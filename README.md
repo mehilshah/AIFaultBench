@@ -1,4 +1,4 @@
-# Benchmark DL Bugs
+# Benchmark of DL Bugs
 
 > **📢 MSR 2027 Mining Challenge dataset.** A reproducibility benchmark of real-world
 > deep-learning bugs, packaged as self-contained, runnable reproductions.
@@ -23,7 +23,7 @@ be reproduced (hardware access, pinned builds, or upstream fixes).
 |:----:|:------------:|:----------------:|:------------:|:-------------:|:------------:|
 | **640** | **533** (83%) | **107** (17%) | **87** | **63** | ~48 MB |
 
-<p align="center"><img src="assets/repro_status.png" alt="533 of 640 bugs reproduce (83%)" width="88%"></p>
+*(Figures for all of the below are collected in [§7 Figures at a glance](#7-figures-at-a-glance).)*
 
 > Codebases and Python environments are **regenerated on demand** (clone + checkout + venv), not
 > shipped — which is why the whole package is ~48 MB rather than tens of gigabytes.
@@ -38,7 +38,8 @@ be reproduced (hardware access, pinned builds, or upstream fixes).
 4. [Running experiments across the benchmark](#4-running-experiments-across-the-benchmark)
 5. [How the benchmark was built](#5-how-the-benchmark-was-built)
 6. [Data notes & known limitations](#6-data-notes--known-limitations)
-7. [Citation & license](#7-citation--license)
+7. [Figures at a glance](#7-figures-at-a-glance)
+8. [Citation & license](#8-citation--license)
 
 ---
 
@@ -50,8 +51,6 @@ alone (transformers, diffusers, accelerate, peft, …) contributes 146 bugs; the
 probabilistic-programming ecosystem 63; and the PyTorch, JAX, TensorFlow/Keras, vLLM, and
 DeepSpeed families round out the rest.
 
-<p align="center"><img src="assets/bugs_per_repo.png" alt="Bugs per repository, top 15, split by reproducibility" width="80%"></p>
-
 **Reproducibility is gated by hardware, and the gate is concentrated in distributed / GPU-serving
 libraries.** Reproduction rates are high and tight across most repositories (79–94%), but **vLLM
 sits far below the pack at 44%** — and most of its non-reproducible bugs fail on GPU/accelerator
@@ -61,12 +60,8 @@ end, **NumPyro reproduces at 94%**: it is largely CPU-friendly probabilistic cod
 hardware dependencies. In other words, *what a library is for* predicts how reproducible its bugs
 are on commodity hardware.
 
-<p align="center"><img src="assets/repro_rate.png" alt="Reproduction rate by repository; vLLM lowest at 44%, NumPyro highest at 94%" width="78%"></p>
-
 **When a bug doesn't reproduce, we say why.** Every one of the 107 non-reproducible cases carries
 a `blocking_reason`. Grouping them:
-
-<p align="center"><img src="assets/blocking_breakdown.png" alt="Breakdown of the 107 non-reproducible bugs" width="80%"></p>
 
 | Category | Count | What it means |
 |----------|:-----:|---------------|
@@ -86,7 +81,7 @@ are gated by hardware you can add, or by upstream fixes you can pin around.
 
 ## 2. What's in the package
 
-Each bug lives in its own numbered folder at the top level (`001/`, `002/`, …):
+Each bug lives in its own numbered folder under `bugs/` (`bugs/001/`, `bugs/002/`, …):
 
 ```
 .
@@ -94,7 +89,8 @@ Each bug lives in its own numbered folder at the top level (`001/`, `002/`, …)
 ├── assets/                       # figures used in this README
 ├── index.csv                     # ← START HERE: canonical bug_id → report/commit/status map
 ├── index.json                    # same index, for programmatic use
-└── <bug_id>/                     # one folder per bug: 001, 002, … (zero-padded)
+└── bugs/                         # one folder per bug: 001, 002, … (zero-padded)
+    └── <bug_id>/
 ```
 
 ### `index.csv` — the map
@@ -109,7 +105,7 @@ One row per bug; the single source of truth for setup and evaluation:
 | `issue_url`        | the original bug report on GitHub |
 | `commit`           | commit hash to check out for reproduction |
 | `clone_url`        | git URL of the repository |
-| `bug_report`       | path to the local bug-report text (e.g. `001/bug_report.txt`) |
+| `bug_report`       | path to the local bug-report text (e.g. `bugs/001/bug_report.txt`) |
 | `codebase_present` | `true` if a codebase snapshot ships in-folder (rare); otherwise clone it |
 | `reproducible`     | `true` / `false` — whether the bug was verified to reproduce |
 | `blocking_reason`  | if not reproducible, why (empty otherwise) |
@@ -143,7 +139,7 @@ Reproduction uses a local Python **virtualenv** — no Docker required. Pick a b
 `index.csv`, then:
 
 ```bash
-cd 001
+cd bugs/001
 
 # 1. Recreate the codebase at the buggy commit (not shipped with the dataset)
 bash setup_codebase.sh
@@ -186,7 +182,7 @@ for r in csv.DictReader(open("index.csv")):
     if r["reproducible"] == "true":
         print(r["bug_id"])
 PY
-  ( cd "$bug_id" || exit 0
+  ( cd "bugs/$bug_id" || exit 0
     bash setup_codebase.sh
     # --- invoke YOUR tool here, e.g. feed it bug_report.txt + codebase/ ---
     # your_tool --bug-report bug_report.txt --codebase codebase --repro repro.py
@@ -250,7 +246,48 @@ and evaluation.
 
 ---
 
-## 7. Citation & license
+## 7. Figures at a glance
+
+All figures are generated from `index.csv` by [`scripts/make_figures.py`](scripts/make_figures.py)
+(LaTeX / TikZ + pgfplots, rasterized with `pdftocairo`) so the numbers always match the shipped
+data. Re-render them with `python3 scripts/make_figures.py`.
+
+**Reproduction status.** 533 of 640 bugs (83%) reproduce on the reference machine.
+
+<p align="center"><img src="assets/repro_status.png" alt="533 of 640 bugs reproduce (83%)" width="88%"></p>
+
+**Bugs per repository.** The 15 largest contributors, each split into reproducible vs. not.
+
+<p align="center"><img src="assets/bugs_per_repo.png" alt="Bugs per repository, top 15, split by reproducibility" width="78%"></p>
+
+**Reproduction rate by repository.** Share of each repo's bugs that reproduce (repos with ≥ 15
+bugs); vLLM is the clear low outlier, NumPyro the highest.
+
+<p align="center"><img src="assets/repro_rate.png" alt="Reproduction rate by repository; vLLM lowest at 44%, NumPyro highest at 94%" width="76%"></p>
+
+**Reliability ranking by ecosystem.** Reproducibility rate per ecosystem family (an explicit
+repo→family grouping); dots below the 83% mean under-perform.
+
+<p align="center"><img src="assets/rate_ranking.png" alt="Reproducibility rate per ecosystem family, ranked against the dataset mean" width="78%"></p>
+
+**Reproducibility across ecosystems.** The same ecosystem rates as a radar; families outside the
+dashed mean ring beat the average.
+
+<p align="center"><img src="assets/ecosystem_radar.png" alt="Radar of reproducibility rate across ecosystem families" width="62%"></p>
+
+**Does volume hurt reproducibility?** Each bubble is a repository (x = bug count, y = rate, size ∝
+count). The relationship is essentially flat — big repos reproduce fine; vLLM is the outlier.
+
+<p align="center"><img src="assets/volume_vs_rate.png" alt="Repository bug count versus reproducibility rate; vLLM is the clear outlier" width="78%"></p>
+
+**Why the 107 don't reproduce.** Nearly all blocked cases are upstream fixes / drift or
+unavailable hardware — not the bug genuinely disappearing.
+
+<p align="center"><img src="assets/blocking_breakdown.png" alt="Breakdown of the 107 non-reproducible bugs" width="80%"></p>
+
+---
+
+## 8. Citation & license
 
 <!-- TODO: replace with the real citation/DOI once available -->
 If you use this benchmark, please cite the accompanying paper:
