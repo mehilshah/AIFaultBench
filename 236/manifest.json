@@ -1,0 +1,12 @@
+{
+  "bug_id": "236",
+  "bug_dir": "236",
+  "issue_url": "https://github.com/patrick-kidger/equinox/issues/898",
+  "commit_hash": "",
+  "library_name": "equinox",
+  "library_version": "0.11.8",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../236"
+}

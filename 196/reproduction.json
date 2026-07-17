@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` produced `DATACLASS_CASE=NO_ERROR:Vector(x=Array([0., 1.], dtype=float32), y=Array([0., 1.], dtype=float32))` and `PLAIN_CASE=ERROR:TypeCheckError:Type-check error whilst checking the return value of __main__.test.` with `B=10` in scope.",
+  "steps": [
+    "Activate the environment or install dependencies with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` from the bug folder.",
+    "Observe that the dataclass case returns normally while the plain-tensor case raises `TypeCheckError`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

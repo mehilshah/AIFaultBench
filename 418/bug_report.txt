@@ -1,0 +1,74 @@
+# recovered-from-issue: https://github.com/pyg-team/pytorch_geometric/issues/10163
+
+TITLE
+Inconsistent implementation of bias in `nn.conv.TransformerConv`
+
+BODY
+### 🐛 Describe the bug
+
+## Main issue
+The `bias` argument is not being passed to the instantiation of `self.lin_value`, `self.lin_query`, and `self.lin_key`.
+
+## Explanation
+In `nn.conv.TransformerConv`, the `bias` argument is not being passed to `self.lin_value`, `self.lin_query`, and `self.lin_key`, corresponding to $W_2$, $W_3$, and $W_4$ in the docstring of the module. However, it is being passed to `self.lin_skip` corresponding to $W_1$. 
+
+This is inconsistent behavior that does not align with the expectations of setting the `bias` parameter. It is unintuitive that the `bias` parameter only affects some of the model weights.
+
+For very specific application such as [Deep One-Class Classification](https://proceedings.mlr.press/v80/ruff18a.html) (**Proposition 2**, specifically), it is a requirement that the model does not have any bias terms. The current implementation does not allow for this.
+
+## Suggested fix
+The suggested fix is to simply pass the `bias` argument to the instantiations of `self.lin_value`, `self.lin_query`, and `self.lin_key`. 
+```
+self.lin_key = Linear(in_channels[0], heads * out_channels, bias=bias)
+self.lin_query = Linear(in_channels[1], heads * out_channels, bias=bias)
+self.lin_value = Linear(in_channels[0], heads * out_channels, bias=bias)
+```
+
+### Versions
+
+```
+PyTorch version: 2.5.1+cpu
+Is debug build: False
+CUDA used to build PyTorch: Could not collect
+ROCM used to build PyTorch: N/A
+
+OS: Microsoft Windows 11 Home (10.0.26100 64-bit)
+GCC version: (Rev2, Built by MSYS2 project) 12.1.0
+
+Clang version: Could not collect
+CMake version: version 3.30.3
+Libc version: N/A
+
+Python version: 3.12.6 (tags/v3.12.6:a4a2d2b, Sep  6 2024, 20:11:23) [MSC v.1940 64 bit (AMD64)] (64-bit runtime)
+Python platform: Windows-11-10.0.26100-SP0
+Is CUDA available: False
+CUDA runtime version: Could not collect
+CUDA_MODULE_LOADING set to: N/A
+GPU models and configuration: GPU 0: NVIDIA GeForce MX150
+Nvidia driver version: 536.23
+cuDNN version: Could not collect
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+Is XNNPACK available: True
+
+CPU:
+Name: Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz
+Manufacturer: GenuineIntel
+Family: 205
+Architecture: 9
+ProcessorType: 3
+DeviceID: CPU0
+CurrentClockSpeed: 1600
+MaxClockSpeed: 1800
+L2CacheSize: 1024
+L2CacheSpeed: None
+Revision: None
+
+Versions of relevant libraries:
+[pip3] neptune-pytorch==2.0.0
+[pip3] numpy==2.2.3
+[pip3] torch==2.5.1
+[pip3] torch-geometric==2.6.1
+[pip3] torchviz==0.0.3
+[conda] Could not collect
+```

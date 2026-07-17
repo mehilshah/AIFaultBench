@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "bug_id": 200,
+  "title": "GitLab fails to detect Linux docker version",
+  "reproducible": true,
+  "language": "python",
+  "entrypoint": "run_repro.sh"
+}

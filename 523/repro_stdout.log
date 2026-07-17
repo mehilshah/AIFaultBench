@@ -1,0 +1,4 @@
+torch=2.13.0+cpu
+accelerate=0.18.0.dev0
+accelerator.device=cpu
+partial_state_cpu=True

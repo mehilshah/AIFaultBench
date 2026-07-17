@@ -1,0 +1,6 @@
+jax=0.7.1
+numpyro=0.19.0
+legacy_key_type= ArrayImpl
+modern_key_type= PRNGKeyArray
+legacy_parallel_ok= {'obs': Array([-1.1574776, -1.135625 ,  0.9609788], dtype=float32)}
+running modern typed key path...

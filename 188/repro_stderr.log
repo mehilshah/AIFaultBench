@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "188/repro.py", line 112, in _exercise_case
+    RequestOutput.from_request_output([_make_request()])
+  File "188/codebase/torchtune/dev/rl/datatypes/request_output.py", line 72, in from_request_output
+    cls(
+  File "188/.venv/lib/python3.12/site-packages/tensordict/tensorclass.py", line 1430, in wrapper
+    self.__post_init__()
+  File "188/codebase/torchtune/dev/rl/datatypes/request_output.py", line 46, in __post_init__
+    postproc(from_dataclass(output, dest_cls=VllmCompletionOutput))
+  File "188/codebase/torchtune/dev/rl/datatypes/request_output.py", line 39, in postproc
+    output.logprobs = get_logprob(output)
+                      ^^^^^^^^^^^^^^^^^^^
+  File "188/codebase/torchtune/dev/rl/datatypes/request_output.py", line 33, in get_logprob
+    v[tid]["logprob"] if v[tid].get("logprob") is not None else 1.0
+                         ~^^^^^
+KeyError: tensor(10)

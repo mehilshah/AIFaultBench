@@ -1,0 +1,16 @@
+Reproduced bug: Client construction raises an exception.
+Traceback (most recent call last):
+  File "222/repro.py", line 68, in main
+    client_cls("127.0.0.1:8000")
+  File "222/codebase/towhee/serve/triton/pipeline_client.py", line 55, in __init__
+    self._client = aio_httpclient.InferenceServerClient(url)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/repro_towhee_triton_222_venv/lib/python3.12/site-packages/tritonclient/http/aio/__init__.py", line 116, in __init__
+    self._conn = aiohttp.TCPConnector(ssl=ssl_context, limit=conn_limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/repro_towhee_triton_222_venv/lib/python3.12/site-packages/aiohttp/connector.py", line 988, in __init__
+    super().__init__(
+  File "/tmp/repro_towhee_triton_222_venv/lib/python3.12/site-packages/aiohttp/connector.py", line 298, in __init__
+    loop = loop or asyncio.get_running_loop()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: no running event loop

@@ -1,0 +1,11 @@
+{
+  "bug_id": "256",
+  "bug_dir": "256",
+  "issue_url": "https://github.com/sdv-dev/SDV/issues/1741",
+  "library_name": "sdv",
+  "library_version": "1.9.1.dev0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "sdv-dev/SDV local checkout",
+  "codebase_present": "true",
+  "standardized_dir": "../256"
+}

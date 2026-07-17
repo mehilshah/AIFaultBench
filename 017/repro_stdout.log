@@ -1,0 +1,11 @@
+python=3.12.3
+tensorflow=2.21.0
+model_dir=/users/grad/mehil/.keras/datasets/ssd_mobilenet_v1_coco_2017_11_17/ssd_mobilenet_v1_coco_2017_11_17/saved_model
+image=017/codebase/research/object_detection/test_images/image1.jpg
+num_detections=100
+detection_scores[:5]=[0.9407 0.9345 0.2309 0.2252 0.1725]
+detection_classes[:5]=[18, 18, 18, 18, 18]
+detection_boxes[:2]=[[0.0391 0.0192 0.8721 0.3158]
+ [0.1095 0.4028 0.9246 0.973 ]]
+max_score=0.9406895041465759
+nonempty_scores=True

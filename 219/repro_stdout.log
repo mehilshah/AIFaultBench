@@ -1,0 +1,4 @@
+python: 3.10.13
+tensorflow: 2.15.0
+transformers: 4.38.2
+loading TFBertModel.from_pretrained('bert-base-uncased', config=BertConfig(max_position_embeddings=2048))

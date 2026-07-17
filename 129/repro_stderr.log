@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "129/repro.py", line 24, in <module>
+    main()
+  File "129/repro.py", line 12, in main
+    parameter_type=ParameterType.FLOAT,
+                   ^^^^^^^^^^^^^
+NameError: name 'ParameterType' is not defined

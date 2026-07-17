@@ -1,0 +1,15 @@
+{
+  "bug_id": "088",
+  "issue_url": "https://github.com/lucidrains/x-transformers/issues/290",
+  "library_name": "x-transformers",
+  "library_version": "unknown",
+  "codebase_source": "local codebase/ checkout",
+  "repro_files": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ]
+}

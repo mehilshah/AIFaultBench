@@ -1,0 +1,14 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+-f https://data.pyg.org/whl/torch-2.5.1+cpu.html
+
+torch==2.5.1+cpu
+pyg-lib==0.4.0+pt25cpu
+
+aiohttp
+fsspec
+jinja2
+numpy
+psutil>=5.8.0
+pyparsing
+requests
+tqdm

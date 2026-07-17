@@ -1,0 +1,15 @@
+# Core Python deps for the local torch-geometric source tree.
+aiohttp
+fsspec
+jinja2
+numpy
+pandas
+psutil
+pyparsing
+requests
+scikit-learn
+scipy
+tqdm
+networkx
+matplotlib
+-e ./codebase

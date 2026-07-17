@@ -1,0 +1,73 @@
+Title: [BUG] TensorDictReplayBuffer's pin_memory=True does not work with custom transforms
+Date: 2024-08-30T04:43:30+00:00
+URL: https://github.com/pytorch/rl/issues/2404
+
+Description:
+## Describe the bug
+
+`TensorDictReplayBuffer`'s `pin_memory=True` does not work with custom transforms 
+
+```python
+rb = TensorDictReplayBuffer(storage, pin_memory=True, transform=CustomTransform())
+rb.sample()['actions'].is_pinned() # False
+```
+
+
+## To Reproduce
+
+```python
+import torch
+from torchrl.data import LazyMemmapStorage, TensorDictReplayBuffer
+from tensordict import TensorDict
+
+
+class CustomTransform:
+    def __call__(self, tensordict: TensorDict) -> TensorDict:
+        output = TensorDict({'observation': tensordict['observation']}, batch_size=10)
+        return output
+
+
+rb = TensorDictReplayBuffer(storage=LazyMemmapStorage(1000, scratch_dir='/tmp'), pin_memory=True,
+                            transform=CustomTransform())
+
+for i in range(100):
+    td = TensorDict({"observation": torch.randn(10, 4)}, batch_size=[10])
+    rb.add(td)
+
+sample = rb.sample(10)
+
+print(sample['observation'].is_pinned())  # False, expecting True
+
+```
+
+## Expected behavior
+
+Expecting the samples to be memory pinned.
+
+## System info
+
+```python
+import torchrl, numpy, sys
+print(torchrl.__version__, numpy.__version__, sys.version, sys.platform)
+0.5.0 1.24.4 3.8.19 | packaged by conda-forge | (default, Mar 20 2024, 12:47:35)
+[GCC 12.3.0] linux
+
+tensordict.__version__ = 0.5.0 (installed from nightly)
+```
+
+## Reason and Possible fixes
+
+When a new TensorDict is created (`output = TensorDict({'observation': tensordict['observation']}, batch_size=10)`) its `device` property is set to None, unless specified.
+At [torchrl/data/replay_buffers/utils.py#L88](https://github.com/pytorch/rl/blob/main/torchrl/data/replay_buffers/utils.py#L88), the sampled data is skipped from pinning, because its `.device` is None. 
+
+I have various thoughts about this. 
+- is this expected behavior? (It actually took me a while to figure out I should set device='cpu')
+- should the `output.device==torch.device('cpu')` check exist? I just looked at `torch`'s pin_memory() method. There the input is not expected to be in 'cpu'.
+- instead should there be a check whether all tensors in the TensorDict are in cpu?
+
+
+## Checklist
+
+- [x] I have checked that there is no similar issue in the repo (**required**)
+- [x] I have read the [documentation](https://github.com/pytorch/rl/tree/main/docs/) (**required**)
+- [x] I have provided a minimal working example to reproduce the bug (**required**)

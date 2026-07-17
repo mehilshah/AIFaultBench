@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Running ./run_repro.sh in the bundled CPU-only venv completed successfully.",
+    "The repro output was: pytorch_lightning_import=ok version=2.6.1; lightning_fabric_import=ok; lightning_fabric_has_strategies=True.",
+    "A direct check in the same venv also reported `2.6.1` and `True` for `hasattr(lightning.fabric, 'strategies')`."
+  ],
+  "steps": [
+    "Created a CPU-only virtualenv and installed the local source tree as editable `pytorch_lightning`.",
+    "Ran the import check from repro.py.",
+    "Verified that the reported `AttributeError` did not occur."
+  ],
+  "blocking_reason": "The local source tree does not reproduce the reported circular-import failure. In this folder, `import pytorch_lightning` and `import lightning.fabric` both succeed, and `lightning.fabric.strategies` is already present on the package object.",
+  "reproduction_command": "./run_repro.sh"
+}

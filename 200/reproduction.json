@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "run_repro.sh exits with code 1.",
+    "repro_stderr.log shows KeyError: 'ApiVersion' at cibuildwheel/oci_container.py:123.",
+    "The KeyError is wrapped as OCIEngineTooOldError with the message 'Build failed because docker is too old or is not working properly.'"
+  ],
+  "steps": [
+    "./setup_env.sh",
+    "./run_repro.sh"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

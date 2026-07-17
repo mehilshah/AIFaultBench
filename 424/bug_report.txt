@@ -1,0 +1,61 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7830
+
+TITLE
+[BUG]AttributeError in ZeRO-3 with gradient_checkpointing: 'NoneType' object has no attribute 'next_functions' (DeepSpeed 0.18.5)
+
+BODY
+**Describe the bug**
+When using DeepSpeed ZeRO-3 with `gradient_checkpointing=True`, training fails with:
+AttributeError: 'NoneType' object has no attribute 'next_functions'
+This occurs even in DeepSpeed 0.18.5.
+
+**Environment** 
+- Deepspeed version: 0.18.5
+- PyTorch version: 2.3.0+cu121
+- Transformers version: 4.57.5
+- CUDA version: 12.8 (nvcc)
+- Python version: 3.10
+- OS: Ubuntu 22.04
+
+**DeepSpeed Config** 
+```
+{
+    "fp16": {
+        "enabled": "auto"
+    },
+    "bf16": {
+        "enabled": "auto"
+    },
+    "optimizer": {
+        "type": "AdamW",
+        "params": {
+            "lr": "auto",
+            "weight_decay": "auto"
+        }
+    },
+    "zero_optimization": {
+        "stage": 3,
+        "offload_optimizer": {
+            "device": "cpu",
+            "pin_memory": true
+        },
+        "offload_param": {
+            "device": "none",
+            "pin_memory": true
+        },
+        "overlap_comm": true,
+        "contiguous_gradients": true,
+        "reduce_bucket_size": "auto",
+        "stage3_prefetch_bucket_size": "auto",
+        "stage3_param_persistence_threshold": "auto",
+        "stage3_gather_16bit_weights_on_model_save": true
+    },
+    "gradient_accumulation_steps": "auto",
+    "gradient_clipping": "auto",
+    "steps_per_print": 2000,
+    "train_batch_size": "auto",
+    "train_micro_batch_size_per_gpu": "auto",
+    "wall_clock_breakdown": false
+}
+```
+

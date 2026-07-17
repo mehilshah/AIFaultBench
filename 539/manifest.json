@@ -1,0 +1,12 @@
+{
+  "bug_id": "539",
+  "bug_dir": "539",
+  "issue_url": "https://github.com/pyro-ppl/pyro/issues/3032",
+  "commit_hash": "f4fafc5c7fa0dc5a377ceb06ec59a234bf3ac465",
+  "library_name": "pyro",
+  "library_version": "torch==1.9.0+cpu",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pyro-ppl/pyro@f4fafc5c7fa0dc5a377ceb06ec59a234bf3ac465",
+  "codebase_present": "true",
+  "standardized_dir": "../539"
+}

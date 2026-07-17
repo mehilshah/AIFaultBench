@@ -1,0 +1,12 @@
+{
+  "bug_id": "231",
+  "bug_dir": "231",
+  "issue_url": "https://github.com/optuna/optuna/issues/6073",
+  "commit_hash": "",
+  "library_name": "optuna",
+  "library_version": "4.4.0.dev",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../231"
+}

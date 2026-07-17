@@ -1,0 +1,12 @@
+{
+  "reproducible": false,
+  "evidence": "A forced self-conditioning forward/backward pass completed successfully. On torch 2.13.0+cpu and torch 2.9.1+cpu, the script printed status=backward_completed instead of raising RuntimeError: Inference tensors cannot be saved for backward.",
+  "steps": [
+    "Installed a local virtualenv and the minimal dependency set needed by the package.",
+    "Forced the self-conditioning branch by patching the module-level random() helper to return 0.0.",
+    "Ran a tiny GaussianDiffusion forward/backward pass with self_condition=True.",
+    "Observed that loss.backward() completed successfully, so the reported bug did not reproduce in this environment."
+  ],
+  "blocking_reason": "Not reproducible here on the available stable torch builds; the reported inference-mode autograd failure did not occur.",
+  "reproduction_command": "bash run_repro.sh"
+}

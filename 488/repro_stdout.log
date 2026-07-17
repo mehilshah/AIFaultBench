@@ -1,0 +1,5 @@
+Python 3.12.3
+GLM-5.2 sparse indexer schedule check
+source: codebase/vllm/models/deepseek_v32/nvidia/attention.py
+documented carry layers (from comment): [0, 1, 2, 6, 10]
+current formula carry layers: [0, 1, 5, 9]

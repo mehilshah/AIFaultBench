@@ -1,0 +1,11 @@
+{
+  "blocking_reason": "",
+  "evidence": "ErnieImageModularPipeline bases: ['ModularPipeline'] | ErnieImageModularPipeline defines methods: none | hasattr(ErnieImageModularPipeline, 'load_lora_weights') -> False | calling pipe.load_lora_weights(...) -> 'ErnieImageModularPipeline' object has no attribute 'load_lora_weights' | modular pipeline source shows `class ErnieImageModularPipeline(ModularPipeline)` at line 66 | non-modular pipeline source shows `class ErnieImagePipeline(DiffusionPipeline, ErnieImageLoraLoaderMixin)` at line 42",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Import the real `ErnieImageModularPipeline` class from `codebase/src` using a local `torch` stub.",
+    "Instantiate the class shell and call `load_lora_weights` on it.",
+    "Observe `AttributeError: 'ErnieImageModularPipeline' object has no attribute 'load_lora_weights'`."
+  ]
+}

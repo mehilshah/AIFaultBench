@@ -1,0 +1,145 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/1196
+
+TITLE
+AttributeError: 'ClusterConfig' object has no attribute 'tpu_cluster' on 
+
+BODY
+### System Info
+
+```Shell
+- Accelerate 0.17.1
+- TPU v4-8 (TPUVM)
+- tpu-vm-v4-pt-1.13
+
+Sys env:
+
+# Tpu v4 PyTorch XLA .env
+export XRT_TPU_CONFIG="localservice;0;localhost:51011"
+
+# Set the environment variable to visible devices*
+export TPU_NUM_DEVICES=4
+
+# Allow LIBTPU LOAD by multiple processes
+export ALLOW_MULTIPLE_LIBTPU_LOAD=1
+```
+
+`accelerate env`:
+
+```
+- `Accelerate` version: 0.17.1
+- Platform: Linux-5.13.0-1023-gcp-x86_64-with-glibc2.17
+- Python version: 3.8.16
+- Numpy version: 1.24.2
+- PyTorch version (GPU?): 1.13.1+cu117 (False)
+- `Accelerate` default config:
+        - compute_environment: LOCAL_MACHINE
+        - distributed_type: TPU
+        - mixed_precision: fp16
+        - use_cpu: False
+        - num_processes: 4
+        - machine_rank: 0
+        - num_machines: 1
+        - rdzv_backend: static
+        - same_network: True
+        - main_training_function: main
+        - deepspeed_config: {}
+        - fsdp_config: {}
+        - megatron_lm_config: {}
+        - downcast_bf16: no
+        - tpu_use_cluster: False
+        - tpu_use_sudo: False
+        - tpu_env: []
+        - dynamo_config: {}
+```
+
+
+### Information
+
+- [X] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [X] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+Accelerate Config:
+
+```yaml
+# default_config.yaml
+compute_environment: LOCAL_MACHINE
+deepspeed_config: {}
+distributed_type: TPU
+downcast_bf16: 'no'
+dynamo_config: {}
+fsdp_config: {}
+machine_rank: 0
+main_training_function: main
+megatron_lm_config: {}
+mixed_precision: 'no'
+num_machines: 1
+num_processes: 4
+rdzv_backend: static
+same_network: true
+tpu_env: []
+tpu_use_cluster: false
+tpu_use_sudo: false
+use_cpu: false
+```
+
+
+Train Command:
+
+```bash
+accelerate launch run_clm_no_trainer.py \
+--train_file='ko_inst_45040_jsonl.json' \
+--validation_split_percentage=1 \
+--model_name_or_path='EleutherAI/polyglot-ko-5.8b' \
+--per_device_train_batch_size=16 \
+--num_warmup_steps=500 \
+--output_dir='testmodel' \
+--seed=42 \
+--block_size=512 \
+--preprocessing_num_workers=20 \
+--checkpointing_steps='epoch' \
+--with_tracking
+```
+
+Error:
+
+```
+Traceback (most recent call last):
+  File "/home/beomi/miniconda3/envs/xla/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+  File "/home/beomi/miniconda3/envs/xla/lib/python3.8/site-packages/accelerate/commands/accelerate_cli.py", line 45, in main
+    args.func(args)
+  File "/home/beomi/miniconda3/envs/xla/lib/python3.8/site-packages/accelerate/commands/launch.py", line 892, in launch_command
+    args, defaults, mp_from_config_flag = _validate_launch_command(args)
+  File "/home/beomi/miniconda3/envs/xla/lib/python3.8/site-packages/accelerate/commands/launch.py", line 793, in _validate_launch_command
+    args.tpu_cluster = defaults.tpu_cluster if args.tpu else False
+AttributeError: 'ClusterConfig' object has no attribute 'tpu_cluster'
+```
+
+### Expected behavior
+
+It seems like there is no `tpu_cluster` config args on `accelerate/commands/config/config_args.py`.
+
+Ref: https://github.com/huggingface/accelerate/blob/2f83b1afefae2c13f9be36419da9f39c283de07d/src/accelerate/commands/config/config_args.py#L150
+
+Maybe we need to add `tpu_cluster` below?
+
+```python
+    # args for TPU pods
+    tpu_name: str = None
+    tpu_zone: str = None
+    tpu_use_cluster: bool = False
+    tpu_use_sudo: bool = False
+    command_file: str = None
+    commands: List[str] = None
+    tpu_vm: List[str] = None
+    tpu_env: List[str] = None
+    # tpu_cluster may be located here?
+```
+

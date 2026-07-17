@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running the local NumPyro checkout under JAX 0.9.1 with warnings enabled reproduces the reported issue: sampling `Dirichlet([1])` and `Beta(1, 1)` both emit `DeprecationWarning`s from `ml_dtypes/_finfo.py` about implicit array-to-dtype conversion, while still returning samples.",
+  "steps": [
+    "Created a clean virtual environment with Python 3.12.",
+    "Installed the pinned runtime stack from `requirements.txt` and the local `codebase/` in editable mode.",
+    "Ran `bash run_repro.sh` with `JAX_PLATFORM_NAME=cpu` and `PYTHONWARNINGS=always`.",
+    "Observed repeated `DeprecationWarning`s in `repro_stderr.log` and successful sample values in `repro_stdout.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

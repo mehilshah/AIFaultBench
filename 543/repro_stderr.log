@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "543/repro.py", line 42, in <module>
+    main()
+  File "543/repro.py", line 36, in main
+    assert hidden_states is None or isinstance(hidden_states, tuple), (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FAIL: hidden_states is <class 'torch.Tensor'>, expected None or tuple

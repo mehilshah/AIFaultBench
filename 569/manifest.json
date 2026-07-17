@@ -1,0 +1,12 @@
+{
+  "bug_id": "569",
+  "bug_dir": "569",
+  "issue_url": "https://github.com/huggingface/transformers/issues/46762",
+  "commit_hash": "ad697ec123f5133e5aae45c97c23d90ea52a1bd8",
+  "library_name": "transformers",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "huggingface/transformers@ad697ec123f5133e5aae45c97c23d90ea52a1bd8",
+  "codebase_present": "true",
+  "standardized_dir": "../569"
+}

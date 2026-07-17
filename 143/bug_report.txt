@@ -1,0 +1,36 @@
+Title: Issue loading remote source code offline?
+Date: 2024-11-08T00:34:39+00:00
+URL: https://github.com/huggingface/sentence-transformers/issues/3043
+
+Description:
+Hi there,
+
+I am trying to load the `nomic-ai/nomic-embed-text-v1`  onto a machine with internet disabled. It seems a similar issue was mentioned [here](https://discuss.huggingface.co/t/could-not-locate-the-configuration-hf-nomic-bert-py-inside-nomic-ai-nomic-bert-2048/93036).
+
+I am able to save/load variants such as `all-mpnet-base-v2` and `all-MiniLM-L6-v2` just fine, but I believe the remote source code is causing an issue.
+
+First, I save the model on a machine with internet enabled.
+
+```
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("nomic-ai/nomic-embed-text-v1", trust_remote_code=True).cuda()
+model.save("./nomic-embed-text-v1.pt")
+```
+
+Next, I attempt to load the model on a machine with internet disabled.
+```
+embedding_model = SentenceTransformer(
+    "nomic-ai/nomic-embed-text-v1", 
+    trust_remote_code=True,
+    local_files_only=True,
+).cuda()
+embedding_model.load("./nomic-embed-text-v1.pt")
+```
+
+This results in the error below.
+
+```
+Could not locate the configuration_hf_nomic_bert.py inside nomic-ai/nomic-bert-2048.
+```
+Is it possible to load models w/ remote source code given these constraints?

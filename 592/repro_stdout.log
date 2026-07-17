@@ -1,0 +1,3 @@
+CREATED_PARAMETERS={"DAYZ_SPEC_VERSION": "V1", "tables": {"table": {"columns": {"id": {"missing_values_proportion": 0.0}, "value": {"category_values": ["alpha", "beta", "gamma", "delta"], "missing_values_proportion": 0.0}}, "num_rows": 4}}}
+MUTATED_PRIMARY_KEY_PARAMETER={"missing_values_proportion": 0.5}
+VALIDATION_ACCEPTED_NONZERO_PRIMARY_KEY_MISSING_VALUES_PROPORTION

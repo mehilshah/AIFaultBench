@@ -1,0 +1,95 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21561
+
+TITLE
+CUDA issue when using ddp_notebook on Kaggle
+
+BODY
+### Bug description
+
+I am attempting to fine-tune a model with PyTorch on Kaggle using the 2 T4 GPUs. I am using the ddp_notebook strategy and keep on getting the following error stack:
+
+```
+RuntimeError: Lightning can't create new processes if CUDA is already initialized. Did you manually call `torch.cuda.*` functions, have moved the model to the device, or allocated memory on the GPU any other way? Please remove any such calls, or change the selected strategy. You will have to restart the Python kernel.
+```
+
+I went through my training code and seemed to have removed any CUDA functions but this still occurs. My training code can be found [here](https://github.com/Chilliwiddit/medical-loss-FT/blob/main/train_Llama_normal.py). Maybe if one could review the code to see what I am doing wrong or could it some other thing entirely?
+
+### What version are you seeing the problem on?
+
+master
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+The sample code can be found [here](https://github.com/Chilliwiddit/medical-loss-FT/blob/main/train_Llama_normal.py). Running it in kaggle will reproduce the error when it comes to the trainer.fit(model) section.
+```
+
+### Error messages and logs
+
+```
+---------------------------------------------------------------------------
+RuntimeError                              Traceback (most recent call last)
+/tmp/ipykernel_47/3532242074.py in <cell line: 0>()
+      1 print ("Training model")
+----> 2 trainer.fit(model)
+      3 
+      4 
+      5 print ("training finished")
+
+/usr/local/lib/python3.11/dist-packages/pytorch_lightning/trainer/trainer.py in fit(self, model, train_dataloaders, val_dataloaders, datamodule, ckpt_path)
+    558         self.training = True
+    559         self.should_stop = False
+--> 560         call._call_and_handle_interrupt(
+    561             self, self._fit_impl, model, train_dataloaders, val_dataloaders, datamodule, ckpt_path
+    562         )
+
+/usr/local/lib/python3.11/dist-packages/pytorch_lightning/trainer/call.py in _call_and_handle_interrupt(trainer, trainer_fn, *args, **kwargs)
+     46     try:
+     47         if trainer.strategy.launcher is not None:
+---> 48             return trainer.strategy.launcher.launch(trainer_fn, *args, trainer=trainer, **kwargs)
+     49         return trainer_fn(*args, **kwargs)
+     50 
+
+/usr/local/lib/python3.11/dist-packages/pytorch_lightning/strategies/launchers/multiprocessing.py in launch(self, function, trainer, *args, **kwargs)
+    108         """
+    109         if self._start_method in ("fork", "forkserver"):
+--> 110             _check_bad_cuda_fork()
+    111         if self._start_method == "spawn":
+    112             _check_missing_main_guard()
+
+/usr/local/lib/python3.11/dist-packages/lightning_fabric/strategies/launchers/multiprocessing.py in _check_bad_cuda_fork()
+    206     if _IS_INTERACTIVE:
+    207         message += " You will have to restart the Python kernel."
+--> 208     raise RuntimeError(message)
+    209 
+    210 
+
+RuntimeError: Lightning can't create new processes if CUDA is already initialized. Did you manually call `torch.cuda.*` functions, have moved the model to the device, or allocated memory on the GPU any other way? Please remove any such calls, or change the selected strategy. You will have to restart the Python kernel.
+```
+
+
+### Environment
+
+
+ - PyTorch Lightning Version (e.g., 2.5.0): latest
+- PyTorch Version (e.g., 2.5):
+- Python version (e.g., 3.12): latest
+- OS (e.g., Linux): kagg;e
+- CUDA/cuDNN version: latest
+- GPU models and configuration: 2 T4 GPUs
+- How you installed Lightning(`conda`, `pip`, source): pip
+
+
+
+
+These all can be seen by looking at the [training code](https://github.com/Chilliwiddit/medical-loss-FT/blob/main/train_Llama_normal.py)
+
+### More info
+
+_No response_
+
+cc @ethanwharris @justusschock @lantiga

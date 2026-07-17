@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "A clean virtual environment with numpyro==0.19.0, jax==0.4.38, and jaxlib==0.4.38 printed nan for Beta(1.0, 8.0).log_prob(0.0) and jnp.isnan(...) was True.",
+    "The same expression is the boundary-value case described in bug_report.txt and is the one asserted in repro.py."
+  ],
+  "steps": [
+    "Created a clean virtual environment.",
+    "Installed the pinned dependencies from requirements.txt.",
+    "Ran repro.py through run_repro.sh.",
+    "Observed nan from Beta(1.0, 8.0).log_prob(0.0)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

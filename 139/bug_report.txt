@@ -1,0 +1,44 @@
+Title: [BUG] MLP returns different result based on batch size
+Date: 2024-09-19T21:51:41+00:00
+URL: https://github.com/huggingface/pytorch-image-models/issues/2282
+
+Description:
+**Describe the bug**
+Using a linear MLP, the result for a batch of size 2 is different than the result for a batch of size 1, despite having the exact same inputs. 
+
+**To Reproduce**
+Steps to reproduce the behavior:
+
+This is a minimal reproducible example:
+```
+from timm.models.vision_transformer import Mlp
+import torch
+
+x = (torch.rand(1, 499, 1280) * 1000).repeat(2,1,1).cuda()
+# This will be True, x[0] is equal to x[1]
+assert x[0].equal(x[1]), "inputs are different than one another"
+
+mlp =  Mlp(
+            in_features=1280,
+            hidden_features=5120,
+            act_layer=torch.nn.GELU,
+            drop=0.0,
+        ).cuda()
+result_single = mlp(x[:1])
+result_double = mlp(x[:2])
+# this will be True, result_double[0] is the same as result_double[1]
+assert result_double[0].equal(result_double[1]), "outputs are different than one another for two identical samples in the same batch"
+
+# this will be False, result_single[0] is different than result_double[0]
+assert result_single[0].equal(result_double[0]), "outputs are different than one another for two identical samples in batches of different sizes"
+```
+
+
+**Expected behavior**
+We would expect the first row of the output when given a batch size of 1 to be the same as the first row of the output when given a batch size of 2, since the inputs have the exact same samples. 
+However, the result is that the first row of the output for the batch size of 1 is different than the first row of the output when the batch size is 2.
+
+**Desktop (please complete the following information):**
+ - OS: Ubuntu 22.04.4 LTS
+ - timm version: 1.0.9
+ - PyTorch version w/ CUDA/cuDNN: 2.4.1+cu118

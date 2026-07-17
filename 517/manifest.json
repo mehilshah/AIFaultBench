@@ -1,0 +1,19 @@
+{
+  "title": "Memory leak using TraceEnum_ELBO",
+  "source_issue": "https://github.com/pyro-ppl/pyro/issues/3068",
+  "entrypoint": "run_repro.sh",
+  "reproducible": true,
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md"
+  ],
+  "notes": [
+    "The local checkout asserts on Torch 1.x at import time; repro.py patches torch.__version__ before importing pyro.",
+    "The repro compares TraceEnum_ELBO against Trace_ELBO on the tutorial-style GMM model from codebase/tutorial/source/gmm.ipynb."
+  ]
+}

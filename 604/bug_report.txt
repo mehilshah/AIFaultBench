@@ -1,0 +1,73 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/2870
+
+TITLE
+guide.quantiles() shape issue
+
+BODY
+I run into frequent `RuntimeError`s when generating quantiles of models fitted with SVI. This can be replicated on the radon models in `pyro-models`. For example, the [radon_intercept](https://github.com/pyro-ppl/pyro-models/blob/master/pyro_models/arm/radon_intercept_chr.py) model fit with `SVI` with an `AutoNormal` guide generates the following:
+
+```
+>>> estimates = guide.quantiles([0.05, 0.5, 0.95])
+
+
+estimates = guide.quantiles([0.05, 0.5, 0.95])
+---------------------------------------------------------------------------
+RuntimeError                              Traceback (most recent call last)
+~/GitHub/pyro-models/pyro_models/arm/radon_intercept_chr.py in 
+----> 78 estimates = guide.quantiles([0.05, 0.5, 0.95])
+
+~/miniforge3/envs/pyro/lib/python3.9/site-packages/torch/autograd/grad_mode.py in decorate_context(*args, **kwargs)
+     25         def decorate_context(*args, **kwargs):
+     26             with self.__class__():
+---> 27                 return func(*args, **kwargs)
+     28         return cast(F, decorate_context)
+     29 
+
+~/miniforge3/envs/pyro/lib/python3.9/site-packages/pyro/infer/autoguide/guides.py in quantiles(self, quantiles, *args, **kwargs)
+    578 
+    579             site_quantiles = torch.tensor(quantiles, dtype=site_loc.dtype, device=site_loc.device)
+--> 580             site_quantiles_values = dist.Normal(site_loc, site_scale).icdf(site_quantiles)
+    581             constrained_site_quantiles = biject_to(site["fn"].support)(site_quantiles_values)
+    582             results[name] = constrained_site_quantiles
+
+~/miniforge3/envs/pyro/lib/python3.9/site-packages/torch/distributions/normal.py in icdf(self, value)
+     83 
+     84     def icdf(self, value):
+---> 85         return self.loc + self.scale * torch.erfinv(2 * value - 1) * math.sqrt(2)
+     86 
+     87     def entropy(self):
+
+RuntimeError: The size of tensor a (85) must match the size of tensor b (3) at non-singleton dimension 0
+
+```
+
+This has come up repeatedly with larger models, but this is the first easily reproducible example that I have come across.
+
+### Environment
+For any bugs, please provide the following:
+ - OS and python version. MacOS, Linux; Python 3.7.10
+ - PyTorch version: 1.8.0
+ - Pyro version: 1.6.0
+
+### Code Snippet
+
+Using the `arm.radon_intercept` model, I am fitting using the following:
+
+```python
+N_STEPS = 1000
+
+guide = autoguides.AutoNormal(model)
+
+initial_lr = 0.01
+optimizer = pyro.optim.ClippedAdam({"lr": initial_lr})
+svi = SVI(model, guide, optimizer, loss=Trace_ELBO())
+
+pyro.clear_param_store()
+for j in range(N_STEPS):
+    # calculate the loss and take a gradient step
+    loss = svi.step(radon_data)
+    if not j % 100:
+        print("[iteration %04d] loss: %.4f" % (j + 1, loss / len(radon_data['y'])))
+
+estimates = guide.quantiles([0.05, 0.5, 0.95])
+```

@@ -1,0 +1,3 @@
+torch: 2.13.0+cpu
+transformers: 5.14.0.dev0
+exporting to: /tmp/canine_fp16_repro.onnx

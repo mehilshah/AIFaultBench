@@ -1,0 +1,50 @@
+Title: IndexError when calling `mo.ui.tabs({})`
+Date: 2026-01-09T20:35:58+00:00
+URL: https://github.com/marimo-team/marimo/issues/7767
+
+Description:
+### Describe the bug
+
+Calling `mo.ui.tabs()` with an empty dict raises an IndexError.
+
+```python
+Traceback (most recent call last):
+  File "/tmp/marimo_66/__marimo__cell_HnLb_.py", line 1, in <module>
+    mo.ui.tabs({})
+  File "/usr/local/lib/python3.12/site-packages/marimo/_plugins/ui/_impl/tabs.py", line 90, in __init__
+    super().__init__(
+  File "/usr/local/lib/python3.12/site-packages/marimo/_plugins/ui/_core/ui_element.py", line 167, in __init__
+    self._initialize(self._args)
+  File "/usr/local/lib/python3.12/site-packages/marimo/_plugins/ui/_core/ui_element.py", line 273, in _initialize
+    self._value = self._initial_value = self._convert_value(initial_value)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/marimo/_plugins/ui/_impl/tabs.py", line 101, in _convert_value
+    return self._tab_keys[0]
+           ~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+```
+
+
+### Will you submit a PR?
+
+- [ ] Yes
+
+### Environment
+
+<details>
+
+```
+From Molab
+```
+
+</details>
+
+
+### Code to reproduce
+
+https://molab.marimo.io/notebooks/nb_EV8NCLHGy1WYEzrGDY2hcF
+
+```python
+import marimo as mo
+mo.ui.tabs({})
+```

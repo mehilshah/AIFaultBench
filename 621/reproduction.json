@@ -1,0 +1,13 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "_prepare_sampler raised AttributeError: 'GenerationConfig' object has no attribute 'sampler_config'",
+    "postprocess raised KeyError: 'input_ids'"
+  ],
+  "steps": [
+    "A plain GenerationConfig reaches DiffusionGemmaGenerationMixin._prepare_sampler and raises AttributeError on sampler_config.",
+    "Passing DiffusionGemmaGenerationOutput into ImageTextToTextPipeline.postprocess raises KeyError on 'input_ids'."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

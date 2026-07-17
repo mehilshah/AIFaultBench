@@ -1,0 +1,5 @@
+dists0 shape: (90, 90)
+dists1 shape: (90, 90)
+max abs diff: 0.000000
+same-matrix call succeeded: (90, 90)
+reproduced exception: TypeError: unsupported operand type(s) for *: 'NoneType' and 'float'

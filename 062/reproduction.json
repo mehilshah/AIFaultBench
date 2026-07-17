@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With pandas 2.2.3 in the local venv, running `bash run_repro.sh` prints `About to call train_df.append(test_df)` and then fails with `AttributeError: 'DataFrame' object has no attribute 'append'. Did you mean: '_append'?` at `repro.py:23`, matching `codebase/examples/nlp/masked_language_modeling.py:114`.",
+  "steps": [
+    "Create two small pandas DataFrames.",
+    "Call `train_df.append(test_df)` to mirror the masked_language_modeling example.",
+    "Observe the pandas 2.x AttributeError because `append` no longer exists."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

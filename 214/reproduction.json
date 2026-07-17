@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "KeyError: SUBPATTERN",
+    "Traceback shows the failure originates in rdt.transformers.utils.strings_from_regex()"
+  ],
+  "steps": [
+    "Loaded the reported metadata and input data.",
+    "Instantiated GaussianCopulaSynthesizer.",
+    "Called fit(data) and observed a KeyError during regex parsing."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

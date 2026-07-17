@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "A tiny bf16 Sam3Model run succeeded eagerly and failed under torch.compile with `RuntimeError: mat1 and mat2 must have the same dtype, but got Float and BFloat16`.",
+  "steps": [
+    "Run `bash setup_env.sh` to create `.venv` and install dependencies.",
+    "Run `bash run_repro.sh` from the bug folder.",
+    "Observe that eager inference succeeds and the compiled forward fails in `repro.py`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

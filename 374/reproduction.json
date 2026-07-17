@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With a clean Python 3.12 virtualenv and the local codebase on PYTHONPATH, instantiating ModelNet(root='repro_data/modelnet10', name='10', train=True) prints the download URL and raises urllib.error.HTTPError: HTTP Error 404: Not Found from torch_geometric/datasets/modelnet.py:115.",
+  "steps": [
+    "Created an isolated Python 3.12 virtualenv and installed torch==2.6.0+cpu plus the runtime dependencies from requirements.txt.",
+    "Ran PYTHONPATH=codebase .venv/bin/python repro.py from the bug folder.",
+    "The run reached torch_geometric.data.download.download_url() with http://vision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip and failed with HTTP 404."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the repro on the local codebase raises AssertionError because both VisionTransformer and Eva omit reg_token from no_weight_decay() and place reg_token in a different layer-decay group than cls_token. The captured stdout shows reg_token alone in the deepest group with weight_decay 0.05 and lr_scale 1.0, while cls_token stays in the stem group with weight_decay 0.0.",
+  "steps": [
+    "Created a local virtual environment and installed the repro dependencies from requirements.txt.",
+    "Executed ./run_repro.sh with stdout and stderr captured to repro_stdout.log and repro_stderr.log.",
+    "Observed AssertionError from repro.py confirming reg_token is missing from no_weight_decay() and group_matcher() for both VisionTransformer and Eva."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && ./run_repro.sh >repro_stdout.log 2>repro_stderr.log"
+}

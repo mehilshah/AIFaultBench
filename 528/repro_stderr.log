@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "528/repro.py", line 43, in main
+    import numpy  # type: ignore
+    ^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'numpy'
+Traceback (most recent call last):
+  File "528/repro.py", line 51, in main
+    import torch  # type: ignore
+    ^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'torch'
+Traceback (most recent call last):
+  File "528/repro.py", line 65, in main
+    import sdv  # type: ignore
+    ^^^^^^^^^^
+ModuleNotFoundError: No module named 'sdv'

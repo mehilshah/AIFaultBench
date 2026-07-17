@@ -1,0 +1,62 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21524
+
+TITLE
+AttributeError: partially initialized module 'lightning_fabric' has no attribute 'strategies' (most likely due to a circular import)
+
+BODY
+### Bug description
+
+
+Trying to import Neuralforecast but recently getting this strategies error.
+
+
+
+
+### What version are you seeing the problem on?
+
+master
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+from neuralforecast import NeuralForecast
+```
+
+### Error messages and logs
+
+```
+-->lightning_fabric/_graveyard/tpu.py:108)     setattr(fabric.strategies, "SingleTPUStrategy", SingleTPUStrategy)
+    109     setattr(fabric.accelerators, "TPUAccelerator", TPUAccelerator)
+    110     setattr(fabric.plugins, "TPUPrecision", TPUPrecision)
+
+AttributeError: partially initialized module 'lightning_fabric' has no attribute 'strategies' (most likely due to a circular import)
+```
+
+
+### Environment
+
+<details>
+  <summary>Current environment</summary>
+
+```
+#- PyTorch Lightning Version:2.6.1
+#- PyTorch Version:2.9.1
+#- Python version:3.12
+#- OS (e.g., Linux):windows
+#- CUDA/cuDNN version: NA
+#- GPU models and configuration: Intel Iris R Xe graphics
+#- How you installed Lightning(`conda`, `pip`, source):installed with pip install neuralforecast
+```
+
+</details>
+
+
+### More info
+
+_No response_
+
+cc @ethanwharris

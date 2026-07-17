@@ -1,0 +1,22 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2453
+
+TITLE
+[BUG] Hello， I want use the mobilenet, but after training, it dose not work.
+
+BODY
+I just want use  the features of the 3rd stage to create my backbone. Is it right?
+```
+class MobileNetv4_mdium(nn.Module):
+	def __init__(self):
+		super().__init__()
+		model = timm.create_model('mobilenetv4_conv_medium'), pretrained=True, pretrained_cfg_overlay=('file=./pytorch_model.bin')
+		self.conv_stem = model.conv_stem
+		self.bn1 = model.bn1
+		self.blocks = model.blocks[:3]
+	
+	def forward(self, x):
+	x = self.conv_stem(x)
+	x = self.bn1(x)
+	x = self.blocks(x)
+	return x
+```

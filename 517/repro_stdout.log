@@ -1,0 +1,22 @@
+[init] best_seed=2 initial_loss=25.743104934692383
+[Trace_ELBO] rss_start_kb=535544
+[Trace_ELBO] step=1 rss_kb=782248 delta_kb=246704
+[Trace_ELBO] step=500 rss_kb=782328 delta_kb=246784
+[Trace_ELBO] step=1000 rss_kb=782328 delta_kb=246784
+[TraceEnum_ELBO] rss_start_kb=782336
+[TraceEnum_ELBO] step=1 rss_kb=782340 delta_kb=4
+[TraceEnum_ELBO] step=500 rss_kb=783472 delta_kb=1136
+[TraceEnum_ELBO] step=1000 rss_kb=785156 delta_kb=2820
+[TraceEnum_ELBO] step=1500 rss_kb=786844 delta_kb=4508
+{
+  "reproducible": true,
+  "evidence": "TraceEnum_ELBO on the tutorial-style GMM increased RSS from 783472 KB to 786844 KB between steps 500 and 1500 (+3372 KB), while the same model/guide under Trace_ELBO stayed flat at 782328 KB -> 782328 KB (+0 KB).",
+  "steps": [
+    "Monkeypatched torch.__version__ before importing pyro so the local checkout would load under the installed Torch build.",
+    "Ran the tutorial-style GMM model with AutoDelta globals and an enumerated local assignment guide.",
+    "Measured current RSS during 1000 Trace_ELBO steps and 1500 TraceEnum_ELBO steps.",
+    "Observed monotonic RSS growth only on TraceEnum_ELBO after the initial allocator jump."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

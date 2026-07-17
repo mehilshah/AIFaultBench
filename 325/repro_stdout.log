@@ -1,0 +1,5 @@
+numpyro version: 0.20.0
+testing Dirichlet forward sampling
+Dirichlet sample: [0.9999999]
+testing Beta forward sampling
+Beta sample: 0.48362162709236145

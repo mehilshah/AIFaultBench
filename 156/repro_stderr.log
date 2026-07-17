@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "156/repro.py", line 27, in <module>
+    main()
+  File "156/repro.py", line 23, in main
+    convert_segmentation_map_to_binary_masks(segmentation_map)
+  File "156/codebase/src/transformers/models/eomt/image_processing_eomt.py", line 83, in convert_segmentation_map_to_binary_masks
+    all_labels = np.unique(segmentation_map)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/.local/lib/python3.12/site-packages/numpy/lib/_arraysetops_impl.py", line 292, in unique
+    ar = np.asanyarray(ar)
+         ^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/.local/lib/python3.12/site-packages/torch/_tensor.py", line 1245, in __array__
+    return self.numpy()
+           ^^^^^^^^^^^^
+TypeError: can't convert cuda:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first.

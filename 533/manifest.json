@@ -1,0 +1,13 @@
+{
+  "title": "torch.compile doesn't work with self.toggle_optimizer() in lightning module",
+  "source": "bug_report.txt",
+  "repro_script": "repro.py",
+  "setup_script": "setup_env.sh",
+  "run_script": "run_repro.sh",
+  "dockerfile": "Dockerfile",
+  "python_path": "codebase/src",
+  "notes": [
+    "Uses a minimal manual-optimization LightningModule with a single Linear layer.",
+    "The model is wrapped with torch.compile() before trainer.fit()."
+  ]
+}

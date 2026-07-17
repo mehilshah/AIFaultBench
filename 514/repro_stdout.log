@@ -1,0 +1,66 @@
+torch=2.7.1+cpu
+cuda_available=False
+shape=(8192, 4096)
+trace_limit_mb=1800
+exec_limit_mb=1000
+vm_before_eager
+  VmSize:	  732044 kB
+  VmRSS:	  338412 kB
+  VmData:	  296796 kB
+eager_loss=8.824750
+decomposed_graph:
+graph():
+    %logits_1 : [num_users=2] = placeholder[target=logits_1]
+    %target_1 : [num_users=5] = placeholder[target=target_1]
+    %amax : [num_users=1] = call_function[target=torch.ops.prims.amax.default](args = (%logits_1, [1]), kwargs = {})
+    %broadcast_in_dim : [num_users=1] = call_function[target=torch.ops.prims.broadcast_in_dim.default](args = (%amax, [8192, 1], [0]), kwargs = {})
+    %broadcast_in_dim_1 : [num_users=1] = call_function[target=torch.ops.prims.broadcast_in_dim.default](args = (%broadcast_in_dim, [8192, 4096], [0, 1]), kwargs = {})
+    %sub : [num_users=2] = call_function[target=torch.ops.prims.sub.default](args = (%logits_1, %broadcast_in_dim_1), kwargs = {})
+    %exp : [num_users=1] = call_function[target=torch.ops.prims.exp.default](args = (%sub,), kwargs = {})
+    %sum_1 : [num_users=1] = call_function[target=torch.ops.prims.sum.default](args = (%exp, [1]), kwargs = {})
+    %broadcast_in_dim_2 : [num_users=1] = call_function[target=torch.ops.prims.broadcast_in_dim.default](args = (%sum_1, [8192, 1], [0]), kwargs = {})
+    %log : [num_users=1] = call_function[target=torch.ops.prims.log.default](args = (%broadcast_in_dim_2,), kwargs = {})
+    %broadcast_in_dim_3 : [num_users=1] = call_function[target=torch.ops.prims.broadcast_in_dim.default](args = (%log, [8192, 4096], [0, 1]), kwargs = {})
+    %sub_1 : [num_users=3] = call_function[target=torch.ops.prims.sub.default](args = (%sub, %broadcast_in_dim_3), kwargs = {})
+    %ne : [num_users=1] = call_function[target=torch.ops.prims.ne.default](args = (%target_1, -100), kwargs = {})
+    %where : [num_users=1] = call_function[target=torch.ops.prims.where.default](args = (%ne, %target_1, 0), kwargs = {})
+    %broadcast_in_dim_4 : [num_users=1] = call_function[target=torch.ops.prims.broadcast_in_dim.default](args = (%where, [8192, 1], [0]), kwargs = {})
+    %gather : [num_users=1] = call_function[target=torch.ops.aten.gather.default](args = (%sub_1, 1, %broadcast_in_dim_4), kwargs = {})
+    %squeeze : [num_users=1] = call_function[target=torch.ops.prims.squeeze.default](args = (%gather, [1]), kwargs = {})
+    %neg : [num_users=1] = call_function[target=torch.ops.prims.neg.default](args = (%squeeze,), kwargs = {})
+    %ne_1 : [num_users=1] = call_function[target=torch.ops.prims.ne.default](args = (%target_1, -100), kwargs = {})
+    %where_1 : [num_users=1] = call_function[target=torch.ops.prims.where.default](args = (%ne_1, %neg, 0.0), kwargs = {})
+    %ne_2 : [num_users=1] = call_function[target=torch.ops.prims.ne.default](args = (%target_1, -100), kwargs = {})
+    %convert_element_type : [num_users=1] = call_function[target=torch.ops.prims.convert_element_type.default](args = (%ne_2, torch.int64), kwargs = {})
+    %sum_2 : [num_users=1] = call_function[target=torch.ops.prims.sum.default](args = (%convert_element_type, [0]), kwargs = {})
+    %convert_element_type_1 : [num_users=2] = call_function[target=torch.ops.prims.convert_element_type.default](args = (%sum_2, torch.float32), kwargs = {})
+    %sum_3 : [num_users=1] = call_function[target=torch.ops.prims.sum.default](args = (%where_1, [0]), kwargs = {})
+    %div : [num_users=1] = call_function[target=torch.ops.prims.div.default](args = (%sum_3, %convert_element_type_1), kwargs = {})
+    %full_like : [num_users=1] = call_function[target=torch.ops.aten.full_like.default](args = (%div, 1), kwargs = {pin_memory: False, memory_format: torch.preserve_format})
+    %div_1 : [num_users=1] = call_function[target=torch.ops.prims.div.default](args = (%full_like, %convert_element_type_1), kwargs = {})
+    %broadcast_in_dim_5 : [num_users=3] = call_function[target=torch.ops.prims.broadcast_in_dim.default](args = (%target_1, [8192, 1], [0]), kwargs = {})
+    %ne_3 : [num_users=1] = call_function[target=torch.ops.prims.ne.default](args = (%broadcast_in_dim_5, -100), kwargs = {})
+    %where_2 : [num_users=1] = call_function[target=torch.ops.prims.where.default](args = (%ne_3, %broadcast_in_dim_5, 0), kwargs = {})
+    %full_like_1 : [num_users=1] = call_function[target=torch.ops.aten.full_like.default](args = (%sub_1, 0), kwargs = {pin_memory: False, memory_format: torch.preserve_format})
+    %scatter : [num_users=1] = call_function[target=torch.ops.aten.scatter.value](args = (%full_like_1, 1, %where_2, -1.0), kwargs = {})
+    %ne_4 : [num_users=1] = call_function[target=torch.ops.prims.ne.default](args = (%broadcast_in_dim_5, -100), kwargs = {})
+    %where_3 : [num_users=1] = call_function[target=torch.ops.prims.where.default](args = (%ne_4, %div_1, 0.0), kwargs = {})
+    %broadcast_in_dim_6 : [num_users=1] = call_function[target=torch.ops.prims.broadcast_in_dim.default](args = (%where_3, [8192, 4096], [0, 1]), kwargs = {})
+    %mul : [num_users=2] = call_function[target=torch.ops.prims.mul.default](args = (%scatter, %broadcast_in_dim_6), kwargs = {})
+    %exp_1 : [num_users=1] = call_function[target=torch.ops.prims.exp.default](args = (%sub_1,), kwargs = {})
+    %sum_4 : [num_users=1] = call_function[target=torch.ops.prims.sum.default](args = (%mul, [1]), kwargs = {})
+    %broadcast_in_dim_7 : [num_users=1] = call_function[target=torch.ops.prims.broadcast_in_dim.default](args = (%sum_4, [8192, 1], [0]), kwargs = {})
+    %broadcast_in_dim_8 : [num_users=1] = call_function[target=torch.ops.prims.broadcast_in_dim.default](args = (%broadcast_in_dim_7, [8192, 4096], [0, 1]), kwargs = {})
+    %mul_1 : [num_users=1] = call_function[target=torch.ops.prims.mul.default](args = (%exp_1, %broadcast_in_dim_8), kwargs = {})
+    %sub_2 : [num_users=1] = call_function[target=torch.ops.prims.sub.default](args = (%mul, %mul_1), kwargs = {})
+    return sub_2
+vm_after_trace
+  VmSize:	  809516 kB
+  VmRSS:	  428648 kB
+  VmData:	  369328 kB
+vm_after_lowering_cap
+vm_before_fx_run
+  VmSize:	  809516 kB
+  VmRSS:	  428648 kB
+  VmData:	  369328 kB
+expected_failure=RuntimeError: [enforce fail at alloc_cpu.cpp:119] err == 0. DefaultCPUAllocator: can't allocate memory: you tried to allocate 134217728 bytes. Error code 12 (Cannot allocate memory)

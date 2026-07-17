@@ -1,0 +1,68 @@
+Title: [Bug]: Extracted entity text does not preserve newline characters, leading to span inconsistencies
+Date: 2025-05-28T08:54:12+00:00
+URL: https://github.com/flairNLP/flair/issues/3665
+
+Description:
+### Describe the bug
+
+When performing an NER task with Flair, I've observed that entity spans output by the model replace newline characters within entities with spaces. This leads to inconsistencies when comparing the extracted spans with the original text.
+
+### To Reproduce
+
+```python
+from flair.models import SequenceTagger
+from flair.data import Sentence
+
+
+# model: https://huggingface.co/flair/ner-english-fast
+tagger = SequenceTagger.load("flair/ner-english-fast")
+
+example = "I am a student named John\nSmith."
+
+sentence = Sentence(example)
+
+tagger.predict(sentence)
+
+print(sentence)
+
+entity = sentence.get_spans("ner")[0]
+
+print(f"Source Text: f{repr(example)}")
+print(f"Entity Start: {entity.start_position}")
+print(f"Entity End: {entity.end_position}")
+print(f"Entity Text: {entity.text}")
+print(f"Entity in source text: {repr(example[entity.start_position:entity.end_position])}")
+
+assert example[entity.start_position:entity.end_position] == entity.text
+```
+
+### Expected behavior
+
+The extracted entity text (entity.text) should precisely match the original text segment (example[entity.start_position:entity.end_position])
+
+### Logs and Stack traces
+
+```stacktrace
+Sentence[8]: "I am a student named John Smith." → ["John Smith"/PER]
+Source Text: f'I am a student named John\nSmith.'
+Entity Start: 21
+Entity End: 31
+Entity Text: John Smith
+Entity in source text: 'John\nSmith'
+Traceback (most recent call last):
+  File "/xxx/flair_ner_model_v2/flair_bug_reproduce.py", line 24, in <module>
+    assert example[entity.start_position:entity.end_position] == entity.text
+AssertionError
+```
+
+### Screenshots
+
+_No response_
+
+### Additional Context
+
+_No response_
+
+### Environment
+
+flair==0.14.0

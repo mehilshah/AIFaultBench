@@ -1,0 +1,693 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/1573
+
+TITLE
+[BUG] Test failed with accelerate version 0.20.3 and deepspeed version 0.9.3 on single machine with 4x A100 GPU
+
+BODY
+### System Info
+
+```Shell
+- `Accelerate` version: 0.20.3
+- Platform: Linux-3.10.0-1160.71.1.el7.x86_64-x86_64-with-glibc2.17
+- Python version: 3.10.9
+- Numpy version: 1.23.5
+- PyTorch version (GPU?): 2.0.1+cu117 (True)
+- PyTorch XPU available: False
+- System RAM: 1929.00 GB
+- GPU type: NVIDIA A100-SXM4-80GB
+- `Accelerate` default config:
+        - compute_environment: LOCAL_MACHINE
+        - distributed_type: DEEPSPEED
+        - mixed_precision: no
+        - use_cpu: False
+        - num_processes: 4
+        - machine_rank: 0
+        - num_machines: 1
+        - rdzv_backend: static
+        - same_network: True
+        - main_training_function: main
+        - deepspeed_config: {'gradient_accumulation_steps': 1, 'offload_optimizer_device': 'none', 'offload_param_device': 'none', 'zero3_init_flag': False, 'zero_stage': 2}
+        - downcast_bf16: no
+        - tpu_use_cluster: False
+        - tpu_use_sudo: False
+        - tpu_env: []
+```
+
+
+### Information
+
+- [X] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+1. Accelerate version 0.19.0 and deepspeed version 0.9.3:
+    4x A100: test OK.
+2. Accelerate version 0.20.3 and deepspeed version 0.9.3:
+    2x A100: test OK.
+    4x A100: test failed.
+
+The output log is as follows.
+
+```Shell
+$ accelerate test
+Setting ds_accelerator to cuda (auto detect)
+
+Running:  accelerate-launch /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/test_script.py
+stdout: Setting ds_accelerator to cuda (auto detect)
+stdout: [09:50:58] WARNING                                                                                                                                                                                          run.py:694
+stdout:                     *****************************************
+stdout:                     Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in
+stdout:                     your application as needed.
+stdout:                     *****************************************
+stdout: Setting ds_accelerator to cuda (auto detect)
+stdout: Setting ds_accelerator to cuda (auto detect)
+stdout: Setting ds_accelerator to cuda (auto detect)
+stdout: Setting ds_accelerator to cuda (auto detect)
+stdout: [2023-06-10 09:51:00,584] [WARNING] [comm.py:152:init_deepspeed_backend] NCCL backend in DeepSpeed not yet implemented
+stdout: [2023-06-10 09:51:00,584] [INFO] [comm.py:594:init_distributed] cdb=None
+stdout: [2023-06-10 09:51:00,647] [WARNING] [comm.py:152:init_deepspeed_backend] NCCL backend in DeepSpeed not yet implemented
+stdout: [2023-06-10 09:51:00,647] [INFO] [comm.py:594:init_distributed] cdb=None
+stdout: [2023-06-10 09:51:00,700] [WARNING] [comm.py:152:init_deepspeed_backend] NCCL backend in DeepSpeed not yet implemented
+stdout: [2023-06-10 09:51:00,700] [INFO] [comm.py:594:init_distributed] cdb=None
+stdout: [2023-06-10 09:51:00,701] [WARNING] [comm.py:152:init_deepspeed_backend] NCCL backend in DeepSpeed not yet implemented
+stdout: [2023-06-10 09:51:00,701] [INFO] [comm.py:594:init_distributed] cdb=None
+stdout: [2023-06-10 09:51:00,701] [INFO] [comm.py:625:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+stdout: Distributed environment: DEEPSPEED  Backend: nccl
+stdout: Num processes: 4
+stdout: Process index: 2
+stdout: Local process index: 2
+stdout: Device: cuda:2
+stdout: 
+stdout: Mixed precision type: no
+stdout: ds_config: {'train_batch_size': 'auto', 'train_micro_batch_size_per_gpu': 'auto', 'gradient_accumulation_steps': 1, 'zero_optimization': {'stage': 2, 'offload_optimizer': {'device': 'none', 'nvme_path': None}, 'offload_param': {'device': 'none', 'nvme_path': None}, 'stage3_gather_16bit_weights_on_model_save': False}, 'steps_per_print': inf, 'fp16': {'enabled': False}, 'bf16': {'enabled': False}}
+stdout: 
+stdout: Distributed environment: DEEPSPEED  Backend: nccl
+stdout: Num processes: 4
+stdout: Process index: 1
+stdout: Local process index: 1
+stdout: Device: cuda:1
+stdout: 
+stdout: Mixed precision type: no
+stdout: ds_config: {'train_batch_size': 'auto', 'train_micro_batch_size_per_gpu': 'auto', 'gradient_accumulation_steps': 1, 'zero_optimization': {'stage': 2, 'offload_optimizer': {'device': 'none', 'nvme_path': None}, 'offload_param': {'device': 'none', 'nvme_path': None}, 'stage3_gather_16bit_weights_on_model_save': False}, 'steps_per_print': inf, 'fp16': {'enabled': False}, 'bf16': {'enabled': False}}
+stdout: 
+stdout: **Initialization**
+stdout: Testing, testing. 1, 2, 3.
+stdout: Distributed environment: DEEPSPEED  Backend: nccl
+stdout: Num processes: 4
+stdout: Process index: 0
+stdout: Local process index: 0
+stdout: Device: cuda:0
+stdout: 
+stdout: Mixed precision type: no
+stdout: ds_config: {'train_batch_size': 'auto', 'train_micro_batch_size_per_gpu': 'auto', 'gradient_accumulation_steps': 1, 'zero_optimization': {'stage': 2, 'offload_optimizer': {'device': 'none', 'nvme_path': None}, 'offload_param': {'device': 'none', 'nvme_path': None}, 'stage3_gather_16bit_weights_on_model_save': False}, 'steps_per_print': inf, 'fp16': {'enabled': False}, 'bf16': {'enabled': False}}
+stdout: 
+stdout: 
+stdout: **Test process execution**
+stdout: Distributed environment: DEEPSPEED  Backend: nccl
+stdout: Num processes: 4
+stdout: Process index: 3
+stdout: Local process index: 3
+stdout: Device: cuda:3
+stdout: 
+stdout: Mixed precision type: no
+stdout: ds_config: {'train_batch_size': 'auto', 'train_micro_batch_size_per_gpu': 'auto', 'gradient_accumulation_steps': 1, 'zero_optimization': {'stage': 2, 'offload_optimizer': {'device': 'none', 'nvme_path': None}, 'offload_param': {'device': 'none', 'nvme_path': None}, 'stage3_gather_16bit_weights_on_model_save': False}, 'steps_per_print': inf, 'fp16': {'enabled': False}, 'bf16': {'enabled': False}}
+stdout: 
+stdout: 
+stdout: **Test split between processes as a list**
+stdout: 
+stdout: **Test split between processes as a dict**
+stdout: 
+stdout: **Test split between processes as a tensor**
+stdout: 
+stdout: **Test random number generator synchronization**
+stderr: ╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+stderr: │ st_script.py:553 in <module>                                                                     │
+stderr: │                                                                                                  │
+stderr: │   550                                                                                            │
+stderr: │   551                                                                                            │
+stderr: │   552 if __name__ == "__main__":                                                                 │
+stderr: │ ❱ 553 │   main()                                                                                 │
+stderr: │   554                                                                                            │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+stderr: │ st_script.py:527 in main                                                                         │
+stderr: │                                                                                                  │
+stderr: │   524 │                                                                                          │
+stderr: │   525 │   if state.local_process_index == 0:                                                     │
+stderr: │   526 │   │   print("\n**Test split between processes as a dict**")                              │
+stderr: │ ❱ 527 │   test_split_between_processes_nested_dict()                                             │
+stderr: │   528 │                                                                                          │
+stderr: │   529 │   if state.local_process_index == 0:                                                     │
+stderr: │   530 │   │   print("\n**Test split between processes as a tensor**")                            │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+stderr: │ st_script.py:479 in test_split_between_processes_nested_dict                                     │
+stderr: │                                                                                                  │
+stderr: │   476 │   │   │   elif state.num_processes == 2:                                                 │
+stderr: │   477 │   │   │   │   assert results["a"] == data_copy["a"][2:]                                  │
+stderr: │   478 │   │   │   else:                                                                          │
+stderr: │ ❱ 479 │   │   │   │   assert results["a"] == data_copy["a"][-1]                                  │
+stderr: │   480 │   │   │   if state.process_index == 0:                                                   │
+stderr: │   481 │   │   │   │   assert results["b"] == data_copy["b"][: 4 // state.num_processes]          │
+stderr: │   482 │   │   │   elif state.num_processes == 2:                                                 │
+stderr: ╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+stderr: AssertionError
+stderr: ╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+stderr: │ st_script.py:553 in <module>                                                                     │
+stderr: │                                                                                                  │
+stderr: │   550                                                                                            │
+stderr: │   551                                                                                            │
+stderr: │   552 if __name__ == "__main__":                                                                 │
+stderr: │ ❱ 553 │   main()                                                                                 │
+stderr: │   554                                                                                            │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+stderr: │ st_script.py:527 in main                                                                         │
+stderr: │                                                                                                  │
+stderr: │   524 │                                                                                          │
+stderr: │   525 │   if state.local_process_index == 0:                                                     │
+stderr: │   526 │   │   print("\n**Test split between processes as a dict**")                              │
+stderr: │ ❱ 527 │   test_split_between_processes_nested_dict()                                             │
+stderr: │   528 │                                                                                          │
+stderr: │   529 │   if state.local_process_index == 0:                                                     │
+stderr: │   530 │   │   print("\n**Test split between processes as a tensor**")                            │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+stderr: │ st_script.py:479 in test_split_between_processes_nested_dict                                     │
+stderr: │                                                                                                  │
+stderr: │   476 │   │   │   elif state.num_processes == 2:                                                 │
+stderr: │   477 │   │   │   │   assert results["a"] == data_copy["a"][2:]                                  │
+stderr: │   478 │   │   │   else:                                                                          │
+stderr: │ ❱ 479 │   │   │   │   assert results["a"] == data_copy["a"][-1]                                  │
+stderr: │   480 │   │   │   if state.process_index == 0:                                                   │
+stderr: │   481 │   │   │   │   assert results["b"] == data_copy["b"][: 4 // state.num_processes]          │
+stderr: │   482 │   │   │   elif state.num_processes == 2:                                                 │
+stderr: ╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+stderr: AssertionError
+stderr: ╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+stderr: │ st_script.py:553 in <module>                                                                     │
+stderr: │                                                                                                  │
+stderr: │   550                                                                                            │
+stderr: │   551                                                                                            │
+stderr: │   552 if __name__ == "__main__":                                                                 │
+stderr: │ ❱ 553 │   main()                                                                                 │
+stderr: │   554                                                                                            │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+stderr: │ st_script.py:523 in main                                                                         │
+stderr: │                                                                                                  │
+stderr: │   520 │                                                                                          │
+stderr: │   521 │   if state.local_process_index == 0:                                                     │
+stderr: │   522 │   │   print("\n**Test split between processes as a list**")                              │
+stderr: │ ❱ 523 │   test_split_between_processes_list()                                                    │
+stderr: │   524 │                                                                                          │
+stderr: │   525 │   if state.local_process_index == 0:                                                     │
+stderr: │   526 │   │   print("\n**Test split between processes as a dict**")                              │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+stderr: │ st_script.py:459 in test_split_between_processes_list                                            │
+stderr: │                                                                                                  │
+stderr: │   456 │   │   ), f"Each process did not have two items. Process index: {state.process_index};    │
+stderr: │   457 │                                                                                          │
+stderr: │   458 │   data = list(range(0, (2 * state.num_processes) + 1))                                   │
+stderr: │ ❱ 459 │   with state.split_between_processes(data, apply_padding=True) as results:               │
+stderr: │   460 │   │   if state.is_last_process:                                                          │
+stderr: │   461 │   │   │   # Test that the last process gets the extra item(s)                            │
+stderr: │   462 │   │   │   num_samples_per_device = math.ceil(len(data) / state.num_processes)            │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/contextlib.py:135 in __enter__                 │
+stderr: │                                                                                                  │
+stderr: │   132 │   │   # they are only needed for recreation, which is not possible anymore               │
+stderr: │   133 │   │   del self.args, self.kwds, self.func                                                │
+stderr: │   134 │   │   try:                                                                               │
+stderr: │ ❱ 135 │   │   │   return next(self.gen)                                                          │
+stderr: │   136 │   │   except StopIteration:                                                              │
+stderr: │   137 │   │   │   raise RuntimeError("generator didn't yield") from None                         │
+stderr: │   138                                                                                            │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/state.py:854 in       │
+stderr: │ split_between_processes                                                                          │
+stderr: │                                                                                                  │
+stderr: │   851 │   │   ["C", "C"]                                                                         │
+stderr: │   852 │   │   ```                                                                                │
+stderr: │   853 │   │   """                                                                                │
+stderr: │ ❱ 854 │   │   with PartialState().split_between_processes(inputs, apply_padding=apply_padding)   │
+stderr: │   855 │   │   │   yield inputs                                                                   │
+stderr: │   856 │                                                                                          │
+stderr: │   857 │   @contextmanager                                                                        │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/contextlib.py:135 in __enter__                 │
+stderr: │                                                                                                  │
+stderr: │   132 │   │   # they are only needed for recreation, which is not possible anymore               │
+stderr: │   133 │   │   del self.args, self.kwds, self.func                                                │
+stderr: │   134 │   │   try:                                                                               │
+stderr: │ ❱ 135 │   │   │   return next(self.gen)                                                          │
+stderr: │   136 │   │   except StopIteration:                                                              │
+stderr: │   137 │   │   │   raise RuntimeError("generator didn't yield") from None                         │
+stderr: │   138                                                                                            │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/state.py:418 in       │
+stderr: │ split_between_processes                                                                          │
+stderr: │                                                                                                  │
+stderr: │   415 │   │   │   else:                                                                          │
+stderr: │   416 │   │   │   │   return inputs                                                              │
+stderr: │   417 │   │                                                                                      │
+stderr: │ ❱ 418 │   │   yield _split_values(inputs, start_index, end_index)                                │
+stderr: │   419 │                                                                                          │
+stderr: │   420 │   @contextmanager                                                                        │
+stderr: │   421 │   def main_process_first(self):                                                          │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/state.py:409 in       │
+stderr: │ _split_values                                                                                    │
+stderr: │                                                                                                  │
+stderr: │   406 │   │   │   │   │   │   tensorized_result = send_to_device(result, self.device)            │
+stderr: │   407 │   │   │   │   │   │   result = pad_across_processes(tensorized_result, pad_index=input   │
+stderr: │   408 │   │   │   │   │   else:                                                                  │
+stderr: │ ❱ 409 │   │   │   │   │   │   result += [result[-1]] * (num_samples_per_process - len(result))   │
+stderr: │   410 │   │   │   │   return result                                                              │
+stderr: │   411 │   │   │   elif isinstance(inputs, dict):                                                 │
+stderr: │   412 │   │   │   │   for key in inputs.keys():                                                  │
+stderr: ╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+stderr: IndexError: list index out of range
+stdout: [09:51:08] WARNING  Sending process 94476 closing signal SIGTERM                                                                                                                                            api.py:698
+stdout:            ERROR    failed (exitcode: 1) local_rank: 1 (pid: 94477) of binary: /home/xxx/apps/miniconda310/envs/ml/bin/python                                                                                api.py:672
+stderr: ╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/bin/accelerate-launch:8 in <module>                           │
+stderr: │                                                                                                  │
+stderr: │   5 from accelerate.commands.launch import main                                                  │
+stderr: │   6 if __name__ == '__main__':                                                                   │
+stderr: │   7 │   sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])                         │
+stderr: │ ❱ 8 │   sys.exit(main())                                                                         │
+stderr: │   9                                                                                              │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/commands/launch.py:94 │
+stderr: │ 7 in main                                                                                        │
+stderr: │                                                                                                  │
+stderr: │   944 def main():                                                                                │
+stderr: │   945 │   parser = launch_command_parser()                                                       │
+stderr: │   946 │   args = parser.parse_args()                                                             │
+stderr: │ ❱ 947 │   launch_command(args)                                                                   │
+stderr: │   948                                                                                            │
+stderr: │   949                                                                                            │
+stderr: │   950 if __name__ == "__main__":                                                                 │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/commands/launch.py:92 │
+stderr: │ 6 in launch_command                                                                              │
+stderr: │                                                                                                  │
+stderr: │   923 │   │   if mp_from_config_flag:                                                            │
+stderr: │   924 │   │   │   args.deepspeed_fields_from_accelerate_config.append("mixed_precision")         │
+stderr: │   925 │   │   args.deepspeed_fields_from_accelerate_config = ",".join(args.deepspeed_fields_fr   │
+stderr: │ ❱ 926 │   │   deepspeed_launcher(args)                                                           │
+stderr: │   927 │   elif args.use_fsdp and not args.cpu:                                                   │
+stderr: │   928 │   │   multi_gpu_launcher(args)                                                           │
+stderr: │   929 │   elif args.use_megatron_lm and not args.cpu:                                            │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/commands/launch.py:67 │
+stderr: │ 1 in deepspeed_launcher                                                                          │
+stderr: │                                                                                                  │
+stderr: │   668 │   │   )                                                                                  │
+stderr: │   669 │   │   with patch_environment(**current_env):                                             │
+stderr: │   670 │   │   │   try:                                                                           │
+stderr: │ ❱ 671 │   │   │   │   distrib_run.run(args)                                                      │
+stderr: │   672 │   │   │   except Exception:                                                              │
+stderr: │   673 │   │   │   │   if is_rich_available() and debug:                                          │
+stderr: │   674 │   │   │   │   │   console = get_console()                                                │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/torch/distributed/run.py:785 in  │
+stderr: │ run                                                                                              │
+stderr: │                                                                                                  │
+stderr: │   782 │   │   )                                                                                  │
+stderr: │   783 │                                                                                          │
+stderr: │   784 │   config, cmd, cmd_args = config_from_args(args)                                         │
+stderr: │ ❱ 785 │   elastic_launch(                                                                        │
+stderr: │   786 │   │   config=config,                                                                     │
+stderr: │   787 │   │   entrypoint=cmd,                                                                    │
+stderr: │   788 │   )(*cmd_args)                                                                           │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/torch/distributed/launcher/api.p │
+stderr: │ y:134 in __call__                                                                                │
+stderr: │                                                                                                  │
+stderr: │   131 │   │   self._entrypoint = entrypoint                                                      │
+stderr: │   132 │                                                                                          │
+stderr: │   133 │   def __call__(self, *args):                                                             │
+stderr: │ ❱ 134 │   │   return launch_agent(self._config, self._entrypoint, list(args))                    │
+stderr: │   135                                                                                            │
+stderr: │   136                                                                                            │
+stderr: │   137 def _get_entrypoint_name(                                                                  │
+stderr: │                                                                                                  │
+stderr: │ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/torch/distributed/launcher/api.p │
+stderr: │ y:250 in launch_agent                                                                            │
+stderr: │                                                                                                  │
+stderr: │   247 │   │   │   # if the error files for the failed children exist                             │
+stderr: │   248 │   │   │   # @record will copy the first error (root cause)                               │
+stderr: │   249 │   │   │   # to the error file of the launcher process.                                   │
+stderr: │ ❱ 250 │   │   │   raise ChildFailedError(                                                        │
+stderr: │   251 │   │   │   │   name=entrypoint_name,                                                      │
+stderr: │   252 │   │   │   │   failures=result.failures,                                                  │
+stderr: │   253 │   │   │   )                                                                              │
+stderr: ╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+stderr: ChildFailedError:
+stderr: ============================================================
+stderr: /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/test_script.py FAILED
+stderr: ------------------------------------------------------------
+stderr: Failures:
+stderr: [1]:
+stderr:   time      : 2023-06-10_09:51:08
+stderr:   host      : g0001
+stderr:   rank      : 2 (local_rank: 2)
+stderr:   exitcode  : 1 (pid: 94478)
+stderr:   error_file: <N/A>
+stderr:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+stderr: [2]:
+stderr:   time      : 2023-06-10_09:51:08
+stderr:   host      : g0001
+stderr:   rank      : 3 (local_rank: 3)
+stderr:   exitcode  : 1 (pid: 94479)
+stderr:   error_file: <N/A>
+stderr:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+stderr: ------------------------------------------------------------
+stderr: Root Cause (first observed failure):
+stderr: [0]:
+stderr:   time      : 2023-06-10_09:51:08
+stderr:   host      : g0001
+stderr:   rank      : 1 (local_rank: 1)
+stderr:   exitcode  : 1 (pid: 94477)
+stderr:   error_file: <N/A>
+stderr:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+stderr: ============================================================
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /home/xxx/apps/miniconda310/envs/ml/bin/accelerate:8 in <module>                                  │
+│                                                                                                  │
+│   5 from accelerate.commands.accelerate_cli import main                                          │
+│   6 if __name__ == '__main__':                                                                   │
+│   7 │   sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])                         │
+│ ❱ 8 │   sys.exit(main())                                                                         │
+│   9                                                                                              │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/commands/accelerate_c │
+│ li.py:45 in main                                                                                 │
+│                                                                                                  │
+│   42 │   │   exit(1)                                                                             │
+│   43 │                                                                                           │
+│   44 │   # Run                                                                                   │
+│ ❱ 45 │   args.func(args)                                                                         │
+│   46                                                                                             │
+│   47                                                                                             │
+│   48 if __name__ == "__main__":                                                                  │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/commands/test.py:54   │
+│ in test_command                                                                                  │
+│                                                                                                  │
+│   51 │   │   test_args = f"--config_file={args.config_file} {script_name}"                       │
+│   52 │                                                                                           │
+│   53 │   cmd = ["accelerate-launch"] + test_args.split()                                         │
+│ ❱ 54 │   result = execute_subprocess_async(cmd, env=os.environ.copy())                           │
+│   55 │   if result.returncode == 0:                                                              │
+│   56 │   │   print("Test is a success! You are ready for your distributed training!")            │
+│   57                                                                                             │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/testing.py │
+│ :383 in execute_subprocess_async                                                                 │
+│                                                                                                  │
+│   380 │   cmd_str = " ".join(cmd)                                                                │
+│   381 │   if result.returncode > 0:                                                              │
+│   382 │   │   stderr = "\n".join(result.stderr)                                                  │
+│ ❱ 383 │   │   raise RuntimeError(                                                                │
+│   384 │   │   │   f"'{cmd_str}' failed with returncode {result.returncode}\n\n"                  │
+│   385 │   │   │   f"The combined stderr from workers follows:\n{stderr}"                         │
+│   386 │   │   )                                                                                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+RuntimeError: 'accelerate-launch /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/test_script.py' failed with returncode 1
+
+The combined stderr from workers follows:
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+│ st_script.py:553 in <module>                                                                     │
+│                                                                                                  │
+│   550                                                                                            │
+│   551                                                                                            │
+│   552 if __name__ == "__main__":                                                                 │
+│ ❱ 553 │   main()                                                                                 │
+│   554                                                                                            │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+│ st_script.py:527 in main                                                                         │
+│                                                                                                  │
+│   524 │                                                                                          │
+│   525 │   if state.local_process_index == 0:                                                     │
+│   526 │   │   print("\n**Test split between processes as a dict**")                              │
+│ ❱ 527 │   test_split_between_processes_nested_dict()                                             │
+│   528 │                                                                                          │
+│   529 │   if state.local_process_index == 0:                                                     │
+│   530 │   │   print("\n**Test split between processes as a tensor**")                            │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+│ st_script.py:479 in test_split_between_processes_nested_dict                                     │
+│                                                                                                  │
+│   476 │   │   │   elif state.num_processes == 2:                                                 │
+│   477 │   │   │   │   assert results["a"] == data_copy["a"][2:]                                  │
+│   478 │   │   │   else:                                                                          │
+│ ❱ 479 │   │   │   │   assert results["a"] == data_copy["a"][-1]                                  │
+│   480 │   │   │   if state.process_index == 0:                                                   │
+│   481 │   │   │   │   assert results["b"] == data_copy["b"][: 4 // state.num_processes]          │
+│   482 │   │   │   elif state.num_processes == 2:                                                 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+AssertionError
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+│ st_script.py:553 in <module>                                                                     │
+│                                                                                                  │
+│   550                                                                                            │
+│   551                                                                                            │
+│   552 if __name__ == "__main__":                                                                 │
+│ ❱ 553 │   main()                                                                                 │
+│   554                                                                                            │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+│ st_script.py:527 in main                                                                         │
+│                                                                                                  │
+│   524 │                                                                                          │
+│   525 │   if state.local_process_index == 0:                                                     │
+│   526 │   │   print("\n**Test split between processes as a dict**")                              │
+│ ❱ 527 │   test_split_between_processes_nested_dict()                                             │
+│   528 │                                                                                          │
+│   529 │   if state.local_process_index == 0:                                                     │
+│   530 │   │   print("\n**Test split between processes as a tensor**")                            │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+│ st_script.py:479 in test_split_between_processes_nested_dict                                     │
+│                                                                                                  │
+│   476 │   │   │   elif state.num_processes == 2:                                                 │
+│   477 │   │   │   │   assert results["a"] == data_copy["a"][2:]                                  │
+│   478 │   │   │   else:                                                                          │
+│ ❱ 479 │   │   │   │   assert results["a"] == data_copy["a"][-1]                                  │
+│   480 │   │   │   if state.process_index == 0:                                                   │
+│   481 │   │   │   │   assert results["b"] == data_copy["b"][: 4 // state.num_processes]          │
+│   482 │   │   │   elif state.num_processes == 2:                                                 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+AssertionError
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+│ st_script.py:553 in <module>                                                                     │
+│                                                                                                  │
+│   550                                                                                            │
+│   551                                                                                            │
+│   552 if __name__ == "__main__":                                                                 │
+│ ❱ 553 │   main()                                                                                 │
+│   554                                                                                            │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+│ st_script.py:523 in main                                                                         │
+│                                                                                                  │
+│   520 │                                                                                          │
+│   521 │   if state.local_process_index == 0:                                                     │
+│   522 │   │   print("\n**Test split between processes as a list**")                              │
+│ ❱ 523 │   test_split_between_processes_list()                                                    │
+│   524 │                                                                                          │
+│   525 │   if state.local_process_index == 0:                                                     │
+│   526 │   │   print("\n**Test split between processes as a dict**")                              │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/te │
+│ st_script.py:459 in test_split_between_processes_list                                            │
+│                                                                                                  │
+│   456 │   │   ), f"Each process did not have two items. Process index: {state.process_index};    │
+│   457 │                                                                                          │
+│   458 │   data = list(range(0, (2 * state.num_processes) + 1))                                   │
+│ ❱ 459 │   with state.split_between_processes(data, apply_padding=True) as results:               │
+│   460 │   │   if state.is_last_process:                                                          │
+│   461 │   │   │   # Test that the last process gets the extra item(s)                            │
+│   462 │   │   │   num_samples_per_device = math.ceil(len(data) / state.num_processes)            │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/contextlib.py:135 in __enter__                 │
+│                                                                                                  │
+│   132 │   │   # they are only needed for recreation, which is not possible anymore               │
+│   133 │   │   del self.args, self.kwds, self.func                                                │
+│   134 │   │   try:                                                                               │
+│ ❱ 135 │   │   │   return next(self.gen)                                                          │
+│   136 │   │   except StopIteration:                                                              │
+│   137 │   │   │   raise RuntimeError("generator didn't yield") from None                         │
+│   138                                                                                            │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/state.py:854 in       │
+│ split_between_processes                                                                          │
+│                                                                                                  │
+│   851 │   │   ["C", "C"]                                                                         │
+│   852 │   │   ```                                                                                │
+│   853 │   │   """                                                                                │
+│ ❱ 854 │   │   with PartialState().split_between_processes(inputs, apply_padding=apply_padding)   │
+│   855 │   │   │   yield inputs                                                                   │
+│   856 │                                                                                          │
+│   857 │   @contextmanager                                                                        │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/contextlib.py:135 in __enter__                 │
+│                                                                                                  │
+│   132 │   │   # they are only needed for recreation, which is not possible anymore               │
+│   133 │   │   del self.args, self.kwds, self.func                                                │
+│   134 │   │   try:                                                                               │
+│ ❱ 135 │   │   │   return next(self.gen)                                                          │
+│   136 │   │   except StopIteration:                                                              │
+│   137 │   │   │   raise RuntimeError("generator didn't yield") from None                         │
+│   138                                                                                            │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/state.py:418 in       │
+│ split_between_processes                                                                          │
+│                                                                                                  │
+│   415 │   │   │   else:                                                                          │
+│   416 │   │   │   │   return inputs                                                              │
+│   417 │   │                                                                                      │
+│ ❱ 418 │   │   yield _split_values(inputs, start_index, end_index)                                │
+│   419 │                                                                                          │
+│   420 │   @contextmanager                                                                        │
+│   421 │   def main_process_first(self):                                                          │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/state.py:409 in       │
+│ _split_values                                                                                    │
+│                                                                                                  │
+│   406 │   │   │   │   │   │   tensorized_result = send_to_device(result, self.device)            │
+│   407 │   │   │   │   │   │   result = pad_across_processes(tensorized_result, pad_index=input   │
+│   408 │   │   │   │   │   else:                                                                  │
+│ ❱ 409 │   │   │   │   │   │   result += [result[-1]] * (num_samples_per_process - len(result))   │
+│   410 │   │   │   │   return result                                                              │
+│   411 │   │   │   elif isinstance(inputs, dict):                                                 │
+│   412 │   │   │   │   for key in inputs.keys():                                                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+IndexError: list index out of range
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /home/xxx/apps/miniconda310/envs/ml/bin/accelerate-launch:8 in <module>                           │
+│                                                                                                  │
+│   5 from accelerate.commands.launch import main                                                  │
+│   6 if __name__ == '__main__':                                                                   │
+│   7 │   sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])                         │
+│ ❱ 8 │   sys.exit(main())                                                                         │
+│   9                                                                                              │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/commands/launch.py:94 │
+│ 7 in main                                                                                        │
+│                                                                                                  │
+│   944 def main():                                                                                │
+│   945 │   parser = launch_command_parser()                                                       │
+│   946 │   args = parser.parse_args()                                                             │
+│ ❱ 947 │   launch_command(args)                                                                   │
+│   948                                                                                            │
+│   949                                                                                            │
+│   950 if __name__ == "__main__":                                                                 │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/commands/launch.py:92 │
+│ 6 in launch_command                                                                              │
+│                                                                                                  │
+│   923 │   │   if mp_from_config_flag:                                                            │
+│   924 │   │   │   args.deepspeed_fields_from_accelerate_config.append("mixed_precision")         │
+│   925 │   │   args.deepspeed_fields_from_accelerate_config = ",".join(args.deepspeed_fields_fr   │
+│ ❱ 926 │   │   deepspeed_launcher(args)                                                           │
+│   927 │   elif args.use_fsdp and not args.cpu:                                                   │
+│   928 │   │   multi_gpu_launcher(args)                                                           │
+│   929 │   elif args.use_megatron_lm and not args.cpu:                                            │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/commands/launch.py:67 │
+│ 1 in deepspeed_launcher                                                                          │
+│                                                                                                  │
+│   668 │   │   )                                                                                  │
+│   669 │   │   with patch_environment(**current_env):                                             │
+│   670 │   │   │   try:                                                                           │
+│ ❱ 671 │   │   │   │   distrib_run.run(args)                                                      │
+│   672 │   │   │   except Exception:                                                              │
+│   673 │   │   │   │   if is_rich_available() and debug:                                          │
+│   674 │   │   │   │   │   console = get_console()                                                │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/torch/distributed/run.py:785 in  │
+│ run                                                                                              │
+│                                                                                                  │
+│   782 │   │   )                                                                                  │
+│   783 │                                                                                          │
+│   784 │   config, cmd, cmd_args = config_from_args(args)                                         │
+│ ❱ 785 │   elastic_launch(                                                                        │
+│   786 │   │   config=config,                                                                     │
+│   787 │   │   entrypoint=cmd,                                                                    │
+│   788 │   )(*cmd_args)                                                                           │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/torch/distributed/launcher/api.p │
+│ y:134 in __call__                                                                                │
+│                                                                                                  │
+│   131 │   │   self._entrypoint = entrypoint                                                      │
+│   132 │                                                                                          │
+│   133 │   def __call__(self, *args):                                                             │
+│ ❱ 134 │   │   return launch_agent(self._config, self._entrypoint, list(args))                    │
+│   135                                                                                            │
+│   136                                                                                            │
+│   137 def _get_entrypoint_name(                                                                  │
+│                                                                                                  │
+│ /home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/torch/distributed/launcher/api.p │
+│ y:250 in launch_agent                                                                            │
+│                                                                                                  │
+│   247 │   │   │   # if the error files for the failed children exist                             │
+│   248 │   │   │   # @record will copy the first error (root cause)                               │
+│   249 │   │   │   # to the error file of the launcher process.                                   │
+│ ❱ 250 │   │   │   raise ChildFailedError(                                                        │
+│   251 │   │   │   │   name=entrypoint_name,                                                      │
+│   252 │   │   │   │   failures=result.failures,                                                  │
+│   253 │   │   │   )                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+ChildFailedError:
+============================================================
+/home/xxx/apps/miniconda310/envs/ml/lib/python3.10/site-packages/accelerate/test_utils/scripts/test_script.py FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2023-06-10_09:51:08
+  host      : g0001
+  rank      : 2 (local_rank: 2)
+  exitcode  : 1 (pid: 94478)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2023-06-10_09:51:08
+  host      : g0001
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 94479)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2023-06-10_09:51:08
+  host      : g0001
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 94477)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+```
+
+
+### Expected behavior
+
+Accelerate test OK with 4x A100 GPU.

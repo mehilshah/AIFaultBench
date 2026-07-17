@@ -1,0 +1,4 @@
+first_load_ok=True
+cache_file_exists_after_first_load=True
+second_load_exception=RuntimeError: Simulated Hugging Face rate limit: second hub call was made
+hub_call_count=2

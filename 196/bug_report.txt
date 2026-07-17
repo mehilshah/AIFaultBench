@@ -1,0 +1,59 @@
+Title: Inconsistent shape resolution scope when using dataclasses
+Date: 2025-02-01T00:23:21+00:00
+URL: https://github.com/patrick-kidger/jaxtyping/issues/290
+
+Description:
+```python
+import chex
+import jax.numpy as jnp
+from beartype import beartype
+from jaxtyping import Float, Array, jaxtyped
+
+
+@jaxtyped(typechecker=beartype)
+@chex.dataclass
+class Vector:
+    x: Float[Array, "B"]
+    y: Float[Array, "B"]
+
+
+@jaxtyped(typechecker=beartype)
+def test(v: Vector) -> Vector:
+    return Vector(
+        x=v.x[:2],
+        y=v.y[:2],
+    )
+
+
+a = Vector(
+    x=jnp.arange(10.0),
+    y=jnp.arange(10.0),
+)
+test(a)
+```
+
+In this example, I would have expected `B=10` for the input `Vector` then raise an error when `B=2` for the output `Vector`, but this runs fine without an error. It seems like the scope of these shape variables is separate when the inputs to a function are dataclasses. Is this intended? If I pass in each tensor individually instead of in a dataclass an error is raised.
+
+```python
+@jaxtyped(typechecker=beartype)
+def test(
+    x: Float[Array, "B"], 
+    y: Float[Array, "B"],
+) -> tuple[Float[Array, "B"], Float[Array, "B"]]:
+    return (x[:2], y[:2])
+
+
+test(
+    x=jnp.arange(10.0),
+    y=jnp.arange(10.0),
+)
+
+TypeCheckError: Type-check error whilst checking the return value of __main__.test.
+Actual value: (f32[2](jax), f32[2](jax))
+Expected type: tuple[Float[Array, 'B'], Float[Array, 'B']].
+----------------------
+Called with parameters: {'x': f32[10](jax), 'y': f32[10](jax)}
+Parameter annotations: (x: Float[Array, 'B'], y: Float[Array, 'B']) -> Any.
+The current values for each jaxtyping axis annotation are as follows.
+B=10
+```

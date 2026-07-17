@@ -1,0 +1,497 @@
+Collecting tensorflow==2.20.0 (from -r 023/requirements.txt (line 1))
+  Downloading tensorflow-2.20.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.5 kB)
+Collecting tf-models-official==2.20.0 (from -r 023/requirements.txt (line 2))
+  Downloading tf_models_official-2.20.0-py2.py3-none-any.whl.metadata (1.6 kB)
+Collecting pyopenssl==26.3.0 (from -r 023/requirements.txt (line 3))
+  Downloading pyopenssl-26.3.0-py3-none-any.whl.metadata (22 kB)
+Collecting absl-py>=1.0.0 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading absl_py-2.5.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting astunparse>=1.6.0 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading astunparse-1.6.3-py2.py3-none-any.whl.metadata (4.4 kB)
+Collecting flatbuffers>=24.3.25 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading flatbuffers-25.12.19-py2.py3-none-any.whl.metadata (1.0 kB)
+Collecting gast!=0.5.0,!=0.5.1,!=0.5.2,>=0.2.1 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading gast-0.7.0-py3-none-any.whl.metadata (1.5 kB)
+Collecting google_pasta>=0.1.1 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading google_pasta-0.2.0-py3-none-any.whl.metadata (814 bytes)
+Collecting libclang>=13.0.0 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading libclang-18.1.1-py2.py3-none-manylinux2010_x86_64.whl.metadata (5.2 kB)
+Collecting opt_einsum>=2.3.2 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading opt_einsum-3.4.0-py3-none-any.whl.metadata (6.3 kB)
+Collecting packaging (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting protobuf>=5.28.0 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading protobuf-7.35.1-cp310-abi3-manylinux2014_x86_64.whl.metadata (595 bytes)
+Collecting requests<3,>=2.21.0 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+Collecting setuptools (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading setuptools-83.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting six>=1.12.0 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Collecting termcolor>=1.1.0 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading termcolor-3.3.0-py3-none-any.whl.metadata (6.5 kB)
+Collecting typing_extensions>=3.6.6 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting wrapt>=1.11.0 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading wrapt-2.2.2-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (7.4 kB)
+Collecting grpcio<2.0,>=1.24.3 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading grpcio-1.82.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.7 kB)
+Collecting tensorboard~=2.20.0 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading tensorboard-2.20.0-py3-none-any.whl.metadata (1.8 kB)
+Collecting keras>=3.10.0 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading keras-3.15.0-py3-none-any.whl.metadata (6.3 kB)
+Collecting numpy>=1.26.0 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting h5py>=3.11.0 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading h5py-3.16.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (3.0 kB)
+Collecting ml_dtypes<1.0.0,>=0.5.1 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading ml_dtypes-0.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (8.9 kB)
+Collecting google-api-python-client>=1.6.7 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading google_api_python_client-2.198.0-py3-none-any.whl.metadata (7.0 kB)
+Collecting kaggle>=1.3.9 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading kaggle-2.2.3-py3-none-any.whl.metadata (16 kB)
+Collecting oauth2client (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading oauth2client-4.1.3-py2.py3-none-any.whl.metadata (1.2 kB)
+Collecting pandas>=0.22.0 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading pandas-3.0.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 79.5/79.5 kB 6.2 MB/s eta 0:00:00
+Collecting psutil>=5.4.3 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+Collecting py-cpuinfo>=3.3.0 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading py_cpuinfo-9.0.0-py3-none-any.whl.metadata (794 bytes)
+Collecting scipy>=0.19.1 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading scipy-1.18.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.3/62.3 kB 38.7 MB/s eta 0:00:00
+Collecting tensorflow-hub>=0.6.0 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading tensorflow_hub-0.16.1-py2.py3-none-any.whl.metadata (1.3 kB)
+Collecting tensorflow-model-optimization>=0.4.1 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading tensorflow_model_optimization-0.8.1-py2.py3-none-any.whl.metadata (1.1 kB)
+Collecting tensorflow-datasets (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading tensorflow_datasets-4.9.10-py3-none-any.whl.metadata (11 kB)
+Collecting tf-keras>=2.16.0 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading tf_keras-2.21.0-py3-none-any.whl.metadata (1.8 kB)
+Collecting gin-config (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading gin_config-0.5.0-py3-none-any.whl.metadata (2.9 kB)
+Collecting tf_slim>=1.1.0 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading tf_slim-1.1.0-py2.py3-none-any.whl.metadata (1.6 kB)
+Collecting Cython (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading cython-3.2.8-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (4.2 kB)
+Collecting matplotlib (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading matplotlib-3.11.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (80 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 80.3/80.3 kB 273.1 MB/s eta 0:00:00
+Collecting pyyaml>=6.0.0 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting opencv-python-headless (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading opencv_python_headless-5.0.0.93-cp37-abi3-manylinux_2_28_x86_64.whl.metadata (19 kB)
+Collecting Pillow (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)
+Collecting pycocotools (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading pycocotools-2.0.11-cp312-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (1.3 kB)
+Collecting seqeval (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading seqeval-1.2.2.tar.gz (43 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 43.6/43.6 kB 349.8 MB/s eta 0:00:00
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting sentencepiece (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading sentencepiece-0.2.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (33 kB)
+Collecting sacrebleu (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading sacrebleu-2.6.0-py3-none-any.whl.metadata (39 kB)
+Collecting immutabledict (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading immutabledict-4.3.1-py3-none-any.whl.metadata (3.5 kB)
+Collecting ai-edge-litert>=1.0.1 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading ai_edge_litert-2.1.6-cp312-cp312-manylinux_2_27_x86_64.whl.metadata (2.3 kB)
+Collecting tensorflow-text~=2.20.0 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading tensorflow_text-2.20.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.1 kB)
+Collecting cryptography<50,>=49.0.0 (from pyopenssl==26.3.0->-r 023/requirements.txt (line 3))
+  Downloading cryptography-49.0.0-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (4.3 kB)
+Collecting backports.strenum (from ai-edge-litert>=1.0.1->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading backports_strenum-1.2.8-py3-none-any.whl.metadata (3.6 kB)
+Collecting tqdm (from ai-edge-litert>=1.0.1->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading tqdm-4.68.4-py3-none-any.whl.metadata (57 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 57.4/57.4 kB 481.5 MB/s eta 0:00:00
+Collecting wheel<1.0,>=0.23.0 (from astunparse>=1.6.0->tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading wheel-0.47.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting cffi>=2.0.0 (from cryptography<50,>=49.0.0->pyopenssl==26.3.0->-r 023/requirements.txt (line 3))
+  Downloading cffi-2.1.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+Collecting httplib2<1.0.0,>=0.19.0 (from google-api-python-client>=1.6.7->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading httplib2-0.32.0-py3-none-any.whl.metadata (2.2 kB)
+Collecting google-auth!=2.24.0,!=2.25.0,<3.0.0,>=1.32.0 (from google-api-python-client>=1.6.7->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading google_auth-2.56.0-py3-none-any.whl.metadata (6.0 kB)
+Collecting google-auth-httplib2<1.0.0,>=0.2.0 (from google-api-python-client>=1.6.7->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading google_auth_httplib2-0.4.0-py3-none-any.whl.metadata (3.0 kB)
+Collecting google-api-core!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.0,<3.0.0,>=1.31.5 (from google-api-python-client>=1.6.7->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading google_api_core-2.32.0-py3-none-any.whl.metadata (3.2 kB)
+Collecting uritemplate<5,>=3.0.1 (from google-api-python-client>=1.6.7->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading uritemplate-4.2.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting bleach (from kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading bleach-6.4.0-py3-none-any.whl.metadata (32 kB)
+Collecting jupytext (from kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading jupytext-1.19.4-py3-none-any.whl.metadata (15 kB)
+Collecting kagglesdk<1.0,>=0.1.30 (from kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading kagglesdk-0.1.34-py3-none-any.whl.metadata (13 kB)
+Collecting python-dateutil (from kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting python-dotenv (from kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading python_dotenv-1.2.2-py3-none-any.whl.metadata (27 kB)
+Collecting python-slugify (from kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading python_slugify-8.0.4-py2.py3-none-any.whl.metadata (8.5 kB)
+Collecting urllib3>=1.15.1 (from kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading urllib3-2.7.0-py3-none-any.whl.metadata (6.9 kB)
+Collecting rich (from keras>=3.10.0->tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+Collecting namex (from keras>=3.10.0->tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading namex-0.1.0-py3-none-any.whl.metadata (322 bytes)
+Collecting optree (from keras>=3.10.0->tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading optree-0.19.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (32 kB)
+Collecting charset_normalizer<4,>=2 (from requests<3,>=2.21.0->tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading charset_normalizer-3.4.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (41 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 41.7/41.7 kB 407.6 MB/s eta 0:00:00
+Collecting idna<4,>=2.5 (from requests<3,>=2.21.0->tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+Collecting certifi>=2023.5.7 (from requests<3,>=2.21.0->tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading certifi-2026.6.17-py3-none-any.whl.metadata (2.5 kB)
+Collecting markdown>=2.6.8 (from tensorboard~=2.20.0->tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading markdown-3.10.2-py3-none-any.whl.metadata (5.1 kB)
+Collecting tensorboard-data-server<0.8.0,>=0.7.0 (from tensorboard~=2.20.0->tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading tensorboard_data_server-0.7.2-py3-none-manylinux_2_31_x86_64.whl.metadata (1.1 kB)
+Collecting werkzeug>=1.0.1 (from tensorboard~=2.20.0->tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading werkzeug-3.1.8-py3-none-any.whl.metadata (4.0 kB)
+Collecting absl-py>=1.0.0 (from tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading absl_py-1.4.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting dm-tree~=0.1.1 (from tensorflow-model-optimization>=0.4.1->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading dm_tree-0.1.10-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (2.6 kB)
+Collecting mock (from tensorflow-model-optimization>=0.4.1->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading mock-5.2.0-py3-none-any.whl.metadata (3.1 kB)
+INFO: pip is looking at multiple versions of tf-keras to determine which version is compatible with other requirements. This could take a while.
+Collecting tf-keras>=2.16.0 (from tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading tf_keras-2.20.1-py3-none-any.whl.metadata (1.8 kB)
+Collecting contourpy>=1.0.1 (from matplotlib->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading contourpy-1.3.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (5.5 kB)
+Collecting cycler>=0.10 (from matplotlib->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading cycler-0.12.1-py3-none-any.whl.metadata (3.8 kB)
+Collecting fonttools>=4.22.0 (from matplotlib->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading fonttools-4.63.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (118 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 118.7/118.7 kB 87.7 MB/s eta 0:00:00
+Collecting kiwisolver>=1.3.1 (from matplotlib->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading kiwisolver-1.5.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (5.1 kB)
+Collecting pyparsing>=3 (from matplotlib->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading pyparsing-3.3.2-py3-none-any.whl.metadata (5.8 kB)
+Collecting pyasn1>=0.1.7 (from oauth2client->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading pyasn1-0.6.4-py3-none-any.whl.metadata (8.4 kB)
+Collecting pyasn1-modules>=0.0.5 (from oauth2client->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading pyasn1_modules-0.4.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting rsa>=3.1.4 (from oauth2client->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading rsa-4.9.1-py3-none-any.whl.metadata (5.6 kB)
+Collecting portalocker (from sacrebleu->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading portalocker-3.2.0-py3-none-any.whl.metadata (8.7 kB)
+Collecting regex (from sacrebleu->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading regex-2026.7.10-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.5/40.5 kB 371.3 MB/s eta 0:00:00
+Collecting tabulate>=0.8.9 (from sacrebleu->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading tabulate-0.10.0-py3-none-any.whl.metadata (40 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.8/40.8 kB 378.8 MB/s eta 0:00:00
+Collecting colorama (from sacrebleu->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+Collecting lxml (from sacrebleu->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading lxml-6.1.1-cp312-cp312-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl.metadata (3.5 kB)
+Collecting scikit-learn>=0.21.3 (from seqeval->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading scikit_learn-1.9.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (11 kB)
+Collecting array_record>=0.5.0 (from tensorflow-datasets->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading array_record-0.8.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.1 kB)
+Collecting etils>=1.9.1 (from etils[edc,enp,epath,epy,etree]>=1.9.1; python_version >= "3.11"->tensorflow-datasets->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading etils-1.14.0-py3-none-any.whl.metadata (6.5 kB)
+Collecting promise (from tensorflow-datasets->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading promise-2.3.tar.gz (19 kB)
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting pyarrow (from tensorflow-datasets->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading pyarrow-25.0.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (3.0 kB)
+Collecting simple_parsing (from tensorflow-datasets->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading simple_parsing-0.1.8-py3-none-any.whl.metadata (8.1 kB)
+Collecting tensorflow-metadata (from tensorflow-datasets->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading tensorflow_metadata-1.21.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting toml (from tensorflow-datasets->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading toml-0.10.2-py2.py3-none-any.whl.metadata (7.1 kB)
+Collecting pycparser (from cffi>=2.0.0->cryptography<50,>=49.0.0->pyopenssl==26.3.0->-r 023/requirements.txt (line 3))
+  Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+Collecting attrs>=18.2.0 (from dm-tree~=0.1.1->tensorflow-model-optimization>=0.4.1->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+Collecting einops (from etils[edc,enp,epath,epy,etree]>=1.9.1; python_version >= "3.11"->tensorflow-datasets->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading einops-0.8.2-py3-none-any.whl.metadata (13 kB)
+Collecting fsspec (from etils[edc,enp,epath,epy,etree]>=1.9.1; python_version >= "3.11"->tensorflow-datasets->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading fsspec-2026.6.0-py3-none-any.whl.metadata (10 kB)
+Collecting zipp (from etils[edc,enp,epath,epy,etree]>=1.9.1; python_version >= "3.11"->tensorflow-datasets->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading zipp-4.1.0-py3-none-any.whl.metadata (3.6 kB)
+Collecting googleapis-common-protos<2.0.0,>=1.63.2 (from google-api-core!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.0,<3.0.0,>=1.31.5->google-api-python-client>=1.6.7->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading googleapis_common_protos-1.75.0-py3-none-any.whl.metadata (8.6 kB)
+Collecting proto-plus<2.0.0,>=1.24.0 (from google-api-core!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.0,<3.0.0,>=1.31.5->google-api-python-client>=1.6.7->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading proto_plus-1.28.1-py3-none-any.whl.metadata (2.2 kB)
+Collecting joblib>=1.4.0 (from scikit-learn>=0.21.3->seqeval->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading joblib-1.5.3-py3-none-any.whl.metadata (5.5 kB)
+Collecting narwhals>=2.0.1 (from scikit-learn>=0.21.3->seqeval->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading narwhals-2.24.0-py3-none-any.whl.metadata (15 kB)
+Collecting threadpoolctl>=3.5.0 (from scikit-learn>=0.21.3->seqeval->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading threadpoolctl-3.6.0-py3-none-any.whl.metadata (13 kB)
+Collecting markupsafe>=2.1.1 (from werkzeug>=1.0.1->tensorboard~=2.20.0->tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Collecting webencodings (from bleach->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading webencodings-0.5.1-py2.py3-none-any.whl.metadata (2.1 kB)
+Collecting markdown-it-py>=1.0 (from jupytext->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+Collecting mdit-py-plugins (from jupytext->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading mdit_py_plugins-0.6.1-py3-none-any.whl.metadata (2.9 kB)
+Collecting nbformat (from jupytext->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading nbformat-5.10.4-py3-none-any.whl.metadata (3.6 kB)
+Collecting text-unidecode>=1.3 (from python-slugify->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading text_unidecode-1.3-py2.py3-none-any.whl.metadata (2.4 kB)
+Collecting pygments<3.0.0,>=2.13.0 (from rich->keras>=3.10.0->tensorflow==2.20.0->-r 023/requirements.txt (line 1))
+  Downloading pygments-2.20.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting docstring-parser~=0.15 (from simple_parsing->tensorflow-datasets->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading docstring_parser-0.18.0-py3-none-any.whl.metadata (3.5 kB)
+Collecting mdurl~=0.1 (from markdown-it-py>=1.0->jupytext->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Collecting fastjsonschema>=2.15 (from nbformat->jupytext->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading fastjsonschema-2.21.2-py3-none-any.whl.metadata (2.3 kB)
+Collecting jsonschema>=2.6 (from nbformat->jupytext->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting jupyter-core!=5.0.*,>=4.12 (from nbformat->jupytext->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading jupyter_core-5.9.1-py3-none-any.whl.metadata (1.5 kB)
+Collecting traitlets>=5.1 (from nbformat->jupytext->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading traitlets-5.15.1-py3-none-any.whl.metadata (10 kB)
+Collecting jsonschema-specifications>=2023.03.6 (from jsonschema>=2.6->nbformat->jupytext->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+Collecting referencing>=0.28.4 (from jsonschema>=2.6->nbformat->jupytext->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting rpds-py>=0.25.0 (from jsonschema>=2.6->nbformat->jupytext->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading rpds_py-2026.6.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+Collecting platformdirs>=2.5 (from jupyter-core!=5.0.*,>=4.12->nbformat->jupytext->kaggle>=1.3.9->tf-models-official==2.20.0->-r 023/requirements.txt (line 2))
+  Downloading platformdirs-4.10.0-py3-none-any.whl.metadata (5.5 kB)
+Downloading tensorflow-2.20.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (620.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 620.7/620.7 MB 88.5 MB/s eta 0:00:00
+Downloading tf_models_official-2.20.0-py2.py3-none-any.whl (2.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.9/2.9 MB 92.5 MB/s eta 0:00:00
+Downloading pyopenssl-26.3.0-py3-none-any.whl (56 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 56.0/56.0 kB 524.9 MB/s eta 0:00:00
+Downloading ai_edge_litert-2.1.6-cp312-cp312-manylinux_2_27_x86_64.whl (17.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.3/17.3 MB 90.3 MB/s eta 0:00:00
+Downloading astunparse-1.6.3-py2.py3-none-any.whl (12 kB)
+Downloading cryptography-49.0.0-cp311-abi3-manylinux_2_34_x86_64.whl (4.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 93.9 MB/s eta 0:00:00
+Downloading flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+Downloading gast-0.7.0-py3-none-any.whl (22 kB)
+Downloading google_api_python_client-2.198.0-py3-none-any.whl (15.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 15.6/15.6 MB 92.7 MB/s eta 0:00:00
+Downloading google_pasta-0.2.0-py3-none-any.whl (57 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 57.5/57.5 kB 376.8 MB/s eta 0:00:00
+Downloading grpcio-1.82.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (6.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.9/6.9 MB 95.6 MB/s eta 0:00:00
+Downloading h5py-3.16.0-cp312-cp312-manylinux_2_28_x86_64.whl (5.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.4/5.4 MB 96.2 MB/s eta 0:00:00
+Downloading kaggle-2.2.3-py3-none-any.whl (111 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 111.5/111.5 kB 130.2 MB/s eta 0:00:00
+Downloading keras-3.15.0-py3-none-any.whl (1.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 103.8 MB/s eta 0:00:00
+Downloading libclang-18.1.1-py2.py3-none-manylinux2010_x86_64.whl (24.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 24.5/24.5 MB 94.4 MB/s eta 0:00:00
+Downloading ml_dtypes-0.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (5.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.0/5.0 MB 94.7 MB/s eta 0:00:00
+Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 96.7 MB/s eta 0:00:00
+Downloading opt_einsum-3.4.0-py3-none-any.whl (71 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 71.9/71.9 kB 428.9 MB/s eta 0:00:00
+Downloading pandas-3.0.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (10.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.9/10.9 MB 97.0 MB/s eta 0:00:00
+Downloading protobuf-7.35.1-cp310-abi3-manylinux2014_x86_64.whl (327 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 327.1/327.1 kB 154.8 MB/s eta 0:00:00
+Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 155.6/155.6 kB 141.6 MB/s eta 0:00:00
+Downloading py_cpuinfo-9.0.0-py3-none-any.whl (22 kB)
+Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 54.6 MB/s eta 0:00:00
+Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.1/73.1 kB 454.9 MB/s eta 0:00:00
+Downloading scipy-1.18.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.3/35.3 MB 73.4 MB/s eta 0:00:00
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading tensorboard-2.20.0-py3-none-any.whl (5.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.5/5.5 MB 76.1 MB/s eta 0:00:00
+Downloading setuptools-83.0.0-py3-none-any.whl (1.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 84.9 MB/s eta 0:00:00
+Downloading tensorflow_hub-0.16.1-py2.py3-none-any.whl (30 kB)
+Downloading tensorflow_model_optimization-0.8.1-py2.py3-none-any.whl (242 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 242.7/242.7 kB 168.6 MB/s eta 0:00:00
+Downloading absl_py-1.4.0-py3-none-any.whl (126 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 126.5/126.5 kB 184.1 MB/s eta 0:00:00
+Downloading tensorflow_text-2.20.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (62.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.5/62.5 MB 81.1 MB/s eta 0:00:00
+Downloading termcolor-3.3.0-py3-none-any.whl (7.7 kB)
+Downloading tf_keras-2.20.1-py3-none-any.whl (1.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 85.1 MB/s eta 0:00:00
+Downloading tf_slim-1.1.0-py2.py3-none-any.whl (352 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 352.1/352.1 kB 159.6 MB/s eta 0:00:00
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 45.6/45.6 kB 364.9 MB/s eta 0:00:00
+Downloading wrapt-2.2.2-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (169 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 169.8/169.8 kB 513.8 MB/s eta 0:00:00
+Downloading cython-3.2.8-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.4/3.4 MB 85.3 MB/s eta 0:00:00
+Downloading gin_config-0.5.0-py3-none-any.whl (61 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.3/61.3 kB 488.2 MB/s eta 0:00:00
+Downloading immutabledict-4.3.1-py3-none-any.whl (5.0 kB)
+Downloading matplotlib-3.11.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (10.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.0/10.0 MB 81.4 MB/s eta 0:00:00
+Downloading packaging-26.2-py3-none-any.whl (100 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.2/100.2 kB 471.6 MB/s eta 0:00:00
+Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.9/6.9 MB 84.2 MB/s eta 0:00:00
+Downloading oauth2client-4.1.3-py2.py3-none-any.whl (98 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 98.2/98.2 kB 335.1 MB/s eta 0:00:00
+Downloading opencv_python_headless-5.0.0.93-cp37-abi3-manylinux_2_28_x86_64.whl (61.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.2/61.2 MB 87.8 MB/s eta 0:00:00
+Downloading pycocotools-2.0.11-cp312-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (411 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 411.7/411.7 kB 131.6 MB/s eta 0:00:00
+Downloading sacrebleu-2.6.0-py3-none-any.whl (100 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.8/100.8 kB 221.1 MB/s eta 0:00:00
+Downloading sentencepiece-0.2.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (1.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 96.5 MB/s eta 0:00:00
+Downloading tensorflow_datasets-4.9.10-py3-none-any.whl (5.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.3/5.3 MB 90.2 MB/s eta 0:00:00
+Downloading array_record-0.8.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.0/5.0 MB 90.3 MB/s eta 0:00:00
+Downloading certifi-2026.6.17-py3-none-any.whl (133 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.3/133.3 kB 272.3 MB/s eta 0:00:00
+Downloading cffi-2.1.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (221 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 221.8/221.8 kB 142.2 MB/s eta 0:00:00
+Downloading charset_normalizer-3.4.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (224 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 224.3/224.3 kB 175.5 MB/s eta 0:00:00
+Downloading contourpy-1.3.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (362 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 362.6/362.6 kB 99.7 MB/s eta 0:00:00
+Downloading cycler-0.12.1-py3-none-any.whl (8.3 kB)
+Downloading dm_tree-0.1.10-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (186 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 186.5/186.5 kB 261.5 MB/s eta 0:00:00
+Downloading etils-1.14.0-py3-none-any.whl (172 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 172.9/172.9 kB 218.0 MB/s eta 0:00:00
+Downloading fonttools-4.63.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.0/5.0 MB 86.6 MB/s eta 0:00:00
+Downloading google_api_core-2.32.0-py3-none-any.whl (174 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 174.2/174.2 kB 191.1 MB/s eta 0:00:00
+Downloading google_auth-2.56.0-py3-none-any.whl (257 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 258.0/258.0 kB 119.1 MB/s eta 0:00:00
+Downloading google_auth_httplib2-0.4.0-py3-none-any.whl (9.5 kB)
+Downloading httplib2-0.32.0-py3-none-any.whl (93 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 93.1/93.1 kB 417.7 MB/s eta 0:00:00
+Downloading idna-3.18-py3-none-any.whl (65 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 65.5/65.5 kB 439.9 MB/s eta 0:00:00
+Downloading kagglesdk-0.1.34-py3-none-any.whl (247 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 247.5/247.5 kB 136.9 MB/s eta 0:00:00
+Downloading kiwisolver-1.5.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.5/1.5 MB 100.5 MB/s eta 0:00:00
+Downloading markdown-3.10.2-py3-none-any.whl (108 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 108.2/108.2 kB 469.0 MB/s eta 0:00:00
+Downloading pyasn1-0.6.4-py3-none-any.whl (84 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 84.4/84.4 kB 590.7 MB/s eta 0:00:00
+Downloading pyasn1_modules-0.4.2-py3-none-any.whl (181 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 181.3/181.3 kB 284.1 MB/s eta 0:00:00
+Downloading pyparsing-3.3.2-py3-none-any.whl (122 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 122.8/122.8 kB 480.5 MB/s eta 0:00:00
+Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 229.9/229.9 kB 157.0 MB/s eta 0:00:00
+Downloading rsa-4.9.1-py3-none-any.whl (34 kB)
+Downloading scikit_learn-1.9.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (9.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.1/9.1 MB 90.4 MB/s eta 0:00:00
+Downloading tabulate-0.10.0-py3-none-any.whl (39 kB)
+Downloading tensorboard_data_server-0.7.2-py3-none-manylinux_2_31_x86_64.whl (6.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.6/6.6 MB 90.2 MB/s eta 0:00:00
+Downloading uritemplate-4.2.0-py3-none-any.whl (11 kB)
+Downloading urllib3-2.7.0-py3-none-any.whl (131 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 131.1/131.1 kB 336.4 MB/s eta 0:00:00
+Downloading werkzeug-3.1.8-py3-none-any.whl (226 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 226.5/226.5 kB 148.5 MB/s eta 0:00:00
+Downloading wheel-0.47.0-py3-none-any.whl (32 kB)
+Downloading backports_strenum-1.2.8-py3-none-any.whl (7.9 kB)
+Downloading bleach-6.4.0-py3-none-any.whl (165 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 165.1/165.1 kB 180.2 MB/s eta 0:00:00
+Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Downloading jupytext-1.19.4-py3-none-any.whl (170 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 170.9/170.9 kB 177.5 MB/s eta 0:00:00
+Downloading lxml-6.1.1-cp312-cp312-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl (5.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 91.4 MB/s eta 0:00:00
+Downloading mock-5.2.0-py3-none-any.whl (31 kB)
+Downloading namex-0.1.0-py3-none-any.whl (5.9 kB)
+Downloading optree-0.19.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (457 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 457.6/457.6 kB 131.0 MB/s eta 0:00:00
+Downloading portalocker-3.2.0-py3-none-any.whl (22 kB)
+Downloading pyarrow-25.0.0-cp312-cp312-manylinux_2_28_x86_64.whl (50.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 50.1/50.1 MB 93.7 MB/s eta 0:00:00
+Downloading python_dotenv-1.2.2-py3-none-any.whl (22 kB)
+Downloading python_slugify-8.0.4-py2.py3-none-any.whl (10 kB)
+Downloading regex-2026.7.10-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (801 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 801.3/801.3 kB 123.3 MB/s eta 0:00:00
+Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 310.7/310.7 kB 128.6 MB/s eta 0:00:00
+Downloading simple_parsing-0.1.8-py3-none-any.whl (113 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 113.4/113.4 kB 101.9 MB/s eta 0:00:00
+Downloading tensorflow_metadata-1.21.0-py3-none-any.whl (30 kB)
+Downloading toml-0.10.2-py2.py3-none-any.whl (16 kB)
+Downloading tqdm-4.68.4-py3-none-any.whl (676 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 676.6/676.6 kB 94.7 MB/s eta 0:00:00
+Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 67.5/67.5 kB 545.5 MB/s eta 0:00:00
+Downloading docstring_parser-0.18.0-py3-none-any.whl (22 kB)
+Downloading googleapis_common_protos-1.75.0-py3-none-any.whl (300 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 300.6/300.6 kB 153.2 MB/s eta 0:00:00
+Downloading joblib-1.5.3-py3-none-any.whl (309 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 309.1/309.1 kB 170.7 MB/s eta 0:00:00
+Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 91.7/91.7 kB 598.3 MB/s eta 0:00:00
+Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Downloading narwhals-2.24.0-py3-none-any.whl (461 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 461.0/461.0 kB 118.4 MB/s eta 0:00:00
+Downloading proto_plus-1.28.1-py3-none-any.whl (50 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 50.4/50.4 kB 457.7 MB/s eta 0:00:00
+Downloading pygments-2.20.0-py3-none-any.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 100.5 MB/s eta 0:00:00
+Downloading text_unidecode-1.3-py2.py3-none-any.whl (78 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.2/78.2 kB 449.6 MB/s eta 0:00:00
+Downloading threadpoolctl-3.6.0-py3-none-any.whl (18 kB)
+Downloading einops-0.8.2-py3-none-any.whl (65 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 65.6/65.6 kB 418.7 MB/s eta 0:00:00
+Downloading fsspec-2026.6.0-py3-none-any.whl (203 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 203.9/203.9 kB 183.7 MB/s eta 0:00:00
+Downloading mdit_py_plugins-0.6.1-py3-none-any.whl (66 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 66.7/66.7 kB 502.5 MB/s eta 0:00:00
+Downloading nbformat-5.10.4-py3-none-any.whl (78 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.5/78.5 kB 498.3 MB/s eta 0:00:00
+Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 48.2/48.2 kB 434.1 MB/s eta 0:00:00
+Downloading webencodings-0.5.1-py2.py3-none-any.whl (11 kB)
+Downloading zipp-4.1.0-py3-none-any.whl (10 kB)
+Downloading fastjsonschema-2.21.2-py3-none-any.whl (24 kB)
+Downloading jsonschema-4.26.0-py3-none-any.whl (90 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 90.6/90.6 kB 428.0 MB/s eta 0:00:00
+Downloading jupyter_core-5.9.1-py3-none-any.whl (29 kB)
+Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Downloading traitlets-5.15.1-py3-none-any.whl (85 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 85.9/85.9 kB 386.5 MB/s eta 0:00:00
+Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+Downloading platformdirs-4.10.0-py3-none-any.whl (22 kB)
+Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+Downloading rpds_py-2026.6.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (366 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 366.2/366.2 kB 147.6 MB/s eta 0:00:00
+Building wheels for collected packages: seqeval, promise
+  Building wheel for seqeval (setup.py): started
+  Building wheel for seqeval (setup.py): finished with status 'done'
+  Created wheel for seqeval: filename=seqeval-1.2.2-py3-none-any.whl size=16162 sha256=efed76d36b1883f8d29bb271c16921ff7fe6c19d359e5f3d16dff5320a6e21c9
+  Stored in directory: /tmp/pip-ephem-wheel-cache-dnn8h_su/wheels/5f/b8/73/0b2c1a76b701a677653dd79ece07cfabd7457989dbfbdcd8d7
+  Building wheel for promise (setup.py): started
+  Building wheel for promise (setup.py): finished with status 'done'
+  Created wheel for promise: filename=promise-2.3-py3-none-any.whl size=21481 sha256=aff1debfca6ffc092c2ebbe08b3fd10df0d2c91f44ea2944b769ce88aca47461
+  Stored in directory: /tmp/pip-ephem-wheel-cache-dnn8h_su/wheels/e7/e6/28/864bdfee5339dbd6ddcb5a186286a8e217648ec198bdf0097d
+Successfully built seqeval promise
+Installing collected packages: webencodings, text-unidecode, py-cpuinfo, namex, libclang, gin-config, flatbuffers, fastjsonschema, zipp, wrapt, urllib3, uritemplate, typing_extensions, traitlets, tqdm, toml, threadpoolctl, termcolor, tensorboard-data-server, tabulate, six, setuptools, sentencepiece, rpds-py, regex, pyyaml, python-slugify, python-dotenv, pyparsing, pygments, pycparser, pyasn1, pyarrow, psutil, protobuf, portalocker, platformdirs, Pillow, packaging, opt_einsum, numpy, narwhals, mock, mdurl, markupsafe, markdown, lxml, kiwisolver, joblib, immutabledict, idna, gast, fsspec, fonttools, etils, einops, docstring-parser, Cython, cycler, colorama, charset_normalizer, certifi, bleach, backports.strenum, attrs, absl-py, wheel, werkzeug, tf_slim, simple_parsing, scipy, sacrebleu, rsa, requests, referencing, python-dateutil, pycocotools, pyasn1-modules, proto-plus, promise, optree, opencv-python-headless, ml_dtypes, markdown-it-py, jupyter-core, httplib2, h5py, grpcio, googleapis-common-protos, google_pasta, dm-tree, contourpy, cffi, ai-edge-litert, tensorflow-metadata, tensorboard, scikit-learn, rich, pandas, oauth2client, mdit-py-plugins, matplotlib, kagglesdk, jsonschema-specifications, cryptography, astunparse, seqeval, pyopenssl, keras, jsonschema, google-auth, array_record, tensorflow, nbformat, google-auth-httplib2, google-api-core, tf-keras, tensorflow-text, tensorflow-datasets, jupytext, google-api-python-client, tensorflow-model-optimization, tensorflow-hub, kaggle, tf-models-official
+Successfully installed Cython-3.2.8 Pillow-12.3.0 absl-py-1.4.0 ai-edge-litert-2.1.6 array_record-0.8.3 astunparse-1.6.3 attrs-26.1.0 backports.strenum-1.2.8 bleach-6.4.0 certifi-2026.6.17 cffi-2.1.0 charset_normalizer-3.4.9 colorama-0.4.6 contourpy-1.3.3 cryptography-49.0.0 cycler-0.12.1 dm-tree-0.1.10 docstring-parser-0.18.0 einops-0.8.2 etils-1.14.0 fastjsonschema-2.21.2 flatbuffers-25.12.19 fonttools-4.63.0 fsspec-2026.6.0 gast-0.7.0 gin-config-0.5.0 google-api-core-2.32.0 google-api-python-client-2.198.0 google-auth-2.56.0 google-auth-httplib2-0.4.0 google_pasta-0.2.0 googleapis-common-protos-1.75.0 grpcio-1.82.1 h5py-3.16.0 httplib2-0.32.0 idna-3.18 immutabledict-4.3.1 joblib-1.5.3 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 jupyter-core-5.9.1 jupytext-1.19.4 kaggle-2.2.3 kagglesdk-0.1.34 keras-3.15.0 kiwisolver-1.5.0 libclang-18.1.1 lxml-6.1.1 markdown-3.10.2 markdown-it-py-4.2.0 markupsafe-3.0.3 matplotlib-3.11.0 mdit-py-plugins-0.6.1 mdurl-0.1.2 ml_dtypes-0.5.4 mock-5.2.0 namex-0.1.0 narwhals-2.24.0 nbformat-5.10.4 numpy-2.5.1 oauth2client-4.1.3 opencv-python-headless-5.0.0.93 opt_einsum-3.4.0 optree-0.19.1 packaging-26.2 pandas-3.0.3 platformdirs-4.10.0 portalocker-3.2.0 promise-2.3 proto-plus-1.28.1 protobuf-7.35.1 psutil-7.2.2 py-cpuinfo-9.0.0 pyarrow-25.0.0 pyasn1-0.6.4 pyasn1-modules-0.4.2 pycocotools-2.0.11 pycparser-3.0 pygments-2.20.0 pyopenssl-26.3.0 pyparsing-3.3.2 python-dateutil-2.9.0.post0 python-dotenv-1.2.2 python-slugify-8.0.4 pyyaml-6.0.3 referencing-0.37.0 regex-2026.7.10 requests-2.34.2 rich-15.0.0 rpds-py-2026.6.3 rsa-4.9.1 sacrebleu-2.6.0 scikit-learn-1.9.0 scipy-1.18.0 sentencepiece-0.2.2 seqeval-1.2.2 setuptools-83.0.0 simple_parsing-0.1.8 six-1.17.0 tabulate-0.10.0 tensorboard-2.20.0 tensorboard-data-server-0.7.2 tensorflow-2.20.0 tensorflow-datasets-4.9.10 tensorflow-hub-0.16.1 tensorflow-metadata-1.21.0 tensorflow-model-optimization-0.8.1 tensorflow-text-2.20.1 termcolor-3.3.0 text-unidecode-1.3 tf-keras-2.20.1 tf-models-official-2.20.0 tf_slim-1.1.0 threadpoolctl-3.6.0 toml-0.10.2 tqdm-4.68.4 traitlets-5.15.1 typing_extensions-4.16.0 uritemplate-4.2.0 urllib3-2.7.0 webencodings-0.5.1 werkzeug-3.1.8 wheel-0.47.0 wrapt-2.2.2 zipp-4.1.0
+tensorflow 2.20.0
+orbit 023/.deps/orbit/__init__.py
+tfm.core 023/.deps/official/core/__init__.py
+tfm.vision 023/.deps/tensorflow_models/vision/__init__.py
+pretty_printer PrettyPrinter

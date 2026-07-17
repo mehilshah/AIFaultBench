@@ -1,0 +1,21 @@
+sdv source: 566/codebase/sdv/__init__.py
+python: 3.11.15 (main, May 10 2026, 19:28:18) [Clang 22.1.3 ]
+
+== reported-order probe ==
+data columns: ['binned_time', 'Heart Rate', 'Respiratory Rate', 'O2 saturation pulseoxymetry', 'gender', 'anchor_age', 'diag_label', 'sub_hadm_stay_id']
+context_columns: ['diag_label', 'gender', 'anchor_age']
+fit: failed
+
+== aligned-order control ==
+data columns: ['binned_time', 'Heart Rate', 'Respiratory Rate', 'O2 saturation pulseoxymetry', 'diag_label', 'gender', 'anchor_age', 'sub_hadm_stay_id']
+context_columns: ['diag_label', 'gender', 'anchor_age']
+fit: ok
+sample: ok
+  sub_hadm_stay_id gender  anchor_age diag_label
+0    sdv-id-zszvtY      F          63          i
+1    sdv-id-zszvtY      F          63          i
+2    sdv-id-zszvtY      F          63          i
+3    sdv-id-zszvtY      F          63          i
+4    sdv-id-zszvtY      F          63          i
+
+Wrote reproduction.json

@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "459/repro.py", line 21, in main
+    get_model_relations(guide)
+  File "459/codebase/numpyro/infer/inspect.py", line 326, in get_model_relations
+    trace = jax.eval_shape(get_trace).trace
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Value <function guide.<locals>.<lambda> at 0x735a1b78b740> with type <class 'function'> is not a valid JAX type
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.

@@ -1,0 +1,10 @@
+{
+  "title": "DeepSeek V2 aux hidden-state extraction regression",
+  "source_bug_report": "bug_report.txt",
+  "entrypoint": "run_repro.sh",
+  "reproducible": false,
+  "notes": [
+    "The current codebase already contains the final-layer aux hidden-state capture branch.",
+    "This bundle therefore records the issue as non-reproducible in the checked-in tree."
+  ]
+}

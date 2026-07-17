@@ -1,0 +1,7 @@
+Using torch version: simulated
+Using torchaudio version: simulated
+Using device: cpu
+Simulated sample rate: 16000
+window  0-30s input=33.0s -> 1649 frames
+window 30-60s input=36.0s -> 1799 frames
+window 60-90s input= 6.0s -> 299 frames

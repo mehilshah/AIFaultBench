@@ -1,0 +1,130 @@
+torch=2.5.1+cpu
+VisionTransformer optimizer groups:
+[
+  {
+    "group": 0,
+    "lr_scale": 0.5625,
+    "weight_decay": 0.0,
+    "names": [
+      "cls_token",
+      "pos_embed",
+      "patch_embed.proj.bias"
+    ]
+  },
+  {
+    "group": 1,
+    "lr_scale": 1.0,
+    "weight_decay": 0.05,
+    "names": [
+      "reg_token"
+    ]
+  },
+  {
+    "group": 2,
+    "lr_scale": 0.5625,
+    "weight_decay": 0.05,
+    "names": [
+      "patch_embed.proj.weight"
+    ]
+  },
+  {
+    "group": 3,
+    "lr_scale": 0.75,
+    "weight_decay": 0.0,
+    "names": [
+      "blocks.0.norm1.weight",
+      "blocks.0.norm1.bias",
+      "blocks.0.attn.qkv.bias",
+      "blocks.0.attn.proj.bias",
+      "blocks.0.norm2.weight",
+      "blocks.0.norm2.bias",
+      "blocks.0.mlp.fc1.bias",
+      "blocks.0.mlp.fc2.bias"
+    ]
+  },
+  {
+    "group": 4,
+    "lr_scale": 0.75,
+    "weight_decay": 0.05,
+    "names": [
+      "blocks.0.attn.qkv.weight",
+      "blocks.0.attn.proj.weight",
+      "blocks.0.mlp.fc1.weight",
+      "blocks.0.mlp.fc2.weight"
+    ]
+  },
+  {
+    "group": 5,
+    "lr_scale": 1.0,
+    "weight_decay": 0.0,
+    "names": [
+      "fc_norm.weight",
+      "fc_norm.bias"
+    ]
+  }
+]
+Eva optimizer groups:
+[
+  {
+    "group": 0,
+    "lr_scale": 0.5625,
+    "weight_decay": 0.0,
+    "names": [
+      "cls_token",
+      "pos_embed",
+      "patch_embed.proj.bias"
+    ]
+  },
+  {
+    "group": 1,
+    "lr_scale": 1.0,
+    "weight_decay": 0.05,
+    "names": [
+      "reg_token"
+    ]
+  },
+  {
+    "group": 2,
+    "lr_scale": 0.5625,
+    "weight_decay": 0.05,
+    "names": [
+      "patch_embed.proj.weight"
+    ]
+  },
+  {
+    "group": 3,
+    "lr_scale": 0.75,
+    "weight_decay": 0.0,
+    "names": [
+      "blocks.0.norm1.weight",
+      "blocks.0.norm1.bias",
+      "blocks.0.attn.q_bias",
+      "blocks.0.attn.v_bias",
+      "blocks.0.attn.proj.bias",
+      "blocks.0.norm2.weight",
+      "blocks.0.norm2.bias",
+      "blocks.0.mlp.fc1.bias",
+      "blocks.0.mlp.fc2.bias"
+    ]
+  },
+  {
+    "group": 4,
+    "lr_scale": 0.75,
+    "weight_decay": 0.05,
+    "names": [
+      "blocks.0.attn.qkv.weight",
+      "blocks.0.attn.proj.weight",
+      "blocks.0.mlp.fc1.weight",
+      "blocks.0.mlp.fc2.weight"
+    ]
+  },
+  {
+    "group": 5,
+    "lr_scale": 1.0,
+    "weight_decay": 0.0,
+    "names": [
+      "fc_norm.weight",
+      "fc_norm.bias"
+    ]
+  }
+]

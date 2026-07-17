@@ -1,0 +1,32 @@
+# recovered-from-issue: https://github.com/facebookresearch/detectron2/issues/3486
+
+TITLE
+instance_mode=ColorMode.IMAGE_BW does not work as expected in Detectron2 Tutorial
+
+BODY
+## Instructions To Reproduce the 🐛 Bug:
+1. Full runnable code or full changes you made:
+Code is linked in the docs on the [getting started](https://detectron2.readthedocs.io/en/latest/tutorials/getting_started.html) page and is on [Google Colab](https://colab.research.google.com/drive/16jcaJoc6bCFAQ96jDe2HwtXj7BMD_-m5). 
+```
+from detectron2.utils.visualizer import ColorMode
+dataset_dicts = get_balloon_dicts("balloon/val")
+for d in random.sample(dataset_dicts, 3):    
+    im = cv2.imread(d["file_name"])
+    outputs = predictor(im)  # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
+    v = Visualizer(im[:, :, ::-1],
+                   metadata=balloon_metadata, 
+                   scale=0.5, 
+                   instance_mode=ColorMode.IMAGE_BW   # remove the colors of unsegmented pixels. This option is only available for segmentation models
+    )
+    out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+    cv2_imshow(out.get_image()[:, :, ::-1])
+```
+2. What exact command do you run:
+I am running the cell as provided. 
+3. __Full logs__ or other relevant observations:
+There are no logs other than the images displayed. The images displayed, however, do not have the color removed from pixels that are segmented as the comment suggests. 
+
+## Expected behavior:
+
+The images visualized should be grayscale, everywhere where there isn't a segmentation mask provided. 
+

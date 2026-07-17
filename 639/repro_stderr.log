@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "639/repro.py", line 58, in <module>
+    main()
+  File "639/repro.py", line 54, in main
+    speculator.prefill()
+  File "639/repro.py", line 45, in prefill
+    _ = last_hidden_states[last_token_indices]
+        ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: only integer tensors of a single element can be converted to an index

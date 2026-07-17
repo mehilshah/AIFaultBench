@@ -1,0 +1,11 @@
+torch==2.7.1+cpu
+packaging>=20.0
+hjson
+msgpack
+ninja
+numpy
+psutil
+py-cpuinfo
+pydantic>=2.0.0
+tqdm
+einops

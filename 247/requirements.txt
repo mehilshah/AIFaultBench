@@ -1,0 +1,4 @@
+numpy>=1.26
+opt_einsum>=3.3.0
+pyro-api>=0.1.1
+tqdm>=4.66

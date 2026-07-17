@@ -1,0 +1,2 @@
+torch=2.13.0+cu130
+pytorch_lightning=1.7.7

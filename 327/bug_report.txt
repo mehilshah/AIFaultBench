@@ -1,0 +1,45 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2855
+
+TITLE
+`Inequality` constraint diagnostic score not 1.0 due to out of range datetimes
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:
+* Python version:
+* Operating System:
+
+### Error Description
+The `Inequality` constraint can cause the synthesizer to sample out of range columns for datetimes. 
+
+For numerical columns, the constraints save a `NumericalFormatter` to enforce min/max values. However, the `DatetimeFormatter` does not have this option. Instead, if a constraint is going to remove a datetime column, we should save the min/max value for the column and clip the values during formatting.
+
+### Steps to reproduce
+
+```python
+metadata = Metadata.load_from_dict({
+    'tables': {
+        'table': {
+            'columns': {
+                'datetime1': {'sdtype': 'datetime'},
+                'datetime2': {'sdtype': 'datetime'},
+            }
+        }
+    }
+})
+data =pd.DataFrame({
+    'datetime1': [pd.Timestamp('2019-01-01'), pd.Timestamp('2019-01-01'), pd.Timestamp('2019-12-30')],
+    'datetime2': [pd.Timestamp('2020-01-01')] * 3,
+})
+inequality = Inequality(low_column_name='datetime1', high_column_name='datetime2', table_name='table')
+synthesizer = GaussianCopulaSynthesizer(metadata)
+synthesizer.add_constraints([inequality])
+synthesizer.fit(data)
+sample = synthesizer.sample(500)
+
+run_diagnostic(data, sample, metadata)
+```
+

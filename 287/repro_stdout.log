@@ -1,0 +1,24 @@
+iterations=20
+created_files=20
+deleted_fds=20
+leaked_fd=3 target=287/repro_tmp/repro_0.pt (deleted)
+leaked_fd=4 target=287/repro_tmp/repro_1.pt (deleted)
+leaked_fd=5 target=287/repro_tmp/repro_2.pt (deleted)
+leaked_fd=6 target=287/repro_tmp/repro_3.pt (deleted)
+leaked_fd=7 target=287/repro_tmp/repro_4.pt (deleted)
+leaked_fd=8 target=287/repro_tmp/repro_5.pt (deleted)
+leaked_fd=9 target=287/repro_tmp/repro_6.pt (deleted)
+leaked_fd=10 target=287/repro_tmp/repro_7.pt (deleted)
+leaked_fd=11 target=287/repro_tmp/repro_8.pt (deleted)
+leaked_fd=12 target=287/repro_tmp/repro_9.pt (deleted)
+leaked_fd=13 target=287/repro_tmp/repro_10.pt (deleted)
+leaked_fd=14 target=287/repro_tmp/repro_11.pt (deleted)
+leaked_fd=15 target=287/repro_tmp/repro_12.pt (deleted)
+leaked_fd=16 target=287/repro_tmp/repro_13.pt (deleted)
+leaked_fd=17 target=287/repro_tmp/repro_14.pt (deleted)
+leaked_fd=18 target=287/repro_tmp/repro_15.pt (deleted)
+leaked_fd=19 target=287/repro_tmp/repro_16.pt (deleted)
+leaked_fd=20 target=287/repro_tmp/repro_17.pt (deleted)
+leaked_fd=21 target=287/repro_tmp/repro_18.pt (deleted)
+leaked_fd=22 target=287/repro_tmp/repro_19.pt (deleted)
+result=bug_reproduced

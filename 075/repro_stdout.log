@@ -1,0 +1,10 @@
+python: 3.11.15
+datasets: 2.16.1
+huggingface_hub: 0.20.3
+numpy: 1.26.4
+pyarrow: 14.0.2
+checking wikitext load with token=...
+wikitext rows: 367
+checking local parquet load with token=...
+parquet rows: 2
+BUG_NOT_REPRODUCED

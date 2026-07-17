@@ -1,0 +1,150 @@
+Title: Biomedical Stanza models error during loading pos -  KeyError: 'bert_finetune'
+Date: 2024-02-29T22:04:09+00:00
+URL: https://github.com/stanfordnlp/stanza/issues/1357
+
+Description:
+**Describe the bug**
+Trying to make a Stanza pipeline with any biomedical package and receive the error 'KeyError: bert_finetune' while loading the POS tagger (occurs with or without i2b2 NER processor). 
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Running `nlp = stanza.Pipeline('en', package='mimic', processors={'ner': 'i2b2'})` or `nlp = stanza.Pipeline('en', package='craft', processors={'ner': 'i2b2'})` or `nlp = stanza.Pipeline('en', package='genia', processors={'ner': 'i2b2'})`
+2.  Error, example for 'mimic' package:
+```
+`2024-02-29 16:41:08 INFO: Checking for updates to resources.json in case models have been updated.  Note: this behavior can be turned off with download_method=None or download_method=DownloadMethod.REUSE_RESOURCES
+INFO:stanza:Checking for updates to resources.json in case models have been updated.  Note: this behavior can be turned off with download_method=None or download_method=DownloadMethod.REUSE_RESOURCES
+Downloading https://raw.githubusercontent.com/stanfordnlp/stanza-resources/main/resources_1.8.0.json:
+373k/? [00:00<00:00, 53.2MB/s]
+2024-02-29 16:41:08 INFO: Downloaded file to /home/idies/stanza_resources/resources.json
+INFO:stanza:Downloaded file to /home/idies/stanza_resources/resources.json
+2024-02-29 16:41:09 INFO: Loading these models for language: en (English):
+==============================
+| Processor | Package        |
+------------------------------
+| tokenize  | mimic          |
+| pos       | mimic_charlm   |
+| lemma     | mimic_nocharlm |
+| depparse  | mimic_charlm   |
+| ner       | i2b2           |
+==============================
+
+INFO:stanza:Loading these models for language: en (English):
+==============================
+| Processor | Package        |
+------------------------------
+| tokenize  | mimic          |
+| pos       | mimic_charlm   |
+| lemma     | mimic_nocharlm |
+| depparse  | mimic_charlm   |
+| ner       | i2b2           |
+==============================
+
+2024-02-29 16:41:09 INFO: Using device: cpu
+INFO:stanza:Using device: cpu
+2024-02-29 16:41:09 INFO: Loading: tokenize
+INFO:stanza:Loading: tokenize
+2024-02-29 16:41:09 INFO: Loading: pos
+INFO:stanza:Loading: pos
+---------------------------------------------------------------------------
+KeyError                                  Traceback (most recent call last)
+Cell In[95], line 2
+      1 #nlp = stanza.Pipeline('nl', processors={'ner': 'conll02'})
+----> 2 nlp = stanza.Pipeline('en', package='mimic', processors={'ner': 'i2b2'})
+
+File ~/miniconda3/lib/python3.9/site-packages/stanza/pipeline/core.py:305, in Pipeline.__init__(self, lang, dir, package, processors, logging_level, verbose, use_gpu, model_dir, download_method, resources_url, resources_branch, resources_version, resources_filepath, proxies, foundation_cache, device, allow_unknown_language, **kwargs)
+    302 logger.debug(curr_processor_config)
+    303 try:
+    304     # try to build processor, throw an exception if there is a requirements issue
+--> 305     self.processors[processor_name] = NAME_TO_PROCESSOR_CLASS[processor_name](config=curr_processor_config,
+    306                                                                               pipeline=self,
+    307                                                                               device=self.device)
+    308 except ProcessorRequirementsException as e:
+    309     # if there was a requirements issue, add it to list which will be printed at end
+    310     pipeline_reqs_exceptions.append(e)
+
+File ~/miniconda3/lib/python3.9/site-packages/stanza/pipeline/processor.py:193, in UDProcessor.__init__(self, config, pipeline, device)
+    191 self._vocab = None
+    192 if not hasattr(self, '_variant'):
+--> 193     self._set_up_model(config, pipeline, device)
+    195 # build the final config for the processor
+    196 self._set_up_final_config(config)
+
+File ~/miniconda3/lib/python3.9/site-packages/stanza/pipeline/pos_processor.py:32, in POSProcessor._set_up_model(self, config, pipeline, device)
+     29 args = {'charlm_forward_file': config.get('forward_charlm_path', None),
+     30         'charlm_backward_file': config.get('backward_charlm_path', None)}
+     31 # set up trainer
+---> 32 self._trainer = Trainer(pretrain=self.pretrain, model_file=config['model_path'], device=device, args=args, foundation_cache=pipeline.foundation_cache)
+     33 self._tqdm = 'tqdm' in config and config['tqdm']
+
+File ~/miniconda3/lib/python3.9/site-packages/stanza/models/pos/trainer.py:44, in Trainer.__init__(self, args, vocab, pretrain, model_file, device, foundation_cache)
+     40 self.optimizers = utils.get_split_optimizer(self.args['optim'], self.model, self.args['lr'], betas=(0.9, self.args['beta2']), eps=1e-6, weight_decay=self.args.get('initial_weight_decay', None), bert_learning_rate=self.args.get('bert_learning_rate', 0.0), is_peft=self.args.get("peft", False))
+     42 self.schedulers = {}
+---> 44 if self.args["bert_finetune"]:
+     45     import transformers
+     46     warmup_scheduler = transformers.get_linear_schedule_with_warmup(
+     47         self.optimizers["bert_optimizer"],
+     48         # todo late starting?
+     49         0, self.args["max_steps"])
+
+KeyError: 'bert_finetune'`
+```
+
+**Expected behavior**
+No issues running basic Stanza model - i.e. `nlp = stanza.Pipeline('nl', processors={'ner': 'conll02'})`
+Output: 
+```
+`2024-02-29 16:59:36 INFO: Checking for updates to resources.json in case models have been updated.  Note: this behavior can be turned off with download_method=None or download_method=DownloadMethod.REUSE_RESOURCES
+INFO:stanza:Checking for updates to resources.json in case models have been updated.  Note: this behavior can be turned off with download_method=None or download_method=DownloadMethod.REUSE_RESOURCES
+Downloading https://raw.githubusercontent.com/stanfordnlp/stanza-resources/main/resources_1.8.0.json:
+373k/? [00:00<00:00, 37.7MB/s]
+2024-02-29 16:59:36 INFO: Downloaded file to /home/idies/stanza_resources/resources.json
+INFO:stanza:Downloaded file to /home/idies/stanza_resources/resources.json
+2024-02-29 16:59:37 INFO: Loading these models for language: nl (Dutch):
+===============================
+| Processor | Package         |
+-------------------------------
+| tokenize  | alpino          |
+| mwt       | alpino          |
+| pos       | alpino_charlm   |
+| lemma     | alpino_nocharlm |
+| depparse  | alpino_charlm   |
+| ner       | conll02         |
+===============================
+
+INFO:stanza:Loading these models for language: nl (Dutch):
+===============================
+| Processor | Package         |
+-------------------------------
+| tokenize  | alpino          |
+| mwt       | alpino          |
+| pos       | alpino_charlm   |
+| lemma     | alpino_nocharlm |
+| depparse  | alpino_charlm   |
+| ner       | conll02         |
+===============================
+
+2024-02-29 16:59:37 INFO: Using device: cpu
+INFO:stanza:Using device: cpu
+2024-02-29 16:59:37 INFO: Loading: tokenize
+INFO:stanza:Loading: tokenize
+2024-02-29 16:59:37 INFO: Loading: mwt
+INFO:stanza:Loading: mwt
+2024-02-29 16:59:37 INFO: Loading: pos
+INFO:stanza:Loading: pos
+2024-02-29 16:59:39 INFO: Loading: lemma
+INFO:stanza:Loading: lemma
+2024-02-29 16:59:39 INFO: Loading: depparse
+INFO:stanza:Loading: depparse
+2024-02-29 16:59:40 INFO: Loading: ner
+INFO:stanza:Loading: ner
+2024-02-29 16:59:41 INFO: Done loading processors!
+INFO:stanza:Done loading processors!`
+```
+
+
+**Environment (please complete the following information):**
+ - OS: Windows 
+ - Python version: 3.9.17
+ - Stanza version:  1.8.0
+
+Not sure if there are some obvious dependencies missing on my end. Appreciate any help you can provide. Thank you!

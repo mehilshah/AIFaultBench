@@ -1,0 +1,2 @@
+# This repro only uses the Python standard library.
+# The reported `ColumnFormula` constraint is not present in the local open-source SDV tree.

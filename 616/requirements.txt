@@ -1,0 +1,4 @@
+jax[cpu]==0.4.38
+jaxlib==0.4.38
+pytest==9.1.1
+scipy==1.18.0

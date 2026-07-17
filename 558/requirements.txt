@@ -1,0 +1,20 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# CPU torch is required because the host torch install is unusable in this environment.
+torch==2.8.0+cpu
+
+# CLI support used by the reproduction script.
+jsonargparse[signatures]==4.49.0
+
+# Versions observed to work together in the repro environment.
+fsspec==2026.6.0
+lightning-utilities==0.15.3
+numpy==2.5.1
+packaging==26.2
+PyYAML==6.0.3
+torchmetrics==1.9.0
+tqdm==4.68.4
+typing-extensions==4.16.0
+
+# Install the local Lightning source snapshot in editable mode.
+-e ./codebase

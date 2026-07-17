@@ -1,0 +1,10 @@
+Title: [Bug] Python 3.9 is silently broken
+Date: 2025-10-20T20:25:39+00:00
+URL: https://github.com/unslothai/unsloth/issues/3488
+
+Description:
+Unsloth requires unsloth_zoo which requires cut_cross_entropy, which only supports Python 3.10+: https://github.com/unslothai/cut-cross-entropy/blob/main/pyproject.toml#L6
+
+pyproject.toml in unsloth and unsloth_zoo should both be updated to indicate that 3.9 is not supported.
+
+To reproduce just run: `pip install unsloth` on Python 3.9.

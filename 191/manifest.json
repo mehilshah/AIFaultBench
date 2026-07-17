@@ -1,0 +1,13 @@
+{
+  "bug_id": "191",
+  "bug_dir": "191",
+  "issue_url": "https://github.com/NVIDIA/apex/issues/1823",
+  "commit_hash": "",
+  "library_name": "distributed_adam_cuda",
+  "library_version": "0.1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": true,
+  "standardized_dir": "../191",
+  "repro_command": "python3 repro.py"
+}

@@ -1,0 +1,128 @@
+# recovered-from-issue: https://github.com/huggingface/peft/issues/2627
+
+TITLE
+Some Gemma generate tests fail on GPU with: torch._dynamo.exc.Unsupported: Data-dependent branching
+
+BODY
+### System Info
+
+Current PEFT version, transformers 4.54.0.dev0, torch 2.7.1.
+
+### Who can help?
+
+_No response_
+
+### Reproduction
+
+E.g., run this with a GPU:
+
+`pytest tests/test_decoder_models.py -k "test_generate_pos_args and gemma" -v`
+
+The reported error is:
+
+```
+>       self._test_generate_pos_args(model_id, config_cls, config_kwargs.copy(), raises_err=False)
+
+tests/test_decoder_models.py:393: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/testing_common.py:1145: in _test_generate_pos_args
+    _ = model.generate(inputs["input_ids"])
+src/peft/peft_model.py:1934: in generate
+    outputs = self.base_model.generate(*args, **kwargs)
+../../../anaconda3/envs/peft/lib/python3.12/site-packages/torch/utils/_contextlib.py:116: in decorate_context
+    return func(*args, **kwargs)
+../transformers/src/transformers/generation/utils.py:2626: in generate
+    result = self._sample(
+../transformers/src/transformers/generation/utils.py:3610: in _sample
+    outputs = model_forward(**model_inputs, return_dict=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (), kwargs = {'attention_mask': {'sliding_attention': tensor([[[[ True,  True,  True,  True, False, False, False, False, False, Fal...or([3], device='cuda:0'), 'input_ids': tensor([[78057],
+        [78057]], device='cuda:0'), 'inputs_embeds': None, ...}, prior = None
+cleanups = [<function nothing at 0x7dcf9e9b60c0>], prior_skip_guard_eval_unsafe = False, saved_dynamic_layer_stack_depth = 0, cleanup = <function nothing at 0x7dcf9e9b60c0>
+
+    @functools.wraps(fn)
+    def _fn(*args, **kwargs):
+        prior = set_eval_frame(None)
+        try:
+            if is_fx_tracing():
+                if config.error_on_nested_fx_trace:
+                    raise RuntimeError(
+                        "Detected that you are using FX to symbolically trace "
+                        "a dynamo-optimized function. This is not supported at the moment."
+                    )
+                else:
+                    return fn(*args, **kwargs)
+    
+            if is_jit_tracing():
+                raise RuntimeError(
+                    "Detected that you are using FX to torch.jit.trace "
+                    "a dynamo-optimized function. This is not supported at the moment."
+                )
+    
+            cleanups = [enter() for enter in self.enter_exit_hooks]
+            prior_skip_guard_eval_unsafe = set_skip_guard_eval_unsafe(
+                _is_skip_guard_eval_unsafe_stance()
+            )
+    
+            # Ensure that if an assertion occurs after graph pushes
+            # something onto the DynamicLayerStack then we pop it off (the
+            # constructed graph code isn't guarded with try/finally).
+            #
+            # This used to be a context but putting a `with` here is a noticible
+            # perf regression (#126293)
+            saved_dynamic_layer_stack_depth = (
+                torch._C._functorch.get_dynamic_layer_stack_depth()
+            )
+            _maybe_set_eval_frame(_callback_from_stance(callback))
+    
+            try:
+                return fn(*args, **kwargs)
+            except Unsupported as e:
+                if config.verbose:
+                    raise
+>               raise e.with_traceback(None) from None
+E               torch._dynamo.exc.Unsupported: Data-dependent branching
+E                 Explanation: Detected data-dependent branching (e.g. `if my_tensor.sum() > 0:`). Dynamo does not support tracing dynamic control flow.
+E                 Hint: This graph break is fundamental - it is unlikely that Dynamo will ever be able to trace through your code. Consider finding a workaround.
+E                 Hint: Use `torch.cond` to express dynamic control flow.
+E               
+E                 Developer debug context: attempted to jump with TensorVariable()
+E               
+E               
+E               from user code:
+E                  File "/home/name/work/forks/transformers/src/transformers/utils/generic.py", line 943, in wrapper
+E                   output = func(self, *args, **kwargs)
+E                 File "/home/name/work/forks/transformers/src/transformers/models/gemma3/modeling_gemma3.py", line 681, in forward
+E                   outputs: BaseModelOutputWithPast = self.model(
+E                 File "/home/name/work/forks/transformers/src/transformers/utils/generic.py", line 943, in wrapper
+E                   output = func(self, *args, **kwargs)
+E                 File "/home/name/work/forks/transformers/src/transformers/models/gemma3/modeling_gemma3.py", line 565, in forward
+E                   layer_outputs = decoder_layer(
+E                 File "/home/name/work/forks/transformers/src/transformers/modeling_layers.py", line 83, in __call__
+E                   return super().__call__(*args, **kwargs)
+E                 File "/home/name/anaconda3/envs/peft/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+E                   return self._call_impl(*args, **kwargs)
+E                 File "/home/name/anaconda3/envs/peft/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+E                   return forward_call(*args, **kwargs)
+E                 File "/home/name/work/forks/transformers/src/transformers/utils/deprecation.py", line 172, in wrapped_func
+E                   return func(*args, **kwargs)
+E                 File "/home/name/work/forks/transformers/src/transformers/models/gemma3/modeling_gemma3.py", line 385, in forward
+E                   hidden_states, self_attn_weights = self.self_attn(
+E                 File "/home/name/work/forks/transformers/src/transformers/models/gemma3/modeling_gemma3.py", line 311, in forward
+E                   query_states = self.q_proj(hidden_states).view(hidden_shape).transpose(1, 2)
+E                 File "/home/name/work/forks/peft/src/peft/tuners/vblora/layer.py", line 244, in forward
+E                   A, B = self._get_lora_matrices(active_adapter)
+E                 File "/home/name/work/forks/peft/src/peft/tuners/vblora/layer.py", line 191, in _get_lora_matrices
+E                   if self.training and vblora_logits_A[0, 0].isinf().any():
+E               
+E               Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+../../../anaconda3/envs/peft/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:659: Unsupported
+```
+
+Affected methods are CPT, P-tuning, prompt-tuning, and VB-LoRA.
+
+### Expected behavior
+
+Tests should pass.

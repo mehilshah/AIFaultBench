@@ -1,0 +1,70 @@
+# recovered-from-issue: https://github.com/pyg-team/pytorch_geometric/issues/9897
+
+TITLE
+cannot import name 'BaseData' from 'torch_geometric.data.data'
+
+BODY
+### 🐛 Describe the bug
+
+I successfully installed the dependent packages and then directly used the Tsinghua mirror source to install torch_geometric via pip. However, when I tried to import the library in Jupyter, an error occurred: ImportError: cannot import name 'BaseData' from 'torch_geometric.data.data'. I've checked the code and there is a BaseData class in it. Why can't it be imported? 
+![image](https://github.com/user-attachments/assets/5139732a-3edd-48fd-8e5e-554f377b184c)
+
+
+### Versions
+
+Collecting environment information...
+PyTorch version: 2.1.2+cu121
+Is debug build: False
+CUDA used to build PyTorch: 12.1
+ROCM used to build PyTorch: N/A
+
+OS: Microsoft Windows 11 家庭中文版 (10.0.26100 64 位)
+GCC version: Could not collect
+Clang version: Could not collect
+CMake version: Could not collect
+Libc version: N/A
+
+Python version: 3.8.19 (default, Mar 20 2024, 19:55:45) [MSC v.1916 64 bit (AMD64)] (64-bit runtime)
+Python platform: Windows-10-10.0.26100-SP0
+Is CUDA available: True
+CUDA runtime version: 12.1.66
+CUDA_MODULE_LOADING set to: LAZY
+GPU models and configuration: GPU 0: NVIDIA GeForce RTX 3060 Laptop GPU
+Nvidia driver version: 546.30
+cuDNN version: Could not collect
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+Is XNNPACK available: True
+
+CPU:
+Name: 12th Gen Intel(R) Core(TM) i9-12900H
+Manufacturer: GenuineIntel
+Family: 207
+Architecture: 9
+ProcessorType: 3
+DeviceID: CPU0
+CurrentClockSpeed: 2500
+MaxClockSpeed: 2500
+L2CacheSize: 11776
+L2CacheSpeed: None
+Revision: None
+
+Versions of relevant libraries:
+[pip3] numpy==1.23.0
+[pip3] torch==2.1.2+cu121
+[pip3] torch-cluster==1.6.2+pt21cu121
+[pip3] torch-geometric==2.6.1
+[pip3] torch-scatter==2.1.2+pt21cu121
+[pip3] torch-sparse==0.6.18+pt21cu121
+[pip3] torch-spline-conv==1.2.2+pt21cu121
+[pip3] torchaudio==2.1.2+cu121
+[pip3] torchvision==0.16.2+cu121
+[conda] numpy                     1.23.0                   pypi_0    pypi
+[conda] torch                     2.1.2+cu121              pypi_0    pypi
+[conda] torch-cluster             1.6.2+pt21cu121          pypi_0    pypi
+[conda] torch-geometric           2.6.1                    pypi_0    pypi
+[conda] torch-scatter             2.1.2+pt21cu121          pypi_0    pypi
+[conda] torch-sparse              0.6.18+pt21cu121          pypi_0    pypi
+[conda] torch-spline-conv         1.2.2+pt21cu121          pypi_0    pypi
+[conda] torchaudio                2.1.2+cu121              pypi_0    pypi
+[conda] torchvision               0.16.2+cu121             pypi_0    pypi

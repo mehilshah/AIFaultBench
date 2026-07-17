@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running get_peft_model() on a tiny BertForSequenceClassification with AdaLoraConfig(lora_dropout=0) raises TypeError: peft.tuners.adalora.AdaLoraLayer.update_layer.<locals>.lora_dropout_layer is not a Module subclass. The failing code is in codebase/src/peft/tuners/adalora.py:342-352.",
+  "steps": [
+    "Create a tiny BertForSequenceClassification model from config so no network download is needed.",
+    "Wrap it with get_peft_model() using AdaLoraConfig with task_type='SEQ_CLS', target_modules=['query', 'value'], and lora_dropout=0.",
+    "Observe the TypeError when AdaLoraLayer.update_layer() stores a plain function in nn.ModuleDict."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

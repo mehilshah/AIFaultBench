@@ -1,0 +1,11 @@
+{
+  "bug_report": "bug_report.txt",
+  "reproduction_command": "bash run_repro.sh",
+  "reproducible": false,
+  "tested_environment": {
+    "python": "3.12.3",
+    "torch": "2.7.1+cpu",
+    "torch_geometric": "2.6.1"
+  },
+  "summary": "RSS fluctuated after the initial warmup and remained bounded; it did not reproduce the steady per-epoch climb from the report."
+}

@@ -1,0 +1,15 @@
+{
+  "bug_id": "118",
+  "bug_dir": "118",
+  "issue_url": "https://github.com/clearml/clearml/issues/1440",
+  "commit_hash": "",
+  "library_name": "clearml",
+  "library_version": "2.0.0",
+  "secondary_library_name": "clearml-agent",
+  "secondary_library_version": "1.9.3",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../118",
+  "reproduction_command": "bash run_repro.sh"
+}

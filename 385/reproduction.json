@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "KeyError raised from PettingZooWrapper._update_action_mask when accessing a missing agent key: KeyError('agent_1').",
+  "steps": [
+    "Create a custom PettingZoo ParallelEnv with two agents and per-agent action masks.",
+    "Wrap it with torchrl.envs.libs.pettingzoo.PettingZooWrapper using use_mask=True and done_on_any=False.",
+    "Reset the wrapper, then step once after the environment drops agent_1 from the active observation dict."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

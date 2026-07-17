@@ -1,0 +1,53 @@
+Title: NonMatchingChecksumError while loading the dataset plant_leaves
+Date: 2024-05-06T02:43:56+00:00
+URL: https://github.com/tensorflow/datasets/issues/5397
+
+Description:
+**Short descrition**
+Receiving the NonMatchingChecksumError error while loading plant_leaves dataset. Tried on May 6, 2024
+
+**Environment information**
+Using Google Colab
+* Operating System: Windows 11
+* Python version: 3.10.12
+* `tensorflow-datasets`/`tfds-nightly` 4.9.4
+* `tensorflow`/`tf-nightly` version: 2.15.0
+
+* Does the issue still exists with the last `tfds-nightly` package (`pip install --upgrade tfds-nightly`) ?
+
+**Reproduction instructions**
+
+```python
+import tensorflow_datasets as tfds
+plant_leaves = tfds.load('plant_leaves', split='train', shuffle_files=True)
+```
+Gives 
+
+```python
+Downloading and preparing dataset 6.81 GiB (download: 6.81 GiB, generated: Unknown size, total: 6.81 GiB) to /root/tensorflow_datasets/plant_leaves/0.1.0...
+Dl Completed...: 100%
+ 1/1 [03:29<00:00, 209.56s/ url]
+Dl Size...: 100%
+ 6718/6718 [03:29<00:00, 32.54 MiB/s]
+---------------------------------------------------------------------------
+NonMatchingChecksumError                  Traceback (most recent call last)
+[<ipython-input-6-2c493bec905f>](https://localhost:8080/#) in <cell line: 1>()
+----> 1 plant_leaves = tfds.load('plant_leaves', split='train', shuffle_files=True)
+      2 #(train_images , train_labels), (test_images, test_labels) = plant_leaves.load_data()
+
+19 frames
+[/usr/local/lib/python3.10/dist-packages/tensorflow_datasets/core/download/download_manager.py](https://localhost:8080/#) in _validate_checksums(url, path, computed_url_info, expected_url_info, force_checksums_validation)
+    807         'https://www.tensorflow.org/datasets/overview#fixing_nonmatchingchecksumerror'
+    808     )
+--> 809     raise NonMatchingChecksumError(msg)
+    810 
+    811 
+
+NonMatchingChecksumError: Artifact https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/hb74ynkjcn-1.zip, downloaded to /root/tensorflow_datasets/downloads/prod-dcd-data-cach-zipf.s3.eu-west-1_hb74-7eUGweNz0kFlLHivgq48u6VAv9FcAcWkR3ENYp3T4kw.zip.tmp.755f3b8739374686b7aa07e4bcb3c39e/hb74ynkjcn-1.zip, has wrong checksum:
+* Expected: UrlInfo(size=6.56 GiB, checksum='63db271e5d24d09d12b35189642ff04378c407fc31b4f26225ebc406223baaa4', filename='hb74ynkjcn-1.zip')
+* Got: UrlInfo(size=6.56 GiB, checksum='cd6e9f088fd73810520e03c1dff3ceb026cef3b83fc9860958de65f16577ca19', filename='hb74ynkjcn-1.zip')
+To debug, see: https://www.tensorflow.org/datasets/overview#fixing_nonmatchingchecksumerror
+```
+
+**Expected behavior**
+Expected to load dataset correctly without any errors

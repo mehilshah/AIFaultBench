@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "312/repro.py", line 50, in main
+    ot.gromov.gromov_wasserstein(
+  File "312/codebase/ot/gromov.py", line 345, in gromov_wasserstein
+    res, log = cg(p, q, 0, 1, f, df, G0, log=True, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "312/codebase/ot/optim.py", line 182, in cg
+    G = G + alpha * deltaG
+            ~~~~~~^~~~~~~~
+TypeError: unsupported operand type(s) for *: 'NoneType' and 'float'

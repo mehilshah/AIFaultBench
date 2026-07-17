@@ -1,0 +1,62 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38125
+
+TITLE
+vmap of jit does not work in presence of hi types
+
+BODY
+### Description
+
+The following modified `test_tuple_vmap` from `hijax_test.py` fails. The modification is just adding `jax.jit` on the function to be mapped.
+
+```
+  def test_tuple_vmap(self):
+    tup = make_tup(jnp.arange(3.), jnp.arange(3.))
+    out = jax.vmap(jax.jit(lambda x: x), in_axes=TupSpec((0, 0)),
+                   out_axes=TupSpec((0, 0)), axis_size=3)(tup)
+    self.assertAllClose(out.elts, tup.elts)
+```
+
+the error is the following:
+```
+jax/_src/pjit.py:254: in cache_miss
+    executable, pgle_profiler, const_args) = _run_python_pjit(
+jax/_src/pjit.py:142: in _run_python_pjit
+    out_flat = jit_p.bind(*args_flat, **p.params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jax/_src/core.py:664: in bind
+    return self.bind_with_trace(prev_trace, args, avals, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jax/_src/core.py:672: in bind_with_trace
+    return trace.process_primitive(self, args, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jax/_src/interpreters/batching.py:263: in process_primitive
+    val_out, dim_out = fancy_primitive_batchers[p](
+jax/_src/pjit.py:1451: in _pjit_batcher
+    in_shardings = tuple(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+.0 = <list_iterator object at 0x114c73c70>
+
+    in_shardings = tuple(
+        _pjit_batcher_for_sharding(i, axis_in, axis_data.spmd_name, ctx_mesh,
+>                                  aval.ndim)
+                                   ^^^^^^^^^
+        if axis_in is not None else i
+        for axis_in, i, aval in zip(dims_in, in_shardings, new_jaxpr.in_avals))
+E   AttributeError: 'TupTy' object has no attribute 'ndim'
+```
+
+A simple workaround is possible where we defer reading `.ndim` if the sharding is unspecified. But a real fix should consider other shardings, and it seems that `_pjit_batcher` has not been updated for hijax.
+
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+```
+jax:    0.10.2.dev20260602+bd317d60c4
+jaxlib: 0.10.1
+numpy:  2.4.6
+python: 3.12.11 (main, Aug 28 2025, 17:00:08) [Clang 20.1.4 ]
+device info: cpu-1, 1 local devices"
+process_count: 1
+platform: uname_result(system='Darwin', node='necula-mac.roam.internal', release='24.6.0', version='Darwin Kernel Version 24.6.0: Tue Apr 21 20:19:12 PDT 2026; root:xnu-11417.140.69.710.16~1/RELEASE_ARM64_T6041', machine='arm64')
+```

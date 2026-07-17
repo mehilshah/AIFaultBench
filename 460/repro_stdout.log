@@ -1,0 +1,98 @@
+Requirement already satisfied: pip in ./.venv_repro/lib/python3.9/site-packages (23.0.1)
+Collecting pip
+  Downloading pip-26.0.1-py3-none-any.whl (1.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 18.6 MB/s eta 0:00:00
+
+Requirement already satisfied: setuptools in ./.venv_repro/lib/python3.9/site-packages (79.0.1)
+Collecting setuptools
+  Downloading setuptools-82.0.1-py3-none-any.whl (1.0 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 52.9 MB/s eta 0:00:00
+
+Collecting wheel
+  Downloading wheel-0.47.0-py3-none-any.whl (32 kB)
+Collecting packaging>=24.0
+  Downloading packaging-26.2-py3-none-any.whl (100 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.2/100.2 kB 419.3 MB/s eta 0:00:00
+
+Installing collected packages: setuptools, pip, packaging, wheel
+  Attempting uninstall: setuptools
+    Found existing installation: setuptools 79.0.1
+    Uninstalling setuptools-79.0.1:
+      Successfully uninstalled setuptools-79.0.1
+  Attempting uninstall: pip
+    Found existing installation: pip 23.0.1
+    Uninstalling pip-23.0.1:
+      Successfully uninstalled pip-23.0.1
+Successfully installed packaging-26.2 pip-26.0.1 setuptools-82.0.1 wheel-0.47.0
+Obtaining file://460/codebase (from -r 460/requirements.txt (line 6))
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting numpy<2 (from -r 460/requirements.txt (line 1))
+  Downloading numpy-1.26.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+Collecting opt_einsum>=2.3.2 (from -r 460/requirements.txt (line 2))
+  Downloading opt_einsum-3.4.0-py3-none-any.whl.metadata (6.3 kB)
+Collecting pyro-api>=0.1.1 (from -r 460/requirements.txt (line 3))
+  Downloading pyro_api-0.1.2-py3-none-any.whl.metadata (2.5 kB)
+Collecting torch==1.13.1 (from -r 460/requirements.txt (line 4))
+  Downloading torch-1.13.1-cp39-cp39-manylinux1_x86_64.whl.metadata (24 kB)
+Collecting tqdm>=4.36 (from -r 460/requirements.txt (line 5))
+  Downloading tqdm-4.68.4-py3-none-any.whl.metadata (57 kB)
+Collecting typing-extensions (from torch==1.13.1->-r 460/requirements.txt (line 4))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting nvidia-cuda-runtime-cu11==11.7.99 (from torch==1.13.1->-r 460/requirements.txt (line 4))
+  Downloading nvidia_cuda_runtime_cu11-11.7.99-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cudnn-cu11==8.5.0.96 (from torch==1.13.1->-r 460/requirements.txt (line 4))
+  Downloading nvidia_cudnn_cu11-8.5.0.96-2-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cublas-cu11==11.10.3.66 (from torch==1.13.1->-r 460/requirements.txt (line 4))
+  Downloading nvidia_cublas_cu11-11.10.3.66-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cuda-nvrtc-cu11==11.7.99 (from torch==1.13.1->-r 460/requirements.txt (line 4))
+  Downloading nvidia_cuda_nvrtc_cu11-11.7.99-2-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Requirement already satisfied: setuptools in ./.venv_repro/lib/python3.9/site-packages (from nvidia-cublas-cu11==11.10.3.66->torch==1.13.1->-r 460/requirements.txt (line 4)) (82.0.1)
+Requirement already satisfied: wheel in ./.venv_repro/lib/python3.9/site-packages (from nvidia-cublas-cu11==11.10.3.66->torch==1.13.1->-r 460/requirements.txt (line 4)) (0.47.0)
+Requirement already satisfied: packaging>=24.0 in ./.venv_repro/lib/python3.9/site-packages (from wheel->nvidia-cublas-cu11==11.10.3.66->torch==1.13.1->-r 460/requirements.txt (line 4)) (26.2)
+Downloading torch-1.13.1-cp39-cp39-manylinux1_x86_64.whl (887.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 887.4/887.4 MB 80.9 MB/s  0:00:11
+
+Downloading nvidia_cublas_cu11-11.10.3.66-py3-none-manylinux1_x86_64.whl (317.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 317.1/317.1 MB 81.2 MB/s  0:00:04
+
+Downloading nvidia_cuda_nvrtc_cu11-11.7.99-2-py3-none-manylinux1_x86_64.whl (21.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 21.0/21.0 MB 89.8 MB/s  0:00:00
+
+Downloading nvidia_cuda_runtime_cu11-11.7.99-py3-none-manylinux1_x86_64.whl (849 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 849.3/849.3 kB 41.1 MB/s  0:00:00
+
+Downloading nvidia_cudnn_cu11-8.5.0.96-2-py3-none-manylinux1_x86_64.whl (557.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 557.1/557.1 MB 57.4 MB/s  0:00:09
+
+Downloading numpy-1.26.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.2/18.2 MB 72.4 MB/s  0:00:00
+
+Downloading opt_einsum-3.4.0-py3-none-any.whl (71 kB)
+Downloading pyro_api-0.1.2-py3-none-any.whl (11 kB)
+Downloading tqdm-4.68.4-py3-none-any.whl (676 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 676.6/676.6 kB 97.7 MB/s  0:00:00
+
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Building wheels for collected packages: pyro-ppl
+  Building editable for pyro-ppl (pyproject.toml): started
+  Building editable for pyro-ppl (pyproject.toml): finished with status 'done'
+  Created wheel for pyro-ppl: filename=pyro_ppl-1.8.4+685c7ade-0.editable-py3-none-any.whl size=9584 sha256=c1e5674f6d625abeb8efe91f735ada734ee02b3f47394148bab4f5911b3251da
+  Stored in directory: /tmp/pip-ephem-wheel-cache-8azjd11a/wheels/9f/97/6a/9f11f1ba0d0ba837cbfe9235bac3af5c3b523d85fb807318e2
+Successfully built pyro-ppl
+Installing collected packages: pyro-api, typing-extensions, tqdm, opt_einsum, nvidia-cuda-nvrtc-cu11, numpy, nvidia-cuda-runtime-cu11, nvidia-cublas-cu11, nvidia-cudnn-cu11, torch, pyro-ppl
+
+
+Successfully installed numpy-1.26.4 nvidia-cublas-cu11-11.10.3.66 nvidia-cuda-nvrtc-cu11-11.7.99 nvidia-cuda-runtime-cu11-11.7.99 nvidia-cudnn-cu11-8.5.0.96 opt_einsum-3.4.0 pyro-api-0.1.2 pyro-ppl-1.8.4+685c7ade torch-1.13.1 tqdm-4.68.4 typing-extensions-4.16.0
+pyro_version = 1.8.4+685c7ade
+torch_transformed.batch_shape = torch.Size([2])
+torch_transformed.event_shape = torch.Size([2])
+pyro_transformed.batch_shape = torch.Size([2])
+pyro_transformed.event_shape = torch.Size([2])
+event_shape comparison passed

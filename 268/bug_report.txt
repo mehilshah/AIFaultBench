@@ -1,0 +1,153 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/14195
+
+TITLE
+Offline mode rejects local LoRA files and directories without weight_name
+
+BODY
+### Describe the bug
+
+When `HF_HUB_OFFLINE=1` is enabled, or `local_files_only=True` is passed,
+loading LoRA weights from an existing local file or directory without an
+explicit `weight_name` fails with:
+
+`ValueError: When using the offline mode, you must specify a weight_name.`
+
+Offline mode should prevent HTTP requests, but it should not prevent Diffusers
+from inspecting an explicitly provided local filesystem path.
+
+The issue is in `_best_guess_weight_name()`:
+
+https://github.com/huggingface/diffusers/blob/1aadc65cacf94515e9c9a040def3e9a9e14d32c5/src/diffusers/loaders/lora_base.py#L277-L290
+
+The function checks `local_files_only` / `HF_HUB_OFFLINE` before checking
+`os.path.isfile()` and `os.path.isdir()`. As a result, existing local paths are
+rejected before they can be inspected.
+
+I understand that #6184 intentionally requires an explicit `weight_name` for a
+remote repository ID in offline mode. Without access to `model_info()`,
+Diffusers cannot automatically determine which file exists in a Hub repository.
+This report does not propose changing that behavior.
+
+This is related to #6089 and #6110 and follows up on the offline guard
+introduced in #6184. Unlike the cached-repository case discussed there, this
+issue only concerns inputs that already resolve to an explicit local file or
+directory.
+
+Expected behavior:
+
+- An explicit local LoRA file should work in offline mode.
+- An explicit local directory should support discovery of its LoRA weight file.
+- A remote repository ID without `weight_name` should continue to raise in
+  offline mode.
+- `model_info()` should not be called in offline mode.
+
+I am willing to submit a focused PR that moves the local file and directory
+checks before the offline-mode guard and adds regression tests using temporary
+local files without downloading any models.
+
+Would this distinction and proposed scope be acceptable for a PR?
+
+### Reproduction
+
+### `HF_HUB_OFFLINE=1`
+
+Run this in a fresh Python process:
+
+```python
+import os
+
+os.environ["HF_HUB_OFFLINE"] = "1"
+
+import tempfile
+from pathlib import Path
+
+import torch
+from safetensors.torch import save_file
+
+from diffusers.loaders import StableDiffusionLoraLoaderMixin
+
+
+with tempfile.TemporaryDirectory() as tmpdir:
+    weight_path = Path(tmpdir) / "adapter.safetensors"
+    save_file(
+        {"unet.test.lora_A.weight": torch.ones(1)},
+        str(weight_path),
+    )
+
+    StableDiffusionLoraLoaderMixin.lora_state_dict(tmpdir)
+```
+
+### `local_files_only=True`
+
+The same failure occurs with `HF_HUB_OFFLINE` disabled and only
+`local_files_only=True`. Run this separately in a fresh Python process:
+
+```python
+import os
+
+os.environ.pop("HF_HUB_OFFLINE", None)
+
+import tempfile
+from pathlib import Path
+
+import torch
+from safetensors.torch import save_file
+
+from diffusers.loaders import StableDiffusionLoraLoaderMixin
+
+
+with tempfile.TemporaryDirectory() as tmpdir:
+    weight_path = Path(tmpdir) / "adapter.safetensors"
+    save_file(
+        {"unet.test.lora_A.weight": torch.ones(1)},
+        str(weight_path),
+    )
+
+    StableDiffusionLoraLoaderMixin.lora_state_dict(
+        tmpdir,
+        local_files_only=True,
+    )
+```
+
+Both examples use a small temporary safetensors file and do not download any
+models.
+
+### Logs
+
+```shell
+Traceback (most recent call last):
+  File "<stdin>", line 21, in <module>
+  File ".../huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File ".../diffusers/loaders/lora_pipeline.py", line 318, in lora_state_dict
+    state_dict, metadata = _fetch_state_dict(
+  File ".../diffusers/loaders/lora_base.py", line 224, in _fetch_state_dict
+    weight_name = _best_guess_weight_name(
+  File ".../diffusers/loaders/lora_base.py", line 281, in _best_guess_weight_name
+    raise ValueError("When using the offline mode, you must specify a `weight_name`.")
+ValueError: When using the offline mode, you must specify a `weight_name`.
+```
+
+### System Info
+
+- 🤗 Diffusers version: 0.40.0.dev0
+- Reproduced on main commit: 1aadc65cacf94515e9c9a040def3e9a9e14d32c5
+- Platform: Linux-5.4.210-39.1.pagevecsize-x86_64-with-glibc2.39
+- Running on Google Colab?: No
+- Python version: 3.12.3
+- PyTorch version (GPU?): 2.6.0+cpu (False)
+- Flax version (CPU?/GPU?/TPU?): not installed (NA)
+- Jax version: not installed
+- JaxLib version: not installed
+- Huggingface_hub version: 0.36.2
+- Transformers version: 4.57.6
+- Accelerate version: 1.14.0
+- PEFT version: 0.17.1
+- Safetensors version: 0.8.0
+- xFormers version: not installed
+- Using GPU in script?: No
+- Using distributed or parallel set-up in script?: No
+
+### Who can help?
+
+@sayakpaul 

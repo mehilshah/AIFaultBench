@@ -1,0 +1,5 @@
+observed_target_entropy=-1.0
+expected_target_entropy=-2.0
+actor_spec_shape=torch.Size([])
+loss_action_spec_shape=torch.Size([2])
+Mismatch: SACLoss(target_entropy='auto') collapses a 2D action spec to -1 instead of -2.

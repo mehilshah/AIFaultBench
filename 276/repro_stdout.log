@@ -1,0 +1,5 @@
+initial MINARI_DATASETS_PATH: None
+temporary download cache: /tmp/tmpovq2cdb5
+downloaded dataset into /tmp/tmpovq2cdb5/D4RL/door/human-v2/data
+about to load dataset metadata after restoring MINARI_DATASETS_PATH
+minari.load_dataset sees cache root: /users/grad/mehil/.minari/datasets

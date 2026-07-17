@@ -1,0 +1,5 @@
+jax[cpu]==0.4.38
+numpy==2.5.1
+scipy==1.18.0
+tqdm==4.68.4
+multipledispatch==1.0.0

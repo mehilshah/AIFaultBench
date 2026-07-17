@@ -1,0 +1,31 @@
+Title: Divergence checking does not maintain time-reversibility
+Date: 2024-01-12T12:12:53+00:00
+URL: https://github.com/pyro-ppl/numpyro/issues/1719
+
+Description:
+As per title. This can cause sampling bias when we have jump near `max_delta_energy`. Here's a concrete example translated from @nhuurre 's stan code at https://discourse.mc-stan.org/t/divergence-check-does-not-satisfy-time-reversibility/33738.
+
+```python
+
+import jax
+import jax.numpy as jnp
+import numpyro
+import numpyro.distributions as dist
+from numpyro.infer import MCMC, NUTS
+import seaborn as sns
+
+# Sampling is biased when jump is near `max_delta_energy`.
+jump = 1000.0
+
+def model():
+    x = numpyro.sample("x", dist.Normal())
+    numpyro.factor("jump", jnp.where(x > 0, jump, 0))
+
+nuts_kernel = NUTS(model, target_accept_prob=0.6)
+mcmc = MCMC(nuts_kernel, num_warmup=2_000, num_samples=20_000)
+mcmc.run(jax.random.key(0))
+
+sns.histplot(x=mcmc.get_samples()['x'], stat="density")
+xs = jnp.linspace(0.0, 3.5, 100)
+sns.lineplot(x=xs, y=jnp.exp(jax.vmap(dist.HalfNormal().log_prob)(xs)))
+```

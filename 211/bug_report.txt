@@ -1,0 +1,33 @@
+Title: PAR DiagnosticReport not 1.0 with float categorical columns
+Date: 2024-04-10T18:51:35+00:00
+URL: https://github.com/sdv-dev/SDV/issues/1910
+
+Description:
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version: 1.14.0
+* Python version: 3.12
+* Operating System: Linux
+
+### Error Description
+
+When running PAR with categorical columns that are floats, PAR does not stick to the original categories when sampling. This leads to a very low diagnostic score for `'Data Validity'` due to the `CategoryAdherence` metric failing.
+
+### Steps to reproduce
+```python
+from sdv.datasets.demo import download_demo
+from sdv.sequential import PARSynthesizer
+from sdv.evaluation.single_table import run_diagnostic
+
+data, metadata = download_demo('sequential', 'nasdaq100_2019')
+data['category'] = [100.0 if i % 2 == 0 else 50.0 for i in data.index]
+metadata.add_column('category', sdtype='categorical')
+
+synth = PARSynthesizer(metadata)
+synth.fit(data)
+sampled = synth.sample(2)
+
+report = run_diagnostic(data, sampled, metadata)
+```

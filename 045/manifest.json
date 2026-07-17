@@ -1,0 +1,12 @@
+{
+  "bug_id": "045",
+  "bug_dir": "045",
+  "issue_url": "https://github.com/facebookresearch/fairseq/issues/5320",
+  "commit_hash": "unknown",
+  "library_name": "fairseq",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report/045.txt",
+  "codebase_source": "local codebase snapshot",
+  "codebase_present": "true",
+  "standardized_dir": "../045"
+}

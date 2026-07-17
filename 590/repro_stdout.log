@@ -1,0 +1,3 @@
+jax 0.4.25
+running TraceEnum_ELBO.loss with an auxiliary guide site
+exit code: 1

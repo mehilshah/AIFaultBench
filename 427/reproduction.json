@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Using a CPU-only venv with the local timm checkout, `timm.create_model(\"vit_base_patch16_dinov3.lvd1689m\", pretrained=False)` constructs `RotaryEmbeddingDinoV3`, and `model.set_input_size(512)` raises `AttributeError: 'RotaryEmbeddingDinoV3' object has no attribute 'update_feat_shape'`.",
+  "steps": [
+    "Create an isolated virtual environment and install CPU torch/torchvision plus the repro dependencies.",
+    "Install the local `codebase/` checkout in editable mode.",
+    "Create `vit_base_patch16_dinov3.lvd1689m` with `pretrained=False`.",
+    "Call `set_input_size(512)` and observe the AttributeError from `RotaryEmbeddingDinoV3`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

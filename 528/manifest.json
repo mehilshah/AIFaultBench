@@ -1,0 +1,14 @@
+{
+  "issue": "https://github.com/sdv-dev/SDV/issues/2725",
+  "title": "Minimum tests failing - OSError: [WinError 1114] A dynamic link library (DLL) initialization routine failed",
+  "python": "3.11",
+  "notes": [
+    "Reported on Windows.",
+    "The crash happens during import/collection after torch 2.9.0 is installed with numpy < 2.0.0.",
+    "This workspace is Linux, so the Windows DLL failure is expected to be blocked here."
+  ],
+  "entrypoints": {
+    "setup": "bash setup_env.sh",
+    "run": "bash run_repro.sh"
+  }
+}

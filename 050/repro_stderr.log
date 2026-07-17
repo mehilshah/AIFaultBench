@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "050/repro.py", line 145, in <module>
+    main()
+  File "050/repro.py", line 141, in main
+    gan.fit(dataloader, epochs=1)
+  File "050/.venv/lib/python3.12/site-packages/keras/src/utils/traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "050/repro.py", line 80, in train_step
+    batch_size = real_images.shape[0]
+                 ^^^^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'shape'

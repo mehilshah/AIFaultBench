@@ -1,0 +1,67 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/13819
+
+TITLE
+Black image when running QwenImageEdit snippet from docs
+
+BODY
+### Describe the bug
+
+when running the snippet from the docs, it gives black image
+
+```
+import torch
+from PIL import Image
+from diffusers import QwenImageEditPipeline
+from diffusers.utils import load_image
+
+pipe = QwenImageEditPipeline.from_pretrained("Qwen/Qwen-Image-Edit", torch_dtype=torch.bfloat16)
+pipe.to("cuda")
+image = load_image(
+    "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/diffusers/yarn-art-pikachu.png"
+).convert("RGB")
+prompt = (
+    "Make Pikachu hold a sign that says 'Qwen Edit is awesome', yarn art style, detailed, vibrant colors"
+)
+# Depending on the variant being used, the pipeline call will slightly vary.
+# Refer to the pipeline documentation for more details.
+image = pipe(image, prompt, num_inference_steps=50).images[0]
+image.save("qwenimage_edit.png")
+```
+
+### Reproduction
+
+```
+import torch
+from PIL import Image
+from diffusers import QwenImageEditPipeline
+from diffusers.utils import load_image
+
+pipe = QwenImageEditPipeline.from_pretrained("Qwen/Qwen-Image-Edit", torch_dtype=torch.bfloat16)
+pipe.to("cuda")
+image = load_image(
+    "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/diffusers/yarn-art-pikachu.png"
+).convert("RGB")
+prompt = (
+    "Make Pikachu hold a sign that says 'Qwen Edit is awesome', yarn art style, detailed, vibrant colors"
+)
+# Depending on the variant being used, the pipeline call will slightly vary.
+# Refer to the pipeline documentation for more details.
+image = pipe(image, prompt, num_inference_steps=50).images[0]
+image.save("qwenimage_edit.png")
+```
+
+### Logs
+
+```shell
+
+```
+
+### System Info
+
+diffusers==0.38.0
+transformers==4.53.3
+torch==2.5.0
+
+### Who can help?
+
+_No response_

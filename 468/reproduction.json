@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Muon sees different gradients depending on whether the full reduce-scatter result was available before orthogonalization. Using codebase/deepspeed/runtime/zero/muon/original_muon.py, the rank-0 partition differs from the correct update by 0.351562, the rank-1 partition differs by 0.578125, and the reconstructed full update differs by 0.578125.",
+  "steps": [
+    "Load DeepSpeed's Muon update function from the pinned codebase checkout.",
+    "Feed it the fully reduced gradient that would exist if reduce_scatter=false.",
+    "Feed it two rank-local mixed buffers that model reduce_scatter=true for a cross-partition parameter.",
+    "Compare the partition slices and reconstructed update."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

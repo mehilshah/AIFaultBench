@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "542/repro.py", line 48, in <module>
+    main()
+  File "542/repro.py", line 37, in main
+    np.testing.assert_array_equal(
+  File "542/.venv/lib/python3.12/site-packages/numpy/testing/_private/utils.py", line 1128, in assert_array_equal
+    assert_array_compare(operator.__eq__, actual, desired, err_msg=err_msg,
+  File "542/.venv/lib/python3.12/site-packages/numpy/testing/_private/utils.py", line 858, in assert_array_compare
+    infs_mask = func_assert_same_pos(
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "542/.venv/lib/python3.12/site-packages/numpy/testing/_private/utils.py", line 795, in func_assert_same_pos
+    raise AssertionError(msg)
+AssertionError: 
+Arrays are not equal
+jit(log(exp(89.0))) = 89.0 but eager = inf: JIT hides exp overflow
+inf location mismatch:
+ ACTUAL: array(89., dtype=float32)
+ DESIRED: array(inf, dtype=float32)

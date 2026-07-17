@@ -1,0 +1,9 @@
+pyro import spec: 326/codebase/pyro/__init__.py
+py.typed present: False
+/tmp/bug326-mypy-8xph5qt4/check_pyro.py:1: error: Cannot find implementation or library stub for module named "pyro"  [import-not-found]
+/tmp/bug326-mypy-8xph5qt4/check_pyro.py:2: error: Cannot find implementation or library stub for module named "pyro.distributions"  [import-not-found]
+/tmp/bug326-mypy-8xph5qt4/check_pyro.py:3: error: Cannot find implementation or library stub for module named "pyro.infer"  [import-not-found]
+/tmp/bug326-mypy-8xph5qt4/check_pyro.py:4: error: Cannot find implementation or library stub for module named "pyro.infer.autoguide"  [import-not-found]
+/tmp/bug326-mypy-8xph5qt4/check_pyro.py:4: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
+/tmp/bug326-mypy-8xph5qt4/check_pyro.py:5: error: Cannot find implementation or library stub for module named "pyro.optim"  [import-not-found]
+Found 5 errors in 1 file (checked 1 source file)

@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`./run_repro.sh` prints `metadata.validate(): completed without error`.",
+    "`./run_repro.sh` prints `set_primary_key('A'): completed without error`.",
+    "`./run_repro.sh` prints `BUG REPRODUCED: primary_key and sequence_key can point to the same column.`"
+  ],
+  "steps": [
+    "Create a `SingleTableMetadata` object with column `A` defined as `id`.",
+    "Set both `primary_key` and `sequence_key` to `A`.",
+    "Run `./run_repro.sh` and observe that validation and the setter both succeed instead of raising `InvalidMetadataError`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

@@ -1,0 +1,102 @@
+# recovered-from-issue: https://github.com/facebookresearch/detectron2/issues/642
+
+TITLE
+[baseline] [reproducibility] Problem to reproduce the baseline in Model Zoo 
+
+BODY
+Hello,
+I have tried to reproduce the Faster-RCNN baseline using [R50-FPN_1x](https://github.com/facebookresearch/detectron2/blob/master/MODEL_ZOO.md#faster-r-cnn). However, there's a **drop of around 4-5 points** for the box AP, compared to the score **37.9** in Model Zoo. I would really appreciate it if anyone could give me some insights about what might have gone wrong ^ ^
+My result:
+```
+COCO Evaluation results for bbox:
+|   AP   |  AP50  |  AP75  |  APs   |  APm   |  APl   |
+|:------:|:------:|:------:|:------:|:------:|:------:|
+| 33.551 | 53.341 | 35.969 | 18.661 | 36.469 | 43.063 |
+```
+
+## Instructions To Reproduce the Issue:
+
+1. what changes I made (`git diff`) 
+The code version I used is [e74a00c](https://github.com/facebookresearch/detectron2/commit/e74a00c97069dd722007fa5bdc5f1c820a4e97a1) of Dec 26, 2019.
+No change has been made except for minor changements to run the code on AzureML.
+
+2. what exact command I run:
+```
+python tools/train_net.py --num-gpus 4 \
+	--config-file configs/COCO-Detection/faster_rcnn_R_50_FPN_1x.yaml
+```
+
+3. what I observed (including the full logs):
+Final result after 90,000 iterations:
+```
+[32m[01/05 18:28:18 d2.evaluation.coco_evaluation]: [0mEvaluation results for bbox: 
+|   AP   |  AP50  |  AP75  |  APs   |  APm   |  APl   |
+|:------:|:------:|:------:|:------:|:------:|:------:|
+| 33.551 | 53.341 | 35.969 | 18.661 | 36.469 | 43.063 |
+```
+I also compared the training loss of my experiment azureml (using 4 K80) with the [official metrics](https://dl.fbaipublicfiles.com/detectron2/COCO-Detection/faster_rcnn_R_50_FPN_1x/137257794/metrics.json)
+![total_loss](https://user-images.githubusercontent.com/16140400/71884790-43e1f480-3139-11ea-917f-8f54db470d68.png)
+![loss_cls](https://user-images.githubusercontent.com/16140400/71884964-9e7b5080-3139-11ea-9050-0a2952a52690.png)
+![loss_reg](https://user-images.githubusercontent.com/16140400/71884966-a1764100-3139-11ea-8a0a-f7808ec6a08e.png)
+
+The full log is here: [loss-4gpu.log](https://github.com/facebookresearch/detectron2/files/4029887/loss-4gpu.log)
+
+## What I tried to understand why
+1. Investigation on influence of GPU numbers
+At first I thought that it was because of the batch size had changed when changing `num-gpus` from 8 to 4. However the full config in the log indicates the same batch size (`IMS_PER_BATCH: 16`). 
+Secondly, since the only difference is the number of GPUs (maybe I am wrong), I re-ran the same experiment with different number of GPUs for 10k iterations and compared with the [official metrics](https://dl.fbaipublicfiles.com/detectron2/COCO-Detection/faster_rcnn_R_50_FPN_1x/137257794/metrics.json).
+![total_loss_2gpu_4gpu_8gpu_10k](https://user-images.githubusercontent.com/16140400/71885898-96241500-313b-11ea-9bb2-00094cc223b0.png)
+The loss curve shows that my problem is independent of GPU numbers.
+
+2. Investigation on other baselines
+Last but not least, I tried another baseline: [mask_rcnn_R_50_FPN_1x of COCO Instance Segmentation Baselines with Mask R-CNN](https://github.com/facebookresearch/detectron2/blob/master/MODEL_ZOO.md#coco-instance-segmentation-baselines-with-mask-r-cnn). And the similar performance drop happened again, around **4 AP point drop** compared to the reference (38.6 box AP and 35.2 mask AP) 
+
+My result: 
+```
+COCO Evaluation results for bbox:
+|   AP   |  AP50  |  AP75  |  APs   |  APm   |  APl   |
+|:------:|:------:|:------:|:------:|:------:|:------:|
+| 34.483 | 54.024 | 37.521 | 19.586 | 36.835 | 44.503 |
+
+COCO Evaluation results for segm:
+|   AP   |  AP50  |  AP75  |  APs   |  APm   |  APl   |
+|:------:|:------:|:------:|:------:|:------:|:------:|
+| 31.698 | 51.398 | 33.640 | 14.372 | 33.611 | 45.871 |
+```
+My log: [loss-4gpu-mrcnn.txt](https://github.com/facebookresearch/detectron2/files/4030028/loss-4gpu-mrcnn.txt)
+
+
+## Environment:
+```
+(py36) root@e07abda472cc:/ai-detectron2# python -m detectron2.utils.collect_env
+------------------------  -------------------------------------------------------------------
+sys.platform              linux
+Python                    3.6.9 |Anaconda, Inc.| (default, Jul 30 2019, 19:07:31) [GCC 7.3.0]
+Numpy                     1.15.0
+Detectron2 Compiler       GCC 5.4
+Detectron2 CUDA Compiler  10.1
+DETECTRON2_ENV_MODULE     <not set>
+PyTorch                   1.3.1
+PyTorch Debug Build       False
+torchvision               0.4.2
+CUDA available            True
+GPU 0,1                   Tesla K80
+CUDA_HOME                 /usr/local/cuda
+NVCC                      Cuda compilation tools, release 10.1, V10.1.243
+Pillow                    5.2.0
+cv2                       4.1.0
+------------------------  -------------------------------------------------------------------
+PyTorch built with:
+  - GCC 7.3
+  - Intel(R) Math Kernel Library Version 2019.0.4 Product Build 20190411 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v0.20.5 (Git Hash 0125f28c61c1f822fd48570b4c1066f96fcb9b2e)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - NNPACK is enabled
+  - CUDA Runtime 10.1
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_37,code=compute_37
+  - CuDNN 7.6.3
+  - Magma 2.5.1
+  - Build settings: BLAS=MKL, BUILD_NAMEDTENSOR=OFF, BUILD_TYPE=Release, CXX_FLAGS= -Wno-deprecated -fvisibility-inlines-hidden -fopenmp -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -O2 -fPIC -Wno-narrowing -Wall -Wextra -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wno-unused-result -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Wno-stringop-overflow, DISABLE_NUMA=1, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, USE_CUDA=True, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, USE_STATIC_DISPATCH=OFF, 
+
+```
+

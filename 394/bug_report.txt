@@ -1,0 +1,62 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7837
+
+TITLE
+[BUG] Gradient norm abnormally increases when training with ZeRO-0
+
+BODY
+### Problem Description
+
+When training with **ZeRO-0**, the **gradient norm abnormally increases**; however, under **identical configurations**, switching only the ZeRO stage to **ZeRO-1, ZeRO-2, or ZeRO-3** results in normal gradient behavior.
+
+#### Gradient Norm Comparison
+
+- **With ZeRO-0:**
+
+  ![ZeRO-0 Gradient](https://github.com/user-attachments/assets/046117dd-8477-46c7-a9f8-7ee592d8453a)
+
+- **With ZeRO-1/2/3:**
+
+  ![ZeRO-1/2/3 Gradients](https://github.com/user-attachments/assets/469578ee-bb8a-4c6d-b89b-0059326c9d95)
+
+> The only variable is the DeepSpeed ZeRO stage configuration. All other settings—including model architecture, data, optimizer, learning rate, and batch size—are identical.  
+> This suggests that ZeRO-0 may have an issue in gradient computation, synchronization, or logging.
+
+---
+
+### Reproduction Steps
+
+1. **Clone the repository and set up the environment**
+   ```bash
+   git clone https://github.com/wxhcore/bumblecore.git
+   cd bumblecore
+   conda create -n bumblecore_env python=3.10 -y
+   conda activate bumblecore_env
+   pip install -e .
+   ```
+
+2. **Modify the pretraining script to enable ZeRO-0**
+   
+   Edit `./scripts/pretrain.sh` to include:
+   ```bash
+   --deepspeed_config_path ./configs/deepspeed/ds_z0_config.json \
+   ```
+
+3. **Start training**
+   ```bash
+   bash scripts/pretrain.sh
+   ```
+
+4. **Observe gradient norm logs**  
+   The gradient norm rapidly increases (as shown in the first image).
+
+5. **Switch to ZeRO-1/2/3 configurations for comparison**  
+   Replace the config file with `ds_z1_config.json`, `ds_z2_config.json`, or `ds_z3_config.json`. The gradients remain stable.
+
+> All ZeRO configuration files are located at: [configs/deepspeed](https://github.com/wxhcore/bumblecore/tree/main/configs/deepspeed)
+
+---
+
+### Expected Behavior
+
+Under identical conditions, gradient behavior should be consistent across different ZeRO stages.  
+In particular, **ZeRO-0 (no sharding, equivalent to standard DDP)** should exhibit the same gradient dynamics as regular distributed training.

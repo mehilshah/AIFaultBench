@@ -1,0 +1,64 @@
+Title: Provide a more descriptive error message when Regex is is not supported
+Date: 2025-03-27T14:56:52+00:00
+URL: https://github.com/sdv-dev/SDV/issues/2434
+
+Description:
+### Problem Description
+Currently, SDV does not support Regexes with sub-patterns that are used to indicate "or" logic. For example the following regex format strings are not supported:
+
+- `'(10|20|30)[0-9]{4}'`
+- `'(?:10|20|30)[0-9]{4}'`
+
+Currently, the metadata for these regex patterns validates, and I am able to successfully instantiate a synthesizer with it. However, it errors during `fit`.
+
+```python
+import pandas as pd
+
+from sdv.metadata import Metadata
+from sdv.single_table import GaussianCopulaSynthesizer
+
+metadata = Metadata.load_from_dict({
+    'tables': {
+        'table': {
+            'columns': {
+                'id': { 'sdtype': 'id', 'regex_format': '(10|20|30)[0-9]{4}'},
+                'A': { 'sdtype': 'numerical'}
+            }
+        }
+    }
+})
+
+data = pd.DataFrame(data={
+    'id': ['101234', '201234', '301234', '100123', '200123'],
+    'A': [0, 1, 2, 3, 4]
+})
+
+synthesizer = GaussianCopulaSynthesizer(metadata)
+synthesizer.fit(data)
+```
+```
+KeyError: SUBPATTERN
+```
+
+Note that if I change the `regex_format` to `'(?:10|20|30)[0-9]{4}'`, then it errors at the same spot with a different type of KeyError:
+
+```
+KeyError: BRANCH
+```
+
+### Expected behavior
+I expect to have a more clear error message _upfront_ if the regex format is not supported. This error message should happen when I instantiate the synthesizer.
+
+```python
+synthesizer = GaussianCopulaSynthesizer(metadata)
+```
+```
+SynthesizerInputError: SDV synthesizers do not currently support complex regex formats such as 
+'(10|20|30)[0-9]{4}', which you have provided for table 'table', column 'id'. Please use a simplified format 
+or update to a different sdtype.
+```
+
+_Note that the `metadata.validate()` call should still work, because nothing is technically wrong with the Regex. Just that the SDV synthesizers do not support it yet._
+
+### Additional context
+All SDV synthesizers in public and enterprise should have this behavior. This includes DayZSynthesizer as well!

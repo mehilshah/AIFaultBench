@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "KeyError reproduced as expected: KeyError(0). After `_create_fp16_sub_groups`, sub_group_to_param_num={}; the first bucket reduction set _cur_bucket_index=0 and then indexed the empty map.",
+  "steps": [
+    "Create a single dummy parameter and split it with `_create_fp16_sub_groups`; it returns 1 subgroup(s).",
+    "Observe that `sub_group_to_param_num` stays empty: {}.",
+    "Call `reduce_independent_p_g_buckets_and_remove_grads` for that parameter and hit `KeyError: 0`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

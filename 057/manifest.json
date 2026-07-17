@@ -1,0 +1,13 @@
+{
+  "bug_id": "057",
+  "issue_url": "https://github.com/keras-team/keras-io/issues/1665",
+  "library_name": "keras",
+  "library_version": "2.14.0",
+  "reproducible": true,
+  "primary_failure": "ImportError: cannot import name 'ops' from 'keras'",
+  "reproduction_command": "bash run_repro.sh",
+  "notes": [
+    "The failure occurs before any dataset download or model training.",
+    "The pinned environment uses TensorFlow 2.14.0 and numpy<2 to avoid unrelated import failures on Python 3.11."
+  ]
+}

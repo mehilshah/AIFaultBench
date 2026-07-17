@@ -1,0 +1,8 @@
+{
+  "bug_id": "311",
+  "issue_url": "https://github.com/sdv-dev/SDV/issues/2856",
+  "library_name": "SDV",
+  "reproduction_command": "bash run_repro.sh",
+  "reproducible": true,
+  "summary": "OneHotEncoding causes the multi-table diagnostic report's TableStructure score for the constrained Actions table to drop below 1.0."
+}

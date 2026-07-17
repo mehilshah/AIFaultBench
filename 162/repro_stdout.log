@@ -1,0 +1,2 @@
+Running: docker pull quay.io/jupyter/scipy-notebook:hub-4.1.6
+docker pull exited with 1

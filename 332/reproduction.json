@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "In the bundled run, every attn2 processor stayed as IPAdapterWrapper before and after the forward pass, the module-level processor remained IPAdapterWrapper, and the wrapper executed 4 times. See repro_stdout.log.",
+  "steps": [
+    "Create a clean Python 3.12 virtualenv and install the pinned dependencies from requirements.txt.",
+    "Set PYTHONPATH to codebase/src and run repro.py through run_repro.sh.",
+    "Compare the attn2 processor mapping before and after one UNet2DConditionModel forward pass."
+  ],
+  "blocking_reason": "The reported processor overwrite does not occur in this checkout; the injected custom wrapper is preserved across the forward pass.",
+  "reproduction_command": "./setup_env.sh && ./run_repro.sh"
+}

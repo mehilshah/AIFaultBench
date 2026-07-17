@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "062/repro.py", line 29, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "062/repro.py", line 23, in main
+    all_data = train_df.append(test_df)
+               ^^^^^^^^^^^^^^^
+  File "062/.venv/lib/python3.12/site-packages/pandas/core/generic.py", line 6299, in __getattr__
+    return object.__getattribute__(self, name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DataFrame' object has no attribute 'append'. Did you mean: '_append'?

@@ -1,0 +1,19 @@
+{
+  "True": {
+    "ok": true,
+    "shape": [
+      3,
+      2048
+    ]
+  },
+  "olora": {
+    "error": "RuntimeError: mat1 and mat2 shapes cannot be multiplied (3x2048 and 1x1)",
+    "ok": false,
+    "traceback": "Traceback (most recent call last):\n  File \"337/repro.py\", line 50, in main\n    out = run_case(init_mode)\n          ^^^^^^^^^^^^^^^^^^^\n  File \"337/repro.py\", line 42, in run_case\n    y = peft_layer(x)\n        ^^^^^^^^^^^^^\n  File \"337/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1553, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"337/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1562, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"337/codebase/src/peft/tuners/lora/bnb.py\", line 489, in forward\n    output = lora_B(lora_A(dropout(x))) * scaling\n                    ^^^^^^^^^^^^^^^^^^\n  File \"337/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1553, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"337/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1562, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"337/.venv/lib/python3.12/site-packages/torch/nn/modules/linear.py\", line 117, in forward\n    return F.linear(input, self.weight, self.bias)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: mat1 and mat2 shapes cannot be multiplied (3x2048 and 1x1)\n"
+  },
+  "pissa": {
+    "error": "RuntimeError: mat1 and mat2 shapes cannot be multiplied (3x2048 and 1x1)",
+    "ok": false,
+    "traceback": "Traceback (most recent call last):\n  File \"337/repro.py\", line 50, in main\n    out = run_case(init_mode)\n          ^^^^^^^^^^^^^^^^^^^\n  File \"337/repro.py\", line 42, in run_case\n    y = peft_layer(x)\n        ^^^^^^^^^^^^^\n  File \"337/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1553, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"337/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1562, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"337/codebase/src/peft/tuners/lora/bnb.py\", line 489, in forward\n    output = lora_B(lora_A(dropout(x))) * scaling\n                    ^^^^^^^^^^^^^^^^^^\n  File \"337/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1553, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"337/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1562, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"337/.venv/lib/python3.12/site-packages/torch/nn/modules/linear.py\", line 117, in forward\n    return F.linear(input, self.weight, self.bias)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: mat1 and mat2 shapes cannot be multiplied (3x2048 and 1x1)\n"
+  }
+}

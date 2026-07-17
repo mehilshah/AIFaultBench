@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "083/repro.py", line 22, in main
+    module.CrossViT(
+  File "083/codebase/vit_pytorch/cross_vit.py", line 232, in __init__
+    self.multi_scale_encoder = MultiScaleEncoder(
+                               ^^^^^^^^^^^^^^^^^^
+  File "083/codebase/vit_pytorch/cross_vit.py", line 154, in __init__
+    CrossTransformer(sm_dim = sm_dim, lg_dim = lg_dim, depth = cross_attn_depth, heads = cross_attn_heads, dim_head = cross_attn_dim_head, dropout = dropout)
+  File "083/codebase/vit_pytorch/cross_vit.py", line 118, in __init__
+    ProjectInOut(lg_dim, sm_dim, ttention(sm_dim, heads = heads, dim_head = dim_head, dropout = dropout))
+                                 ^^^^^^^^
+NameError: name 'ttention' is not defined. Did you mean: 'Attention'?

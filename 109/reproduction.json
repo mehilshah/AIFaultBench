@@ -1,0 +1,13 @@
+{
+  "reproducible": true,
+  "evidence": "Running the local repro with PrefixTuning and BatchSplit(batch_sizes=[2, 0]) raises RuntimeError: Sizes of tensors must match except in dimension 2. Expected size 2 but got size 0 for tensor number 1 in the list at codebase/src/adapters/methods/prefix_tuning.py:529. The reversed control case BatchSplit(batch_sizes=[0, 2]) completes successfully with logits shape (2, 2).",
+  "steps": [
+    "Create BertForSequenceClassification with BertConfig(num_hidden_layers=2).",
+    "Call adapters.init(model) and add two PrefixTuning adapters named a and b.",
+    "Activate ac.BatchSplit('a', 'b', batch_sizes=[2, 0]) and run a forward pass with input_ids shaped (2, 128).",
+    "Observe the RuntimeError from torch.cat in PrefixTuningLayer.compose_single.",
+    "Verify the control case BatchSplit('a', 'b', batch_sizes=[0, 2]) succeeds."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

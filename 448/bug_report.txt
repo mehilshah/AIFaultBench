@@ -1,0 +1,324 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38497
+
+TITLE
+[Pallas] interpret=True silently drops intermediate block writes (outputs NaN) when tiling last dimension with >=3 blocks
+
+BODY
+### Description
+
+### Summary
+When using `jax.experimental.pallas.pallas_call` with `interpret=True`, writing to the output array fails silently for intermediate grid cells if the array is tiled along its last dimension with 3 or more blocks. 
+
+The first and last blocks write perfectly, but all middle blocks are lost and result in `NaN`s in the output. This breaks local testing/simulation of kernels that rely on column/block tiling (such as FP8 block quantization).
+
+### Trigger Conditions
+The bug consistently triggers when **all** of the following are true:
+1. `interpret=True` is used.
+2. Tiling occurs along the last dimension (`block_shape[-1] < array_shape[-1]`).
+3. The grid produces 3 or more blocks along that dimension (`array_shape[-1] / block_shape[-1] >= 3`).
+
+### Observed Behavior (e.g., 4 blocks of 128 elements)
+* Block 0 (First): ✓ Written correctly
+* Block 1 (Middle): ✗ **NaN (write silently dropped)**
+* Block 2 (Middle): ✗ **NaN (write silently dropped)**
+* Block 3 (Last): ✓ Written correctly
+
+### Expected Behavior
+All blocks should be written correctly to the output array without dropping data or yielding `NaN`s, matching the behavior of actual hardware execution (e.g., TPU) where this kernel works perfectly.
+
+```python
+#!/usr/bin/env python3
+"""
+Trigger condition:
+  - block_shape[-1] < array_shape[-1]
+  - array_shape[-1] / block_shape[-1] >= 3
+  - interpret=True
+
+Related: https://github.com/jax-ml/jax/issues/31395
+"""
+
+import os
+os.environ["JAX_PLATFORMS"] = "cpu"
+
+import jax
+import jax.numpy as jnp
+import jax.experimental.pallas as pl
+
+
+def copy_kernel(x_ref, out_ref):
+    """Trivial kernel — copies input to output. No computation."""
+    out_ref[...] = x_ref[...]
+
+
+def block_quantize_kernel(x_ref, out_ref, scale_ref):
+    """FP8 block quantization kernel — a real-world use case."""
+    x_block = x_ref[...]
+    abs_max = jnp.max(jnp.abs(x_block))
+    fp8_min = jnp.finfo(jnp.float8_e4m3fn).smallest_subnormal.astype(abs_max.dtype)
+    scale = jnp.maximum(abs_max, fp8_min) / 448
+    x_fp8 = jnp.clip(x_block / scale, -448, 448).astype(jnp.float8_e4m3fn)
+    out_ref[...] = x_fp8
+    scale_ref[...] = scale.reshape(1, 1).astype(jnp.bfloat16)
+
+
+def run_copy_test(shape, block_size, label):
+    """Run the trivial copy kernel and check for NaN."""
+    N, C = shape
+    n_blocks = C // block_size
+
+    x = jnp.ones(shape, dtype=jnp.bfloat16)
+
+    out = pl.pallas_call(
+        copy_kernel,
+        out_shape=jax.ShapeDtypeStruct(shape, jnp.bfloat16),
+        grid=(N, n_blocks),
+        in_specs=[pl.BlockSpec(
+            index_map=lambda i, j: (i, j * block_size),
+            block_shape=(1, block_size),
+        )],
+        out_specs=pl.BlockSpec(
+            index_map=lambda i, j: (i, j * block_size),
+            block_shape=(1, block_size),
+        ),
+        interpret=True,
+    )(x)
+
+    has_nan = bool(jnp.isnan(out).any())
+    nan_count = int(jnp.isnan(out).sum()) if has_nan else 0
+    status = f"✗ NaN ({nan_count}/{out.size} elements)" if has_nan else "✓ OK"
+    print(f"  {label:<50s} blocks={n_blocks:<3d} {status}")
+    return has_nan
+
+
+def run_quantize_test(C, block_size=128):
+    """Run the FP8 quantize kernel — shows the bug in a real-world scenario."""
+    x = jnp.ones((1, C), dtype=jnp.bfloat16) * 42.0
+    N = 1
+    n_blocks = C // block_size
+
+    out_fp8, scales = pl.pallas_call(
+        block_quantize_kernel,
+        out_shape=(
+            jax.ShapeDtypeStruct((N, C), jnp.float8_e4m3fn),
+            jax.ShapeDtypeStruct((N, n_blocks), jnp.bfloat16),
+        ),
+        grid=(N, n_blocks),
+        in_specs=[pl.BlockSpec(
+            index_map=lambda i, j: (i, j * block_size),
+            block_shape=(1, block_size),
+        )],
+        out_specs=[
+            pl.BlockSpec(
+                index_map=lambda i, j: (i, j * block_size),
+                block_shape=(1, block_size),
+            ),
+            pl.BlockSpec(
+                index_map=lambda i, j: (i, j),
+                block_shape=(1, 1),
+            ),
+        ],
+        interpret=True,
+    )(x)
+
+    has_nan = bool(jnp.isnan(out_fp8).any())
+    nan_count = int(jnp.isnan(out_fp8).sum()) if has_nan else 0
+    status = f"✗ NaN ({nan_count}/{out_fp8.size} elements)" if has_nan else "✓ OK"
+    print(f"  FP8 quantize  C={C:<5d} block_size={block_size:<4d}  blocks={n_blocks:<3d} {status}")
+    return has_nan
+
+
+def main():
+    print(f"JAX version: {jax.__version__}")
+    print(f"Platform:    {jax.default_backend()}")
+    print()
+
+    # ── Test 1: Trivial copy kernel, varying last-dim tile count ──
+    print("=" * 72)
+    print("TEST 1: Trivial copy kernel (out_ref[...] = x_ref[...])")
+    print("        Tiling along the LAST dimension with block_size=128")
+    print("=" * 72)
+
+    block_size = 128
+    for n_blocks in [1, 2, 3, 4, 8]:
+        C = block_size * n_blocks
+        run_copy_test((1, C), block_size, f"shape=(1, {C})")
+
+    # ── Test 2: Multiple rows — bug is per-row ──
+    print()
+    print("=" * 72)
+    print("TEST 2: Multiple rows — bug affects every row independently")
+    print("=" * 72)
+
+    for N in [1, 2, 4]:
+        run_copy_test((N, 512), 128, f"shape=({N}, 512)")
+
+    # ── Test 3: Row tiling vs column tiling ──
+    print()
+    print("=" * 72)
+    print("TEST 3: Row tiling (block covers full row) vs column tiling")
+    print("        Row tiling works. Column tiling with 3+ blocks fails.")
+    print("=" * 72)
+
+    # Row tiling: grid iterates rows, each block covers the full row width
+    x = jnp.ones((4, 128), dtype=jnp.bfloat16)
+    out = pl.pallas_call(
+        copy_kernel,
+        out_shape=jax.ShapeDtypeStruct((4, 128), jnp.bfloat16),
+        grid=(4,),
+        in_specs=[pl.BlockSpec(index_map=lambda i: (i, 0), block_shape=(1, 128))],
+        out_specs=pl.BlockSpec(index_map=lambda i: (i, 0), block_shape=(1, 128)),
+        interpret=True,
+    )(x)
+    status = "✗ NaN" if bool(jnp.isnan(out).any()) else "✓ OK"
+    print(f"  Row tiling:    (4, 128) grid=(4,)   block=(1, 128)    {status}")
+
+    # Column tiling: grid iterates columns, 4 blocks per row
+    x2 = jnp.ones((1, 512), dtype=jnp.bfloat16)
+    out2 = pl.pallas_call(
+        copy_kernel,
+        out_shape=jax.ShapeDtypeStruct((1, 512), jnp.bfloat16),
+        grid=(4,),
+        in_specs=[pl.BlockSpec(index_map=lambda j: (0, j * 128), block_shape=(1, 128))],
+        out_specs=pl.BlockSpec(index_map=lambda j: (0, j * 128), block_shape=(1, 128)),
+        interpret=True,
+    )(x2)
+    status = "✗ NaN" if bool(jnp.isnan(out2).any()) else "✓ OK"
+    print(f"  Column tiling: (1, 512) grid=(4,)   block=(1, 128)    {status}")
+
+    # ── Test 4: Real-world FP8 block quantization kernel ──
+    print()
+    print("=" * 72)
+    print("TEST 4: Real-world FP8 block quantization kernel")
+    print("=" * 72)
+
+    for C in [128, 256, 384, 512, 1024]:
+        run_quantize_test(C)
+
+    # ── Test 5: Where exactly are the NaN? ──
+    print()
+    print("=" * 72)
+    print("TEST 5: Which blocks survive? (1, 512) with 4 blocks of 128")
+    print("=" * 72)
+
+    x = jnp.ones((1, 512), dtype=jnp.bfloat16)
+    out = pl.pallas_call(
+        copy_kernel,
+        out_shape=jax.ShapeDtypeStruct((1, 512), jnp.bfloat16),
+        grid=(1, 4),
+        in_specs=[pl.BlockSpec(index_map=lambda i, j: (i, j * 128), block_shape=(1, 128))],
+        out_specs=pl.BlockSpec(index_map=lambda i, j: (i, j * 128), block_shape=(1, 128)),
+        interpret=True,
+    )(x)
+
+    for b in range(4):
+        block = out[0, b * 128 : (b + 1) * 128]
+        is_nan = bool(jnp.isnan(block).any())
+        is_ok = bool((block == 1.0).all()) if not is_nan else False
+        label = "NaN (write lost)" if is_nan else ("correct" if is_ok else "wrong values")
+        print(f"  Block {b} [idx {b*128:>3d}–{(b+1)*128-1:>3d}]: {label}")
+
+    # ── Summary ──
+    print()
+    print("=" * 72)
+    print("SUMMARY")
+    print("=" * 72)
+    print("""
+  Bug: pallas_call(interpret=True) silently drops output writes for
+       intermediate grid cells when tiling along the last array dimension
+       with 3 or more blocks.
+
+  Trigger:
+    - block_shape[-1] < array_shape[-1]
+    - array_shape[-1] / block_shape[-1] >= 3
+
+  Behavior:
+    - First block: ✓ written correctly
+    - Last block:  ✓ written correctly
+    - Middle blocks: ✗ NaN (writes silently dropped)
+
+  Workaround: use pure JAX (reshape + vectorized ops) when interpret=True.
+  The Pallas kernel works correctly on TPU without interpret mode.
+""")
+
+
+if __name__ == "__main__":
+    main()
+
+```
+```
+JAX version: 0.10.2.dev20260616+48f94e65d
+Platform:    cpu
+
+========================================================================
+TEST 1: Trivial copy kernel (out_ref[...] = x_ref[...])
+        Tiling along the LAST dimension with block_size=128
+========================================================================
+  shape=(1, 128)                                     blocks=1   ✓ OK
+  shape=(1, 256)                                     blocks=2   ✓ OK
+  shape=(1, 384)                                     blocks=3   ✗ NaN (128/384 elements)
+  shape=(1, 512)                                     blocks=4   ✗ NaN (256/512 elements)
+  shape=(1, 1024)                                    blocks=8   ✗ NaN (768/1024 elements)
+
+========================================================================
+TEST 2: Multiple rows — bug affects every row independently
+========================================================================
+  shape=(1, 512)                                     blocks=4   ✗ NaN (256/512 elements)
+  shape=(2, 512)                                     blocks=4   ✗ NaN (512/1024 elements)
+  shape=(4, 512)                                     blocks=4   ✗ NaN (1024/2048 elements)
+
+========================================================================
+TEST 3: Row tiling (block covers full row) vs column tiling
+        Row tiling works. Column tiling with 3+ blocks fails.
+========================================================================
+  Row tiling:    (4, 128) grid=(4,)   block=(1, 128)    ✓ OK
+  Column tiling: (1, 512) grid=(4,)   block=(1, 128)    ✗ NaN
+
+========================================================================
+TEST 4: Real-world FP8 block quantization kernel
+========================================================================
+  FP8 quantize  C=128   block_size=128   blocks=1   ✓ OK
+  FP8 quantize  C=256   block_size=128   blocks=2   ✓ OK
+  FP8 quantize  C=384   block_size=128   blocks=3   ✗ NaN (128/384 elements)
+  FP8 quantize  C=512   block_size=128   blocks=4   ✗ NaN (256/512 elements)
+  FP8 quantize  C=1024  block_size=128   blocks=8   ✗ NaN (768/1024 elements)
+
+========================================================================
+TEST 5: Which blocks survive? (1, 512) with 4 blocks of 128
+========================================================================
+  Block 0 [idx   0–127]: correct
+  Block 1 [idx 128–255]: NaN (write lost)
+  Block 2 [idx 256–383]: NaN (write lost)
+  Block 3 [idx 384–511]: correct
+
+========================================================================
+SUMMARY
+========================================================================
+
+  Bug: pallas_call(interpret=True) silently drops output writes for
+       intermediate grid cells when tiling along the last array dimension
+       with 3 or more blocks.
+
+  Trigger:
+    - block_shape[-1] < array_shape[-1]
+    - array_shape[-1] / block_shape[-1] >= 3
+
+  Behavior:
+    - First block: ✓ written correctly
+    - Last block:  ✓ written correctly
+    - Middle blocks: ✗ NaN (writes silently dropped)
+
+  Workaround: use pure JAX (reshape + vectorized ops) when interpret=True.
+  The Pallas kernel works correctly on TPU without interpret mode.
+```
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+```
+jax:    0.10.2.dev20260616+48f94e65d
+jaxlib: 0.10.1
+numpy:  2.4.6
+python: 3.13.11 (main, Dec 17 2025, 21:08:16) [Clang 21.1.4 ]
+device info: cpu-1, 1 local devices"
+process_count: 1
+platform: uname_result(system='Linux', node='archlinux', release='7.0.3-arch1-1', version='#1 SMP PREEMPT_DYNAMIC Thu, 30 Apr 2026 18:41:12 +0000', machine='x86_64')
+```

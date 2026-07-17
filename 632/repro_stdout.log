@@ -1,0 +1,133 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (24.0)
+Collecting pip
+  Downloading pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
+Collecting setuptools
+  Downloading setuptools-83.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting wheel
+  Downloading wheel-0.47.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting packaging>=24.0 (from wheel)
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 24.4 MB/s eta 0:00:00
+Downloading setuptools-83.0.0-py3-none-any.whl (1.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 53.1 MB/s eta 0:00:00
+Downloading wheel-0.47.0-py3-none-any.whl (32 kB)
+Downloading packaging-26.2-py3-none-any.whl (100 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.2/100.2 kB 484.1 MB/s eta 0:00:00
+Installing collected packages: setuptools, pip, packaging, wheel
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed packaging-26.2 pip-26.1.2 setuptools-83.0.0 wheel-0.47.0
+Looking in indexes: https://pypi.org/simple, https://download.pytorch.org/whl/cpu
+Collecting torch==2.5.1+cpu (from -r 632/requirements.txt (line 2))
+  Downloading torch-2.5.1%2Bcpu-cp312-cp312-linux_x86_64.whl (174.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 174.6/174.6 MB 100.2 MB/s  0:00:01
+Collecting numpy (from -r 632/requirements.txt (line 3))
+  Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting aiohttp (from -r 632/requirements.txt (line 4))
+  Downloading aiohttp-3.14.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (8.3 kB)
+Collecting psutil (from -r 632/requirements.txt (line 5))
+  Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+Collecting pyparsing (from -r 632/requirements.txt (line 6))
+  Downloading pyparsing-3.3.2-py3-none-any.whl.metadata (5.8 kB)
+Collecting requests (from -r 632/requirements.txt (line 7))
+  Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+Collecting tqdm (from -r 632/requirements.txt (line 8))
+  Downloading tqdm-4.68.4-py3-none-any.whl.metadata (57 kB)
+Collecting filelock (from torch==2.5.1+cpu->-r 632/requirements.txt (line 2))
+  Downloading filelock-3.30.2-py3-none-any.whl.metadata (2.0 kB)
+Collecting typing-extensions>=4.8.0 (from torch==2.5.1+cpu->-r 632/requirements.txt (line 2))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting networkx (from torch==2.5.1+cpu->-r 632/requirements.txt (line 2))
+  Downloading networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+Collecting jinja2 (from torch==2.5.1+cpu->-r 632/requirements.txt (line 2))
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting fsspec (from torch==2.5.1+cpu->-r 632/requirements.txt (line 2))
+  Downloading fsspec-2026.6.0-py3-none-any.whl.metadata (10 kB)
+Requirement already satisfied: setuptools in ./.venv/lib/python3.12/site-packages (from torch==2.5.1+cpu->-r 632/requirements.txt (line 2)) (83.0.0)
+Collecting sympy==1.13.1 (from torch==2.5.1+cpu->-r 632/requirements.txt (line 2))
+  Downloading sympy-1.13.1-py3-none-any.whl.metadata (12 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy==1.13.1->torch==2.5.1+cpu->-r 632/requirements.txt (line 2))
+  Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Collecting aiohappyeyeballs>=2.5.0 (from aiohttp->-r 632/requirements.txt (line 4))
+  Downloading aiohappyeyeballs-2.7.1-py3-none-any.whl.metadata (5.9 kB)
+Collecting aiosignal>=1.4.0 (from aiohttp->-r 632/requirements.txt (line 4))
+  Downloading aiosignal-1.4.0-py3-none-any.whl.metadata (3.7 kB)
+Collecting attrs>=17.3.0 (from aiohttp->-r 632/requirements.txt (line 4))
+  Downloading attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+Collecting frozenlist>=1.1.1 (from aiohttp->-r 632/requirements.txt (line 4))
+  Downloading frozenlist-1.8.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (20 kB)
+Collecting multidict<7.0,>=4.5 (from aiohttp->-r 632/requirements.txt (line 4))
+  Downloading multidict-6.7.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (5.3 kB)
+Collecting propcache>=0.2.0 (from aiohttp->-r 632/requirements.txt (line 4))
+  Downloading propcache-0.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (16 kB)
+Collecting yarl<2.0,>=1.17.0 (from aiohttp->-r 632/requirements.txt (line 4))
+  Downloading yarl-1.24.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (94 kB)
+Collecting idna>=2.0 (from yarl<2.0,>=1.17.0->aiohttp->-r 632/requirements.txt (line 4))
+  Downloading idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+Collecting charset_normalizer<4,>=2 (from requests->-r 632/requirements.txt (line 7))
+  Downloading charset_normalizer-3.4.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (41 kB)
+Collecting urllib3<3,>=1.26 (from requests->-r 632/requirements.txt (line 7))
+  Downloading urllib3-2.7.0-py3-none-any.whl.metadata (6.9 kB)
+Collecting certifi>=2023.5.7 (from requests->-r 632/requirements.txt (line 7))
+  Downloading certifi-2026.6.17-py3-none-any.whl.metadata (2.5 kB)
+Collecting MarkupSafe>=2.0 (from jinja2->torch==2.5.1+cpu->-r 632/requirements.txt (line 2))
+  Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Downloading sympy-1.13.1-py3-none-any.whl (6.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.2/6.2 MB 48.9 MB/s  0:00:00
+Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 76.7 MB/s  0:00:00
+Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 61.8 MB/s  0:00:00
+Downloading aiohttp-3.14.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 67.4 MB/s  0:00:00
+Downloading multidict-6.7.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (256 kB)
+Downloading yarl-1.24.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (105 kB)
+Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+Downloading pyparsing-3.3.2-py3-none-any.whl (122 kB)
+Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+Downloading charset_normalizer-3.4.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (224 kB)
+Downloading idna-3.18-py3-none-any.whl (65 kB)
+Downloading urllib3-2.7.0-py3-none-any.whl (131 kB)
+Downloading tqdm-4.68.4-py3-none-any.whl (676 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 676.6/676.6 kB 60.0 MB/s  0:00:00
+Downloading aiohappyeyeballs-2.7.1-py3-none-any.whl (15 kB)
+Downloading aiosignal-1.4.0-py3-none-any.whl (7.5 kB)
+Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+Downloading certifi-2026.6.17-py3-none-any.whl (133 kB)
+Downloading frozenlist-1.8.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (242 kB)
+Downloading propcache-0.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (61 kB)
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading filelock-3.30.2-py3-none-any.whl (94 kB)
+Downloading fsspec-2026.6.0-py3-none-any.whl (203 kB)
+Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Downloading networkx-3.6.1-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 64.0 MB/s  0:00:00
+Installing collected packages: mpmath, urllib3, typing-extensions, tqdm, sympy, pyparsing, psutil, propcache, numpy, networkx, multidict, MarkupSafe, idna, fsspec, frozenlist, filelock, charset_normalizer, certifi, attrs, aiohappyeyeballs, yarl, requests, jinja2, aiosignal, torch, aiohttp
+
+Successfully installed MarkupSafe-3.0.3 aiohappyeyeballs-2.7.1 aiohttp-3.14.1 aiosignal-1.4.0 attrs-26.1.0 certifi-2026.6.17 charset_normalizer-3.4.9 filelock-3.30.2 frozenlist-1.8.0 fsspec-2026.6.0 idna-3.18 jinja2-3.1.6 mpmath-1.3.0 multidict-6.7.1 networkx-3.6.1 numpy-2.5.1 propcache-0.5.2 psutil-7.2.2 pyparsing-3.3.2 requests-2.34.2 sympy-1.13.1 torch-2.5.1+cpu tqdm-4.68.4 typing-extensions-4.16.0 urllib3-2.7.0 yarl-1.24.2
+Obtaining file://632/codebase
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: torch-geometric
+  Building editable for torch-geometric (pyproject.toml): started
+  Building editable for torch-geometric (pyproject.toml): finished with status 'done'
+  Created wheel for torch-geometric: filename=torch_geometric-2.7.0-py3-none-any.whl size=16742 sha256=8b6a677dc1cfa7d223abc796bbeaa9cbec41aada115e928d8ee82d2ff04ea4a0
+  Stored in directory: /tmp/pip-ephem-wheel-cache-vxsgsnbn/wheels/03/07/4b/48fdf8a4b07e131bd4904f06d6b0595498f5a44ef3bb12d065
+Successfully built torch-geometric
+Installing collected packages: torch-geometric
+Successfully installed torch-geometric-2.7.0
+torch=2.5.1+cpu
+WITH_PYG_LIB=False
+WITH_TORCH_SPARSE=False
+loader=NeighborLoader()
+ImportError: 'NeighborSampler' requires either 'pyg-lib' or 'torch-sparse'

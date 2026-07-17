@@ -1,0 +1,61 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7718
+
+TITLE
+[BUG]Incorrect gradient computation in ZeRO-2 with DeepSpeed ≥ 0.17.6
+
+BODY
+### Describe the bug
+
+After upgrading DeepSpeed to version **≥ 0.17.6**, I observed **incorrect gradient computation** when using **ZeRO Stage 2 (zero2)** during training.
+
+To isolate the issue, I conducted three controlled experiments under identical conditions:
+- Same training code, hyperparameters, and dataset  
+- Fixed random seed (`seed=42`)  
+- PyTorch `2.7.1` and Transformers `4.57.3`
+
+#### Experimental Results
+
+**1. DeepSpeed < 0.17.6 + ZeRO-2** (expected behavior):
+```
+loss: 1.4401 | lr: 5.56e-06 | grad_norm: 4.7373 | epoch: 0.03
+loss: 1.3686 | lr: 1.11e-05 | grad_norm: 3.9810 | epoch: 0.06
+loss: 1.7664 | lr: 1.67e-05 | grad_norm: 6.0319 | epoch: 0.09
+loss: 1.8631 | lr: 2.22e-05 | grad_norm: 3.9356 | epoch: 0.12
+```
+
+**2. DeepSpeed ≥ 0.17.6 + ZeRO-2** (abnormal gradients):
+```
+loss: 1.4401 | lr: 5.56e-06 | grad_norm: 1.6262 | epoch: 0.03
+loss: 1.3686 | lr: 1.11e-05 | grad_norm: 1.4901 | epoch: 0.06
+loss: 1.7633 | lr: 1.67e-05 | grad_norm: 3.2463 | epoch: 0.09
+loss: 1.8681 | lr: 2.22e-05 | grad_norm: 2.0825 | epoch: 0.12
+```
+> Note: Loss values are numerically similar initially, but **gradient norms are significantly lower**.
+
+**3. DeepSpeed ≥ 0.17.6 + ZeRO-3** (works correctly):
+```
+loss: 1.4382 | lr: 5.56e-06 | grad_norm: 4.7749 | epoch: 0.03
+loss: 1.3666 | lr: 1.11e-05 | grad_norm: 3.8569 | epoch: 0.06
+loss: 1.7716 | lr: 1.67e-05 | grad_norm: 6.0011 | epoch: 0.09
+loss: 1.8621 | lr: 2.22e-05 | grad_norm: 3.8893 | epoch: 0.12
+```
+> ZeRO-3 behaves as expected, confirming the issue is specific to **ZeRO-2 in DeepSpeed ≥ 0.17.6**.
+
+#### Additional Validation
+
+To rule out issues in my custom training framework, I reproduced the experiment using **LLaMA-Factory**. The results were consistent:
+- With DeepSpeed < 0.17.6 + ZeRO-2 → normal loss curve 
+
+Moreover, **ZeRO-1 and ZeRO-3** with DeepSpeed ≥ 0.17.6 both produce correct gradients and loss curves, further isolating the regression to **ZeRO-2**.
+
+#### Visual Evidence
+
+ **Normal training (DeepSpeed < 0.17.6 + ZeRO-2):**  
+![Normal Loss Curve](https://github.com/user-attachments/assets/a1964576-8833-4b3a-8297-40b87170b941)
+
+ **Abnormal training (DeepSpeed ≥ 0.17.6 + ZeRO-2):**  
+![Degraded Loss Curve](https://github.com/user-attachments/assets/280ae91f-f41f-4ce0-be96-ea933b6cc666)
+
+The core issue: After the DeepSpeed version was upgraded to 0.17.6 or above, the gradient calculation in the ZeRO-2 optimization stage deviated.
+
+It is hoped that this report can help identify the problem. If more logs, minimized reproduction code or other environment information is needed, I can cooperate at any time.

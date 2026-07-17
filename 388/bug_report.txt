@@ -1,0 +1,263 @@
+# recovered-from-issue: https://github.com/pyg-team/pytorch_geometric/issues/10356
+
+TITLE
+Potential memory leak when loading graphs from disk
+
+BODY
+### 🐛 Describe the bug
+
+Hello, I have been trying to store my graphs in disk similarly to https://pytorch-geometric.readthedocs.io/en/2.5.3/notes/create_dataset.html#creating-larger-datasets. However, I have noticed that my CPU memory usage consistently increases every epoch.
+
+These are my Python and package versions:
+
+```
+python==3.13.2
+torch_geometric==2.6.1
+networkx==3.5
+torch==2.7.1
+torchvision==0.22.1
+torchaudio==2.7.1
+```
+
+This is my first attempt, in which I only construct the graphs when first called in the get method.
+
+```
+import os
+import gc
+import psutil
+import torch
+import torch_geometric
+
+class CustomDataset(torch_geometric.data.Dataset):
+  def __init__(self, root, num_graphs = 150):
+    self.num_graphs = num_graphs
+    self.data_dir = './data'
+    super().__init__(root)
+      
+  def len(self):
+    return self.num_graphs
+
+  def get(self, idx):
+    path = os.path.join(self.data_dir, f'{idx}.pt')
+    if os.path.exists(path):
+      return torch.load(path, weights_only = False)
+    else:
+      x = torch.randn((500, 1024))
+      edge_index = torch.randint(0, 500, (2, 1500))
+      y = torch.tensor([idx % 2], dtype=torch.long)
+      data = torch_geometric.data.Data(x = x, edge_index = edge_index, y = y)  
+      torch.save(data, path)
+      return data
+
+dataset = CustomDataset(root = 'data')
+loader = torch_geometric.loader.DataLoader(dataset, batch_size=16, shuffle=True, num_workers = 0)
+
+print(f"[BEFORE EPOCHS] Allocated: {(torch.cuda.memory_allocated() / (1024 ** 2)):.2f} MB, Reserved: {(torch.cuda.memory_reserved() / (1024 ** 2)):.2f} MB, CPU: {psutil.Process().memory_info().rss / 1024**2:.2f} MB", flush = True)
+for epoch in range(30):
+  for batch_idx, batch in enumerate(loader):
+    continue
+  print(f"[EPOCH {epoch}] Allocated: {(torch.cuda.memory_allocated() / (1024 ** 2)):.2f} MB, Reserved: {(torch.cuda.memory_reserved() / (1024 ** 2)):.2f} MB, CPU: {psutil.Process().memory_info().rss / 1024**2:.2f} MB", flush = True)
+```
+
+Which resulted in the following memory usage.
+
+```
+[BEFORE EPOCHS] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.00 MB
+[EPOCH 0] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 787.11 MB
+[EPOCH 1] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 934.07 MB
+[EPOCH 2] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 1281.57 MB
+[EPOCH 3] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 1592.57 MB
+[EPOCH 4] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 1903.57 MB
+[EPOCH 5] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 2214.57 MB
+[EPOCH 6] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 2525.57 MB
+[EPOCH 7] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 2836.57 MB
+[EPOCH 8] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 3147.57 MB
+[EPOCH 9] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 3458.57 MB
+[EPOCH 10] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 3769.57 MB
+[EPOCH 11] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 4080.57 MB
+[EPOCH 12] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 4391.57 MB
+[EPOCH 13] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 4702.57 MB
+[EPOCH 14] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 5013.07 MB
+[EPOCH 15] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 5324.07 MB
+[EPOCH 16] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 5635.07 MB
+[EPOCH 17] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 5946.07 MB
+[EPOCH 18] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 6257.07 MB
+[EPOCH 19] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 6568.07 MB
+[EPOCH 20] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 6879.07 MB
+[EPOCH 21] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 7190.07 MB
+[EPOCH 22] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 7501.07 MB
+[EPOCH 23] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 7812.07 MB
+[EPOCH 24] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 8123.07 MB
+[EPOCH 25] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 8434.07 MB
+[EPOCH 26] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 8744.57 MB
+[EPOCH 27] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 9046.07 MB
+[EPOCH 28] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 9345.57 MB
+[EPOCH 29] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 9642.57 MB
+```
+
+I also modified my code to construct all graphs outside of the get method, being closer to the implementation in the documentation.
+
+```
+import os
+import gc
+import psutil
+import torch
+import torch_geometric
+
+class CustomDataset(torch_geometric.data.Dataset):
+  def __init__(self, root, num_graphs = 150):
+    self.num_graphs = num_graphs
+    super().__init__(root)
+      
+  def len(self):
+    return self.num_graphs
+
+  @property
+  def processed_file_names(self):
+    return [f'{idx}.pt' for idx in range(self.num_graphs)]
+
+  def process(self):
+    for idx in range(self.num_graphs):
+      x = torch.randn((500, 1024))
+      edge_index = torch.randint(0, 500, (2, 1500))
+      y = torch.tensor([idx % 2], dtype=torch.long)
+      data = torch_geometric.data.Data(x = x, edge_index = edge_index, y = y)        
+      path = os.path.join(self.processed_dir, f'{idx}.pt')
+      torch.save(data, path)
+
+  def get(self, idx):
+    path = os.path.join(self.processed_dir, f'{idx}.pt')
+    data = torch.load(path, weights_only = False)
+    return data
+
+dataset = CustomDataset(root = 'data')
+loader = torch_geometric.loader.DataLoader(dataset, batch_size=16, shuffle=True, num_workers = 0)
+
+print(f"[BEFORE EPOCHS] Allocated: {(torch.cuda.memory_allocated() / (1024 ** 2)):.2f} MB, Reserved: {(torch.cuda.memory_reserved() / (1024 ** 2)):.2f} MB, CPU: {psutil.Process().memory_info().rss / 1024**2:.2f} MB", flush = True)
+for epoch in range(30):
+  for batch_idx, batch in enumerate(loader):
+    continue
+  print(f"[EPOCH {epoch}] Allocated: {(torch.cuda.memory_allocated() / (1024 ** 2)):.2f} MB, Reserved: {(torch.cuda.memory_reserved() / (1024 ** 2)):.2f} MB, CPU: {psutil.Process().memory_info().rss / 1024**2:.2f} MB", flush = True)
+```
+
+However, the problem persists.
+
+```
+Processing...
+Done!
+[BEFORE EPOCHS] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 766.81 MB
+[EPOCH 0] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 955.15 MB
+[EPOCH 1] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 1264.15 MB
+[EPOCH 2] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 1575.15 MB
+[EPOCH 3] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 1886.15 MB
+[EPOCH 4] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 2197.15 MB
+[EPOCH 5] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 2508.15 MB
+[EPOCH 6] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 2818.65 MB
+[EPOCH 7] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 3129.65 MB
+[EPOCH 8] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 3440.65 MB
+[EPOCH 9] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 3751.65 MB
+[EPOCH 10] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 4062.65 MB
+[EPOCH 11] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 4373.65 MB
+[EPOCH 12] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 4684.65 MB
+[EPOCH 13] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 4995.65 MB
+[EPOCH 14] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 5306.65 MB
+[EPOCH 15] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 5617.65 MB
+[EPOCH 16] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 5928.65 MB
+[EPOCH 17] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 6239.65 MB
+[EPOCH 18] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 6550.65 MB
+[EPOCH 19] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 6861.65 MB
+[EPOCH 20] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 7172.65 MB
+[EPOCH 21] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 7483.65 MB
+[EPOCH 22] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 7794.65 MB
+[EPOCH 23] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 8105.15 MB
+[EPOCH 24] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 8416.15 MB
+[EPOCH 25] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 8725.65 MB
+[EPOCH 26] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 9023.65 MB
+[EPOCH 27] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 9321.15 MB
+[EPOCH 28] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 9618.65 MB
+[EPOCH 29] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 9916.15 MB
+```
+
+I am unsure if am doing something wrong, or if PyG caches the data via the data loader, but this behaviour does not seem intentional given the documentation. I also tried calling del batch at the end of each batch-level loop iteration, followed by gc.collect() at the end of each epoch, but it made no difference.
+
+Any help would be much appreciated!
+
+### Versions
+
+Collecting environment information...
+PyTorch version: 2.7.1
+Is debug build: False
+CUDA used to build PyTorch: 12.6
+ROCM used to build PyTorch: N/A
+
+OS: Gentoo Linux (x86_64)
+GCC version: (Gentoo 12.3.1_p20230526 p2) 12.3.1 20230526
+Clang version: Could not collect
+CMake version: version 3.27.7
+Libc version: glibc-2.37
+
+Python version: 3.13.2 (main, Feb  5 2025, 15:09:29) [GCC 13.3.0] (64-bit runtime)
+Python platform: Linux-6.8.0-54-generic-x86_64-Intel-R-_Xeon-R-_Gold_6338_CPU_@_2.00GHz-with-glibc2.37
+Is CUDA available: True
+CUDA runtime version: 12.8.93
+CUDA_MODULE_LOADING set to: LAZY
+GPU models and configuration: GPU 0: NVIDIA L40S
+Nvidia driver version: 570.148.08
+cuDNN version: Could not collect
+Is XPU available: False
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+Is XNNPACK available: True
+
+CPU:
+Architecture:                         x86_64
+CPU op-mode(s):                       32-bit, 64-bit
+Address sizes:                        46 bits physical, 57 bits virtual
+Byte Order:                           Little Endian
+CPU(s):                               64
+On-line CPU(s) list:                  0-63
+Vendor ID:                            GenuineIntel
+Model name:                           Intel(R) Xeon(R) Gold 6338 CPU @ 2.00GHz
+CPU family:                           6
+Model:                                106
+Thread(s) per core:                   1
+Core(s) per socket:                   32
+Socket(s):                            2
+Stepping:                             6
+CPU(s) scaling MHz:                   39%
+CPU max MHz:                          3200.0000
+CPU min MHz:                          800.0000
+BogoMIPS:                             4000.00
+Flags:                                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 intel_ppin ssbd mba ibrs ibpb stibp ibrs_enhanced fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local split_lock_detect wbnoinvd dtherm ida arat pln pts avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg tme avx512_vpopcntdq la57 rdpid fsrm md_clear pconfig flush_l1d arch_capabilities
+L1d cache:                            3 MiB (64 instances)
+L1i cache:                            2 MiB (64 instances)
+L2 cache:                             80 MiB (64 instances)
+L3 cache:                             96 MiB (2 instances)
+NUMA node(s):                         4
+NUMA node0 CPU(s):                    0-15
+NUMA node1 CPU(s):                    16-31
+NUMA node2 CPU(s):                    32-47
+NUMA node3 CPU(s):                    48-63
+Vulnerability Gather data sampling:   Mitigation; Microcode
+Vulnerability Itlb multihit:          Not affected
+Vulnerability L1tf:                   Not affected
+Vulnerability Mds:                    Not affected
+Vulnerability Meltdown:               Not affected
+Vulnerability Mmio stale data:        Mitigation; Clear CPU buffers; SMT disabled
+Vulnerability Reg file data sampling: Not affected
+Vulnerability Retbleed:               Not affected
+Vulnerability Spec rstack overflow:   Not affected
+Vulnerability Spec store bypass:      Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:             Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:             Mitigation; Enhanced / Automatic IBRS; IBPB conditional; RSB filling; PBRSB-eIBRS SW sequence; BHI SW loop, KVM SW loop
+Vulnerability Srbds:                  Not affected
+Vulnerability Tsx async abort:        Not affected
+
+Versions of relevant libraries:
+[pip3] numpy==2.2.2+computecanada
+[pip3] torch==2.7.1+computecanada
+[pip3] torch_geometric==2.6.1+computecanada
+[pip3] torchaudio==2.7.1+computecanada
+[pip3] torchvision==0.22.1+computecanada
+[conda] Could not collect
+

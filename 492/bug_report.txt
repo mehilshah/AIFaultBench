@@ -1,0 +1,21 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/2040
+
+TITLE
+Update for TBIP notebook
+
+BODY
+### Bug Description
+The [example notebook for Text-Based Ideal Points](https://num.pyro.ai/en/stable/tutorials/tbip.html) uses an old version of numpyro (v0.10.1) which doesn't work anymore because the jax.util module imported by numpyro v0.10.1 has now been replaced by jax.extend.linear_util. 
+Hence the notebook doesn't work. 
+Cf. [this issue](https://github.com/keyonvafa/tbip/issues/17). 
+
+
+### Steps to Reproduce
+Run the notebook or just run: 
+```
+pip install numpyro==0.10.1
+import numpyro
+```
+
+### Solution
+Just update to `pip install numpyro==0.18.0` which runs without any issue. 

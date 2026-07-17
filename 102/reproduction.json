@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running ResidualSimVQ with quantize_dropout=True raises NameError: name 'return_loss' is not defined at codebase/vector_quantize_pytorch/residual_sim_vq.py:153.",
+  "steps": [
+    "Create and activate the local venv with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` to instantiate `ResidualSimVQ` and call its forward method.",
+    "Observe the traceback ending in `NameError: name 'return_loss' is not defined`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

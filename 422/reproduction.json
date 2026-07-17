@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "input_uri=s3://my-bucket/checkpoints/epoch=5.ckpt",
+    "pathlib_normalized=s3:/my-bucket/checkpoints/epoch=5.ckpt",
+    "message=The provided path is not a valid DeepSpeed checkpoint: s3:/my-bucket/checkpoints/epoch=5.ckpt"
+  ],
+  "steps": [
+    "Clone the referenced Lightning commit into codebase/ using setup_codebase.sh.",
+    "Run bash run_repro.sh.",
+    "Observe that the remote URI is normalized to s3:/... and FileNotFoundError is raised."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

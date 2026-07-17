@@ -1,0 +1,1 @@
+BLOCKER: the bug needs at least 2 CUDA devices, but this machine exposes 1.

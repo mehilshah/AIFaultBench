@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "The synthetic repro based on the reported model structure ran successfully on this host and showed steady resident-memory growth across repeated SVI updates: initial RSS 454.27 MB, then 816.87 MB at iter 0, 998.19 MB at iter 4, and 1224.75 MB at iter 9. The run completed without exception, but the macOS-specific Mach-port counter is not observable on Linux.",
+  "steps": [
+    "Create a virtualenv and install the pinned runtime from requirements.txt plus the local codebase in editable mode.",
+    "Run ./run_repro.sh --iters 10 to execute the synthetic classroom SVI loop.",
+    "Observe that the same repeated SVI.update path completes while RSS rises by about 770 MB over 10 iterations."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./setup_env.sh && ./run_repro.sh --iters 10"
+}

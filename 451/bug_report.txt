@@ -1,0 +1,83 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21580
+
+TITLE
+Wrong typehint for device_mesh in FSDP
+
+BODY
+### Bug description
+
+The type hint of `device_mesh` in FSDP is not correct. The current value is `Optional[Union[tuple[int], "DeviceMesh"]]`, which causes a configuration validation error when using the CLI and setting `device_mesh` as a tuple. Indeed, if a tuple, `device_mesh` must be of length 2: (replication size, sharding size).
+
+The correct value for the type hint is `Optional[Union[tuple[int, int], "DeviceMesh"]]`.
+
+### What version are you seeing the problem on?
+
+v2.5
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+fit:
+    trainer:
+        strategy:
+            class_path: lightning.pytorch.strategies.FSDPStrategy
+            init_args:
+                sharding_strategy: HYBRID_SHARD
+                device_mesh: [1, 4]
+```
+
+### Error messages and logs
+
+```
+usage: main.py [-h] [-c CONFIG] [--print_config[=flags]] {fit,validate,test,predict} ...
+error: Parser key "trainer.strategy":
+  Does not validate against any of the Union subtypes
+  Subtypes: (<class 'str'>, <class 'lightning.pytorch.strategies.strategy.Strategy'>)
+  Errors:
+    - Expected a <class 'str'>
+    - Problem with given class_path 'lightning.pytorch.strategies.FSDPStrategy':
+        Parser key "device_mesh":
+          Does not validate against any of the Union subtypes
+          Subtypes: (tuple[int], <class 'torch.distributed.device_mesh.DeviceMesh'>, <class 'NoneType'>)
+          Errors:
+            - Expected a tuple with 1 elements
+            - Not a valid subclass of DeviceMesh
+              Subclass types expect one of:
+              - a class path (str)
+              - a dict with class_path entry
+              - a dict without class_path but with init_args entry (class path given previously)
+            - Expected a <class 'NoneType'>
+          Given value type: <class 'list'>
+          Given value: [1, 4]
+  Given value type: <class 'dict'>
+  Given value: {'class_path': 'lightning.pytorch.strategies.FSDPStrategy', 'init_args': {'auto_wrap_policy': [...], 'activation_checkpointing_policy': [...], 'sharding_strategy': 'HYBRID_SHARD', 'device_mesh': [1, 4]}}
+```
+
+
+### Environment
+
+<details>
+  <summary>Current environment</summary>
+
+```
+- PyTorch Lightning Version (e.g., 2.5.0): 2.5.1
+- PyTorch Version (e.g., 2.5): 2.9.1
+- Python version (e.g., 3.12): 3.11.0
+- OS (e.g., Linux): Linux
+- CUDA/cuDNN version:
+- GPU models and configuration: NVIDIA A-100
+- How you installed Lightning(`conda`, `pip`, source): mamba
+```
+
+</details>
+
+
+### More info
+
+_No response_
+
+cc @ethanwharris @lantiga

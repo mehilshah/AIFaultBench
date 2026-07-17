@@ -1,0 +1,41 @@
+Title: LigerFusedLinearCrossEntropyFunction does not support reduction=None
+Date: 2024-12-18T17:03:51+00:00
+URL: https://github.com/linkedin/Liger-Kernel/issues/488
+
+Description:
+### 🐛 Describe the bug
+
+loss = LigerFusedLinearCrossEntropyLoss(reduction='none')(model.lm_head.weight, flattened_hidden_states, flattened_target)
+
+returns loss with shape []:
+tensor(209594.4062, device='cuda:7',
+       grad_fn=<LigerFusedLinearCrossEntropyFunctionBackward>)
+       
+reduction is actually perfromed
+
+### Reproduce
+
+```python
+from liger_kernel.transformers import LigerCrossEntropyLoss, LigerFusedLinearCrossEntropyLoss
+device3 = 'cuda'
+weight = torch.randn((180000, 4096), device=device3, dtype=torch.float32)
+fhidden_states = torch.randn((20, 4096), device=device3, dtype=torch.float32)
+ftarget = torch.ones((20,), device=device3, dtype=torch.long)
+loss = LigerFusedLinearCrossEntropyLoss(reduction='none')(weight, fhidden_states, ftarget)
+print(loss)
+```
+
+### Versions
+
+
+Environment Report:
+-------------------
+Operating System: Linux-5.4.0-135-generic-x86_64-with-glibc2.31
+Python version: 3.10.14
+Liger Kernel version: 0.5.2
+PyTorch version: 2.5.1+cu124
+CUDA version: 12.4
+HIP(ROCm) version: Not available
+Triton version: 3.1.0
+Transformers version: 4.44.0
+XPU version: XPU Not Available

@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "623/repro.py", line 102, in <module>
+    main()
+  File "623/repro.py", line 95, in main
+    next(iter(train_loader))
+  File "623/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 630, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "623/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 673, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "623/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/fetch.py", line 52, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+            ~~~~~~~~~~~~^^^^^
+  File "623/.venv/lib/python3.12/site-packages/asteroid/data/librimix_dataset.py", line 92, in __getitem__
+    start = random.randint(0, row["length"] - self.seg_len)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/random.py", line 336, in randint
+    return self.randrange(a, b+1)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/random.py", line 312, in randrange
+    istop = _index(stop)
+            ^^^^^^^^^^^^
+TypeError: 'numpy.float64' object cannot be interpreted as an integer

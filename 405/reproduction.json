@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "HEAD /facebook/dinov3-vits16-pretrain-lvd1689m/resolve/main/config.json: 7 requests; HEAD /facebook/dinov3-vits16-pretrain-lvd1689m/resolve/main/preprocessor_config.json: 14 requests; HEAD /facebook/dinov3-vits16-pretrain-lvd1689m/resolve/main/processor_config.json: 7 requests; HEAD /facebook/dinov3-vits16-pretrain-lvd1689m/resolve/main/tokenizer_config.json: 7 requests; HEAD /facebook/dinov3-vits16-pretrain-lvd1689m/resolve/main/video_preprocessor_config.json: 7 requests; OSError: We couldn't connect to 'http://127.0.0.1:37899' to load the files, and couldn't find them in the cached files.\nCheck your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.",
+  "steps": [
+    "Start a local HF_ENDPOINT server that returns 200 for repo metadata and 429 for file downloads.",
+    "Call AutoProcessor.from_pretrained('facebook/dinov3-vits16-pretrain-lvd1689m') against that endpoint.",
+    "Observe repeated 429 retries for processor_config.json, preprocessor_config.json, video_preprocessor_config.json, tokenizer_config.json, and config.json."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

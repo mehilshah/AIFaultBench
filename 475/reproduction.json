@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running the local repro prints the expected traceback: HMASynthesizer.add_constraints -> DataProcessor._detect_multi_column_transformers -> AttributeError: 'SingleTableMetadata' object has no attribute '_valid_column_relationships'. The original metadata instance does have _valid_column_relationships before the synthesizer rebuilds table metadata.",
+  "steps": [
+    "Create a Metadata object with two tables, add an 'address' column relationship to table.",
+    "Instantiate HMASynthesizer(metadata_example, locales=['en_US']).",
+    "Call synthesizer.add_constraints([FixedCombinations(table_name='table', column_names=['code', 'description'])]).",
+    "Observe the AttributeError when DataProcessor inspects the rebuilt SingleTableMetadata."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

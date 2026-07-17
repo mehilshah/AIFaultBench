@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` in the prepared venv reproduces `TypeError: object of type 'NoneType' has no len()` from `stable_baselines3/common/base_class.py:695` when `PPO.load()` loads a model saved with `policy_kwargs=dict(net_arch=None)`.",
+  "steps": [
+    "Create a venv and install the bundle requirements from `requirements.txt`.",
+    "Instantiate `PPO('MlpPolicy', gym.make('CartPole-v1'), policy_kwargs=dict(net_arch=None))`.",
+    "Save the model and call `PPO.load()` on the saved artifact.",
+    "Observe the `TypeError` raised by `len(data['policy_kwargs']['net_arch'])` during load."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

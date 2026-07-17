@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "The two-iteration training loop completed without raising RuntimeError.",
+    "After the first iteration, cached_freqs existed and cached_freqs.grad_fn was None.",
+    "The saved stdout shows step=0, step=1, and result=not_reproduced."
+  ],
+  "steps": [
+    "Created a Python virtual environment and installed the package dependencies from requirements.txt.",
+    "Ran repro.py through run_repro.sh against the local codebase/ copy.",
+    "Verified that the second backward pass succeeded while reusing the cached frequencies."
+  ],
+  "blocking_reason": "The checked-in code already avoids caching trainable frequencies, so the reported autograd reuse error does not occur in this snapshot.",
+  "reproduction_command": "bash run_repro.sh"
+}

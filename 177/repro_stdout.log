@@ -1,0 +1,5 @@
+parsed tree: Tree(Token('RULE', 'start'), [Tree(Token('RULE', 'pair'), [Token('NUMBER', '1'), Token('NUMBER', '2')])])
+transformer pair args: 1 2
+transformer start value: 3
+transform result: 3
+visiting tree...

@@ -1,0 +1,46 @@
+Title: Sampling with HMA Synthesizer generates many `SingleTableMetadata` deprecation warnings
+Date: 2024-11-12T21:19:58+00:00
+URL: https://github.com/sdv-dev/SDV/issues/2290
+
+Description:
+### Environment Details
+
+* SDV version: 1.17.1 (latest)
+
+### Error Description
+
+When sampling using an HMA Synthesizer object that was instantiated using a MultiTableMetadata object, the SingleTableMetadata deprecation warning is repeatedly logged:
+
+<img width="1568" alt="Screenshot 2024-11-12 at 4 13 44 PM" src="https://github.com/user-attachments/assets/ebd3b169-4314-41e1-b157-10e075354519">
+
+This warning isn't very helpful (as it describes the SingleTableMetadata object) and repeats many times (it loosely seems like a larger volume of data generates more warnings). The user is already shown an accurate warning during synthesizer instantiation:
+
+```
+/usr/local/lib/python3.10/dist-packages/sdv/multi_table/base.py:110: FutureWarning: The 'MultiTableMetadata' is deprecated. Please use the new 'Metadata' class for synthesizers.
+  warnings.warn(DEPRECATION_MSG, FutureWarning)
+```
+
+### Steps to reproduce
+
+[Internal Colab Notebook to reproduce](https://colab.research.google.com/drive/1nn32sXxCqwSYjAY3-4lv17Q01Q3QWq_v?usp=sharing)
+
+```
+from sdv.datasets.demo import download_demo
+from sdv.metadata import MultiTableMetadata
+from sdv.multi_table import HMASynthesizer
+
+data, metadata = download_demo(
+    modality='multi_table',
+    dataset_name='fake_hotels'
+)
+
+guests_table = data['guests']
+hotels_table = data['hotels']
+
+multi_metadata = MultiTableMetadata()
+multi_metadata.detect_from_dataframes(data)
+
+synthesizer = HMASynthesizer(multi_metadata)
+synthesizer.fit(real_data)
+synthetic_data = synthesizer.sample()
+```

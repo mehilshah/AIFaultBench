@@ -1,0 +1,141 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/47228
+
+TITLE
+Sam3 bf16 compilation regression (v5.8.0 -> v5.9.0)
+
+BODY
+### System Info
+
+  - transformers: 5.9.0  (also fails on main; works on 5.8.0)
+  - torch: 2.13.0+cu130
+  - Python: 3.10.12
+  - Platform: Ubuntu 22.04.3 LTS, kernel 6.8.0-134-generic, x86_64
+  - GPU: NVIDIA A100-PCIE-40GB
+  - CUDA: 13.2
+
+### Who can help?
+
+@yonigozlan @molbap
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+Between versions `5.8.0` and `5.9.0` Sam3 started raising a `RuntimeError` when compiled using `dtype=torch.bfloat16`. I have also ran on the latest main and the issue is still present in commit 0bc355418bb265136a66c2dedc501066ffbc237d
+
+This script reproduces the error,
+
+```python
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#     "transformers",
+#     "torch",
+#     "torchvision",
+#     "pillow",
+# ]
+# ///
+import torch
+import transformers
+from PIL import Image
+from transformers import Sam3Model, Sam3Processor
+
+print("torch       ", torch.__version__)
+print("transformers", transformers.__version__)
+
+model_id = "facebook/sam3"
+device = "cuda"
+processor = Sam3Processor.from_pretrained(model_id)
+model = (
+    Sam3Model.from_pretrained(model_id, attn_implementation="sdpa", dtype=torch.bfloat16)
+    .eval()
+    .to(device)
+)
+
+image = Image.new("RGB", (512, 512), (128, 128, 128))
+inputs = processor(images=image, text="cat", return_tensors="pt").to(device)
+
+# Eager succeeds
+with torch.inference_mode():
+	outputs = model(**inputs)
+print("eager OK:", type(outputs).__name__)
+
+# Compiled raises type mismatch error
+compiled = torch.compile(model)
+with torch.inference_mode():
+    outputs = compiled(**inputs)
+print("compiled OK:", type(outputs).__name__)
+```
+
+
+Running with `uv run --with 'transformers==5.8.0'  sam3_bf16_repro.py` is successful
+
+```bash
+torch        2.13.0+cu130
+transformers 5.8.0
+eager OK: Sam3ImageSegmentationOutput
+compiled OK: Sam3ImageSegmentationOutput
+```
+
+
+Running with `uv run --with 'transformers==5.9.0'  sam3_bf16_repro.py` raises the following stack trace
+
+```bash
+torch        2.13.0+cu130
+transformers 5.9.0
+eager OK: Sam3ImageSegmentationOutput
+Traceback (most recent call last):
+  File "/home/imason/sam3_bf16_repro.py", line 38, in <module>
+    outputs = compiled(**inputs)
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 511, in __call__
+    return super().__call__(*args, **kwargs)
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 1166, in compile_wrapper
+    result = fn(*args, **kwargs)
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/imason/.cache/uv/archive-v0/NpojP0MAEKYeH5dTjxO0j/lib/python3.10/site-packages/transformers/utils/generic.py", line 903, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/imason/.cache/uv/archive-v0/NpojP0MAEKYeH5dTjxO0j/lib/python3.10/site-packages/transformers/models/sam3/modeling_sam3.py", line 2257, in forward
+    @can_return_tuple
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 1446, in _fn
+    return fn(*args, **kwargs)
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 1277, in forward
+    return compiled_fn(full_args)
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 2548, in __call__
+    return self.compiled_fn(*args, **kwargs)
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 1141, in runtime_wrapper
+    result = _codegen_runtime_wrapper(
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/subclass_codegen.py:codegen(runtime_wrapper_orchestration)", line 8, in _runtime_wrapper
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/_inductor/output_code.py", line 763, in __call__
+    return self.current_callable(inputs)
+  File "/tmp/torchinductor_imason/t4/ct47yqsumqafahda4prnzbzd7dpbusbrudywioua4qanikpa2whm.py", line 11194, in call
+    extern_kernels.addmm(arg1000_1, reinterpret_tensor(buf1291, (5184, 256), (256, 1), 0), reinterpret_tensor(arg999_1, (256, 256), (1, 256), 0), alpha=1, beta=1, out=buf1292)
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/_compile.py", line 54, in inner
+    return disable_fn(*args, **kwargs)
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 1446, in _fn
+    return fn(*args, **kwargs)
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 432, in __torch_dispatch__
+    res = func(*args, **kwargs)
+  File "/home/imason/.cache/uv/environments-v2/sam3-bf16-repro-aeb8850e340fc43e/lib/python3.10/site-packages/torch/_ops.py", line 875, in __call__
+    return self._op(*args, **kwargs)
+RuntimeError: mat1 and mat2 must have the same dtype, but got Float and BFloat16
+```
+
+
+### Expected behavior
+
+When compiled using `dtype=torch.bfloat16`, Sam3 should not raise a `RuntimeError`.

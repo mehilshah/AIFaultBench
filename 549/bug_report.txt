@@ -1,0 +1,50 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2472
+
+TITLE
+[BUG]  Unable to export to ONNX due to torch.onnx._export being deprecated
+
+BODY
+**Describe the bug**
+The following code produces an error:
+~~~python
+import timm
+from timm.utils.onnx import onnx_export
+
+model_name = "bat_resnext26ts.ch_in1k"
+timm_model = timm.create_model(model_name, exportable=True)
+timm_model.eval()
+onnx_model = onnx_export(
+    model=timm_model,
+    output_file=f"{model_name}.onnx"
+)
+~~~
+results in
+~~~
+Traceback (most recent call last):
+  File "[file-path].py", line 7, in <module>
+    onnx_model = onnx_export(
+                 ^^^^^^^^^^^^
+  File "[dir-path]/venv/lib64/python3.12/site-packages/timm/utils/onnx.py", line 83, in onnx_export
+    torch_out = torch.onnx._export(
+                ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'torch.onnx' has no attribute '_export'. Did you mean: 'export'?
+~~~
+
+
+
+**To Reproduce**
+Steps to reproduce the behavior:
+0. Install python 3.12.8
+1. `pip install torch==2.6.0 timm==1.0.14 onnx==1.17.0`
+2. Run the above code
+
+**Expected behavior**
+The code should export the model without errors (most likely by using `torch.onnx.export` instead of `torch.onnx._export`
+
+**Desktop (please complete the following information):**
+ - OS: Linux, RHEL 8
+ - TIMM version: 1.0.14
+
+**Additional context**
+I tried replacing `_export` with `export` and it worked for me.
+

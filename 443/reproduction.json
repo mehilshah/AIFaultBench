@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "replay_buffer.extend(td) raises RuntimeError: batch dimension mismatch for a TensorDict with batch_size [1, 2048, 1]; the failing value shape reported by TorchRL is [1, 2048, 3].",
+  "steps": [
+    "Create a TensorDict with batch_size [1, 2048, 1].",
+    "Extend a TensorDictReplayBuffer backed by LazyTensorStorage(ndim=3).",
+    "Observe RuntimeError: batch dimension mismatch, got self.batch_size=torch.Size([1, 2048, 1]) and value.shape=torch.Size([1, 2048, 3])."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "547/repro.py", line 88, in <module>
+    main()
+  File "547/repro.py", line 84, in main
+    module.scale_lr(2, 4, 1.0, "sqrt")
+  File "547/codebase/deepspeed/runtime/data_pipeline/data_sampling/variable_batch_size_and_lr.py", line 159, in scale_lr
+    return base_lr * torch.sqrt(batch_size / base_batch_size)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: sqrt(): argument 'input' (position 1) must be Tensor, not float

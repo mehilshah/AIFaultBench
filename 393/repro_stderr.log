@@ -1,0 +1,61 @@
+393/codebase/src/accelerate/utils/torch_xla.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+393/codebase/src/accelerate/utils/torch_xla.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+393/codebase/src/accelerate/utils/torch_xla.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+393/codebase/src/accelerate/utils/torch_xla.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+rank=2 failed
+rank=3 failed
+Traceback (most recent call last):
+  File "393/repro.py", line 39, in _worker
+    test_split_between_processes_nested_dict()
+  File "393/codebase/src/accelerate/test_utils/scripts/test_script.py", line 479, in test_split_between_processes_nested_dict
+    assert results["a"] == data_copy["a"][-1]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+Traceback (most recent call last):
+  File "393/repro.py", line 39, in _worker
+    test_split_between_processes_nested_dict()
+  File "393/codebase/src/accelerate/test_utils/scripts/test_script.py", line 479, in test_split_between_processes_nested_dict
+    assert results["a"] == data_copy["a"][-1]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+rank=1 failed
+Traceback (most recent call last):
+  File "393/repro.py", line 39, in _worker
+    test_split_between_processes_nested_dict()
+  File "393/codebase/src/accelerate/test_utils/scripts/test_script.py", line 479, in test_split_between_processes_nested_dict
+    assert results["a"] == data_copy["a"][-1]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+W0717 04:12:09.744000 137167937933440 torch/multiprocessing/spawn.py:146] Terminating process 2390301 via signal SIGTERM
+Traceback (most recent call last):
+  File "393/repro.py", line 71, in main
+    mp.spawn(_worker, args=(world_size, port, queue), nprocs=world_size, join=True)
+  File "393/.venv/lib/python3.12/site-packages/torch/multiprocessing/spawn.py", line 282, in spawn
+    return start_processes(fn, args, nprocs, join, daemon, start_method="spawn")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "393/.venv/lib/python3.12/site-packages/torch/multiprocessing/spawn.py", line 238, in start_processes
+    while not context.join():
+              ^^^^^^^^^^^^^^
+  File "393/.venv/lib/python3.12/site-packages/torch/multiprocessing/spawn.py", line 189, in join
+    raise ProcessRaisedException(msg, error_index, failed_process.pid)
+torch.multiprocessing.spawn.ProcessRaisedException: 
+
+-- Process 2 terminated with the following error:
+Traceback (most recent call last):
+  File "393/.venv/lib/python3.12/site-packages/torch/multiprocessing/spawn.py", line 76, in _wrap
+    fn(i, *args)
+  File "393/repro.py", line 39, in _worker
+    test_split_between_processes_nested_dict()
+  File "393/codebase/src/accelerate/test_utils/scripts/test_script.py", line 479, in test_split_between_processes_nested_dict
+    assert results["a"] == data_copy["a"][-1]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+

@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "In an isolated Python 3.12 venv with the repository's runtime dependencies installed, importing transformers.models.qwen2_5_vl.modeling_qwen2_5_vl, transformers.models.qwen3_vl.modeling_qwen3_vl, and transformers.models.glm.modeling_glm produced no stdout diagnostics.",
+  "steps": [
+    "Created a clean virtual environment and installed the runtime dependencies listed in requirements.txt.",
+    "Ran PYTHONPATH=$PWD/codebase/src .venv/bin/python repro.py to import the three reported modules.",
+    "Observed that the import completed without emitting the [ERROR] doc-lint messages described in the report."
+  ],
+  "blocking_reason": "The referenced commit snapshot does not reproduce the reported stdout leak during import.",
+  "reproduction_command": "bash run_repro.sh"
+}

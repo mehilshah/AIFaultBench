@@ -1,0 +1,39 @@
+411/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py:949: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Some weights of BloomForSequenceClassification were not initialized from the model checkpoint at bigscience/bloomz-560m and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Some weights of BloomForSequenceClassification were not initialized from the model checkpoint at bigscience/bloomz-560m and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+WARNING:root:Some parameters are on the meta device device because they were offloaded to the cpu and disk.
+Traceback (most recent call last):
+  File "411/repro.py", line 68, in run_offload_case
+    out = head(inputs)
+          ^^^^^^^^^^^^
+  File "411/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "411/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "411/codebase/src/peft/utils/other.py", line 145, in forward
+    return self.modules_to_save[self.active_adapter](*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "411/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "411/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "411/.venv/lib/python3.12/site-packages/accelerate/hooks.py", line 161, in new_forward
+    args, kwargs = module._hf_hook.pre_forward(module, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "411/.venv/lib/python3.12/site-packages/accelerate/hooks.py", line 328, in pre_forward
+    value = self.weights_map[name]
+            ~~~~~~~~~~~~~~~~^^^^^^
+  File "411/.venv/lib/python3.12/site-packages/accelerate/utils/offload.py", line 118, in __getitem__
+    return self.dataset[f"{self.prefix}{key}"]
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "411/.venv/lib/python3.12/site-packages/accelerate/utils/offload.py", line 165, in __getitem__
+    weight_info = self.index[key]
+                  ~~~~~~~~~~^^^^^
+KeyError: 'score.weight'

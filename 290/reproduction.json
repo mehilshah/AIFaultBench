@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "run_repro.sh exits 1 after reproducing the layer-decay mismatch. repro_stdout.log shows actual_lr_scales [0.7290000000000001, 0.7290000000000001, 0.81, 0.81, 0.9, 0.9] versus expected_lr_scales [0.81, 0.81, 0.9, 0.9, 1.0, 1.0].",
+  "steps": [
+    "Load the local timm sources from codebase/ without importing the full timm package init.",
+    "Create the reporter's model with three trainable Linear blocks and three frozen EMA blocks.",
+    "Call create_optimizer_v2(..., layer_decay=0.9) and inspect optimizer.param_groups[\"lr_scale\"]."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

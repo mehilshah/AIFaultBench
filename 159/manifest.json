@@ -1,0 +1,17 @@
+{
+  "title": "Deprecation warning from datetime.utcfromtimestamp during Point import",
+  "python_version": "3.12",
+  "package": "influxdb-client-python",
+  "bug_report": "bug_report.txt",
+  "entrypoint": "repro.py",
+  "files": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ],
+  "expected_signal": "Importing influxdb_client.client.write.point should emit a DeprecationWarning from datetime.utcfromtimestamp() on Python 3.12.",
+  "reproduction_command": "bash run_repro.sh"
+}

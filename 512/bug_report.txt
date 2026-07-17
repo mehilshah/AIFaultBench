@@ -1,0 +1,77 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21556
+
+TITLE
+Fabric FSDP precision: incorrect dtype during init when using bf16-mixed
+
+BODY
+### Bug description
+
+When using fabric FSDP bf16-mixed precision, the initialized parameters will be bf16, despite the intended semantics being maintaining the parameters in full precision i.e., fp32 (as suggested by the [doc](https://lightning.ai/docs/fabric/stable/api/fabric_args.html#precision)). This is due to the fact that the `module_init_context` uses `param_dtype`, which is bf16 ([here](https://github.com/Lightning-AI/pytorch-lightning/blob/8d86b2417d56703d5cc4f0da76acc71717d1dab7/src/lightning/fabric/plugins/precision/fsdp.py#L114-L115)).
+
+### What version are you seeing the problem on?
+
+master
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+# minimal_fsdp_fabric_bf16_mixed.py
+import torch
+from torch import nn
+
+from lightning.fabric import Fabric
+from lightning.fabric.plugins.precision import FSDPPrecision
+from lightning.fabric.strategies import FSDPStrategy
+
+
+class TinyModel(nn.Module):
+    def __init__(self, in_dim: int = 1024, hidden: int = 4096, out_dim: int = 10):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(in_dim, hidden),
+            nn.GELU(),
+            nn.Linear(hidden, out_dim),
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self.net(x)
+
+
+# FSDP strategy (keep it minimal; no custom wrapping policy here)
+strategy = FSDPStrategy()
+
+# For FSDP, use the FSDP-specific precision plugin when you want "bf16-mixed"
+fabric = Fabric(
+    accelerator="cuda",
+    devices="auto",
+    strategy=strategy,
+    plugins=FSDPPrecision("bf16-mixed"),
+)
+
+fabric.launch()
+
+# ---- model initialization (stop here, as requested) ----
+# fabric.init_module() ensures parameters get initialized correctly for the chosen strategy/precision
+with fabric.init_module():
+    model = TinyModel()
+
+print(next(model.parameters()).dtype)
+```
+
+### Error messages and logs
+
+torch.bfloat16
+
+### Environment
+
+lightning==2.6.1
+
+### More info
+
+_No response_
+
+cc @ethanwharris @justusschock @lantiga

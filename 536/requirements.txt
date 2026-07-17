@@ -1,0 +1,7 @@
+# The reproducer is stdlib-only because the local workspace cannot import the
+# ROCm stack needed for the reported GPU fault.
+#
+# The issue itself depends on the vLLM ROCm code path plus a ROCm-enabled torch
+# build and the AITER package. Those runtime-specific pieces are documented in
+# the bug report and probed by repro.py, but they are not installed here.
+

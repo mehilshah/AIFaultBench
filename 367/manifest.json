@@ -1,0 +1,22 @@
+{
+  "title": "PEFT merge_and_unload offload/save failure",
+  "source_issue": "https://github.com/huggingface/peft/issues/868",
+  "reproducible": true,
+  "entrypoints": {
+    "setup": "./setup_env.sh",
+    "run": "./run_repro.sh"
+  },
+  "dependencies": {
+    "python": "3.12",
+    "torch": "2.13.0+cpu",
+    "accelerate": "1.14.0",
+    "transformers": "5.14.1",
+    "safetensors": "0.8.0",
+    "huggingface_hub": "1.23.0"
+  },
+  "notes": [
+    "Uses sshleifer/tiny-gpt2 as a minimal public model.",
+    "Manually offloads one transformer block to disk to reproduce the meta/offload path locally.",
+    "The failure occurs during merged model save_pretrained() after merge_and_unload()."
+  ]
+}

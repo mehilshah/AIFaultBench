@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "179/repro.py", line 22, in <module>
+    main()
+  File "179/repro.py", line 18, in main
+    print(Lark(grammar, parser="lalr", transformer=T()).parse("32"))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "179/codebase/lark/lark.py", line 517, in parse
+    return self.parser.parse(text, start=start)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "179/codebase/lark/parser_frontends.py", line 115, in parse
+    return self.parser.parse(lexer_thread, start)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "179/codebase/lark/parsers/lalr_parser.py", line 36, in parse
+    return self.parser.parse(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "179/codebase/lark/parsers/lalr_parser.py", line 136, in parse
+    return self.parse_from_state(parser_state)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "179/codebase/lark/parsers/lalr_parser.py", line 142, in parse_from_state
+    for token in state.lexer.lex(state):
+  File "179/codebase/lark/lexer.py", line 446, in lex
+    yield lexer.next_token(lexer_state, parser_state)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "179/codebase/lark/lexer.py", line 387, in next_token
+    raise LexError("Callbacks must return a token (returned %r)" % t)
+lark.exceptions.LexError: Callbacks must return a token (returned 32)

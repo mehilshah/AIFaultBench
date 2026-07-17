@@ -1,0 +1,51 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7708
+
+TITLE
+[BUG] None grad triggers exception in the backward hook
+
+BODY
+**Describe the bug**
+When training Llama2 with DeepCompile enabled, the backward engine seems to pass two losses to the backward graph, with one of them being None and not actually used by the graph.
+
+With #7665, a backward hook is registered to scale the loss by accumulation steps, but that hook assumes the grad is always a valid tensor. As DeepCompile breaks that assumption, the hook will triggere a type error exception.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Run https://gist.github.com/eternalNight/8277302920fb8fb5aa7eb4fb9e3fb6a3
+
+Traceback:
+
+```
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/test_simple.py", line 67, in <module>
+[rank0]:     m.backward(loss.loss)
+[rank0]:   File "/mnt/engines/deepspeed/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:   File "/mnt/engines/deepspeed/deepspeed/runtime/engine.py", line 2466, in backward
+[rank0]:     loss.backward(**backward_kwargs)
+[rank0]:   File "/workspaces/venv/lib/python3.10/site-packages/torch/_tensor.py", line 639, in backward
+[rank0]:     return handle_torch_function(
+[rank0]:   File "/workspaces/venv/lib/python3.10/site-packages/torch/overrides.py", line 1721, in handle_torch_function
+[rank0]:     result = mode.__torch_function__(public_api, types, args, kwargs)
+[rank0]:   File "/workspaces/venv/lib/python3.10/site-packages/torch/utils/_device.py", line 104, in __torch_function__
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/workspaces/venv/lib/python3.10/site-packages/torch/_tensor.py", line 648, in backward
+[rank0]:     torch.autograd.backward(
+[rank0]:   File "/workspaces/venv/lib/python3.10/site-packages/torch/autograd/__init__.py", line 353, in backward
+[rank0]:     _engine_run_backward(
+[rank0]:   File "/workspaces/venv/lib/python3.10/site-packages/torch/autograd/graph.py", line 824, in _engine_run_backward
+[rank0]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[rank0]:   File "/mnt/engines/deepspeed/deepspeed/runtime/utils.py", line 1271, in backward_hook
+[rank0]:     grad = self.preprocess_per_tensor_fn(grad)
+[rank0]:   File "/mnt/engines/deepspeed/deepspeed/runtime/engine.py", line 2335, in _backward_prologue_per_tensor
+[rank0]:     return grad / self.gradient_accumulation_steps()
+[rank0]: TypeError: unsupported operand type(s) for /: 'NoneType' and 'int'
+```
+
+**Expected behavior**
+The training should end normally.
+
+**More information**
+The two losses in torch profile:
+
+<img width="1964" height="633" alt="Image" src="https://github.com/user-attachments/assets/3815ae72-86a3-47fe-b626-ce6fad24afa5" />

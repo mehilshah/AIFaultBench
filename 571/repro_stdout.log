@@ -1,0 +1,5 @@
+scores: [-0.0, -1.0]
+target: [True, False]
+AP for the first query: 0.0
+AP after shifting the scores above zero: 1.0
+mAP@200: 0.0, p@200: 0.0, Best mAP: -1000.0

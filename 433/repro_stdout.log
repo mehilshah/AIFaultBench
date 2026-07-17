@@ -1,0 +1,8 @@
+saved: ShapeDtypeStruct(shape=(10, 10), dtype=float16)
+loaded_type: ndarray
+loaded_shape: ()
+loaded_dtype: dtype('O')
+loaded_repr: array(ShapeDtypeStruct(shape=(10, 10), dtype=float16), dtype=object)
+wrapped_value_type: ShapeDtypeStruct
+wrapped_value_repr: ShapeDtypeStruct(shape=(10, 10), dtype=float16)
+result: reproduced

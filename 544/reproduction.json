@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running ./run_repro.sh loaded a benign LoRA checkpoint first, then failed on the real checkpoint with ValueError: Invalid LoRA checkpoint. Make sure all LoRA param names contain 'lora' substring.",
+    "The traceback points to codebase/src/diffusers/loaders/lora_pipeline.py line 645.",
+    "The downloaded detailed_notrigger.safetensors file contains 1572 keys, including non-lora keys such as diffusion_model_output_blocks_2_2_conv.alpha and diffusion_model_output_blocks_5_2_conv.alpha."
+  ],
+  "steps": [
+    "Create a local venv with Python 3.11 and install torch, diffusers dependencies, and Pillow.",
+    "Download the reported detailed_notrigger.safetensors checkpoint from Hugging Face into artifacts/.",
+    "Load a tiny valid LoRA checkpoint through a dummy StableDiffusionXLLoraLoaderMixin subclass.",
+    "Load the reported checkpoint and observe the ValueError emitted by load_lora_weights()."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh > repro_stdout.log 2> repro_stderr.log"
+}

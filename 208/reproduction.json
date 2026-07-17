@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the reported example locally produced d1_p1=[0.09500000000000001] and d2_p1=[0.09000000000000001] after translating both samples by delta=0.02, so p=1 is not invariant under joint rotation. The same repro gave p2_allclose=True with d1_p2=[0.017550000000000007] and d2_p2=[0.017550000000000003].",
+  "steps": [
+    "Added a minimal repro script that imports the local codebase and evaluates ot.wasserstein_circle on the issue report inputs.",
+    "Ran bash run_repro.sh to capture stdout and stderr in repro_stdout.log and repro_stderr.log.",
+    "Verified the p=1 outputs differ while the p=2 outputs match up to floating-point noise."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

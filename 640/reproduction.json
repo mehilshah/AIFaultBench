@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` in a clean venv with `torch==2.5.1+cpu` and `torchvision==0.20.1+cpu` reproduced the issue. The synthetic wide image kept 1842 dark pixels in the left 60 columns after a plain resize, but `create_transform(input_size=224, is_training=False, crop_pct=1.0, normalize=False)` reduced that to 0 dark pixels, showing the edge feature was center-cropped away.",
+  "steps": [
+    "Created an isolated Python virtual environment and installed the CPU torch/torchvision stack plus Pillow and NumPy.",
+    "Installed the local `codebase/` as an editable package so the repro uses the bundled timm sources.",
+    "Ran `bash run_repro.sh` to apply `create_transform(..., is_training=False, crop_pct=1.0)` to a synthetic non-square image with a left-edge \"A\" feature.",
+    "Compared the transform output with a direct resize and confirmed the feature disappeared in the timm transform output."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

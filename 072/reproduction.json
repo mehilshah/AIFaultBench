@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` exits with status 1 and raises `AttributeError: 'DeepSpeedEngine' object has no attribute 'model'`. The failing repository line is `codebase/applications/DeepSpeed-Chat/training/step1_supervised_finetuning/main.py:367`, which calls `print_throughput(model.model, ...)`.",
+  "steps": [
+    "Inspected `bug_report.txt` and confirmed the reported traceback points to `main.py:367`.",
+    "Verified the codebase still contains `print_throughput(model.model, args, end - start, args.global_rank)` at `codebase/applications/DeepSpeed-Chat/training/step1_supervised_finetuning/main.py:367`.",
+    "Ran `bash run_repro.sh > repro_stdout.log 2> repro_stderr.log`.",
+    "Observed the expected `AttributeError` in `repro_stderr.log` and exit status 1."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

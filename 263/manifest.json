@@ -1,0 +1,19 @@
+{
+  "bug_id": "263",
+  "issue_url": "https://github.com/thu-ml/tianshou/issues/1272",
+  "library_name": "tianshou",
+  "library_version": "2.0.0b1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "repro_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` reproduced the batching issue: two identical conditioning images produced different image IDs after the batch split. The first batch element matched the single-image reference, but the second did not (`batch0_equals_reference=true`, `batch1_equals_reference=false`, `batch0_equals_batch1=false`). The captured output shows `T=10` for batch 0 and `T=20` for batch 1 even though the images are identical.",
+  "steps": [
+    "Created an isolated Python environment with `setup_env.sh`.",
+    "Executed `bash run_repro.sh` against the reproduced batching logic from `examples/dreambooth/train_dreambooth_lora_flux2_klein_img2img.py`.",
+    "Observed that the same conditioning-image shape in the same batch generated different time coordinates instead of repeating a single reference ID block."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

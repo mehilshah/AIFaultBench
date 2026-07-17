@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "Running the reported cross-attention setup with an all-false context_mask in the local codebase produced finite decoder outputs; torch.isnan(out).any() was false.",
+  "steps": [
+    "Created an isolated virtual environment and installed torch, einops, and packaging.",
+    "Ran a minimal TransformerWrapper + Decoder(cross_attend=True, attn_flash=True) forward pass with context_mask set to all False.",
+    "Checked the decoder output for NaNs and finite values."
+  ],
+  "blocking_reason": "The bug does not reproduce in this checkout: the decoder output is finite under the reported masking condition.",
+  "reproduction_command": "bash run_repro.sh"
+}

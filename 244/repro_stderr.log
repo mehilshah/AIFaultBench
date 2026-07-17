@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "244/repro.py", line 25, in main
+    import numpyro  # noqa: F401
+    ^^^^^^^^^^^^^^
+  File "244/.venv/lib/python3.12/site-packages/numpyro/__init__.py", line 13, in <module>
+    from numpyro import compat, diagnostics, distributions, handlers, infer, ops, optim
+  File "244/.venv/lib/python3.12/site-packages/numpyro/distributions/__init__.py", line 4, in <module>
+    from numpyro.distributions.conjugate import (
+  File "244/.venv/lib/python3.12/site-packages/numpyro/distributions/conjugate.py", line 13, in <module>
+    from numpyro._typing import ConstraintT
+  File "244/.venv/lib/python3.12/site-packages/numpyro/_typing.py", line 9, in <module>
+    from typing_extensions import ParamSpec, TypeAlias
+ModuleNotFoundError: No module named 'typing_extensions'
+Traceback (most recent call last):
+  File "244/repro.py", line 37, in <module>
+    main()
+  File "244/repro.py", line 25, in main
+    import numpyro  # noqa: F401
+    ^^^^^^^^^^^^^^
+  File "244/.venv/lib/python3.12/site-packages/numpyro/__init__.py", line 13, in <module>
+    from numpyro import compat, diagnostics, distributions, handlers, infer, ops, optim
+  File "244/.venv/lib/python3.12/site-packages/numpyro/distributions/__init__.py", line 4, in <module>
+    from numpyro.distributions.conjugate import (
+  File "244/.venv/lib/python3.12/site-packages/numpyro/distributions/conjugate.py", line 13, in <module>
+    from numpyro._typing import ConstraintT
+  File "244/.venv/lib/python3.12/site-packages/numpyro/_typing.py", line 9, in <module>
+    from typing_extensions import ParamSpec, TypeAlias
+ModuleNotFoundError: No module named 'typing_extensions'

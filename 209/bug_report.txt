@@ -1,0 +1,37 @@
+Title: FqnToConfig doesn't handle module swaps
+Date: 2025-12-15T17:17:41+00:00
+URL: https://github.com/pytorch/ao/issues/3490
+
+Description:
+A user tried to use `FqnToConfig` with `QATConfig`, which uses module swap. However, `FqnToConfig` seems to only work with tensor subclasses, not module swaps:
+https://github.com/pytorch/ao/blob/ff6d9e24421cf4b1e98a2ae139144adbc038e6f8/torchao/quantization/quant_api.py#L485-L491
+
+Looks like we do need to reassign for module swaps.
+
+**Minimal repro:**
+
+```
+import torch
+from torchao.quantization import quantize_, FqnToConfig, Int4WeightOnlyConfig
+from torchao.quantization.qat import QATConfig
+from torchao.prototype.mx_formats import NVFP4DynamicActivationNVFP4WeightConfig
+
+class M(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.l = torch.nn.Linear(4096, 4096)
+    def forward(self, x):
+        return self.l(x)
+
+m = M()
+print("BEFORE:", type(m.l), m.l)
+base_config = NVFP4DynamicActivationNVFP4WeightConfig()
+name_to_config = {"l": QATConfig(base_config, step="prepare")}
+quantize_(m, FqnToConfig(name_to_config), filter_fn=None) # doesn't work
+print("AFTER:", type(m.l), m.l)
+```
+Output: (module was not swapped)
+```
+BEFORE: <class 'torch.nn.modules.linear.Linear'> Linear(in_features=4096, out_features=4096, bias=True)
+AFTER: <class 'torch.nn.modules.linear.Linear'> Linear(in_features=4096, out_features=4096, bias=True)
+```

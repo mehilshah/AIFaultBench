@@ -1,0 +1,1 @@
+{"expected": ["cpu: 0", "cpu: 1", "cpu: 2", "cpu: 3"], "gathered": ["cpu:0: 0", "cpu:0: 1", "cpu:0: 0", "cpu:0: 1", "cpu:0: 2", "cpu:0: 3", "cpu:0: 2", "cpu:0: 3"], "matches_expected": false}

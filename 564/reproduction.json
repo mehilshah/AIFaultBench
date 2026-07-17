@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` raises `TypeError: sequence item 1: expected str instance, int found` from `codebase/numpyro/contrib/module.py:234` inside `_update_params` while `random_nnx_module` recursively processes list-backed NNX layers.",
+  "steps": [
+    "Create an `nnx.Module` whose child layers are stored in a Python list.",
+    "Call `numpyro.contrib.module.random_nnx_module(\"nn\", module, prior)` inside a seeded NumPyro model.",
+    "The recursive parameter walk reaches an integer list index and fails when `_update_params` tries to build the dotted path name."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

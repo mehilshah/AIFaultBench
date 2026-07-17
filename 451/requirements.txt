@@ -1,0 +1,2 @@
+-r codebase/requirements/pytorch/base.txt
+-r codebase/requirements/pytorch/extra.txt

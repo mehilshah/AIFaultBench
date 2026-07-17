@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running PARSynthesizer.fit() on the sample data with context_columns=['context2', 'context1'] crashes with TypeError: the resolved dtypes are not compatible with add.reduce. The traceback points into deepecho.models.par._idx_map via np.nanmean on the context values.",
+  "steps": [
+    "Create a pandas DataFrame with one sequence key, two context columns, and two sequence columns.",
+    "Build Metadata with sequence_key='sequence' and instantiate PARSynthesizer with context_columns in reversed order.",
+    "Call synthesizer.fit(data) and observe the TypeError raised from deepecho/numpy."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running `bash run_repro.sh` exits with status 1.",
+    "The captured stdout shows `lark version: 1.1.7`, then `GrammarError` and `Rule 'mask' used but not defined (in rule pipesyn)`.",
+    "The grammar from the report is loaded directly from `repro.py`, so the undefined-rule error is triggered by the reported input."
+  ],
+  "steps": [
+    "Created a local virtual environment with `bash setup_env.sh` and installed the editable `codebase/` snapshot as `lark 1.1.7`.",
+    "Executed `bash run_repro.sh`, which runs `repro.py` against the issue grammar.",
+    "Observed `GrammarError` on the alias name `mask`, confirming the bug reproduces in this folder."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

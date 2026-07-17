@@ -1,0 +1,5 @@
+jaxlib==0.10.1
+ml_dtypes>=0.5.0
+numpy>=2.0
+opt_einsum
+scipy>=1.14

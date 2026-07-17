@@ -1,0 +1,3 @@
+metadata.validate(): completed without error
+set_primary_key('A'): completed without error
+BUG REPRODUCED: primary_key and sequence_key can point to the same column.

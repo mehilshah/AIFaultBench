@@ -1,0 +1,10 @@
+{
+  "layer": "TransformerConv(8, 4, bias=False)",
+  "observed": {
+    "lin_key_bias_is_none": false,
+    "lin_query_bias_is_none": false,
+    "lin_skip_bias_is_none": true,
+    "lin_value_bias_is_none": false
+  },
+  "torch_version": "2.5.1+cu124"
+}

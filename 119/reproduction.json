@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "torch.jit.trace fails after fantasization with RuntimeError: Cannot insert a Tensor that requires grad as a constant.",
+  "steps": [
+    "Created an ExactGP model and trained it briefly on synthetic sine data.",
+    "Called model.get_fantasy_model(fantasy_x, fantasy_y) after priming the prediction strategy with a test forward pass.",
+    "Enabled gpytorch.settings.trace_mode() and invoked torch.jit.trace on the fantasized model wrapper.",
+    "Observed the trace abort with RuntimeError in exact_prediction_strategies.py at test_train_covar.matmul(precomputed_cache)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "591/repro.py", line 43, in <module>
+    main()
+  File "591/repro.py", line 38, in main
+    print("loss=", elbo.loss(model, config_enumerate(guide, "sequential")))
+  File "591/codebase/pyro/infer/traceenum_elbo.py", line 358, in loss
+    elbo_particle = _compute_dice_elbo(model_trace, guide_trace)
+  File "591/codebase/pyro/infer/traceenum_elbo.py", line 185, in _compute_dice_elbo
+    return Dice(guide_trace, ordering).compute_expectation(costs)
+  File "591/codebase/pyro/infer/util.py", line 303, in compute_expectation
+    expected_cost = expected_cost + scale * torch.tensordot(prob, cost, prob.dim())
+  File "591/.venv/lib/python3.9/site-packages/torch/functional.py", line 929, in tensordot
+    raise RuntimeError(f"unsupported input to tensordot, got dims={dims}")
+RuntimeError: unsupported input to tensordot, got dims=0
+Traceback (most recent call last):
+  File "591/repro.py", line 43, in <module>
+    main()
+  File "591/repro.py", line 38, in main
+    print("loss=", elbo.loss(model, config_enumerate(guide, "sequential")))
+  File "591/codebase/pyro/infer/traceenum_elbo.py", line 358, in loss
+    elbo_particle = _compute_dice_elbo(model_trace, guide_trace)
+  File "591/codebase/pyro/infer/traceenum_elbo.py", line 185, in _compute_dice_elbo
+    return Dice(guide_trace, ordering).compute_expectation(costs)
+  File "591/codebase/pyro/infer/util.py", line 303, in compute_expectation
+    expected_cost = expected_cost + scale * torch.tensordot(prob, cost, prob.dim())
+  File "591/.venv/lib/python3.9/site-packages/torch/functional.py", line 929, in tensordot
+    raise RuntimeError(f"unsupported input to tensordot, got dims={dims}")
+RuntimeError: unsupported input to tensordot, got dims=0

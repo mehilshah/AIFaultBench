@@ -1,0 +1,6 @@
+jax=0.4.38
+equinox=0.11.8
+plain_class_asarray=[1 2 3]
+bug_reproduced=True
+exception_type=TypeError
+exception_message=Unexpected input type for array: <class '__main__.MyEqxArray'>

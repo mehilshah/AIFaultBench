@@ -1,0 +1,73 @@
+Title: null prediction when using future regressor and len(training set) == n_lags + n_forecasts
+Date: 2024-04-23T23:28:37+00:00
+URL: https://github.com/ourownstory/neural_prophet/issues/1567
+
+Description:
+**Prerequisites**
+
+* [X] Put an X between the brackets on this line if you have done all of the following:
+    * Reproduced the problem in a new virtualenv with only neuralprophet installed, directly from github:
+      ```shell
+      git clone <copied link from github>
+      cd neural_prophet
+      pip install .
+      ```
+    * Checked the Answered Questions on the Github Discussion board: https://github.com/ourownstory/neural_prophet/discussions
+      If you have the same question but the Answer does not solve your issue, please continue the conversation there.
+    * Checked that your issue isn't already filed: https://github.com/ourownstory/neural_prophet/issues
+      If you have the same issue but there is a twist to your situation, please add an explanation there.
+    * Considered whether your bug might actually be solvable by getting a question answered: 
+      * Please [post a package use question](https://github.com/ourownstory/neural_prophet/discussions/categories/q-a-get-help-using-neuralprophet)
+      * Please [post a forecasting best practice question](https://github.com/ourownstory/neural_prophet/discussions/categories/q-a-forecasting-best-practices)
+      * Please [post an idea or feedback](https://github.com/ourownstory/neural_prophet/discussions/categories/ideas-feedback)
+
+**Describe the bug**
+
+When using future regressor, and the training dataset length is exaclty equal to n_lags + n_forecasts, the model.predict methods returns a prediction dataframe with null values on all yhat columns. 
+
+The same training data works when future regressor is not used.
+
+Please run the included code to reproduce the error.
+
+**To Reproduce**
+
+Steps to reproduce the behavior:
+
+```
+import pandas as pd
+import numpy as np
+import neuralprophet
+demo_df = pd.DataFrame(
+   {
+    "ds": pd.date_range("2022-04-01", "2022-04-30"),
+   "y": np.random.random(30),
+   "reg": np.random.random(30),
+   })
+
+demo_model = neuralprophet.NeuralProphet(n_forecasts=15, n_lags=15)
+demo_model.set_plotting_backend('matplotlib')
+demo_model.add_future_regressor("reg")
+demo_model.fit(demo_df)
+prediction = demo_model.predict(demo_df) #<== THIS IS THE BLANK DATAFRAME
+demo_model.plot(prediction) 
+
+
+demo_model2 = neuralprophet.NeuralProphet(n_forecasts=15, n_lags=15)
+demo_model2.set_plotting_backend('matplotlib')
+# demo_model.add_future_regressor("reg")
+demo_model2.fit(demo_df[['ds','y']])
+prediction2 = demo_model2.predict(demo_df[['ds','y']])  #<== THIS IS THE EXPECTED BEAHVIOUR
+demo_model2.plot(prediction2)
+```
+
+**Expected behavior**
+The model.predict method should return a dataframe with predicted values for the n_forecasts dates
+
+
+**What actually happens**
+The model.predict method returns a dataframe with null values in all yhat columns
+
+**Environment (please complete the following information):**
+
+ - Python environment Python: 3.11.9, venv
+ - NeuralProphet version and install method: v0.8.0 installed from PYPI with `pip install neuralprophet`

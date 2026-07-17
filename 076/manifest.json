@@ -1,0 +1,15 @@
+{
+  "bug_report": "https://github.com/matterport/Mask_RCNN/issues/3050",
+  "title": "Problem with demo.ipynb MaskRCNN.load_weights by_name=True",
+  "reproduction_command": "bash run_repro.sh",
+  "reproducible": true,
+  "dependencies": [
+    "tensorflow-cpu==2.16.1",
+    "keras==3.15.0",
+    "numpy==1.26.4",
+    "scipy==1.13.1",
+    "scikit-image==0.24.0",
+    "h5py==3.11.0",
+    "pillow==10.4.0"
+  ]
+}

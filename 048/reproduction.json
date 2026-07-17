@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` prints the sliding-window frame counts `1649` and `1799` for the first two windows and then fails with `RuntimeError: Sizes of tensors must match except in dimension 1. Expected size 1649 but got size 1799 for tensor number 1 in the list.`",
+  "steps": [
+    "Execute the self-contained sliding-window reproducer in `repro.py`.",
+    "Observe the first two emission tensors being produced with different time lengths.",
+    "Hit the concatenation failure at the `fake_cat(..., dim=1)` step."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

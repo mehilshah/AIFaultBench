@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running PARSynthesizer on the nasdaq100_2019 sequential demo with an added float categorical column produced synthetic category values outside {50.0, 100.0}. The captured diagnostic report shows Data Validity -> category CategoryAdherence = 0.0 and an overall diagnostic score of 0.9285714285714286.",
+  "steps": [
+    "Load the sequential demo dataset nasdaq100_2019.",
+    "Add a categorical column named category containing alternating float values 100.0 and 50.0.",
+    "Fit PARSynthesizer(metadata) on the modified data and sample 2 sequences.",
+    "Run run_diagnostic(real_data, sampled_data, metadata) and inspect the Data Validity details."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

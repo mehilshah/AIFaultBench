@@ -1,0 +1,10 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3273
+
+TITLE
+Bug in `CVAE` example
+
+BODY
+There is a bug in `CVAE` example. The `target` input to the `MaskedBCELoss` is not binary (it has values of -1, 0, 1). This was discovered by the PyTorch 2.1 update which started to validate the inputs of `F.binary_cross_entropy_loss`.
+
+> FAILED tests/test_examples.py::test_cpu[cvae/main.py --num-quadrant-inputs=1 --num-epochs=1] - subprocess.CalledProcessError: Command '['/opt/hostedtoolcache/Python/3.8.18/x64/bin/python', '/home/runner/work/pyro/pyro/examples/cvae/main.py', '--num-quadrant-inputs=1', '--num-epochs=1']' returned non-zero exit status 1.
+= 1 failed, 148 passed, 97 skipped, 26558 deselected, 2 warnings in 1948.89s (0:32:28) =

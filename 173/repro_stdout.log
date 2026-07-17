@@ -1,0 +1,79 @@
+Running: 173/.venv/bin/python -m pip install kfp==2.7.0 kubeflow-katib==0.17.0rc0
+Collecting kfp==2.7.0
+  Downloading kfp-2.7.0.tar.gz (441 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting kubeflow-katib==0.17.0rc0
+  Downloading kubeflow_katib-0.17.0rc0-py3-none-any.whl.metadata (1.4 kB)
+Collecting click<9,>=8.0.0 (from kfp==2.7.0)
+  Downloading click-8.4.2-py3-none-any.whl.metadata (2.6 kB)
+Collecting docstring-parser<1,>=0.7.3 (from kfp==2.7.0)
+  Downloading docstring_parser-0.18.0-py3-none-any.whl.metadata (3.5 kB)
+Collecting google-api-core!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.0,<3.0.0dev,>=1.31.5 (from kfp==2.7.0)
+  Downloading google_api_core-2.32.0-py3-none-any.whl.metadata (3.2 kB)
+Collecting google-auth<3,>=1.6.1 (from kfp==2.7.0)
+  Downloading google_auth-2.56.0-py3-none-any.whl.metadata (6.0 kB)
+Collecting google-cloud-storage<3,>=2.2.1 (from kfp==2.7.0)
+  Downloading google_cloud_storage-2.19.0-py2.py3-none-any.whl.metadata (9.1 kB)
+Collecting kfp-pipeline-spec==0.3.0 (from kfp==2.7.0)
+  Downloading kfp_pipeline_spec-0.3.0-py3-none-any.whl.metadata (329 bytes)
+Collecting kfp-server-api<2.1.0,>=2.0.0 (from kfp==2.7.0)
+  Downloading kfp-server-api-2.0.5.tar.gz (63 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting kubernetes<27,>=8.0.0 (from kfp==2.7.0)
+  Downloading kubernetes-26.1.0-py2.py3-none-any.whl.metadata (1.5 kB)
+Collecting protobuf<5,>=4.21.1 (from kfp==2.7.0)
+  Downloading protobuf-4.25.9-cp37-abi3-manylinux2014_x86_64.whl.metadata (541 bytes)
+Collecting PyYAML<7,>=5.3 (from kfp==2.7.0)
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting requests-toolbelt<1,>=0.8.0 (from kfp==2.7.0)
+  Downloading requests_toolbelt-0.10.1-py2.py3-none-any.whl.metadata (14 kB)
+Collecting tabulate<1,>=0.8.6 (from kfp==2.7.0)
+  Downloading tabulate-0.10.0-py3-none-any.whl.metadata (40 kB)
+Collecting urllib3<2.0.0 (from kfp==2.7.0)
+  Downloading urllib3-1.26.20-py2.py3-none-any.whl.metadata (50 kB)
+Collecting certifi>=14.05.14 (from kubeflow-katib==0.17.0rc0)
+  Downloading certifi-2026.6.17-py3-none-any.whl.metadata (2.5 kB)
+Collecting six>=1.10 (from kubeflow-katib==0.17.0rc0)
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Requirement already satisfied: setuptools>=21.0.0 in ./.venv/lib/python3.12/site-packages (from kubeflow-katib==0.17.0rc0) (83.0.0)
+INFO: pip is looking at multiple versions of kubeflow-katib to determine which version is compatible with other requirements. This could take a while.
+Collecting python-dateutil>=2.5.3 (from kubernetes<27,>=8.0.0->kfp==2.7.0)
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting websocket-client!=0.40.0,!=0.41.*,!=0.42.*,>=0.32.0 (from kubernetes<27,>=8.0.0->kfp==2.7.0)
+  Downloading websocket_client-1.9.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting requests (from kubernetes<27,>=8.0.0->kfp==2.7.0)
+  Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+Collecting requests-oauthlib (from kubernetes<27,>=8.0.0->kfp==2.7.0)
+  Downloading requests_oauthlib-2.0.0-py2.py3-none-any.whl.metadata (11 kB)
+
+The conflict is caused by:
+    kfp 2.7.0 depends on kubernetes<27 and >=8.0.0
+    kubeflow-katib 0.17.0rc0 depends on kubernetes>=27.2.0
+
+Additionally, some packages in these conflicts have no matching distributions available for your environment:
+    kubernetes
+
+To fix this you could try to:
+1. loosen the range of package versions you've specified
+2. remove package versions to allow pip to attempt to solve the dependency conflict
+{
+  "blocking_reason": "",
+  "evidence": "pip failed to resolve kfp==2.7.0 and kubeflow-katib==0.17.0rc0 together because kfp requires kubernetes<27 and kubeflow-katib requires kubernetes>=27.2.0.",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Create a virtual environment.",
+    "Run `python -m pip install kfp==2.7.0 kubeflow-katib==0.17.0rc0`.",
+    "Observe pip's ResolutionImpossible error on the kubernetes dependency."
+  ]
+}

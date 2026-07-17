@@ -1,0 +1,5 @@
+Building repro image: detectron2-bug-490-repro
+Running repro container without GPU runtime
+torch_version=2.3.1
+cuda_is_available=False
+cuda_visible_devices=None

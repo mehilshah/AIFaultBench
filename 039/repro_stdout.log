@@ -1,0 +1,4 @@
+input_shape=(3, 1, 1, 4)
+rope_dim=3
+exception=The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 3
+reproduced: RuntimeError from RoPE cache broadcasting

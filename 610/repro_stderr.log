@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "610/repro.py", line 37, in <module>
+    main()
+  File "610/repro.py", line 28, in main
+    precision.clip_gradients(optimizer, clip_val=1.0)
+  File "610/codebase/src/lightning/pytorch/plugins/precision/amp.py", line 108, in clip_gradients
+    raise RuntimeError(
+RuntimeError: The current optimizer, AdamW, does not allow for gradient clipping because it performs unscaling of gradients internally. HINT: Are you using a 'fused' optimizer?

@@ -1,0 +1,79 @@
+DEPRECATION: --build-option and --global-option are deprecated. pip 24.2 will enforce this behaviour change. A possible replacement is to use --config-settings. Discussion can be found at https://github.com/pypa/pip/issues/11859
+WARNING: Implying --no-binary=:all: due to the presence of --build-option / --global-option.
+  Running command pip subprocess to install build dependencies
+  Collecting setuptools
+    Downloading setuptools-83.0.0.tar.gz (1.2 MB)
+       ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 17.8 MB/s eta 0:00:00
+    Getting requirements to build wheel: started
+    Getting requirements to build wheel: finished with status 'done'
+    Preparing metadata (pyproject.toml): started
+    Preparing metadata (pyproject.toml): finished with status 'done'
+  Collecting wheel
+    Downloading wheel-0.47.0.tar.gz (63 kB)
+       ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 63.9/63.9 kB 383.4 MB/s eta 0:00:00
+    Installing build dependencies: started
+    Installing build dependencies: finished with status 'done'
+    Getting requirements to build wheel: started
+    Getting requirements to build wheel: finished with status 'done'
+    Preparing metadata (pyproject.toml): started
+    Preparing metadata (pyproject.toml): finished with status 'done'
+  Collecting packaging>=24.0 (from wheel)
+    Downloading packaging-26.2.tar.gz (228 kB)
+       ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 228.1/228.1 kB 11.4 MB/s eta 0:00:00
+    Installing build dependencies: started
+    Installing build dependencies: finished with status 'done'
+    Getting requirements to build wheel: started
+    Getting requirements to build wheel: finished with status 'done'
+    Preparing metadata (pyproject.toml): started
+    Preparing metadata (pyproject.toml): finished with status 'done'
+  Building wheels for collected packages: setuptools, wheel, packaging
+    Building wheel for setuptools (pyproject.toml): started
+    Building wheel for setuptools (pyproject.toml): finished with status 'done'
+    Created wheel for setuptools: filename=setuptools-83.0.0-py3-none-any.whl size=1008090 sha256=b3083de1fec600393b85985c70075e32585188299bdb0c38a84e583e3881b30a
+    Stored in directory: /tmp/pip-ephem-wheel-cache-nx0f0js2/wheels/0c/e0/11/ed171b2a9219b2e2d6fda23f438ff8adfdc1acffe2afed56b4
+    Building wheel for wheel (pyproject.toml): started
+    Building wheel for wheel (pyproject.toml): finished with status 'done'
+    Created wheel for wheel: filename=wheel-0.47.0-py3-none-any.whl size=32218 sha256=ed2e2223617f50c5c4fd0e381341b181ab4ccff703630dd9317d7ff938105a26
+    Stored in directory: /tmp/pip-ephem-wheel-cache-nx0f0js2/wheels/07/d2/e5/7a079af52c2d539cc4db04d585aa49061e88113ebc5e83211e
+    Building wheel for packaging (pyproject.toml): started
+    Building wheel for packaging (pyproject.toml): finished with status 'done'
+    Created wheel for packaging: filename=packaging-26.2-py3-none-any.whl size=100195 sha256=40dbb2ada16cb327933e5993df5d9039c0f80f26c5c729200d854075cc1d80bf
+    Stored in directory: /tmp/pip-ephem-wheel-cache-nx0f0js2/wheels/25/53/e3/2045add23529d0c391e88152570207022609b8f91597f35e3d
+  Successfully built setuptools wheel packaging
+  Installing collected packages: setuptools, packaging, wheel
+  Successfully installed packaging-26.2 setuptools-83.0.0 wheel-0.47.0
+  Running command Getting requirements to build wheel
+  Traceback (most recent call last):
+    File "191/.repro-venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 353, in <module>
+      main()
+    File "191/.repro-venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 335, in main
+      json_out['return_val'] = hook(**hook_input['kwargs'])
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "191/.repro-venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 118, in get_requires_for_build_wheel
+      return hook(config_settings)
+             ^^^^^^^^^^^^^^^^^^^^^
+    File "/tmp/pip-build-env-y8ffw6xw/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 333, in get_requires_for_build_wheel
+      return self._get_build_requires(config_settings, requirements=[])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/tmp/pip-build-env-y8ffw6xw/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 301, in _get_build_requires
+      self.run_setup()
+    File "/tmp/pip-build-env-y8ffw6xw/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 317, in run_setup
+      exec(code, locals())
+    File "<string>", line 10, in <module>
+  ModuleNotFoundError: No module named 'torch'
+  error: subprocess-exited-with-error
+  
+  × Getting requirements to build wheel did not run successfully.
+  │ exit code: 1
+  ╰─> See above for output.
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  full command: 191/.repro-venv/bin/python 191/.repro-venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py get_requires_for_build_wheel /tmp/tmpz_ux02ug
+  cwd: 191/codebase
+error: subprocess-exited-with-error
+
+× Getting requirements to build wheel did not run successfully.
+│ exit code: 1
+╰─> See above for output.
+
+note: This error originates from a subprocess, and is likely not a problem with pip.

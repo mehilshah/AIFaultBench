@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running ./run_repro.sh raises TypeError: unsupported operand type(s) for /: 'NoneType' and 'int' from DeepSpeedEngine._backward_prologue_per_tensor at codebase/deepspeed/runtime/engine.py:2335, reached through OutputBackwardHookManager.backward_hook in codebase/deepspeed/runtime/utils.py:1271.",
+  "steps": [
+    "Created a local venv with the CPU PyTorch wheel and the small dependency set needed to import the local DeepSpeed source.",
+    "Ran repro.py, which triggers the real DeepSpeed backward hook path with grad=None.",
+    "Observed the TypeError in DeepSpeedEngine._backward_prologue_per_tensor when the hook tries to divide None by the gradient accumulation steps."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

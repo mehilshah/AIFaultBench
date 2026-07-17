@@ -1,0 +1,471 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile:
+#1 transferring dockerfile: 367B done
+#1 DONE 0.5s
+
+#2 [internal] load metadata for docker.io/library/python:3.10-slim-bookworm
+#2 DONE 0.3s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 1.45kB done
+#4 DONE 0.0s
+
+#5 [1/5] FROM docker.io/library/python:3.10-slim-bookworm@sha256:9643927a6fc74bd81b0f1bbb5cce3cb4a491f46b4c5dbee770f28e575f180015
+#5 resolve docker.io/library/python:3.10-slim-bookworm@sha256:9643927a6fc74bd81b0f1bbb5cce3cb4a491f46b4c5dbee770f28e575f180015 0.0s done
+#5 DONE 0.1s
+
+#6 [2/5] WORKDIR /work
+#6 DONE 1.4s
+
+#7 [3/5] COPY requirements.txt /work/requirements.txt
+#7 DONE 0.0s
+
+#8 [4/5] RUN python -m pip install --upgrade pip &&     python -m pip install -r /work/requirements.txt
+#8 1.265 Requirement already satisfied: pip in /usr/local/lib/python3.10/site-packages (23.0.1)
+#8 1.368 Collecting pip
+#8 1.424   Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
+#8 1.509      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 22.2 MB/s eta 0:00:00
+#8 1.554 Installing collected packages: pip
+#8 1.554   Attempting uninstall: pip
+#8 1.555     Found existing installation: pip 23.0.1
+#8 1.653     Uninstalling pip-23.0.1:
+#8 3.009       Successfully uninstalled pip-23.0.1
+#8 3.646 Successfully installed pip-26.1.2
+#8 3.647 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#8 4.578 Collecting tensorflow==2.13.1 (from -r /work/requirements.txt (line 1))
+#8 4.654   Downloading tensorflow-2.13.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.4 kB)
+#8 4.673 Collecting keras-cv==0.6.1 (from -r /work/requirements.txt (line 2))
+#8 5.616   Downloading keras_cv-0.6.1-py3-none-any.whl.metadata (10 kB)
+#8 5.633 Collecting keras-core==0.1.5 (from -r /work/requirements.txt (line 3))
+#8 5.657   Downloading keras_core-0.1.5-py3-none-any.whl.metadata (4.0 kB)
+#8 5.674 Collecting absl-py>=1.0.0 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 5.685   Downloading absl_py-2.5.0-py3-none-any.whl.metadata (3.3 kB)
+#8 5.699 Collecting astunparse>=1.6.0 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 5.710   Downloading astunparse-1.6.3-py2.py3-none-any.whl.metadata (4.4 kB)
+#8 5.726 Collecting flatbuffers>=23.1.21 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 5.737   Downloading flatbuffers-25.12.19-py2.py3-none-any.whl.metadata (1.0 kB)
+#8 5.752 Collecting gast<=0.4.0,>=0.2.1 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 5.763   Downloading gast-0.4.0-py3-none-any.whl.metadata (1.1 kB)
+#8 5.777 Collecting google-pasta>=0.1.1 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 5.790   Downloading google_pasta-0.2.0-py3-none-any.whl.metadata (814 bytes)
+#8 6.215 Collecting grpcio<2.0,>=1.24.3 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 6.226   Downloading grpcio-1.82.1-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.7 kB)
+#8 6.268 Collecting h5py>=2.9.0 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 6.279   Downloading h5py-3.16.0-cp310-cp310-manylinux_2_28_x86_64.whl.metadata (3.0 kB)
+#8 6.299 Collecting keras<2.14,>=2.13.1 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 6.310   Downloading keras-2.13.1-py3-none-any.whl.metadata (2.4 kB)
+#8 6.327 Collecting libclang>=13.0.0 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 6.339   Downloading libclang-18.1.1-py2.py3-none-manylinux2010_x86_64.whl.metadata (5.2 kB)
+#8 6.515 Collecting numpy<=1.24.3,>=1.22 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 6.526   Downloading numpy-1.24.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.6 kB)
+#8 6.540 Collecting opt-einsum>=2.3.2 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 6.554   Downloading opt_einsum-3.4.0-py3-none-any.whl.metadata (6.3 kB)
+#8 6.555 Requirement already satisfied: packaging in /usr/local/lib/python3.10/site-packages (from tensorflow==2.13.1->-r /work/requirements.txt (line 1)) (26.2)
+#8 6.684 Collecting protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<5.0.0dev,>=3.20.3 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 6.695   Downloading protobuf-4.25.9-cp37-abi3-manylinux2014_x86_64.whl.metadata (541 bytes)
+#8 6.696 Requirement already satisfied: setuptools in /usr/local/lib/python3.10/site-packages (from tensorflow==2.13.1->-r /work/requirements.txt (line 1)) (79.0.1)
+#8 6.709 Collecting six>=1.12.0 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 6.720   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+#8 6.762 Collecting tensorboard<2.14,>=2.13 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 6.773   Downloading tensorboard-2.13.0-py3-none-any.whl.metadata (1.8 kB)
+#8 6.789 Collecting tensorflow-estimator<2.14,>=2.13.0 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 6.800   Downloading tensorflow_estimator-2.13.0-py2.py3-none-any.whl.metadata (1.3 kB)
+#8 6.814 Collecting termcolor>=1.1.0 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 6.825   Downloading termcolor-3.3.0-py3-none-any.whl.metadata (6.5 kB)
+#8 6.842 Collecting typing-extensions<4.6.0,>=3.6.6 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 6.853   Downloading typing_extensions-4.5.0-py3-none-any.whl.metadata (8.5 kB)
+#8 7.070 Collecting wrapt>=1.11.0 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 7.082   Downloading wrapt-2.2.2-cp310-cp310-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (7.4 kB)
+#8 7.107 Collecting tensorflow-io-gcs-filesystem>=0.23.1 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 7.120   Downloading tensorflow_io_gcs_filesystem-0.37.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (14 kB)
+#8 7.409 Collecting regex (from keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 7.422   Downloading regex-2026.7.10-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+#8 7.444 Collecting tensorflow-datasets (from keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 7.455   Downloading tensorflow_datasets-4.9.10-py3-none-any.whl.metadata (11 kB)
+#8 7.530 Collecting rich (from keras-core==0.1.5->-r /work/requirements.txt (line 3))
+#8 7.542   Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+#8 7.591 Collecting namex (from keras-core==0.1.5->-r /work/requirements.txt (line 3))
+#8 7.602   Downloading namex-0.1.0-py3-none-any.whl.metadata (322 bytes)
+#8 7.621 Collecting dm-tree (from keras-core==0.1.5->-r /work/requirements.txt (line 3))
+#8 7.632   Downloading dm_tree-0.1.10-cp310-cp310-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (2.6 kB)
+#8 7.636 INFO: pip is looking at multiple versions of grpcio to determine which version is compatible with other requirements. This could take a while.
+#8 7.636 Collecting grpcio<2.0,>=1.24.3 (from tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 7.647   Downloading grpcio-1.81.1-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.7 kB)
+#8 7.660   Downloading grpcio-1.81.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.7 kB)
+#8 7.672   Downloading grpcio-1.80.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.8 kB)
+#8 7.686   Downloading grpcio-1.78.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.8 kB)
+#8 7.699   Downloading grpcio-1.76.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.7 kB)
+#8 7.710   Downloading grpcio-1.75.1-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.7 kB)
+#8 7.723   Downloading grpcio-1.75.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.7 kB)
+#8 7.724 INFO: pip is still looking at multiple versions of grpcio to determine which version is compatible with other requirements. This could take a while.
+#8 7.763   Downloading grpcio-1.74.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.8 kB)
+#8 7.803 Collecting google-auth<3,>=1.6.3 (from tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 7.815   Downloading google_auth-2.56.0-py3-none-any.whl.metadata (6.0 kB)
+#8 7.836 Collecting google-auth-oauthlib<1.1,>=0.5 (from tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 7.847   Downloading google_auth_oauthlib-1.0.0-py2.py3-none-any.whl.metadata (2.7 kB)
+#8 7.865 Collecting markdown>=2.6.8 (from tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 7.876   Downloading markdown-3.10.2-py3-none-any.whl.metadata (5.1 kB)
+#8 7.907 Collecting requests<3,>=2.21.0 (from tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 7.918   Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+#8 7.933 Collecting tensorboard-data-server<0.8.0,>=0.7.0 (from tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 7.944   Downloading tensorboard_data_server-0.7.2-py3-none-manylinux_2_31_x86_64.whl.metadata (1.1 kB)
+#8 7.963 Collecting werkzeug>=1.0.1 (from tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 7.975   Downloading werkzeug-3.1.8-py3-none-any.whl.metadata (4.0 kB)
+#8 7.976 Requirement already satisfied: wheel>=0.26 in /usr/local/lib/python3.10/site-packages (from tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1)) (0.46.3)
+#8 7.994 Collecting pyasn1-modules>=0.2.1 (from google-auth<3,>=1.6.3->tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 8.005   Downloading pyasn1_modules-0.4.2-py3-none-any.whl.metadata (3.5 kB)
+#8 8.162 Collecting cryptography>=38.0.3 (from google-auth<3,>=1.6.3->tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 8.207   Downloading cryptography-49.0.0-cp39-abi3-manylinux_2_34_x86_64.whl.metadata (4.3 kB)
+#8 8.228 Collecting requests-oauthlib>=0.7.0 (from google-auth-oauthlib<1.1,>=0.5->tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 8.239   Downloading requests_oauthlib-2.0.0-py2.py3-none-any.whl.metadata (11 kB)
+#8 8.314 Collecting charset_normalizer<4,>=2 (from requests<3,>=2.21.0->tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 8.327   Downloading charset_normalizer-3.4.9-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (41 kB)
+#8 8.344 Collecting idna<4,>=2.5 (from requests<3,>=2.21.0->tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 8.354   Downloading idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+#8 8.374 Collecting urllib3<3,>=1.26 (from requests<3,>=2.21.0->tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 8.385   Downloading urllib3-2.7.0-py3-none-any.whl.metadata (6.9 kB)
+#8 8.403 Collecting certifi>=2023.5.7 (from requests<3,>=2.21.0->tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 8.413   Downloading certifi-2026.6.17-py3-none-any.whl.metadata (2.5 kB)
+#8 8.495 Collecting cffi>=2.0.0 (from cryptography>=38.0.3->google-auth<3,>=1.6.3->tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 8.506   Downloading cffi-2.1.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+#8 8.508 INFO: pip is looking at multiple versions of cryptography to determine which version is compatible with other requirements. This could take a while.
+#8 8.508 Collecting cryptography>=38.0.3 (from google-auth<3,>=1.6.3->tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 8.519   Downloading cryptography-48.0.1-cp39-abi3-manylinux_2_34_x86_64.whl.metadata (4.3 kB)
+#8 8.532   Downloading cryptography-48.0.0-cp39-abi3-manylinux_2_34_x86_64.whl.metadata (4.3 kB)
+#8 8.545   Downloading cryptography-47.0.0-cp38-abi3-manylinux_2_34_x86_64.whl.metadata (4.5 kB)
+#8 8.558   Downloading cryptography-46.0.7-cp38-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+#8 8.575   Downloading cryptography-46.0.6-cp38-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+#8 8.593   Downloading cryptography-46.0.5-cp38-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+#8 8.609   Downloading cryptography-46.0.4-cp38-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+#8 8.613 INFO: pip is still looking at multiple versions of cryptography to determine which version is compatible with other requirements. This could take a while.
+#8 8.626   Downloading cryptography-46.0.3-cp38-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+#8 8.641   Downloading cryptography-46.0.2-cp38-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+#8 8.656   Downloading cryptography-46.0.1-cp38-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+#8 8.671   Downloading cryptography-46.0.0-cp38-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+#8 8.709   Downloading cryptography-45.0.7-cp37-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+#8 8.727 Collecting pycparser (from cffi>=2.0.0->cryptography>=38.0.3->google-auth<3,>=1.6.3->tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 8.738   Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+#8 8.769 Collecting pyasn1<0.7.0,>=0.6.1 (from pyasn1-modules>=0.2.1->google-auth<3,>=1.6.3->tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 8.781   Downloading pyasn1-0.6.4-py3-none-any.whl.metadata (8.4 kB)
+#8 8.800 Collecting oauthlib>=3.0.0 (from requests-oauthlib>=0.7.0->google-auth-oauthlib<1.1,>=0.5->tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 8.811   Downloading oauthlib-3.3.1-py3-none-any.whl.metadata (7.9 kB)
+#8 8.870 Collecting markupsafe>=2.1.1 (from werkzeug>=1.0.1->tensorboard<2.14,>=2.13->tensorflow==2.13.1->-r /work/requirements.txt (line 1))
+#8 8.882   Downloading markupsafe-3.0.3-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+#8 8.900 Collecting attrs>=18.2.0 (from dm-tree->keras-core==0.1.5->-r /work/requirements.txt (line 3))
+#8 8.910   Downloading attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+#8 8.935 Collecting markdown-it-py>=2.2.0 (from rich->keras-core==0.1.5->-r /work/requirements.txt (line 3))
+#8 8.946   Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+#8 8.968 Collecting pygments<3.0.0,>=2.13.0 (from rich->keras-core==0.1.5->-r /work/requirements.txt (line 3))
+#8 8.978   Downloading pygments-2.20.0-py3-none-any.whl.metadata (2.5 kB)
+#8 8.992 Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich->keras-core==0.1.5->-r /work/requirements.txt (line 3))
+#8 9.030   Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+#8 9.052 Collecting array_record>=0.5.0 (from tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 9.063   Downloading array_record-0.8.1-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.1 kB)
+#8 9.083 Collecting etils>=1.6.0 (from etils[edc,enp,epath,epy,etree]>=1.6.0; python_version < "3.11"->tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 9.096   Downloading etils-1.13.0-py3-none-any.whl.metadata (6.5 kB)
+#8 9.127 Collecting immutabledict (from tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 9.138   Downloading immutabledict-4.3.1-py3-none-any.whl.metadata (3.5 kB)
+#8 9.153 Collecting promise (from tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 9.164   Downloading promise-2.3.tar.gz (19 kB)
+#8 9.170   Installing build dependencies: started
+#8 11.31   Installing build dependencies: finished with status 'done'
+#8 11.32   Getting requirements to build wheel: started
+#8 12.07   Getting requirements to build wheel: finished with status 'done'
+#8 12.08   Preparing metadata (pyproject.toml): started
+#8 12.65   Preparing metadata (pyproject.toml): finished with status 'done'
+#8 12.74 Collecting psutil (from tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 12.75   Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+#8 12.82 Collecting pyarrow (from tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 12.83   Downloading pyarrow-25.0.0-cp310-cp310-manylinux_2_28_x86_64.whl.metadata (3.0 kB)
+#8 12.85 Collecting simple_parsing (from tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 12.86   Downloading simple_parsing-0.1.8-py3-none-any.whl.metadata (8.1 kB)
+#8 12.88 Collecting tensorflow-metadata (from tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 12.89   Downloading tensorflow_metadata-1.21.0-py3-none-any.whl.metadata (2.5 kB)
+#8 12.91 Collecting toml (from tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 12.92   Downloading toml-0.10.2-py2.py3-none-any.whl.metadata (7.1 kB)
+#8 12.94 Collecting tqdm (from tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 12.95   Downloading tqdm-4.68.4-py3-none-any.whl.metadata (57 kB)
+#8 12.98 Collecting einops (from etils[edc,enp,epath,epy,etree]>=1.6.0; python_version < "3.11"->tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 12.99   Downloading einops-0.8.2-py3-none-any.whl.metadata (13 kB)
+#8 13.01 Collecting fsspec (from etils[edc,enp,epath,epy,etree]>=1.6.0; python_version < "3.11"->tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 13.02   Downloading fsspec-2026.6.0-py3-none-any.whl.metadata (10 kB)
+#8 13.05 Collecting importlib_resources (from etils[edc,enp,epath,epy,etree]>=1.6.0; python_version < "3.11"->tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 13.07   Downloading importlib_resources-7.1.0-py3-none-any.whl.metadata (4.0 kB)
+#8 13.09 Collecting zipp (from etils[edc,enp,epath,epy,etree]>=1.6.0; python_version < "3.11"->tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 13.10   Downloading zipp-4.1.0-py3-none-any.whl.metadata (3.6 kB)
+#8 13.12 Collecting docstring-parser~=0.15 (from simple_parsing->tensorflow-datasets->keras-cv==0.6.1->-r /work/requirements.txt (line 2))
+#8 13.13   Downloading docstring_parser-0.18.0-py3-none-any.whl.metadata (3.5 kB)
+#8 13.16 Downloading tensorflow-2.13.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (479.7 MB)
+#8 20.90    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 479.7/479.7 MB 68.7 MB/s  0:00:07
+#8 20.91 Downloading keras_cv-0.6.1-py3-none-any.whl (756 kB)
+#8 20.92    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 756.2/756.2 kB 107.3 MB/s  0:00:00
+#8 20.93 Downloading keras_core-0.1.5-py3-none-any.whl (924 kB)
+#8 20.94    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 924.6/924.6 kB 79.9 MB/s  0:00:00
+#8 20.96 Downloading gast-0.4.0-py3-none-any.whl (9.8 kB)
+#8 20.97 Downloading grpcio-1.74.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (6.2 MB)
+#8 21.04    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.2/6.2 MB 84.9 MB/s  0:00:00
+#8 21.05 Downloading keras-2.13.1-py3-none-any.whl (1.7 MB)
+#8 21.07    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 80.4 MB/s  0:00:00
+#8 21.08 Downloading numpy-1.24.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (17.3 MB)
+#8 21.29    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.3/17.3 MB 85.9 MB/s  0:00:00
+#8 21.30 Downloading protobuf-4.25.9-cp37-abi3-manylinux2014_x86_64.whl (295 kB)
+#8 21.31 Downloading tensorboard-2.13.0-py3-none-any.whl (5.6 MB)
+#8 21.40    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.6/5.6 MB 58.3 MB/s  0:00:00
+#8 21.41 Downloading google_auth-2.56.0-py3-none-any.whl (257 kB)
+#8 21.43 Downloading google_auth_oauthlib-1.0.0-py2.py3-none-any.whl (18 kB)
+#8 21.44 Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+#8 21.45 Downloading charset_normalizer-3.4.9-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (223 kB)
+#8 21.46 Downloading idna-3.18-py3-none-any.whl (65 kB)
+#8 21.48 Downloading tensorboard_data_server-0.7.2-py3-none-manylinux_2_31_x86_64.whl (6.6 MB)
+#8 21.55    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.6/6.6 MB 87.2 MB/s  0:00:00
+#8 21.56 Downloading tensorflow_estimator-2.13.0-py2.py3-none-any.whl (440 kB)
+#8 21.58 Downloading typing_extensions-4.5.0-py3-none-any.whl (27 kB)
+#8 21.59 Downloading urllib3-2.7.0-py3-none-any.whl (131 kB)
+#8 21.60 Downloading absl_py-2.5.0-py3-none-any.whl (137 kB)
+#8 21.61 Downloading astunparse-1.6.3-py2.py3-none-any.whl (12 kB)
+#8 21.63 Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+#8 21.64 Downloading certifi-2026.6.17-py3-none-any.whl (133 kB)
+#8 21.65 Downloading cryptography-45.0.7-cp37-abi3-manylinux_2_34_x86_64.whl (4.4 MB)
+#8 21.70    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.4/4.4 MB 87.3 MB/s  0:00:00
+#8 21.71 Downloading cffi-2.1.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (218 kB)
+#8 21.72 Downloading flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+#8 21.73 Downloading google_pasta-0.2.0-py3-none-any.whl (57 kB)
+#8 21.75 Downloading h5py-3.16.0-cp310-cp310-manylinux_2_28_x86_64.whl (5.1 MB)
+#8 21.81    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.1/5.1 MB 86.8 MB/s  0:00:00
+#8 21.82 Downloading libclang-18.1.1-py2.py3-none-manylinux2010_x86_64.whl (24.5 MB)
+#8 22.09    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 24.5/24.5 MB 88.7 MB/s  0:00:00
+#8 22.11 Downloading markdown-3.10.2-py3-none-any.whl (108 kB)
+#8 22.12 Downloading opt_einsum-3.4.0-py3-none-any.whl (71 kB)
+#8 22.13 Downloading pyasn1_modules-0.4.2-py3-none-any.whl (181 kB)
+#8 22.14 Downloading pyasn1-0.6.4-py3-none-any.whl (84 kB)
+#8 22.15 Downloading requests_oauthlib-2.0.0-py2.py3-none-any.whl (24 kB)
+#8 22.16 Downloading oauthlib-3.3.1-py3-none-any.whl (160 kB)
+#8 22.18 Downloading tensorflow_io_gcs_filesystem-0.37.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (5.1 MB)
+#8 22.23    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.1/5.1 MB 90.1 MB/s  0:00:00
+#8 22.24 Downloading termcolor-3.3.0-py3-none-any.whl (7.7 kB)
+#8 22.26 Downloading werkzeug-3.1.8-py3-none-any.whl (226 kB)
+#8 22.27 Downloading markupsafe-3.0.3-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (20 kB)
+#8 22.28 Downloading wrapt-2.2.2-cp310-cp310-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (152 kB)
+#8 22.29 Downloading dm_tree-0.1.10-cp310-cp310-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (183 kB)
+#8 22.31 Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+#8 22.32 Downloading namex-0.1.0-py3-none-any.whl (5.9 kB)
+#8 22.33 Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+#8 22.34 Downloading regex-2026.7.10-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (794 kB)
+#8 22.35    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 794.2/794.2 kB 114.2 MB/s  0:00:00
+#8 22.36 Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+#8 22.37 Downloading pygments-2.20.0-py3-none-any.whl (1.2 MB)
+#8 22.39    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 92.6 MB/s  0:00:00
+#8 22.40 Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+#8 22.41 Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+#8 22.42 Downloading tensorflow_datasets-4.9.10-py3-none-any.whl (5.3 MB)
+#8 22.48    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.3/5.3 MB 90.5 MB/s  0:00:00
+#8 22.49 Downloading array_record-0.8.1-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (2.5 MB)
+#8 22.52    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.5/2.5 MB 91.6 MB/s  0:00:00
+#8 22.53 Downloading etils-1.13.0-py3-none-any.whl (170 kB)
+#8 22.54 Downloading einops-0.8.2-py3-none-any.whl (65 kB)
+#8 22.56 Downloading fsspec-2026.6.0-py3-none-any.whl (203 kB)
+#8 22.57 Downloading immutabledict-4.3.1-py3-none-any.whl (5.0 kB)
+#8 22.58 Downloading importlib_resources-7.1.0-py3-none-any.whl (37 kB)
+#8 22.59 Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+#8 22.60 Downloading pyarrow-25.0.0-cp310-cp310-manylinux_2_28_x86_64.whl (50.1 MB)
+#8 23.14    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 50.1/50.1 MB 93.5 MB/s  0:00:00
+#8 23.15 Downloading simple_parsing-0.1.8-py3-none-any.whl (113 kB)
+#8 23.16 Downloading docstring_parser-0.18.0-py3-none-any.whl (22 kB)
+#8 23.17 Downloading tensorflow_metadata-1.21.0-py3-none-any.whl (30 kB)
+#8 23.19 Downloading toml-0.10.2-py2.py3-none-any.whl (16 kB)
+#8 23.20 Downloading tqdm-4.68.4-py3-none-any.whl (676 kB)
+#8 23.20    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 676.6/676.6 kB 116.0 MB/s  0:00:00
+#8 23.22 Downloading zipp-4.1.0-py3-none-any.whl (10 kB)
+#8 23.74 Building wheels for collected packages: promise
+#8 23.74   Building wheel for promise (pyproject.toml): started
+#8 24.19   Building wheel for promise (pyproject.toml): finished with status 'done'
+#8 24.19   Created wheel for promise: filename=promise-2.3-py3-none-any.whl size=21580 sha256=a41301ad963c56b1b29ba60d40af83581bf45941297b11c788f5b317b01c379c
+#8 24.19   Stored in directory: /tmp/pip-ephem-wheel-cache-m3gl6mdp/wheels/54/4e/28/3ed0e1c8a752867445bab994d2340724928aa3ab059c57c8db
+#8 24.20 Successfully built promise
+#8 24.43 Installing collected packages: namex, libclang, flatbuffers, zipp, wrapt, urllib3, typing-extensions, tqdm, toml, termcolor, tensorflow-io-gcs-filesystem, tensorflow-estimator, tensorboard-data-server, six, regex, pygments, pycparser, pyasn1, pyarrow, psutil, protobuf, opt-einsum, oauthlib, numpy, mdurl, markupsafe, markdown, keras, importlib_resources, immutabledict, idna, grpcio, gast, fsspec, etils, einops, docstring-parser, charset_normalizer, certifi, attrs, absl-py, werkzeug, tensorflow-metadata, simple_parsing, requests, pyasn1-modules, promise, markdown-it-py, h5py, google-pasta, dm-tree, cffi, astunparse, rich, requests-oauthlib, cryptography, keras-core, google-auth, array_record, google-auth-oauthlib, tensorflow-datasets, tensorboard, tensorflow, keras-cv
+#8 43.91 
+#8 43.91 Successfully installed absl-py-2.5.0 array_record-0.8.1 astunparse-1.6.3 attrs-26.1.0 certifi-2026.6.17 cffi-2.1.0 charset_normalizer-3.4.9 cryptography-45.0.7 dm-tree-0.1.10 docstring-parser-0.18.0 einops-0.8.2 etils-1.13.0 flatbuffers-25.12.19 fsspec-2026.6.0 gast-0.4.0 google-auth-2.56.0 google-auth-oauthlib-1.0.0 google-pasta-0.2.0 grpcio-1.74.0 h5py-3.16.0 idna-3.18 immutabledict-4.3.1 importlib_resources-7.1.0 keras-2.13.1 keras-core-0.1.5 keras-cv-0.6.1 libclang-18.1.1 markdown-3.10.2 markdown-it-py-4.2.0 markupsafe-3.0.3 mdurl-0.1.2 namex-0.1.0 numpy-1.24.3 oauthlib-3.3.1 opt-einsum-3.4.0 promise-2.3 protobuf-4.25.9 psutil-7.2.2 pyarrow-25.0.0 pyasn1-0.6.4 pyasn1-modules-0.4.2 pycparser-3.0 pygments-2.20.0 regex-2026.7.10 requests-2.34.2 requests-oauthlib-2.0.0 rich-15.0.0 simple_parsing-0.1.8 six-1.17.0 tensorboard-2.13.0 tensorboard-data-server-0.7.2 tensorflow-2.13.1 tensorflow-datasets-4.9.10 tensorflow-estimator-2.13.0 tensorflow-io-gcs-filesystem-0.37.1 tensorflow-metadata-1.21.0 termcolor-3.3.0 toml-0.10.2 tqdm-4.68.4 typing-extensions-4.5.0 urllib3-2.7.0 werkzeug-3.1.8 wrapt-2.2.2 zipp-4.1.0
+#8 43.91 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#8 DONE 47.1s
+
+#9 [5/5] COPY repro.py /work/repro.py
+#9 DONE 0.6s
+
+#10 exporting to image
+#10 exporting layers
+#10 exporting layers 48.7s done
+#10 exporting manifest sha256:ec9ccb933a901de02b3d74a5f317c50a3b950fc27066721ce6e86b2f18b9df52 done
+#10 exporting config sha256:317b478db099dc13dd025f8dc4b9304ff7ee8ec3d5d5135c61addcbb5600e824 done
+#10 exporting attestation manifest sha256:0aac249ecec70f1a19d5c35b855a6c1547f4f6290529fadb75fdda25b00264ad 0.0s done
+#10 exporting manifest list sha256:3c5c1063dd3b142178f7353704ea560036f95fbc107462b298558d983015b6b2 0.0s done
+#10 naming to docker.io/library/repro-repro-063:latest 0.0s done
+#10 unpacking to docker.io/library/repro-repro-063:latest
+#10 unpacking to docker.io/library/repro-repro-063:latest 9.3s done
+#10 DONE 58.1s
+2026-07-17 04:42:33.380562: I tensorflow/core/util/port.cc:110] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-07-17 04:42:33.382169: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
+2026-07-17 04:42:33.412335: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
+2026-07-17 04:42:33.412721: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-07-17 04:42:34.106637: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+ERROR:absl:cannot import name 'runtime_version' from 'google.protobuf' (/usr/local/lib/python3.10/site-packages/google/protobuf/__init__.py)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/__init__.py", line 79, in <module>
+    from tensorflow_datasets import rlds  # pylint: disable=g-bad-import-order
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/rlds/__init__.py", line 21, in <module>
+    from tensorflow_datasets.rlds import envlogger_reader
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/rlds/envlogger_reader.py", line 21, in <module>
+    from tensorflow_datasets.core.utils.lazy_imports_utils import tree
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/__init__.py", line 21, in <module>
+    from tensorflow_datasets.core import community
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/community/__init__.py", line 19, in <module>
+    from tensorflow_datasets.core.community.huggingface_wrapper import mock_builtin_to_use_gfile
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/community/huggingface_wrapper.py", line 32, in <module>
+    from tensorflow_datasets.core import dataset_builder
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/dataset_builder.py", line 162, in <module>
+    class DatasetBuilder(registered.RegisteredDataset):
+  File "/usr/local/lib/python3.10/site-packages/etils/epy/lazy_imports_utils.py", line 123, in __getattr__
+    return getattr(self._module, name)
+  File "/usr/local/lib/python3.10/functools.py", line 981, in __get__
+    val = self.func(instance)
+  File "/usr/local/lib/python3.10/site-packages/etils/epy/lazy_imports_utils.py", line 84, in _module
+    module = importlib.import_module(self.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/registered.py", line 36, in <module>
+    import tensorflow_datasets.core.logging as _tfds_logging
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/logging/__init__.py", line 29, in <module>
+    from tensorflow_datasets.core.logging import logging_logger
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/logging/logging_logger.py", line 21, in <module>
+    from tensorflow_datasets.core import decode
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/decode/__init__.py", line 22, in <module>
+    from tensorflow_datasets.core.decode.partial_decode import PartialDecoding
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/decode/partial_decode.py", line 21, in <module>
+    from tensorflow_datasets.core import features as features_lib
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/features/__init__.py", line 22, in <module>
+    from tensorflow_datasets.core.features.audio_feature import Audio
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/features/audio_feature.py", line 33, in <module>
+    from tensorflow_datasets.core.features import feature as feature_lib
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/features/feature.py", line 36, in <module>
+    from tensorflow_datasets.core.proto import feature_pb2
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/proto/__init__.py", line 18, in <module>
+    from tensorflow_datasets.core.proto import dataset_info_generated_pb2 as dataset_info_pb2  # pylint: disable=line-too-long
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_datasets/core/proto/dataset_info_generated_pb2.py", line 32, in <module>
+    from tensorflow_metadata.proto.v0 import schema_pb2 as tensorflow__metadata_dot_proto_dot_v0_dot_schema__pb2
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_metadata/proto/__init__.py", line 16, in <module>
+    from tensorflow_metadata.proto.v0 import (
+  File "/usr/local/lib/python3.10/site-packages/tensorflow_metadata/proto/v0/anomalies_pb2.py", line 9, in <module>
+    from google.protobuf import runtime_version as _runtime_version
+ImportError: cannot import name 'runtime_version' from 'google.protobuf' (/usr/local/lib/python3.10/site-packages/google/protobuf/__init__.py)
+Traceback (most recent call last):
+  File "/work/repro.py", line 55, in <module>
+    main()
+  File "/work/repro.py", line 43, in main
+    tf.data.Dataset.range(4)
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/data/ops/dataset_ops.py", line 2278, in map
+    return map_op._map_v2(
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/data/ops/map_op.py", line 40, in _map_v2
+    return _ParallelMapDataset(
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/data/ops/map_op.py", line 148, in __init__
+    self._map_func = structured_function.StructuredFunctionWrapper(
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/data/ops/structured_function.py", line 272, in __init__
+    self._function = fn_factory()
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/eager/polymorphic_function/polymorphic_function.py", line 1189, in get_concrete_function
+    concrete = self._get_concrete_function_garbage_collected(*args, **kwargs)
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/eager/polymorphic_function/polymorphic_function.py", line 1169, in _get_concrete_function_garbage_collected
+    self._initialize(args, kwargs, add_initializers_to=initializers)
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/eager/polymorphic_function/polymorphic_function.py", line 694, in _initialize
+    self._variable_creation_fn    # pylint: disable=protected-access
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/eager/polymorphic_function/tracing_compiler.py", line 176, in _get_concrete_function_internal_garbage_collected
+    concrete_function, _ = self._maybe_define_concrete_function(args, kwargs)
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/eager/polymorphic_function/tracing_compiler.py", line 171, in _maybe_define_concrete_function
+    return self._maybe_define_function(args, kwargs)
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/eager/polymorphic_function/tracing_compiler.py", line 398, in _maybe_define_function
+    concrete_function = self._create_concrete_function(
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/eager/polymorphic_function/tracing_compiler.py", line 305, in _create_concrete_function
+    func_graph_module.func_graph_from_py_func(
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/framework/func_graph.py", line 1055, in func_graph_from_py_func
+    func_outputs = python_func(*func_args, **func_kwargs)
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/eager/polymorphic_function/polymorphic_function.py", line 597, in wrapped_fn
+    out = weak_wrapped_fn().__wrapped__(*args, **kwds)
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/data/ops/structured_function.py", line 238, in wrapped_fn
+    ret = wrapper_helper(*args)
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/data/ops/structured_function.py", line 168, in wrapper_helper
+    ret = autograph.tf_convert(self._func, ag_ctx)(*nested_args)
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/autograph/impl/api.py", line 690, in wrapper
+    return converted_call(f, args, kwargs, options=options)
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/autograph/impl/api.py", line 377, in converted_call
+    return _call_unconverted(f, args, kwargs, options)
+  File "/usr/local/lib/python3.10/site-packages/tensorflow/python/autograph/impl/api.py", line 459, in _call_unconverted
+    return f(*args, **kwargs)
+  File "/usr/local/lib/python3.10/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/tmp/__autograph_generated_filehj19gba3.py", line 46, in tf__call
+    ag__.if_stmt(ag__.ld(images).shape.rank == 3, if_body_1, else_body_1, get_state_1, set_state_1, ('outputs',), 1)
+  File "/tmp/__autograph_generated_filehj19gba3.py", line 24, in if_body_1
+    outputs = ag__.converted_call(ag__.ld(self)._format_output, (ag__.converted_call(ag__.ld(self)._augment, (ag__.ld(inputs),), None, fscope), ag__.ld(metadata)), None, fscope)
+  File "/tmp/__autograph_generated_file4foru1fv.py", line 12, in tf___augment
+    result = ag__.converted_call(ag__.converted_call(ag__.ld(super), (), None, fscope)._augment, (ag__.ld(sample),), None, fscope)
+  File "/tmp/__autograph_generated_filenb9ofb9t.py", line 55, in tf___augment
+    ag__.if_stmt(ag__.ld(self).layers == [], if_body, else_body, get_state_1, set_state_1, ('do_return', 'retval_'), 2)
+  File "/tmp/__autograph_generated_filenb9ofb9t.py", line 45, in else_body
+    ag__.for_stmt(ag__.converted_call(ag__.ld(range), (ag__.ld(self).augmentations_per_image,), None, fscope), None, loop_body, get_state, set_state, ('result',), {'iterate_names': '_'})
+  File "/tmp/__autograph_generated_filenb9ofb9t.py", line 42, in loop_body
+    result = ag__.converted_call(ag__.ld(tf).cond, (ag__.ld(skip_augment) > ag__.ld(self).rate, ag__.autograph_artifact(lambda : ag__.ld(inputs)), ag__.autograph_artifact(lambda : ag__.converted_call(ag__.ld(self)._random_choice, (ag__.ld(result),), None, fscope))), None, fscope)
+  File "/tmp/__autograph_generated_filenb9ofb9t.py", line 42, in <lambda>
+    result = ag__.converted_call(ag__.ld(tf).cond, (ag__.ld(skip_augment) > ag__.ld(self).rate, ag__.autograph_artifact(lambda : ag__.ld(inputs)), ag__.autograph_artifact(lambda : ag__.converted_call(ag__.ld(self)._random_choice, (ag__.ld(result),), None, fscope))), None, fscope)
+  File "/tmp/__autograph_generated_filehj19gba3.py", line 46, in tf__call
+    ag__.if_stmt(ag__.ld(images).shape.rank == 3, if_body_1, else_body_1, get_state_1, set_state_1, ('outputs',), 1)
+  File "/tmp/__autograph_generated_filehj19gba3.py", line 24, in if_body_1
+    outputs = ag__.converted_call(ag__.ld(self)._format_output, (ag__.converted_call(ag__.ld(self)._augment, (ag__.ld(inputs),), None, fscope), ag__.ld(metadata)), None, fscope)
+  File "/tmp/__autograph_generated_filexb6reist.py", line 14, in tf___augment
+    retval_ = ag__.converted_call(ag__.ld(tf).switch_case, (), dict(branch_index=ag__.ld(selected_op), branch_fns=ag__.ld(branch_fns), default=ag__.autograph_artifact(lambda : ag__.ld(inputs))), fscope)
+TypeError: Exception encountered when calling layer 'rand_augment' (type RandAugment).
+
+in user code:
+
+    File "/usr/local/lib/python3.10/site-packages/keras_cv/layers/preprocessing/base_image_augmentation_layer.py", line 419, in call  *
+        outputs = self._format_output(self._augment(inputs), metadata)
+    File "/usr/local/lib/python3.10/site-packages/keras_cv/layers/preprocessing/rand_augment.py", line 127, in _augment  *
+        result = super()._augment(sample)
+    File "/usr/local/lib/python3.10/site-packages/keras_cv/layers/preprocessing/random_augmentation_pipeline.py", line 103, in _augment  *
+        result = tf.cond(
+    File "/usr/local/lib/python3.10/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler
+        raise e.with_traceback(filtered_tb) from None
+    File "/tmp/__autograph_generated_filehj19gba3.py", line 46, in tf__call
+        ag__.if_stmt(ag__.ld(images).shape.rank == 3, if_body_1, else_body_1, get_state_1, set_state_1, ('outputs',), 1)
+    File "/tmp/__autograph_generated_filehj19gba3.py", line 24, in if_body_1
+        outputs = ag__.converted_call(ag__.ld(self)._format_output, (ag__.converted_call(ag__.ld(self)._augment, (ag__.ld(inputs),), None, fscope), ag__.ld(metadata)), None, fscope)
+    File "/tmp/__autograph_generated_filexb6reist.py", line 14, in tf___augment
+        retval_ = ag__.converted_call(ag__.ld(tf).switch_case, (), dict(branch_index=ag__.ld(selected_op), branch_fns=ag__.ld(branch_fns), default=ag__.autograph_artifact(lambda : ag__.ld(inputs))), fscope)
+
+    TypeError: Exception encountered when calling layer 'random_choice' (type RandomChoice).
+    
+    in user code:
+    
+        File "/usr/local/lib/python3.10/site-packages/keras_cv/layers/preprocessing/base_image_augmentation_layer.py", line 419, in call  *
+            outputs = self._format_output(self._augment(inputs), metadata)
+        File "/usr/local/lib/python3.10/site-packages/keras_cv/layers/preprocessing/random_choice.py", line 110, in _augment  *
+            default=lambda: inputs,
+    
+        TypeError: branches[0] and branches[1] arguments to tf.switch_case must have the same number, type, and overall structure of return values.
+        
+        branches[0] output: {'images': <tf.Tensor 'sequential/rand_augment/cond/random_choice/switch_case/indexed_case/Identity:0' shape=(160, 160, 3) dtype=float32>, 'segmentation_masks': <tf.Tensor 'sequential/rand_augment/cond/random_choice/switch_case/indexed_case/Identity_1:0' shape=(160, 160, 1) dtype=float32>}
+        branches[1] output: {'images': <tf.Tensor 'sequential/rand_augment/cond/random_choice/switch_case/indexed_case/Identity:0' shape=(160, 160, 3) dtype=float32>, 'segmentation_masks': <tf.Tensor 'sequential/rand_augment/cond/random_choice/switch_case/indexed_case/Identity_1:0' shape=(160, 160, 1) dtype=int64>}
+        
+        Error details:
+        Tensor("sequential/rand_augment/cond/random_choice/switch_case/indexed_case/Identity_1:0", shape=(160, 160, 1), dtype=float32) and Tensor("sequential/rand_augment/cond/random_choice/switch_case/indexed_case/Identity_1:0", shape=(160, 160, 1), dtype=int64) have different types
+    
+    
+    Call arguments received by layer 'random_choice' (type RandomChoice):
+      • inputs={'images': 'tf.Tensor(shape=(160, 160, 3), dtype=float32)', 'segmentation_masks': 'tf.Tensor(shape=(160, 160, 1), dtype=int64)'}
+
+
+Call arguments received by layer 'rand_augment' (type RandAugment):
+  • inputs={'images': 'tf.Tensor(shape=(160, 160, 3), dtype=float32)', 'segmentation_masks': 'tf.Tensor(shape=(160, 160, 1), dtype=int64)'}

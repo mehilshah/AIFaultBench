@@ -1,0 +1,8 @@
+{
+  "bug_id": "575",
+  "issue_url": "https://github.com/huggingface/pytorch-image-models/issues/2457",
+  "library_name": "pytorch-image-models",
+  "library_version": "unknown",
+  "reproduction_command": "bash run_repro.sh",
+  "reproducible": false
+}

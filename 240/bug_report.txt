@@ -1,0 +1,63 @@
+Title: tracer error in blocked AutoGuide
+Date: 2024-02-29T22:11:09+00:00
+URL: https://github.com/pyro-ppl/numpyro/issues/1753
+
+Description:
+I came across a very strange bug while trying to vmap the `SVI` class (in order to parallelize model training across multiple initializations + across different datasets of the same shape). 
+
+A tracer error occurs, but only if the AutoGuide has a site blocked out and there is also a deterministic site in the model. I wonder if this is related to #1657 ?
+
+```python
+import jax
+import jax.random as random
+
+import numpyro
+import numpyro.distributions as dist
+from numpyro.handlers import block, seed
+from numpyro.infer import SVI, TraceEnum_ELBO
+from numpyro.infer.autoguide import AutoDelta
+
+def model():
+    a = numpyro.sample('a', dist.Normal(0, 1))
+    b = numpyro.sample('b', dist.Normal(0, 1))
+
+# -- this works --
+keys = random.split(random.PRNGKey(0), 2)
+
+optimizer = numpyro.optim.Adam(step_size=.01)
+guide = AutoDelta(block(seed(model, rng_seed=0), hide=['b']))
+svi = SVI(model, guide, optimizer, loss=TraceEnum_ELBO())
+
+mapped_state = jax.vmap(svi.init)(keys)
+
+def model_w_deterministic():
+    a = numpyro.sample('a', dist.Normal(0, 1))
+    b = numpyro.sample('b', dist.Normal(0, 1))
+    
+    numpyro.deterministic('test', a)
+
+# -- this fails --
+optimizer = numpyro.optim.Adam(step_size=.01)
+guide = AutoDelta(block(seed(model_w_deterministic, rng_seed=0), hide=['b']))
+svi = SVI(model_w_deterministic, guide, optimizer, loss=TraceEnum_ELBO())
+
+mapped_state = jax.vmap(svi.init)(keys)
+``` 
+
+```UnexpectedTracerError: Encountered an unexpected tracer. A function transformed by JAX had a side effect, allowing for a reference to an intermediate value with type uint32[2] wrapped in a DynamicJaxprTracer to escape the scope of the transformation.
+JAX transformations require that functions explicitly return their outputs, and disallow saving intermediate values to global state.
+The function being traced when the value leaked was body_fn at [/home/ami/venvs/jax/lib/python3.11/site-packages/numpyro/infer/util.py:358](https://file+.vscode-resource.vscode-cdn.net/home/ami/venvs/jax/lib/python3.11/site-packages/numpyro/infer/util.py:358) traced for while_loop.
+------------------------------
+The leaked intermediate value was created on line [/home/ami/venvs/jax/lib/python3.11/site-packages/numpyro/handlers.py:745:8](https://file+.vscode-resource.vscode-cdn.net/home/ami/venvs/jax/lib/python3.11/site-packages/numpyro/handlers.py:745:8) (seed.process_message). 
+------------------------------
+When the value was created, the final 5 stack frames (most recent last) excluding JAX-internal frames were:
+------------------------------
+[/home/ami/venvs/jax/lib/python3.11/site-packages/numpyro/primitives.py:105:19](https://file+.vscode-resource.vscode-cdn.net/home/ami/venvs/jax/lib/python3.11/site-packages/numpyro/primitives.py:105:19) (Messenger.__call__)
+<ipython-input-9-38f6b9474998>:17:8 (model_w_deterministic)
+[/home/ami/venvs/jax/lib/python3.11/site-packages/numpyro/primitives.py:222:10](https://file+.vscode-resource.vscode-cdn.net/home/ami/venvs/jax/lib/python3.11/site-packages/numpyro/primitives.py:222:10) (sample)
+[/home/ami/venvs/jax/lib/python3.11/site-packages/numpyro/primitives.py:47:8](https://file+.vscode-resource.vscode-cdn.net/home/ami/venvs/jax/lib/python3.11/site-packages/numpyro/primitives.py:47:8) (apply_stack)
+[/home/ami/venvs/jax/lib/python3.11/site-packages/numpyro/handlers.py:745:8](https://file+.vscode-resource.vscode-cdn.net/home/ami/venvs/jax/lib/python3.11/site-packages/numpyro/handlers.py:745:8) (seed.process_message)
+------------------------------
+
+To catch the leak earlier, try setting the environment variable JAX_CHECK_TRACER_LEAKS or using the `jax.checking_leaks` context manager.
+See https://jax.readthedocs.io/en/latest/errors.html#jax.errors.UnexpectedTracerError```

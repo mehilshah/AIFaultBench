@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With compatibility shims for modern SciPy/NumPy, `repro.py` printed `sum(opt.G)=0.7333999999999999` and `result=reproduced`, so the coupling mass is below the expected 1.0.",
+  "steps": [
+    "Created a virtualenv in `.venv` and installed the pinned repro dependencies.",
+    "Built the bundled POT Cython extension in place with `codebase/setup.py build_ext --inplace`.",
+    "Ran `repro.py`, which applies SciPy/NumPy compatibility shims and executes the issue 24 OTDA example."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

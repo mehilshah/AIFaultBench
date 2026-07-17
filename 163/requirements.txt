@@ -1,0 +1,7 @@
+tensorflow-cpu==2.20.0
+keras-nlp
+absl-py
+regex
+tensorflow-datasets
+kagglehub
+packaging

@@ -1,0 +1,29 @@
+{
+  "alpha": 0.2,
+  "beta_reference": {
+    "mean": 0.5020632981940479,
+    "middle_mass": 0.17102,
+    "q10": 0.00024746188615865826,
+    "q90": 0.999761842248624,
+    "var": 0.1788089841121679
+  },
+  "buggy": {
+    "mean": 0.501401424407959,
+    "middle_mass": 0.50112,
+    "q10": 0.10028971955180169,
+    "q90": 0.899753749370575,
+    "var": 0.08315563201904297
+  },
+  "buggy_minus_beta_var": 0.09565335209312492,
+  "buggy_minus_uniform_var": 0.0003086248213451104,
+  "samples": 100000,
+  "source": "004/codebase/official/vision/ops/augment.py",
+  "uniform_reference": {
+    "mean": 0.4990442767385684,
+    "middle_mass": 0.5032,
+    "q10": 0.09969456371130268,
+    "q90": 0.8981615498586185,
+    "var": 0.08284700719769786
+  }
+}
+Result: reproducible. The local sampler behaves like a near-uniform Beta(1, 1) draw instead of Beta(0.2, 0.2).

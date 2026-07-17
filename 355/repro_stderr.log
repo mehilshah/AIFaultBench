@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "355/repro.py", line 23, in main
+    exec(snippet, {})
+  File "<string>", line 6, in <module>
+NameError: name 'multiprocessing' is not defined. Did you forget to import 'multiprocessing'
+Traceback (most recent call last):
+  File "355/repro.py", line 30, in <module>
+    main()
+  File "355/repro.py", line 23, in main
+    exec(snippet, {})
+  File "<string>", line 6, in <module>
+NameError: name 'multiprocessing' is not defined. Did you forget to import 'multiprocessing'?

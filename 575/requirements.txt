@@ -1,0 +1,2 @@
+# No additional third-party dependencies are required for this repro.
+# The check is source-level and uses only the Python standard library.

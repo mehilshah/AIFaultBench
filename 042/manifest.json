@@ -1,0 +1,12 @@
+{
+  "bug_id": "042",
+  "bug_dir": "042",
+  "issue_url": "https://github.com/lucidrains/imagen-pytorch/issues/378",
+  "commit_hash": "0d34fe31df013d9c0be072062e224e0df10b1044",
+  "library_name": "imagen-pytorch",
+  "library_version": "1.26.2",
+  "bug_report_source": "bug_report/042.txt",
+  "codebase_source": "lucidrains/imagen-pytorch@0d34fe31df013d9c0be072062e224e0df10b1044",
+  "codebase_present": "true",
+  "standardized_dir": "../042"
+}

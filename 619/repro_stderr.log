@@ -1,0 +1,4 @@
+GPU available: False, used: False
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+`Trainer(limit_val_batches=1)` was configured so 1 batch will be used.

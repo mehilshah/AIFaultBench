@@ -1,0 +1,2 @@
+pyro-ppl==1.8.4
+torch==2.4.0.dev20240605+cpu

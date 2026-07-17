@@ -1,0 +1,46 @@
+Title: Overloading Class Example doesn't pick up correct constructor
+Date: 2024-11-23T16:39:42+00:00
+URL: https://github.com/exaloop/codon/issues/609
+
+Description:
+From testing the second block of code here, but with a more explicit example:
+
+https://docs.exaloop.io/codon/language/classes
+
+```python
+class Foo:
+    x: int
+    y: int
+
+    def __init__(self):                    # constructor
+        self.x, self.y = 0, 0
+        print('empty', self.x, self.y)
+
+    def __init__(self, x: int, y: int):    # another constructor
+        self.x, self.y = x, y
+        print('int int', self.x, self.y)
+
+    def __init__(self, x: int, y: float):  # yet another constructor
+        self.x, self.y = x, int(y)
+        print('int float', self.x, self.y)
+
+
+Foo()
+Foo(1, 2)
+Foo(1, 2.3)
+a: int = 3
+b: int = 5
+Foo(a, b)
+```
+
+Output:
+
+```
+> codon run example.py
+empty 0 0
+int float 1 2       <- should be int int 1 2
+int float 1 2
+int float 3 5       <- should be int int 3 5
+```
+
+Note that swapping the `__init__` order so that the float constructor is first works successfully.  (i.e. method definition order matters)

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` reliably fails in `codebase/vit_pytorch/mpp.py:154` with `RuntimeError: Given normalized_shape=[1024], expected input with shape [*, 1024], but got input of size[20, 64, 3072]`.",
+  "steps": [
+    "Created a ViT with image_size=256, patch_size=32, dim=1024, depth=6, heads=8, and mlp_dim=2048.",
+    "Wrapped it in MPP with patch_size=32, dim=1024, mask_prob=0.15, random_patch_prob=0.30, and replace_prob=0.50.",
+    "Ran `bash run_repro.sh` in a fresh `.venv` and observed the LayerNorm shape mismatch when MPP applies `transformer.to_patch_embedding[-1]` to raw flattened patches."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

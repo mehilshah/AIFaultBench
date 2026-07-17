@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "218/repro.py", line 80, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "218/repro.py", line 74, in main
+    print(entry["xpos"])
+          ~~~~~^^^^^^^^
+KeyError: 'xpos'

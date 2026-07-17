@@ -1,0 +1,5 @@
+torch=2.13.0+cpu
+model_id=sshleifer/tiny-gpt2
+meta_params_before_peft=12
+meta_params_after_peft=14
+meta_params_after_merge=12

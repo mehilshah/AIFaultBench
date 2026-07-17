@@ -1,0 +1,10 @@
+python=3.12.3
+torch=2.4.0+cpu
+numpy=1.26.4
+Drop 0 utterances from 1 (shorter than 3 seconds)
+Drop 0 utterances from 1 (shorter than 3 seconds)
+fixture_root=/tmp/bug623_minilibri_lvcditza
+length_value=48000.0
+length_type=float64
+seg_len=48000
+fetching first batch now

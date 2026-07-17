@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "484/repro.py", line 53, in <module>
+    main()
+  File "484/repro.py", line 49, in main
+    trigger_bug(pipe, "hello world")
+  File "484/repro.py", line 31, in trigger_bug
+    if not pipe.safety_checker.check_text_safety(p):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Cosmos2_5_PredictBasePipeline' object has no attribute 'check_text_safety'

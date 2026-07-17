@@ -1,0 +1,2 @@
+typeof(tup) = Tup{ShapedArray(float32[3]),ShapedArray(float32[3])}
+calling jax.vmap(jax.jit(lambda x: x)) on a hijax tuple

@@ -1,0 +1,19 @@
+{
+  "bug_report": "bug_report.txt",
+  "entrypoint": "repro.py",
+  "reproduction_command": "bash run_repro.sh",
+  "dependencies": [
+    "torch==2.4.1+cpu",
+    "botorch==0.18.1",
+    "numpy",
+    "pandas",
+    "scipy",
+    "scikit-learn",
+    "ipywidgets",
+    "plotly>=5.12.0",
+    "pyre-extensions",
+    "sympy",
+    "markdown"
+  ],
+  "notes": "The homepage sample fails at ParameterType.FLOAT because ParameterType is not imported."
+}

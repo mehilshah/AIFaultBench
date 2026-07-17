@@ -1,0 +1,4 @@
+--find-links https://data.pyg.org/whl/torch-2.8.0+cu126.html
+torch==2.8.0
+pyg-lib==0.6.0
+-e codebase

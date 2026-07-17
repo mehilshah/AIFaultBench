@@ -1,0 +1,4 @@
+numpy
+packaging
+torch
+kornia_rs>=0.1.9

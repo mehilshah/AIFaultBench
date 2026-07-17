@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "305/repro.py", line 49, in <module>
+    main()
+  File "305/repro.py", line 45, in main
+    assert adapter_to_delete not in model.base_model.classifier.modules_to_save
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

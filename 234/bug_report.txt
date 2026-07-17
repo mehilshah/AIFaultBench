@@ -1,0 +1,122 @@
+Title: `error_if` sometimes raises `ValueError` instead of `EquinoxRuntimeError` depending on execution order
+Date: 2025-12-22T10:58:21+00:00
+URL: https://github.com/patrick-kidger/equinox/issues/1156
+
+Description:
+## Description
+
+Calling `equinox.error_if` is supposed to raise an `EquinoxRuntimeError`. Since jax 0.7.2, this appears to be broken when you call a jitted function *first* without the error condition, and *then* with the error condition triggering.
+
+When the bug is triggered, a `ValueError` is raised instead, with equinox incorrectly claiming that I am not using "filter_jit" even though I am.
+
+Reversing the order of calls does not trigger this bug -- when the first time the function is jitted the error *is* raised, it will correctly raise `EquinoxRuntimeError` on all subsequent calls.
+
+Using `@jax.jit` rather than `@equinox.filter_jit` has the same inconsistency, where it raises a `JaxRuntimeError` in the expected case, and incorrectly a ValueError when first called without the error being hit.
+
+## Which versions are affected?
+
+Python version: 3.12
+
+equinox version: 0.13.2
+
+JAX version:
+ * reproduced with latest version `jax==0.8.2`
+ * reproduced with `jax==0.7.2`
+ * NOT reproducible with `jax==0.7.1` and earlier versions
+
+## Minimal reproducer
+
+```python
+import equinox
+import jax.numpy as jnp
+
+@equinox.filter_jit
+def foo(x):
+    # Adding a debug print makes the ValueError bug go away!
+    # jax.debug.print("Inside foo with x = {}", x)
+
+    return equinox.error_if(x, x > 0.0, "my message")
+
+def foo_without_error():
+    # Calls foo without raising an error
+    return foo(jnp.array(-1.0))
+
+def foo_with_error():
+    # Calls foo in a way that raises an error, printing the error type
+    try:
+        foo(jnp.array(1.0))
+    except Exception as e:
+        print("Exception type:", type(e))
+
+
+# Calling the function first without error, then with error, results in a ValueError
+# rather than the expected EquinoxRuntimeError.
+# Reversing these 2 lines does not trigger the bug.
+foo_without_error()
+foo_with_error()
+```
+
+Actual output:
+```
+Exception type: <class 'ValueError'>
+```
+
+Expected output:
+```
+Exception type: <class 'EquinoxRuntimeError'>
+```
+
+
+## Stack trace
+
+<details>
+<summary>Expand for stack trace of the unexpected ValueError</summary>
+
+```
+ERROR:2025-12-22 10:53:15,462:jax._src.callback:94: jax.pure_callback failed
+Traceback (most recent call last):
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/jax/_src/callback.py", line 92, in pure_callback_impl
+    return tree_util.tree_map(np.asarray, callback(*args))
+                                          ^^^^^^^^^^^^^^^
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/jax/_src/callback.py", line 70, in __call__
+    return tree_util.tree_leaves(self.callback_func(*args, **kwargs))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/equinox/_errors.py", line 88, in raises
+    raise _EquinoxRuntimeError(
+equinox._errors._EquinoxRuntimeError: my message
+
+
+--------------------
+An error occurred during the runtime of your JAX program! Unfortunately you do not appear to be using `equinox.filter_jit` (perhaps you are using `jax.jit` instead?) and so further information about the error cannot be displayed. (Probably you are seeing a very large but uninformative error message right now.) Please wrap your program with `equinox.filter_jit`.
+--------------------
+
+Traceback (most recent call last):
+  File "foo.py", line 27, in <module>
+    foo_with_error()
+  File "foo.py", line 20, in foo_with_error
+    foo(jnp.array(1.0))
+jax.errors.JaxRuntimeError: INTERNAL: CpuCallback error calling callback: Traceback (most recent call last):
+  File "foo.py", line 27, in <module>
+  File "foo.py", line 20, in foo_with_error
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/jax/_src/traceback_util.py", line 195, in reraise_with_filtered_traceback
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/jax/_src/pjit.py", line 261, in cache_miss
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/jax/_src/pjit.py", line 144, in _python_pjit_helper
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/jax/_src/pjit.py", line 1570, in _pjit_call_impl_python
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/jax/_src/profiler.py", line 359, in wrapper
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/jax/_src/interpreters/pxla.py", line 1366, in __call__
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/jax/_src/callback.py", line 805, in _wrapped_callback
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/jax/_src/callback.py", line 223, in _callback
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/jax/_src/callback.py", line 95, in pure_callback_impl
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/jax/_src/callback.py", line 70, in __call__
+  File "/workspaces/repo/dist/lib/python3.12/site-packages/equinox/_errors.py", line 88, in raises
+_EquinoxRuntimeError: my message
+
+
+--------------------
+An error occurred during the runtime of your JAX program! Unfortunately you do not appear to be using `equinox.filter_jit` (perhaps you are using `jax.jit` instead?) and so further information about the error cannot be displayed. (Probably you are seeing a very large but uninformative error message right now.) Please wrap your program with `equinox.filter_jit`.
+--------------------
+
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.
+```
+</details>

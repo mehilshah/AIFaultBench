@@ -1,0 +1,8 @@
+{
+  "bug_id": "522",
+  "issue_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21524",
+  "library_name": "pytorch-lightning",
+  "library_version": "2.6.1",
+  "reproducible": false,
+  "notes": "Local source install imports successfully; the reported lightning_fabric AttributeError does not occur in this folder."
+}

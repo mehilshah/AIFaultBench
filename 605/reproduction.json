@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Single-table DayZ validation returned no exception for multi-table metadata when the relationships key was removed.",
+    "Multi-table DayZ validation raised AttributeError ('str' object has no attribute 'keys') for relationships=['a', 'b', 'c'] instead of a structured validation error.",
+    "min_cardinality=0 validated successfully."
+  ],
+  "steps": [
+    "Created a multi-table Metadata object with district/account tables and one relationship.",
+    "Built a valid DayZ parameter dictionary and removed relationships for the single-table path.",
+    "Called SingleTableDayZSynthesizer.validate_parameters(metadata, parameters) and observed no exception.",
+    "Set relationships to ['a', 'b', 'c'] and called MultiTableDayZSynthesizer.validate_parameters(metadata, parameters), observing AttributeError.",
+    "Set min_cardinality to 0 and verified the multi-table validator accepted it."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

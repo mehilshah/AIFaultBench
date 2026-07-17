@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` prints `image_device=cuda:0` and `segmentation_map_device=cuda:0`, then fails in `codebase/src/transformers/models/eomt/image_processing_eomt.py:83` with `TypeError: can't convert cuda:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first.`",
+  "steps": [
+    "Create a CUDA segmentation map tensor with `torch.randint_like`.",
+    "Pass it to `convert_segmentation_map_to_binary_masks` from the local EoMT image processor.",
+    "The helper calls `np.unique` on the CUDA tensor and raises the NumPy conversion TypeError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

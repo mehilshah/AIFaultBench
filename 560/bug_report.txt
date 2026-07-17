@@ -1,0 +1,249 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7729
+
+TITLE
+[BUG] `UlyssesSPAttentionHF.register_with_transformers()` crashes with PEFT models due to overly strict `isinstance(model, PreTrainedModel)` check
+
+BODY
+### Describe the bug
+`UlyssesSPAttentionHF.register_with_transformers(model_name_or_path=...) `crashes when the supplied model is a PEFT-wrapped model (e.g. PeftModel).
+The function uses an overly strict` isinstance(model_name_or_path, PreTrainedModel)` check; PEFT models expose `.config` but are not subclasses of `PreTrainedModel`, so the code falls through to `AutoConfig.from_pretrained(...) ` and immediately fails with `TypeError: expected str, bytes or os.PathLike object, not PeftModel`.
+
+
+### To Reproduce:
+
+
+```py
+%%writefile test.py
+
+
+import torch
+import os
+from torch import tensor
+from transformers import AutoModelForCausalLM, AutoConfig
+from peft import LoraConfig, get_peft_model
+import deepspeed
+import deepspeed.comm as dist
+from deepspeed.runtime.sequence_parallel.ulysses_sp import UlyssesSPAttentionHF
+
+
+model_name_or_path = 'hf-internal-testing/tiny-random-LlamaForCausalLM'
+sequence_parallel_size = 2 # Kaggle 2x T4 setup
+
+
+dist.init_distributed(dist_backend='nccl', dist_init_required=True)
+
+# Create the Bug: Wrap Model in PEFT FIRST
+base_model = AutoModelForCausalLM.from_pretrained(model_name_or_path)
+
+
+peft_config = LoraConfig(
+    r=8, lora_alpha=32, target_modules=["q_proj", "v_proj"], task_type="CAUSAL_LM"
+)
+peft_model = get_peft_model(base_model, peft_config)
+
+# ------------------------------------------------------------------------
+# THE CRASH HAPPENS HERE
+# We pass the 'peft_model' object. Since PeftModel is NOT a subclass of
+# transformers.PreTrainedModel, DeepSpeed's isinstance check fails.
+# It will fall through to the 'else' block and try to treat the model object
+# as a string path, causing a crash.
+# ------------------------------------------------------------------------
+if dist.get_rank() == 0:
+    print(f"Attempting to register Ulysses with model type: {type(peft_model)}")
+
+try:
+    mpu = UlyssesSPAttentionHF.register_with_transformers(
+        model_name_or_path=peft_model,  # <-- Passing the OBJECT triggers the bug
+        core_attn_implementation="sdpa",
+        sequence_parallel_size=sequence_parallel_size,
+        micro_batch_size=1,
+        seq_length=64,
+        seq_length_is_variable=True,
+    )
+    if dist.get_rank() == 0:
+        print("SUCCESS: Ulysses injected successfully (Unexpected if bug exists)")
+except Exception as e:
+    # This block catches the crash to demonstrate the bug
+    if dist.get_rank() == 0:
+        print("\n" + "="*40)
+        print("SUCCESSFUL REPRO: The bug was triggered!")
+        print(f"Error Type: {type(e).__name__}")
+        print(f"Error Message: {e}")
+        print("="*40 + "\n")
+    exit(0)
+```
+
+```bash
+!deepspeed --num_gpus=2 test.py
+```
+Throws:
+```bash
+Error Type: OSError
+Error Message: Can't load the configuration of 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(32000, 16, padding_idx=31999)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=16, out_features=16, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=16, out_features=8, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=8, out_features=16, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=16, out_features=16, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=16, out_features=16, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=16, out_features=8, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=8, out_features=16, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=16, out_features=16, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=16, out_features=64, bias=False)
+              (up_proj): Linear(in_features=16, out_features=64, bias=False)
+              (down_proj): Linear(in_features=64, out_features=16, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((16,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((16,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((16,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=16, out_features=32000, bias=False)
+    )
+  )
+)'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(32000, 16, padding_idx=31999)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=16, out_features=16, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=16, out_features=8, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=8, out_features=16, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=16, out_features=16, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=16, out_features=16, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=16, out_features=8, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=8, out_features=16, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=16, out_features=16, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=16, out_features=64, bias=False)
+              (up_proj): Linear(in_features=16, out_features=64, bias=False)
+              (down_proj): Linear(in_features=64, out_features=16, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((16,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((16,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((16,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=16, out_features=32000, bias=False)
+    )
+  )
+)' is the correct path to a directory containing a config.json file
+========================================
+
+[rank0]:[W1216 20:39:48.021924502 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[2025-12-16 20:39:50,756] [INFO] [launch.py:367:main] Process 929 exits successfully.
+[2025-12-16 20:39:50,756] [INFO] [launch.py:367:main] Process 930 exits successfully.
+```
+### System Info:
+```
+OS       : Linux-6.6.105+-x86_64-with-glibc2.35
+Python   : 3.11.13
+PyTorch  : 2.6.0+cu124
+CUDA     : 12.4
+Transformers: 4.53.3
+PEFT     : 0.16.0
+DeepSpeed: 0.18.3
+Accelerate: 1.9.0
+```
+
+### Proposed fix:
+
+Replace the` isinstance` check with a duck-typed test for the `.config` attribute (PEFT already forwards `.config` to the base model):
+
+In [ulysses_sp.py](https://github.com/deepspeedai/DeepSpeed/blob/aadba516d638bbd0c5c1ba41a06a43b2097e8e40/deepspeed/runtime/sequence_parallel/ulysses_sp.py#L370)
+```diff
+# old
+- if isinstance(model_name_or_path, PreTrainedModel):
+-    hf_model_config = model_name_or_path.config
+- else:
+-    hf_model_config = AutoConfig.from_pretrained(model_name_or_path)
+
+# new
++if hasattr(model_name_or_path, "config"):
++    hf_model_config = model_name_or_path.config
++elif isinstance(model_name_or_path, str):
++    hf_model_config = AutoConfig.from_pretrained(model_name_or_path)
++else:
++   raise ValueError(
++        f"Expected a model object with a `.config` attribute or a string path/hub-id. "
++        f"Received {type(model_name_or_path)}"
++   )
+```
+
+### Would you like to open a PR?
+Yes – I can submit the one-line patch if the maintainers agree with the approach.
+
+### Launcher context
+Plain Python interpreter (bug is independent of launcher).
+### Docker context
+None – bare-metal install
+
+### Companion Accelerate issue:
+ https://github.com/huggingface/accelerate/issues/3889
+

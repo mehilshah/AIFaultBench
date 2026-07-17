@@ -1,0 +1,13 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+Loading weights:   0%|          | 0/29 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 29/29 [00:00<00:00, 34952.53it/s]
+Some parameters are on the meta device because they were offloaded to the cpu and disk.
+367/codebase/src/peft/tuners/lora.py:471: UserWarning: fan_in_fan_out is set to False but the target module is `Conv1D`. Setting fan_in_fan_out to True.
+  warnings.warn(
+367/.venv/lib/python3.12/site-packages/transformers/modeling_utils.py:3574: UserWarning: Attempting to save a model with offloaded modules. Ensure that unallocated cpu memory exceeds the `shard_size` (50GB default)
+  warnings.warn(
+
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]
+expected_failure=TypeError: 'NoneType' object is not subscriptable

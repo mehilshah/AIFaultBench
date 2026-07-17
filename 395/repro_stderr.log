@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "395/repro.py", line 47, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "395/repro.py", line 36, in main
+    weight_loader(
+  File "395/repro.py", line 29, in weight_loader
+    expert_data = param.data if full_load else param.data[expert_id]
+                                               ~~~~~~~~~~^^^^^^^^^^^
+  File "395/repro.py", line 18, in __getitem__
+    raise IndexError("index 0 is out of bounds for dimension 0 with size 0")
+IndexError: index 0 is out of bounds for dimension 0 with size 0

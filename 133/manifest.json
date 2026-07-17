@@ -1,0 +1,23 @@
+{
+  "bug_id": 133,
+  "title": "Extracted entity text does not preserve newline characters",
+  "reproducible": true,
+  "entrypoints": {
+    "setup_env": "setup_env.sh",
+    "run": "run_repro.sh",
+    "script": "repro.py"
+  },
+  "runtime": {
+    "python": "3.12",
+    "dependencies": [
+      "numpy",
+      "torch",
+      "deprecated",
+      "segtok"
+    ]
+  },
+  "sources": [
+    "bug_report.txt",
+    "codebase/"
+  ]
+}

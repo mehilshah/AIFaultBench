@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "375/repro.py", line 60, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "375/repro.py", line 48, in main
+    raise AssertionError(
+AssertionError: gammaln should be finite for the smallest positive float32 subnormal

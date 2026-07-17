@@ -1,0 +1,21 @@
+jax version: 0.11.0.dev20260620+4250605d1
+scipy version: 1.18.0
+
+x = np.float32(0.0), df = np.float32(2.0)
+  scipy: -0.6931471805599453
+  jax:   nan
+  jit:   nan
+  status: MISMATCH
+
+x = np.float64(0.0), df = np.float64(2.0)
+  scipy: -0.6931471805599453
+  jax:   nan
+  jit:   nan
+  status: MISMATCH
+
+x = np.float32(inf), df = np.float32(2.0)
+  scipy: -inf
+  jax:   nan
+  jit:   nan
+  status: MISMATCH
+

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running bash run_repro.sh prints torchvision.__version__=0.18.1a0+405940f and then fails in the exact ART parsing expression with ValueError: invalid literal for int() with base 10: '1a0'.",
+  "steps": [
+    "Run bash run_repro.sh from the standardized bug folder.",
+    "The script simulates the reported torchvision version string 0.18.1a0+405940f.",
+    "The ART parsing logic from art/estimators/object_detection/pytorch_object_detector.py:L98 raises ValueError when it attempts int('1a0')."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

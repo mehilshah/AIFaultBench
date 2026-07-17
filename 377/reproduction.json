@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "run_repro.sh completed in a clean venv and the mock FA3 varlen path printed: expected shape (2, 4, 2, 64), actual shape (2, 1, 64), actual tensor equals expected: False, followed by 'BUG REPRODUCED: tensor return was destructured as if it were a tuple.'",
+  "steps": [
+    "Create a fresh Python venv and install CPU Torch plus the minimal Diffusers runtime dependencies.",
+    "Run repro.py in auto mode via run_repro.sh on this CPU-only machine.",
+    "Observe that _flash_attention_3_varlen_hub unpacks a tensor return as if it were a tuple and truncates the output."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

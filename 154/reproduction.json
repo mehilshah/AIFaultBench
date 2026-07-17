@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the local repro creates TvpConfig without type_vocab_size, then TvpModel(config) raises AttributeError: 'TvpConfig' object has no attribute 'type_vocab_size' from transformers/models/tvp/modeling_tvp.py:297.",
+  "steps": [
+    "Set up the local virtual environment with bash setup_env.sh.",
+    "Run bash run_repro.sh.",
+    "Observe the traceback in repro_stderr.log and the nonzero exit recorded by the repro script."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

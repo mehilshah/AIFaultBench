@@ -1,0 +1,8 @@
+jax==0.9.1
+jaxlib==0.9.1
+ml_dtypes==0.5.4
+numpy==2.5.1
+opt_einsum==3.4.0
+multipledispatch==1.0.0
+scipy==1.18.0
+tqdm==4.68.4

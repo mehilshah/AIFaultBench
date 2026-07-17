@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "072/repro.py", line 21, in <module>
+    main()
+  File "072/repro.py", line 17, in main
+    _ = model.model
+        ^^^^^^^^^^^
+  File "072/repro.py", line 7, in __getattr__
+    raise AttributeError(
+AttributeError: 'DeepSpeedEngine' object has no attribute 'model'

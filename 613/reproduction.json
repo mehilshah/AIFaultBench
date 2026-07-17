@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "repro_stdout.log shows the source mismatch (`gemma4_has_expert_weights_assignment: false` and `gemma4_unified_accesses_expert_weights: true`) and the AttributeError when `Gemma4ForConditionalGeneration` dereferences `Gemma4ForCausalLM.expert_weights`; `codebase/vllm/model_executor/models/gemma4_unified.py:338` dereferences `self.language_model.expert_weights`; `codebase/vllm/model_executor/models/gemma4.py:1535-1573` initializes MoE metadata but never assigns `self.expert_weights`.",
+  "steps": [
+    "Run `bash run_repro.sh` in the standardized bug folder.",
+    "Inspect `repro_stdout.log` and `repro_stderr.log` for the AttributeError.",
+    "Verify the source mismatch between `gemma4.py` and `gemma4_unified.py`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

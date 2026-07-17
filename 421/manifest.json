@@ -1,0 +1,22 @@
+{
+  "bug_id": "421",
+  "bug_dir": "421",
+  "issue_url": "https://github.com/huggingface/diffusers/issues/13967",
+  "commit_hash": "4757c7c465157ce843294424a5dd9fcd24f52cb2",
+  "library_name": "diffusers",
+  "library_version": "0.39.0.dev0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "huggingface/diffusers@4757c7c465157ce843294424a5dd9fcd24f52cb2",
+  "codebase_present": "true",
+  "standardized_dir": "../421",
+  "repro_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

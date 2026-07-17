@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "On Python 3.11.15 with Equinox 0.13.0 and JAX 0.4.38, `jax.jit(..., static_argnames='static')` raised `ValueError: Non-hashable static arguments are not supported` because `Problematic.__hash__` tried to hash a `dict` field and failed with `TypeError: unhashable type: 'dict'`.",
+  "steps": [
+    "Create a local venv with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh`.",
+    "Inspect `repro_stdout.log` and `repro_stderr.log` for the `Non-hashable static arguments are not supported` traceback."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

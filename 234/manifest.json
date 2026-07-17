@@ -1,0 +1,14 @@
+{
+  "bug_id": "234",
+  "bug_dir": "234",
+  "issue_url": "https://github.com/patrick-kidger/equinox/issues/1156",
+  "commit_hash": "",
+  "library_name": "equinox",
+  "library_version": "0.13.2",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../234",
+  "reproduction_command": "./run_repro.sh",
+  "reproducible": true
+}

@@ -1,0 +1,11 @@
+good input:
+with_optional: 1
+with_union:    2
+with_pipe:     3
+
+bad input:
+with_optional: rejected bad dtype (TypeCheckError)
+with_union: rejected bad dtype (TypeCheckError)
+with_pipe: accepted bad dtype -> 3
+
+BUG REPRODUCED: PEP 604 union accepts the bad dtype while Optional/Union reject it.

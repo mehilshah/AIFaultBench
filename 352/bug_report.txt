@@ -1,0 +1,40 @@
+# recovered-from-issue: https://github.com/huggingface/peft/issues/1938
+
+TITLE
+Check if `past_key_values` is provided when using prefix_tuning in peft_model
+
+BODY
+### Feature request
+
+In `peft/peft_model.py`, in `PeftModelForCausalLM.forward() line 1465`, the function call fails to check if key `past_key_values` is in `kwargs`, and this will throw an error when `past_key_values` are provided in the base model's forward call (though in most cases this argument is set to None).
+This is a snippet of the source code:
+```
+    def forward(
+        self,
+        input_ids=None,
+        attention_mask=None,
+        inputs_embeds=None,
+        labels=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        return_dict=None,
+        task_ids=None,
+        **kwargs,
+    ):
+        ......
+        if peft_config.peft_type == PeftType.PREFIX_TUNING:
+            past_key_values = self.get_prompt(batch_size)
+            return self.base_model(
+                input_ids=input_ids, inputs_embeds=inputs_embeds, past_key_values=past_key_values, **kwargs
+            )
+        else:
+        ......
+```
+
+### Motivation
+
+This error occurs when I try to finetune the language model wrapped in llava. In llava's `forward` function, the language model is called with `past_key_values` argument and this raises TypeError `object got multiple values for keyword argument 'past_key_values'`
+
+### Your contribution
+
+A simple solution is just add `past_key_values` as keyword argument in the peft model's `forward` function and its value can be safely overridden by the inner codes. I'm more than happy to submit a PR.

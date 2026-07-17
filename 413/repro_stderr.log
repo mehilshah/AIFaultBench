@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "413/repro.py", line 44, in main
+    indexed = instances[0]
+              ~~~~~~~~~^^^
+  File "413/codebase/detectron2/structures/instances.py", line 130, in __getitem__
+    ret.set(k, v[item])
+  File "413/codebase/detectron2/structures/instances.py", line 71, in set
+    data_len = len(value)
+               ^^^^^^^^^^
+  File "413/.venv/lib/python3.12/site-packages/torch/_tensor.py", line 1183, in __len__
+    raise TypeError("len() of a 0-d tensor")
+TypeError: len() of a 0-d tensor

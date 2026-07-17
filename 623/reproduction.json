@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "The repro prints length_type=float64 and then fails when iterating the first batch. The traceback ends in asteroid/data/librimix_dataset.py:92 at random.randint(0, row[\"length\"] - self.seg_len), which passes a numpy.float64 into random.randrange and raises TypeError: 'numpy.float64' object cannot be interpreted as an integer.",
+  "steps": [
+    "Created a synthetic MiniLibriMix-style metadata directory with length stored as 48000.0 so pandas reads it back as numpy.float64.",
+    "Loaded asteroid.data.librimix_dataset.LibriMix directly from the installed Asteroid source tree without importing the full package stack.",
+    "Monkeypatched LibriMix.mini_from_download to point loaders_from_mini at the synthetic fixture.",
+    "Iterated the first batch from the returned DataLoader and reproduced the TypeError."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "./run_repro.sh"
+}

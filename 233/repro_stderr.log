@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "233/repro.py", line 40, in main
+    out = jax.jit(merge, static_argnames="static")(arr, static)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Non-hashable static arguments are not supported. An error occurred while trying to hash an object of type <class '__main__.Problematic'>, Problematic(nested={0: 0.0}). The error was:
+Traceback (most recent call last):
+  File "233/repro.py", line 51, in <module>
+  File "233/repro.py", line 40, in main
+  File "233/codebase/equinox/_module/_module.py", line 612, in __hash__
+TypeError: unhashable type: 'dict'
+

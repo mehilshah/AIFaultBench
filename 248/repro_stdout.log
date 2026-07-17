@@ -1,0 +1,77 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (24.0)
+Collecting pip
+  Downloading pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
+Collecting setuptools
+  Downloading setuptools-83.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting wheel
+  Downloading wheel-0.47.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting packaging>=24.0 (from wheel)
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 20.0 MB/s eta 0:00:00
+Downloading setuptools-83.0.0-py3-none-any.whl (1.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 61.1 MB/s eta 0:00:00
+Downloading wheel-0.47.0-py3-none-any.whl (32 kB)
+Downloading packaging-26.2-py3-none-any.whl (100 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.2/100.2 kB 376.7 MB/s eta 0:00:00
+Installing collected packages: setuptools, pip, packaging, wheel
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed packaging-26.2 pip-26.1.2 setuptools-83.0.0 wheel-0.47.0
+Processing ./codebase
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting bottle (from Eel==0.18.0)
+  Downloading bottle-0.13.4-py2.py3-none-any.whl.metadata (1.6 kB)
+Collecting bottle-websocket (from Eel==0.18.0)
+  Downloading bottle-websocket-0.2.9.tar.gz (2.0 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting future (from Eel==0.18.0)
+  Downloading future-1.0.0-py3-none-any.whl.metadata (4.0 kB)
+Collecting pyparsing (from Eel==0.18.0)
+  Downloading pyparsing-3.3.2-py3-none-any.whl.metadata (5.8 kB)
+Collecting gevent-websocket (from bottle-websocket->Eel==0.18.0)
+  Downloading gevent_websocket-0.10.1-py3-none-any.whl.metadata (5.3 kB)
+Collecting gevent (from gevent-websocket->bottle-websocket->Eel==0.18.0)
+  Downloading gevent-26.5.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (14 kB)
+Collecting greenlet>=3.2.2 (from gevent->gevent-websocket->bottle-websocket->Eel==0.18.0)
+  Downloading greenlet-3.5.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (3.8 kB)
+Collecting zope.event (from gevent->gevent-websocket->bottle-websocket->Eel==0.18.0)
+  Downloading zope_event-6.2-py3-none-any.whl.metadata (5.4 kB)
+Collecting zope.interface (from gevent->gevent-websocket->bottle-websocket->Eel==0.18.0)
+  Downloading zope_interface-8.5-cp312-cp312-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl.metadata (47 kB)
+Downloading bottle-0.13.4-py2.py3-none-any.whl (103 kB)
+Downloading future-1.0.0-py3-none-any.whl (491 kB)
+Downloading gevent_websocket-0.10.1-py3-none-any.whl (22 kB)
+Downloading gevent-26.5.0-cp312-cp312-manylinux_2_28_x86_64.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 40.8 MB/s  0:00:00
+Downloading greenlet-3.5.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (614 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 614.2/614.2 kB 32.6 MB/s  0:00:00
+Downloading pyparsing-3.3.2-py3-none-any.whl (122 kB)
+Downloading zope_event-6.2-py3-none-any.whl (6.5 kB)
+Downloading zope_interface-8.5-cp312-cp312-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl (270 kB)
+Building wheels for collected packages: Eel, bottle-websocket
+  Building wheel for Eel (pyproject.toml): started
+  Building wheel for Eel (pyproject.toml): finished with status 'done'
+  Created wheel for Eel: filename=eel-0.18.0-py3-none-any.whl size=24067 sha256=2a14d1098dc9d3ef996dca354fbf6cc3a8b74b6dde5ebdfd0015fd7341b0bfef
+  Stored in directory: /tmp/pip-ephem-wheel-cache-onhbo6gl/wheels/a5/40/6c/2deb382ae9d17aac418f2d8a910972584160a666b79e8a156b
+  Building wheel for bottle-websocket (pyproject.toml): started
+  Building wheel for bottle-websocket (pyproject.toml): finished with status 'done'
+  Created wheel for bottle-websocket: filename=bottle_websocket-0.2.9-py3-none-any.whl size=2387 sha256=1ed24c80ee565bc27c358641940f6edcb57f835b645a8f7e7b0a974546bc300d
+  Stored in directory: /tmp/pip-ephem-wheel-cache-onhbo6gl/wheels/83/b3/23/5d63740225cdbc67270b75cbfe5cf5f12c81aa059bf848a8cf
+Successfully built Eel bottle-websocket
+Installing collected packages: bottle, zope.interface, zope.event, pyparsing, greenlet, future, gevent, gevent-websocket, bottle-websocket, Eel
+
+Successfully installed Eel-0.18.0 bottle-0.13.4 bottle-websocket-0.2.9 future-1.0.0 gevent-26.5.0 gevent-websocket-0.10.1 greenlet-3.5.3 pyparsing-3.3.2 zope.event-6.2 zope.interface-8.5
+ModuleNotFoundError: No module named 'typing_extensions'

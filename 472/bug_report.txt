@@ -1,0 +1,95 @@
+# recovered-from-issue: https://github.com/pytorch/rl/issues/3463
+
+TITLE
+[Bug] Replay buffer is not thread-safe for concurrent extend() + sample()
+
+BODY
+## Description
+
+`TensorDictReplayBuffer` is not safe to use when `extend()` and `sample()` are called concurrently from different threads. This matters for async training pipelines where a background thread collects data and extends the buffer while the main thread samples for training.
+
+## Two distinct problems
+
+### 1. GPU storage (`LazyTensorStorage` on CUDA): cross-stream data race
+
+PyTorch uses **per-thread default CUDA streams**. When two threads operate on the same `LazyTensorStorage(device="cuda:1")`:
+
+- **Thread A** (collector): calls `replay_buffer.extend(data)` → enqueues writes to cuda:1 storage on Thread A's default stream
+- **Thread B** (trainer): calls `replay_buffer.sample()` → enqueues reads from cuda:1 storage on Thread B's default stream
+
+These are **different streams**, so the GPU can execute them concurrently. Thread B may read storage locations that Thread A is still writing to → **corrupted/partial data**.
+
+Even with a Python-level `threading.Lock`, the CUDA operations from `extend()` may still be in-flight on Thread A's stream when `sample()` starts on Thread B's stream. A proper fix requires either:
+- `torch.cuda.synchronize(device)` after `extend()` (expensive)
+- CUDA events to synchronize across streams
+- Forcing both threads to use the same CUDA stream
+
+### 2. CPU storage (`LazyMemmapStorage`): Python-level data race
+
+Even with CPU-only storage, `extend()` and `sample()` share internal mutable state:
+
+- **Storage arrays**: `extend()` writes new data to storage slots while `sample()` reads from (potentially the same) slots
+- **Sampler state**: `SliceSampler` maintains trajectory tracking (`_cache`, `_storage_len_at_cache_time`, etc.) that `extend()` may invalidate while `sample()` is iterating over it
+- **Write pointer / length**: the storage's internal `_len` and write cursor are modified by `extend()` and read by `sample()`/sampler
+
+With memory-mapped storage, writes to mmap'd arrays are visible to concurrent readers without any synchronization, so `sample()` can read partially-written rows.
+
+## Reproduction
+
+```python
+import threading
+import torch
+from torchrl.data import (
+    LazyTensorStorage,  # or LazyMemmapStorage
+    SliceSampler,
+    TensorDictReplayBuffer,
+)
+from tensordict import TensorDict
+
+device = torch.device("cuda:0")
+storage = LazyTensorStorage(10000, device=device, ndim=2)
+sampler = SliceSampler(slice_len=10, strict_length=False)
+rb = TensorDictReplayBuffer(storage=storage, sampler=sampler, batch_size=1000)
+
+stop = threading.Event()
+
+def writer():
+    i = 0
+    while not stop.is_set():
+        data = TensorDict({"obs": torch.randn(4, 100, device="cpu")}, batch_size=[4, 100])
+        data["collector", "traj_ids"] = torch.full((4, 100), i, dtype=torch.long)
+        rb.extend(data)
+        i += 1
+
+t = threading.Thread(target=writer, daemon=True)
+t.start()
+
+# Wait for some data
+import time; time.sleep(1)
+
+for _ in range(100):
+    sample = rb.sample()
+    if sample["obs"].isnan().any():
+        print("NaN detected in sample!")
+        break
+
+stop.set()
+t.join()
+```
+
+## Impact
+
+This caused immediate NaN gradients in a Dreamer + IsaacLab training pipeline where a background thread continuously collected data (extending the buffer) while the main thread sampled for training.
+
+## Possible fixes
+
+1. **Document** that replay buffers are not thread-safe for concurrent extend+sample
+2. Add an optional `threading.Lock` inside the buffer (opt-in via constructor arg)
+3. For GPU storage: use CUDA events to properly synchronize cross-stream access
+4. Consider a lock-free ring buffer design for the storage layer
+
+## Environment
+
+- torchrl: main branch
+- PyTorch: 2.5+ (Isaac container)
+- Multi-threaded, multi-GPU setup

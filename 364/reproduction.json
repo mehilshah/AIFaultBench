@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` inside the isolated venv prints the model modules including `broken: None`, then fails in `accelerate.utils.modeling._get_named_parameters()` with `AttributeError: 'NoneType' object has no attribute '_parameters'` while `load_checkpoint_and_dispatch()` calls `find_tied_parameters()`.",
+  "steps": [
+    "Create a CPU-only virtual environment with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh`.",
+    "Observe the traceback from `load_checkpoint_and_dispatch()` -> `find_tied_parameters()` -> `_get_named_parameters()`.",
+    "Confirm the crash is the reported `NoneType._parameters` failure."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

@@ -1,0 +1,6 @@
+numpy<2
+jax[cpu]==0.4.25
+scipy>=1.9
+multipledispatch
+tqdm
+-e ./codebase

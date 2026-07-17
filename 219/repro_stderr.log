@@ -1,0 +1,33 @@
+2026-07-17 03:13:50.547697: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:9261] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2026-07-17 03:13:50.547734: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:607] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2026-07-17 03:13:50.548376: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1515] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2026-07-17 03:13:51.044834: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2026-07-17 03:13:51.724628: W tensorflow/core/common_runtime/gpu/gpu_device.cc:2256] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
+Skipping registering GPU devices...
+Traceback (most recent call last):
+  File "219/.venv/lib/python3.10/site-packages/transformers/modeling_tf_pytorch_utils.py", line 348, in load_pytorch_state_dict_in_tf2_model
+    array = apply_transpose(transpose, array, symbolic_weight.shape)
+  File "219/.venv/lib/python3.10/site-packages/transformers/modeling_tf_pytorch_utils.py", line 143, in apply_transpose
+    weight = reshape(weight, match_shape)
+  File "219/.venv/lib/python3.10/site-packages/transformers/utils/generic.py", line 620, in reshape
+    return tf.reshape(array, newshape)
+  File "219/.venv/lib/python3.10/site-packages/tensorflow/python/ops/weak_tensor_ops.py", line 88, in wrapper
+    return op(*args, **kwargs)
+  File "219/.venv/lib/python3.10/site-packages/tensorflow/python/util/traceback_utils.py", line 153, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "219/.venv/lib/python3.10/site-packages/tensorflow/python/eager/execute.py", line 53, in quick_execute
+    tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,
+tensorflow.python.framework.errors_impl.InvalidArgumentError: {{function_node __wrapped__Reshape_device_/job:localhost/replica:0/task:0/device:CPU:0}} Input to reshape is a tensor with 393216 values, but the requested shape has 1572864 [Op:Reshape]
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "219/repro.py", line 21, in <module>
+    main()
+  File "219/repro.py", line 16, in main
+    model = TFBertModel.from_pretrained("bert-base-uncased", config=configuration)
+  File "219/.venv/lib/python3.10/site-packages/transformers/modeling_tf_utils.py", line 2903, in from_pretrained
+    return load_pytorch_state_dict_in_tf2_model(
+  File "219/.venv/lib/python3.10/site-packages/transformers/modeling_tf_pytorch_utils.py", line 355, in load_pytorch_state_dict_in_tf2_model
+    raise tf.errors.InvalidArgumentError(error_msg)
+TypeError: InvalidArgumentError.__init__() missing 2 required positional arguments: 'op' and 'message'

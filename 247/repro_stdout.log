@@ -1,0 +1,3 @@
+pyro version: 1.9.1
+has pyro.poutine.equalize: False
+attempting to call pyro.poutine.equalize(...)

@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "291/repro.py", line 125, in <module>
+    main()
+  File "291/repro.py", line 121, in main
+    masks[4]
+    ~~~~~^^^
+  File "291/codebase/detectron2/structures/masks.py", line 133, in __getitem__
+    return BitMasks(self.tensor[item].view(1, -1))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "291/codebase/detectron2/structures/masks.py", line 104, in __init__
+    assert tensor.dim() == 3, tensor.size()
+           ^^^^^^^^^^^^^^^^^
+AssertionError: torch.Size([1, 65536])

@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "Running Decoder(dim=512, depth=2, heads=8, alibi_pos_bias=True, attn_flash=True) with a 2D custom pos tensor raises einops.EinopsError in codebase/x_transformers/attend.py:373: Error while processing rearrange-reduction pattern 'h i j -> 1 h i j'. Input tensor shape: torch.Size([2, 8, 4, 4]).",
+  "steps": [
+    "bash setup_env.sh",
+    "python repro.py"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

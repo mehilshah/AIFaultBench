@@ -1,0 +1,14 @@
+554/.venv/lib/python3.12/site-packages/torch/distributed/c10d_logger.py:83: FutureWarning: You are using a Backend <class 'torch.distributed.distributed_c10d.ProcessGroupGloo'> as a ProcessGroup. This usage is deprecated since PyTorch 2.0. Please use a public API of PyTorch Distributed instead.
+  return func(*args, **kwargs)
+Traceback (most recent call last):
+  File "554/repro.py", line 105, in <module>
+    main()
+  File "554/repro.py", line 98, in main
+    dist_rpc.rpc_partition_to_workers(ctx, num_partitions=2,
+  File "554/.venv/lib/python3.12/site-packages/torch/distributed/rpc/api.py", line 94, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "554/codebase/torch_geometric/distributed/rpc.py", line 123, in rpc_partition_to_workers
+    for worker_name, (role, nparts, idx) in gathered_results.items():
+                     ^^^^^^^^^^^^^^^^^^^
+TypeError: cannot unpack non-iterable NoneType object

@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "612/repro.py", line 68, in <module>
+    main()
+  File "612/repro.py", line 64, in main
+    Harness().reduce_ipg_grads()
+  File "612/repro.py", line 49, in reduce_ipg_grads
+    self.average_tensor(bucket.buffer[bucket.index].narrow(0, 0, bucket.elements),
+                        ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+IndexError: list index out of range

@@ -1,0 +1,5 @@
+reproduction_command: /usr/bin/python3 -m pip install --use-feature=2020-resolver .
+working_directory: 018/codebase/research/object_detection/packages/tf2
+returncode: 2
+
+

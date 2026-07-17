@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running create_model(\"hf-hub:google/mobilenet_v2_1.0_224\", pretrained=True) against the local timm 1.0.15 checkout raises KeyError: 'architecture' in codebase/timm/models/_hub.py:172 when loading the Hugging Face config.json.",
+  "steps": [
+    "Created an isolated Python 3.12 virtual environment and installed the repro dependencies.",
+    "Ran the local timm checkout with PYTHONPATH pointing at codebase/.",
+    "Executed create_model(\"hf-hub:google/mobilenet_v2_1.0_224\", pretrained=True)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

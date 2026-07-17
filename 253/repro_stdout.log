@@ -1,0 +1,8 @@
+torch=2.7.1+cu126
+tensordict=0.10.0
+[bug] action.shape = (2, 1)
+[bug] expected failure: RuntimeError: Losses shape mismatch: torch.Size([2, 2]) and torch.Size([2])
+[workaround] action.shape = (2,)
+[workaround] succeeded
+[workaround] loss keys = ['loss_actor', 'loss_qvalue', 'loss_value', 'entropy']
+[workaround] loss_actor = 2.4794559479

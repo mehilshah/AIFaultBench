@@ -1,0 +1,7 @@
+Observed repr:
+ResizeKeepRatio(size=(224, 224), interpolation=bilinear, longest=0.000, random_scale_prob=0.000, random_scale_range=(0.500, 1.100), random_aspect_prob=0.000, random_aspect_range=(0.900, 1.100))
+
+Expected fragment:
+random_scale_range=(0.500, 1.200)
+
+Bug reproduced: True

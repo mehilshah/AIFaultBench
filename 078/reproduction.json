@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Using torch 2.4.0, forward succeeds on a small NaViT 3D nested-tensor input, but backward fails with RuntimeError: Function UnbindBackwardAutogradNestedTensor0 returned an invalid gradient at index 0 ... expected shape compatible with [2, j2, 16]. The failing operation is the final pooled.unbind() path in codebase/vit_pytorch/na_vit_nested_tensor_3d.py.",
+  "steps": [
+    "Install torch 2.4.0 and the lightweight dependencies from requirements.txt.",
+    "Run repro.py, which loads vit_pytorch/na_vit_nested_tensor_3d.py directly from the local codebase.",
+    "Observe that the forward pass completes, then loss.backward() raises the nested-tensor UnbindBackwardAutogradNestedTensor0 gradient-shape error."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

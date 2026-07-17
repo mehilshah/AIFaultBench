@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the local repro under an isolated CPU-only torch environment prints hidden_states_type=<class 'torch.Tensor'>, hidden_states_is_none=False, and hidden_states_is_tuple=False. The run then fails with AssertionError: FAIL: hidden_states is <class 'torch.Tensor'>, expected None or tuple. The captured traceback is in repro_stderr.log.",
+  "steps": [
+    "Create and activate the isolated virtual environment with bash setup_env.sh.",
+    "Run bash run_repro.sh with the local codebase on PYTHONPATH.",
+    "Observe that VideoPrismForVideoClassification returns a Tensor in outputs.hidden_states instead of None or a tuple."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

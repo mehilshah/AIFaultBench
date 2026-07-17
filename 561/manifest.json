@@ -1,0 +1,12 @@
+{
+  "bug_id": "561",
+  "bug_dir": "561",
+  "issue_url": "https://github.com/vllm-project/vllm/issues/47054",
+  "commit_hash": "7be582697b27277e2756a3878f563fa9dfea30aa",
+  "library_name": "vllm",
+  "library_version": "0.23.1rc1.dev489+gabc71548e",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "vllm-project/vllm@7be582697b27277e2756a3878f563fa9dfea30aa",
+  "codebase_present": "true",
+  "standardized_dir": "../561"
+}

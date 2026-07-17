@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "bash run_repro.sh printed `NO_ERROR` and then `V1000`, showing that `DayZSynthesizer.validate_parameters(metadata, dayz_parameters)` accepted an invalid DAYZ_SPEC_VERSION instead of raising.",
+  "steps": [
+    "Install the local SDV checkout from ./codebase with pip.",
+    "Run repro.py to create DayZ parameters and change DAYZ_SPEC_VERSION to V1000.",
+    "Call DayZSynthesizer.validate_parameters(metadata, dayz_parameters)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

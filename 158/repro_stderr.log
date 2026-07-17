@@ -1,0 +1,8 @@
+PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Traceback (most recent call last):
+  File "158/repro.py", line 49, in <module>
+    main()
+  File "158/repro.py", line 43, in main
+    raise AssertionError("\n".join(failures))
+AssertionError: Phi4MultimodalConfig() leaves vision_config as None.
+Phi4MultimodalConfig(vision_config=Phi4MultimodalVisionConfig()) leaves audio_config as None.

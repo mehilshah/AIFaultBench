@@ -1,0 +1,28 @@
+# recovered-from-issue: https://github.com/facebookresearch/detectron2/issues/3227
+
+TITLE
+Bug report: R-CNN inference using the pre-computed proposals.
+
+BODY
+In the following line, the type of `dataset_name` is `list`
+https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/build.py#L401
+
+However, in the following line, `dataset_name` is used for indexing. It is obviously that the type of `dataset_name` shouldn't be `list`
+https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/build.py#L407
+
+The most simple way to fix it is change 
+https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/build.py#L400
+https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/build.py#L401
+into
+```
+ if isinstance(dataset_name, list) or isinstance(dataset_name, tuple):
+      dataset_name = dataset_name[0]
+```
+
+Instructions To Reproduce the Issue and Full Logs:
+
+python train_net.py --num-gpus 8 --config-file configs/C2_SwinB-22k_1280b32_4x_adam_error_8nodes.yaml --eval-only MODEL.WEIGHTS models/C2_SwinB-22k_1280b32_4x_adam_error_final.pth
+
+My Environment:
+
+PyTorch 1.8.1 + Detectron2 0.4.1

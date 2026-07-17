@@ -1,0 +1,12 @@
+{
+  "bug_id": "507",
+  "issue_url": "https://github.com/vllm-project/vllm/issues/48493",
+  "library_name": "vllm",
+  "library_version": "0.25.0",
+  "reproducible": false,
+  "reproduction_command": "bash run_repro.sh",
+  "source_files": [
+    "bug_report.txt",
+    "codebase/"
+  ]
+}

@@ -1,0 +1,1 @@
+reproduced: accelerate.commands.launch._validate_launch_command raises AttributeError on tpu_cluster

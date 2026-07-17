@@ -1,0 +1,37 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.1.2)
+Requirement already satisfied: jax==0.4.38 in ./.venv/lib/python3.12/site-packages (from jax[cpu]==0.4.38->-r requirements.txt (line 1)) (0.4.38)
+Requirement already satisfied: jaxlib==0.4.38 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 2)) (0.4.38)
+Requirement already satisfied: funsor>=0.4.1 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 3)) (0.4.7)
+Requirement already satisfied: scipy>=1.10 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 4)) (1.18.0)
+Requirement already satisfied: tqdm>=4.66 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 5)) (4.68.4)
+Requirement already satisfied: ml_dtypes>=0.4.0 in ./.venv/lib/python3.12/site-packages (from jax==0.4.38->jax[cpu]==0.4.38->-r requirements.txt (line 1)) (0.5.4)
+Requirement already satisfied: numpy>=1.24 in ./.venv/lib/python3.12/site-packages (from jax==0.4.38->jax[cpu]==0.4.38->-r requirements.txt (line 1)) (2.5.1)
+Requirement already satisfied: opt_einsum in ./.venv/lib/python3.12/site-packages (from jax==0.4.38->jax[cpu]==0.4.38->-r requirements.txt (line 1)) (3.4.0)
+Requirement already satisfied: makefun in ./.venv/lib/python3.12/site-packages (from funsor>=0.4.1->-r requirements.txt (line 3)) (1.16.0)
+Requirement already satisfied: multipledispatch in ./.venv/lib/python3.12/site-packages (from funsor>=0.4.1->-r requirements.txt (line 3)) (1.0.0)
+Requirement already satisfied: typing_extensions in ./.venv/lib/python3.12/site-packages (from funsor>=0.4.1->-r requirements.txt (line 3)) (4.16.0)
+Obtaining file://642/codebase
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: jax>=0.4.25 in ./.venv/lib/python3.12/site-packages (from numpyro==0.17.0) (0.4.38)
+Requirement already satisfied: jaxlib>=0.4.25 in ./.venv/lib/python3.12/site-packages (from numpyro==0.17.0) (0.4.38)
+Requirement already satisfied: multipledispatch in ./.venv/lib/python3.12/site-packages (from numpyro==0.17.0) (1.0.0)
+Requirement already satisfied: numpy in ./.venv/lib/python3.12/site-packages (from numpyro==0.17.0) (2.5.1)
+Requirement already satisfied: tqdm in ./.venv/lib/python3.12/site-packages (from numpyro==0.17.0) (4.68.4)
+Requirement already satisfied: ml_dtypes>=0.4.0 in ./.venv/lib/python3.12/site-packages (from jax>=0.4.25->numpyro==0.17.0) (0.5.4)
+Requirement already satisfied: opt_einsum in ./.venv/lib/python3.12/site-packages (from jax>=0.4.25->numpyro==0.17.0) (3.4.0)
+Requirement already satisfied: scipy>=1.10 in ./.venv/lib/python3.12/site-packages (from jax>=0.4.25->numpyro==0.17.0) (1.18.0)
+Building wheels for collected packages: numpyro
+  Building editable for numpyro (pyproject.toml): started
+  Building editable for numpyro (pyproject.toml): finished with status 'done'
+  Created wheel for numpyro: filename=numpyro-0.17.0-0.editable-py3-none-any.whl size=18678 sha256=a62a10c47885ae404847cb17004dfdb939e283fa8fd2e557d98bb02ab57a8d31
+  Stored in directory: /tmp/pip-ephem-wheel-cache-xaik8dv5/wheels/20/36/3b/1810e2ed8aa69f3d38b766094c69be2902714c885531e3abaa
+Successfully built numpyro
+Installing collected packages: numpyro
+Successfully installed numpyro-0.17.0

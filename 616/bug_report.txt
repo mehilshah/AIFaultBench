@@ -1,0 +1,22 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/2000
+
+TITLE
+Running mcmc within jit might cause tracer leak
+
+BODY
+### Bug Description
+A part of https://github.com/pyro-ppl/numpyro/issues/1981
+During MCMC run, we cache some functions so that later run might be faster. However, this might cause some leaks.
+
+### Steps to Reproduce
+
+```
+JAX_CHECK_TRACER_LEAKS=1 pytest -vs test/infer/test_mcmc.py::test_chain_inside_jit
+JAX_CHECK_TRACER_LEAKS=1 pytest -vs test/infer/test_mcmc.py::test_chain_jit_args_smoke
+JAX_CHECK_TRACER_LEAKS=1 pytest -vs test/infer/test_mcmc.py::test_reuse_mcmc_run
+JAX_CHECK_TRACER_LEAKS=1 pytest -vs test/infer/test_mcmc.py::test_model_with_multiple_exec_paths
+```
+
+### Expected Behavior
+No tracer leaks. A solution is to cache outside of jit context.
+

@@ -1,0 +1,47 @@
+# recovered-from-issue: https://github.com/huggingface/peft/issues/2381
+
+TITLE
+Bug when deleting adapters of a model with modules_to_save
+
+BODY
+### System Info
+
+All PEFT versions.
+
+### Who can help?
+
+_No response_
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+```python
+from transformers import AutoModelForSequenceClassification
+from peft import LoraConfig, get_peft_model
+
+model_id = "facebook/opt-125m"
+config = LoraConfig(task_type="SEQ_CLS")
+
+model = AutoModelForSequenceClassification.from_pretrained(model_id)
+adapter_to_delete = "delete_me"
+model = get_peft_model(model, config)
+model.add_adapter(adapter_to_delete, config)
+# sanity check
+assert "delete_me" in model.base_model.model.score.modules_to_save
+
+model.delete_adapter(adapter_to_delete)
+assert "delete_me" not in model.base_model.model.score.modules_to_save
+```
+
+### Expected behavior
+
+When adding, say, a LoRA adapter with `modules_to_save`, then deleting the adapter, the LoRA part is correctly removed but the `modules_to_save` part is not removed.

@@ -1,0 +1,59 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7804
+
+TITLE
+[BUG] ZeRO-2 with `overlap_comm=True` and `contiguous_gradients=True` does not work properly
+
+BODY
+**Describe the bug**
+When `overlap_comm=True` and `contiguous_gradients=True` are enabled, the gradient communication (AllReduce) does not overlap with backward pass computations as expected. Profiling trace logs reveal that AllReduce operations wait for computations to complete, indicating that the ping-pong buffer or stream synchronization logic is not functioning correctly.
+
+**To Reproduce**
+1. I have prepared a minimal training script to demonstrate the bug:
+[ds_overlap_comm_test.py](https://github.com/user-attachments/files/24759932/ds_overlap_comm_test.py)
+
+2. Download the script and run it using the DeepSpeed launcher in a multi-GPU environment (reproduced on 2x H20 GPUs):
+   ```bash
+   deepspeed ds_overlap_comm_test.py
+   ```
+3. Profiling logs will be generated in the `logs/` directory.
+4. Open the trace JSON file using https://ui.perfetto.dev/.
+5. Observe that there is no overlap; the gradient AllReduce operations are serialized after the computations.
+
+**Expected behavior**
+The AllReduce operation on one buffer (e.g., buffer 0) should occur simultaneously with the gradient computations for the next buffer (e.g., buffer 1).
+
+**ds_report output**
+DeepSpeed general environment info:
+torch install path ............... ['/usr/local/lib/python3.12/dist-packages/torch']
+torch version .................... 2.7.0a0+79aa17489c.nv25.04
+deepspeed install path ........... ['/mnt/project/user/xxxx/DeepSpeed/deepspeed']
+deepspeed info ................... 0.18.5+5aa2d17d, 5aa2d17d, master
+torch cuda version ............... 12.9
+torch hip version ................ None
+nvcc version ..................... 12.9
+deepspeed wheel compiled w. ...... torch 2.7, cuda 12.9
+shared memory (/dev/shm) size .... 235.00 GB
+
+**Screenshots**
+The following profiler trace shows a clear gap between communication and computation, confirming the lack of overlap:
+<img width="2269" height="233" alt="Observed Behavior" src="https://github.com/user-attachments/assets/b162d530-555f-40e6-bd94-0754fc72f164" />
+
+For comparison, this is the expected behavior (ideal overlap):
+<img width="2041" height="209" alt="Expected Behavior" src="https://github.com/user-attachments/assets/4a1131d3-2511-4b41-bb0e-2e0c04316404" />
+
+
+**System info (please complete the following information):**
+- Docker Image: nvcr.io/nvidia/pytorch:25.04-py3
+- Hardware: 2x NVIDIA H20 GPUs
+
+**Launcher context**
+Launched via `deepspeed` CLI.
+
+**Docker context**
+nvcr.io/nvidia/pytorch:25.04-py3
+
+**Additional context**
+After investigating the code in `deepspeed/runtime/zero/stage_1_and_2.py`, I have identified the root cause. The regression regarding communication overlap was introduced in PR #7371 (https://github.com/deepspeedai/DeepSpeed/pull/7371). While the additional two-stream synchronization in that PR fixes gradient corruption, it effectively disables the overlapping behavior.
+
+The underlying issue causing the gradient corruption (which #7371 attempted to fix) was actually introduced in PR #6993 (https://github.com/deepspeedai/DeepSpeed/pull/6993). In that PR, `bucket.clear()` incorrectly resets the ping-pong buffer index to 0 at the end of `reduce_ipg_grads`. This logic disrupts the buffer index swapping mechanism within `reduce_independent_p_g_buckets_and_remove_grads`. I will be submitting a Pull Request with a fix shortly.
+

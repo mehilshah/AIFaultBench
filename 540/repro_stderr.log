@@ -1,0 +1,29 @@
+Traceback (most recent call last):
+  File "540/repro.py", line 51, in main
+    synthesizer.fit(data)
+  File "540/codebase/sdv/single_table/base.py", line 679, in fit
+    self.fit_processed_data(processed_data)
+  File "540/codebase/sdv/single_table/base.py", line 648, in fit_processed_data
+    self._fit(processed_data)
+  File "540/codebase/sdv/sequential/par.py", line 535, in _fit
+    self._fit_sequence_columns(processed_data)
+  File "540/codebase/sdv/sequential/par.py", line 521, in _fit_sequence_columns
+    self._model.fit_sequences(sequences, context_types, data_types)
+  File "540/.venv/lib/python3.12/site-packages/deepecho/models/par.py", line 325, in fit_sequences
+    self._build(sequences, context_types, data_types)
+  File "540/.venv/lib/python3.12/site-packages/deepecho/models/par.py", line 185, in _build
+    self._ctx_map, self._ctx_dims = self._idx_map(contexts, context_types)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "540/.venv/lib/python3.12/site-packages/deepecho/models/par.py", line 132, in _idx_map
+    'mu': np.nanmean(x[i]),
+          ^^^^^^^^^^^^^^^^
+  File "540/.venv/lib/python3.12/site-packages/numpy/lib/_nanfunctions_impl.py", line 1033, in nanmean
+    return np.mean(arr, axis=axis, dtype=dtype, out=out, keepdims=keepdims,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "540/.venv/lib/python3.12/site-packages/numpy/_core/fromnumeric.py", line 3862, in mean
+    return _methods._mean(a, axis=axis, dtype=dtype,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "540/.venv/lib/python3.12/site-packages/numpy/_core/_methods.py", line 132, in _mean
+    ret = umr_sum(arr, axis, dtype, out, keepdims, where=where)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: the resolved dtypes are not compatible with add.reduce. Resolved (dtype('<U1'), dtype('<U1'), dtype('<U2'))

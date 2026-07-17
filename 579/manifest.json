@@ -1,0 +1,12 @@
+{
+  "bug_id": "579",
+  "bug_dir": "579",
+  "issue_url": "https://github.com/sdv-dev/SDV/issues/2711",
+  "commit_hash": "ae6e1c01a9b4d06bbc13868071a3ec36c5ed2d33",
+  "library_name": "SDV",
+  "library_version": "1.27.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "sdv-dev/SDV@ae6e1c01a9b4d06bbc13868071a3ec36c5ed2d33",
+  "codebase_present": "true",
+  "standardized_dir": "../579"
+}

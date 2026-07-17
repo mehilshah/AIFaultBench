@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "293/repro.py", line 22, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "293/repro.py", line 15, in main
+    import numpyro
+  File "293/codebase/numpyro/__init__.py", line 13, in <module>
+    from numpyro import compat, diagnostics, distributions, handlers, infer, ops, optim
+  File "293/codebase/numpyro/infer/__init__.py", line 6, in <module>
+    from numpyro.infer.elbo import (
+  File "293/codebase/numpyro/infer/elbo.py", line 35, in <module>
+    from numpyro.ops.provenance import eval_provenance
+  File "293/codebase/numpyro/ops/provenance.py", line 7, in <module>
+    from jax.extend.core.primitives import call_p, closed_call_p, jit_p, xla_pmap_p
+ImportError: cannot import name 'xla_pmap_p' from 'jax.extend.core.primitives' (293/.venv/lib/python3.12/site-packages/jax/extend/core/primitives.py)

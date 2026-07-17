@@ -1,0 +1,29 @@
+# recovered-from-issue: https://github.com/huggingface/peft/issues/424
+
+TITLE
+Deepcopy not copying the LoraConfig
+
+BODY
+I'm trying to make a deepcopy (using copy.deepcopy) of a LoraModel on the version '0.2.0'. But the values in PeftConfig remain the default ones (e.g. r = 8), not the ones of the copied model. Is it normal ? Am I supposed to do a `model_copy = get_peft_model(model_copy, peft_config)` ?
+It is possible to implement `__deepcopy__` and `__copy__` if necessary.
+
+Here is a reproduction example :
+``` Python
+import copy
+from transformers import AutoModelForCausalLM
+from peft import get_peft_config, get_peft_model, LoraConfig, TaskType
+model_name_or_path = "gpt2"
+tokenizer_name_or_path = "gpt2"
+peft_config = LoraConfig(task_type=TaskType.CAUSAL_LM, inference_mode=False, r=87, lora_alpha=32, lora_dropout=0.1)
+model = AutoModelForCausalLM.from_pretrained(model_name_or_path)
+model = get_peft_model(model, peft_config)
+
+model_copy = copy.deepcopy(model)
+assert(model.peft_config.r == model_copy.peft_config.r)
+```
+
+Moreover, I also get an AssertionError if I continue with :
+``` Python
+model_copy = get_peft_model(model_copy, peft_config)
+assert(model == model_copy)
+```

@@ -1,0 +1,4 @@
+saved=repro_empty_tensor.safetensors size=72
+load_file_keys=['empty']
+load_file_shape=(0,)
+bytes_length=72

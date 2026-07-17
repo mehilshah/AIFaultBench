@@ -1,0 +1,12 @@
+initial_rss_mb=454.27
+iter=0 loss=51.3421 rss_mb=816.87
+iter=1 loss=51.2219 rss_mb=863.47
+iter=2 loss=53.5067 rss_mb=907.75
+iter=3 loss=51.7148 rss_mb=952.69
+iter=4 loss=49.5285 rss_mb=998.19
+iter=5 loss=50.1807 rss_mb=1043.32
+iter=6 loss=50.6263 rss_mb=1088.54
+iter=7 loss=49.6128 rss_mb=1133.59
+iter=8 loss=50.0652 rss_mb=1178.80
+iter=9 loss=50.1152 rss_mb=1224.75
+summary loss_start=51.3421 loss_end=50.1152 rss_start=454.27 rss_end=1224.75 rss_delta=770.48

@@ -1,0 +1,5 @@
+Running MultilevelDetectionGenerator on a zero-class input.
+raw_boxes shape: (1, 1, 1, 4)
+raw_scores shape: (1, 1, 1, 1)
+anchor_boxes shape: (1, 1, 4)
+Reproduced the empty-list ConcatV2 failure.

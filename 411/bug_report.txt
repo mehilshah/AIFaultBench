@@ -1,0 +1,97 @@
+# recovered-from-issue: https://github.com/huggingface/peft/issues/602
+
+TITLE
+`modules_to_save` incompatible with `load_in_4bit / load_in_8bit` ?
+
+BODY
+### System Info
+
+Python version: 3.10.8
+torch==2.0.1+cu118
+transformers @ git+https://github.com/huggingface/transformers.git@17a55534f5e5df10ac4804d4270bf6b8cc24998d
+peft @ git+https://github.com/huggingface/peft.git@3714aa2fff158fdfa637b2b65952580801d890b2
+accelerate @ git+https://github.com/huggingface/accelerate.git@7d24bdefb5b3252505151d8c1ac0efbed3574857
+bitsandbytes==0.39.0
+
+### Who can help?
+
+ @pacman100
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+I'm trying to train a LoRA sequence classification model and found that gradient updates were applied to `original_module` instead of `modules_to_save.default`. This causes issues when loading the trained adapter for inference.
+
+I've tried different combinations of `load_in_{4,8}bit, device_map, resize_token_embeddings, prepare_model_for_kbit_training`, etc. The only combination that behaves as expected was `load_in_4bit=False, device_map=None, should_resize_token_embeddings=True, should_prepare_model_for_kbit_training=False` (i.e. removing `device_map='auto'`). However this is not an option for `load_in_{4,8}bit`.
+
+Thanks for your work and would appreciate any suggestions.
+
+```python
+import fire
+ 
+import torch
+from peft import LoraConfig, TaskType, get_peft_model, prepare_model_for_kbit_training
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, set_seed 
+
+set_seed(123)
+
+PRETRAIN = 'bigscience/bloomz-560m'
+tokenizer = AutoTokenizer.from_pretrained(PRETRAIN)
+
+
+def main(load_in_4bit=False, device_map='auto', should_resize_token_embeddings=False, should_prepare_model_for_kbit_training=False):
+    model = AutoModelForSequenceClassification.from_pretrained(
+        PRETRAIN,
+        load_in_4bit=load_in_4bit,
+        torch_dtype=torch.float32,
+        device_map=device_map,
+    )
+    if should_prepare_model_for_kbit_training: model = prepare_model_for_kbit_training(model)
+
+    config = LoraConfig(
+        r=16,
+        lora_alpha=16,
+        lora_dropout=0.05,
+        bias="none",
+        task_type=TaskType.SEQ_CLS,
+    )
+
+    peft_model = get_peft_model(model, config)
+    if should_resize_token_embeddings: model.resize_token_embeddings(len(tokenizer))
+
+    lm_head = peft_model.base_model.model.score
+    original_module = lm_head.original_module
+    modules_to_save = lm_head.modules_to_save.default
+    
+    inputs = torch.randn((1024))
+    o1 = lm_head(inputs)
+    o1.mean().backward()
+    original_module_has_grad = original_module.weight.grad is not None
+    modules_to_save_has_grad = modules_to_save.weight.grad is not None
+    print(f'{load_in_4bit=}, {device_map=}, {should_resize_token_embeddings=}, {should_prepare_model_for_kbit_training=} --> {original_module.weight.requires_grad=}, {modules_to_save.weight.requires_grad=}, {original_module_has_grad=}, {modules_to_save_has_grad=}')
+
+
+if __name__ == '__main__':
+    fire.Fire(main)
+
+
+# load_in_4bit=False, device_map='auto', should_resize_token_embeddings=False, should_prepare_model_for_kbit_training=False --> original_module.weight.requires_grad=True, modules_to_save.weight.requires_grad=True, original_module_has_grad=True, modules_to_save_has_grad=False
+# load_in_4bit=False, device_map=None, should_resize_token_embeddings=False, should_prepare_model_for_kbit_training=False --> original_module.weight.requires_grad=True, modules_to_save.weight.requires_grad=True, original_module_has_grad=False, modules_to_save_has_grad=True ***ONLY THIS IS AS EXPECTED***
+# load_in_4bit=False, device_map='auto', should_resize_token_embeddings=True, should_prepare_model_for_kbit_training=False --> original_module.weight.requires_grad=True, modules_to_save.weight.requires_grad=True, original_module_has_grad=True, modules_to_save_has_grad=False
+# load_in_4bit=True, device_map='auto', should_resize_token_embeddings=False, should_prepare_model_for_kbit_training=True --> original_module.weight.requires_grad=True, modules_to_save.weight.requires_grad=True, original_module_has_grad=True, modules_to_save_has_grad=False
+# load_in_4bit=True, device_map='auto', should_resize_token_embeddings=True, should_prepare_model_for_kbit_training=True --> original_module.weight.requires_grad=True, modules_to_save.weight.requires_grad=True, original_module_has_grad=True, modules_to_save_has_grad=False
+# load_in_4bit=True, device_map=None, should_resize_token_embeddings=False, should_prepare_model_for_kbit_training=True --> ValueError: A device map needs to be passed to run convert models into 8-bit and 4-bit formats. Please run`.from_pretrained` with `device_map='auto'`
+```
+
+### Expected behavior
+
+`modules_to_save.default` should get updated instead of `original_module`

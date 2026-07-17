@@ -1,0 +1,9 @@
+032/.venv/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:368: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /__w/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:84.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+Traceback (most recent call last):
+  File "032/repro.py", line 32, in main
+    module.gelu(x)
+  File "032/codebase/PyTorch/LanguageModeling/BERT/modeling.py", line 122, in gelu
+    return torch.nn.functional.gelu(x, approximate=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: gelu(): argument 'approximate' must be str, not bool

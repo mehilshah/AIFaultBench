@@ -1,0 +1,39 @@
+An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+Traceback (most recent call last):
+  File "629/repro.py", line 24, in <module>
+    svi.run(random.PRNGKey(0), 1, progress_bar=False)
+  File "629/codebase/numpyro/infer/svi.py", line 429, in run
+    svi_state, losses = lax.scan(body_fn, svi_state, None, length=num_steps)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "629/codebase/numpyro/infer/svi.py", line 392, in body_fn
+    svi_state, loss = self.update(
+                      ^^^^^^^^^^^^
+  File "629/codebase/numpyro/infer/svi.py", line 284, in update
+    (loss_val, mutable_state), optim_state = self.optim.eval_and_update(
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "629/codebase/numpyro/optim.py", line 104, in eval_and_update
+    (out, aux), grads = _value_and_grad(
+                        ^^^^^^^^^^^^^^^^
+  File "629/codebase/numpyro/optim.py", line 50, in _value_and_grad
+    return value_and_grad(f, has_aux=True)(x)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+^^^^^^^^^^^^^^^^^^
+Exception: Leaked trace MainTrace(3,JVPTrace). Leaked tracer(s):
+
+Traced<ShapedArray(float32[])>with<JVPTrace(level=3/0)> with
+  primal = Traced<ShapedArray(float32[])>with<DynamicJaxprTrace(level=1/0)>
+  tangent = Traced<ShapedArray(float32[])>with<JaxprTrace(level=2/0)> with
+    pval = (ShapedArray(float32[]), None)
+    recipe = JaxprEqnRecipe(eqn_id=<object object at 0x7fe316faf070>, in_tracers=(Traced<ShapedArray(float32[]):JaxprTrace(level=2/0)>,), out_tracer_refs=[<weakref at 0x7fe2ba17e980; to 'JaxprTracer' at 0x7fe2ba17e8a0>], out_avals=[ShapedArray(float32[])], primitive=pjit, params={'jaxpr': { lambda ; a:f32[]. let  in (a,) }, 'in_shardings': (UnspecifiedValue,), 'out_shardings': (UnspecifiedValue,), 'resource_env': None, 'donated_invars': (False,), 'name': 'fn', 'keep_unused': False, 'inline': True}, effects=set(), source_info=SourceInfo(traceback=<jaxlib.xla_extension.Traceback object at 0x7fe2ba14cd30>, name_stack=NameStack(stack=(Transform(name='jvp'),))))
+<JVPTracer 140611761463904> is referred to by <dict 140611761356928>['value']
+<dict 140611761356928> is referred to by <dict 140611761261248>['loc1p']
+<dict 140611761261248> is referred to by <SVIState 140611761463008>[1]
+<SVIState 140611761463008> is referred to by <tuple 140611761424448>[0]
+<tuple 140611761424448> is referred to by <generator 140611761013472>
+<generator 140611761013472> is referred to by <tuple 140611761338944>[0]
+<tuple 140611761338944> is referred to by <list 140611761296768>[0]
+
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.

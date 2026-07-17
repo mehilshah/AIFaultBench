@@ -1,0 +1,9 @@
+{
+  "bug_id": "626",
+  "issue_url": "https://github.com/vllm-project/vllm/issues/46933",
+  "library_name": "vllm",
+  "codebase_source": "local codebase snapshot in codebase",
+  "repro_entrypoint": "run_repro.sh",
+  "expected_behavior": "vLLM serve hangs while capturing CUDA graphs when CPU KV offloading is enabled with tensor parallelism",
+  "local_status": "blocked by single-GPU environment"
+}

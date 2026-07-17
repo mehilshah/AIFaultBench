@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "223/repro.py", line 99, in <module>
+    main()
+  File "223/repro.py", line 94, in main
+    add_kernel[grid](123, n_element, BLOCK_SIZE=1024)
+  File "223/.venv/lib/python3.12/site-packages/triton/runtime/jit.py", line 370, in <lambda>
+    return lambda *args, **kwargs: self.run(grid=grid, warmup=False, *args, **kwargs)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "223/.venv/lib/python3.12/site-packages/triton/runtime/jit.py", line 755, in run
+    grid_size = len(grid)
+                ^^^^^^^^^
+TypeError: object of type 'int' has no len()

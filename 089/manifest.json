@@ -1,0 +1,14 @@
+{
+  "bug_id": "089",
+  "bug_dir": "089",
+  "issue_url": "https://github.com/lucidrains/x-transformers/issues/282",
+  "commit_hash": "eeed50391855f8d552edc866701952f38015e415",
+  "library_name": "x-transformers",
+  "library_version": "1.40.9",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": "true",
+  "standardized_dir": "../089",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh"
+}

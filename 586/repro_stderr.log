@@ -1,0 +1,4 @@
+DeepSpeed emitted its standard CPU accelerator warning during initialization:
+[WARNING] Setting accelerator to CPU. If you have GPU or other accelerator, we were unable to detect it.
+
+No stderr was produced by the successful probe itself.

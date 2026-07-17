@@ -1,0 +1,48 @@
+expected failure observed
+Traceback (most recent call last):
+  File "630/codebase/pyro/poutine/trace_struct.py", line 216, in compute_log_prob
+    log_p = site["fn"].log_prob(site["value"], *site["args"], **site["kwargs"])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "630/.venv/lib/python3.11/site-packages/torch/distributions/normal.py", line 79, in log_prob
+    self._validate_sample(value)
+  File "630/.venv/lib/python3.11/site-packages/torch/distributions/distribution.py", line 271, in _validate_sample
+    raise ValueError('The value argument to log_prob must be a Tensor')
+ValueError: The value argument to log_prob must be a Tensor
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "630/repro.py", line 48, in main
+    svi.step(guess)
+  File "630/codebase/pyro/infer/svi.py", line 128, in step
+    loss = self.loss_and_grads(self.model, self.guide, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "630/codebase/pyro/infer/trace_elbo.py", line 131, in loss_and_grads
+    for model_trace, guide_trace in self._get_traces(model, guide, args, kwargs):
+  File "630/codebase/pyro/infer/elbo.py", line 170, in _get_traces
+    yield self._get_trace(model, guide, args, kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "630/codebase/pyro/infer/trace_elbo.py", line 57, in _get_trace
+    model_trace, guide_trace = get_importance_trace(
+                               ^^^^^^^^^^^^^^^^^^^^^
+  File "630/codebase/pyro/infer/enum.py", line 55, in get_importance_trace
+    model_trace.compute_log_prob()
+  File "630/codebase/pyro/poutine/trace_struct.py", line 220, in compute_log_prob
+    raise ValueError("Error while computing log_prob at site '{}':\n{}\n{}"
+  File "630/codebase/pyro/poutine/trace_struct.py", line 216, in compute_log_prob
+    log_p = site["fn"].log_prob(site["value"], *site["args"], **site["kwargs"])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "630/.venv/lib/python3.11/site-packages/torch/distributions/normal.py", line 79, in log_prob
+    self._validate_sample(value)
+  File "630/.venv/lib/python3.11/site-packages/torch/distributions/distribution.py", line 271, in _validate_sample
+    raise ValueError('The value argument to log_prob must be a Tensor')
+ValueError: Error while computing log_prob at site 'measurement':
+The value argument to log_prob must be a Tensor
+   Trace Shapes:  
+    Param Sites:  
+   Sample Sites:  
+     weight dist |
+           value |
+        log_prob |
+measurement dist |
+           value |

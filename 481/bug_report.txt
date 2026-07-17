@@ -1,0 +1,109 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/2041
+
+TITLE
+bug: `WishartCholesky.infer_shapes` assumes tuples instead of supporting arrays
+
+BODY
+### Bug Description
+
+The `WishartCholesky` distribution accepts `scale_matrix`, `rate_matrix`, and `scale_tril` as array-type arguments, as seen in the [distribution's argument constraints](https://github.com/pyro-ppl/numpyro/blob/7a3c24ff4b072f3f3df6c0ef9494d1635753c53d/numpyro/distributions/continuous.py#L3092-L3094). However, the `infer_shapes` class method handles these parameters as if their shapes can be used directly like tuples of integers, which is inconsistent.
+
+In particular, the following line in `infer_shapes` is problematic:
+
+https://github.com/pyro-ppl/numpyro/blob/7a3c24ff4b072f3f3df6c0ef9494d1635753c53d/numpyro/distributions/continuous.py#L3240-L3241
+
+### Steps to Reproduce
+
+Using values from [test_distributions.py](https://github.com/pyro-ppl/numpyro/blob/7a3c24ff4b072f3f3df6c0ef9494d1635753c53d/test/test_distributions.py#L869-L873):
+
+```python
+from jax import numpy as jnp
+from numpyro.distributions import WishartCholesky
+
+concentration = jnp.array([4.0, 5.0])
+scale_matrix = jnp.array([[[1.0, 0.5], [0.5, 1.0]]])
+
+# This will raise a TypeError
+WishartCholesky.infer_shapes(concentration, scale_matrix=scale_matrix)
+```
+
+<details><summary>Error</summary>
+<p>
+
+```python
+In [1]: from jax import numpy as jnp
+   ...: from numpyro.distributions import WishartCholesky
+   ...:
+   ...: concentration = jnp.array([4.0, 5.0])
+   ...: scale_matrix = jnp.array([[[1.0, 0.5], [0.5, 1.0]]])
+   ...:
+   ...: # This will raise a TypeError
+   ...: WishartCholesky.infer_shapes(concentration, scale_matrix=scale_matrix)
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+File ~/.conda/envs/gwkenv/lib/python3.12/site-packages/jax/_src/lax/lax.py:196, in broadcast_shapes(*shapes)
+    195 try:
+--> 196   return _broadcast_shapes_cached(*shapes)
+    197 except:
+
+File ~/.conda/envs/gwkenv/lib/python3.12/site-packages/jax/_src/util.py:337, in cache.<locals>.wrap.<locals>.wrapper(*args, **kwargs)
+    336   return f(*args, **kwargs)
+--> 337 return cached(config.trace_context() if trace_context_in_key else _ignore(),
+    338               *args, **kwargs)
+
+TypeError: unhashable type: 'jaxlib.xla_extension.ArrayImpl'
+
+During handling of the above exception, another exception occurred:
+
+TypeError                                 Traceback (most recent call last)
+Cell In[1], line 8
+      5 scale_matrix = jnp.array([[[1.0, 0.5], [0.5, 1.0]]])
+      7 # This will raise a TypeError
+----> 8 WishartCholesky.infer_shapes(concentration, scale_matrix=scale_matrix)
+
+File ~/.conda/envs/gwkenv/lib/python3.12/site-packages/numpyro/distributions/continuous.py:2973, in WishartCholesky.infer_shapes(concentration, scale_matrix, rate_matrix, scale_tril)
+   2971 for matrix in [scale_matrix, rate_matrix, scale_tril]:
+   2972     if matrix is not None:
+-> 2973         batch_shape = lax.broadcast_shapes(concentration, matrix[:-2])
+   2974         event_shape = matrix[-2:]
+   2975         return batch_shape, event_shape
+
+File ~/.conda/envs/gwkenv/lib/python3.12/site-packages/jax/_src/lax/lax.py:198, in broadcast_shapes(*shapes)
+    196   return _broadcast_shapes_cached(*shapes)
+    197 except:
+--> 198   return _broadcast_shapes_uncached(*shapes)
+
+File ~/.conda/envs/gwkenv/lib/python3.12/site-packages/jax/_src/lax/lax.py:205, in _broadcast_shapes_uncached(*shapes)
+    204 def _broadcast_shapes_uncached(*shapes):
+--> 205   _validate_shapes(shapes)
+    206   fst, *rst = shapes
+    207   if not rst: return fst
+
+File ~/.conda/envs/gwkenv/lib/python3.12/site-packages/jax/_src/lax/lax.py:110, in _validate_shapes(shapes)
+    108   return
+    109 else:
+--> 110   foreach(_check_static_shape, shapes)
+
+File ~/.conda/envs/gwkenv/lib/python3.12/site-packages/jax/_src/lax/lax.py:99, in _validate_shapes.<locals>._check_static_shape(shape)
+     98 def _check_static_shape(shape: Shape):
+---> 99   checked = canonicalize_shape(shape)
+    100   if not all(idx >= 0 for idx in checked):
+    101     msg = f"Only non-negative indices are allowed when broadcasting" \
+    102           f" static shapes, but got shape {shape!r}."
+
+File ~/.conda/envs/gwkenv/lib/python3.12/site-packages/jax/_src/core.py:1755, in canonicalize_shape(shape, context)
+   1753 except TypeError:
+   1754   pass
+-> 1755 raise _invalid_shape_error(shape, context)
+
+TypeError: Shapes must be 1D sequences of concrete values of integer type, got [4. 5.].
+```
+
+</p>
+</details> 
+
+### Expected Behavior
+
+The method should extract `.shape` or use `jnp.shape(matrix)` instead of slicing the JAX array directly.
+
+Tagging @tillahoffmann, the contributor of WishartCholesky distribution (#1779).

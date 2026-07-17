@@ -1,0 +1,21 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2593
+
+TITLE
+[BUG] AttributeError: 'RotaryEmbeddingDinoV3' object has no attribute 'update_feat_shape'
+
+BODY
+Hi, thanks for the great library. 
+
+I was trying to use the DinoV3 models and faced the following error when using the `set_input_size()` function : 
+
+> AttributeError: 'RotaryEmbeddingDinoV3' object has no attribute 'update_feat_shape'
+
+
+**To Reproduce**
+```python
+import timm
+model = timm.create_model('vit_base_patch16_dinov3.lvd1689m', pretrained=True)
+model.set_input_size(512)
+```
+**Possible Fix**
+Add the `update_feat_shape()` function to the `RotaryEmbeddingDinoV3` class.

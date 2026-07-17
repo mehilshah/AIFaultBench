@@ -1,0 +1,11 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/903
+
+TITLE
+CLI should guard against bad input parameters
+
+BODY
+Look into how we can guard against someone running a command such as:
+```bash
+accelerate launch --multi_gpu --gpu_ids 0,1,2,3 --mixed_precision no --num_machines 1 --num_processes 1 --num_cpu_threads_per_process=1
+```
+As `--multi_gpu` and `--num_processes 1` are mutually exclusive based on the fact that `--num_processes < 2` and `--num_machines < 2`

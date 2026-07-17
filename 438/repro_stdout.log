@@ -1,0 +1,2 @@
+EXPECTED_INIT_FAILURE: DeepSpeed lamb optimizer requires dynamic loss scaling
+Test Passed

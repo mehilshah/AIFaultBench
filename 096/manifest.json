@@ -1,0 +1,9 @@
+{
+  "bug_id": "096",
+  "issue_url": "https://github.com/lucidrains/denoising-diffusion-pytorch/issues/286",
+  "library_name": "denoising-diffusion-pytorch",
+  "library_version": "unknown",
+  "codebase_present": true,
+  "reproducible": false,
+  "notes": "Forced self-conditioning backward pass completed successfully on available stable torch builds."
+}

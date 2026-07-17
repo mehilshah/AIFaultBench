@@ -1,0 +1,12 @@
+{
+  "bug_id": "375",
+  "bug_dir": "375",
+  "issue_url": "https://github.com/jax-ml/jax/issues/38634",
+  "commit_hash": "faf677af0abec7ea25c7a33831fcabf30a795796",
+  "library_name": "jax",
+  "library_version": "0.10.1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "local codebase/ snapshot",
+  "codebase_present": "true",
+  "standardized_dir": "../375"
+}

@@ -1,0 +1,10 @@
+=== BUG ===
+state_dict before: 2 keys
+state_dict after:  0 keys
+OrderedDict()
+=== WORKAROUND ===
+state_dict before: 2 keys
+state_dict after:  2 keys
+OrderedDict({'module.weight': tensor([[-0.0911,  0.0400, -0.2104,  0.0431],
+        [-0.2078,  0.3403, -0.1379,  0.0720]]), 'module.bias': tensor([-0.0292, -0.4801])})
+PASS

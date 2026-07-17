@@ -1,0 +1,39 @@
+# recovered-from-issue: https://github.com/facebookresearch/detectron2/issues/3405
+
+TITLE
+Possible bugs in detectron2.data.MapDataset?
+
+BODY
+## Instructions To Reproduce the 🐛 Bug:
+It seems like the `MapDataset` changes the behaviour of `__new__` inherited from `torch.utils.data.Dataset` and pass extra arguments to the `__new__` function which only accept one for `object.__new__()`
+
+1. What exact command you run:
+```
+train_dict = DatasetCatalog.get(self.train_name)
+dataset=DatasetFromList(train_dict)
+map_func=DatasetMapper(True, augmentations=self.train_augs, image_format="BGR")
+self.train_set = MapDataset(
+    dataset, map_func
+)
+```
+2. __Full logs__ or other relevant observations:
+```
+/miniconda/lib/python3.9/site-packages/detectron2/data/common.py in __new__(cls, dataset, map_func)
+     75             return _MapIterableDataset(dataset, map_func)
+     76         else:
+---> 77             return super().__new__(cls, dataset, map_func)
+     78 
+     79     def __getnewargs__(self):
+
+TypeError: object.__new__() takes exactly one argument (the type to instantiate)
+
+```
+
+## Environment:
+
+Provide your environment information using the following command:
+```
+detectron2: 0.5
+python: 3.9.5
+```
+

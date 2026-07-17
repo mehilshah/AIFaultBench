@@ -1,0 +1,6 @@
+accelerate==0.14.0
+numpy
+packaging
+psutil
+pyyaml
+torch

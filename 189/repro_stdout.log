@@ -1,0 +1,4 @@
+checkpoint=189/codebase/logs/repro_train1/checkpoints/epoch_1.pt
+loading via open_clip.factory.load_state_dict(weights_only=True)
+exception_type=UnpicklingError
+BUG_REPRODUCED

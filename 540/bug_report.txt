@@ -1,0 +1,70 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2719
+
+TITLE
+PARSynthesizer crashes if context columns are listed in a different order than the data
+
+BODY
+### Environment Details
+* SDV version: 1.27.0
+* Python version: 3.11
+* Operating System: Linux (Google Colab)
+
+### Error Description
+When instantiating the [PARSynthesizer](https://docs.sdv.dev/sdv/sequential-data/modeling/parsynthesizer#parameter-reference), I am able to provide a list of _context column_ names, which are columns whose values do not vary within a sequence. For example, if each sequence represents a healthcare patient's data, the context columns are static for a given patient, such as the patient's name or birthday.
+
+In theory, the list of context column can be inputted in any order because all that I'm doing is telling PAR which columns to consider as context. But in practice, it seems that the order of the context column matters. If I provide the context columns in a different order than what my data has, then the PARSynthesizer crashes.
+
+### Steps to reproduce
+The example below consists of two context columns -- `context1` is categorical while `context2` is numerical. In the data, the `context1` column appears to the left of the `context2` column. 
+
+```python
+import pandas as pd
+data = pd.DataFrame(data={
+    'sequence': ['id-0']*3 + ['id-1']*4 + ['id-2']*3,
+    'context1': ['M']*3 + ['F']*4 + ['M']*3,
+    'context2': [12.0]*3 + [np.nan]*4 + [34.0]*3,
+    'seq1': [12, 34, 12, 78, 12, 56, 34, 78, 12, 67],
+    'seq2': ['Yes', 'Yes', 'No', 'No', 'No', 'No', 'Yes', 'Yes', 'No', 'No']
+})
+print(data)
+```
+
+<img width="1160" height="354" alt="Image" src="https://github.com/user-attachments/assets/7d0e98ba-5a21-4206-9ece-582e26f63c87" />
+
+Now, when instantiating a PARSynthesizer, input the context columns in a different order -- `[context2, context1]`. Observe that the PARSynthesizer crashes.
+
+```python
+from sdv.metadata import Metadata
+metadata = Metadata.load_from_dict({
+    'tables': {
+        'table': {
+            'columns': {
+                'sequence': { 'sdtype': 'id' },
+                'context1': { 'sdtype': 'categorical' },
+                'context2': { 'sdtype': 'numerical' },
+                'seq1': { 'sdtype': 'numerical' },
+                'seq2': { 'sdtype': 'categorical'}},
+            'sequence_key': 'sequence' }}})
+
+synthesizer = PARSynthesizer(
+  metadata,
+  context_columns=['context2', 'context1'], # these are in a different order than the data
+)
+synthesizer.fit(data) # this line crashes
+```
+```
+TypeError: the resolved dtypes are not compatible with add.reduce. Resolved (dtype('<U1'), dtype('<U1'), dtype('<U2'))
+```
+The full stack trace is available below.
+
+[stack_trace.txt](https://github.com/user-attachments/files/22888740/stack_trace.txt)
+
+### Expected Behavior
+**The order in which I input the context columns' names should not matter.** So both instantiations below should work.
+
+```python
+synthesizer1 = PARSynthesizer(metadata, context_columns=['context1', 'context2'])
+synthesizer2 = PARSynthesizer(metadata, context_columns=['context2', 'context1'])
+```
+
+Currently, only `synthesizer1` actually runs because the context columns are in the same order as the data.

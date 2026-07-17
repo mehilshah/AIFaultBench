@@ -1,0 +1,120 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2714
+
+TITLE
+Key Error While Using Synthesizers
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version: 1.27.0
+* Python version: 3.11
+* Operating System: Ubuntu 24.04
+
+### Error Description
+
+I am using "PARSynthesizer" to generate new sequences from tabular data. I train model on 1000 seqeunces (a total of 125k rows with 8 columns). Using the synthesizer casues a "key error". From the values in the error message it's likely related to column "anchor age" in my data. Please see `metadata` below. 
+
+
+**Metadata**
+
+`{
+    "tables": {
+        "icu_data_v03": {
+            "columns": {
+                "binned_time": {
+                    "datetime_format": "%Y-%m-%d %H:%M:%S",
+                    "sdtype": "datetime"
+                },
+                "Heart Rate": {
+                    "sdtype": "numerical"
+                },
+                "Respiratory Rate": {
+                    "sdtype": "numerical"
+                },
+                "O2 saturation pulseoxymetry": {
+                    "sdtype": "numerical"
+                },
+                "gender": {
+                    "sdtype": "categorical"
+                },
+                "anchor_age": {
+                    "sdtype": "numerical"
+                },
+                "diag_label": {
+                    "sdtype": "categorical"
+                },
+                "sub_hadm_stay_id": {
+                    "sdtype": "id"
+                }
+            },
+            "sequence_key": "sub_hadm_stay_id",
+            "sequence_index": "binned_time"
+        }
+    },
+    "relationships": [],
+    "METADATA_SPEC_VERSION": "V1"
+}`
+
+### Steps to reproduce
+
+**Here is the code to train synthesizer and use it for synthesis:**
+
+`synthesizer = PARSynthesizer(
+    metadata,
+    context_columns=['diag_label', 'gender', 'anchor_age'],
+    epochs = epochs,
+    verbose = True,
+    )
+
+synthesizer.fit(trn_df)
+
+`
+
+```
+---------------------------------------------------------------------------
+KeyError                                  Traceback (most recent call last)
+Cell In[21], line 4
+      1 ## Synthesize Data
+      2 ## Note: if you see key errors here, it is likely due to not having enough training data
+      3 ## this error was seen mostly on the "anchor_age" columns in the context data - needs to be investigated further
+----> 4 synt_df = synthesizer.sample(num_sequences=num_synth_subjects)
+      5 synt_df.to_parquet(os.path.join(ws, f"{num_synth_subjects}_synthetic_df.pq"))
+      6 synt_df.to_csv(os.path.join(ws, f"{num_synth_subjects}_synthetic_df.csv"), index=False)
+
+File ~/anaconda3/envs/synpub/lib/python3.11/site-packages/sdv/sequential/par.py:632, in PARSynthesizer.sample(self, num_sequences, sequence_length)
+    629     if column not in context_columns:
+    630         context_columns[column] = range(len(context_columns))
+--> 632 return self._sample(context_columns, sequence_length)
+
+File ~/anaconda3/envs/synpub/lib/python3.11/site-packages/sdv/sequential/par.py:602, in PARSynthesizer._sample(self, context_columns, sequence_length)
+    601 def _sample(self, context_columns, sequence_length=None):
+--> 602     sampled = self._sample_from_par(context_columns, sequence_length)
+    603     sampled = self._data_processor.reverse_transform(sampled)
+    604     return self.reverse_transform_constraints(sampled)
+
+File ~/anaconda3/envs/synpub/lib/python3.11/site-packages/sdv/sequential/par.py:567, in PARSynthesizer._sample_from_par(self, context, sequence_length)
+    565 for sequence_key_values, context_values in iterator:
+    566     context_values_list = context_values.drop(id_context_columns, errors='ignore').tolist()
+--> 567     sequence = self._model.sample_sequence(context_values_list, sequence_length)
+    568     if self._sequence_index:
+    569         sequence_index_idx = self._data_columns.index(self._sequence_index)
+
+File ~/anaconda3/envs/synpub/lib/python3.11/site-packages/deepecho/models/par.py:581, in PARModel.sample_sequence(self, context, sequence_length)
+    578     max_length = self._max_length
+    580 if self._ctx_dims:
+--> 581     context = self._context_to_tensor(context).unsqueeze(0)
+    582 else:
+    583     context = None
+
+File ~/anaconda3/envs/synpub/lib/python3.11/site-packages/deepecho/models/par.py:281, in PARModel._context_to_tensor(self, context)
+    279     if pd.isna(value):
+    280         value = None
+--> 281     x[props['indices'][value]] = 1.0
+    283 else:
+    284     raise ValueError()
+
+KeyError: 58.0
+```
+

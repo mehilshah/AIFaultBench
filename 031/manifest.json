@@ -1,0 +1,12 @@
+{
+  "bug_id": "031",
+  "bug_dir": "031",
+  "issue_url": "https://github.com/NVIDIA/DeepLearningExamples/issues/1268",
+  "commit_hash": "acecffe16f0358cc7247893cca00707d63e527e1",
+  "library_name": "DeepLearningExamples",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report/031.txt",
+  "codebase_source": "NVIDIA/DeepLearningExamples@acecffe16f0358cc7247893cca00707d63e527e1",
+  "codebase_present": "true",
+  "standardized_dir": "../031"
+}

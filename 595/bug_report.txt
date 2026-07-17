@@ -1,0 +1,43 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46726
+
+TITLE
+AutoProcessor reports “Unrecognized image processor” when required vision backend is missing
+
+BODY
+### System Info
+
+Observed with `transformers==5.12.1` in an environment with `torch` installed but `torchvision` missing.
+
+### Who can help?
+
+_No response_
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [x] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+```python
+  from transformers import AutoProcessor
+
+  AutoProcessor.from_pretrained("HuggingFaceTB/SmolVLM-256M-Instruct")
+```
+
+In an environment where torchvision is **not** installed, this can fail with:
+```
+ValueError: Unrecognized image processor in HuggingFaceTB/SmolVLM-256M-Instruct...
+```
+This is misleading because the model/config can be recognized; the real issue is that the image processor implementation is unavailable due to a missing optional dependency. Installing `torchvision` makes the same processor load successfully.
+
+This does not affect every vision processor equally. Some models can fall back to a PIL-based image processor when `torchvision` is unavailable and Pillow is installed. The issue is specifically that when no usable mapped backend implementation can be imported, the auto processor path should surface a dependency/backend error instead of an “unrecognized image processor” error.
+
+### Expected behavior
+
+The error should explain that no mapped image processor backend class could be loaded and suggest installing the missing backend dependency, rather than implying that the image processor or model type is unrecognized.

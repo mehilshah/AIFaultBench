@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "After installing torch 2.8.0+cpu and numpy, `bash run_repro.sh` prints `before=torch.nn.modules.linear.Linear`, `after=torch.nn.modules.linear.Linear`, and `BUG: module was not swapped`.",
+  "steps": [
+    "Create the isolated environment with `bash setup_env.sh`.",
+    "Run the reproducer with `bash run_repro.sh`.",
+    "Observe that `quantize_(..., FqnToConfig({\"l\": QATConfig(..., step=\"prepare\")}), filter_fn=None)` leaves `m.l` as `torch.nn.Linear`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

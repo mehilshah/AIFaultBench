@@ -1,0 +1,3 @@
+InitTrackerConfig signature: (in_keys: 'list[str] | None' = None, out_keys: 'list[str] | None' = None, _target_: 'str' = 'torchrl.envs.transforms.transforms.InitTracker') -> None
+Attempting InitTrackerConfig(init_key='is_test_init') ...
+TypeError: InitTrackerConfig.__init__() got an unexpected keyword argument 'init_key'

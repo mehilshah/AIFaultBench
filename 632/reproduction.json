@@ -1,0 +1,13 @@
+{
+  "reproducible": true,
+  "evidence": "In a fresh venv with torch==2.5.1+cpu and the local torch-geometric checkout, the repro prints WITH_PYG_LIB=False and WITH_TORCH_SPARSE=False, then NeighborLoader() and fails with ImportError: 'NeighborSampler' requires either 'pyg-lib' or 'torch-sparse'.",
+  "steps": [
+    "Created an isolated virtual environment.",
+    "Installed torch==2.5.1+cpu plus the package's core Python dependencies.",
+    "Installed the local codebase in editable mode.",
+    "Constructed a small homogeneous Data graph and instantiated NeighborLoader with input_nodes=train_mask.",
+    "Iterated the loader to trigger NeighborSampler._sample(), which raised the ImportError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

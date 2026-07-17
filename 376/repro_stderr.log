@@ -1,0 +1,13 @@
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Traceback (most recent call last):
+  File "376/repro.py", line 29, in <module>
+    main()
+  File "376/repro.py", line 25, in main
+    runner.invoke(transformers_cli.app, ["version"], catch_exceptions=False)
+  File "376/.venv/lib/python3.12/site-packages/typer/testing.py", line 285, in invoke
+    cli = _get_command(app)
+          ^^^^^^^^^^^^^^^^^
+  File "376/.venv/lib/python3.12/site-packages/typer/main.py", line 1174, in get_command
+    if typer_instance._add_completion:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HFCliTyperGroup' object has no attribute '_add_completion'

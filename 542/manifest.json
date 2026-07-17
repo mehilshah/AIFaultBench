@@ -1,0 +1,10 @@
+{
+  "bug_id": "542",
+  "issue_url": "https://github.com/jax-ml/jax/issues/38099",
+  "library_name": "jax",
+  "library_version": "0.10.2.dev20260717",
+  "codebase_source": "local codebase/ checkout",
+  "bug_report_source": "bug_report.txt",
+  "repro_script": "repro.py",
+  "run_script": "run_repro.sh"
+}

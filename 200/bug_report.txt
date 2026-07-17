@@ -1,0 +1,78 @@
+Title: GitLab fails to detect Linux docker version
+Date: 2025-11-11T20:45:11+00:00
+URL: https://github.com/pypa/cibuildwheel/issues/2659
+
+Description:
+### Description
+
+Linux builds with GitLab CI are failing with the error:
+> cibuildwheel: error: Build failed because docker is too old or is not working properly.
+
+I have this section in my CI configuration:
+```yaml
+build-linux:
+  stage: build
+  image: python:3.12
+  # make a docker daemon available for cibuildwheel to use
+  services:
+    - name: docker:dind
+      entrypoint: ["env", "-u", "DOCKER_HOST"]
+      command: ["dockerd-entrypoint.sh"]
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+    # See https://github.com/docker-library/docker/pull/166
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - curl -sSL https://get.docker.com/ | sh
+    - python -m pip install cibuildwheel==3.2.1
+    - docker version -f '{{json .}}'
+    - cibuildwheel --output-dir wheelhouse --debug-traceback
+  artifacts:
+    paths:
+      - wheelhouse/
+  rules:
+    - if: $CI_COMMIT_TAG
+    - when: manual
+```
+
+This is the output of `docker version -f '{{json .}}'`:
+```
+{"Client":{"Platform":{"Name":"Docker Engine - Community"},"Version":"29.0.0","ApiVersion":"1.52","DefaultAPIVersion":"1.52","GitCommit":"3d4129b","GoVersion":"go1.25.4","Os":"linux","Arch":"amd64","BuildTime":"Mon Nov 10 21:46:28 2025","Context":"default"},"Server":{"Platform":{"Name":"Docker Engine - Community"},"Version":"29.0.0","APIVersion":"1.52","MinAPIVersion":"1.44","Os":"linux","Arch":"amd64","Experimental":false,"Components":[{"Name":"Engine","Version":"29.0.0","Details":{"ApiVersion":"1.52","Arch":"amd64","BuildTime":"Mon Nov 10 21:47:52 2025","Experimental":"false","GitCommit":"d105562","GoVersion":"go1.25.4","KernelVersion":"5.15.154+","MinAPIVersion":"1.44","Os":"linux"}},{"Name":"containerd","Version":"v2.1.5","Details":{"GitCommit":"fcd43222d6b07379a4be9786bda52438f0dd16a1"}},{"Name":"runc","Version":"1.3.3","Details":{"GitCommit":"v1.3.3-0-gd842d77"}},{"Name":"docker-init","Version":"0.19.0","Details":{"GitCommit":"de40ad0"}}]}}
+```
+
+This is the error traceback:
+```
+cibuildwheel: error: Build failed because docker is too old or is not working properly.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/site-packages/cibuildwheel/oci_container.py", line 123, in _check_engine_version
+    server_api_version = FlexibleVersion(version_info["Server"]["ApiVersion"])
+                                         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'ApiVersion'
+The above exception was the direct cause of the following exception:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/site-packages/cibuildwheel/__main__.py", line 62, in main
+    main_inner(global_options)
+  File "/usr/local/lib/python3.12/site-packages/cibuildwheel/__main__.py", line 254, in main_inner
+    build_in_directory(args)
+  File "/usr/local/lib/python3.12/site-packages/cibuildwheel/__main__.py", line 384, in build_in_directory
+    platform_module.build(options, tmp_path)
+  File "/usr/local/lib/python3.12/site-packages/cibuildwheel/platforms/linux.py", line 475, in build
+    with OCIContainer(
+         ^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/cibuildwheel/oci_container.py", line 255, in __enter__
+    _check_engine_version(self.engine)
+  File "/usr/local/lib/python3.12/site-packages/cibuildwheel/oci_container.py", line 162, in _check_engine_version
+    raise OCIEngineTooOldError(msg) from e
+cibuildwheel.errors.OCIEngineTooOldError: Build failed because docker is too old or is not working properly.
+```
+
+Has the key naming schema of the docker version information changed between versions or is this something else? Thank you very much!
+
+### Build log
+
+https://gist.github.com/xasc/471eb58046dcf324e3394899fe15a75b
+
+### CI config
+
+https://gitlab.com/xasc/tree-sitter-t32/-/blob/main/.gitlab-ci.yml?ref_type=heads

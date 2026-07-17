@@ -1,0 +1,13 @@
+{
+  "bug_id": "056",
+  "bug_dir": "056",
+  "issue_url": "https://github.com/keras-team/keras-io/issues/1672",
+  "commit_hash": "cbe83d8244cb53e0a42299b8b5da4c460c6ae768",
+  "library_name": "keras-io",
+  "library_version": "keras==3.0.0, tensorflow-cpu==2.16.1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "keras-team/keras-io@cbe83d8244cb53e0a42299b8b5da4c460c6ae768",
+  "codebase_present": "true",
+  "standardized_dir": "../056",
+  "reproduction_command": "bash run_repro.sh"
+}

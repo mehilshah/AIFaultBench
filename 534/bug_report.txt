@@ -1,0 +1,72 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/1163
+
+TITLE
+save_state deletes wrong checkpoint when total_limit is set
+
+BODY
+### System Info
+
+```Shell
+- `Accelerate` version: 0.16.0
+- Platform: Linux-5.19.0-32-generic-x86_64-with-glibc2.35
+- Python version: 3.10.6
+- Numpy version: 1.23.3
+- PyTorch version (GPU?): 1.12.1+cu116 (True)
+- `Accelerate` default config:
+	- compute_environment: LOCAL_MACHINE
+	- distributed_type: NO
+	- mixed_precision: fp16
+	- use_cpu: False
+	- dynamo_backend: NO
+	- num_processes: 1
+	- machine_rank: 0
+	- num_machines: 1
+	- gpu_ids: all
+	- rdzv_backend: static
+	- same_network: True
+	- main_training_function: main
+	- deepspeed_config: {}
+	- fsdp_config: {}
+	- megatron_lm_config: {}
+	- downcast_bf16: no
+```
+
+
+### Information
+
+- [ ] The official example scripts
+- [X] My own modified scripts
+
+### Tasks
+
+- [ ] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [X] My own task or dataset (give details below)
+
+### Reproduction
+
+```python
+from accelerate import Accelerator
+from accelerate.utils import ProjectConfiguration
+import torch
+
+config = ProjectConfiguration(total_limit=3, automatic_checkpoint_naming=True)
+accelerator = Accelerator(project_dir='./total_limit_test', project_config=config)
+
+model = torch.nn.Linear(1, 1)
+optimizer = torch.optim.Adam(params=model.parameters())
+dataloader = torch.utils.data.DataLoader(None)
+scheduler = torch.optim.lr_scheduler.ConstantLR(optimizer)
+
+model, optimizer, dataloader, scheduler = accelerator.prepare(
+     model, optimizer, dataloader, scheduler
+)
+
+for _ in range(20):
+    accelerator.save_state()
+```
+
+### Expected behavior
+
+
+When `total_limit` and `automatic_checkpoint_naming` are set in `ProjectConfiguration`, `save_state` should automatically delete old checkpoints keeping only `total_limit` latest ones. However because checkpoints are [sorted alphabetically](https://github.com/huggingface/accelerate/blob/3533e2b0b167238fcdd3c636dcf6c3c6de983efa/src/accelerate/accelerator.py#L2169) instead of numerically checkpoints with less digits are kept instead of latest ones. The reproduction example saves state 20 times and 8, 9 and 19 checkpoints are left at the end instead of three latest.
+

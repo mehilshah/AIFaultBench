@@ -1,0 +1,69 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/47276
+
+TITLE
+Misleading synced_gpus warning message in continuous batching
+
+BODY
+### System Info
+
+- `transformers` version: 5.14.0.dev0
+- Platform: Windows-11-10.0.26200-SP0
+- Python version: 3.12.7
+- Huggingface_hub version: 1.22.0
+- Safetensors version: 0.8.0
+- Accelerate version: 1.14.0
+- Accelerate config: 	not found
+- DeepSpeed version: not installed
+- PyTorch version (accelerator?): 2.12.1+cpu (NA)
+- Using distributed or parallel set-up in script?: No
+
+### Who can help?
+
+@remi-or @ArthurZucker @McPatate
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+When generating using continuous batching (by passing `cache_implementation="paged"`), if you pass `synced_gpus=True` to the model's `generate()` method, a misleading warning is logged.
+
+The warning in `src/transformers/generation/utils.py` reads:
+```python
+logger.warning(f"synced_gpus is not ignored for continuous batching. Got {synced_gpus = }")
+```
+
+Because `synced_gpus` is in fact ignored for continuous batching, the warning should say "is ignored" rather than "is not ignored".
+
+Minimal reproduction using `hf-internal-testing/tiny-random-gpt2`:
+
+```python
+import torch
+from unittest.mock import patch
+from transformers import AutoConfig, AutoModelForCausalLM
+
+config = AutoConfig.from_pretrained("hf-internal-testing/tiny-random-gpt2")
+model = AutoModelForCausalLM.from_config(config)
+input_ids = torch.tensor([[1, 2, 3]])
+
+with patch.object(model, "generate_batch", return_value={}):
+    model.generate(input_ids, synced_gpus=True, cache_implementation="paged")
+```
+
+This logs:
+```
+synced_gpus is not ignored for continuous batching. Got synced_gpus = True
+```
+
+### Expected behavior
+
+The warning message should state that synced_gpus is ignored for continuous batching, not that it "is not ignored." Specifically, in src/transformers/generation/utils.py:
+
+logger.warning(f"synced_gpus is ignored for continuous batching. Got {synced_gpus = }")

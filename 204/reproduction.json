@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash setup_env.sh && bash run_repro.sh` in this folder reproduces the reported failure. The stderr log shows `numpyro.render_model(...)` failing inside `jax.eval_shape(get_trace)` with `TypeError: Value <function eqx_module.<locals>.<lambda> ...> with type <class 'function'> is not a valid JAX type`.",
+  "steps": [
+    "Created a local virtual environment with the minimal runtime dependencies: editable `codebase/`, `equinox`, `graphviz`, `jax==0.4.38`, and `jaxlib==0.4.38`.",
+    "Executed the exact Equinox-based model from the bug report in `repro.py`.",
+    "Observed `numpyro.render_model(..., render_distributions=True, render_params=True)` raise the same JAX TypeError reported in the issue."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

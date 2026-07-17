@@ -1,0 +1,148 @@
+Title: EoMT fast image processor fails to process segmentation maps stored on CUDA
+Date: 2025-12-30T21:35:23+00:00
+URL: https://github.com/huggingface/transformers/issues/43072
+
+Description:
+### System Info
+
+transformers 4.57.3
+python 3.13.9
+
+### Who can help?
+
+@yonigozlan @molbap
+
+### Information
+
+- [x] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [x] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+If we will try to run such a simple script
+
+```py
+import matplotlib.pyplot as plt
+import requests
+import torch
+from PIL import Image
+from torchvision import transforms
+
+from transformers import EomtForUniversalSegmentation, EomtImageProcessorFast, EomtConfig
+
+
+to_tensor_transform = transforms.ToTensor()
+
+url = "https://huggingface.co/datasets/hf-internal-testing/fixtures_ade20k/resolve/main/ADE_val_00000001.jpg"
+image = Image.open(requests.get(url, stream=True).raw)
+# Convert image to tensor and move it to cuda
+image = to_tensor_transform(image).to("cuda")
+
+# Generate a segmentation map
+seg_map = torch.randint_like(image[0], 0, 10)
+
+processor = processor = EomtImageProcessorFast()
+config = EomtConfig()
+model = EomtForUniversalSegmentation(config)
+
+inputs = processor(
+    images=image,
+    segmentation_maps=seg_map,
+    return_tensors="pt",
+)
+```
+
+we will get an error:
+```
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+Cell In[14], line 6
+      3 config = EomtConfig()
+      4 model = EomtForUniversalSegmentation(config)
+----> 6 inputs = processor(
+      7     images=image,
+      8     segmentation_maps=seg_map,
+      9     return_tensors="pt",
+     10 )
+
+File [~\Documents\geo\.pixi\envs\default\Lib\site-packages\transformers\image_processing_utils_fast.py:732](http://localhost:8888/lab/tree/rsp-test/~/Documents/geo/.pixi/envs/default/Lib/site-packages/transformers/image_processing_utils_fast.py#line=731), in BaseImageProcessorFast.__call__(self, images, *args, **kwargs)
+    731 def __call__(self, images: ImageInput, *args, **kwargs: Unpack[DefaultFastImageProcessorKwargs]) -> BatchFeature:
+--> 732     return self.preprocess(images, *args, **kwargs)
+
+File [~\Documents\geo\.pixi\envs\default\Lib\site-packages\transformers\models\eomt\image_processing_eomt_fast.py:164](http://localhost:8888/lab/tree/rsp-test/~/Documents/geo/.pixi/envs/default/Lib/site-packages/transformers/models/eomt/image_processing_eomt_fast.py#line=163), in EomtImageProcessorFast.preprocess(self, images, segmentation_maps, instance_id_to_semantic_id, **kwargs)
+    150 @auto_docstring
+    151 def preprocess(
+    152     self,
+   (...)    156     **kwargs: Unpack[EomtImageProcessorFastKwargs],
+    157 ) -> BatchFeature:
+    158     r"""
+    159     segmentation_maps (`ImageInput`, *optional*):
+    160         The segmentation maps to preprocess for corresponding images.
+    161     instance_id_to_semantic_id (`list[dict[int, int]]` or `dict[int, int]`, *optional*):
+    162         A mapping between object instance ids and class ids.
+    163     """
+--> 164     return super().preprocess(images, segmentation_maps, instance_id_to_semantic_id, **kwargs)
+
+File [~\Documents\geo\.pixi\envs\default\Lib\site-packages\transformers\image_processing_utils_fast.py:757](http://localhost:8888/lab/tree/rsp-test/~/Documents/geo/.pixi/envs/default/Lib/site-packages/transformers/image_processing_utils_fast.py#line=756), in BaseImageProcessorFast.preprocess(self, images, *args, **kwargs)
+    754 # Pop kwargs that are not needed in _preprocess
+    755 kwargs.pop("data_format")
+--> 757 return self._preprocess_image_like_inputs(
+    758     images, *args, do_convert_rgb=do_convert_rgb, input_data_format=input_data_format, device=device, **kwargs
+    759 )
+
+File [~\Documents\geo\.pixi\envs\default\Lib\site-packages\transformers\models\eomt\image_processing_eomt_fast.py:217](http://localhost:8888/lab/tree/rsp-test/~/Documents/geo/.pixi/envs/default/Lib/site-packages/transformers/models/eomt/image_processing_eomt_fast.py#line=216), in EomtImageProcessorFast._preprocess_image_like_inputs(self, images, segmentation_maps, instance_id_to_semantic_id, do_convert_rgb, input_data_format, device, **kwargs)
+    215     instance_id = instance_id_to_semantic_id
+    216 # Use instance2class_id mapping per image
+--> 217 masks, classes = convert_segmentation_map_to_binary_masks(
+    218     segmentation_map,
+    219     instance_id,
+    220     ignore_index=ignore_index,
+    221 )
+    223 mask_labels.append(torch.from_numpy(masks))
+    224 class_labels.append(torch.from_numpy(classes))
+
+File [~\Documents\geo\.pixi\envs\default\Lib\site-packages\transformers\models\eomt\image_processing_eomt.py:66](http://localhost:8888/lab/tree/rsp-test/~/Documents/geo/.pixi/envs/default/Lib/site-packages/transformers/models/eomt/image_processing_eomt.py#line=65), in convert_segmentation_map_to_binary_masks(segmentation_map, instance_id_to_semantic_id, ignore_index)
+     63     segmentation_map = np.where(segmentation_map == 0, ignore_index, segmentation_map - 1)
+     65 # Get unique ids (class or instance ids based on input)
+---> 66 all_labels = np.unique(segmentation_map)
+     68 # Drop background label if applicable
+     69 if ignore_index is not None:
+
+File [~\Documents\geo\.pixi\envs\default\Lib\site-packages\numpy\lib\_arraysetops_impl.py:292](http://localhost:8888/lab/tree/rsp-test/~/Documents/geo/.pixi/envs/default/Lib/site-packages/numpy/lib/_arraysetops_impl.py#line=291), in unique(ar, return_index, return_inverse, return_counts, axis, equal_nan, sorted)
+    145 @array_function_dispatch(_unique_dispatcher)
+    146 def unique(ar, return_index=False, return_inverse=False,
+    147            return_counts=False, axis=None, *, equal_nan=True,
+    148            sorted=True):
+    149     """
+    150     Find the unique elements of an array.
+    151 
+   (...)    290 
+    291     """
+--> 292     ar = np.asanyarray(ar)
+    293     if axis is None:
+    294         ret = _unique1d(ar, return_index, return_inverse, return_counts,
+    295                         equal_nan=equal_nan, inverse_shape=ar.shape, axis=None,
+    296                         sorted=sorted)
+
+File [~\Documents\geo\.pixi\envs\default\Lib\site-packages\torch\_tensor.py:1211](http://localhost:8888/lab/tree/rsp-test/~/Documents/geo/.pixi/envs/default/Lib/site-packages/torch/_tensor.py#line=1210), in Tensor.__array__(self, dtype)
+   1209     return handle_torch_function(Tensor.__array__, (self,), self, dtype=dtype)
+   1210 if dtype is None:
+-> 1211     return self.numpy()
+   1212 else:
+   1213     return self.numpy().astype(dtype, copy=False)
+
+TypeError: can't convert cuda:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first.
+```
+
+### Expected behavior
+
+Looks like the function `convert_segmentation_map_to_binary_masks`, which is imported from the slow image processor, can not work with tensors that are on CUDA.
+
+The function in the slow image processor is adapted from the same function from MaskFormer. However, MaskFormer's fast image processor have the fast implementation of this function. We can just use it.
+
+I will submit a PR.

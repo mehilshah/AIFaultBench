@@ -1,0 +1,10 @@
+torch
+numpy
+packaging
+regex
+pydantic
+psutil
+cbor2
+requests
+pyyaml
+tqdm

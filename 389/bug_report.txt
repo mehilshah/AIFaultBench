@@ -1,0 +1,102 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38632
+
+TITLE
+jax.lax.mul returns NaN for -inf multiplied by positive subnormal float32
+
+BODY
+### Description
+
+`jax.lax.mul` appears to return an incorrect `NaN` result when multiplying `-inf` by the smallest positive `float32` subnormal value.
+
+For floating-point multiplication, `-inf * positive_nonzero` should produce `-inf`. However, JAX returns `NaN` for this element. This looks like the positive subnormal value may be treated as zero during the multiplication, because `-inf * 0.0` would produce `NaN`, while `-inf * 1.401298464324817e-45` should produce `-inf`.
+
+### Minimal reproducible example
+
+```
+#!/usr/bin/env python3
+import os
+import sys
+import warnings
+
+warnings.filterwarnings("ignore")
+os.environ.setdefault("JAX_PLATFORMS", "cpu")
+
+try:
+    import numpy as np
+    import jax
+    import jax.numpy as jnp
+except ImportError as e:
+    print(f"missing dep: {e}")
+    sys.exit(2)
+
+nan = float("nan")
+inf = float("inf")
+
+x = jnp.asarray(
+    np.asarray(
+        [
+            [nan, inf, -inf],
+            [-0.35449573397636414, 0.04463260620832443, 0.11511584371328354],
+        ],
+        dtype=np.float32,
+    )
+)
+
+y = jnp.asarray(
+    np.asarray(
+        [
+            [-0.0, 0.0, 1.401298464324817e-45],
+            [-1.0, 1.0, 9.999999974752427e-07],
+        ],
+        dtype=np.float32,
+    )
+)
+
+out = np.asarray(jax.lax.mul(x, y))
+
+expected = np.asarray(
+    [
+        [nan, nan, -inf],
+        [0.35449573397636414, 0.04463260620832443, 1.1511584574463996e-07],
+    ],
+    dtype=np.float32,
+)
+
+print("jax:", out.tolist())
+print("expected:", expected.tolist())
+```
+
+### Actual result
+
+```
+jax: [[nan, nan, nan], [0.35449573397636414, 0.04463260620832443, 1.1511584574463996e-07]]
+expected: [[nan, nan, -inf], [0.35449573397636414, 0.04463260620832443, 1.1511584574463996e-07]]
+```
+
+### Expected result
+
+```
+The third element of the first row should be -inf:
+
+[-inf] = [-inf] * [1.401298464324817e-45]
+```
+
+The other `NaN` results are expected:
+
+```
+nan * -0.0 = nan
+inf * 0.0 = nan
+```
+
+But the third element is different because the multiplier is a positive nonzero subnormal `float32`, not zero. Therefore `-inf * positive_nonzero` should produce `-inf`, not `NaN`.
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+jax: 0.10.1
+jaxlib: 0.10.1
+numpy: 2.4.6
+python: 3.13.13
+platform: Ubuntu 24.04.3 LTS, Linux x86_64
+accelerator: CPU backend
+
+Note: GPU is present, but CUDA-enabled jaxlib is not installed, so JAX falls back to CPU.

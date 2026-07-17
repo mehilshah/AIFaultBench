@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "NeighborSampler on a destination-sorted temporal graph raised RuntimeError: Found invalid non-sorted temporal neighborhood",
+  "steps": [
+    "Created a destination-sorted temporal graph whose neighborhood for dst=2 is not sorted by source timestamp.",
+    "Instantiated NeighborSampler with time_attr='time' and is_sorted=True so the graph is not re-sorted by PyG.",
+    "Called node_sample() and observed the backend RuntimeError from pyg-lib."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && ./run_repro.sh"
+}

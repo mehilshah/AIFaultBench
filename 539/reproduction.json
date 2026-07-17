@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Under Python 3.9.25 with torch 1.9.0+cpu, `torch.meshgrid(xs, ys, indexing='xy')` failed with `TypeError: meshgrid() got an unexpected keyword argument 'indexing'`.",
+  "steps": [
+    "Created an isolated Python 3.9 virtual environment.",
+    "Installed the pinned repro dependencies from requirements.txt.",
+    "Ran repro.py via run_repro.sh and observed the expected TypeError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

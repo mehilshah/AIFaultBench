@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`import tensorflow_text` in the prepared environment fails with `tensorflow.python.framework.errors_impl.NotFoundError` and `undefined symbol: _ZN10tensorflow12OpDefBuilder10SetShapeFnESt8functionIFN4absl12lts_202501276StatusEPNS_15shape_inference16InferenceContextEEE`.",
+    "`import tensorflow_models as tfm` from the local `codebase/` traverses the repo import chain and logs the same TF-Text mismatch before failing on an unrelated missing `sentencepiece` dependency."
+  ],
+  "steps": [
+    "Run `bash run_repro.sh` in the standardized folder.",
+    "The script creates a Python 3.10 virtualenv, installs TensorFlow 2.15.1, forces `tensorflow-text` 2.20.1, installs the small supporting set (`tensorflow-datasets`, `gin-config`, `scipy`, `pyyaml`).",
+    "The repro script imports `tensorflow_models` from `codebase/` and then imports `tensorflow_text`, which raises the undefined-symbol error."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

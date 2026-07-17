@@ -1,0 +1,18 @@
+{
+  "title": "NeMo Canary tensor-loading timestamps can be blank",
+  "description": "Running EncDecMultiTaskModel.from_pretrained('nvidia/canary-1b-v2') on the attached timestamp.wav with timestamps=True returns a hypothesis whose timestamp['word'] and timestamp['segment'] lists are empty.",
+  "reproduction_command": "bash run_repro.sh",
+  "entrypoint": "repro.py",
+  "language": "python",
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md",
+    "timestamp.zip",
+    "timestamp.wav"
+  ]
+}

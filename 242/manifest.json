@@ -1,0 +1,12 @@
+{
+  "bug_id": "242",
+  "bug_dir": "242",
+  "issue_url": "https://github.com/pyro-ppl/numpyro/issues/1991",
+  "commit_hash": "",
+  "library_name": "numpyro",
+  "library_version": "0.17.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../242"
+}

@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "036/repro.py", line 52, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "036/repro.py", line 42, in main
+    raise AssertionError(
+AssertionError: GAE docstring is still incorrect: the infinite-horizon term uses r_{t+1} instead of r_{t+2}, and the weights omit the (1-lambda) factor.

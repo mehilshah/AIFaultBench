@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the bundle via `bash run_repro.sh` reproduced `KeyError: 'future'` while constructing `LinearRegressionModel` with `lags_past_covariates` as a dict, `lags_future_covariates` as a list, and `output_chunk_shift=1`. The traceback points to `codebase/darts/models/forecasting/regression_model.py:399`.",
+  "steps": [
+    "Installed the repro environment with `setup_env.sh`.",
+    "Loaded the bundled AirPassengers CSV and built the target and covariate TimeSeries objects.",
+    "Instantiated `LinearRegressionModel(lags_past_covariates={'month': [-6]}, lags_future_covariates=[0], output_chunk_shift=1)` and observed `KeyError: 'future'`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

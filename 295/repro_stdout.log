@@ -1,0 +1,4 @@
+regex: (ab)*
+expected ValueError: REGEX operation: SUBPATTERN is not supported by SDV.
+observed result: ['ab']
+result: bug reproduced, because no ValueError was raised

@@ -1,0 +1,6 @@
+Bug: AttributeError: 'DetectionFromImageModule' object has no attribute 'outputs'
+Exporter source: codebase/research/object_detection/exporter_lib_v2.py
+Entry-point source: codebase/research/object_detection/exporter_main_v2.py
+DetectionFromImageModule is defined at line 137.
+Class defines an 'outputs' attribute assignment: False
+exporter_main_v2.py contains attribute reads named 'outputs': 0

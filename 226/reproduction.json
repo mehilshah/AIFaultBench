@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "In a Python 3.9.25 virtual environment, `uv pip install --python .venv/bin/python -r requirements.txt` completed successfully.",
+    "`repro_stdout.log` records `repro_exit_code=0`.",
+    "`repro_stderr.log` shows `Resolved 87 packages` and `Installed 84 packages`, including `unsloth==2026.1.2` and `unsloth-zoo==2026.1.2`."
+  ],
+  "steps": [
+    "Created a Python 3.9 venv with `bash setup_env.sh`.",
+    "Ran the repro harness with `bash run_repro.sh`.",
+    "Observed a successful install instead of the reported failure."
+  ],
+  "blocking_reason": "The current package release no longer reproduces the Python 3.9 install breakage described in the bug report. The dependency resolution succeeds on Python 3.9 in this environment, so there is no failure to block on.",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

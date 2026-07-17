@@ -1,0 +1,2 @@
+# No external dependencies are required for this repro.
+# The vendored `codebase/` is imported directly.

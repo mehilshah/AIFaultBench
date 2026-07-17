@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running the local repro shows root-level StepCounter outputs, but nested next/data step_count and truncated keys are absent even though the env exposes nested data/done keys. The run ends with AssertionError: StepCounter did not create a nested step_count key when a root done key was present.",
+  "steps": [
+    "Create a TransformedEnv from NestedCountingEnv(has_root_done=True, nest_done=True, max_steps=2) with StepCounter(max_steps=2).",
+    "Run a short rollout and inspect the produced keys.",
+    "Verify that root next/done, next/truncated, and next/step_count exist while nested next/data/step_count and next/data/truncated do not.",
+    "The repro exits with an AssertionError once the missing nested step_count key is checked."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

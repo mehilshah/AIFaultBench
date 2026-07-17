@@ -1,0 +1,74 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.1.2)
+Requirement already satisfied: setuptools in ./.venv/lib/python3.12/site-packages (83.0.0)
+Requirement already satisfied: wheel in ./.venv/lib/python3.12/site-packages (0.47.0)
+Requirement already satisfied: packaging>=24.0 in ./.venv/lib/python3.12/site-packages (from wheel) (26.2)
+Looking in indexes: https://pypi.org/simple, https://download.pytorch.org/whl/cpu
+Requirement already satisfied: torch==2.2.2 in ./.venv/lib/python3.12/site-packages (from -r 486/requirements.txt (line 2)) (2.2.2+cpu)
+Collecting numpy<2 (from -r 486/requirements.txt (line 3))
+  Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+Collecting setuptools<81 (from -r 486/requirements.txt (line 4))
+  Downloading setuptools-80.10.2-py3-none-any.whl.metadata (6.6 kB)
+Requirement already satisfied: packaging in ./.venv/lib/python3.12/site-packages (from -r 486/requirements.txt (line 5)) (26.2)
+Requirement already satisfied: psutil in ./.venv/lib/python3.12/site-packages (from -r 486/requirements.txt (line 6)) (7.2.2)
+Requirement already satisfied: pyyaml in ./.venv/lib/python3.12/site-packages (from -r 486/requirements.txt (line 7)) (6.0.3)
+Requirement already satisfied: filelock in ./.venv/lib/python3.12/site-packages (from torch==2.2.2->-r 486/requirements.txt (line 2)) (3.30.2)
+Requirement already satisfied: typing-extensions>=4.8.0 in ./.venv/lib/python3.12/site-packages (from torch==2.2.2->-r 486/requirements.txt (line 2)) (4.16.0)
+Requirement already satisfied: sympy in ./.venv/lib/python3.12/site-packages (from torch==2.2.2->-r 486/requirements.txt (line 2)) (1.14.0)
+Requirement already satisfied: networkx in ./.venv/lib/python3.12/site-packages (from torch==2.2.2->-r 486/requirements.txt (line 2)) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch==2.2.2->-r 486/requirements.txt (line 2)) (3.1.6)
+Requirement already satisfied: fsspec in ./.venv/lib/python3.12/site-packages (from torch==2.2.2->-r 486/requirements.txt (line 2)) (2026.6.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch==2.2.2->-r 486/requirements.txt (line 2)) (3.0.3)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy->torch==2.2.2->-r 486/requirements.txt (line 2)) (1.3.0)
+Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.0/18.0 MB 1.8 MB/s  0:00:09
+
+Downloading setuptools-80.10.2-py3-none-any.whl (1.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 2.3 MB/s  0:00:00
+
+Installing collected packages: setuptools, numpy
+  Attempting uninstall: setuptools
+    Found existing installation: setuptools 83.0.0
+    Uninstalling setuptools-83.0.0:
+      Successfully uninstalled setuptools-83.0.0
+  Attempting uninstall: numpy
+    Found existing installation: numpy 2.5.1
+    Uninstalling numpy-2.5.1:
+      Successfully uninstalled numpy-2.5.1
+
+
+Successfully installed numpy-1.26.4 setuptools-80.10.2
+Obtaining file://486/codebase
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy>=1.17 in ./.venv/lib/python3.12/site-packages (from accelerate==0.18.0.dev0) (1.26.4)
+Requirement already satisfied: packaging>=20.0 in ./.venv/lib/python3.12/site-packages (from accelerate==0.18.0.dev0) (26.2)
+Requirement already satisfied: psutil in ./.venv/lib/python3.12/site-packages (from accelerate==0.18.0.dev0) (7.2.2)
+Requirement already satisfied: pyyaml in ./.venv/lib/python3.12/site-packages (from accelerate==0.18.0.dev0) (6.0.3)
+Requirement already satisfied: torch>=1.4.0 in ./.venv/lib/python3.12/site-packages (from accelerate==0.18.0.dev0) (2.2.2+cpu)
+Requirement already satisfied: filelock in ./.venv/lib/python3.12/site-packages (from torch>=1.4.0->accelerate==0.18.0.dev0) (3.30.2)
+Requirement already satisfied: typing-extensions>=4.8.0 in ./.venv/lib/python3.12/site-packages (from torch>=1.4.0->accelerate==0.18.0.dev0) (4.16.0)
+Requirement already satisfied: sympy in ./.venv/lib/python3.12/site-packages (from torch>=1.4.0->accelerate==0.18.0.dev0) (1.14.0)
+Requirement already satisfied: networkx in ./.venv/lib/python3.12/site-packages (from torch>=1.4.0->accelerate==0.18.0.dev0) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch>=1.4.0->accelerate==0.18.0.dev0) (3.1.6)
+Requirement already satisfied: fsspec in ./.venv/lib/python3.12/site-packages (from torch>=1.4.0->accelerate==0.18.0.dev0) (2026.6.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch>=1.4.0->accelerate==0.18.0.dev0) (3.0.3)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy->torch>=1.4.0->accelerate==0.18.0.dev0) (1.3.0)
+Building wheels for collected packages: accelerate
+  Building editable for accelerate (pyproject.toml): started
+  Building editable for accelerate (pyproject.toml): finished with status 'done'
+  Created wheel for accelerate: filename=accelerate-0.18.0.dev0-0.editable-py3-none-any.whl size=11465 sha256=8ab665db443a221651d483c3e62880998b04293fe9abf8885a89ea4ea402b855
+  Stored in directory: /tmp/pip-ephem-wheel-cache-0yunrdae/wheels/bc/a4/7b/3fdce95076485c8eb79cfdf4898f70e9245a3ea382e470a481
+Successfully built accelerate
+Installing collected packages: accelerate
+  Attempting uninstall: accelerate
+    Found existing installation: accelerate 0.18.0.dev0
+    Uninstalling accelerate-0.18.0.dev0:
+      Successfully uninstalled accelerate-0.18.0.dev0
+Successfully installed accelerate-0.18.0.dev0
+{"accelerate_scheduler_type": "AcceleratedScheduler", "has_scheduler_attr": true, "is_accelerated_scheduler": true, "python_version": "3.12.3", "torch_version": "2.2.2+cpu"}

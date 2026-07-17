@@ -1,0 +1,18 @@
+Support for Torch based models not available. To enable them, install "darts", "u8darts[torch]" or "u8darts[all]" (with pip); or "u8darts-torch" or "u8darts-all" (with conda).
+The StatsForecast module could not be imported. To enable support for the StatsForecastAutoARIMA, StatsForecastAutoETS and Croston models, please consider installing it.
+The `XGBoost` module could not be imported. To enable XGBoost support in Darts, follow the detailed instructions in the installation guide: https://github.com/unit8co/darts/blob/master/INSTALL.md
+Traceback (most recent call last):
+  File "265/repro.py", line 36, in main
+    LinearRegressionModel(
+  File "265/codebase/darts/models/forecasting/forecasting_model.py", line 118, in __call__
+    return super().__call__(**all_params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "265/codebase/darts/models/forecasting/linear_regression_model.py", line 197, in __init__
+    super().__init__(
+  File "265/codebase/darts/models/forecasting/regression_model.py", line 247, in __init__
+    self.lags, self.component_lags = self._generate_lags(
+                                     ^^^^^^^^^^^^^^^^^^^^
+  File "265/codebase/darts/models/forecasting/regression_model.py", line 399, in _generate_lags
+    for comp_, lags_ in processed_component_lags[
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'future'

@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "039/repro.py", line 74, in main
+    RotaryPositionalEmbeddings(3)(x)
+  File "039/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "039/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "039/codebase/labml_nn/transformers/rope/__init__.py", line 188, in forward
+    x_rope = (x_rope * self.cos_cached[:x.shape[0]]) + (neg_half_x * self.sin_cached[:x.shape[0]])
+              ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RuntimeError: The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 3

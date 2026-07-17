@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "With the bundled repro on this Blackwell GPU, the forward pass fails inside `codebase/src/peft/peft_model.py`.",
+    "Current observed traceback: `RuntimeError: Expected all tensors to be on the same device, but got tensors is on cuda:0, different from other tensors on cpu` at line 557 in the prompt-tuning forward path.",
+    "The repro prints `accelerator.device=cuda`, `input_ids.device=cuda:0`, and `attention_mask.device=cuda:0` before the failure."
+  ],
+  "steps": [
+    "Run `bash setup_env.sh` to create `.venv` and install the CUDA-capable torch wheel plus the pinned accelerate/transformers stack and editable PEFT checkout.",
+    "Run `bash run_repro.sh`.",
+    "The process exits with a device-mismatch RuntimeError in `peft_model.py` during `PromptEncoder` FSDP prompt-tuning forward."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

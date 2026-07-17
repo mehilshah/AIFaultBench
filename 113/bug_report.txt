@@ -1,0 +1,30 @@
+Title: [Feature suggestion] Diag / trace-like reductions
+Date: 2024-11-06T14:54:54+00:00
+URL: https://github.com/arogozhnikov/einops/issues/347
+
+Description:
+Numpy's `np.einsum` can implement a number of diagonal reductions by repeating indices. For example:
+
+```
+diag = np.einsum("ii->i", matrix)  # np.diag(matrix)
+diag = np.einsum("iii->i", tensor) 
+trace = np.einsum("ii->", matrix)  # np.trace(matrix) / np.sum(np.diag(matrix))
+```
+
+For those not familiar, an exception is raised if any of the repeated dimensions have different size.
+
+I was surprised that `einops.reduce` and `einops.rearrange` does not handle this case. For example all of these fail:
+
+```
+diag = einops.rearrange(matrix, "ii->i")
+diag = einops.rearrange(tensor, "iii->i") 
+matrix = einops.rearrange(diag, "i->ii")
+trace = einops.reduce(matrix, "ii->i", "sum")
+max_over_diag = einops.reduce(matrix, "ii->i", "max")
+```
+
+Dealing with diagonals of matrices/tensors is common when there are symmetries/equivariances in tensors.
+
+Adding this as a feature will also help einops become feature complete with `np.einsum`.
+
+

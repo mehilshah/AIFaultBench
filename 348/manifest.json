@@ -1,0 +1,12 @@
+{
+  "bug_id": "348",
+  "bug_dir": "348",
+  "issue_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21703",
+  "commit_hash": "78bf0214a0ad7571391619dca952c13988c0dc51",
+  "library_name": "pytorch-lightning",
+  "library_version": "2.6.2",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "Lightning-AI/pytorch-lightning@78bf0214a0ad7571391619dca952c13988c0dc51",
+  "codebase_present": "true",
+  "standardized_dir": "../348"
+}

@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "117/repro.py", line 44, in <module>
+    fire.Fire(
+  File "117/.venv/lib/python3.12/site-packages/fire/core.py", line 143, in Fire
+    component_trace = _Fire(component, args, parsed_flag_args, context, name)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "117/.venv/lib/python3.12/site-packages/fire/core.py", line 568, in _Fire
+    component, remaining_args = _CallAndUpdateTrace(
+                                ^^^^^^^^^^^^^^^^^^^^
+  File "117/codebase/clearml/binding/frameworks/__init__.py", line 36, in _inner_patch
+    raise ex
+  File "117/codebase/clearml/binding/frameworks/__init__.py", line 34, in _inner_patch
+    ret = patched_fn(original_fn, *args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PatchFire.__CallAndUpdateTrace() missing 1 required positional argument: 'target'

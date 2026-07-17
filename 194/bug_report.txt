@@ -1,0 +1,17 @@
+Title: `filter_vmap` produces output with wrong out_axes arrangement
+Date: 2024-11-24T13:35:38+00:00
+URL: https://github.com/patrick-kidger/equinox/issues/900
+
+Description:
+```Python
+def foo(x):
+    return x * 2.
+
+x = jnp.arange(24).reshape((2,3,4))
+y = jax.vmap(foo, out_axes=-1)(x)
+z = eqx.filter_vmap(foo, out_axes=-1)(x)
+print("jax:", y.shape, "eqx:", z.shape)
+# jax: (3, 4, 2) eqx: (4, 3, 2)
+```
+
+equinox version: 0.11.8

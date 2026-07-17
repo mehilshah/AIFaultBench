@@ -1,0 +1,12 @@
+{
+  "bug_id": "221",
+  "bug_dir": "221",
+  "issue_url": "https://github.com/TorchIO-project/torchio/issues/1335",
+  "commit_hash": "",
+  "library_name": "torchio",
+  "library_version": "0.20.15",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../221"
+}

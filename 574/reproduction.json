@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Running `bash run_repro.sh` exited in preflight before any vLLM server or LM-Eval process was started.",
+    "The captured stdout says `torch import failed: ImportError: /users/grad/mehil/.local/lib/python3.12/site-packages/torch/lib/libtorch_cuda.so: undefined symbol: ncclCommResume`."
+  ],
+  "steps": [
+    "Built a self-contained repro bundle from the bug report and local `codebase/` snapshot.",
+    "Ran `bash run_repro.sh` and captured the output in `repro_stdout.log` and `repro_stderr.log`.",
+    "Confirmed that the local runtime cannot import torch, so the Hopper/FlashInfer FP8 reproduction path cannot be exercised here."
+  ],
+  "blocking_reason": "This workspace has a broken local torch installation (`libtorch_cuda.so` is missing `ncclCommResume`), so the CUDA/vLLM stack needed by the report cannot start here.",
+  "reproduction_command": "bash run_repro.sh"
+}

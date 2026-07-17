@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` after `bash setup_env.sh` prints `log_prob=-1.6094379425048828` and `density=0.19999998807907104` for `Uniform(0.0, 5.0).log_prob(7.0)`, then fails with `AssertionError: Expected zero density outside the support`.",
+  "steps": [
+    "Create and activate the local virtual environment with `bash setup_env.sh`.",
+    "Run the repro with `bash run_repro.sh`.",
+    "Observe that the out-of-support density is non-zero instead of zero."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "245/repro.py", line 9, in <module>
+    import numpyro
+  File "245/codebase/numpyro/__init__.py", line 1, in <module>
+    from numpyro import ops
+  File "245/codebase/numpyro/ops/__init__.py", line 1, in <module>
+    from numpyro.ops.provenance import eval_provenance
+  File "245/codebase/numpyro/ops/provenance.py", line 1, in <module>
+    from jax.interpreters.pxla import xla_pmap_p
+  File "245/.venv/lib/python3.14/site-packages/jax/_src/deprecations.py", line 55, in getattr
+    warnings.warn(message, DeprecationWarning, stacklevel=2)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+DeprecationWarning: jax.interpreters.pxla.xla_pmap_p is deprecated as of JAX v0.8.2.

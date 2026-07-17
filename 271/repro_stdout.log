@@ -1,0 +1,6 @@
+DeepSpeed ZeRO-3 mixed-dtype repro
+  persistent params: ['base_weight', 'lora_adapter']
+  input dtypes     : [torch.bfloat16, torch.float32]
+  output dtype     : torch.bfloat16 (taken from param[0])
+  raised           : output tensor must have the same type as input tensor
+exit_code=1

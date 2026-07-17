@@ -1,0 +1,15 @@
+{
+  "cli_accepts_rdzv_backend_flag": false,
+  "cli_effective_nnodes": "2",
+  "cli_effective_node_rank": 0,
+  "cli_effective_nproc_per_node": "4",
+  "cli_effective_rdzv_backend": "static",
+  "cli_effective_rdzv_endpoint": "10.13.23.78:7010",
+  "yaml_info": {
+    "loaded_type": "ClusterConfig",
+    "yaml_main_process_ip": "10.13.23.78",
+    "yaml_main_process_port": 7010,
+    "yaml_rdzv_backend": "c10d",
+    "yaml_same_network": false
+  }
+}

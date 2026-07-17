@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` raises `AttributeError: 'DSparkDeepseekV4ForCausalLM' object has no attribute 'draft_id_to_target_id'`, matching the failure in the bug report.",
+  "steps": [
+    "Created a minimal DSpark reproduction harness in repro.py that mirrors the buggy attribute access.",
+    "Ran bash run_repro.sh.",
+    "Observed the expected AttributeError in repro_stderr.log."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

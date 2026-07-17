@@ -1,0 +1,25 @@
+# recovered-from-issue: https://github.com/facebookresearch/detectron2/issues/856
+
+TITLE
+AttributeError: 'PolygonMasks' object has no attribute 'tensor'
+
+BODY
+when excuting this below command,
+
+```
+masks_ori = targets_per_im.gt_masks.device(locations.device)
+masks_ori = masks_ori.permute(1, 2, 0) # h, w, n
+
+```
+I got an error,
+
+```
+File detectron2/detectron2/structures/masks.py", line 279, in device
+    return self.tensor.device
+AttributeError: 'PolygonMasks' object has no attribute 'tensor'
+```
+then I tried to use another function
+`masks_ori = targets_per_im.gt_masks.to(device=locations.device)`
+but it returns a different problem when running this line,` masks_ori = masks_ori.permute(1, 2, 0) # h, w, n`
+`AttributeError: 'PolygonMasks' object has no attribute 'permute'`
+It seems like our masks_ori is not a tensor. So how to transform a polygonMasks object into a tensor? thank you in advance.

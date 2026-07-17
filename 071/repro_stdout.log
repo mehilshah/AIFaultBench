@@ -1,0 +1,3 @@
+Using transformers==5.14.1
+Relevant source file: codebase/applications/DeepSpeed-Chat/dschat/utils/model/model_utils.py
+Attempting: from transformers.deepspeed import HfDeepSpeedConfig

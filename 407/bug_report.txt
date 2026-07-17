@@ -1,0 +1,59 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21677
+
+TITLE
+FLOPs numbers are inconsistent
+
+BODY
+### Bug description
+
+The FLOPs numbers in [throughput.py](https://github.com/Lightning-AI/pytorch-lightning/blob/master/src/lightning/fabric/utilities/throughput.py) for H100 and H200 GPUs have some inconsistencies that have caused me some confusion when switching between GPU types: 
+
+- all H200 and the H100 NVL GPU seem to be using sparse FLOPs numbers 
+- the H100 SXM and PCIE models seem to using dense FLOPs, see: https://resources.nvidia.com/en-us-gpu-resources/h100-datasheet-24306
+
+I think it would be good to standardize on one and also document the behaviour as there's a factor 2 difference between the two. 
+
+### What version are you seeing the problem on?
+
+master
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+
+```
+
+### Error messages and logs
+
+```
+# Error messages and logs here please
+```
+
+
+### Environment
+
+<details>
+  <summary>Current environment</summary>
+
+```
+#- PyTorch Lightning Version (e.g., 2.6.0):
+#- PyTorch Version (e.g., 2.5):
+#- Python version (e.g., 3.12):
+#- OS (e.g., Linux):
+#- CUDA/cuDNN version:
+#- GPU models and configuration:
+#- How you installed Lightning(`conda`, `pip`, source):
+```
+
+</details>
+
+
+### More info
+
+_No response_
+
+cc @ethanwharris

@@ -1,0 +1,119 @@
+Python 3.12.3
+Source file: 192/codebase/src/anomalib/data/datasets/image/realiad.py
+Actual category count: 30
+Expected category count: 30
+Actual categories:
+('audiojack', 'button_battery', 'capacitor', 'connector', 'diode', 'end_cap', 'fuse', 'ic', 'inductor', 'led', 'pcb_finger', 'plastic_nut', 'potentiometer', 'relay', 'resistor', 'rivet', 'rubber_grommet', 'screw', 'spring', 'switch', 'terminal_block', 'through_hole', 'toggle_switch', 'toy_brick', 'transistor', 'washer', 'woodstick', 'zipper', 'toothbrush', 'usb_adaptor')
+Expected categories:
+('audiojack', 'bottle_cap', 'button_battery', 'end_cap', 'eraser', 'fire_hood', 'mint', 'mounts', 'pcb', 'phone_battery', 'plastic_nut', 'plastic_plug', 'porcelain_doll', 'regulator', 'rolled_strip_base', 'sim_card_set', 'switch', 'tape', 'terminalblock', 'toothbrush', 'toy', 'toy_brick', 'transistor1', 'u_block', 'usb', 'usb_adaptor', 'vcpill', 'wooden_beads', 'woodstick', 'zipper')
+Mismatch detected.
+Unified diff:
+--- actual
++++ expected
+@@ -1,30 +1,30 @@
+ audiojack
+
++bottle_cap
+
+ button_battery
+
+-capacitor
+
+-connector
+
+-diode
+
+ end_cap
+
+-fuse
+
+-ic
+
+-inductor
+
+-led
+
+-pcb_finger
+
++eraser
+
++fire_hood
+
++mint
+
++mounts
+
++pcb
+
++phone_battery
+
+ plastic_nut
+
+-potentiometer
+
+-relay
+
+-resistor
+
+-rivet
+
+-rubber_grommet
+
+-screw
+
+-spring
+
++plastic_plug
+
++porcelain_doll
+
++regulator
+
++rolled_strip_base
+
++sim_card_set
+
+ switch
+
+-terminal_block
+
+-through_hole
+
+-toggle_switch
+
++tape
+
++terminalblock
+
++toothbrush
+
++toy
+
+ toy_brick
+
+-transistor
+
+-washer
+
++transistor1
+
++u_block
+
++usb
+
++usb_adaptor
+
++vcpill
+
++wooden_beads
+
+ woodstick
+
+ zipper
+
+-toothbrush
+
+-usb_adaptor
+
+Missing from source: ['bottle_cap', 'eraser', 'fire_hood', 'mint', 'mounts', 'pcb', 'phone_battery', 'plastic_plug', 'porcelain_doll', 'regulator', 'rolled_strip_base', 'sim_card_set', 'tape', 'terminalblock', 'toy', 'transistor1', 'u_block', 'usb', 'vcpill', 'wooden_beads']
+Extra in source: ['capacitor', 'connector', 'diode', 'fuse', 'ic', 'inductor', 'led', 'pcb_finger', 'potentiometer', 'relay', 'resistor', 'rivet', 'rubber_grommet', 'screw', 'spring', 'terminal_block', 'through_hole', 'toggle_switch', 'transistor', 'washer']

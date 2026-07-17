@@ -1,0 +1,14 @@
+{
+  "bug_id": "226",
+  "bug_dir": "226",
+  "issue_url": "https://github.com/unslothai/unsloth/issues/3488",
+  "commit_hash": "",
+  "library_name": "unsloth",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../226",
+  "reproducible": false,
+  "reproduction_command": "uv pip install --python .repro_tmp/venv39/bin/python unsloth"
+}

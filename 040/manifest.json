@@ -1,0 +1,10 @@
+{
+  "bug_id": "040",
+  "issue_url": "https://github.com/labmlai/annotated_deep_learning_paper_implementations/issues/146",
+  "commit_hash": "05632f9f8e0de4657c210a13954a81f9556fd1ed",
+  "library_name": "annotated_deep_learning_paper_implementations",
+  "library_version": "unknown",
+  "focus_file": "codebase/labml_nn/diffusion/ddpm/unet.py",
+  "suspected_bug": "AttentionBlock normalizes attention with softmax(dim=1) instead of the key axis dim=2",
+  "runtime_dependency": "torch"
+}

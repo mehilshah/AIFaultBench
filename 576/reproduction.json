@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `./run_repro.sh` in a clean venv prints `torch=2.7.1+cpu` and `storage=LazyMemmapStorage`, then fails with `AttributeError: 'LazyMemmapStorage' object has no attribute 'register_save_hook'` from `ReplayBuffer.register_save_hook` delegating to `self._storage.register_save_hook(hook)`.",
+  "steps": [
+    "Create an isolated Python 3.12 venv and install CPU PyTorch 2.7.1 plus the minimal TorchRL dependencies from requirements.txt.",
+    "Run `./run_repro.sh` from the standardized bug folder with `codebase/` on `PYTHONPATH`.",
+    "Observe the AttributeError when `ReplayBuffer.register_save_hook(TED2Flat())` reaches `LazyMemmapStorage.register_save_hook`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

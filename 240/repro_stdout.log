@@ -1,0 +1,7 @@
+jax=0.4.38
+numpyro=0.13.2
+baseline_init_start
+baseline_init_ok
+SVIState(optim_state=(Array([0, 0], dtype=int32, weak_type=True), OptimizerState(packed_state=([Array([0.20882556, 0.20882556], dtype=float32), Array([0., 0.], dtype=float32), Array([0., 0.], dtype=float32)],), tree_def=PyTreeDef({'a_auto_loc': *}), subtree_defs=(PyTreeDef((*, *, *)),))), mutable_state=None, rng_key=Array([[3115665281, 2516762499],
+       [ 310927892,   87303217]], dtype=uint32))
+deterministic_init_start

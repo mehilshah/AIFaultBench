@@ -1,0 +1,9 @@
+original_scheduler_id=123538486418352
+copied_scheduler_id=123538486682464
+captured_self_id=123538486418352
+wrapped_step_is_plain_function=True
+audio_step_result={'value': 'audio', 'step_index': 1, 'self_id': 123538486418352}
+original_step_index=1
+copied_step_index=0
+original_step_result={'value': 'video', 'step_index': 2, 'self_id': 123538486418352}
+BUG_REPRODUCED=1

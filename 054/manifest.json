@@ -1,0 +1,14 @@
+{
+  "bug_id": "054",
+  "bug_dir": "054",
+  "issue_url": "https://github.com/keras-team/keras-io/issues/1711",
+  "commit_hash": "b124d091b3ee87b6ae6b10ed2707be18e647c81d",
+  "library_name": "keras-io",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report/054.txt",
+  "codebase_source": "keras-team/keras-io@b124d091b3ee87b6ae6b10ed2707be18e647c81d",
+  "codebase_present": "true",
+  "standardized_dir": "../054",
+  "repro_type": "static_source_inspection",
+  "repro_entrypoint": "run_repro.sh"
+}

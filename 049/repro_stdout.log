@@ -1,0 +1,8 @@
+Loaded RelPositionMultiHeadedAttention from the local codebase.
+source_uses_xavier=True
+source_uses_raw_allocation=True
+pos_bias_u_finite=True
+pos_bias_v_finite=True
+pos_bias_u_nonzero=True
+pos_bias_v_nonzero=True
+Result: the reported uninitialized-bias bug does not reproduce in this snapshot because the biases are initialized before use.

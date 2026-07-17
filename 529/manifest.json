@@ -1,0 +1,22 @@
+{
+  "bug_id": "529",
+  "bug_dir": "529",
+  "issue_url": "https://github.com/pyg-team/pytorch_geometric/issues/9974",
+  "commit_hash": "9b794b600d41802edaad26aac18bff958fc8f642",
+  "library_name": "pytorch_geometric",
+  "library_version": "2.5.3",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "repro_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

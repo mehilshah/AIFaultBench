@@ -1,0 +1,3 @@
+safetensors=0.4.4
+torch=2.3.0+cu121
+CATCH_EXCEPTION=False

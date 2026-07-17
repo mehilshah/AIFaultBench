@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "500/repro.py", line 167, in main
+    launch._validate_launch_command(build_args(CONFIG_FILE))
+  File "500/codebase/src/accelerate/commands/launch.py", line 793, in _validate_launch_command
+    args.tpu_cluster = defaults.tpu_cluster if args.tpu else False
+                       ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'ClusterConfig' object has no attribute 'tpu_cluster'. Did you mean: 'tpu_use_cluster'?

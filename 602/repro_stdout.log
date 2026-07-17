@@ -1,0 +1,4 @@
+torch=2.5.1+cpu
+constructing VIPTransform(model_name='resnet50', download=True)
+constructed=VIPTransform
+status=success

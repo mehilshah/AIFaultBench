@@ -1,0 +1,12 @@
+{
+  "bug_id": "239",
+  "bug_dir": "239",
+  "issue_url": "https://github.com/pypa/cibuildwheel/issues/1724",
+  "commit_hash": "",
+  "library_name": "cibuildwheel",
+  "library_version": "2.16.2",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../239"
+}

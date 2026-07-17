@@ -1,0 +1,31 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3274
+
+TITLE
+[bug] MixtureOfDiagNormals
+
+BODY
+### Problem description
+
+I recently tried to use [`MixtureOfDiagNormals`](https://github.com/pyro-ppl/pyro/blob/c00bcc3fb701327b07e94de88754da49b7f29ebe/pyro/distributions/diag_normal_mixture.py#L15) and ran across two issues while using it together with an `AutoNormal` guide.
+
+1. The distributions [`MixtureOfDiagNormal`](https://github.com/pyro-ppl/pyro/blob/c00bcc3fb701327b07e94de88754da49b7f29ebe/pyro/distributions/diag_normal_mixture.py#L15) and [`MixtureOfDiagNormalsSharedCovariance`](https://github.com/pyro-ppl/pyro/blob/c00bcc3fb701327b07e94de88754da49b7f29ebe/pyro/distributions/diag_normal_mixture_shared_cov.py#L15) do not implement the `support` property, which leads to problems when using the distribution for latent variables and e.g. the `AutoNormal` guide. This can be solved easily by adding `support = constraints.real_vector` at the beginning of both classes. I assume that `real_vector` is the correct constraint here since `D=1` is not supported anyways.
+2. There seems to be a bug in the [`forward`](https://github.com/pyro-ppl/pyro/blob/c00bcc3fb701327b07e94de88754da49b7f29ebe/pyro/distributions/diag_normal_mixture.py#L134) method of `_MixDiagNormalSample`. Specifically, when creating the white noise
+   ```python
+       white = locs.new(noise_shape).normal_()
+   ```
+   This creates a new tensor of size `(len(noise_shape),)` instead of expected size `noise_shape`. This is actually done correctly in [`_MixDiagNormalSharedCovarianceSample`](https://github.com/pyro-ppl/pyro/blob/c00bcc3fb701327b07e94de88754da49b7f29ebe/pyro/distributions/diag_normal_mixture_shared_cov.py#L137C30-L137C30) with a call to `torch.randn` instead.
+   The correct way to do it would be
+   ```python
+       white = locs.new(*noise_shape).normal_()
+   ```
+   However, since `torch.Tensor.new` does not appear in the PyTorch documentation (at least I didn't find it), I assume it is recommended to use a method like `torch.Tensor.new_empty` instead.
+   ```python
+       white = locs.new_empty(noise_shape).normal_()
+   ```
+   works as expected. Alternatively, the same approach as for `MixtureOfDiagNormalSharedCovariance` is possible.
+
+### Package versions
+
+PyTorch: version 2.0.1
+Pyro: version 1.8.6
+

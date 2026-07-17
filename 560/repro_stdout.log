@@ -1,0 +1,124 @@
+[2026-07-17 11:22:06,599] [WARNING] [real_accelerator.py:209:get_accelerator] Setting accelerator to CPU. If you have GPU or other accelerator, we were unable to detect it.
+[2026-07-17 11:22:06,603] [WARNING] [real_accelerator.py:209:get_accelerator] Setting accelerator to CPU. If you have GPU or other accelerator, we were unable to detect it.
+[2026-07-17 11:22:06,627] [WARNING] [real_accelerator.py:209:get_accelerator] Setting accelerator to CPU. If you have GPU or other accelerator, we were unable to detect it.
+[2026-07-17 11:22:06,631] [WARNING] [real_accelerator.py:209:get_accelerator] Setting accelerator to CPU. If you have GPU or other accelerator, we were unable to detect it.
+DeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully
+DeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully
+world_size=2
+model_type=PeftModelForCausalLM
+exception_type=OSError
+exception_message=Can't load the configuration of 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 16, padding_idx=0)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=16, out_features=16, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=16, out_features=8, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=8, out_features=16, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=16, out_features=8, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=16, out_features=8, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=16, out_features=8, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=8, out_features=8, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=16, out_features=16, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=16, out_features=32, bias=False)
+              (up_proj): Linear(in_features=16, out_features=32, bias=False)
+              (down_proj): Linear(in_features=32, out_features=16, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((16,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((16,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((16,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=16, out_features=128, bias=False)
+    )
+  )
+)'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 16, padding_idx=0)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=16, out_features=16, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=16, out_features=8, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=8, out_features=16, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=16, out_features=8, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=16, out_features=8, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=16, out_features=8, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=8, out_features=8, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=16, out_features=16, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=16, out_features=32, bias=False)
+              (up_proj): Linear(in_features=16, out_features=32, bias=False)
+              (down_proj): Linear(in_features=32, out_features=16, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((16,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((16,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((16,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=16, out_features=128, bias=False)
+    )
+  )
+)' is the correct path to a directory containing a config.json file

@@ -1,0 +1,9 @@
+DATACLASS_CASE=NO_ERROR:Vector(x=Array([0., 1.], dtype=float32), y=Array([0., 1.], dtype=float32))
+PLAIN_CASE=ERROR:TypeCheckError:Type-check error whilst checking the return value of __main__.test.
+Actual value: (f32[2], f32[2])
+Expected type: tuple[Float[Array, 'B'], Float[Array, 'B']].
+----------------------
+Called with parameters: {'x': f32[10], 'y': f32[10]}
+Parameter annotations: (x: Float[Array, 'B'], y: Float[Array, 'B']) -> Any.
+The current values for each jaxtyping axis annotation are as follows.
+B=10

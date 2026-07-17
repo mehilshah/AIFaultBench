@@ -1,0 +1,6 @@
+absl-py
+numpy
+Pillow
+protobuf
+six
+tensorflow-cpu==2.16.1

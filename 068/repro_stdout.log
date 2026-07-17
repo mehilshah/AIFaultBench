@@ -1,0 +1,5 @@
+tensorflow: 2.21.0
+keras-cv BoxCOCOMetrics concat repro
+update_state batch with boxes shape=(4, 2, 4), classes shape=(4, 2)
+update_state batch with boxes shape=(4, 1, 4), classes shape=(4, 1)
+calling result(force=True)

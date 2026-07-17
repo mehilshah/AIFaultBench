@@ -1,0 +1,22 @@
+python=3.12.3
+source_file=361/codebase/src/transformers/integrations/deepspeed.py
+source_excerpt:
+733:     losses_per_rank = torch.distributed.nn.functional.all_gather(loss, group=sp_group)
+734:     # special dealing with SFT that has prompt tokens that aren't used in loss computation
+735:     good_tokens = (inputs["shift_labels"] != -100).view(-1).sum()
+736:     good_tokens_per_rank = torch.distributed.nn.functional.all_gather(good_tokens, group=sp_group)
+737:     # Skip ranks with zero valid tokens
+738:     total_loss = sum(
+739:         losses_per_rank[rank] * good_tokens_per_rank[rank]
+740:         for rank in range(sp_world_size)
+741:         if good_tokens_per_rank[rank] > 0
+742:     )
+torch=2.7.1+cu128
+cuda_available=True
+cuda_device=NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition
+delay_source=matmul_chain
+branch_taken=True
+branch_elapsed_ms=6.41
+sync_elapsed_ms=6.49
+note: the branch elapsed time captures the Python truthiness check
+BUG_NOT_REPRODUCED

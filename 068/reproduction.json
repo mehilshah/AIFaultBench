@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With tensorflow-cpu==2.21.0 and keras-cv==0.9.0, ./run_repro.sh exits 1. The metric crashes in BoxCOCOMetrics.result(force=True) with InvalidArgumentError: ConcatOp : Dimension 1 in both shapes must be equal: shape[0] = [4,2,4] vs. shape[1] = [4,1,4].",
+  "steps": [
+    "Create a BoxCOCOMetrics instance with bounding_box_format='xyxy' and a very large evaluate_freq.",
+    "Call update_state() twice with two synthetic batches whose box tensors have shapes [4, 2, 4] and [4, 1, 4].",
+    "Call result(force=True) after the second update and observe the tf.concat shape mismatch."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

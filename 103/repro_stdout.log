@@ -1,0 +1,6 @@
+input_shape=(2, 1851, 14)
+mask_true=3700
+quantized_shape=(2, 1851, 14)
+indices_shape=(2, 1851, 1)
+loss_shape=(1,)
+{"reproducible": true, "warning_count": 1}

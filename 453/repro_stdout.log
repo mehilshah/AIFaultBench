@@ -1,0 +1,15 @@
+[rank0] dist ready world=2 device=cuda:0 visible_gpus=1
+[rank0] before deepspeed.initialize
+NCCL version 2.26.2+cuda12.2
+
+[2026-07-17 05:36:31] raiselab:2567221:2567825 [0] init.cc:722 NCCL WARN Duplicate GPU detected : rank 0 and rank 1 both on CUDA device ac000
+
+[2026-07-17 05:36:31] raiselab:2567222:2567827 [0] init.cc:722 NCCL WARN Duplicate GPU detected : rank 1 and rank 0 both on CUDA device ac000
+SKIP_ENV: deepspeed.initialize failed: DistBackendError: NCCL error in: /pytorch/torch/csrc/distributed/c10d/NCCLUtils.cpp:77, invalid usage (run with NCCL_DEBUG=WARN for details), NCCL version 2.26.2
+ncclInvalidUsage: This usually reflects invalid usage of NCCL library.
+Last error:
+Duplicate GPU detected : rank 0 and rank 1 both on CUDA device ac000
+SKIP_ENV: deepspeed.initialize failed: DistBackendError: NCCL error in: /pytorch/torch/csrc/distributed/c10d/NCCLUtils.cpp:77, invalid usage (run with NCCL_DEBUG=WARN for details), NCCL version 2.26.2
+ncclInvalidUsage: This usually reflects invalid usage of NCCL library.
+Last error:
+Duplicate GPU detected : rank 1 and rank 0 both on CUDA device ac000

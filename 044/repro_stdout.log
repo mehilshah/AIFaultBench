@@ -1,0 +1,12 @@
+text after filtering OOV: 
+{
+  "reproducible": true,
+  "input_text": "これは日本語の再現テストです。",
+  "filtered_text": "",
+  "filtered_length": 0,
+  "evidence": [
+    "The MMS Japanese vocab in jvn.tar.gz does not contain Japanese characters.",
+    "filter_oov() prints an empty string for Japanese-script input.",
+    "The filtered text length is 0, so downstream inference would receive empty text."
+  ]
+}

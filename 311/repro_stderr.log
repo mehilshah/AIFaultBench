@@ -1,0 +1,8 @@
+311/codebase/sdv/evaluation/multi_table.py:4: FutureWarning: The multi table diagnostic report is deprecated. Please use the DiagnosticReport from 'sdmetrics.reports' instead.
+  from sdmetrics.reports.multi_table.diagnostic_report import DiagnosticReport
+311/codebase/sdv/evaluation/multi_table.py:5: FutureWarning: The multi table quality report is deprecated. Please use the QualityReport from 'sdmetrics.reports' instead.
+  from sdmetrics.reports.multi_table.quality_report import QualityReport
+311/codebase/sdv/evaluation/single_table.py:4: FutureWarning: The single table diagnostic report is deprecated. Please use the DiagnosticReport from 'sdmetrics.reports' instead.
+  from sdmetrics.reports.single_table.diagnostic_report import DiagnosticReport
+311/codebase/sdv/evaluation/single_table.py:5: FutureWarning: The single table quality report is deprecated. Please use the QualityReport from 'sdmetrics.reports' instead.
+  from sdmetrics.reports.single_table.quality_report import QualityReport

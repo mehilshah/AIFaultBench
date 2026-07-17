@@ -1,0 +1,7 @@
+python=3.12.3
+torch=2.5.1+cpu
+source=347/codebase/src/diffusers/pipelines/kandinsky5/pipeline_kandinsky_i2i.py
+bug_line=latents = torch.cat([latents, image_latents, torch.ones_like(latents[..., :1])], -1)
+noise_device=cpu
+vae_device=meta
+expected_failure=RuntimeError: Tensor on device meta is not on the expected device cpu!

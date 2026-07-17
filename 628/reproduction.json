@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "In a CPU-only venv with torch 2.7.1, tensordict 0.10.0, gymnasium 1.1.1, and the local torchrl codebase, `repro.py` prints `manual_extend_ok len=8 write_count=8`, then prints `collector_created`, then stops at `Returning final rollout with NO buffer (maybe_dense_stack).` without ever emitting `iter=0` before `run_repro.sh` times out.",
+  "steps": [
+    "Run `bash setup_env.sh` to create `.venv` and install the pinned dependencies.",
+    "Run `bash run_repro.sh` from the bug folder.",
+    "Confirm that the manual `ParallelEnv` replay-buffer extend succeeds and that the `MultiSyncDataCollector` never yields its first batch."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

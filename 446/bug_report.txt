@@ -1,0 +1,52 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2803
+
+TITLE
+In the `financial` demo dataset, the metadata does not list columns in the correct order
+
+BODY
+### Environment Details
+* SDV version: 1.33.1
+
+### Error Description
+SDV offers many different [demo datasets](https://docs.sdv.dev/sdv/multi-table-data/data-preparation/loading-data/demo-data#download_demo) for testing. When downloading a dataset, SDV returns the actual data as well as the SDV metadata file that describes it.
+
+For the `financial` dataset, the metadata file _does_ describe the data. However for each table, it lists the columns in a different order than the actual data. Ultimately, SDV is able to model and sample synthetic data for it. However, SDV always looks at the _metadata_ as a ground source-of-truth, so the synthetic data follows the order of the metadata (which is different from the original data).
+
+### Expected Behavior
+The metadata should be updated. I expect that the downloaded metadata for the `financial` demo should list the columns in the same order as the actual data tables (from left to right).
+
+### Steps to reproduce
+**Metadata is out-of-order**: Download the `financial` demo dataset. If you inspect the data for a particular table (say `account`), observe the order of the columns
+
+```python
+from sdv.datasets.demo import download_demo
+
+data, metadata = download_demo(
+    modality='multi_table',
+    dataset_name='financial')
+
+data['account'].head()
+```
+
+<img width="903" height="205" alt="Image" src="https://github.com/user-attachments/assets/c7d984c6-c0f6-4c30-abc5-77a7eab54463" />
+
+But notice that the metadata has a different order.
+```python
+print(metadata)
+```
+
+<img width="1053" height="348" alt="Image" src="https://github.com/user-attachments/assets/d0014906-b57c-430d-8391-da8bd69e87ad" />
+
+Now, if you create synthetic data, it will (correctly) follow the order of the metadata. But since the metadata order doesn't match the real data, there is a mismatch.
+
+```python
+from sdv.multi_table import HSASynthesizer
+
+synthesizer = HSASynthesizer(metadata)
+synthesizer.fit(data)
+synthetic_data = synthesizer(scale=1.0)
+
+synthetic_data['account'].head()
+```
+
+<img width="916" height="203" alt="Image" src="https://github.com/user-attachments/assets/fb7af3bf-a715-46b5-b543-188aaa08c349" />

@@ -1,0 +1,10 @@
+GPU launch attempt:
+- `accelerate launch --config_file fsdp2.yaml repro.py`
+- reached TRL dataset prep, then failed before the reported DeviceMesh assertion
+
+CPU probe:
+- `CUDA_VISIBLE_DEVICES= CPU_FSDP_PROBE=1 torchrun --standalone --nproc_per_node=2 repro.py`
+- `cpu_probe_rank=0 world_size=2`
+- `cpu_probe_rank=1 world_size=2`
+- `cpu_probe_prepare_completed`
+- `cpu_probe_prepare_completed`

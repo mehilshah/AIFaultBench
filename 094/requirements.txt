@@ -1,0 +1,8 @@
+torch
+accelerate
+beartype
+einops>=0.6
+lion-pytorch
+packaging
+numpy
+tqdm

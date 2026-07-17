@@ -1,0 +1,110 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46693
+
+TITLE
+Performance regression with FA2 and long-context generation after 5.2.0
+
+BODY
+### System Info
+
+transformers: 5.2.0 vs 5.4.0 (I could not test 5.3.0 due to a bug)
+PyTorch: 2.12
+flash-attn: 2.8.3
+CUDA: 13.2
+Python: 3.12
+cudnn: 9.20.0.48
+
+### Who can help?
+
+@zucchini-nlp 
+@Cyrilvallez 
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+1. Install the latest version of transformers
+2. Install FlashAttention2
+3. Run the provided code
+4. Downgrade to transformers version 5.2.0
+5. Run the code again
+
+```python
+from transformers import Qwen3VLForConditionalGeneration, AutoProcessor
+import torch
+
+model = Qwen3VLForConditionalGeneration.from_pretrained(
+    "Qwen/Qwen3-VL-2B-Thinking",
+    dtype=torch.bfloat16,
+    attn_implementation="flash_attention_2",
+).to("cuda")
+
+processor = AutoProcessor.from_pretrained("Qwen/Qwen3-VL-2B-Thinking")
+
+messages = [
+    [
+        {
+            "role": "user",
+            "content": [
+                {"type": "video", "video": torch.zeros(768, 3, 512, 512)},
+                {"type": "text", "text": "placeholder"},
+            ],
+        }
+    ],
+    [
+        {
+            "role": "user",
+            "content": [
+                {"type": "video", "video": torch.zeros(768, 3, 512, 512)},
+                {"type": "text", "text": "different placeholder"},
+            ],
+        }
+    ],
+]
+
+inputs = processor.apply_chat_template(
+    messages,
+    tokenize=True,
+    add_generation_prompt=True,
+    do_sample_frames=False,
+    return_dict=True,
+    return_tensors="pt",
+    padding=True,
+    padding_side="left",
+).to("cuda")
+
+MAX_LEN = 16 * 1024
+
+while True:
+    start = torch.cuda.Event(enable_timing=True)
+    end = torch.cuda.Event(enable_timing=True)
+
+    start.record()
+    out_ids = model.generate(
+        **inputs, do_sample=False, min_length=MAX_LEN, max_length=MAX_LEN, use_cache=True
+    )
+    end.record()
+
+    torch.cuda.synchronize()
+    assert out_ids.size(0) == 2 and out_ids.size(1) == MAX_LEN
+
+    cur_time = start.elapsed_time(end)
+    print(cur_time)
+```
+
+### Expected behavior
+
+Tested on an NVIDIA RTX 6000 PRO:
+- v5.2.0 FA2 = 92 sec
+- v5.4.0 FA2 = 108 sec (+17% overhead)
+- v5.2.0 SDPA = 136 sec
+- v5.4.0 SDPA = 136 sec (no change)
+
+The performance regression seems to occur when the KV cache is sufficiently large, at which point the GPU memory bandwidth has been saturated. Furthermore, it seems to be related with the changes to the FA2 integration layer. It does not seem to be related with the nvidia-cudnn conv kernel performance regression which was fixed in a recent PyTorch version.

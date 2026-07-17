@@ -1,0 +1,7 @@
+[run] executing repro.py
+value=1.999999
+int_rate dtype=int32, rate=2
+float_rate dtype=float32, rate=2.0
+Poisson(2).log_prob(1.999999) = -2.000000238418579
+Poisson(2.0).log_prob(1.999999) = -1.3068537712097168
+absolute_difference = 0.6931464672088623

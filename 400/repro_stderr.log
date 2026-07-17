@@ -1,0 +1,8 @@
+An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+Traceback (most recent call last):
+  File "400/repro.py", line 15, in <module>
+    main()
+  File "400/repro.py", line 11, in main
+    assert float(density) == 0.0, "Expected zero density outside the support"
+           ^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected zero density outside the support

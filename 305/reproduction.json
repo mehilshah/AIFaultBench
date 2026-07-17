@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running the repro leaves the deleted adapter in `model.base_model.classifier.modules_to_save`: stdout shows `before_delete=['default', 'delete_me']` and `after_delete=['default', 'delete_me']`, and stderr ends with `AssertionError` from the post-delete check.",
+  "steps": [
+    "Created a local virtualenv and installed the PEFT runtime dependencies.",
+    "Instantiated a small `BertForSequenceClassification` model and wrapped it with `LoraConfig(task_type=TaskType.SEQ_CLS)`.",
+    "Added the `delete_me` adapter, verified it appeared in `classifier.modules_to_save`, then called `delete_adapter('delete_me')`.",
+    "Observed that `delete_me` was still present in `classifier.modules_to_save`, causing the assertion to fail."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

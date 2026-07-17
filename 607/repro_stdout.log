@@ -1,0 +1,5 @@
+numpy.std(x) = np.float32(nan)
+jax.std(x)   = inf
+jax.__version__ = 0.10.2.dev20260717
+jaxlib.__version__ = 0.10.1
+reproduced = True

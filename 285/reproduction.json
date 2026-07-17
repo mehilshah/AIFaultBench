@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `PYTHONPATH=codebase/src .venv/bin/python -u repro.py` in the local checkout spawned two CPU FSDP workers, printed the checkpoint save attempt on both ranks, and then terminated with `Segmentation fault (core dumped)` (exit code 139). `repro_stderr.log` also shows the peer-reset error that follows the worker crash.",
+  "steps": [
+    "Create a venv with system site packages and install the Lightning runtime deps from `requirements.txt`.",
+    "Run `repro.py` with `PYTHONPATH=codebase/src` so the local source checkout is imported.",
+    "Observe the process crash during `fabric.save(...)` while using `FSDPStrategySubclass(state_dict_type='full')` on CPU with `devices=2`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

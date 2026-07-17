@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`init_lora_weights=True` runs successfully and returns a tensor with shape [3, 2048].",
+    "`init_lora_weights=\"olora\"` fails on the first forward with `RuntimeError: mat1 and mat2 shapes cannot be multiplied (3x2048 and 1x1)`.",
+    "`init_lora_weights=\"pissa\"` fails with the same runtime error at the same code path in `peft/tuners/lora/bnb.py:489`."
+  ],
+  "steps": [
+    "Created a local fake 4-bit `bitsandbytes` package and a tiny model that exposes a flattened 1x1 quantized weight while keeping the base forward valid.",
+    "Instantiated PEFT's 4-bit LoRA wrapper directly with `init_lora_weights=True`, `olora`, and `pissa`.",
+    "Ran the wrapper on a 2048-wide input and observed that only the `olora` and `pissa` cases crash."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

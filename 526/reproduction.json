@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running ./run_repro.sh in a clean local venv raises UnboundLocalError: cannot access local variable 'device' where it is not associated with a value. The traceback points to codebase/torchrl/objectives/crossq.py:406 in maybe_init_target_entropy().",
+  "steps": [
+    "Create the local virtual environment and install the pinned runtime dependencies with setup_env.sh",
+    "Run repro.py via run_repro.sh",
+    "Observe the UnboundLocalError emitted by CrossQLoss when target_entropy is a numeric value"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "The repro script shows the alias is broken after dispatch: pre_dispatch_shared=True, post_dispatch_shared=False, and post_dispatch_named_parameters=['embed_tokens.weight', 'lm_head.weight']. The script then restores the alias with tie_weights(), matching the reported failure mode.",
+  "steps": [
+    "Set up a Python 3.11 venv with the local accelerate source installed editable.",
+    "Run bash run_repro.sh.",
+    "Confirm that dispatch_model breaks the tied embed/head relationship when the embedding is offloaded to disk."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

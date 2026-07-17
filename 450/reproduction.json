@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "On torch 2.7.1+cu126, the non-autocast path preserved distinct image positions while CPU autocast collapsed them: ref_equal_01=false, ref_equal_02=false, ac_equal_01=true, ac_equal_02=true, max_diff=1.9335092306137085.",
+  "steps": [
+    "Created a minimal local codebase tree containing the bug-relevant diffusers rotary-embedding module.",
+    "Created an isolated Python 3.11 virtual environment and installed the minimal runtime dependencies.",
+    "Ran repro.py against diffusers.models.transformers.transformer_ideogram4.Ideogram4MRoPE.",
+    "Observed that torch.autocast(..., dtype=torch.bfloat16) makes the reported image positions share identical rotary embeddings."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

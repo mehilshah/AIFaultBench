@@ -1,0 +1,14 @@
+{
+  "bug_id": "462",
+  "bug_dir": "462",
+  "issue_url": "https://github.com/pyg-team/pytorch_geometric/issues/10138",
+  "commit_hash": "afffee9f089ac0fe1eb8c1600c6e0b2e07ca6f80",
+  "library_name": "torch_geometric",
+  "library_version": "2.6.1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pyg-team/pytorch_geometric@afffee9f089ac0fe1eb8c1600c6e0b2e07ca6f80",
+  "codebase_present": "true",
+  "standardized_dir": "../462",
+  "reproducible": true,
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

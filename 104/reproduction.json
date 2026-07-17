@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` prints `implicit_neural_codebook=False` and `initialized_mlps=3`, then raises `AssertionError: ResidualVQ initialized MLP modules even though implicit_neural_codebook=False`.",
+  "steps": [
+    "Created a local virtual environment with `./setup_env.sh` and installed `torch`, `einops`, and `einx`.",
+    "Ran `./run_repro.sh` against `codebase/vector_quantize_pytorch/residual_vq.py`.",
+    "Observed that `ResidualVQ(dim=8, num_quantizers=4, codebook_size=16, implicit_neural_codebook=False)` still initializes 3 MLP modules."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

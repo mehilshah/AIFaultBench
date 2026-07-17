@@ -1,0 +1,24 @@
+{
+  "source_evidence": {
+    "source_path": "634/codebase/src/transformers/modeling_flash_attention_utils.py",
+    "unpad_has_buggy_line": true,
+    "unpad_has_fixed_line": false,
+    "get_unpad_has_buggy_line": true,
+    "get_unpad_has_fixed_line": false
+  }
+}
+{
+  "status": "blocked",
+  "reason": "flash_attn is unavailable in this environment",
+  "detail": "This folder can only run a CPU-side proxy benchmark here."
+}
+{
+  "status": "cpu_proxy_complete",
+  "buggy_max_type": "Tensor",
+  "fixed_max_type": "int",
+  "benchmark_rounds": 250000,
+  "buggy_elapsed_s": 0.054000877775251865,
+  "fixed_elapsed_s": 0.01069864397868514,
+  "slowdown_ratio": 5.047450675322739,
+  "interpretation": "The local snapshot still propagates a tensor-valued max sequence length. That is the regression mechanism called out in the upstream fix for #46693."
+}

@@ -1,0 +1,37 @@
+566/codebase/sdv/sequential/par.py:318: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  .apply(lambda x: x[self._sequence_index].diff().bfill())
+Traceback (most recent call last):
+  File "566/repro.py", line 129, in run_probe
+    synthesizer.fit(data)
+  File "566/codebase/sdv/single_table/base.py", line 679, in fit
+    self.fit_processed_data(processed_data)
+  File "566/codebase/sdv/single_table/base.py", line 648, in fit_processed_data
+    self._fit(processed_data)
+  File "566/codebase/sdv/sequential/par.py", line 535, in _fit
+    self._fit_sequence_columns(processed_data)
+  File "566/codebase/sdv/sequential/par.py", line 521, in _fit_sequence_columns
+    self._model.fit_sequences(sequences, context_types, data_types)
+  File "/tmp/bug566-py311/lib/python3.11/site-packages/deepecho/models/par.py", line 325, in fit_sequences
+    self._build(sequences, context_types, data_types)
+  File "/tmp/bug566-py311/lib/python3.11/site-packages/deepecho/models/par.py", line 185, in _build
+    self._ctx_map, self._ctx_dims = self._idx_map(contexts, context_types)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug566-py311/lib/python3.11/site-packages/deepecho/models/par.py", line 132, in _idx_map
+    'mu': np.nanmean(x[i]),
+          ^^^^^^^^^^^^^^^^
+  File "/tmp/bug566-py311/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py", line 1033, in nanmean
+    return np.mean(arr, axis=axis, dtype=dtype, out=out, keepdims=keepdims,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug566-py311/lib/python3.11/site-packages/numpy/_core/fromnumeric.py", line 3824, in mean
+    return _methods._mean(a, axis=axis, dtype=dtype,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug566-py311/lib/python3.11/site-packages/numpy/_core/_methods.py", line 132, in _mean
+    ret = umr_sum(arr, axis, dtype, out, keepdims, where=where)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: the resolved dtypes are not compatible with add.reduce. Resolved (dtype('<U1'), dtype('<U1'), dtype('<U2'))
+566/codebase/sdv/sequential/par.py:318: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  .apply(lambda x: x[self._sequence_index].diff().bfill())
+566/codebase/sdv/sequential/par.py:576: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
+  start = context_values[start_index]
+566/codebase/sdv/sequential/par.py:576: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
+  start = context_values[start_index]

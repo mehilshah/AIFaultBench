@@ -1,0 +1,2 @@
+torch=2.13.0+cpu
+mae_source_has_valid_slice= True

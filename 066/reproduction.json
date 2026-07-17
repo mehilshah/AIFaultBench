@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "In codebase/examples/vision/mirnet.py, line 347 assigns level2_dau_2, but line 352 calls selective_kernel_feature_fusion(level1_dau_2, level3_dau_2, level3_dau_2). The final SKFF call repeats level3_dau_2 and does not consume level2_dau_2.",
+  "steps": [
+    "Run `bash run_repro.sh` in the standardized bug folder.",
+    "Observe the script output showing the MIRNet source file and the relevant line numbers.",
+    "Confirm that level2_dau_2 is assigned once and that the final SKFF call uses level3_dau_2 twice."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

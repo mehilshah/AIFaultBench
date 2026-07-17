@@ -1,0 +1,55 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/1174
+
+TITLE
+Accelerate.prepare fails on optimizer prepare when forcing CPU
+
+BODY
+### System Info
+
+```Shell
+Accelerate v0.17.0
+torch 1.13.1
+python 3.10
+```
+
+
+### Information
+
+- [ ] The official example scripts
+- [X] My own modified scripts
+
+### Tasks
+
+- [ ] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [X] My own task or dataset (give details below)
+
+### Reproduction
+
+```python
+import torch
+from accelerate import Accelerator
+
+model = torch.nn.Linear(10, 10)
+sgd = torch.optim.SGD(model.parameters(), lr=0.01)
+
+accelerator = Accelerator(cpu=True)
+
+accelerator.prepare(sgd)
+# this works: accelerator.prepare(model)
+
+# this also fails
+# accelerator = Accelerator(device_placement=False, cpu=True)
+# accelerator.prepare(sgd)
+```
+
+Error:
+```
+AssertionError: The current device and desired device are not the same. If the `PartialState` was generated before the `Accelerator` has been instantiated, ensure the `cpu` flag is the same for both. In this case, the `PartialState` has True and the desired device is False. Please use `cpu=True`.
+```
+
+### Expected behavior
+
+```Shell
+Should pass
+```
+

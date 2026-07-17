@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running open_clip.factory.load_state_dict() on codebase/logs/repro_train1/checkpoints/epoch_1.pt under torch 2.6.0+cpu raises _pickle.UnpicklingError: Weights only load failed. The traceback in repro_stderr.log shows torch.load(..., weights_only=True) rejecting numpy._core.multiarray.scalar as an unsupported global.",
+  "steps": [
+    "Create the local venv with ./setup_env.sh.",
+    "Run ./run_repro.sh from the bug folder root.",
+    "Observe the UnpicklingError in repro_stderr.log while loading epoch_1.pt through open_clip.factory.load_state_dict()."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

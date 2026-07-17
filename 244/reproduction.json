@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Fresh venv run installed numpyro without typing_extensions present (`typing_extensions_installed=False`). Importing numpyro failed in numpyro/_typing.py with `ModuleNotFoundError: No module named 'typing_extensions'`.",
+  "steps": [
+    "Create a fresh virtual environment.",
+    "Install the runtime dependencies from requirements.txt and the local codebase/ package.",
+    "Confirm typing_extensions is not installed in that environment.",
+    "Run `import numpyro` and observe the import-time ModuleNotFoundError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

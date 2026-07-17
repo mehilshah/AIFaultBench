@@ -1,0 +1,2 @@
+Imported pyro.optim from 445/codebase/pyro/optim/__init__.py; pyro.__version__=1.8.4+dd4e0f81; has ExponentialLR=True; attr_type=function.
+The standardized snapshot already exposes pyro.optim.ExponentialLR, so the reported AttributeError does not occur here.

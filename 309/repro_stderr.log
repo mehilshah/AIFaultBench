@@ -1,0 +1,92 @@
+An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+
+  0%|          | 0/20 [00:00<?, ?it/s]
+warmup:   5%|▌         | 1/20 [00:00<00:11,  1.72it/s, 2 steps of size 2.34e+00. acc. prob=0.00]
+sample: 100%|██████████| 20/20 [00:00<00:00, 34.05it/s, 31 steps of size 1.30e-01. acc. prob=0.98]
+
+  0%|          | 0/20 [00:00<?, ?it/s]
+  0%|          | 0/20 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "309/repro.py", line 54, in run_case
+    mcmc.run(jax.random.key(0), x, y)
+  File "309/.venv/lib/python3.12/site-packages/numpyro/infer/mcmc.py", line 709, in run
+    states_flat, last_state = partial_map_fn(map_args)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "309/.venv/lib/python3.12/site-packages/numpyro/infer/mcmc.py", line 495, in _single_chain_mcmc
+    collect_vals = fori_collect(
+                   ^^^^^^^^^^^^^
+  File "309/.venv/lib/python3.12/site-packages/numpyro/util.py", line 426, in fori_collect
+    vals = _body_fn(i, *vals)
+           ^^^^^^^^^^^^^^^^^^
+  File "309/.venv/lib/python3.12/site-packages/numpyro/util.py", line 362, in _body_fn
+    val = body_fun(val)
+          ^^^^^^^^^^^^^
+  File "309/.venv/lib/python3.12/site-packages/numpyro/infer/mcmc.py", line 189, in _sample_fn_nojit_args
+    return (sampler.sample(state[0], args, kwargs),)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "309/.venv/lib/python3.12/site-packages/numpyro/infer/hmc.py", line 816, in sample
+    return self._sample_fn(state, model_args, model_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "309/.venv/lib/python3.12/site-packages/numpyro/infer/hmc.py", line 491, in sample_kernel
+    vv_state, energy, num_steps, accept_prob, diverging = _next(
+                                                          ^^^^^^
+  File "309/.venv/lib/python3.12/site-packages/numpyro/infer/hmc.py", line 431, in _nuts_next
+    binary_tree = build_tree(
+                  ^^^^^^^^^^^
+  File "309/.venv/lib/python3.12/site-packages/numpyro/infer/hmc_util.py", line 1179, in build_tree
+    tree, _ = while_loop(_cond_fn, _body_fn, state)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "309/.venv/lib/python3.12/site-packages/numpyro/util.py", line 163, in while_loop
+    return lax.while_loop(cond_fun, body_fun, init_val)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "309/.venv/lib/python3.12/site-packages/numpyro/infer/hmc_util.py", line 1163, in _body_fn
+    tree = _double_tree(
+           ^^^^^^^^^^^^^
+  File "309/.venv/lib/python3.12/site-packages/numpyro/infer/hmc_util.py", line 922, in _double_tree
+    new_tree = _iterative_build_subtree(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "309/.venv/lib/python3.12/site-packages/numpyro/infer/hmc_util.py", line 1063, in _iterative_build_subtree
+    tree, turning, _, _, _ = while_loop(
+                             ^^^^^^^^^^^
+  File "309/.venv/lib/python3.12/site-packages/numpyro/util.py", line 163, in while_loop
+    return lax.while_loop(cond_fun, body_fun, init_val)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 145, in __exit__
+    except StopIteration:
+Exception: Leaked trace DynamicJaxprTrace. Leaked tracer(s):
+
+JitTracer(~int32[])
+The error occurred while tracing the function _body_fn at 309/.venv/lib/python3.12/site-packages/numpyro/infer/hmc_util.py:1003 for while_body. 
+<DynamicJaxprTracer 129175506358848> is referred to by <dict 129175505155776>['mutable']
+<dict 129175505155776> is referred to by <dict 129175507244544>['state']
+<dict 129175507244544> is referred to by <dict 129176156466880>['model$state']
+<dict 129176156466880> is referred to by <substitute 129176154978064>.data
+<substitute 129176154978064> is referred to by <_substitute_default_key 129176155626800> in vars 'fn', '__wrapped__'
+<_substitute_default_key 129176155626800> is referred to by <tuple 129176108746016>[0]
+<tuple 129176108746016> is referred to by <partial 129175507534208>
+<partial 129175507534208> is referred to by <tuple 129175507568720>[0]
+<tuple 129175507568720> is referred to by <partial 129175507534128>
+<partial 129175507534128> is referred to by <NUTS 129176109474032>._potential_fn_gen
+<NUTS 129176109474032> is referred to by <MCMC 129175505584000>.sampler
+<MCMC 129175505584000> is referred to by <function 129175507619488> (<lambda>) closed-over variable self
+
+JitTracer(~int32[])
+The error occurred while tracing the function _body_fn at 309/.venv/lib/python3.12/site-packages/numpyro/infer/hmc_util.py:1003 for while_body. 
+<DynamicJaxprTracer 129175506358512> is referred to by <list 129175505289088>[0]
+<list 129175505289088> is referred to by <TracingEqn 129175505263488>.in_tracers
+<TracingEqn 129175505263488> is referred to by <DynamicJaxprTracer 129175506358848>
+<DynamicJaxprTracer 129175506358848> is referred to by <dict 129175505155776>['mutable']
+<dict 129175505155776> is referred to by <dict 129175507244544>['state']
+<dict 129175507244544> is referred to by <dict 129176156466880>['model$state']
+<dict 129176156466880> is referred to by <substitute 129176154978064>.data
+<substitute 129176154978064> is referred to by <_substitute_default_key 129176155626800> in vars 'fn', '__wrapped__'
+<_substitute_default_key 129176155626800> is referred to by <tuple 129176108746016>[0]
+<tuple 129176108746016> is referred to by <partial 129175507534208>
+<partial 129175507534208> is referred to by <tuple 129175507568720>[0]
+<tuple 129175507568720> is referred to by <partial 129175507534128>
+<partial 129175507534128> is referred to by <NUTS 129176109474032>._potential_fn_gen
+<NUTS 129176109474032> is referred to by <MCMC 129175505584000>.sampler
+<MCMC 129175505584000> is referred to by <function 129175507619488> (<lambda>) closed-over variable self
+
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.

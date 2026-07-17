@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "repro_stdout.log shows documented_shape=(*, 4, 4, 2) and actual_shape=(1, 3, 4, 2) with docstring_mentions_shape=True; repro_stderr.log is empty.",
+  "steps": [
+    "Create a local virtual environment with bash setup_env.sh.",
+    "Run bash run_repro.sh with PYTHONPATH pointed at codebase/.",
+    "Observe that projections_from_fundamental(torch.randn(1, 3, 3)) returns shape (1, 3, 4, 2) while the docstring advertises (*, 4, 4, 2)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

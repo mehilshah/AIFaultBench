@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running the harness in a clean local venv prints `InitTrackerConfig signature: (in_keys: 'list[str] | None' = None, out_keys: 'list[str] | None' = None, _target_: 'str' = 'torchrl.envs.transforms.transforms.InitTracker') -> None` and then fails with `TypeError: InitTrackerConfig.__init__() got an unexpected keyword argument 'init_key'`.",
+  "steps": [
+    "Create a local virtual environment with `setup_env.sh` and install `hydra-core`.",
+    "Load `torchrl.trainers.algorithms.configs.transforms` through a stub package namespace so `torchrl.__init__` is not imported.",
+    "Call `InitTrackerConfig(init_key='is_test_init')`.",
+    "Observe the constructor raise `TypeError` because the dataclass still exposes `in_keys` and `out_keys` instead of `init_key`."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

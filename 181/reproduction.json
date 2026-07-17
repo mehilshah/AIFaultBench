@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "Running the repro from this folder prints available_accelerators=['cpu', 'cuda', 'mps', 'tpu'] and then raises ValueError: You selected an invalid accelerator name: `accelerator='xpu'`. Available names are: auto, tpu, cuda, cpu, mps.",
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

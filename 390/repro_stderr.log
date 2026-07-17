@@ -1,0 +1,228 @@
+390/repro.py:58: DeprecationWarning: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9, the new torch.export-based ONNX exporter has become the default. Learn more about the new export logic: https://docs.pytorch.org/docs/stable/onnx_export.html. For exporting control flow: https://pytorch.org/tutorials/beginner/onnx/export_control_flow_model_to_onnx_tutorial.html
+  torch.onnx.export(
+390/codebase/src/transformers/models/canine/modeling_canine.py:452: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  chunk_end = min(from_seq_length, chunk_start + self.attend_from_chunk_width)
+390/codebase/src/transformers/models/canine/modeling_canine.py:460: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  chunk_end = min(to_seq_length, chunk_start + self.attend_to_chunk_width)
+Traceback (most recent call last):
+  File "390/repro.py", line 58, in main
+    torch.onnx.export(
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/onnx/__init__.py", line 334, in export
+    export(
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py", line 547, in export
+    _export(
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py", line 1510, in _export
+    graph, params_dict, torch_out = _model_to_graph(
+                                    ^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py", line 1108, in _model_to_graph
+    graph, params, torch_out, module = _create_jit_graph(model, args)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py", line 992, in _create_jit_graph
+    graph, torch_out = _trace_and_get_graph_from_model(model, args)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py", line 898, in _trace_and_get_graph_from_model
+    trace_graph, torch_out, inputs_states = torch.jit._get_trace_graph(
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/jit/_trace.py", line 1439, in _get_trace_graph
+    outs = ONNXTracedModule(
+           ^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/jit/_trace.py", line 140, in forward
+    graph, _out = torch._C._create_graph_by_tracing(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/jit/_trace.py", line 131, in wrapper
+    outs.append(self.inner(*trace_inputs))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1768, in _slow_forward
+    result = self.forward(*input, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/repro.py", line 29, in forward
+    return self.model(
+           ^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1768, in _slow_forward
+    result = self.forward(*input, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/codebase/src/transformers/models/canine/modeling_canine.py", line 890, in forward
+    init_chars_encoder_outputs = self.initial_char_encoder(
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1768, in _slow_forward
+    result = self.forward(*input, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/codebase/src/transformers/models/canine/modeling_canine.py", line 634, in forward
+    layer_outputs = layer_module(hidden_states, attention_mask, output_attentions)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/codebase/src/transformers/modeling_layers.py", line 93, in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1768, in _slow_forward
+    result = self.forward(*input, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/codebase/src/transformers/models/canine/modeling_canine.py", line 566, in forward
+    self_attention_outputs = self.attention(
+                             ^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1768, in _slow_forward
+    result = self.forward(*input, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/codebase/src/transformers/models/canine/modeling_canine.py", line 485, in forward
+    attention_outputs_chunk = self.self(
+                              ^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1768, in _slow_forward
+    result = self.forward(*input, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/codebase/src/transformers/models/canine/modeling_canine.py", line 353, in forward
+    context_layer = torch.matmul(attention_probs, value_layer)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: expected m1 and m2 to have the same dtype, but got: float != c10::Half
+Traceback (most recent call last):
+  File "390/repro.py", line 75, in <module>
+    main()
+  File "390/repro.py", line 58, in main
+    torch.onnx.export(
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/onnx/__init__.py", line 334, in export
+    export(
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py", line 547, in export
+    _export(
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py", line 1510, in _export
+    graph, params_dict, torch_out = _model_to_graph(
+                                    ^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py", line 1108, in _model_to_graph
+    graph, params, torch_out, module = _create_jit_graph(model, args)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py", line 992, in _create_jit_graph
+    graph, torch_out = _trace_and_get_graph_from_model(model, args)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py", line 898, in _trace_and_get_graph_from_model
+    trace_graph, torch_out, inputs_states = torch.jit._get_trace_graph(
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/jit/_trace.py", line 1439, in _get_trace_graph
+    outs = ONNXTracedModule(
+           ^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/jit/_trace.py", line 140, in forward
+    graph, _out = torch._C._create_graph_by_tracing(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/jit/_trace.py", line 131, in wrapper
+    outs.append(self.inner(*trace_inputs))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1768, in _slow_forward
+    result = self.forward(*input, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/repro.py", line 29, in forward
+    return self.model(
+           ^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1768, in _slow_forward
+    result = self.forward(*input, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/codebase/src/transformers/models/canine/modeling_canine.py", line 890, in forward
+    init_chars_encoder_outputs = self.initial_char_encoder(
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1768, in _slow_forward
+    result = self.forward(*input, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/codebase/src/transformers/models/canine/modeling_canine.py", line 634, in forward
+    layer_outputs = layer_module(hidden_states, attention_mask, output_attentions)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/codebase/src/transformers/modeling_layers.py", line 93, in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1768, in _slow_forward
+    result = self.forward(*input, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/codebase/src/transformers/models/canine/modeling_canine.py", line 566, in forward
+    self_attention_outputs = self.attention(
+                             ^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1768, in _slow_forward
+    result = self.forward(*input, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/codebase/src/transformers/models/canine/modeling_canine.py", line 485, in forward
+    attention_outputs_chunk = self.self(
+                              ^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/.repro_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1768, in _slow_forward
+    result = self.forward(*input, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "390/codebase/src/transformers/models/canine/modeling_canine.py", line 353, in forward
+    context_layer = torch.matmul(attention_probs, value_layer)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: expected m1 and m2 to have the same dtype, but got: float != c10::Half

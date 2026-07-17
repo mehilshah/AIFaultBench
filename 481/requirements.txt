@@ -1,0 +1,4 @@
+jax[cpu]==0.4.25
+numpy<2
+typing_extensions
+-e ./codebase

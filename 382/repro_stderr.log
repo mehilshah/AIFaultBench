@@ -1,0 +1,8 @@
+[transformers] `use_return_dict` is deprecated! Use `return_dict` instead!
+Traceback (most recent call last):
+  File "382/repro.py", line 80, in <module>
+    main()
+  File "382/repro.py", line 74, in main
+    assert torch.allclose(
+           ^^^^^^^^^^^^^^^
+AssertionError: Loaded model loses the original classifier weights when adapters are disabled.

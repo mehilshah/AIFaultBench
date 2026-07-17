@@ -1,0 +1,8 @@
+Repro result written to reproduction.json
+Summary:
+  ErnieImageModularPipeline bases: ['ModularPipeline']
+  ErnieImageModularPipeline defines methods: none
+  hasattr(ErnieImageModularPipeline, 'load_lora_weights') -> False
+  calling pipe.load_lora_weights(...) -> 'ErnieImageModularPipeline' object has no attribute 'load_lora_weights'
+  modular pipeline source shows `class ErnieImageModularPipeline(ModularPipeline)` at line 66
+  non-modular pipeline source shows `class ErnieImagePipeline(DiffusionPipeline, ErnieImageLoraLoaderMixin)` at line 42

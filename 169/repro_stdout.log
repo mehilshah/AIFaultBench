@@ -1,0 +1,17 @@
+{
+  "expected_file": "LICENSE",
+  "missing_file": "LICENCE",
+  "readme_targets": {
+    "README.md": [
+      "LICENCE"
+    ],
+    "README_zh-CN.md": [
+      "LICENCE"
+    ]
+  },
+  "repository_files": [
+    "LICENSE"
+  ],
+  "reproducible": true
+}
+BUG REPRODUCED: README badge links point to LICENCE, but the repository only contains LICENSE.

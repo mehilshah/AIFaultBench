@@ -1,0 +1,8 @@
+pre_dispatch_shared: True
+pre_dispatch_named_parameters: ['embed_tokens.weight']
+post_dispatch_shared: False
+post_dispatch_embed_device: meta
+post_dispatch_lm_head_device: cpu
+post_dispatch_named_parameters: ['embed_tokens.weight', 'lm_head.weight']
+after_retie_shared: True
+after_retie_named_parameters: ['embed_tokens.weight']

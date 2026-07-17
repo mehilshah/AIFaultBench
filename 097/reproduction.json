@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the repro prints `has_device_property=False` and then catches `AttributeError: 'GaussianDiffusion' object has no attribute 'device'` from `classifier_free_guidance.py` when `offset_noise_strength > 0`.",
+  "steps": [
+    "Create and activate the local virtual environment with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` from the bug folder.",
+    "Observe the missing-`device` `AttributeError` in the output logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

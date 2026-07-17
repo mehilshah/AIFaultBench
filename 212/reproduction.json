@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the bundled repro against the local SDV checkout produced 6 repeated FutureWarnings with the message \"The 'SingleTableMetadata' is deprecated. Please use the new 'Metadata' class for synthesizers.\" during HMASynthesizer.sample().",
+  "steps": [
+    "Create a MultiTableMetadata schema with a parent table and a child table linked by a foreign key.",
+    "Instantiate HMASynthesizer with that MultiTableMetadata and fit it on the small two-table dataset.",
+    "Call sample() and capture warnings; the repro emits 6 SingleTableMetadata deprecation warnings during sampling."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "repro_stdout.log shows DataloaderStopIteration is a subclass of StopIteration and the empty-data generator raises RuntimeError: generator raised StopIteration. The repro exited with status 1.",
+  "steps": [
+    "Created an isolated venv with sh setup_env.sh.",
+    "Ran sh run_repro.sh, which loads codebase/torchtitan/components/dataloader.py and triggers the empty-dataloader path.",
+    "Observed RuntimeError: generator raised StopIteration instead of catching DataloaderStopIteration."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "sh run_repro.sh"
+}

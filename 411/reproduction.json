@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Control run without device_map routed gradients to modules_to_save.default, while the offloaded device_map='auto' run on bigscience/bloomz-560m failed inside accelerate with KeyError: 'score.weight' when the PEFT ModulesToSaveWrapper forwarded through the classifier head.",
+  "steps": [
+    "Run bash run_repro.sh in the standardized folder.",
+    "The control case loads bigscience/bloomz-560m without device_map and confirms original_module_has_grad=False and modules_to_save_has_grad=True.",
+    "The offloaded case loads the same model with device_map='auto', max_memory={'cpu': '1600MB'}, and an offload folder.",
+    "Calling the wrapped score head triggers accelerate's offload hook and raises KeyError: 'score.weight'."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

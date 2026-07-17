@@ -1,0 +1,40 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2407
+
+TITLE
+[BUG] FileNotFoundError from checkpoint_saver.py.
+
+BODY
+**Describe the bug**
+After creating checkpoint 0, 1, and 2, pytorch-image-models/timm/utils/checkpoint_saver.py hits a FileNotFoundError, apparently looking to move a checkpoint that doesn't exist. This stops the training.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Using 4xL40S
+2. Using variables, e.g., `random_num=0.0`, `subset=1over64`
+3. `./train.sh 4 --dataset hfds/datacomp/imagenet-1k-random-{random_num}-{subset} --log-wandb --experiment ImageNetTraining{random_num}-{subset} --model seresnet34 --sched cosine --epochs 150 --warmup-epochs 5 --lr 0.4 --reprob 0.5 --remode pixel --batch-size 256 --amp -j 4`
+
+**Expected behavior**
+The appropriate files, with the right filenames, are found when saving checkpoints, and training continues.
+
+**Traceback**
+```
+Traceback (most recent call last):
+  File "/app/pytorch-image-models/train.py", line 1236, in <module>
+    main()
+  File "/app/pytorch-image-models/train.py", line 959, in main
+    best_metric, best_epoch = saver.save_checkpoint(epoch, metric=latest_metric)
+  File "/app/pytorch-image-models/timm/utils/checkpoint_saver.py", line 125, in save_checkpoint
+    self._replace(tmp_save_path, last_save_path)
+  File "/app/pytorch-image-models/timm/utils/checkpoint_saver.py", line 73, in _replace
+    os.replace(src, dst)
+FileNotFoundError: [Errno 2] No such file or directory: './output/train/ImageNetTraining0.0-frac-1over64/tmp.pth.tar' -> './output/train/ImageNetTraining0.0-frac-1over64/last.pth.tar'
+```
+
+**Desktop (please complete the following information):**
+ - OS: Hugging Face Spaces (Ubuntu, IIRC) FROM docker.io/library/python:3.9@sha256:c1b677ce9a2c118bfaa135709704f66a9beb19f5f21112b88265acf566c87cbb
+ - This repository version: Current repo when running  `git clone https://github.com/huggingface/pytorch-image-models.git`
+ - PyTorch version w/ CUDA/cuDNN : Whatever is specified currently in `https://github.com/huggingface/pytorch-image-models/blob/main/requirements.txt`. `torch>=1.7`
+ 
+**Additional context**
+This must have been introduced very recently, I have been successfully running the code here until last week; I reclone everytime I use it.
+

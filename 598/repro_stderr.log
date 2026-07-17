@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "598/repro.py", line 56, in <module>
+    main()
+  File "598/repro.py", line 48, in main
+    raise AssertionError(
+AssertionError: dispatch_model broke the tied weight relationship between embed_tokens and lm_head

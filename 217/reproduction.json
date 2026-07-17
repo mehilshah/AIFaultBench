@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Pipeline('en', package='mimic', processors={'ner': 'i2b2'}) fails in codebase/stanza/models/pos/trainer.py with KeyError: 'bert_finetune'.",
+  "steps": [
+    "Create and activate the isolated Python 3.11 environment with setup_env.sh.",
+    "Run repro.py with STANZA_RESOURCES_DIR pointing at the local stanza_resources/ directory.",
+    "Observe the POS trainer initialization crash with KeyError: 'bert_finetune'."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,41 @@
+Observed failure for batch_size=8: The size of tensor a (12) must match the size of tensor b (8) at non-singleton dimension 1
+Traceback (most recent call last):
+  File "470/repro.py", line 28, in main
+    run_case(8)
+  File "470/repro.py", line 13, in run_case
+    y = model(x)
+        ^^^^^^^^
+  File "470/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "470/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "470/codebase/timm/models/eva.py", line 905, in forward
+    x = self.forward_features(x)
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "470/codebase/timm/models/eva.py", line 876, in forward_features
+    x = blk(x, rope=rot_pos_embed)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "470/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "470/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "470/codebase/timm/models/eva.py", line 303, in forward
+    x = x + self.drop_path1(self.attn(self.norm1(x), rope=rope, attn_mask=attn_mask))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "470/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "470/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "470/codebase/timm/models/eva.py", line 180, in forward
+    q = torch.cat([q[:, :, :npt, :], apply_rot_embed_cat(q[:, :, npt:, :], rope)], dim=2).type_as(v)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "470/codebase/timm/layers/pos_embed_sincos.py", line 234, in apply_rot_embed_cat
+    return x * cos_emb + rot(x) * sin_emb
+           ~~^~~~~~~~~
+RuntimeError: The size of tensor a (12) must match the size of tensor b (8) at non-singleton dimension 1

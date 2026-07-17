@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "A 2-step Trainer.fit run with ThroughputMonitor and no flops_per_batch attribute emitted the same warning 2 times.",
+  "steps": [
+    "Create the virtual environment and install the pinned dependencies with bash setup_env.sh.",
+    "Run bash run_repro.sh to execute the Lightning training loop and capture the warnings."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

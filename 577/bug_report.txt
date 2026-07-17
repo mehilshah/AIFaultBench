@@ -1,0 +1,35 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/2019
+
+TITLE
+JAX 0.6.0 + Haiku Compatibility
+
+BODY
+### Bug Description
+
+The [newly released JAX 0.6.0](https://github.com/jax-ml/jax/releases/tag/jax-v0.6.0) breaks some Haiku tests.
+
+### Steps to Reproduce
+
+Failing tests from https://github.com/pyro-ppl/numpyro/actions/runs/14522108291/job/40745556707?pr=2018
+
+```python
+FAILED test/contrib/test_esc_proxies.py::test_haiku_compatiable - AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.
+FAILED test/contrib/test_module.py::test_haiku_module - AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.
+FAILED test/contrib/test_module.py::test_random_module_mcmc[True-args-haiku] - AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.
+FAILED test/contrib/test_module.py::test_random_module_mcmc[True-shape-haiku] - AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.
+FAILED test/contrib/test_module.py::test_random_module_mcmc[True-kwargs-haiku] - AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.
+FAILED test/contrib/test_module.py::test_random_module_mcmc[False-args-haiku] - AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.
+FAILED test/contrib/test_module.py::test_random_module_mcmc[False-shape-haiku] - AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.
+FAILED test/contrib/test_module.py::test_random_module_mcmc[False-kwargs-haiku] - AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.
+FAILED test/contrib/test_module.py::test_haiku_state_dropout_smoke[True-True] - AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.
+FAILED test/contrib/test_module.py::test_haiku_state_dropout_smoke[True-False] - AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.
+FAILED test/contrib/test_module.py::test_haiku_state_dropout_smoke[False-True] - AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.
+FAILED test/contrib/test_module.py::test_haiku_state_dropout_smoke[False-False] - AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.
+= 12 failed, 488 passed, 66 skipped, 4 xfailed, 25 warnings in 490.06s (0:08:10) =
+```
+
+### Expected Behavior
+The tests should pass or be skipped.
+
+
+Do we want to skip these tests, or is there a way to run them with JAX < 0.6.0?

@@ -1,0 +1,118 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/3877
+
+TITLE
+Gradient accumulation gives worse results when using DeepSpeed ZeRO 2
+
+BODY
+### System Info
+
+```Shell
+- `Accelerate` version: 1.11.0
+- Platform: Linux-5.4.0-42-generic-x86_64-with-glibc2.35
+- `accelerate` bash location: /raid/swyoon/miniconda3/envs/tbitrl/bin/accelerate
+- Python version: 3.12.12
+- Numpy version: 2.2.6
+- PyTorch version: 2.7.1+cu126
+- PyTorch accelerator: CUDA
+- System RAM: 1006.58 GB
+- GPU type: NVIDIA A100X
+- `Accelerate` default config:
+        Not found
+```
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+In accelerate, the training with gradient accumulation gives higher training loss when DeepSpeed ZeRO stage 2, even though in theory the use of gradient accumulation should not affect the loss values.
+
+For example, when experimented with an SFT script that is slightly modified from [TRL's script for testing gradient accumulation](https://github.com/huggingface/trl/issues/2635#issuecomment-2612759819), the loss curves are wildly different across gradient accumulation step values.
+<img width="438" height="296" alt="Image" src="https://github.com/user-attachments/assets/2c3a262a-7536-46ff-8c04-bcde1e6d3d35" />
+
+Surprisingly, this issue does not happen when ZeRO stage 1 or 3 is used.
+
+The issue can be reproduced by the following command.
+```
+CUDA_VISIBLE_DEVICES=0 accelerate launch --config_file ds_zero2.yaml --num_processes=1 sft_grad_accum_test.py
+```
+where `ds_zero2.yaml` and `sft_grad_accum_test.py` are given as follows.
+
+sft_grad_accum_test.py:
+```python
+from datasets import load_dataset
+from transformers import AutoTokenizer
+from trl import SFTConfig, SFTTrainer
+import os
+os.environ["WANDB_PROJECT"] = "sft-grad-accum-test"
+
+tokenizer = AutoTokenizer.from_pretrained("trl-internal-testing/tiny-Qwen2ForCausalLM-2.5")
+
+batch_size = 2   # the result should be identical when batch_size=8 and gradient_accumulation_steps=1 are set.
+gradient_accumulation_steps = 4
+output_dir = f"SFT-bsz{batch_size}-grad_acc{gradient_accumulation_steps}-zero2"
+
+training_args = SFTConfig(
+    output_dir=output_dir,
+    per_device_train_batch_size=batch_size,
+    gradient_accumulation_steps=gradient_accumulation_steps,
+    logging_steps=2,
+    report_to="wandb",
+    run_name=output_dir,
+    completion_only_loss=True,
+    learning_rate=1e-3,
+)
+
+dummy_dataset = load_dataset("trl-internal-testing/zen", "standard_prompt_completion")
+
+trainer = SFTTrainer(
+    model="trl-internal-testing/tiny-Qwen2ForCausalLM-2.5",
+    args=training_args,
+    processing_class=tokenizer,
+    train_dataset=dummy_dataset["train"],
+)
+
+trainer.train()
+```
+
+ds_zero2.yaml
+```
+compute_environment: LOCAL_MACHINE
+debug: false
+deepspeed_config:
+  deepspeed_multinode_launcher: standard
+  offload_optimizer_device: none 
+  offload_param_device: none
+  zero3_init_flag: false
+  zero_stage: 2
+  gradient_clipping: auto
+distributed_type: DEEPSPEED
+downcast_bf16: 'no'
+machine_rank: 0
+main_training_function: main
+mixed_precision: bf16
+num_machines: 1
+num_processes: 1
+rdzv_backend: static
+same_network: true
+tpu_env: []
+tpu_use_cluster: false
+tpu_use_sudo: false
+use_cpu: false
+```
+
+
+### Expected behavior
+
+The training results should be identical as long as  `batch_size * gradient_accumulation_steps` remains constant, up to numerical precision.
+
+For example, when `zero_stage` in `ds_zero2.yaml` is set to 1 or 3, the training curve looks as follows:
+
+<img width="438" height="292" alt="Image" src="https://github.com/user-attachments/assets/5eb313b1-f79b-4096-9d82-6f0b4195da72" />

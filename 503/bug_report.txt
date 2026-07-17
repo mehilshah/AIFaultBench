@@ -1,0 +1,36 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2525
+
+TITLE
+[BUG] Fasternet model family not available?
+
+BODY
+**Describe the bug**
+
+I am trying to load the FasterNet model family, but they do not seem to load correctly.
+
+Based on the source code it looks like the models should be? Is it expected that these models are unavailable?
+
+**To Reproduce**
+
+```python
+import timm 
+
+model = timm.create_model('fasternet_l.in1k', pretrained=True)
+# RuntimeError: Unknown model (fasternet_l)
+```
+
+**Expected behavior**
+
+```python
+import timm 
+
+model = timm.create_model('fasternet_l.in1k', pretrained=True)
+# No Error
+```
+
+**Additional context**
+
+Version: 1.0.15 or from source
+Machine: Ubuntu 22.04.4 LTS
+
+The models are also not listed when running `timm.list_models("*faster*")`

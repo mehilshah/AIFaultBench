@@ -1,0 +1,8 @@
+jax==0.4.25
+jaxlib==0.4.25
+numpy<2
+scipy==1.11.4
+funsor==0.4.7
+tqdm==4.68.4
+multipledispatch==1.0.0
+

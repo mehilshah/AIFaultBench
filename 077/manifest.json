@@ -1,0 +1,19 @@
+{
+  "bug_id": "077",
+  "issue_url": "https://github.com/matterport/Mask_RCNN/issues/2979",
+  "library_name": "Mask_RCNN",
+  "library_version": "unknown",
+  "reproduction_type": "runtime",
+  "entrypoint": "run_repro.sh",
+  "generated_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

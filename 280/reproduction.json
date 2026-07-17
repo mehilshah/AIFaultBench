@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "The repro script confirms the same projection matrix is used in both calls (projections_equal_norm=0.0, projection_count=10) but the costs differ: cost_with_seed=21.887428414187593 and cost_with_custom_projections=9.788355557356775. The custom-projection path matches the buggy normalization using 50 projections instead of the provided 10.",
+  "steps": [
+    "Run `bash setup_env.sh` to create the isolated environment and install POT against the active NumPy/SciPy stack.",
+    "Run `bash run_repro.sh` to execute the repro script with runtime shims for NumPy/SciPy compatibility.",
+    "Observe that the seeded and explicit-projection calls share identical projections but return different sliced Wasserstein distances."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

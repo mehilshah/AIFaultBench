@@ -1,0 +1,627 @@
+# recovered-from-issue: https://github.com/pyg-team/pytorch_geometric/issues/9965
+
+TITLE
+CI fails with latest updates
+
+BODY
+### 🐛 Describe the bug
+
+```
+________________________________ test_type_repr ________________________________
+
+    def test_type_repr() -> None:
+        inspector = Inspector(SAGEConv)
+    
+        assert inspector.type_repr(Any) == 'typing.Any'
+        assert inspector.type_repr(Final) == 'typing.Final'
+        assert inspector.type_repr(OptPairTensor) == (
+            'Tuple[Tensor, Optional[Tensor]]')
+>       assert inspector.type_repr(
+            Final[Optional[Tensor]]) == ('typing.Final[Optional[Tensor]]')
+E       AssertionError: assert 'typing.Final[Optional[typing.Any]]' == 'typing.Final[Optional[Tensor]]'
+E         
+E         - typing.Final[Optional[Tensor]]
+E         ?                       ^^ ^^^
+E         + typing.Final[Optional[typing.Any]]
+E         ?                       ^^^^ ^^^^^
+
+test/test_inspector.py:28: AssertionError
+______________________________ test_coalesce_jit _______________________________
+
+    def test_coalesce_jit():
+        @torch.jit.script
+        def wrapper1(edge_index: Tensor) -> Tensor:
+            return coalesce(edge_index)
+    
+        @torch.jit.script
+>       def wrapper2(
+            edge_index: Tensor,
+            edge_attr: Optional[Tensor],
+        ) -> Tuple[Tensor, Optional[Tensor]]:
+
+test/utils/test_coalesce.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/torch/jit/_script.py:1429: in script
+    ret = _script_impl(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+obj = <function test_coalesce_jit.<locals>.wrapper2 at 0x7fad9fcef550>
+optimize = None, _frames_up = 1
+_rcb = <function createResolutionCallbackFromEnv.<locals>.<lambda> at 0x7fad9fcefaf0>
+example_inputs = None
+
+    def _script_impl(
+        obj,
+        optimize=None,
+        _frames_up=0,
+        _rcb=None,
+        example_inputs: Union[List[Tuple], Dict[Callable, List[Tuple]], None] = None,
+    ):
+        global type_trace_db
+    
+        if optimize is not None:
+            warnings.warn(
+                "`optimize` is deprecated and has no effect. "
+                "Use `with torch.jit.optimized_execution()` instead",
+                FutureWarning,
+                stacklevel=3,
+            )
+    
+        # No-op for modules, functions, class instances that are already scripted
+        if isinstance(obj, RecursiveScriptClass):
+            return obj
+        if isinstance(obj, ScriptModule):
+            return obj
+        if isinstance(obj, ScriptFunction):
+            return obj
+    
+        if example_inputs:
+            # If MonkeyType is installed, enable profile directed type annotation
+            # Check if example_inputs are defined and generate call traces
+            # for the method by running eager mode version of the method with
+            # the provide example inputs. This logs all the traces in type_trace_db
+            type_trace_db = JitTypeTraceStore()
+            if monkeytype_trace:
+                monkeytype_config = JitTypeTraceConfig(type_trace_db)
+                with monkeytype_trace(monkeytype_config):
+                    if isinstance(example_inputs, Dict):
+                        # If the obj is an nn.Module or a class, then each method is
+                        # executed with the arguments provided in the example inputs.
+                        # example inputs here will be of type Dict(class.method, (arguments))
+                        # This is used to infer type annotations for those methods
+                        # which are not called directly under the hood of monkeytype.
+                        for module, example_input in example_inputs.items():
+                            for example in example_input:
+                                module(*example)
+                    elif isinstance(example_inputs, List):
+                        for examples in example_inputs:
+                            obj(*examples)
+                    else:
+                        raise ValueError(
+                            "Error: Unable to infer types. Please format the inputs to type `List[Tuple]`"
+                            " or `Dict[Callable, List[Tuple]]` to be run with MonkeyType."
+                        )
+            else:
+                warnings.warn(
+                    "Warning: monkeytype is not installed. Please install https://github.com/Instagram/MonkeyType "
+                    "to enable Profile-Directed Typing in TorchScript. Refer to "
+                    "https://github.com/Instagram/MonkeyType/blob/master/README.rst to install MonkeyType. "
+                )
+    
+        if isinstance(obj, torch.nn.Module):
+            obj = call_prepare_scriptable_func(obj)
+            return torch.jit._recursive.create_script_module(
+                obj, torch.jit._recursive.infer_methods_to_compile
+            )
+        else:
+            obj = obj.__prepare_scriptable__() if hasattr(obj, "__prepare_scriptable__") else obj  # type: ignore[operator]
+    
+        if isinstance(obj, dict):
+            return create_script_dict(obj)
+        if isinstance(obj, list):
+            return create_script_list(obj)
+    
+        if inspect.isclass(obj):
+            qualified_name = _qualified_name(obj)
+            # If this type is a `nn.Module` subclass, they probably meant to pass
+            # an instance instead of a Module
+            if issubclass(obj, torch.nn.Module):
+                raise RuntimeError(
+                    f"Type '{obj}' cannot be compiled since it inherits from nn.Module, pass an instance instead"
+                )
+    
+            # Enums are automatically usable in TorchScript, explicitly scripting
+            # is not necessary, but not harmful either.
+            if issubclass(obj, enum.Enum):
+                return obj
+    
+            if not _is_new_style_class(obj):
+                raise RuntimeError(
+                    "TorchScript classes must be new-style classes. "
+                    "Please inherit from 'object'."
+                )
+            if len(obj.mro()) > 2:
+                raise RuntimeError(
+                    "TorchScript classes does not support inheritance yet. "
+                    "Please directly inherit from 'object'."
+                )
+            if _rcb is None:
+                _rcb = _jit_internal.createResolutionCallbackFromFrame(_frames_up + 1)
+            _compile_and_register_class(obj, _rcb, qualified_name)
+            return obj
+        elif inspect.isfunction(obj) or inspect.ismethod(obj):
+            qualified_name = _qualified_name(obj)
+            # this is a decorated fn, and we need to the underlying fn and its rcb
+            if hasattr(obj, "__script_if_tracing_wrapper"):
+                obj = obj.__original_fn  # type: ignore[union-attr]
+                _rcb = _jit_internal.createResolutionCallbackFromClosure(obj)
+    
+            # some functions are explicitly marked as not supported in script mode
+            if hasattr(obj, "__script_unsupported"):
+                raise RuntimeError("TorchScript error: " + obj.__script_unsupported)
+    
+            _check_directly_compile_overloaded(obj)
+            maybe_already_compiled_fn = _try_get_jit_cached_function(obj)
+            if maybe_already_compiled_fn:
+                maybe_already_compiled_fn._torchdynamo_inline = obj  # type: ignore[attr-defined]
+                return maybe_already_compiled_fn
+            ast = get_jit_def(obj, obj.__name__)
+            if _rcb is None:
+                _rcb = _jit_internal.createResolutionCallbackFromClosure(obj)
+>           fn = torch._C._jit_script_compile(
+                qualified_name, ast, _rcb, get_default_args(obj)
+            )
+E           RuntimeError: 
+E           Arguments for call are not valid.
+E           The following variants are available:
+E             
+E             coalesce(Tensor edge_index, str edge_attr="???", int? num_nodes=None, str reduce="sum", bool is_sorted=False, bool sort_by_row=True) -> Tensor:
+E             Expected a value of type 'str' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+E             
+E             coalesce(Tensor edge_index, Tensor edge_attr, int? num_nodes=None, str reduce="sum", bool is_sorted=False, bool sort_by_row=True) -> ((Tensor, Tensor)):
+E             Expected a value of type 'Tensor' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+E             
+E             coalesce(Tensor edge_index, Tensor? edge_attr, int? num_nodes=None, str reduce="sum", bool is_sorted=False, bool sort_by_row=True) -> ((Tensor, Tensor?)):
+E             Expected a value of type 'Optional[Tensor]' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+E             
+E             coalesce(Tensor edge_index, Tensor[] edge_attr, int? num_nodes=None, str reduce="sum", bool is_sorted=False, bool sort_by_row=True) -> ((Tensor, Tensor[])):
+E             Expected a value of type 'List[Tensor]' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+E           
+E           The original call is:
+E             File "/home/runner/work/pytorch_geometric/pytorch_geometric/test/utils/test_coalesce.py", line 66
+E                   edge_attr: Optional[Tensor],
+E               ) -> Tuple[Tensor, Optional[Tensor]]:
+E                   return coalesce(edge_index, edge_attr)
+E                          ~~~~~~~~ <--- HERE
+
+/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/torch/jit/_script.py:1205: RuntimeError
+___________________________ test_sort_edge_index_jit ___________________________
+
+    def test_sort_edge_index_jit():
+        @torch.jit.script
+        def wrapper1(edge_index: Tensor) -> Tensor:
+            return sort_edge_index(edge_index)
+    
+        @torch.jit.script
+>       def wrapper2(
+            edge_index: Tensor,
+            edge_attr: Optional[Tensor],
+        ) -> Tuple[Tensor, Optional[Tensor]]:
+
+test/utils/test_sort_edge_index.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/torch/jit/_script.py:1429: in script
+    ret = _script_impl(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+obj = <function test_sort_edge_index_jit.<locals>.wrapper2 at 0x7fad9dcb2dc0>
+optimize = None, _frames_up = 1
+_rcb = <function createResolutionCallbackFromEnv.<locals>.<lambda> at 0x7fadadcd81f0>
+example_inputs = None
+
+    def _script_impl(
+        obj,
+        optimize=None,
+        _frames_up=0,
+        _rcb=None,
+        example_inputs: Union[List[Tuple], Dict[Callable, List[Tuple]], None] = None,
+    ):
+        global type_trace_db
+    
+        if optimize is not None:
+            warnings.warn(
+                "`optimize` is deprecated and has no effect. "
+                "Use `with torch.jit.optimized_execution()` instead",
+                FutureWarning,
+                stacklevel=3,
+            )
+    
+        # No-op for modules, functions, class instances that are already scripted
+        if isinstance(obj, RecursiveScriptClass):
+            return obj
+        if isinstance(obj, ScriptModule):
+            return obj
+        if isinstance(obj, ScriptFunction):
+            return obj
+    
+        if example_inputs:
+            # If MonkeyType is installed, enable profile directed type annotation
+            # Check if example_inputs are defined and generate call traces
+            # for the method by running eager mode version of the method with
+            # the provide example inputs. This logs all the traces in type_trace_db
+            type_trace_db = JitTypeTraceStore()
+            if monkeytype_trace:
+                monkeytype_config = JitTypeTraceConfig(type_trace_db)
+                with monkeytype_trace(monkeytype_config):
+                    if isinstance(example_inputs, Dict):
+                        # If the obj is an nn.Module or a class, then each method is
+                        # executed with the arguments provided in the example inputs.
+                        # example inputs here will be of type Dict(class.method, (arguments))
+                        # This is used to infer type annotations for those methods
+                        # which are not called directly under the hood of monkeytype.
+                        for module, example_input in example_inputs.items():
+                            for example in example_input:
+                                module(*example)
+                    elif isinstance(example_inputs, List):
+                        for examples in example_inputs:
+                            obj(*examples)
+                    else:
+                        raise ValueError(
+                            "Error: Unable to infer types. Please format the inputs to type `List[Tuple]`"
+                            " or `Dict[Callable, List[Tuple]]` to be run with MonkeyType."
+                        )
+            else:
+                warnings.warn(
+                    "Warning: monkeytype is not installed. Please install https://github.com/Instagram/MonkeyType "
+                    "to enable Profile-Directed Typing in TorchScript. Refer to "
+                    "https://github.com/Instagram/MonkeyType/blob/master/README.rst to install MonkeyType. "
+                )
+    
+        if isinstance(obj, torch.nn.Module):
+            obj = call_prepare_scriptable_func(obj)
+            return torch.jit._recursive.create_script_module(
+                obj, torch.jit._recursive.infer_methods_to_compile
+            )
+        else:
+            obj = obj.__prepare_scriptable__() if hasattr(obj, "__prepare_scriptable__") else obj  # type: ignore[operator]
+    
+        if isinstance(obj, dict):
+            return create_script_dict(obj)
+        if isinstance(obj, list):
+            return create_script_list(obj)
+    
+        if inspect.isclass(obj):
+            qualified_name = _qualified_name(obj)
+            # If this type is a `nn.Module` subclass, they probably meant to pass
+            # an instance instead of a Module
+            if issubclass(obj, torch.nn.Module):
+                raise RuntimeError(
+                    f"Type '{obj}' cannot be compiled since it inherits from nn.Module, pass an instance instead"
+                )
+    
+            # Enums are automatically usable in TorchScript, explicitly scripting
+            # is not necessary, but not harmful either.
+            if issubclass(obj, enum.Enum):
+                return obj
+    
+            if not _is_new_style_class(obj):
+                raise RuntimeError(
+                    "TorchScript classes must be new-style classes. "
+                    "Please inherit from 'object'."
+                )
+            if len(obj.mro()) > 2:
+                raise RuntimeError(
+                    "TorchScript classes does not support inheritance yet. "
+                    "Please directly inherit from 'object'."
+                )
+            if _rcb is None:
+                _rcb = _jit_internal.createResolutionCallbackFromFrame(_frames_up + 1)
+            _compile_and_register_class(obj, _rcb, qualified_name)
+            return obj
+        elif inspect.isfunction(obj) or inspect.ismethod(obj):
+            qualified_name = _qualified_name(obj)
+            # this is a decorated fn, and we need to the underlying fn and its rcb
+            if hasattr(obj, "__script_if_tracing_wrapper"):
+                obj = obj.__original_fn  # type: ignore[union-attr]
+                _rcb = _jit_internal.createResolutionCallbackFromClosure(obj)
+    
+            # some functions are explicitly marked as not supported in script mode
+            if hasattr(obj, "__script_unsupported"):
+                raise RuntimeError("TorchScript error: " + obj.__script_unsupported)
+    
+            _check_directly_compile_overloaded(obj)
+            maybe_already_compiled_fn = _try_get_jit_cached_function(obj)
+            if maybe_already_compiled_fn:
+                maybe_already_compiled_fn._torchdynamo_inline = obj  # type: ignore[attr-defined]
+                return maybe_already_compiled_fn
+            ast = get_jit_def(obj, obj.__name__)
+            if _rcb is None:
+                _rcb = _jit_internal.createResolutionCallbackFromClosure(obj)
+>           fn = torch._C._jit_script_compile(
+                qualified_name, ast, _rcb, get_default_args(obj)
+            )
+E           RuntimeError: 
+E           Arguments for call are not valid.
+E           The following variants are available:
+E             
+E             sort_edge_index(Tensor edge_index, str edge_attr="???", int? num_nodes=None, bool sort_by_row=True) -> Tensor:
+E             Expected a value of type 'str' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+E             
+E             sort_edge_index(Tensor edge_index, Tensor edge_attr, int? num_nodes=None, bool sort_by_row=True) -> ((Tensor, Tensor)):
+E             Expected a value of type 'Tensor' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+E             
+E             sort_edge_index(Tensor edge_index, Tensor? edge_attr, int? num_nodes=None, bool sort_by_row=True) -> ((Tensor, Tensor?)):
+E             Expected a value of type 'Optional[Tensor]' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+E             
+E             sort_edge_index(Tensor edge_index, Tensor[] edge_attr, int? num_nodes=None, bool sort_by_row=True) -> ((Tensor, Tensor[])):
+E             Expected a value of type 'List[Tensor]' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+E           
+E           The original call is:
+E             File "/home/runner/work/pytorch_geometric/pytorch_geometric/test/utils/test_sort_edge_index.py", line 52
+E                   edge_attr: Optional[Tensor],
+E               ) -> Tuple[Tensor, Optional[Tensor]]:
+E                   return sort_edge_index(edge_index, edge_attr)
+E                          ~~~~~~~~~~~~~~~ <--- HERE
+
+/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/torch/jit/_script.py:1205: RuntimeError
+______________________________ test_is_undirected ______________________________
+
+    def test_is_undirected():
+        row = torch.tensor([0, 1, 0])
+        col = torch.tensor([1, 0, 0])
+        sym_weight = torch.tensor([0, 0, 1])
+        asym_weight = torch.tensor([0, 1, 1])
+    
+        assert is_undirected(torch.stack([row, col], dim=0))
+        assert is_undirected(torch.stack([row, col], dim=0), sym_weight)
+        assert not is_undirected(torch.stack([row, col], dim=0), asym_weight)
+    
+        row = torch.tensor([0, 1, 1])
+        col = torch.tensor([1, 0, 2])
+    
+        assert not is_undirected(torch.stack([row, col], dim=0))
+    
+        @torch.jit.script
+>       def jit(edge_index: Tensor) -> bool:
+
+test/utils/test_undirected.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/torch/jit/_script.py:1429: in script
+    ret = _script_impl(
+/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/torch/jit/_script.py:1205: in _script_impl
+    fn = torch._C._jit_script_compile(
+/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/torch/jit/_script.py:1499: in _get_overloads
+    _compile_function_with_overload(overload_fn, qual_name, obj)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+overload_fn = <function is_undirected at 0x7fadadcd8700>
+qual_name = '__torch__.torch_geometric.utils.undirected.is_undirected'
+impl_fn = <function is_undirected at 0x7fadadcd8940>
+
+    def _compile_function_with_overload(overload_fn, qual_name, impl_fn):
+        overload_decl = get_jit_def(overload_fn, overload_fn.__name__).decl()
+        overload_signature = torch.jit.annotations.get_signature(
+            overload_fn, None, None, inspect.ismethod(overload_fn)
+        )
+        impl_ast = get_jit_def(impl_fn, impl_fn.__name__)
+        overload_defaults = get_default_args(overload_fn)
+        implementation_defaults = get_default_args(impl_fn)
+        _rcb = _jit_internal.createResolutionCallbackFromClosure(impl_fn)
+        _check_overload_defaults(
+            implementation_defaults, overload_defaults, overload_decl.range()
+        )
+>       fn = torch._C._jit_script_compile_overload(
+            qual_name,
+            overload_decl,
+            impl_ast,
+            _rcb,
+            implementation_defaults,
+            overload_signature,
+        )
+E       RuntimeError: 
+E       Variable 'edge_attrs' previously had type List[Tensor] but is now being assigned to a value of type Union[list, tuple]
+E       :
+E         File "/home/runner/work/pytorch_geometric/pytorch_geometric/torch_geometric/utils/undirected.py", line 74
+E               edge_attrs.append(edge_attr)
+E           elif isinstance(edge_attr, (list, tuple)):
+E               edge_attrs = edge_attr
+E               ~~~~~~~~~~ <--- HERE
+E       
+E           edge_index1, edge_attrs1 = sort_edge_index(
+E       'is_undirected' is being compiled since it was called from 'jit'
+E         File "/home/runner/work/pytorch_geometric/pytorch_geometric/test/utils/test_undirected.py", line 24
+E           @torch.jit.script
+E           def jit(edge_index: Tensor) -> bool:
+E               return is_undirected(edge_index)
+E                      ~~~~~~~~~~~~~~~~~~~~~~~~ <--- HERE
+
+/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/torch/jit/_script.py:1472: RuntimeError
+______________________________ test_to_undirected ______________________________
+
+    def test_to_undirected():
+        row = torch.tensor([0, 1, 1])
+        col = torch.tensor([1, 0, 2])
+    
+        edge_index = to_undirected(torch.stack([row, col], dim=0))
+        assert edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    
+        @torch.jit.script
+>       def jit(edge_index: Tensor) -> Tensor:
+
+test/utils/test_undirected.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/torch/jit/_script.py:1429: in script
+    ret = _script_impl(
+/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/torch/jit/_script.py:1205: in _script_impl
+    fn = torch._C._jit_script_compile(
+/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/torch/jit/_script.py:1499: in _get_overloads
+    _compile_function_with_overload(overload_fn, qual_name, obj)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+overload_fn = <function to_undirected at 0x7fadadcd8af0>
+qual_name = '__torch__.torch_geometric.utils.undirected.to_undirected'
+impl_fn = <function to_undirected at 0x7fadadcd8c10>
+
+    def _compile_function_with_overload(overload_fn, qual_name, impl_fn):
+        overload_decl = get_jit_def(overload_fn, overload_fn.__name__).decl()
+        overload_signature = torch.jit.annotations.get_signature(
+            overload_fn, None, None, inspect.ismethod(overload_fn)
+        )
+        impl_ast = get_jit_def(impl_fn, impl_fn.__name__)
+        overload_defaults = get_default_args(overload_fn)
+        implementation_defaults = get_default_args(impl_fn)
+        _rcb = _jit_internal.createResolutionCallbackFromClosure(impl_fn)
+        _check_overload_defaults(
+            implementation_defaults, overload_defaults, overload_decl.range()
+        )
+>       fn = torch._C._jit_script_compile_overload(
+            qual_name,
+            overload_decl,
+            impl_ast,
+            _rcb,
+            implementation_defaults,
+            overload_signature,
+        )
+E       RuntimeError: 
+E       Cannot re-assign 'edge_attr' to a value of type python value of type 'str' because edge_attr is not a first-class value.  Only reassignments to first-class values are allowed:
+E         File "/home/runner/work/pytorch_geometric/pytorch_geometric/torch_geometric/utils/undirected.py", line 198
+E           if isinstance(edge_attr, int):
+E               num_nodes = edge_attr
+E               edge_attr = MISSING
+E               ~~~~~~~~~ <--- HERE
+E       
+E           row, col = edge_index[0], edge_index[1]
+E       'to_undirected' is being compiled since it was called from 'jit'
+E         File "/home/runner/work/pytorch_geometric/pytorch_geometric/test/utils/test_undirected.py", line 38
+E           @torch.jit.script
+E           def jit(edge_index: Tensor) -> Tensor:
+E               return to_undirected(edge_index)
+E                      ~~~~~~~~~~~~~~~~~~~~~~~~ <--- HERE
+
+/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/torch/jit/_script.py:1472: RuntimeError
+=============================== warnings summary ===============================
+torch_geometric/graphgym/config.py:19
+  /home/runner/work/pytorch_geometric/pytorch_geometric/torch_geometric/graphgym/config.py:19: UserWarning: Could not define global config object. Please install 'yacs' via 'pip install yacs' in order to use GraphGym
+    warnings.warn("Could not define global config object. Please install "
+
+torch_geometric/graphgym/imports.py:14
+  /home/runner/work/pytorch_geometric/pytorch_geometric/torch_geometric/graphgym/imports.py:14: UserWarning: Please install 'pytorch_lightning' via  'pip install pytorch_lightning' in order to use GraphGym
+    warnings.warn("Please install 'pytorch_lightning' via  "
+
+test/data/test_large_graph_indexer.py::test_save_load
+  /home/runner/work/pytorch_geometric/pytorch_geometric/torch_geometric/data/large_graph_indexer.py:508: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+    indexer.node_attr[key] = torch.load(full_fname)
+
+test/data/test_large_graph_indexer.py::test_save_load
+  /home/runner/work/pytorch_geometric/pytorch_geometric/torch_geometric/data/large_graph_indexer.py:514: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+    indexer.edge_attr[key] = torch.load(full_fname)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED test/test_inspector.py::test_type_repr - AssertionError: assert 'typing.Final[Optional[typing.Any]]' == 'typing.Final[Optional[Tensor]]'
+  
+  - typing.Final[Optional[Tensor]]
+  ?                       ^^ ^^^
+  + typing.Final[Optional[typing.Any]]
+  ?                       ^^^^ ^^^^^
+FAILED test/utils/test_coalesce.py::test_coalesce_jit - RuntimeError: 
+Arguments for call are not valid.
+The following variants are available:
+  
+  coalesce(Tensor edge_index, str edge_attr="???", int? num_nodes=None, str reduce="sum", bool is_sorted=False, bool sort_by_row=True) -> Tensor:
+  Expected a value of type 'str' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+  
+  coalesce(Tensor edge_index, Tensor edge_attr, int? num_nodes=None, str reduce="sum", bool is_sorted=False, bool sort_by_row=True) -> ((Tensor, Tensor)):
+  Expected a value of type 'Tensor' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+  
+  coalesce(Tensor edge_index, Tensor? edge_attr, int? num_nodes=None, str reduce="sum", bool is_sorted=False, bool sort_by_row=True) -> ((Tensor, Tensor?)):
+  Expected a value of type 'Optional[Tensor]' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+  
+  coalesce(Tensor edge_index, Tensor[] edge_attr, int? num_nodes=None, str reduce="sum", bool is_sorted=False, bool sort_by_row=True) -> ((Tensor, Tensor[])):
+  Expected a value of type 'List[Tensor]' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+
+The original call is:
+  File "/home/runner/work/pytorch_geometric/pytorch_geometric/test/utils/test_coalesce.py", line 66
+        edge_attr: Optional[Tensor],
+    ) -> Tuple[Tensor, Optional[Tensor]]:
+        return coalesce(edge_index, edge_attr)
+               ~~~~~~~~ <--- HERE
+FAILED test/utils/test_sort_edge_index.py::test_sort_edge_index_jit - RuntimeError: 
+Arguments for call are not valid.
+The following variants are available:
+  
+  sort_edge_index(Tensor edge_index, str edge_attr="???", int? num_nodes=None, bool sort_by_row=True) -> Tensor:
+  Expected a value of type 'str' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+  
+  sort_edge_index(Tensor edge_index, Tensor edge_attr, int? num_nodes=None, bool sort_by_row=True) -> ((Tensor, Tensor)):
+  Expected a value of type 'Tensor' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+  
+  sort_edge_index(Tensor edge_index, Tensor? edge_attr, int? num_nodes=None, bool sort_by_row=True) -> ((Tensor, Tensor?)):
+  Expected a value of type 'Optional[Tensor]' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+  
+  sort_edge_index(Tensor edge_index, Tensor[] edge_attr, int? num_nodes=None, bool sort_by_row=True) -> ((Tensor, Tensor[])):
+  Expected a value of type 'List[Tensor]' for argument 'edge_attr' but instead found type 'Optional[Any]'.
+
+The original call is:
+  File "/home/runner/work/pytorch_geometric/pytorch_geometric/test/utils/test_sort_edge_index.py", line 52
+        edge_attr: Optional[Tensor],
+    ) -> Tuple[Tensor, Optional[Tensor]]:
+        return sort_edge_index(edge_index, edge_attr)
+               ~~~~~~~~~~~~~~~ <--- HERE
+FAILED test/utils/test_undirected.py::test_is_undirected - RuntimeError: 
+Variable 'edge_attrs' previously had type List[Tensor] but is now being assigned to a value of type Union[list, tuple]
+:
+  File "/home/runner/work/pytorch_geometric/pytorch_geometric/torch_geometric/utils/undirected.py", line 74
+        edge_attrs.append(edge_attr)
+    elif isinstance(edge_attr, (list, tuple)):
+        edge_attrs = edge_attr
+        ~~~~~~~~~~ <--- HERE
+
+    edge_index1, edge_attrs1 = sort_edge_index(
+'is_undirected' is being compiled since it was called from 'jit'
+  File "/home/runner/work/pytorch_geometric/pytorch_geometric/test/utils/test_undirected.py", line 24
+    @torch.jit.script
+    def jit(edge_index: Tensor) -> bool:
+        return is_undirected(edge_index)
+               ~~~~~~~~~~~~~~~~~~~~~~~~ <--- HERE
+FAILED test/utils/test_undirected.py::test_to_undirected - RuntimeError: 
+Cannot re-assign 'edge_attr' to a value of type python value of type 'str' because edge_attr is not a first-class value.  Only reassignments to first-class values are allowed:
+  File "/home/runner/work/pytorch_geometric/pytorch_geometric/torch_geometric/utils/undirected.py", line 198
+    if isinstance(edge_attr, int):
+        num_nodes = edge_attr
+        edge_attr = MISSING
+        ~~~~~~~~~ <--- HERE
+
+    row, col = edge_index[0], edge_index[1]
+'to_undirected' is being compiled since it was called from 'jit'
+  File "/home/runner/work/pytorch_geometric/pytorch_geometric/test/utils/test_undirected.py", line 38
+    @torch.jit.script
+    def jit(edge_index: Tensor) -> Tensor:
+        return to_undirected(edge_index)
+               ~~~~~~~~~~~~~~~~~~~~~~~~ <--- HERE
+```
+
+```
+FAILED test/explain/algorithm/test_explain_algorithm_utils.py::test_set_clear_mask - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+FAILED test/nn/test_sequential.py::test_sequential_to_hetero - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+FAILED test/nn/test_to_fixed_size_transformer.py::test_to_fixed_size - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+FAILED test/nn/test_to_hetero_transformer.py::test_to_hetero_basic - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+FAILED test/nn/test_to_hetero_transformer.py::test_to_hetero_with_gcn - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+FAILED test/nn/test_to_hetero_transformer.py::test_to_hetero_with_basic_model - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+FAILED test/nn/test_to_hetero_transformer.py::test_to_hetero_and_rgcn_equal_output - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+FAILED test/nn/test_to_hetero_transformer.py::test_graph_level_to_hetero - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+FAILED test/nn/test_to_hetero_transformer.py::test_hetero_transformer_self_loop_error - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+FAILED test/nn/test_to_hetero_transformer.py::test_to_hetero_validate - Failed: DID NOT WARN. No warnings of type (<class 'UserWarning'>,) were emitted.
+ Emitted warnings: [].
+FAILED test/nn/test_to_hetero_transformer.py::test_to_hetero_on_static_graphs - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+FAILED test/nn/test_to_hetero_with_bases_transformer.py::test_to_hetero_with_bases - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+FAILED test/nn/test_to_hetero_with_bases_transformer.py::test_to_hetero_with_bases_and_rgcn_equal_output - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+FAILED test/nn/test_to_hetero_with_bases_transformer.py::test_to_hetero_with_bases_validate - Failed: DID NOT WARN. No warnings of type (<class 'UserWarning'>,) were emitted.
+ Emitted warnings: [].
+FAILED test/nn/test_to_hetero_with_bases_transformer.py::test_to_hetero_with_bases_on_static_graphs - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+FAILED test/nn/test_to_hetero_with_bases_transformer.py::test_to_hetero_with_bases_save - AttributeError: module 'torch.fx._symbolic_trace' has no attribute 'List'
+```
+
+### Versions
+
+latest

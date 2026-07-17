@@ -1,0 +1,2 @@
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Blocked: no CUDA GPU is available, so the SM90 FlashAttention 4 path cannot be exercised here.

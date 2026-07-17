@@ -1,0 +1,33 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3156
+
+TITLE
+[Bug] Infinite loop in `HMC._find_reasonable_step_size`
+
+BODY
+### Issue Description
+In some edge cases, the while loop in `HMC._find_reasonable_step_size` never exits and becomes an infinite loop. This happens because the `direction` never changes and the `step_size` eventually becomes `0`. The below printout of `t` & `step_size` shows an example of this. 
+
+<img width="450" alt="Screen Shot 2022-11-18 at 11 34 59 PM" src="https://user-images.githubusercontent.com/9263852/203143099-00723668-88f4-4e34-b9f2-97e8f7a5ae58.png">
+
+### Environment
+For any bugs, please provide the following:
+ - OS and python version: CentOS 8, Python 3.8
+ - PyTorch version, or if relevant, output of `pip freeze`. Latest main.
+ - Pyro version: output of `python -c 'import pyro; print pyro.__version__'` 1.5.2 (checked that the error is not fixed in latest)
+
+### Code Snippet
+Unfortunately, I do not have a clean code snippet that reproduces the issue. I have extracted the `HMC` object and the input `z` that produces the infinite loop and used `torch.save` to save them. With the attached output, run
+```
+import torch
+save_dict = torch.load("/home/saitcakmak/pyro_debug.pt")  # update the file path
+save_dict["hmc"]._find_reasonable_step_size(save_dict["z"])
+```
+[pyro_debug.pt.zip](https://github.com/pyro-ppl/pyro/files/10060315/pyro_debug.pt.zip)
+
+### Quick fix
+For a hot-fix, I updated the following line
+https://github.com/pyro-ppl/pyro/blob/8b7e5641228b664b3c9b674a079e95a478f3e2a0/pyro/infer/mcmc/hmc.py#L193
+with `while direction_new == direction and step_size > 1e-100:` which prevents the infinite loop.
+
+cc @dme65, @balandat
+

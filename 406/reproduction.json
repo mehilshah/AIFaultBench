@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned source defines `Ideogram4LoraLoaderMixin` with `load_lora_weights()` in `codebase/src/diffusers/loaders/lora_pipeline.py`.",
+    "`codebase/src/diffusers/modular_pipelines/ideogram4/modular_pipeline.py` defines `Ideogram4ModularPipeline(ModularPipeline)` with no LoRA mixin.",
+    "Repro output confirms `ideogram4_modular_pipeline_bases = ['ModularPipeline']` and `flux_modular_pipeline_bases = ['ModularPipeline', 'FluxLoraLoaderMixin', 'TextualInversionLoaderMixin']`."
+  ],
+  "steps": [
+    "Inspect the pinned diffusers source for `Ideogram4ModularPipeline` and the Ideogram4 LoRA mixin.",
+    "Run `bash run_repro.sh` to parse the source and compare the modular pipeline base classes.",
+    "Observe the failing check that `Ideogram4ModularPipeline` does not inherit `Ideogram4LoraLoaderMixin`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

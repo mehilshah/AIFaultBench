@@ -1,0 +1,10 @@
+{
+  "title": "TensorFlow Object Detection import fails on removed tf.keras.layers.experimental",
+  "source_bug_report": "bug_report.txt",
+  "entrypoint": "run_repro.sh",
+  "reproduction_command": "bash run_repro.sh",
+  "python_path": "codebase/research",
+  "dependencies": [
+    "tensorflow==2.18.0"
+  ]
+}

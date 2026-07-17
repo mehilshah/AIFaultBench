@@ -1,0 +1,32 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/13979
+
+TITLE
+Can't use `load_lora_weights()` on `Ideogram4ModularPipeline`
+
+BODY
+Hello,
+
+When I try to load a LoRA with `load_lora_weights()` directly on a modular Ideogram 4 pipeline, library crashes saying such method doesn't exist.
+
+### Reproduction
+
+```python
+manager = ComponentsManager()
+
+pipe = ModularPipeline.from_pretrained(
+    "CalamitousFelicitousness/Ideogram-4-bf16-Diffusers",
+    components_manager=manager,
+)
+
+pipe.load_lora_weights(...)
+```
+
+### System Info
+
+Diffusers: 3467efa65a27e4b4c3caa6e01ebb9ca035e14674
+Platform: Windows
+Python: 3.13
+
+### Who can help?
+
+@yiyixuxu @sayakpaul

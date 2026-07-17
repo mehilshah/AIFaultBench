@@ -1,0 +1,18 @@
+{
+  "reproducible": true,
+  "diagnostic_score": 0.9047619047619048,
+  "data_structure": {
+    "Table": {
+      "0": "Players",
+      "1": "Actions"
+    },
+    "Metric": {
+      "0": "TableStructure",
+      "1": "TableStructure"
+    },
+    "Score": {
+      "0": 1.0,
+      "1": 0.42857142857142855
+    }
+  }
+}

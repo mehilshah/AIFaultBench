@@ -1,0 +1,77 @@
+Title: Metadata validation does not catch the case where a foreign key is reused
+Date: 2025-04-09T20:17:54+00:00
+URL: https://github.com/sdv-dev/SDV/issues/2453
+
+Description:
+### Environment Details
+* SDV version: 1.19.0
+* Python version: 3.11
+* Operating System: Linux (Colab notebook)
+
+### Error Description
+Given a column, it should only be possible to list it as a foreign key _once_ in the `'relationships'` portion of my metadata. It does not make sense for this same column to be listed multiple times as a foreign key to different tables; it is not possible for a single column to simultaneously refer to multiple, different columns.
+
+### Steps to reproduce
+The example below creates a metadata that lists the _same_ foreign key column twice in the `'relationships'` section -- once as linking to table `'A'` and once as linking to table `'B'`. This should not be possible, as the same column cannot be simultaneously linking to 2 different parent tables.
+
+
+<img width="868" alt="Image" src="https://github.com/user-attachments/assets/d8c992ae-5f59-49ad-82ba-350fd3248166" />
+
+Yet, this validates without any errors:
+
+```python
+from sdv.metadata import Metadata
+
+metadata = Metadata.load_from_dict({
+    'tables': {
+        'A': {
+            'primary_key': 'id',
+            'columns': {
+                'id': { 'sdtype': 'id'},
+            }
+        },
+        'B': {
+            'primary_key': 'id',
+            'columns': {
+                'id': { 'sdtype': 'id'},
+            }
+        },
+        'C': {
+            'columns': {
+                'parent_id': { 'sdtype': 'id'},
+            }
+        }
+    },
+    'relationships': [{
+        'parent_table_name': 'A',
+        'parent_primary_key': 'id',
+        'child_table_name': 'C',
+        'child_foreign_key': 'parent_id'
+    },{
+        'parent_table_name': 'B',
+        'parent_primary_key': 'id',
+        'child_table_name': 'C',
+        'child_foreign_key': 'parent_id'
+    }]
+})
+
+metadata.validate()
+```
+
+### Expected Behavior
+The metadata `validate` should make sure that a given column only appears as a foreign key _once_ (within all the relationships listed). If this is not true, I expect an `InvalidMetadataError` to be thrown.
+
+The error can describe which relationships are having issues. It can list the offending instance(s), when we detect that the foreign key is being re-used.
+
+```
+InvalidMetadataError: The metadata is not valid
+Relationships:
+Relationship between tables (B, C) uses a foreign key column ('parent_id') that is already used in another relationship.
+```
+
+### Additional Context
+Such a relationship would imply that table A's primary key and table B's primary key are completely in-sync. The recommended solution is to then list a [PrimaryToPrimaryKey pattern](https://docs.sdv.dev/sdv/reference/constraints/constraint-augmented-generation-cag/primarytoprimarykey) between table's A and B. Meanwhile, C should only link to _one of them_.
+
+Currently, when you give SDV the (incorrect) schema: 
+- HMA will ultimately crash during fitting with `KeyError: 'parent_id'`
+- HSA will not crash and will successfully sample data. However, the relationship validity will only be guaranteed for _one_ of the relationships listed (not both). The diagnostic score will not be 1.0.

@@ -1,0 +1,4 @@
+command: nvcc -std=c++17 -arch=sm_80 -c 303/fp_quantizer_warning_repro.cu -o 303/fp_quantizer_warning_repro.o
+returncode: 0
+warnings_found: 2
+reproducible: True

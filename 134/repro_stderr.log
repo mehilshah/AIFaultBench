@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "134/repro.py", line 10, in main
+    from flair.datasets import WIKINER_FRENCH  # noqa: F401
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ImportError: cannot import name 'WIKINER_FRENCH' from 'flair.datasets' (134/codebase/flair/datasets/__init__.py)

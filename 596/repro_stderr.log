@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "596/repro.py", line 42, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "596/repro.py", line 35, in main
+    sample = scheduler.step(model_output, timestep, sample).prev_sample
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "596/codebase/src/diffusers/schedulers/scheduling_unipc_multistep.py", line 1217, in step
+    prev_sample = self.multistep_uni_p_bh_update(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "596/codebase/src/diffusers/schedulers/scheduling_unipc_multistep.py", line 907, in multistep_uni_p_bh_update
+    rks = torch.stack(rks)
+          ^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but got tensors is on cuda:0, different from other tensors on cpu (when checking argument in method wrapper_CUDA_cat)

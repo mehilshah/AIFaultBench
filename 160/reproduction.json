@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Two Point instances with identical measurement, tags, fields, and timestamp produced identical line protocol, but `point_a == point_b` evaluated to `False` in the local snapshot.",
+  "steps": [
+    "Created a self-contained virtual environment and installed the local `codebase/` in editable mode with its runtime dependencies.",
+    "Ran `repro.py` with two structurally identical `Point` objects.",
+    "Observed `line_protocol_equal: True` and `point_equality: False` in `repro_stdout.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

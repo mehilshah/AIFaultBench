@@ -1,0 +1,17 @@
+torch=2.9.0+cu128
+cuda_device=NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition
+{
+  "baseline_seconds": 0.009554077095041672,
+  "cuda_device": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+  "input_shape": [
+    1,
+    3,
+    320,
+    320
+  ],
+  "mode": "full",
+  "model_name": "convnext_large_in22ft1k",
+  "patched_seconds": 0.010003208958854279,
+  "ratio": 0.9551012214520361,
+  "torch_version": "2.9.0+cu128"
+}

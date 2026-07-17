@@ -1,0 +1,11 @@
+{
+  "blocking_reason": "The current PEFT snapshot appears to already handle the prefix-tuning past_key_values path.",
+  "evidence": "No TypeError was raised when passing past_key_values through prefix tuning.",
+  "reproducible": false,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Created a tiny GPT-2 causal LM and wrapped it with PrefixTuningConfig.",
+    "Called PeftModelForCausalLM.forward() with a caller-supplied past_key_values kwarg.",
+    "The call completed successfully, so the historical duplicate-keyword bug was not reproduced."
+  ]
+}

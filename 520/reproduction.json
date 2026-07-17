@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With the local codebase and a CPU runtime using jaxlib 0.10.1, the reproducer prints jit(vmap(f))(x): [3.4028235e+38] and vmap(f)(x): [inf], then fails the allclose assertion.",
+  "steps": [
+    "Run bash setup_env.sh to create .venv and install numpy, scipy, ml_dtypes, opt_einsum, jaxlib, and the local codebase in editable mode.",
+    "Run bash run_repro.sh.",
+    "Observe that the JIT-compiled vmapped path returns 3.4028235e+38 while the eager vmapped path returns inf, causing AssertionError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh > repro_stdout.log 2> repro_stderr.log || true"
+}

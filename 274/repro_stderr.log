@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "274/repro.py", line 125, in <module>
+    main()
+  File "274/repro.py", line 120, in main
+    raise AssertionError("\n".join(issues))
+AssertionError: VisionTransformer.no_weight_decay() is missing 'reg_token'.
+VisionTransformer reg_token is in a different layer-decay group than cls_token: cls_token={'group': 0, 'lr_scale': 0.5625, 'weight_decay': 0.0, 'names': ['cls_token', 'pos_embed', 'patch_embed.proj.bias']}, reg_token={'group': 1, 'lr_scale': 1.0, 'weight_decay': 0.05, 'names': ['reg_token']}.
+Eva.no_weight_decay() is missing 'reg_token'.
+Eva reg_token is in a different layer-decay group than cls_token: cls_token={'group': 0, 'lr_scale': 0.5625, 'weight_decay': 0.0, 'names': ['cls_token', 'pos_embed', 'patch_embed.proj.bias']}, reg_token={'group': 1, 'lr_scale': 1.0, 'weight_decay': 0.05, 'names': ['reg_token']}.

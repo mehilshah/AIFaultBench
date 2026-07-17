@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "timm.list_models('*faster*') returned ['fasternet_l', 'fasternet_m', 'fasternet_s', 'fasternet_t0', 'fasternet_t1', 'fasternet_t2']",
+    "timm.create_model('fasternet_l.in1k', pretrained=False) returned FasterNet"
+  ],
+  "steps": [
+    "Create a clean CPU-only virtualenv",
+    "Install torch, torchvision, and the project dependencies",
+    "Run repro.py against the local codebase"
+  ],
+  "blocking_reason": "The reported bug does not occur in this codebase snapshot.",
+  "reproduction_command": "bash run_repro.sh"
+}

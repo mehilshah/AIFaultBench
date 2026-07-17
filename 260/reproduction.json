@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` prints `before add_constraints` and then fails with `sdv.cag._errors.ConstraintNotMetError: Table 'parent' is missing columns 'colB'.` The traceback originates in `sdv/multi_table/base.py:229` while applying the second overlapping `Inequality` constraint.",
+  "steps": [
+    "Create a parent/child multi-table dataset with `parent` containing `colA`, `colB`, and `colC`.",
+    "Detect metadata from the dataframes and instantiate `HMASynthesizer(metadata)`.",
+    "Add two overlapping `Inequality` constraints on the `parent` table: `colA < colB` and `colB < colC`.",
+    "Call `synthesizer.add_constraints([constraint1, constraint2])`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,12 @@
+{
+  "bug_id": "046",
+  "bug_dir": "046",
+  "issue_url": "https://github.com/facebookresearch/fairseq/issues/5242",
+  "commit_hash": "100cd91db19bb27277a06a25eb4154c805b10189",
+  "library_name": "fairseq",
+  "library_version": "torch 2.5.1+cu124 / torchaudio 2.5.1+cu124",
+  "bug_report_source": "bug_report/046.txt",
+  "codebase_source": "facebookresearch/fairseq@100cd91db19bb27277a06a25eb4154c805b10189",
+  "codebase_present": "true",
+  "standardized_dir": "../046"
+}

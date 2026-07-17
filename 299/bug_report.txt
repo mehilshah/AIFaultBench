@@ -1,0 +1,137 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/47277
+
+TITLE
+Bug: `pthread_cond_clockwait` error in Termux/Android because of `esaxx-rs`
+
+BODY
+### System Info
+
+Symptoms: 
+```
+     Compiling console v0.16.1
+  warning: esaxx-rs@0.1.10: In file included from src/esaxx.cpp:621:
+  warning: esaxx-rs@0.1.10: In file included from src/esa.hxx:30:
+  warning: esaxx-rs@0.1.10: In file included from /data/data/com.termux/files/usr/bin/../../usr/include/c++/v1/vector:363:
+  warning: esaxx-rs@0.1.10: In file included from /data/data/com.termux/files/usr/bin/../../usr/include/c++/v1/locale:209:
+  warning: esaxx-rs@0.1.10: In file included from /data/data/com.termux/files/usr/bin/../../usr/include/c++/v1/__locale_dir/pad_and_output.h:16:
+  warning: esaxx-rs@0.1.10: In file included from /data/data/com.termux/files/usr/bin/../../usr/include/c++/v1/ios:888:
+  warning: esaxx-rs@0.1.10: In file included from /data/data/com.termux/files/usr/bin/../../usr/include/c++/v1/mutex:194:
+  warning: esaxx-rs@0.1.10: /data/data/com.termux/files/usr/bin/../../usr/include/c++/v1/__condition_variable/condition_variable.h:226:14: error: use of undeclared identifier 'pthread_cond_clockwait'
+  warning: esaxx-rs@0.1.10:   226 |   int __ec = pthread_cond_clockwait(&__cv_, __lk.mutex()->native_handle(), CLOCK_MONOTONIC, &__ts);
+  warning: esaxx-rs@0.1.10:       |              ^~~~~~~~~~~~~~~~~~~~~~
+  warning: esaxx-rs@0.1.10: 1 error generated.
+  error: failed to run custom build command for `esaxx-rs v0.1.10`
+
+  Caused by:
+    process didn't exit successfully: `/data/data/com.termux/files/usr/tmp/pip-install-4dlvqlrm/tokenizers_1454457feb064eaaa62c3b4a88926311/bindings/python/target/release/build/esaxx-rs-803693b310fbc8df/build-script-build` (exit status: 1)
+    --- stdout
+    OUT_DIR = Some(/data/data/com.termux/files/usr/tmp/pip-install-4dlvqlrm/tokenizers_1454457feb064eaaa62c3b4a88926311/bindings/python/target/release/build/esaxx-rs-77bf0203313ae7ad/out)
+    OPT_LEVEL = Some(2)
+    TARGET = Some(aarch64-linux-android)
+    CARGO_ENCODED_RUSTFLAGS = Some()
+    HOST = Some(aarch64-linux-android)
+    cargo:rerun-if-env-changed=CXX_aarch64-linux-android
+    CXX_aarch64-linux-android = None
+    cargo:rerun-if-env-changed=CXX_aarch64_linux_android
+    CXX_aarch64_linux_android = None
+    cargo:rerun-if-env-changed=HOST_CXX
+    HOST_CXX = None
+    cargo:rerun-if-env-changed=CXX
+    CXX = Some(clang++)
+    cargo:rerun-if-env-changed=CC_KNOWN_WRAPPER_CUSTOM
+    CC_KNOWN_WRAPPER_CUSTOM = None
+    RUSTC_WRAPPER = None
+    cargo:rerun-if-env-changed=CC_ENABLE_DEBUG_OUTPUT
+    cargo:rerun-if-env-changed=CRATE_CC_NO_DEFAULTS
+    CRATE_CC_NO_DEFAULTS = None
+    DEBUG = Some(false)
+    cargo:rerun-if-env-changed=CXXFLAGS
+    CXXFLAGS = Some( -Wno-c2y-extensions -Wno-unused-variable -Wno-error=c2y-extensions -fvisibility=default -Wno-incompatible-pointer-types -Wno-incompatible-function-pointer-types -Wno-ignored-qualifiers -Wno-error=implicit-function-declaration -fpermissive -Wno-unsafe-buffer-usage -Wno-tautological-unsigned-char-zero-compare  -D_GNU_SOURCE -I/data/data/com.termux/files/usr/include/kineto)
+    cargo:rerun-if-env-changed=CC_SHELL_ESCAPED_FLAGS
+    CC_SHELL_ESCAPED_FLAGS = None
+    cargo:rerun-if-env-changed=HOST_CXXFLAGS
+    HOST_CXXFLAGS = None
+    cargo:rerun-if-env-changed=CXXFLAGS_aarch64_linux_android
+    CXXFLAGS_aarch64_linux_android = None
+    cargo:rerun-if-env-changed=CXXFLAGS_aarch64-linux-android
+    CXXFLAGS_aarch64-linux-android = None
+    cargo:warning=In file included from src/esaxx.cpp:621:
+    cargo:warning=In file included from src/esa.hxx:30:
+    cargo:warning=In file included from /data/data/com.termux/files/usr/bin/../../usr/include/c++/v1/vector:363:
+    cargo:warning=In file included from /data/data/com.termux/files/usr/bin/../../usr/include/c++/v1/locale:209:
+    cargo:warning=In file included from /data/data/com.termux/files/usr/bin/../../usr/include/c++/v1/__locale_dir/pad_and_output.h:16:
+    cargo:warning=In file included from /data/data/com.termux/files/usr/bin/../../usr/include/c++/v1/ios:888:
+    cargo:warning=In file included from /data/data/com.termux/files/usr/bin/../../usr/include/c++/v1/mutex:194:
+    cargo:warning=/data/data/com.termux/files/usr/bin/../../usr/include/c++/v1/__condition_variable/condition_variable.h:226:14: error: use of undeclared identifier 'pthread_cond_clockwait'
+    cargo:warning=  226 |   int __ec = pthread_cond_clockwait(&__cv_, __lk.mutex()->native_handle(), CLOCK_MONOTONIC, &__ts);
+    cargo:warning=      |              ^~~~~~~~~~~~~~~~~~~~~~
+    cargo:warning=1 error generated.
+
+    --- stderr
+
+
+    error occurred in cc-rs: command did not execute successfully (status code exit status: 1): LC_ALL="C" "clang++" "-O2" "-DANDROID" "-ffunction-sections" "-fdata-sections" "-fPIC" "--target=aarch64-linux-android" "-I" "src" "-std=c++11" "-Wno-c2y-extensions" "-Wno-unused-variable" "-Wno-error=c2y-extensions" "-fvisibility=default" "-Wno-incompatible-pointer-types" "-Wno-incompatible-function-pointer-types" "-Wno-ignored-qualifiers" "-Wno-error=implicit-function-declaration" "-fpermissive" "-Wno-unsafe-buffer-usage" "-Wno-tautological-unsigned-char-zero-compare" "-D_GNU_SOURCE" "-I/data/data/com.termux/files/usr/include/kineto" "-o" "/data/data/com.termux/files/usr/tmp/pip-install-4dlvqlrm/tokenizers_1454457feb064eaaa62c3b4a88926311/bindings/python/target/release/build/esaxx-rs-77bf0203313ae7ad/out/0602fb52cb66f316-esaxx.o" "-c" "src/esaxx.cpp"
+```
+
+on: 
+
+```
+u0_a278@localhost
+-----------------
+OS: Android REL 11 aarch64
+Host: realme 8 (RMX3085)
+Kernel: Linux 4.14.186+
+Uptime: 1 day, 14 hours, 34 mins
+Packages: 940 (dpkg), 142 (pacman)
+Shell: bash 5.3.9
+DE: RMX3085_11_A.26
+```
+
+newest Termux. 
+
+My flags: 
+```
+CXXFLAGS= -Wno-c2y-extensions -Wno-unused-variable -Wno-error=c2y-extensions -fvisibility=default -Wno-incompatible-pointer-types -Wno-incompatible-function-pointer-types -Wno-ignored-qualifiers -Wno-error=implicit-function-declaration -fpermissive -Wno-unsafe-buffer-usage -Wno-tautological-unsigned-char-zero-compare  -D_GNU_SOURCE -I/data/data/com.termux/files/usr/include/kineto
+LDFLAGS=-llog -largp -lm  -largp -lpython3 -lpthread
+CFLAGS= -Wno-c2y-extensions -Wno-unused-variable -Wno-error=c2y-extensions -fvisibility=default -Wno-incompatible-pointer-types -Wno-incompatible-function-pointer-types -Wno-ignored-qualifiers -Wno-error=implicit-function-declaration -fpermissive -Wno-unsafe-buffer-usage -Wno-tautological-unsigned-char-zero-compare  -D_GNU_SOURCE -I/data/data/com.termux/files/usr/include/kineto
+```
+and `-lpthread` does not help here, while it should. 
+
+I have deja vu that I have solved it elegantly some versions ago, as : 
+```
+pip show transformers
+Name: transformers
+Version: 5.13.0
+```
+
+ but cannot find any https://github.com/huggingface/transformers/issues?q=is%3Aissue%20Android or https://github.com/huggingface/transformers/issues?q=is%3Aissue%20Termux so have to ferret how I had done it... 
+
+
+
+
+
+### Who can help?
+
+_No response_
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+1. Have Droid
+2. Install `termux` off F-Droid for example. 
+3. `apt install` the usual compilation suspects. 
+4. `pip install --no-build-isolation transformers`  
+
+
+### Expected behavior
+
+`esaxx-rs` does not kvetch about pthreads and transformers get updated

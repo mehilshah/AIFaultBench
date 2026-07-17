@@ -1,0 +1,105 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/14114
+
+TITLE
+`_flash_3_varlen_hub` backend cannot handle non-contiguous mask
+
+BODY
+### Describe the bug
+
+Model like Qwen-Image typically has a non-contiguous mask, currently `_flash_3_varlen_hub` backend does not support this, and cause numerical error in forward and backward silently.
+
+### Reproduction
+
+We and produce the bug using the following code snippet
+
+```python
+"""
+Usage:
+    python test_fa3_mask.py
+"""
+
+import torch
+from diffusers import QwenImageTransformer2DModel
+
+MODEL_CONFIG = dict(
+    patch_size=2,
+    in_channels=16,
+    out_channels=4,
+    num_layers=2,
+    attention_head_dim=16,
+    num_attention_heads=4,
+    joint_attention_dim=16,
+    guidance_embeds=False,
+    axes_dims_rope=(8, 4, 4),
+)
+
+
+def forward(model, hidden_states, encoder_hidden_states, encoder_hidden_states_mask, latent_h):
+    inputs = dict(
+        hidden_states=hidden_states,
+        timestep=torch.full((hidden_states.shape[0],), 0.5, dtype=torch.float32, device=hidden_states.device),
+        encoder_hidden_states=encoder_hidden_states,
+        encoder_hidden_states_mask=encoder_hidden_states_mask,
+        img_shapes=[[(1, latent_h, latent_h)]] * hidden_states.shape[0],
+        return_dict=False,
+    )
+    with torch.no_grad():
+        return model(**inputs)[0].float()
+
+
+def main():
+    torch.manual_seed(42)
+    device = "cuda"
+    dtype = torch.bfloat16
+
+    # One copy with the buggy FA3 varlen backend, one with SDPA as reference.
+    model_fa3 = QwenImageTransformer2DModel(**MODEL_CONFIG).to(device, dtype).eval()
+    model_ref = QwenImageTransformer2DModel(**MODEL_CONFIG).to(device, dtype).eval()
+
+    model_fa3.set_attention_backend("_flash_3_varlen_hub")
+    model_ref.set_attention_backend("native")
+    model_ref.load_state_dict(model_fa3.state_dict(), strict=False)
+
+    B, latent_h, T = 2, 4, 8
+    H = MODEL_CONFIG["in_channels"]
+    D = MODEL_CONFIG["joint_attention_dim"]
+
+    hidden_states = torch.randn(B, latent_h * latent_h, H, device=device, dtype=dtype)
+    encoder_hidden_states = torch.randn(B, T, D, device=device, dtype=dtype)
+
+    # 1. Contiguous mask (all tokens valid) — both backends should agree.
+    mask_all = torch.ones(B, T, dtype=torch.bool, device=device)
+    c_out_fa3 = forward(model_fa3, hidden_states.clone(), encoder_hidden_states.clone(), mask_all, latent_h)
+    c_out_ref = forward(model_ref, hidden_states.clone(), encoder_hidden_states.clone(), mask_all, latent_h)
+    torch.testing.assert_close(c_out_fa3, c_out_ref, rtol=1e-2, atol=1e-2)
+
+    # 2. Non-contiguous mask (varying text lengths: 2 / 6 out of 8).
+    #    QwenImage's joint mask is [text_mask, image_mask], so with masked
+    #    text positions the valid token set is NOT a contiguous prefix.
+    mask_varlen = torch.zeros(B, T, dtype=torch.bool, device=device)
+    mask_varlen[0, :2] = True   # batch 0: only first 2 text tokens
+    mask_varlen[1, :6] = True   # batch 1: only first 6 text tokens
+    v_out_fa3 = forward(model_fa3, hidden_states.clone(), encoder_hidden_states.clone(), mask_varlen, latent_h)
+    v_out_ref = forward(model_ref, hidden_states.clone(), encoder_hidden_states.clone(), mask_varlen, latent_h)
+    torch.testing.assert_close(v_out_fa3, v_out_ref, rtol=1e-2, atol=1e-2)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+### Logs
+
+```log
+AssertionError: Tensor-likes are not close!
+```
+
+### System Info
+
+diffusers: main branch
+
+### Who can help?
+
+@sayakpaul 
+
+_No response_

@@ -1,0 +1,37 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/13484
+
+TITLE
+Lora loading fail on Flux 2 dev for FAL loras
+
+BODY
+I can't load some Fal loras on the Flux2.dev pipe:
+
+First example: "lovis93/Flux-2-Multi-Angles-LoRA-v2"
+
+### Reproduction
+
+
+To reproduce the bug:
+
+```python
+import torch
+from diffusers import Flux2Pipeline
+
+pipe = Flux2Pipeline.from_pretrained("black-forest-labs/FLUX.2-dev", torch_dtype=torch.bfloat16)
+pipe.load_lora_weights("lovis93/Flux-2-Multi-Angles-LoRA-v2")
+
+```
+
+### Logs
+
+```shell
+ValueError: `original_state_dict` should be empty at this point but has original_state_dict.keys()=dict_keys(['guidance_in.in_layer.lora_A.weight', 'guidance_in.in_layer.lora_B.weight', 'guidance_in.out_layer.lora_A.weight', 'guidance_in.out_layer.lora_B.weight']).
+```
+
+### System Info
+
+Diffusers commit 71a6fd9f0df04d3764dfa999268a05d87903a85a
+
+### Who can help?
+
+@yiyixuxu @DN6 @sayakpaul 

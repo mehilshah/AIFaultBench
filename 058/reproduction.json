@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "On TensorFlow 2.14.1 and KerasCV 0.6.4, fitting RetinaNet on a batch with zero ground-truth boxes triggers InvalidArgumentError at retina_net_label_encoder/GatherV2_1: indices[0,10000] = 0 is not in [0, 0).",
+  "steps": [
+    "Created a dense zero-box dataset with shape [2, 0, 4] for boxes and [2, 0] for classes.",
+    "Built keras_cv.models.RetinaNet with a no-download ResNet50 backbone preset.",
+    "Called model.fit for one step and observed the GatherV2 out-of-range failure in RetinaNetLabelEncoder."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

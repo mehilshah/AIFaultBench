@@ -1,0 +1,6 @@
+accepted_invalid_combo=True
+launcher_called=multi_gpu
+multi_gpu_flag=True
+num_processes=1
+num_machines=1
+evidence=launch_command dispatched the invalid combination to multi_gpu_launcher

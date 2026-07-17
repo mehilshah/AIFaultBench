@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` exits with code 1 and raises `RuntimeError: Given normalized_shape=[768], expected input with shape [*, 768], but got input of size[1, 256, 256]` when `CrossViT` processes a 1-channel image.",
+  "steps": [
+    "Create a `CrossViT` instance with the parameters from the issue report.",
+    "Pass a tensor with shape `1 x 1 x 256 x 256` to the model.",
+    "Observe the `LayerNorm` shape mismatch in `vit_pytorch/cross_vit.py` during the forward pass."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

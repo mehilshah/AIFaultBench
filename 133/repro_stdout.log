@@ -1,0 +1,7 @@
+Sentence[8]: "I am a student named John
+Smith." -> ["John Smith"/PER]
+Source Text: 'I am a student named John\nSmith.'
+Entity Start: 21
+Entity End: 31
+Entity Text: John Smith
+Entity in source text: 'John\nSmith'

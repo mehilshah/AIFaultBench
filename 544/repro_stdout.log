@@ -1,0 +1,2 @@
+REPRODUCED: load_lora_weights rejected the real checkpoint.
+ERROR: Invalid LoRA checkpoint. Make sure all LoRA param names contain `'lora'` substring.

@@ -1,0 +1,21 @@
+source tree: 024/codebase/research/delf
+checking package discovery...
+False
+['delf', 'delf.python', 'delf.protos', 'delf.python.examples', 'delf.python.pooling_layers', 'delf.python.normalization_layers', 'delf.python.training', 'delf.python.detect_to_retrieve', 'delf.python.training.global_features', 'delf.python.training.losses', 'delf.python.training.model']
+installing the package without extra deps...
+Processing ./codebase/research/delf
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Building wheels for collected packages: delf
+  Building wheel for delf (setup.py): started
+  Building wheel for delf (setup.py): finished with status 'done'
+  Created wheel for delf: filename=delf-2.0-py3-none-any.whl size=135285 sha256=834793024efac2248b61df368f23a5da99694f411854ba7847602cb1d3c4ce59
+  Stored in directory: /tmp/pip-ephem-wheel-cache-fmhkd8mi/wheels/a4/9c/0b/2875a935f87057f3749894682a826a5e187b539a829cc0889e
+Successfully built delf
+Installing collected packages: delf
+Successfully installed delf-2.0
+running import reproduction...
+{
+  "reproducible": true,
+  "evidence": "importing the installed delf package fails with the expected ModuleNotFoundError"
+}

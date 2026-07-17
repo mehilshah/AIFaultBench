@@ -1,0 +1,87 @@
+124/codebase/stable_baselines3/common/env_checker.py:122: UserWarning: Sequence observation space is not supported by Stable-Baselines3. You can pad your observation to have a fixed size instead.
+Note: The checks for returned values are skipped.
+  warnings.warn(
+Traceback (most recent call last):
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 305, in _check_returned_values
+    _check_obs(obs[key], observation_space.spaces[key], "reset")
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 208, in _check_obs
+    assert not isinstance(
+           ^^^^^^^^^^^^^^^
+AssertionError: The observation returned by the `reset()` method should be a single value, not a tuple
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "124/repro.py", line 125, in main
+    check_env(env)
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 482, in check_env
+    _check_returned_values(env, observation_space, action_space)
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 307, in _check_returned_values
+    raise AssertionError(f"Error while checking key={key}: " + str(e)) from e
+AssertionError: Error while checking key=seq: The observation returned by the `reset()` method should be a single value, not a tuple
+Traceback (most recent call last):
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 305, in _check_returned_values
+    _check_obs(obs[key], observation_space.spaces[key], "reset")
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 223, in _check_obs
+    assert observation_space.shape == obs.shape, (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: The observation returned by the `reset()` method does not match the shape of the given observation space Sequence(Box(-100.0, 100.0, (1,), float32), stack=True). Expected: None, actual shape: (3, 1)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "124/repro.py", line 125, in main
+    check_env(env)
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 482, in check_env
+    _check_returned_values(env, observation_space, action_space)
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 307, in _check_returned_values
+    raise AssertionError(f"Error while checking key={key}: " + str(e)) from e
+AssertionError: Error while checking key=seq: The observation returned by the `reset()` method does not match the shape of the given observation space Sequence(Box(-100.0, 100.0, (1,), float32), stack=True). Expected: None, actual shape: (3, 1)
+124/codebase/stable_baselines3/common/env_checker.py:111: UserWarning: The observation space is a Tuple, this is currently not supported by Stable Baselines3. However, you can convert it to a Dict observation space (cf. https://gymnasium.farama.org/api/spaces/composite/#dict). which is supported by SB3.
+  warnings.warn(
+Traceback (most recent call last):
+  File "124/repro.py", line 125, in main
+    check_env(env)
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 492, in check_env
+    _check_nan(env)
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 140, in _check_nan
+    vec_env = VecCheckNan(DummyVecEnv([lambda: env]))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "124/codebase/stable_baselines3/common/vec_env/dummy_vec_env.py", line 47, in __init__
+    self.buf_obs = OrderedDict([(k, np.zeros((self.num_envs, *tuple(shapes[k])), dtype=dtypes[k])) for k in self.keys])
+                                                              ^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not iterable
+Traceback (most recent call last):
+  File "124/repro.py", line 125, in main
+    check_env(env)
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 492, in check_env
+    _check_nan(env)
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 140, in _check_nan
+    vec_env = VecCheckNan(DummyVecEnv([lambda: env]))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "124/codebase/stable_baselines3/common/vec_env/dummy_vec_env.py", line 47, in __init__
+    self.buf_obs = OrderedDict([(k, np.zeros((self.num_envs, *tuple(shapes[k])), dtype=dtypes[k])) for k in self.keys])
+                                                              ^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not iterable
+Traceback (most recent call last):
+  File "124/repro.py", line 125, in main
+    check_env(env)
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 482, in check_env
+    _check_returned_values(env, observation_space, action_space)
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 309, in _check_returned_values
+    _check_obs(obs, observation_space, "reset")
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 208, in _check_obs
+    assert not isinstance(
+           ^^^^^^^^^^^^^^^
+AssertionError: The observation returned by the `reset()` method should be a single value, not a tuple
+Traceback (most recent call last):
+  File "124/repro.py", line 125, in main
+    check_env(env)
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 482, in check_env
+    _check_returned_values(env, observation_space, action_space)
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 309, in _check_returned_values
+    _check_obs(obs, observation_space, "reset")
+  File "124/codebase/stable_baselines3/common/env_checker.py", line 208, in _check_obs
+    assert not isinstance(
+           ^^^^^^^^^^^^^^^
+AssertionError: The observation returned by the `reset()` method should be a single value, not a tuple

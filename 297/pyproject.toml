@@ -1,0 +1,28 @@
+[project]
+name = "uv-pyg-repro"
+version = "0.0.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "torch==2.8.0",
+    "torchvision>=0.23.0",
+    "torch_geometric",
+]
+
+[tool.uv]
+managed = true
+find-links = ["https://data.pyg.org/whl/torch-2.8.0+cu128.html"]
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[[tool.uv.index]]
+name = "pyg"
+url = "https://data.pyg.org/whl/torch-2.8.0+cu128.html"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch" }
+torchvision = { index = "pytorch" }
+torch_geometric = { index = "pyg" }

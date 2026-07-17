@@ -1,0 +1,9 @@
+[2026-07-17 10:54:17,337] [WARNING] [real_accelerator.py:209:get_accelerator] Setting accelerator to CPU. If you have GPU or other accelerator, we were unable to detect it.
+begin bf16_optimizer
+MA 0.34 GB         Max_MA 0.34 GB         CA 0.34 GB         Max_CA 0 GB 
+CPU Virtual Memory:  used = 17.59 GB, percent = 7.0%
+end bf16_ optimizer
+MA 0.34 GB         Max_MA 0.34 GB         CA 0.34 GB         Max_CA 0 GB 
+CPU Virtual Memory:  used = 17.59 GB, percent = 7.0%
+constructed=BF16_Optimizer bf16_groups=0
+BUG REPRODUCED: IndexError: list index out of range

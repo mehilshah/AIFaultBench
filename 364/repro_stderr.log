@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "364/repro.py", line 41, in <module>
+    main()
+  File "364/repro.py", line 36, in main
+    load_checkpoint_and_dispatch(ModelWithNoneSubmodule(), str(checkpoint), device_map={"": "cpu"})
+  File "364/codebase/src/accelerate/big_modeling.py", line 613, in load_checkpoint_and_dispatch
+    load_checkpoint_in_model(
+  File "364/codebase/src/accelerate/utils/modeling.py", line 1751, in load_checkpoint_in_model
+    tied_params = find_tied_parameters(model)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "364/codebase/src/accelerate/utils/modeling.py", line 720, in find_tied_parameters
+    all_named_parameters = {name: param for name, param in _get_named_parameters(model, remove_duplicate=False)}
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "364/codebase/src/accelerate/utils/modeling.py", line 679, in _get_named_parameters
+    members = module._parameters.items()
+              ^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute '_parameters'

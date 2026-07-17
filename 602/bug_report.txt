@@ -1,0 +1,44 @@
+# recovered-from-issue: https://github.com/pytorch/rl/issues/3244
+
+TITLE
+[BUG] Unable to download VIP model weights
+
+BODY
+## Describe the bug
+
+Looks like the VIP pretrained model weights url is no longer working
+
+## To Reproduce
+
+```python
+from torchrl.envs.transforms import VIPTransform
+
+transform = VIPTransform(model_name='resnet50', download=True)
+```
+
+```bash
+Traceback (most recent call last):
+  File "/zdata/users/dpatel/HandObjFeatures/vip/test.py", line 4, in <module>
+    transform = VIPTransform(model_name='resnet50', download=True)
+  File "/home/ml/dpatel/miniconda3/envs/vip/lib/python3.9/site-packages/torchrl/envs/transforms/vip.py", line 224, in __init__
+    self._init()
+  File "/home/ml/dpatel/miniconda3/envs/vip/lib/python3.9/site-packages/torchrl/envs/transforms/vip.py", line 318, in _init
+    self[-1].load_weights(dir_prefix=self.download_path, tv_weights=None)
+  File "/home/ml/dpatel/miniconda3/envs/vip/lib/python3.9/site-packages/torchrl/envs/transforms/vip.py", line 150, in load_weights
+    self._load_weights(model_name, self, dir_prefix)
+  File "/home/ml/dpatel/miniconda3/envs/vip/lib/python3.9/site-packages/torchrl/envs/transforms/vip.py", line 116, in _load_weights
+    d = load_state_dict_from_url(
+  File "/home/ml/dpatel/miniconda3/envs/vip/lib/python3.9/site-packages/torch/hub.py", line 875, in load_state_dict_from_url
+    return torch.load(cached_file, map_location=map_location, weights_only=weights_only)
+  File "/home/ml/dpatel/miniconda3/envs/vip/lib/python3.9/site-packages/torch/serialization.py", line 1554, in load
+    return _legacy_load(
+  File "/home/ml/dpatel/miniconda3/envs/vip/lib/python3.9/site-packages/torch/serialization.py", line 1802, in _legacy_load
+    magic_number = pickle_m
+```
+
+## Checklist
+
+- [X] I have checked that there is no similar issue in the repo (**required**)
+- [X] I have read the [documentation](https://github.com/pytorch/rl/tree/main/docs/) (**required**)
+- [X] I have provided a minimal working example to reproduce the bug (**required**)
+

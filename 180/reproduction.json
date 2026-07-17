@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` printed `isinstance(MyCallback, NewCallback)=False` and then failed in `lightning/pytorch/trainer/connectors/callback_connector.py::_validate_callbacks_list()` with `ValueError: Expected a parent` from `lightning/pytorch/utilities/model_helpers.py::is_overridden()`. The mixed-import check misses the callback class because it inspects `type(instance)` instead of the class itself.",
+  "steps": [
+    "Create a virtualenv and install the runtime dependencies with `bash setup_env.sh`.",
+    "Run the repro with `bash run_repro.sh` so `PYTHONPATH` points at `codebase/src` and the legacy `pytorch_lightning` namespace is available from the local source tree.",
+    "Observe the `ValueError: Expected a parent` traceback during `Trainer(callbacks=[MyCallback])` initialization."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

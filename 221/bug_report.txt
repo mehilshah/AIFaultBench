@@ -1,0 +1,22 @@
+Title: Unexpected padding behavior
+Date: 2025-07-01T19:56:53.000Z
+URL: https://github.com/TorchIO-project/torchio/issues/1335
+
+Description:
+I tried padding a CT scan and got something unexpected:
+
+```python
+import torchio as tio
+
+ct = tio.datasets.Slicer('CTChest').CT_chest
+ct = tio.Clamp(-1000, 1000)(ct)
+tio.Pad(20, padding_mode='minimum')(ct).plot()
+```
+
+![Image](https://github.com/user-attachments/assets/cb125388-a700-45ba-a424-c92a60e1d697)
+
+This happens because we use NumPy for padding and the [behavior](https://numpy.org/doc/stable/reference/generated/numpy.pad.html) is
+
+> Pads with the minimum value of all or part of the vector **along each axis**.
+
+I think it's very unlikely that someone would want this to happen in our domain, so I think we should change it so the global statistic is used, not the one along each voxel's axis.

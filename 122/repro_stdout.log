@@ -1,0 +1,5 @@
+creating CartPole-v1 environment
+building PPO with policy_kwargs={'net_arch': None}
+saving model to ppo_cartpole_net_arch_none
+loading model
+reproduced TypeError: object of type 'NoneType' has no len()

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "On Python 3.10.13 with torch 2.13.0+cpu, the real ErnieImagePipeline call reaches codebase/src/diffusers/pipelines/ernie_image/pipeline_ernie_image.py:355 and raises KeyError: 'latents' from callback_kwargs = {k: locals()[k] for k in callback_on_step_end_tensor_inputs}.",
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh",
+    "Observe repro_stderr.log ending with KeyError: 'latents' and the traceback pointing at pipeline_ernie_image.py:355"
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

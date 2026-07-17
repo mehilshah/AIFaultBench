@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` reproduced the issue in this snapshot. `RandomCrop` produced `frames_identical: [False, False]` and `videos_different: False`; `RandomHorizontalFlip` produced `frames_identical: [True, True]` and `videos_different: False`; the combined pipeline also failed the batch-level separation check.",
+  "steps": [
+    "Create a 2-video tensor with 20 identical frames per video.",
+    "Apply `VideoSequential(RandomCrop(size=(50, 50), same_on_batch=False), data_format=\"BCTHW\", same_on_frame=True)`.",
+    "Apply `VideoSequential(RandomHorizontalFlip(p=1.0, same_on_batch=False), data_format=\"BCTHW\", same_on_frame=True)`.",
+    "Apply both transforms together in one `VideoSequential` pipeline."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,56 @@
+Title: Inconsistent parse results from simple ambiguous grammar
+Date: 2024-06-30T12:50:00+00:00
+URL: https://github.com/lark-parser/lark/issues/1434
+
+Description:
+**Describe the bug**
+
+I have a small grammar that is a starting point to parse regular expressions. When run repeatedly on the same input Lark produces two different parse trees.
+
+There is an ambiguity in my toy grammar because a RE `quantifier` (`*`, `+`, `?`) can also be interpreted as a `printable_char` (ASCII values between space and tilde). However my reading previous issues (#81, #83) indicates inconsistent parse results should be treated as a bug (and it was certainly a surprise).
+
+
+**To Reproduce**
+
+Lark 1.1.9, Python 3.10.12.
+
+```python
+#!/usr/bin/env python
+
+from lark import Lark
+
+parser = Lark('''
+start: factor+
+
+?factor: atom quantifier?
+
+quantifier: "*" | "+" | "?"
+
+?atom: DOT | printable_char
+
+printable_char: /[ -~]/
+
+DOT: "."
+''')
+
+regex = r'a.?'
+tree = parser.parse(regex)
+print(tree.pretty())
+```
+
+**Sample results**
+
+```
+start
+  printable_char	a
+  .
+  printable_char	?
+```
+
+```
+start
+  printable_char	a
+  factor
+    .
+    quantifier
+```

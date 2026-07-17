@@ -1,0 +1,17 @@
+{
+  "bug_id": "064",
+  "bug_dir": "064",
+  "issue_url": "https://github.com/keras-team/keras-io/issues/1443",
+  "commit_hash": "c36c0c95a73944e99452afe6d87c17bcc93c4e3a",
+  "library_name": "keras-io",
+  "library_version": "TensorFlow 2.13.0 / Keras 2.13 in Docker",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": "true",
+  "standardized_dir": "../064",
+  "reproduction_command": "bash run_repro.sh",
+  "dependencies": [
+    "tensorflow==2.13.0",
+    "numpy==1.24.3"
+  ]
+}

@@ -1,0 +1,7 @@
+torch 2.8.0+cu128
+torch_geometric 2.8.0
+pyg_lib available True
+knn available True
+UnsupportedOperatorException: pyg.knn.default
+
+The error above occurred when calling torch.export.export. If you would like to view some more information about this error, and get a list of all other errors that may occur in your export call, you can replace your `export()` call with `draft_export()`.

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Core ML Tools 9.0 fails while converting the traced DINOv3 helper path with NotImplementedError: PyTorch convert function for op 'tensor_split' not implemented.",
+  "steps": [
+    "Trace a minimal module that calls timm.layers.pos_embed_sincos.apply_rot_embed_cat(), which uses tensor_split().",
+    "Run coremltools.convert(..., convert_to='mlprogram') on the traced module.",
+    "Observe the conversion stop in coremltools with the tensor_split NotImplementedError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

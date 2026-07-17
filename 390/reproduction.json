@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` in the recreated `codebase/` snapshot fails while tracing `torch.onnx.export(...)` with `RuntimeError: expected m1 and m2 to have the same dtype, but got: float != c10::Half`. The traceback points to `codebase/src/transformers/models/canine/modeling_canine.py:353` at `context_layer = torch.matmul(attention_probs, value_layer)`.",
+  "steps": [
+    "Create the isolated environment with `bash setup_env.sh`.",
+    "Run the repro with `bash run_repro.sh`.",
+    "Observe the dtype mismatch traceback in `repro_stderr.log` and the version banner in `repro_stdout.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

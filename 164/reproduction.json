@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the repro with the local Kornia helper shows `gradcheck_2d=True` and `gradcheck_3d_failed=GradcheckError: Jacobian mismatch for output 0 with respect to input 0`. The 3D numerical Jacobian has 0.5000 entries where the analytical Jacobian has 0.2500 entries.",
+  "steps": [
+    "Prepended the local `codebase/` snapshot to `sys.path` and imported `kornia.testing.tensor_to_gradcheck_var`.",
+    "Ran the 2D amin/amax gradcheck case from the bug report and confirmed it passes.",
+    "Ran the 3D amin/amax gradcheck case from the bug report and confirmed it fails with a Jacobian mismatch."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running ./run_repro.sh fails on the first training step. The captured stderr ends in torch._dynamo.utils.tuple_iterator_getitem with IndexError: tuple index out of range while executing LightningModule.toggle_optimizer() from a torch.compile()d model.",
+  "steps": [
+    "Create and activate the local .venv with ./setup_env.sh.",
+    "Run ./run_repro.sh, which sets PYTHONPATH to codebase/src and executes repro.py.",
+    "Observe trainer.fit() fail during the compiled training_step path at toggle_optimizer()."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

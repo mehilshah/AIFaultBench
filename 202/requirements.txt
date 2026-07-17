@@ -1,0 +1,6 @@
+-e codebase
+jax[cpu]==0.4.35
+jaxlib==0.4.35
+scipy==1.18.0
+multipledispatch==1.0.0
+tqdm==4.68.4

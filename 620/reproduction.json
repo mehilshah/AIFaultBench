@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "After installing the local editable JAX checkout (jax 0.10.1.dev20260717) with jaxlib==0.10.0, the repro prints expected_numpy=[True, True] and actual_jax=[True, False] for input [-1, 1] with dtype=bool, so the results differ exactly as described in the issue.",
+  "steps": [
+    "Created a local virtual environment and installed the editable codebase plus jaxlib==0.10.0, numpy>=2.0, scipy>=1.14, ml_dtypes>=0.5.0, and opt_einsum.",
+    "Ran repro.py through run_repro.sh against the local JAX checkout.",
+    "Compared NumPy cumsum with JAX cumsum on integer input using dtype=bool and observed a mismatch."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,11 @@
+cloudpickle
+cmake
+ninja
+numpy
+packaging
+pybind11[global]
+pyvers
+setuptools
+setuptools_scm
+torch>=2.1.0
+tensordict>=0.11.0,<0.12.0

@@ -1,0 +1,18 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Constructor target device: cuda:0",
+    "Model parameter device immediately after init: cpu",
+    "Model.to calls after init: []",
+    "Model.to calls after predict: ['cuda:0']",
+    "Predict output: [0.5]",
+    "CrossEncoder.__init__ stores the requested device but does not move the model until predict() is called."
+  ],
+  "steps": [
+    "Install the requirements with ./setup_env.sh",
+    "Run ./run_repro.sh",
+    "Inspect repro_stdout.log and reproduction.json"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

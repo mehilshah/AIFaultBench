@@ -1,0 +1,37 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2852
+
+TITLE
+`IndexingError` with `FixedCombinations` constraint during sample
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:
+* Python version:
+* Operating System:
+
+### Error Description
+Sampling can sometimes crash with a `FixedCombinations` constraint due to a pandas `IndexingError`. This is triggered when we filter out sampled rows that are invalid for the constraint after reverse transforming ([link](https://github.com/sdv-dev/SDV/blob/db5bcb22a86ca2a1f790f531f0df4a7bd6cc737d/sdv/single_table/base.py#L804)).
+
+The index of the `is_valid` Series is meant to match the sampled data index. For `FixedCombinations` however, we reset the index on the Series, which triggers the error in sample.
+
+### Steps to reproduce
+In the below example, `FixedNullCombinations` drops a few invalid rows after reverse transforming. `FixedCombinations` then causes the error with its `is_valid` Series because the indices no longer align. 
+
+```python
+data, metadata = download_demo('single_table', 'expedia_hotel_logs')
+
+constraints = [
+    FixedCombinations(column_names=['hotel_continent', 'hotel_country'], table_name='expedia_hotel_logs'),
+    FixedNullCombinations(column_names=['user_location_city', 'orig_destination_distance'], table_name='expedia_hotel_logs'),
+]
+synthesizer = GaussianCopulaSynthesizer(metadata)
+
+synthesizer.add_constraints(constraint_list)
+synthesizer.fit(data)
+sample = synthesizer.sample(num_rows=len(data))
+
+```
+

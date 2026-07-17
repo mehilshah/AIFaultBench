@@ -1,0 +1,5 @@
+torch=2.13.0+cu130
+cuda_available=True
+cuda_device_count=1
+model_dtype=torch.bfloat16
+eager_ok pred_logits=(1, 4) pred_masks=(1, 4, 16, 16)

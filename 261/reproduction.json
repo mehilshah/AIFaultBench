@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Using the local stanza 1.9.2 codebase, the Portuguese tokenizer splits 'exemplo1.com, exemplo2.com e exemplo3.com.br' into multiple sentences. The control case with 'www.' stays as one sentence.",
+  "steps": [
+    "Created an isolated venv and installed the local codebase plus its runtime dependencies.",
+    "Downloaded the Portuguese tokenizer resources into a local stanza_resources directory.",
+    "Ran a Pipeline(lang='pt', processors='tokenize') on the reported URL example and observed sentence splitting at each dot.",
+    "Ran the reported 'www.' control example and observed the expected single sentence."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

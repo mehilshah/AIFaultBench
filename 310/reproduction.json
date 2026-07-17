@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "The current checkout maps PyroModule[torch.nn.ModuleList] to pyro.nn.PyroModuleList, and the packaged repro completed successfully with stdout showing 'module_list_alias_is_fix= True' and 'BUG_NOT_REPRODUCED'.",
+  "steps": [
+    "Create a nested PyroModule/BNN structure that uses PyroModule[torch.nn.ModuleList] and slice-indexed iteration in forward.",
+    "Run one SVI step through the nested model so the slice-indexing path is exercised.",
+    "Observe that the run completes successfully and prints BUG_NOT_REPRODUCED."
+  ],
+  "blocking_reason": "The local codebase already contains the PyroModuleList fix and the corresponding regression test, so the historical failure from issue #3341 is not present here.",
+  "reproduction_command": "./run_repro.sh"
+}

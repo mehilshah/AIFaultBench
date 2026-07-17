@@ -1,0 +1,39 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3181
+
+TITLE
+Difference in event_shape between pyro's LKJCholesky and torch's
+
+BODY
+### Issue Description
+Event shape of inverse transform of `LKJCholesky` seems to differ from torch's, and of samples from distribution.
+
+### Environment
+ - WSL2 Ubuntu 20.04
+ - Python 3.9
+ - torch 1.13.1
+ - pyro 1.8.4+9ed468d
+
+### Code Snippet
+```python
+from torch.distributions import TransformedDistribution, LKJCholesky
+from torch.distributions import biject_to
+
+# torch
+torch_lkj = LKJCholesky(2, 0.5)
+torch_inv = biject_to(torch_lkj.support).inv
+torch_transformed = TransformedDistribution(torch_lkj, torch_inv)
+
+# pyro
+from pyro.distributions import LKJCholesky as PyroCholesky
+from pyro import __version__
+
+print(__version__)
+
+pyro_lkj = PyroCholesky(2, 0.5)
+pyro_inv = biject_to(pyro_lkj.support).inv
+pyro_transformed = TransformedDistribution(pyro_lkj, pyro_inv)
+
+assert pyro_transformed.event_shape == torch_transformed.event_shape
+```
+Stepping through the code, it seems as though `pyro.distributions.transforms.cholesky.CorrLCholeskyTransform` doesn't implement the `inverse_shape` method, whereas torch does with `torch.distributions.transforms.CorrCholeskyTransform`. This results in pyro returning an event shape corresponding to `torch.Size([2])`, wheras torch returns `torch.Size([1])`. 
+

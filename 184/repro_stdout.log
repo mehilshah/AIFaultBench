@@ -1,0 +1,10 @@
+[LightGBM] [Warning] Found whitespace in feature_names, replace with underlines
+[LightGBM] [Info] Auto-choosing col-wise multi-threading, the overhead of testing was 0.000080 seconds.
+You can set `force_col_wise=true` to remove the overhead.
+[LightGBM] [Info] Total Bins 323
+[LightGBM] [Info] Number of data points in the train set: 392, number of used features: 7
+[LightGBM] [Info] Start training from score 23.445918
+[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+CUDA available: True
+TorchScript conversion succeeded: TopLevelTracedModule

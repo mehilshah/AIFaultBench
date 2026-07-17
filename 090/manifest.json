@@ -1,0 +1,10 @@
+{
+  "title": "encoder.to_logits.weight doesn't update",
+  "issue": 273,
+  "repository": "lucidrains/x-transformers",
+  "bug_report": "bug_report.txt",
+  "repro_script": "repro.py",
+  "run_script": "run_repro.sh",
+  "setup_script": "setup_env.sh",
+  "expected_signal": "encoder.to_logits.weight has no gradient after a backward pass through XTransformer"
+}

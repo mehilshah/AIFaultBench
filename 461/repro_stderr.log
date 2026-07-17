@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "461/repro.py", line 114, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "461/repro.py", line 107, in main
+    assert metadata.relationships == [
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: semantic foreign key was not detected

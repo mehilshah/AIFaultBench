@@ -1,0 +1,49 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (24.0)
+Collecting pip
+  Downloading pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
+Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 20.7 MB/s eta 0:00:00
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed pip-26.1.2
+Requirement already satisfied: torch in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 167/requirements.txt (line 1)) (2.13.0)
+Collecting kornia_rs (from -r 167/requirements.txt (line 2))
+  Downloading kornia_rs-0.1.14-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (15 kB)
+Requirement already satisfied: packaging in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 167/requirements.txt (line 3)) (26.2)
+Requirement already satisfied: filelock in /usr/lib/python3/dist-packages (from torch->-r 167/requirements.txt (line 1)) (3.13.1)
+Requirement already satisfied: typing-extensions>=4.10.0 in /usr/lib/python3/dist-packages (from torch->-r 167/requirements.txt (line 1)) (4.10.0)
+Requirement already satisfied: setuptools>=77.0.3 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch->-r 167/requirements.txt (line 1)) (83.0.0)
+Requirement already satisfied: sympy>=1.13.3 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch->-r 167/requirements.txt (line 1)) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch->-r 167/requirements.txt (line 1)) (3.6.1)
+Requirement already satisfied: jinja2 in /usr/lib/python3/dist-packages (from torch->-r 167/requirements.txt (line 1)) (3.1.2)
+Requirement already satisfied: fsspec>=0.8.5 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch->-r 167/requirements.txt (line 1)) (2025.3.0)
+Requirement already satisfied: cuda-toolkit==13.0.3 in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch->-r 167/requirements.txt (line 1)) (13.0.3.0)
+Requirement already satisfied: cuda-bindings<14,>=13.0.3 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch->-r 167/requirements.txt (line 1)) (13.3.1)
+Requirement already satisfied: nvidia-cudnn-cu13==9.20.0.48 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch->-r 167/requirements.txt (line 1)) (9.20.0.48)
+Requirement already satisfied: nvidia-cusparselt-cu13==0.8.1 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch->-r 167/requirements.txt (line 1)) (0.8.1)
+Requirement already satisfied: nvidia-nccl-cu13==2.29.7 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch->-r 167/requirements.txt (line 1)) (2.29.7)
+Requirement already satisfied: nvidia-nvshmem-cu13==3.4.5 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch->-r 167/requirements.txt (line 1)) (3.4.5)
+Requirement already satisfied: triton==3.7.1 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch->-r 167/requirements.txt (line 1)) (3.7.1)
+Requirement already satisfied: nvidia-cublas==13.1.1.3.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch->-r 167/requirements.txt (line 1)) (13.1.1.3)
+Requirement already satisfied: nvidia-cuda-nvrtc==13.0.88.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch->-r 167/requirements.txt (line 1)) (13.0.88)
+Requirement already satisfied: nvidia-cuda-runtime==13.0.96.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch->-r 167/requirements.txt (line 1)) (13.0.96)
+Requirement already satisfied: nvidia-cufft==12.0.0.61.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch->-r 167/requirements.txt (line 1)) (12.0.0.61)
+Requirement already satisfied: nvidia-nvjitlink<14,>=13.0.88 in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch->-r 167/requirements.txt (line 1)) (13.3.33)
+Requirement already satisfied: nvidia-cufile==1.15.1.6.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch->-r 167/requirements.txt (line 1)) (1.15.1.6)
+Requirement already satisfied: nvidia-cuda-cupti==13.0.85.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch->-r 167/requirements.txt (line 1)) (13.0.85)
+Requirement already satisfied: nvidia-curand==10.4.0.35.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch->-r 167/requirements.txt (line 1)) (10.4.0.35)
+Requirement already satisfied: nvidia-cusolver==12.0.4.66.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch->-r 167/requirements.txt (line 1)) (12.0.4.66)
+Requirement already satisfied: nvidia-cusparse==12.6.3.3.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch->-r 167/requirements.txt (line 1)) (12.6.3.3)
+Requirement already satisfied: nvidia-nvtx==13.0.85.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch->-r 167/requirements.txt (line 1)) (13.0.85)
+Requirement already satisfied: cuda-pathfinder>=1.4.2 in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-bindings<14,>=13.0.3->torch->-r 167/requirements.txt (line 1)) (1.5.6)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /users/grad/mehil/.local/lib/python3.12/site-packages (from sympy>=1.13.3->torch->-r 167/requirements.txt (line 1)) (1.3.0)
+Downloading kornia_rs-0.1.14-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.7/3.7 MB 42.1 MB/s  0:00:00
+Installing collected packages: kornia_rs
+Successfully installed kornia_rs-0.1.14
+depth shape: (4, 512, 512)
+intrinsics shape: (4, 3, 3)
+calling depth_to_3d_v2(...)

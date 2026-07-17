@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "435/repro.py", line 72, in <module>
+    main()
+  File "435/repro.py", line 66, in main
+    assert torch.equal(
+           ^^^^^^^^^^^^
+AssertionError: layout mismatch: current diffusers behavior reverses prompt tokens and registers

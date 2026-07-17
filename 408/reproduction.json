@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "In the local Accelerate checkout, logging torch.tensor(1.0) to TensorBoard produced no 'loss' scalar events, while logging the float 1.0 produced [('loss', step=1, value=1.0)]. The captured stdout shows 'BUG_REPRODUCED: tensor input is silently ignored while float input is logged.'",
+  "steps": [
+    "Created a local venv with torch 2.13.0+cpu, tensorboard, numpy, packaging, psutil, and pyyaml.",
+    "Ran repro.py against codebase/src from the pinned Accelerate checkout.",
+    "Compared TensorBoard event files for a tensor value and a float control value.",
+    "Observed that the tensor case wrote no scalar summary while the float case wrote the expected scalar."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

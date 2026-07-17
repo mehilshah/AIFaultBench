@@ -1,0 +1,15 @@
+
+  0%|          | 0/1 [00:00<?, ?it/s]
+  0%|          | 0/1 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "622/repro.py", line 99, in <module>
+    main()
+  File "622/repro.py", line 85, in main
+    pipe(
+  File "622/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+  File "622/codebase/src/diffusers/pipelines/ernie_image/pipeline_ernie_image.py", line 355, in __call__
+    callback_kwargs = {k: locals()[k] for k in callback_on_step_end_tensor_inputs}
+  File "622/codebase/src/diffusers/pipelines/ernie_image/pipeline_ernie_image.py", line 355, in <dictcomp>
+    callback_kwargs = {k: locals()[k] for k in callback_on_step_end_tensor_inputs}
+KeyError: 'latents'

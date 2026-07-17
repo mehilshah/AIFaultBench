@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` exits with code 0 after reproducing the bug marker in `repro_stdout.log`. `repro_stderr.log` shows `TypeError: 'int' object is not subscriptable` at `codebase/sentence_transformers/SentenceTransformer.py:704` in the `output_value=None` prompt branch.",
+  "steps": [
+    "Prepare the environment with `bash setup_env.sh`.",
+    "Run the repro with `bash run_repro.sh`.",
+    "Inspect `repro_stdout.log` for `BUG_REPRODUCED: encode(..., output_value=None) crashes on prompt_length`.",
+    "Inspect `repro_stderr.log` for the `TypeError` traceback from `SentenceTransformer.encode()`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

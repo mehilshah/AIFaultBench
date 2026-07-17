@@ -1,0 +1,3 @@
+running DayZSynthesizer.create_parameters with empty data and empty Metadata()
+exception_type=KeyError
+exception_message=None

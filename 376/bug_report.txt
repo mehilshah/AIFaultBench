@@ -1,0 +1,38 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/47059
+
+TITLE
+tests/cli fail with huggingface_hub 1.22.0: 'HFCliTyperGroup' object has no attribute '_add_completion':
+
+BODY
+### System Info
+
+transformers: main (5.14.0.dev0)
+huggingface_hub: 1.22.0
+typer: 0.26.8 / click: 8.4.2 (also reproduces with typer 0.24.1)
+Python 3.10 (CI docker image) — also reproduced on Python 3.11 / Windows
+Note: `transformers env` itself crashes with this bug, so output is unavailable.
+
+### Who can help?
+
+_No response_
+
+### Information
+
+- [x] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+pip install huggingface_hub==1.22.0
+python -m pytest tests/cli/test_system.py -x
+# AttributeError: 'HFCliTyperGroup' object has no attribute '_add_completion'
+#   at typer/main.py::get_command -> typer_instance._add_completion
+
+### Expected behavior
+
+tests/cli passes; `transformers env` / `version` work with the latest huggingface_hub.

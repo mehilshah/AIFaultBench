@@ -1,0 +1,79 @@
+Title: [Bug]: RandomThinPlateSpline ignores same_on_batch=True
+Date: 2026-01-07T09:00:43+00:00
+URL: https://github.com/kornia/kornia/issues/3464
+
+Description:
+### 🐛 Describe the bug
+
+`RandomThinPlateSpline` does not consistently apply the same Thin Plate Spline transformation across all images in a batch when `same_on_batch=True`.
+Users would expect:
+```python
+aug = RandomThinPlateSpline(p=1.0, same_on_batch=True)
+y = aug(x)
+```
+to apply identical control points to every image in the batch.
+
+This is because `RandomThinPlateSpline.generate_parameters` sampled destination control points independently per batch element, even when `same_on_batch=True`.
+However, prior to the fix the behaviour was inconsistent and different TPS parameters were sometimes sampled internally per-image.
+
+
+### 🔄 Steps to Reproduce
+
+```bash
+1. Add the following Code.
+```
+
+### 💻 Minimal Code Example
+
+```python
+import kornia
+import torch
+from kornia.augmentation import RandomThinPlateSpline
+
+torch.manual_seed(42)
+x = torch.randn(4, 3, 32, 32)
+aug = RandomThinPlateSpline(p=1.0, same_on_batch=True)
+y = aug(x)
+params = aug._params
+src = params["src"]
+dst = params["dst"]
+
+# These should match across the batch
+print(torch.allclose(src[0], src[1]))
+print(torch.allclose(dst[0], dst[1]))
+```
+
+###  Expected behavior
+
+All control points should be identical when `same_on_batch=True`.
+
+###  Actual behavior
+
+The control point sets may differ across samples in the same batch.
+
+### 🔧 Environment
+
+```shell
+- Kornia version:0.8.2
+- PyTorch version:2.8.0
+- Python version:3.9.6
+- OS (e.g., Linux, macOS, Windows):macOS Sequoia 15.5(Apple Silicon M4)
+- Installation method (pip, conda, from source):pip
+- CUDA/cuDNN version (if applicable):NA
+- GPU model (if applicable):Apple Silicon M-series
+
+You can also run:
+
+wget https://raw.githubusercontent.com/pytorch/pytorch/main/torch/utils/collect_env.py
+# For security purposes, please check the contents of collect_env.py before running it.
+python collect_env.py
+```
+
+### 📝 Additional context
+
+The above code block will fix this issue and produce expected output.
+
+### 🤝 Contribution Intent
+
+- [x] I plan to submit a PR to fix this bug
+- [ ] I'm reporting this bug but not planning to fix it

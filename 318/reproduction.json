@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "The issue-shaped GPU launch (`accelerate launch --config_file fsdp2.yaml repro.py`) fails earlier with NCCL duplicate-GPU errors because this machine exposes only one physical GPU, so the reported FSDP2 DeviceMesh assertion is not reached.",
+    "The CPU fallback probe (`CUDA_VISIBLE_DEVICES= CPU_FSDP_PROBE=1 torchrun --standalone --nproc_per_node=2 repro.py`) completes successfully, which also does not reproduce the reported failure."
+  ],
+  "steps": [
+    "Created a local venv, installed a CUDA-enabled PyTorch build compatible with the available GPU, and installed the local Accelerate checkout plus the TRL/Transformers/Datasets stack.",
+    "Ran the issue-shaped 2-rank GPU reproduction path and observed a NCCL duplicate-GPU failure before the original bug could be reached.",
+    "Ran the CPU FSDP2 probe and confirmed `fsdp2_prepare_model` completes successfully there."
+  ],
+  "blocking_reason": "Only one physical GPU is visible in this environment, so the multi-rank FSDP2 launch needed to reach the reported bug fails first with NCCL duplicate-GPU errors. The CPU probe path also succeeds, so the original DeviceMesh assertion is not reproducible here.",
+  "reproduction_command": "source .venv/bin/activate && NCCL_P2P_LEVEL=LOC accelerate launch --config_file fsdp2.yaml repro.py"
+}

@@ -1,0 +1,68 @@
+# recovered-from-issue: https://github.com/facebookresearch/detectron2/issues/2154
+
+TITLE
+Incorrect results from pairwise_iou_rotated
+
+BODY
+## Instructions To Reproduce the 🐛 Bug:
+
+1. what code you wrote
+```
+from detectron2.structures import BoxMode, RotatedBoxes, pairwise_iou_rotated
+import torch
+dt1 = RotatedBoxes(torch.tensor([[296.6620178222656, 458.73883056640625, 23.515729904174805, 47.677001953125, 0.08795166015625]]))
+gt1 = RotatedBoxes(torch.tensor([[296.66201, 458.73882000000003, 23.51573, 47.67702, 0.087951]]))
+iou1 = pairwise_iou_rotated(dt1, gt1)
+print("iou1: %f" % iou1)
+
+dt2 = RotatedBoxes(torch.tensor([[296.6620178222656, 458.73883056640625, 23.515729904174805, 47.677001953125, 0.08795166015625]]))
+gt2 = RotatedBoxes(torch.tensor([[296.66201, 458.73882000000003, 23.51573, 47.6770, 0.087951]]))
+iou2 = pairwise_iou_rotated(dt2, gt2)
+print("iou2: %f" % iou2)
+```
+3. what you observed (including __full logs__):
+```
+iou1: 0.600224
+iou2: 1.000000
+```
+
+## Expected behavior:
+
+Both iou1 and iou2 should be 1.
+
+## Environment:
+
+Provide your environment information using the following command:
+```
+----------------------  ----------------------------------------------------------------------
+sys.platform            linux
+Python                  3.7.9 (default, Aug 31 2020, 12:42:55) [GCC 7.3.0]
+numpy                   1.19.1
+detectron2              0.2.1 @/home/qiank10/Project/detectron2/detectron2
+Compiler                GCC 7.4
+CUDA compiler           CUDA 10.2
+detectron2 arch flags   7.5
+DETECTRON2_ENV_MODULE   <not set>
+PyTorch                 1.4.0 @/home/qiank10/anaconda3/lib/python3.7/site-packages/torch
+PyTorch debug build     False
+GPU available           True
+GPU 0,1,2,3             GeForce RTX 2080 Ti (arch=7.5)
+CUDA_HOME               /usr/local/cuda-10.2
+Pillow                  7.2.0
+torchvision             0.5.0 @/home/qiank10/anaconda3/lib/python3.7/site-packages/torchvision
+torchvision arch flags  3.5, 5.0, 6.0, 7.0, 7.5
+fvcore                  0.1.2.post20201016
+cv2                     4.2.0
+----------------------  ----------------------------------------------------------------------
+PyTorch built with:
+  - GCC 7.3
+  - Intel(R) Math Kernel Library Version 2019.0.4 Product Build 20190411 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v0.21.1 (Git Hash 7d2fd500bc78936d1d648ca713b901012f470dbc)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - NNPACK is enabled
+  - CUDA Runtime 10.1
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_37,code=compute_37
+  - CuDNN 7.6.3
+  - Magma 2.5.1
+  - Build settings: BLAS=MKL, BUILD_NAMEDTENSOR=OFF, BUILD_TYPE=Release, CXX_FLAGS= -Wno-deprecated -fvisibility-inlines-hidden -fopenmp -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -O2 -fPIC -Wno-narrowing -Wall -Wextra -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wno-unused-result -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Wno-stringop-overflow, DISABLE_NUMA=1, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, USE_CUDA=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, USE_STATIC_DISPATCH=OFF, 
+```

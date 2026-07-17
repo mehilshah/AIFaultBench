@@ -1,0 +1,50 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3341
+
+TITLE
+Using PyroModule with torch.nn.ModueList fails for nested modules
+
+BODY
+Hi,
+
+I already have made a [PR](https://github.com/pyro-ppl/pyro/pull/3339) but it seems like it just does not get any attention without an issue related to it. So here is the issue to it:
+
+While using "nested" `PyroModule`'s: A `PyroModule` with a `PyroModule[torch.nn.ModuleList]` argument, containing another such module (see the test implementation in the PR for a more detailed example), I encountered some errors related to the existence of multiple sample sites with the same name.
+
+I spend some time on tracing the issue and found that the `RuntimeError` was caused by an unlucky combination of `PyroModule` and `torch.nn.ModuleList`:
+First: why using `torch.nn.ModuleList`? Well I wanted to model a `PyroModule` that owns a list of sub-pyromodules. My idea was to replace `linear = PyroModule[Linear](5, 2)` from the [modules example](https://pyro.ai/examples/modules.html) by `PyroModule[torch.nn.ModuleList](...)`.
+That works fine if there is a
+```python
+class MyPyroModule(PyroModule):
+    def __init__(self, some_module: PyroModule):
+        self.my_submodule = PyroModule[torch.nn.ModuleList]([some_module for _ in range(3)])
+```
+but **can** fail if there is a nested structure, like
+```python
+my_nested_pyro_module = MyPyroModule(MyPyroModule(...))
+```
+The "can fail" could be resolved to the following different types if *accessing* the `self.my_submodule` argument:
++ using a index-positioned access, like `self.my_submodule[0](...)` worked fine, even for nested modules
++ using slice-indexing access, like `self.my_submodule[:-1](...)` only works if there is a single `MyPyroModule()` and not a `MyPyroModule(MyPyroModule(...))`
+
+The cause is [this](https://github.com/pytorch/pytorch/blob/main/torch/nn/modules/container.py#L293) line in the `torch.nn.ModuleList` class:
+```python
+@_copy_to_script_wrapper
+    def __getitem__(self, idx: Union[int, slice]) -> Union[Module, 'ModuleList']:
+        if isinstance(idx, slice):
+            return self.__class__(list(self._modules.values())[idx])
+        else:
+            return self._modules[self._get_abs_string_index(idx)]
+```
+which calls `self.__class__`, which, means that for an object of type `PyroModule[torch.nn.ModuleList]`, it calls the `PyroModule.__init__` function, without the context of the parent module. This results in overwriting the names of the module's submodules and their `._pyro_name` attributes, and because of that, during sampling, sample sites may not be unique anymore.
+
+I see two possible fixes for this:
+1. I have introduced a `pyro.nn.PyroModuleList` class in this PR that inherits from `torch.nn.ModuleList` can overwrites the problematic `__getitem__` function
+2. We may add some example/documentation on this issue, explicitly warning about using `PyroModule[torch.nn.ModuleList]` in combination with slice-indexing (feels a little unsafe to me)
+3. Maybe some has another (potentially better) idea of how to deal with this?
+
+I know that this is kind of a "special purpose" usage and may not affect basic `pyro` usage, but in particular the way the [modules example](https://docs.pyro.ai/en/stable/nn.html) motivates the usage of `PyroModule[torch.nn.Something]` could, imho, quickly lure other users into this (and it took me quite some time to find the root issue).
+
+Please let me know what you think about this PR, and whether it needs updates or clarification.
+
+Best regards
+Martin

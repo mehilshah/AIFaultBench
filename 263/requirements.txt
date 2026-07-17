@@ -1,0 +1,2 @@
+tianshou==2.0.0b1
+gymnasium==0.28.1

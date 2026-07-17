@@ -1,0 +1,81 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38097
+
+TITLE
+`jax.jit + jax.grad + jnp.log + jnp.exp`: jit(grad(sum(log(exp(x))))) != eager grad — XLA identity rewrite hides exp overflow in gradient
+
+BODY
+### Description
+
+
+XLA rewrites `log(exp(x))` to `x` (identity) before differentiation, so `jit(grad(...))` returns `1.0` everywhere. In eager mode, when `exp(x)` overflows to `inf` (at x ≥ 88.72 for float32), the gradient is `nan`; when underflow occurs, the gradient is `0.0`. Two distinct failures were found.
+
+Minimal reproducer:
+
+```python
+import numpy as np
+import jax, jax.numpy as jnp
+
+# Case 1: exp(89) overflows → eager grad is nan, jit grad is 1.0
+x1 = jnp.array([89.0], dtype=jnp.float32)
+jit1   = np.asarray(jax.jit(jax.grad(lambda x: jnp.sum(jnp.log(jnp.exp(x)))))(x1))
+eager1 = np.asarray(jax.grad(lambda x: jnp.sum(jnp.log(jnp.exp(x))))(x1))
+print("x=89  jit:", jit1, " eager:", eager1)  # [1.] vs [nan]
+
+# Case 2: exp(88) overflows → eager grad is 0.0, jit grad is 1.0
+x2 = jnp.array([88.0], dtype=jnp.float32)
+jit2   = np.asarray(jax.jit(jax.grad(lambda x: jnp.sum(jnp.log(jnp.exp(x)))))(x2))
+eager2 = np.asarray(jax.grad(lambda x: jnp.sum(jnp.log(jnp.exp(x))))(x2))
+print("x=88  jit:", jit2, " eager:", eager2)  # [1.] vs [0.]
+```
+
+Expected output:
+```
+x=89  jit: [nan]  eager: [nan]
+x=88  jit: [0.]   eager: [0.]
+```
+
+Actual output:
+```
+x=89  jit: [1.]   eager: [nan]
+x=88  jit: [1.]   eager: [0.]
+```
+
+Full pytest output:
+
+```
+=================================== FAILURES ===================================
+________________________ test_jit_grad_log_exp_float32 _________________________
+  ExceptionGroup: Hypothesis found 2 distinct failures. (2 sub-exceptions)
+  +-+---------------- 1 ----------------
+    | AssertionError: 
+    | Arrays are not equal
+    | jit(grad(sum(log(exp(x))))) != eager grad: JIT algebraic rewrite changes gradient
+    | nan location mismatch:
+    |  ACTUAL: array([1.], dtype=float32)
+    |  DESIRED: array([nan], dtype=float32)
+    | Falsifying example: test_jit_grad_log_exp_float32(
+    |     x_np=array([89.], dtype=float32),
+    | )
+    +---------------- 2 ----------------
+    | AssertionError: 
+    | Arrays are not equal
+    | jit(grad(sum(log(exp(x))))) != eager grad: JIT algebraic rewrite changes gradient
+    | Mismatched elements: 1 / 1 (100%)
+    |  [0]: 1.0 (ACTUAL), 0.0 (DESIRED)
+    | Falsifying example: test_jit_grad_log_exp_float32(
+    |     x_np=array([88.], dtype=float32),
+    | )
+    +------------------------------------
+============================== 1 failed in 0.69s ===============================
+```
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+```
+jax:      0.10.1.dev20260513+64f6e229b
+jaxlib:   0.10.0
+numpy:    2.4.4
+Python:   3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]
+Platform: Linux-6.14.0-37-generic-x86_64-with-glibc2.39
+Device:   CpuDevice(id=0)
+```

@@ -1,0 +1,3 @@
+torch==2.9.1
+tensordict==0.12.4
+gymnasium[classic-control]==1.3.0

@@ -1,0 +1,13 @@
+{
+  "bug_id": "055",
+  "bug_dir": "055",
+  "issue_url": "https://github.com/keras-team/keras-io/issues/1703",
+  "commit_hash": "789daa2f7a487771723de298aa3d0c7d87236d42",
+  "library_name": "keras-nlp",
+  "library_version": "0.6.4",
+  "bug_report_source": "bug_report/055.txt",
+  "codebase_source": "keras-team/keras-io@789daa2f7a487771723de298aa3d0c7d87236d42",
+  "codebase_present": "true",
+  "standardized_dir": "../055",
+  "repro_status": "not reproducible in this environment"
+}

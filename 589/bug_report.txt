@@ -1,0 +1,61 @@
+# recovered-from-issue: https://github.com/pytorch/rl/issues/3246
+
+TITLE
+[BUG] `InitTrackerConfig` fields do not match the `InitTracker` constructor
+
+BODY
+## Describe the bug
+
+Thank you for maintaining this project!
+The `InitTrackerConfig` has the fields `in_keys` and `out_keys`, which are not kwargs for `InitTracker`. The config is also missing the `init_key` field, so it looks like this is potentially a copy-paste leftover that perhaps has gone unchecked?
+
+## To Reproduce
+
+```python
+from hydra.utils import instantiate
+
+from torchrl.trainers.algorithms.configs.transforms import InitTrackerConfig
+
+if __name__ == "__main__":
+    cfg = InitTrackerConfig(init_key="is_test_init")
+    assert cfg.init_key == "is_test_init"
+    instantiate(cfg)
+
+```
+
+```bash
+Traceback (most recent call last):
+  File "my/path/reproduce.py", line 6, in <module>
+    cfg = InitTrackerConfig(init_key="is_test_init")
+TypeError: InitTrackerConfig.__init__() got an unexpected keyword argument 'init_key'
+```
+
+## Expected behavior
+
+No error should be raised for the above snippet.
+
+## Screenshots
+
+## System info
+
+I'm working on a fork of the torchRL repo, installed in editable mode in a conda environment.
+
+```python
+import torchrl, numpy, sys
+print(torchrl.__version__, numpy.__version__, sys.version, sys.platform)
+```
+yields
+```sh
+0.0.0+unknown 2.2.6 3.10.18 | packaged by conda-forge | (main, Jun  4 2025, 14:46:00) [Clang 18.1.8 ] darwin
+```
+
+## Reason and Possible fixes
+
+I have opened a PR here: #3245
+
+## Checklist
+
+- [x] I have checked that there is no similar issue in the repo (**required**)
+- [x] I have read the [documentation](https://github.com/pytorch/rl/tree/main/docs/) (**required**)
+- [x] I have provided a minimal working example to reproduce the bug (**required**)
+

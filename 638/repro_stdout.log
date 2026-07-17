@@ -1,0 +1,2 @@
+param.ds_shape=(3072, 1024)
+param.ds_tensor.shape=()

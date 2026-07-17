@@ -1,0 +1,106 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/47337
+
+TITLE
+## Flaky test: `IndexError` — bbox coordinate values out of 0-1000 range
+
+BODY
+### System Info
+
+### Affected tests
+
+Multiple model tests that use random bounding box generation fail with:
+
+```
+IndexError: The `bbox` coordinate values should be within 0-1000 range.
+```
+
+This affects `layoutlm`, `layoutlmv2`, `layoutlmv3`, `lilt`, `pp_doclayout_v2` — any model whose `modeling_*.py` validates bbox coordinates against a hard 0-1000 range.
+
+### Root cause
+
+The bbox coordinates are randomly generated in tests but not clamped to [0, 1000]. When random values exceed the range, the validation in the model's forward pass raises `IndexError`. This is a test-input-generation bug, not a model bug.
+
+### Relevant code
+
+- `src/transformers/models/layoutlm/modeling_layoutlm.py:102` — raises the error
+- `src/transformers/models/layoutlmv2/modeling_layoutlmv2.py:81`
+- `src/transformers/models/layoutlmv3/modeling_layoutlmv3.py:121`
+- `src/transformers/models/lilt/modeling_lilt.py:157`
+- `src/transformers/models/pp_doclayout_v2/modeling_pp_doclayout_v2.py:488`
+
+### Proposed fix
+
+Clamp randomly generated bbox values to [0, 1000] in the test input preparation, or change the model validation to clamp instead of raising an error (matching `pp_doclayout_v2`'s own `clamp_(0.0, 1000.0)` behavior).
+
+
+### Who can help?
+
+_No response_
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+### Affected tests
+
+Multiple model tests that use random bounding box generation fail with:
+
+```
+IndexError: The `bbox` coordinate values should be within 0-1000 range.
+```
+
+This affects `layoutlm`, `layoutlmv2`, `layoutlmv3`, `lilt`, `pp_doclayout_v2` — any model whose `modeling_*.py` validates bbox coordinates against a hard 0-1000 range.
+
+### Root cause
+
+The bbox coordinates are randomly generated in tests but not clamped to [0, 1000]. When random values exceed the range, the validation in the model's forward pass raises `IndexError`. This is a test-input-generation bug, not a model bug.
+
+### Relevant code
+
+- `src/transformers/models/layoutlm/modeling_layoutlm.py:102` — raises the error
+- `src/transformers/models/layoutlmv2/modeling_layoutlmv2.py:81`
+- `src/transformers/models/layoutlmv3/modeling_layoutlmv3.py:121`
+- `src/transformers/models/lilt/modeling_lilt.py:157`
+- `src/transformers/models/pp_doclayout_v2/modeling_pp_doclayout_v2.py:488`
+
+### Proposed fix
+
+Clamp randomly generated bbox values to [0, 1000] in the test input preparation, or change the model validation to clamp instead of raising an error (matching `pp_doclayout_v2`'s own `clamp_(0.0, 1000.0)` behavior).
+
+
+### Expected behavior
+
+### Affected tests
+
+Multiple model tests that use random bounding box generation fail with:
+
+```
+IndexError: The `bbox` coordinate values should be within 0-1000 range.
+```
+
+This affects `layoutlm`, `layoutlmv2`, `layoutlmv3`, `lilt`, `pp_doclayout_v2` — any model whose `modeling_*.py` validates bbox coordinates against a hard 0-1000 range.
+
+### Root cause
+
+The bbox coordinates are randomly generated in tests but not clamped to [0, 1000]. When random values exceed the range, the validation in the model's forward pass raises `IndexError`. This is a test-input-generation bug, not a model bug.
+
+### Relevant code
+
+- `src/transformers/models/layoutlm/modeling_layoutlm.py:102` — raises the error
+- `src/transformers/models/layoutlmv2/modeling_layoutlmv2.py:81`
+- `src/transformers/models/layoutlmv3/modeling_layoutlmv3.py:121`
+- `src/transformers/models/lilt/modeling_lilt.py:157`
+- `src/transformers/models/pp_doclayout_v2/modeling_pp_doclayout_v2.py:488`
+
+### Proposed fix
+
+Clamp randomly generated bbox values to [0, 1000] in the test input preparation, or change the model validation to clamp instead of raising an error (matching `pp_doclayout_v2`'s own `clamp_(0.0, 1000.0)` behavior).
+

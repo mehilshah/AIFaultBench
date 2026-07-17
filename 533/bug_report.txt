@@ -1,0 +1,110 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21513
+
+TITLE
+torch.compile doesn't work with self.toggle_optimizer() in lightning module
+
+BODY
+### Bug description
+
+I simply add a `self.toggle_optimizer(self.optimizers())` in `training_step`, 
+```python
+class SimpleModel(L.LightningModule):
+    """Simple model for testing"""
+    
+    def __init__(self):
+        super().__init__()
+        self.layer = torchvision.models.resnet50()
+        # self.layer = nn.Linear(10, 10)
+    def forward(self, x):
+        return self.layer(x, x)[0]
+    
+    def training_step(self, batch, batch_idx):
+        self.toggle_optimizer(self.optimizers())
+        x, y = batch
+        y_hat = self(x)
+        loss = F.mse_loss(y_hat, y)
+        self.log('train_loss', loss)
+        return loss
+    
+    def validation_step(self, batch, batch_idx):
+        x, y = batch
+        y_hat = self(x)
+        loss = F.mse_loss(y_hat, y)
+        self.log('val_loss', loss)
+        return loss
+    
+    def on_train_epoch_end(self) -> None:
+        print(0)
+    
+    def configure_optimizers(self):
+        return torch.optim.Adam(self.parameters(), lr=0.02)
+```
+
+
+
+and run
+
+```python
+    model = SimpleModel()
+    model = torch.compile(model)
+    trainer.fit(model, train_loader, val_loader)
+```
+
+then the error comes:
+```
+    param.requires_grad = param_requires_grad_state[param]
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: Parameter containing:
+tensor([ 0.0567,  0.0312,  0.0305,  0.0453, -0.0708, -0.0092,  0.0487,  0.0671,
+         0.0399, -0.0994,  0.0946,  0.0910,  0.0989,  0.0787, -0.0801, -0.0465,
+        -0.0522, -0.0650, -0.0257, -0.0062,  0.0660, -0.0539,  0.0658,  0.0259,
+        -0.0534, -0.0563, -0.0235,  0.0693, -0.0789,  0.0502, -0.0854,  0.0091])
+Epoch 0:   0%|          | 0/125 [00:16<?, ?it/s] 
+```
+
+But I do need toggle_optimizer in GAN training. Can this be fixed?
+
+### What version are you seeing the problem on?
+
+v2.5
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+
+```
+
+### Error messages and logs
+
+```
+# Error messages and logs here please
+```
+
+
+### Environment
+
+<details>
+  <summary>Current environment</summary>
+
+```
+#- PyTorch Lightning Version (e.g., 2.5.0):
+#- PyTorch Version (e.g., 2.5):
+#- Python version (e.g., 3.12):
+#- OS (e.g., Linux):
+#- CUDA/cuDNN version:
+#- GPU models and configuration:
+#- How you installed Lightning(`conda`, `pip`, source):
+```
+
+</details>
+
+
+### More info
+
+_No response_
+
+cc @ethanwharris

@@ -1,0 +1,59 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7728
+
+TITLE
+[BUG] SP with PEFT
+
+BODY
+**Describe the bug**
+```
+        from transformers import PreTrainedModel
+        if isinstance(model_name_or_path, PreTrainedModel):
+            # we already have the model
+            hf_model_config = model_name_or_path.config
+        else:
+            # if we don't have the model yet at this stage
+            hf_model_config = AutoConfig.from_pretrained(model_name_or_path)
+```
+
+if model is PEFT model this code is failing since PEFT is not PreTrainedModel 
+
+**To Reproduce**
+call below with model as PEFT model
+
+```
+                mpu = UlyssesSPAttentionHF.register_with_transformers(
+                    model_name_or_path=model,
+                    sequence_parallel_size=sp_size,
+                    seq_length=sp_handler.sp_seq_length,
+                    seq_length_is_variable=sp_handler.sp_seq_length_is_variable,
+                    core_attn_implementation=sp_handler.sp_attn_implementation,
+                    micro_batch_size=batch_size_per_device,
+                )
+```
+
+
+**Expected behavior**
+accept also PEFT models
+
+**ds_report output**
+Please run `ds_report` to give us details about your setup.
+
+**Screenshots**
+If applicable, add screenshots to help explain your problem.
+
+**System info (please complete the following information):**
+ - OS: [e.g. Ubuntu 18.04]
+ - GPU count and types [e.g. two machines with x8 A100s each]
+ - Interconnects (if applicable) [e.g., two machines connected with 100 Gbps IB]
+ - Python version
+ - Any other relevant info about your setup
+
+**Launcher context**
+Are you launching your experiment with the `deepspeed` launcher, MPI, or something else?
+
+**Docker context**
+Are you using a specific docker image that you can share?
+
+**Additional context**
+Add any other context about the problem here.
+

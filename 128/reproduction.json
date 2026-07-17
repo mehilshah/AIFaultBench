@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` reproduces the compiler failure: `internal.codon:174 (36-49): error: 'Ptr[float32]' object has no attribute '__to_py__'`, followed by `during the realization of to_py(slf: ndarray[float32,1])` and `__to_py__(self: ndarray[float32,1])`.",
+  "steps": [
+    "Ensure Codon is available via `codon` or `~/.codon/bin/codon`.",
+    "Run `bash run_repro.sh`.",
+    "Observe the pyext build fail while generating wrappers for `ndarray[float32,1]`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

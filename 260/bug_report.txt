@@ -1,0 +1,62 @@
+Title: Unable to add overlapping single-table constraints to a multi-table schema
+Date: 2025-07-07T20:39:00+00:00
+URL: https://github.com/sdv-dev/SDV/issues/2601
+
+Description:
+### Environment Details
+* SDV version: 1.24.0
+* Python version: 3.11
+* Operating System: Linux (Google Colab)
+
+### Error Description
+In my multi-table schema, I expect to be able to provide a list of all the different constraints I have. It should be possible to supply multiple, [single-table constraints](https://docs.sdv.dev/sdv/concepts/constraint-augmented-generation-cag/predefined-constraints#single-table) to one of my tables in the schema -- even if some of the constraints share the same columns (aka there is an overlap).
+
+However, in practice, the multi-table synthesizer errors out if I supply 2 overlapping single-table constraints. (Interestingly, it does not error out if I am in a single-table setting and I'm using a synthesizer such as GaussianCopula. This indicates the error may be in the multi-table synthesizers somewhere.)
+
+### Steps to reproduce
+The code below creates a simple parent-child schema where the parent table has 2 overlapping Inequality constraints. 
+
+```python
+import pandas as pd
+import numpy as np
+
+from sdv.cag import Inequality
+from sdv.metadata import Metadata
+from sdv.multi_table import HMASynthesizer
+
+# create a simple parent-child schema where the parent has multiple inequality constraints
+# colA < colB < colC
+parent = pd.DataFrame(data={
+    'id': [i for i in range(20)],
+    'colA': np.random.randint(low=0, high=100, size=20)})
+
+parent['colB'] = parent['colA'] + np.random.randint(low=1, high=10, size=20)
+parent['colC'] = parent['colB'] + np.random.randint(low=1, high=10, size=20)
+
+child = pd.DataFrame(data={
+    'parent_id': np.random.randint(low=0, high=20, size=100),
+    'colD': np.random.randint(low=100, high=200, size=100)})
+
+data = { 'parent': parent, 'child': child }
+
+# metadata is auto-detected correctly
+metadata = Metadata.detect_from_dataframes(data)
+
+# now try to add both constraints to the synthesizer
+synthesizer = HMASynthesizer(metadata)
+constraint1 = Inequality(low_column_name='colA', high_column_name='colB', table_name='parent')
+constraint2 = Inequality(low_column_name='colB', high_column_name='colC', table_name='parent')
+
+synthesizer.add_constraints([constraint1, constraint2])
+```
+The final line of code (`add_constraints`) yields the following error:
+```
+ConstraintNotMetError: Table 'parent' is missing columns 'colB'.
+```
+
+Stack trace is available below.
+
+[stack_trace.txt](https://github.com/user-attachments/files/21109857/stack_trace.txt)
+
+### Additional Context
+I recognize in this case, I could achieve the logic by adding a Range constraint. But it is illustrative of the problem if I add 2 Inequality constraints instead; we intend for this case to work.

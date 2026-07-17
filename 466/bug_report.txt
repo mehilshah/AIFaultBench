@@ -1,0 +1,56 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21576
+
+TITLE
+Please remove @Blaizzy from tags
+
+BODY
+### Bug description
+
+I used to work for Neptune (acquired by OpenAI) and was a maintainer for the Lightning integration. 
+
+But I left years ago and am still getting tagged in issues not related to me or my work, I would love it to stop :) 
+
+### What version are you seeing the problem on?
+
+master
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+
+```
+
+### Error messages and logs
+
+```
+# Error messages and logs here please
+```
+
+
+### Environment
+
+<details>
+  <summary>Current environment</summary>
+
+```
+#- PyTorch Lightning Version (e.g., 2.5.0):
+#- PyTorch Version (e.g., 2.5):
+#- Python version (e.g., 3.12):
+#- OS (e.g., Linux):
+#- CUDA/cuDNN version:
+#- GPU models and configuration:
+#- How you installed Lightning(`conda`, `pip`, source):
+```
+
+</details>
+
+
+### More info
+
+_No response_
+
+cc @ethanwharris

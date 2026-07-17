@@ -1,0 +1,35 @@
+615/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+Traceback (most recent call last):
+  File "615/codebase/torchrl/data/tensor_specs.py", line 3920, in update_mask
+    mask = mask.expand(_remove_neg_shapes(*self.shape, self.space.n))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: The expanded size of the tensor (2) must match the existing size (5) at non-singleton dimension 0.  Target sizes: [2, 5].  Tensor sizes: [5, 5]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "615/repro.py", line 47, in <module>
+    main()
+  File "615/repro.py", line 43, in main
+    check_env_specs(env_transformed)
+  File "615/codebase/torchrl/envs/utils.py", line 759, in check_env_specs
+    real_tensordict = env.rollout(
+                      ^^^^^^^^^^^^
+  File "615/codebase/torchrl/envs/common.py", line 3365, in rollout
+    tensordict = self.reset(tensordict)
+                 ^^^^^^^^^^^^^^^^^^^^^^
+  File "615/codebase/torchrl/envs/common.py", line 2859, in reset
+    tensordict_reset = self._reset(tensordict, **kwargs)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "615/codebase/torchrl/envs/transforms/transforms.py", line 1298, in _reset
+    tensordict_reset = self.transform._reset(tensordict, tensordict_reset)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "615/codebase/torchrl/envs/transforms/transforms.py", line 9028, in _reset
+    return self._call(tensordict_reset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "615/codebase/torchrl/envs/transforms/transforms.py", line 9021, in _call
+    self.action_spec.update_mask(mask.to(self.action_spec.device))
+  File "615/codebase/torchrl/data/tensor_specs.py", line 3922, in update_mask
+    raise RuntimeError("Cannot expand mask to the desired shape.") from err
+RuntimeError: Cannot expand mask to the desired shape.

@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "114/repro.py", line 13, in main
+    from transformers.modeling_utils import shard_checkpoint  # noqa: F401
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ImportError: cannot import name 'shard_checkpoint' from 'transformers.modeling_utils' (114/.venv/lib/python3.12/site-packages/transformers/modeling_utils.py)

@@ -1,0 +1,22 @@
+{
+  "bug_id": "249",
+  "bug_dir": "249",
+  "issue_url": "https://github.com/pytorch/rl/issues/2328",
+  "commit_hash": "",
+  "library_name": "torchrl",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../249",
+  "generated_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

@@ -1,0 +1,19 @@
+input_shape: (2, 1, 20, 100, 100)
+RandomCrop:
+  output_shape: (2, 1, 20, 50, 50)
+  frames_identical: [False, False]
+  videos_different: False
+RandomHorizontalFlip:
+  output_shape: (2, 1, 20, 100, 100)
+  frames_identical: [True, True]
+  videos_different: False
+Combined RandomCrop + RandomHorizontalFlip:
+  output_shape: (2, 1, 20, 50, 50)
+  frames_identical: [False, False]
+  videos_different: False
+BUG_REPRODUCED
+FAIL: RandomCrop: frames are not identical within each video
+FAIL: RandomCrop: videos are not different across the batch
+FAIL: RandomHorizontalFlip: videos are not different across the batch
+FAIL: Combined RandomCrop + RandomHorizontalFlip: frames are not identical within each video
+FAIL: Combined RandomCrop + RandomHorizontalFlip: videos are not different across the batch

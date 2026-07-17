@@ -1,0 +1,17 @@
+078/.venv/lib/python3.12/site-packages/torch/nested/__init__.py:106: UserWarning: The PyTorch API of nested tensors is in prototype stage and will change in the near future. (Triggered internally at ../aten/src/ATen/NestedTensorImpl.cpp:178.)
+  return torch._nested_tensor_from_tensor_list(ts, dtype, None, device, None)
+Traceback (most recent call last):
+  File "078/repro.py", line 55, in <module>
+    main()
+  File "078/repro.py", line 50, in main
+    out.sum().backward()
+  File "078/.venv/lib/python3.12/site-packages/torch/_tensor.py", line 521, in backward
+    torch.autograd.backward(
+  File "078/.venv/lib/python3.12/site-packages/torch/autograd/__init__.py", line 289, in backward
+    _engine_run_backward(
+  File "078/.venv/lib/python3.12/site-packages/torch/autograd/graph.py", line 768, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Function UnbindBackwardAutogradNestedTensor0 returned an invalid gradient at index 0 - got   1  16
+  1  16
+[ torch.LongTensor{2,2} ] but expected shape compatible with [2, j2, 16]

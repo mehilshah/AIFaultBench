@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "repro_stdout.log contains: has_from_single_file: False",
+    "repro_stderr.log contains: AttributeError: type object 'ErnieImageTransformer2DModel' has no attribute 'from_single_file'"
+  ],
+  "steps": [
+    "Created an isolated virtual environment and installed CPU-only torch plus the minimal diffusers runtime dependencies.",
+    "Ran `bash run_repro.sh` from the standardized bug folder.",
+    "Observed that `ErnieImageTransformer2DModel.from_single_file(...)` raises AttributeError immediately."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Using Python 3.10.13 with torch 1.13.1+cpu and pyro 1.6.0, `AutoNormal.quantiles([0.05, 0.5, 0.95])` fails deterministically for a vector latent site with `RuntimeError: The size of tensor a (85) must match the size of tensor b (3) at non-singleton dimension 0`.",
+  "steps": [
+    "Created a clean Python 3.10 virtualenv and installed the pinned CPU Torch + Pyro runtime dependencies.",
+    "Installed the local `codebase/` in editable mode so imports resolve to this checkout.",
+    "Ran `./run_repro.sh`, which executes `repro.py` and triggers the quantile broadcast error."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

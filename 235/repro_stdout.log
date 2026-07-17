@@ -1,0 +1,13 @@
+__getattr__ hit: __name__
+__getattr__ hit: __qualname__
+{
+  "getattr_hits": [
+    "__name__",
+    "__qualname__"
+  ],
+  "instance_type": "Foo",
+  "method_result": "moo",
+  "repo_root": "235",
+  "reproduced": true
+}
+BUG REPRODUCED: invoking Foo().moo() calls user-defined __getattr__ twice.

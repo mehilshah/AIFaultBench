@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "A safetensors file containing an empty float32 tensor loads successfully with safetensors.torch.load_file().",
+    "Calling safetensors.torch.load() on the same file bytes raises ValueError: both buffer length (0) and count (-1) must not be 0.",
+    "The traceback points to safetensors.torch._view2torch() calling torch.frombuffer(v[\"data\"], dtype=dtype) on the empty tensor payload."
+  ],
+  "steps": [
+    "Created a local virtual environment and installed torch and numpy from requirements.txt.",
+    "Used the local codebase sources via PYTHONPATH to import safetensors.torch.",
+    "Generated a minimal safetensors file containing a single zero-length float32 tensor.",
+    "Verified that load_file() returned the expected tensor keys and shape, then confirmed that load(bytes) raised the reported ValueError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

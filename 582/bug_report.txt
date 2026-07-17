@@ -1,0 +1,58 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46752
+
+TITLE
+`apply_chat_template` crashes with `IndexError` when passed an empty list
+
+BODY
+### System Info
+
+transformers: 5.13.0.dev0 (latest main, commit 2b422bde64)
+Python: 3.14.4
+OS: Ubuntu 25.04 (WSL2)
+
+### Who can help?
+
+_No response_
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+```python
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-1.5B-Instruct")
+tokenizer.apply_chat_template([], tokenize=False)
+```
+
+Traceback:
+```
+File "tokenization_utils_base.py", line 3090, in apply_chat_template
+    isinstance(conversation[0], (list, tuple)) or hasattr(conversation[0], "messages")
+               ~~~~~~~~~~~~^^^
+IndexError: list index out of range
+```
+
+Also reproduced on `google/gemma-2-2b-it` — same `IndexError`.
+
+### Expected behavior
+
+Should raise a clear `ValueError` (e.g., "conversation must not be empty") instead of an unhandled `IndexError`.
+
+Root cause: In `tokenization_utils_base.py` line 3090, `conversation[0]` is accessed without checking if the list is empty:
+
+```python
+if isinstance(conversation, (list, tuple)) and (
+    isinstance(conversation[0], (list, tuple)) or hasattr(conversation[0], "messages")
+):
+```
+
+Fix: add `len(conversation) > 0` guard before accessing index 0.

@@ -1,0 +1,72 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3014
+
+TITLE
+[bug] Memory leak on GPU
+
+BODY
+### Issue Description
+After successfully following the SS-VAE example in pyro I have moved over to training a variant of it on a GPU. A memory leak has arisen that has been boiled down to a minimum working example that replicates the error. I am at a loss as to how to proceed in rectifying this issue, any help or insight would be much appreciated!
+
+### Environment
+ - OS and python version. 
+   - OS: Red Hat Enterprise Linux Workstation release 7.9 (Maipo) 
+   - Python: 3.9.7
+   - CUDA Version: 11.2
+ - PyTorch version: 1.10.0
+ - Pyro version: 1.7.0
+
+### Code Snippet
+``` python
+from datetime import datetime
+
+import pyro
+import pyro.distributions as dist
+import torch
+import torch.nn as nn
+from pyro.infer import SVI, TraceEnum_ELBO
+from pyro.optim import Adam
+
+
+class SSVAE(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.accept_ratio = .5
+        ones = torch.ones((), device='cuda')
+        ratio = 1 / (self.accept_ratio + 1)
+        self.alpha_prior = torch.stack((ones - ratio, ones - self.accept_ratio * ratio)).T
+        self.cuda()
+
+    def model(self):
+        pyro.sample("y", dist.OneHotCategorical(self.alpha_prior))
+
+    def guide(self):
+        pass
+
+
+def sizeof_fmt(num, suffix="B"):
+    for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
+        if abs(num) < 1024.0:
+            return f"{num:3.1f}{unit}{suffix}"
+        num /= 1024.0
+    return f"{num:.1f}Yi{suffix}"
+
+
+if __name__ == '__main__':
+    torch.cuda.empty_cache()
+    ssvae = SSVAE()
+
+    optimizer = Adam({"lr": 1e-4})
+
+    svi = SVI(ssvae.model, ssvae.guide, optimizer, loss=TraceEnum_ELBO())
+
+    for i in range(10):
+        print(f"{datetime.now().strftime('%H:%M:%S')} - Starting epoch #{i + 1}")
+        print(
+            f"Current GPU memory allocation:"
+            f" {sizeof_fmt(torch.cuda.memory_allocated())}/{sizeof_fmt(torch.cuda.max_memory_allocated())}")
+
+        # get the losses for an epoch
+        for _ in range(100):
+            svi.step()
+```
+

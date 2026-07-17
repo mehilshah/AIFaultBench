@@ -1,0 +1,6 @@
+create_masks_for_generate_return_type=NoneType
+create_masks_for_generate_return_value=None
+causal_mask_calls_after_precompute=1
+forward_output_shape=(1, 3, 16)
+causal_mask_calls_after_forward=2
+causal_mask_call_history=[None, None]

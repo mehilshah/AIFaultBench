@@ -1,0 +1,11 @@
+458/codebase/torchrl/_extension.py:42: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+Traceback (most recent call last):
+  File "458/repro.py", line 26, in main
+    sampler=PrioritizedSampler(
+            ^^^^^^^^^^^^^^^^^^^
+  File "458/codebase/torchrl/data/replay_buffers/samplers.py", line 426, in __init__
+    self._init()
+  File "458/codebase/torchrl/data/replay_buffers/samplers.py", line 462, in _init
+    raise RuntimeError(
+RuntimeError: SumSegmentTreeFp32 is not available. See warning above.

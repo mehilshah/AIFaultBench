@@ -1,0 +1,78 @@
+Title: Semantic version checking in some modules/tests do not account for epoch, pre/post-release, or development release segments
+Date: 2024-07-24T18:00:35+00:00
+URL: https://github.com/Trusted-AI/adversarial-robustness-toolbox/issues/2473
+
+Description:
+**Describe the bug**
+
+Example code in [art/estimators/object_detection/pytorch_object_detector.py](https://github.com/Trusted-AI/adversarial-robustness-toolbox/blob/main/art/estimators/object_detection/pytorch_object_detector.py#L97-L98)
+
+Parsed versions make an assumption that there will be no epoch, pre-release, post-release, or development release segments. (e.g. `torchvision==0.18.1a0+405940f` would assert with an error of `ValueError: invalid literal for int() with base 10: '1a0'`)
+
+This failure mode was detected when testing within a conda environment with installed downstream `heart-library` (local test build for publication to conda-forge) and the latest version of  `torchvision` via conda-forge.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Build a conda venv for `adversarial-robustness-toolbox`
+2. Install `pytorch` and `torchvision` via conda-forge
+  a. `conda install conda-forge::pytorch`
+  b. `conda install conda-forge::torchvision`
+3. Confirm installed `torchvision` version
+
+```
+python -c "import torchvision; from importlib.metadata import version; print(version('torchvision'))"
+# Currently, this should output:  0.18.1a0+405940f
+```
+
+5. Test semantic version parse line from [pytorch_object_detector.py](https://github.com/Trusted-AI/adversarial-robustness-toolbox/blob/main/art/estimators/object_detection/pytorch_object_detector.py#L98)
+
+```
+python -c 'import torchvision; print(list(map(int, torchvision.__version__.lower().split("+", maxsplit=1)[0].split("."))))'
+
+# This will fail with:
+# Traceback (most recent call last):
+#   File "<string>", line 1, in <module>
+# ValueError: invalid literal for int() with base 10: '1a0'
+```
+
+All code that leverages modules that utilize this form of semantic version testing will either fail on assert statements that expect `int`, or are checking for a specific value (potentially directing code execution into an `else` pathway unintentionally).
+
+
+**Expected behavior**
+These semantic version checks should consistently return a valid version identifier and not fail asserts when other identifying segments are present based on [PyPA specs](https://packaging.python.org/en/latest/specifications/version-specifiers/#public-version-identifiers)
+
+Potential solution:
+- leverage `parse` from `packaging.version` to isolate release version identifier
+```
+Python 3.10.14 | packaged by conda-forge | (main, Mar 20 2024, 12:45:18) [GCC 12.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import torchvision
+>>> from packaging.version import parse
+>>> from importlib.metadata import version
+>>>
+>>> print(torchvision.__version__.lower())
+0.18.1a0+405940f
+>>>
+>>> torchvision_version = list(parse(version("torchvision")).release)
+>>> print(torchvision_version)
+[0, 18, 1]
+>>>
+>>> # or without leveraging importlib.metadata
+>>> torchvision_version = list(parse(torchvision.__version__.lower()).release)
+>>> print(torchvision_version)
+[0, 18, 1]
+```
+
+**Screenshots**
+n/a
+
+**System information (please complete the following information):**
+ - OS = `Ubuntu 22.04.4`
+ - Python version = `3.10`
+ - ART version or commit number = `1.18.1`
+ - TensorFlow / Keras / PyTorch / MXNet version:
+ 
+ ```
+pytorch                     2.3.1           cpu_generic_py310ha4c588e_0    conda-forge
+torchvision               0.18.1          cpu_py310h2ee8361_1    conda-forge
+```

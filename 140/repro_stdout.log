@@ -1,0 +1,3 @@
+TypeError argument 'slices': failed to extract enum Slice ('Slice | Slices')
+- variant Slice (Slice): TypeError: failed to extract field Slice::Slice.0, caused by TypeError: 'tuple' object cannot be converted to 'PySlice'
+- variant Slices (Slices): TypeError: failed to extract field Slice::Slices.0, caused by TypeError: 'int' object cannot be converted to 'PySlice'

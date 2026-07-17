@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "120/repro.py", line 55, in <module>
+    main()
+  File "120/repro.py", line 51, in main
+    assert "numpy" in observed_keys, "np.ndarray was not logged as a histogram"
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: np.ndarray was not logged as a histogram

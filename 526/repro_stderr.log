@@ -1,0 +1,13 @@
+526/codebase/torchrl/_extension.py:42: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+Traceback (most recent call last):
+  File "526/repro.py", line 72, in <module>
+    main()
+  File "526/repro.py", line 63, in main
+    CrossQLoss(
+  File "526/codebase/torchrl/objectives/crossq.py", line 348, in __init__
+    self.maybe_init_target_entropy()
+  File "526/codebase/torchrl/objectives/crossq.py", line 406, in maybe_init_target_entropy
+    "_target_entropy", torch.tensor(target_entropy, device=device)
+                                                           ^^^^^^
+UnboundLocalError: cannot access local variable 'device' where it is not associated with a value

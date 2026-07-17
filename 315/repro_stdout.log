@@ -1,0 +1,95 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (24.0)
+Collecting pip
+  Downloading pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
+Requirement already satisfied: setuptools in /users/grad/mehil/.local/lib/python3.12/site-packages (83.0.0)
+Requirement already satisfied: wheel in /users/grad/mehil/.local/lib/python3.12/site-packages (0.47.0)
+Requirement already satisfied: packaging>=24.0 in /users/grad/mehil/.local/lib/python3.12/site-packages (from wheel) (25.0)
+Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 25.1 MB/s eta 0:00:00
+
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed pip-26.1.2
+Looking in indexes: https://pypi.org/simple, https://download.pytorch.org/whl/cpu
+Requirement already satisfied: numpy>=1.26 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 315/requirements.txt (line 1)) (2.5.1)
+Requirement already satisfied: packaging>=24.0 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 315/requirements.txt (line 2)) (25.0)
+Collecting filelock>=3.16 (from -r 315/requirements.txt (line 3))
+  Downloading filelock-3.30.2-py3-none-any.whl.metadata (2.0 kB)
+Requirement already satisfied: pyyaml>=6.0 in /usr/lib/python3/dist-packages (from -r 315/requirements.txt (line 4)) (6.0.1)
+Requirement already satisfied: regex>=2024.11.6 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 315/requirements.txt (line 5)) (2026.7.10)
+Requirement already satisfied: requests>=2.32 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 315/requirements.txt (line 6)) (2.34.2)
+Requirement already satisfied: safetensors>=0.8.0 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 315/requirements.txt (line 7)) (0.8.0)
+Requirement already satisfied: tokenizers<=0.23.0,>=0.22.0 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 315/requirements.txt (line 8)) (0.22.2)
+Requirement already satisfied: tqdm>=4.66 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 315/requirements.txt (line 9)) (4.67.3)
+Collecting huggingface_hub==1.22.0 (from -r 315/requirements.txt (line 10))
+  Downloading huggingface_hub-1.22.0-py3-none-any.whl.metadata (14 kB)
+Collecting torch==2.4.1 (from -r 315/requirements.txt (line 11))
+  Downloading torch-2.4.1%2Bcpu-cp312-cp312-linux_x86_64.whl (194.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 194.8/194.8 MB 107.2 MB/s  0:00:01
+
+Requirement already satisfied: click<9.0.0,>=8.4.2 in /users/grad/mehil/.local/lib/python3.12/site-packages (from huggingface_hub==1.22.0->-r 315/requirements.txt (line 10)) (8.4.2)
+Requirement already satisfied: fsspec>=2023.5.0 in /users/grad/mehil/.local/lib/python3.12/site-packages (from huggingface_hub==1.22.0->-r 315/requirements.txt (line 10)) (2025.3.0)
+Requirement already satisfied: hf-xet<2.0.0,>=1.5.1 in /users/grad/mehil/.local/lib/python3.12/site-packages (from huggingface_hub==1.22.0->-r 315/requirements.txt (line 10)) (1.5.2)
+Requirement already satisfied: httpx<1,>=0.23.0 in /users/grad/mehil/.local/lib/python3.12/site-packages (from huggingface_hub==1.22.0->-r 315/requirements.txt (line 10)) (0.28.1)
+Requirement already satisfied: typing-extensions>=4.1.0 in /users/grad/mehil/.local/lib/python3.12/site-packages (from huggingface_hub==1.22.0->-r 315/requirements.txt (line 10)) (4.16.0)
+Requirement already satisfied: sympy in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch==2.4.1->-r 315/requirements.txt (line 11)) (1.14.0)
+Requirement already satisfied: networkx in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch==2.4.1->-r 315/requirements.txt (line 11)) (3.6.1)
+Requirement already satisfied: jinja2 in /usr/lib/python3/dist-packages (from torch==2.4.1->-r 315/requirements.txt (line 11)) (3.1.2)
+Requirement already satisfied: setuptools in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch==2.4.1->-r 315/requirements.txt (line 11)) (83.0.0)
+Requirement already satisfied: anyio in /users/grad/mehil/.local/lib/python3.12/site-packages (from httpx<1,>=0.23.0->huggingface_hub==1.22.0->-r 315/requirements.txt (line 10)) (4.14.2)
+Requirement already satisfied: certifi in /usr/lib/python3/dist-packages (from httpx<1,>=0.23.0->huggingface_hub==1.22.0->-r 315/requirements.txt (line 10)) (2023.11.17)
+Requirement already satisfied: httpcore==1.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from httpx<1,>=0.23.0->huggingface_hub==1.22.0->-r 315/requirements.txt (line 10)) (1.0.9)
+Requirement already satisfied: idna in /usr/lib/python3/dist-packages (from httpx<1,>=0.23.0->huggingface_hub==1.22.0->-r 315/requirements.txt (line 10)) (3.6)
+Requirement already satisfied: h11>=0.16 in /users/grad/mehil/.local/lib/python3.12/site-packages (from httpcore==1.*->httpx<1,>=0.23.0->huggingface_hub==1.22.0->-r 315/requirements.txt (line 10)) (0.16.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in /users/grad/mehil/.local/lib/python3.12/site-packages (from requests>=2.32->-r 315/requirements.txt (line 6)) (3.4.9)
+Requirement already satisfied: urllib3<3,>=1.26 in /usr/lib/python3/dist-packages (from requests>=2.32->-r 315/requirements.txt (line 6)) (2.0.7)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /users/grad/mehil/.local/lib/python3.12/site-packages (from sympy->torch==2.4.1->-r 315/requirements.txt (line 11)) (1.3.0)
+Downloading huggingface_hub-1.22.0-py3-none-any.whl (765 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 765.1/765.1 kB 19.5 MB/s  0:00:00
+
+Downloading filelock-3.30.2-py3-none-any.whl (94 kB)
+Installing collected packages: filelock, torch, huggingface_hub
+  Attempting uninstall: filelock
+    Found existing installation: filelock 3.13.1
+    Not uninstalling filelock at /usr/lib/python3/dist-packages, outside environment 315/.venv
+    Can't uninstall 'filelock'. No files were found to uninstall.
+  Attempting uninstall: torch
+    Found existing installation: torch 2.13.0
+    Not uninstalling torch at /users/grad/mehil/.local/lib/python3.12/site-packages, outside environment 315/.venv
+    Can't uninstall 'torch'. No files were found to uninstall.
+  Attempting uninstall: huggingface_hub
+    Found existing installation: huggingface_hub 0.36.2
+    Not uninstalling huggingface-hub at /users/grad/mehil/.local/lib/python3.12/site-packages, outside environment 315/.venv
+    Can't uninstall 'huggingface_hub'. No files were found to uninstall.
+
+
+Successfully installed filelock-3.30.2 huggingface_hub-1.22.0 torch-2.4.1+cpu
+Obtaining file://315/codebase
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: transformers
+  Building editable for transformers (pyproject.toml): started
+  Building editable for transformers (pyproject.toml): finished with status 'done'
+  Created wheel for transformers: filename=transformers-5.14.0.dev0-0.editable-py3-none-any.whl size=14795 sha256=4fbb2078e74994b1e3dc46bf03836686c80801fdf22eb50ba98be87e532ce0b3
+  Stored in directory: /tmp/pip-ephem-wheel-cache-n8my47ay/wheels/e8/b9/24/3d257ddd987aeba3c48a57902a81bb041e847723cfab1f9812
+Successfully built transformers
+Installing collected packages: transformers
+  Attempting uninstall: transformers
+    Found existing installation: transformers 4.57.6
+    Not uninstalling transformers at /users/grad/mehil/.local/lib/python3.12/site-packages, outside environment 315/.venv
+    Can't uninstall 'transformers'. No files were found to uninstall.
+Successfully installed transformers-5.14.0.dev0
+output_shape=(1, 0)
+captured_warnings:
+Detected cache_implementation=paged: switching to continuous batching. You should consider using generate_batch directly instead.
+synced_gpus is not ignored for continuous batching. Got synced_gpus = True
+reproduced=True

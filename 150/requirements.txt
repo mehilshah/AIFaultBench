@@ -1,0 +1,12 @@
+filelock
+huggingface-hub
+numpy
+packaging
+pyyaml
+regex
+requests
+safetensors
+torch
+tokenizers<=0.23.0
+tqdm
+typer-slim

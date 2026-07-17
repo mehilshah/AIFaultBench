@@ -1,0 +1,12 @@
+{
+  "bug_id": "328",
+  "bug_dir": "328",
+  "issue_url": "https://github.com/PythonOT/POT/issues/24",
+  "commit_hash": "a29e22db4772ebc4a8266c917e2e662f624c6baa",
+  "library_name": "POT",
+  "library_version": "0.3.1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "PythonOT/POT@a29e22db4772ebc4a8266c917e2e662f624c6baa",
+  "codebase_present": "true",
+  "standardized_dir": "../328"
+}

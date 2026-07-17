@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "phase_1_missing_model: NameError: name 'model' is not defined",
+    "phase_2_missing_torch_device: NameError: name 'torch_device' is not defined",
+    "phase_3_invalid_device_map_kwarg: TypeError: to() got an unexpected keyword argument 'device_map'"
+  ],
+  "steps": [
+    "Run ./run_repro.sh in the standardized bug folder.",
+    "The script executes the documented DIA example in three stages and captures the first failing line in each stage."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

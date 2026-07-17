@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` produced TensorBoard histogram keys for `torch` only. `repro_stdout.log` shows `histograms=['torch']`, `compressed_histograms=['torch']`, and `observed_histograms=['torch']`. `repro_stderr.log` ends with `AssertionError: np.ndarray was not logged as a histogram`.",
+  "steps": [
+    "Created a local virtual environment and installed the runtime dependencies from `requirements.txt`.",
+    "Loaded `codebase/stable_baselines3/common/logger.py` directly with `importlib` so the repro stays focused on the logger implementation.",
+    "Logged both a `np.ndarray` and a `torch.Tensor` through `TensorBoardOutputFormat`, then read the generated TensorBoard event files with `EventAccumulator`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

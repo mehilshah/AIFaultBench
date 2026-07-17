@@ -1,0 +1,12 @@
+{
+  "reproducible": false,
+  "evidence": "backend=gpu, device=cuda:0; warmup=13.662s; first post-warmup run same_object=7.645s vs fresh num_warmup=0=8.426s (ratio=0.91x); second batch same_object=3.770s vs fresh num_warmup=0=3.217s (ratio=1.17x).",
+  "steps": [
+    "Create the local venv and install JAX 0.9.0 CUDA 13 wheels plus the runtime dependencies.",
+    "Run the issue's GP-style NUTS benchmark with 4 vectorized chains on the local GPU.",
+    "Compare a post-warmup run on the same MCMC object against a fresh num_warmup=0 restart.",
+    "Repeat the comparison for a second steady-state batch after setting post_warmup_state."
+  ],
+  "blocking_reason": "The reported slowdown did not reproduce here; the same-object path was roughly equal to or slightly faster than the fresh num_warmup=0 path.",
+  "reproduction_command": "bash run_repro.sh"
+}

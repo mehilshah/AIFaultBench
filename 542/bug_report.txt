@@ -1,0 +1,69 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38099
+
+TITLE
+`jax.jit + jnp.log + jnp.exp`: jit(log(exp(x))) hides exp overflow — XLA rewrites log(exp(x)) to x
+
+BODY
+### Description
+
+
+XLA's algebraic rewrite `log(exp(x)) → x` suppresses the `inf` that eager mode produces when `exp(x)` overflows in float32 (at x > 88.72). `jit(log(exp(89)))` returns `89.0` while eager correctly returns `inf`.
+
+Minimal reproducer:
+
+```python
+import numpy as np
+import jax, jax.numpy as jnp
+
+x = jnp.array(89.0, dtype=jnp.float32)  # exp(89) overflows in float32
+
+jit_result   = float(jax.jit(lambda x: jnp.log(jnp.exp(x)))(x))
+eager_result = float(jnp.log(jnp.exp(x)))
+
+print(f"jit(log(exp(89)))  = {jit_result}")   # 89.0
+print(f"    log(exp(89))   = {eager_result}")  # inf
+assert jit_result == eager_result  # AssertionError
+```
+
+Expected output:
+```
+jit(log(exp(89))) = inf
+    log(exp(89))  = inf
+```
+
+Actual output:
+```
+jit(log(exp(89))) = 89.0
+    log(exp(89))  = inf
+```
+
+Full pytest output:
+
+```
+=================================== FAILURES ===================================
+______________________ test_jit_log_exp_overflow_float32 _______________________
+    np.testing.assert_array_equal(result, expected, err_msg=f'jit(log(exp({x_np}))) = {float(result)} but eager = {float(expected)}: JIT hides exp overflow')
+E   AssertionError: 
+E   Arrays are not equal
+E   jit(log(exp(89.0))) = 89.0 but eager = inf: JIT hides exp overflow
+E   inf location mismatch:
+E    ACTUAL: array(89., dtype=float32)
+E    DESIRED: array(inf, dtype=float32)
+E   Falsifying example: test_jit_log_exp_overflow_float32(
+E       x_np=float32(89.0),
+E   )
+============================== 1 failed in 0.55s ===============================
+```
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+
+```
+jax:      0.10.1.dev20260513+64f6e229b
+jaxlib:   0.10.0
+numpy:    2.4.4
+Python:   3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]
+Platform: Linux-6.14.0-37-generic-x86_64-with-glibc2.39
+Device:   CpuDevice(id=0)
+```
+

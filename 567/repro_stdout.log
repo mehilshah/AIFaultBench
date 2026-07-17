@@ -1,0 +1,11 @@
+{
+  "codebase": "567/codebase",
+  "cuda_available": true,
+  "cuda_device_count": 1,
+  "python": "3.12.3",
+  "reason": "Need at least two visible CUDA devices to probe cuda:1, but only 1 device(s) are visible.",
+  "reproducible": false,
+  "status": "blocked",
+  "target_device": "cuda:1",
+  "torch": "2.5.1+cu121"
+}

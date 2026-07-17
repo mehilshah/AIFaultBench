@@ -1,0 +1,14 @@
+done_keys: ['done', 'terminated', 'truncated', ('data', 'done'), ('data', 'terminated')]
+step_count_keys: ['step_count']
+truncated_keys: ['truncated']
+reset_keys: ['_reset']
+filtered_reset_keys: ['_reset']
+top-level keys: _TensorDictKeysView([('data', 'done'), ('data', 'terminated'), ('data', 'states'), ('data', 'action'), 'data', 'done', 'terminated', 'step_count', 'truncated', ('next', 'data', 'done'), ('next', 'data', 'terminated'), ('next', 'data', 'states'), ('next', 'data', 'reward'), ('next', 'data'), ('next', 'done'), ('next', 'terminated'), ('next', 'step_count'), ('next', 'truncated'), 'next'],
+    include_nested=True,
+    leaves_only=False)
+root step_count: [0, 1]
+root next truncated: [False, True]
+root next done: [False, True]
+nested next step_count exists: False
+nested next truncated exists: False
+nested next done exists: True

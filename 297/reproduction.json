@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running bash run_repro.sh fails during uv dependency resolution with: 'torch-geometric was not found in the package registry' and a hint that https://data.pyg.org/whl/torch-2.8.0+cu128.html returned 403 Forbidden.",
+  "steps": [
+    "Use the bundled pyproject.toml that mirrors the issue report's torch, torchvision, torch_geometric, and uv index configuration.",
+    "Run bash run_repro.sh from the bug folder.",
+    "Observe uv sync fail with an unsatisfiable dependency resolution for torch-geometric."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

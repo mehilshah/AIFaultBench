@@ -1,0 +1,13 @@
+130/.venv/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:368: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /__w/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:84.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+WARNING[XFORMERS]: Need to compile C++ extensions to use all xFormers features.
+    Please install xformers properly (see https://github.com/facebookresearch/xformers#installing-xformers)
+  Memory-efficient attention, SwiGLU, sparse and more won't be available.
+  Set XFORMERS_MORE_DETAILS=1 for more details
+Traceback (most recent call last):
+  File "130/repro.py", line 47, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "130/repro.py", line 35, in main
+    raise AssertionError(
+AssertionError: BlockDiagonalCausalMask.to() should preserve the subclass, but returned BlockDiagonalMask

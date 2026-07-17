@@ -1,0 +1,75 @@
+Title: `init_range_low` is not adhered to in recent release
+Date: 2025-07-10T09:32:14+00:00
+URL: https://github.com/ahmedfgad/GeneticAlgorithmPython/issues/335
+
+Description:
+Hi, 
+
+I re-installed the most recent release of PyGAD via conda this morning (3.5.0-pyhd8ed1ab_0), and ran some code I had been working on last week. The code takes 20 genes with values of 0 or 1. The fitness function sums the even-numbered genes and subtracts the odd-numbered genes. When I had the previous release installed (3.4.0-pyhd8ed1ab_0), the code gave the correct results, something like: 
+
+```
+Parameters of the best solution : [1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0]
+Fitness value of the best solution = 10
+Predicted output based on the best solution : 10
+```
+
+However, with the new release, I'm getting values for the genes less than `init_range_low`, for example: 
+
+```
+Parameters of the best solution : [  1 -14   1 -12   1  -9   1 -14   1  -9   1 -11   1 -11   1  -8   1 -12  1 -12]
+Fitness value of the best solution = 122
+Predicted output based on the best solution : 122
+```
+
+When I downgraded to the previous release, I get the correct results as before. The code is as follows:
+
+```
+import pygad
+import numpy 
+import scipy
+
+def fitness_func(ga_instance, solution, solution_idx):
+	fitness = numpy.sum(solution[0::2]) - numpy.sum(solution[1::2])
+	return fitness
+
+fitness_function = fitness_func
+num_generations = 50
+num_parents_mating = 10
+
+sol_per_pop = 100
+num_genes = 20
+
+gene_type=int
+init_range_low = 0
+init_range_high = 2
+
+parent_selection_type = "sss"
+keep_parents = 10
+
+crossover_type = "scattered"
+mutation_type = "random"
+mutation_percent_genes = 100 / num_genes
+
+ga_instance = pygad.GA(num_generations=num_generations, 
+num_parents_mating=num_parents_mating, 
+fitness_func=fitness_function, 
+sol_per_pop=sol_per_pop, 
+num_genes=num_genes, 
+gene_type=gene_type,
+init_range_low=init_range_low, 
+init_range_high=init_range_high, 
+parent_selection_type=parent_selection_type, 
+keep_parents=keep_parents, 
+crossover_type=crossover_type, 
+mutation_type=mutation_type, 
+mutation_percent_genes=mutation_percent_genes)
+
+ga_instance.run()
+
+solution, solution_fitness, solution_idx = ga_instance.best_solution()
+print("Parameters of the best solution : {solution}".format(solution=solution))
+print("Fitness value of the best solution = {solution_fitness}".format(solution_fitness=solution_fitness))
+
+prediction = numpy.sum(solution[0::2]) - numpy.sum(solution[1::2])
+print("Predicted output based on the best solution : {prediction}".format(prediction=prediction))
+```

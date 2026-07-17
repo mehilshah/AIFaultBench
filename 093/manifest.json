@@ -1,0 +1,12 @@
+{
+  "bug_id": "093",
+  "bug_dir": "093",
+  "issue_url": "https://github.com/lucidrains/x-transformers/issues/228",
+  "commit_hash": "aa380f17b6f1e762604278ad2cd9b6ecc804f35e",
+  "library_name": "x-transformers",
+  "library_version": "2.23.4",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "local copy of lucidrains/x-transformers from shared repo cache",
+  "codebase_present": "true",
+  "standardized_dir": "../093"
+}

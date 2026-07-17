@@ -1,0 +1,12 @@
+{
+  "bug_id": "398",
+  "bug_dir": "398",
+  "issue_url": "https://github.com/facebookresearch/detectron2/issues/1132",
+  "commit_hash": "e12b2d6534b5fb1c0e6bdc8f486986433e502d1a",
+  "library_name": "detectron2",
+  "library_version": "0.1.1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "facebookresearch/detectron2@e12b2d6534b5fb1c0e6bdc8f486986433e502d1a",
+  "codebase_present": "true",
+  "standardized_dir": "../398"
+}

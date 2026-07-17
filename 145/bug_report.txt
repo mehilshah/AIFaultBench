@@ -1,0 +1,45 @@
+Title: `StaticEmbedding.from_distillation("BAAI/bge-base-en-v1.5", device="cuda")` not producing similarity results from docstring
+Date: 2025-01-17T07:47:08.000Z
+URL: https://github.com/huggingface/sentence-transformers/issues/3175
+
+Description:
+## Issue
+
+From https://www.sbert.net/docs/package_reference/sentence_transformer/models.html#sentence_transformers.models.StaticEmbedding
+
+(Commented out so that the distilled bge-base is the one that is run)
+
+```python
+from sentence_transformers import SentenceTransformer
+from sentence_transformers.models import StaticEmbedding
+from tokenizers import Tokenizer
+
+# Pre-distilled embeddings:
+# static_embedding = StaticEmbedding.from_model2vec("minishlab/M2V_base_output")
+# or distill your own embeddings:
+static_embedding = StaticEmbedding.from_distillation("BAAI/bge-base-en-v1.5", device="cuda")
+# or start with randomized embeddings:
+# tokenizer = Tokenizer.from_pretrained("FacebookAI/xlm-roberta-base")
+#static_embedding = StaticEmbedding(tokenizer, embedding_dim=512)
+
+model = SentenceTransformer(modules=[static_embedding])
+
+embeddings = model.encode(["What are Pandas?", "The giant panda (Ailuropoda melanoleuca; Chinese: 大熊猫; pinyin: dàxióngmāo), also known as the panda bear or simply the panda, is a bear native to south central China."])
+similarity = model.similarity(embeddings[0], embeddings[1])
+# tensor([[0.9177]]) (If you use the distilled bge-base)
+```
+
+For me, this produces 
+
+```
+tensor([[0.5375]])
+```
+
+## Environment
+
+```txt
+sentence-transformers=3.3.1
+model2vec==0.3.6
+```
+
+Colab to reproduce: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1JQQcfxWNjRGEds7kEwZGxkscGJMs47rA?usp=sharing)

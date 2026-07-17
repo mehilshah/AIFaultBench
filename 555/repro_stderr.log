@@ -1,0 +1,7 @@
+An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+Traceback (most recent call last):
+  File "555/repro.py", line 37, in <module>
+    main()
+  File "555/repro.py", line 30, in main
+    raise AssertionError(
+AssertionError: jit(grad(sum(log2(exp2(x))))) != eager grad: jit_result=[1.], eager_result=[0.]

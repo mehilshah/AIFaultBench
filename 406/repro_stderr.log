@@ -1,0 +1,1 @@
+FAIL: Ideogram4ModularPipeline does not inherit Ideogram4LoraLoaderMixin, so load_lora_weights() is not available.

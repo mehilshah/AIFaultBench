@@ -1,0 +1,13 @@
+{
+  "bug_id": "554",
+  "bug_dir": "554",
+  "issue_url": "https://github.com/pyg-team/pytorch_geometric/issues/9959",
+  "commit_hash": "5fb2a8eaae3047a9dd430fd58e735e333daed79d",
+  "library_name": "pytorch_geometric",
+  "library_version": "2.6.1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pyg-team/pytorch_geometric@5fb2a8eaae3047a9dd430fd58e735e333daed79d",
+  "codebase_present": "true",
+  "standardized_dir": "../554",
+  "reproduction_strategy": "local rpc helper repro with one None worker entry"
+}

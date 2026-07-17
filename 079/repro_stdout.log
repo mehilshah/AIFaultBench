@@ -1,0 +1,3 @@
+input_shape=(1, 3, 224, 224)
+exception_type=RuntimeError
+exception_message=Given normalized_shape=[64], expected input with shape [*, 64], but got input of size[1, 64, 112, 112]

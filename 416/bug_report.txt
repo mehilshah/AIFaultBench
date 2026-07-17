@@ -1,0 +1,25 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3218
+
+TITLE
+`ProvenanceTensor` bug when used with `torch.set_default_device`
+
+BODY
+When trying to debug the code from the [forum post](https://forum.pyro.ai/t/running-pyro-plate-on-gpu/5097/8) I came across this bug:
+
+```py
+import torch
+from pyro.ops.provenance import ProvenanceTensor
+
+device = torch.device("cuda")
+torch.set_default_device(device)
+x = torch.tensor([1., 2., 3.])
+y = ProvenanceTensor(x, frozenset(["x"]))
+print(torch.as_tensor(y))
+```
+returns `tensor([], device='cuda:0')`
+
+**Two observations:**
+1. This doesn't happen if `torch.set_default_device` is not used: `print(torch.as_tensor(y.cuda()))` works fine
+2. When `torch.set_default_device` is used then the following code gets invoked
+https://github.com/pytorch/pytorch/blob/main/torch/utils/_device.py#L72-L76
+where `func(*args, **kwargs)` returns `tensor([], device='cuda:0')`. This doesn't happen when `.cuda()` is used like in 1).

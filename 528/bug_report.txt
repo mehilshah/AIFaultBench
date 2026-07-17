@@ -1,0 +1,36 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2725
+
+TITLE
+Minimum tests failing - OSError: [WinError 1114] A dynamic link library (DLL) initialization routine failed
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version: 1.27.0
+* Python version: 3.10 and 3.11 (maybe others)
+* Operating System: Windows
+
+### Error Description
+
+When running the minimum tests on Windows and Python 3.11 and under I see the following error:
+```
+ERROR tests/unit/version/test_version.py - OSError: [WinError 1114] A dynamic link library (DLL) initialization routine failed. Error loading "C:\hostedtoolcache\windows\Python\3.11.9\x64\Lib\site-packages\torch\lib\c10.dll" or one of its dependencies.
+
+!!!!!!!!!!!!!!!!!! Interrupted: 29 errors during collection !!!!!!!!!!!!!!!!!!!
+
+======================= 1 warning, 29 errors in 37.23s ========================
+```
+Here is an example failing [workflow](https://github.com/sdv-dev/SDV/actions/runs/18536232905/job/52831961123).
+
+Upon further investigation, I was able to reproduce locally and discovered that it happens if the new version of torch (2.9.0) is installed and a version of numpy < 2.0.0 is installed.
+
+
+### Steps to reproduce
+On Windows, setup a python environment with python version 3.11 or 3.10. Then run the following:
+```
+pip install sdv[dev]
+invoke minimum
+```
+

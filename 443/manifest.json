@@ -1,0 +1,12 @@
+{
+  "bug_id": "443",
+  "bug_dir": "443",
+  "issue_url": "https://github.com/pytorch/rl/issues/3515",
+  "commit_hash": "83c2101d3ef92b25e371db24e0b6aca8112ea1dd",
+  "library_name": "torchrl",
+  "library_version": "0.11.0+g83c2101d3",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pytorch/rl@83c2101d3ef92b25e371db24e0b6aca8112ea1dd",
+  "codebase_present": "true",
+  "standardized_dir": "../443"
+}

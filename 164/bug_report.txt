@@ -1,0 +1,75 @@
+Title: Gradients from Boxes3D.to_tensor aren't accurate
+Date: 2021-10-16T15:23:12+00:00
+URL: https://github.com/kornia/kornia/issues/1396
+
+Description:
+### Describe the bug
+
+Landing issue for those wanting to compute gradients in for Boxes3D as discussed in #1304.
+
+Gradients from `Boxes3D.to_tensor` aren't accurate as analytical gradient doesn't match with numerical gradient. At the time when Boxes and Boxes3D were implemented (PR #1304), we didn't know how to fix them. Feel free to fix them :) .
+
+Exactly, the error happens in this line of kornia.geometry.bbox_v2.
+ 
+```python
+    boxes = torch.stack([batched_boxes.amin(dim=-2), batched_boxes.amax(dim=-2)], dim=-2).view(
+            batched_boxes.shape[0], batched_boxes.shape[1], 6
+        )
+```
+Here, computed and analytical gradients diverge. This only happens for Boxes3D and not Boxes.  See discussion in PR #1304 when Boxes and Boxes3D were implemented for more information. 
+
+### Reproduction steps 
+
+Below there is a code to reproduce the error:
+
+Working code for 2D boxes
+```python
+import torch
+from torch.autograd import gradcheck
+
+def tensor_to_gradcheck_var(tensor, dtype=torch.float64, requires_grad=True):
+    """Convert the input tensor to a valid variable to check the gradient.
+
+    `gradcheck` needs 64-bit floating point and requires gradient.
+    """
+    if not torch.is_tensor(tensor):
+        raise AssertionError(type(tensor))
+    return tensor.requires_grad_(requires_grad).type(dtype)
+
+t_boxes2D = torch.tensor([[[1.0, 1.0], [3.0, 1.0], [3.0, 2.0], [1.0, 2.0]]])
+t_boxes2D = tensor_to_gradcheck_var(t_boxes2D)
+
+def to_tensor(batched_boxes):
+    batched_boxes = batched_boxes if batched_boxes.ndim == 4 else batched_boxes.unsqueeze(0)
+    
+    boxes = torch.stack([batched_boxes.amin(dim=-2), batched_boxes.amax(dim=-2)], dim=-2).view(
+            batched_boxes.shape[0], batched_boxes.shape[1], 4
+        )
+    return boxes
+
+gradcheck(to_tensor, t_boxes2D)  # Ok when boxes are 2D
+```
+The same code for 3D boxes fails :/ 
+```python
+t_boxes3d = torch.tensor([[[0, 1, 2], [10, 1, 2], [10, 21, 2], [0, 21, 2], [0, 1, 32], [10, 1, 32], [10, 21, 32], [0, 21, 32]]], dtype=float)
+t_boxes3d = tensor_to_gradcheck_var(t_boxes3d)
+
+def to_tensor3d(batched_boxes):
+    batched_boxes = batched_boxes if batched_boxes.ndim == 4 else batched_boxes.unsqueeze(0)
+    boxes = torch.stack([batched_boxes.amin(dim=-2), batched_boxes.amax(dim=-2)], dim=-2).view(
+            batched_boxes.shape[0], batched_boxes.shape[1], 6
+        )
+    return boxes
+
+gradcheck(to_tensor3d, t_boxes3d)  # Fails :/ 
+```
+
+### Expected behavior
+
+To work and enable gradient checks for Boxes3D.to_tensor ;) 
+
+### Environment
+
+```shell
+Tested in Pytorch 1.7.1, 1.8.1, 1.9.0 and 1.9.1, both in linux (ubuntu 20.04) and windows
+```

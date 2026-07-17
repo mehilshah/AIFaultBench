@@ -1,0 +1,121 @@
+Title: FrameStack with ShmemVectorEnv does not update stacked observations
+Date: 2025-08-22T19:57:22+00:00
+URL: https://github.com/thu-ml/tianshou/issues/1272
+
+Description:
+When using ShmemVectorEnv together with gymnasium.wrappers.FrameStack, the stacked observations are not updated after environment steps.
+
+I tested this on Tianshou 2.0.0b1, but I believe the bug is also present in 1.2.0.
+
+Instead of updating with new frames, the frame buffer remains frozen at the initial values.
+
+The following minimal reproducible example illustrates the problem:
+
+```python
+import numpy as np
+import gymnasium as gym
+from gymnasium import spaces
+from tianshou.env import DummyVectorEnv, ShmemVectorEnv
+from gymnasium.wrappers import FrameStack
+
+
+# --- Minimal Dummy Env ---
+class DummyEnv(gym.Env):
+    def __init__(self):
+        self.observation_space = spaces.Box(0, 9, shape=(1,), dtype=np.int32)
+        self.action_space = spaces.Discrete(2)
+        self.t = 0
+
+    def reset(self, *, seed=None, options=None):
+        self.t = 0
+        return np.array([0], dtype=np.int32), {}
+
+    def step(self, action):
+        self.t += 1
+        return (
+            np.array([self.t], dtype=np.int32),
+            float(action),
+            self.t >= 5,
+            False,
+            {"timestep": self.t},
+        )
+
+
+def run(env_cls, name):
+    print(f"\n=== {name} ===")
+    envs = env_cls([lambda: FrameStack(DummyEnv(), 3) for _ in range(2)])
+    obs, _ = envs.reset()
+    print("Initial obs:", obs)
+    for i in range(3):
+        obs, rew, done, _, info = envs.step([0, 1])
+        print(f"Step {i}: obs={obs}, rew={rew}, done={done}, info={info}")
+    envs.close()
+
+
+run(DummyVectorEnv, "DummyVectorEnv, expected output")
+run(ShmemVectorEnv, "ShmemVectorEnv, wrong output")
+```
+
+Output:
+
+```
+=== DummyVectorEnv, expected output ===
+Initial obs: [[[0]
+  [0]
+  [0]]
+
+ [[0]
+  [0]
+  [0]]]
+Step 0: obs=[[[0]
+  [0]
+  [1]]
+
+ [[0]
+  [0]
+  [1]]], rew=[0. 1.], done=[False False], info=[{'timestep': 1, 'env_id': 0} {'timestep': 1, 'env_id': 1}]
+Step 1: obs=[[[0]
+  [1]
+  [2]]
+
+ [[0]
+  [1]
+  [2]]], rew=[0. 1.], done=[False False], info=[{'timestep': 2, 'env_id': 0} {'timestep': 2, 'env_id': 1}]
+Step 2: obs=[[[1]
+  [2]
+  [3]]
+
+ [[1]
+  [2]
+  [3]]], rew=[0. 1.], done=[False False], info=[{'timestep': 3, 'env_id': 0} {'timestep': 3, 'env_id': 1}]
+
+=== ShmemVectorEnv, wrong output ===
+Initial obs: [[[0]
+  [0]
+  [0]]
+
+ [[0]
+  [0]
+  [0]]]
+Step 0: obs=[[[0]
+  [0]
+  [0]]
+
+ [[0]
+  [0]
+  [0]]], rew=[0. 1.], done=[False False], info=[{'timestep': 1, 'env_id': 0} {'timestep': 1, 'env_id': 1}]
+Step 1: obs=[[[0]
+  [0]
+  [0]]
+
+ [[0]
+  [0]
+  [0]]], rew=[0. 1.], done=[False False], info=[{'timestep': 2, 'env_id': 0} {'timestep': 2, 'env_id': 1}]
+Step 2: obs=[[[0]
+  [0]
+  [0]]
+
+ [[0]
+  [0]
+  [0]]], rew=[0. 1.], done=[False False], info=[{'timestep': 3, 'env_id': 0} {'timestep': 3, 'env_id': 1}]
+```

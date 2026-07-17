@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `./run_repro.sh` with torch=2.4.0+cpu and tensordict=0.5.0 printed `sample.device=None`, `observation.device=cpu`, and `observation.is_pinned=False`.",
+  "steps": [
+    "Created a TensorDictReplayBuffer with pin_memory=True and a custom transform that returns a new TensorDict without an explicit device.",
+    "Added 100 observation batches to a LazyMemmapStorage-backed replay buffer.",
+    "Sampled from the buffer and observed that the returned observation tensor was on CPU but not pinned."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

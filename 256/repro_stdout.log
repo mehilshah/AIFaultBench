@@ -1,0 +1,15 @@
+Starting SDV reproduction
+Testing CTGANSynthesizer, TVAESynthesizer, and CopulaGANSynthesizer
+CTGANSynthesizer: fit complete, has _model=False
+CTGANSynthesizer: _model value=None
+CTGANSynthesizer: sample raised AttributeError: Error: Sampling terminated. Partial results are stored in a temporary file: .sample.csv.temp. This file will be overridden the next time you sample. Please rename the file if you wish to save these results.
+'CTGANSynthesizer' object has no attribute '_model'
+TVAESynthesizer: fit complete, has _model=False
+TVAESynthesizer: _model value=None
+TVAESynthesizer: sample raised AttributeError: Error: Sampling terminated. Partial results are stored in a temporary file: .sample.csv.temp. This file will be overridden the next time you sample. Please rename the file if you wish to save these results.
+'TVAESynthesizer' object has no attribute '_model'
+CopulaGANSynthesizer: fit complete, has _model=False
+CopulaGANSynthesizer: _model value=None
+CopulaGANSynthesizer: sample raised AttributeError: Error: Sampling terminated. Partial results are stored in a temporary file: .sample.csv.temp. This file will be overridden the next time you sample. Please rename the file if you wish to save these results.
+'CopulaGANSynthesizer' object has no attribute '_model'
+Reproduction succeeded: sample() fails after fitting with all columns dropped.

@@ -1,0 +1,9 @@
+jax 0.10.2
+devices [CudaDevice(id=0)]
+baseline                         pid=1925675 gpu_used=580 MiB
+1 GiB array allocated            pid=1925675 gpu_used=1610 MiB (delta=+1030 MiB)
+after del + gc                   pid=1925675 gpu_used=1610 MiB (delta=+1030 MiB)
+after vmap call (0.8 GiB scratch) pid=1925675 gpu_used=2644 MiB (delta=+2064 MiB)
+after vmap call (1.2 GiB scratch) pid=1925675 gpu_used=6652 MiB (delta=+6072 MiB)
+after vmap call (1.0 GiB scratch) pid=1925675 gpu_used=6652 MiB (delta=+6072 MiB)
+final (nothing live)             pid=1925675 gpu_used=6652 MiB (delta=+6072 MiB)

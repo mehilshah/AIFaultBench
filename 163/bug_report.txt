@@ -1,0 +1,18 @@
+Title: Boxes from TensorFlow Serving
+Date: 2024-03-01T20:40:22+00:00
+URL: https://github.com/keras-team/keras-cv/issues/2370
+
+Description:
+### Current Behavior:
+I trained a Yolov8 model on custom data and would now like to use TensorFlow Serving to get predictions. When I use the Saved Model CLI I see the output for boxes has a shape of (-1, -1, 64). I can save this with keras.saving.save_model, model.save, or tf.saved_model.save and I get the same result. The same result happens when I use a pre-trained model.
+
+### Expected Behavior:
+I would expect a shape of (-1, -1, 4). I am unsure of how to get bounding boxes from the 64 values I am currently getting. 
+
+### Steps To Reproduce:
+https://colab.research.google.com/gist/alejones/ccc69bd72a1b96fcf1c62a7476e561e6/object_detection_keras_cv.ipynb
+
+
+### Version:
+Keras version: 2.15.0
+Keras_cv version: 0.8.2

@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "147/repro.py", line 73, in main
+    model.encode(["sentence1", "sentence2"], output_value=None)
+  File "147/codebase/sentence_transformers/SentenceTransformer.py", line 704, in encode
+    row = {name: out_features[name][sent_idx] for name in out_features}
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+TypeError: 'int' object is not subscriptable

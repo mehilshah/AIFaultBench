@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With transformers==4.49.0 installed, `from transformers.modeling_utils import shard_checkpoint` raises ImportError: cannot import name 'shard_checkpoint' from 'transformers.modeling_utils'.",
+  "steps": [
+    "Create a virtual environment and install requirements.txt.",
+    "Run repro.py against transformers==4.49.0.",
+    "Observe ImportError for shard_checkpoint in transformers.modeling_utils."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

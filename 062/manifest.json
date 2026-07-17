@@ -1,0 +1,11 @@
+{
+  "bug_id": "062",
+  "issue_url": "https://github.com/keras-team/keras-io/issues/1518",
+  "library_name": "keras-io",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "repro_entrypoint": "run_repro.sh",
+  "primary_failure": "pandas.DataFrame.append removed in pandas 2.x",
+  "source_location": "codebase/examples/nlp/masked_language_modeling.py:114"
+}

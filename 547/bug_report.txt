@@ -1,0 +1,17 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7733
+
+TITLE
+[BUG] `scale_lr` fails for `lr_scaling_method="sqrt"` due to `torch.sqrt` on Python float
+
+BODY
+When using dynamic batching with `lr_scaling_method="sqrt"`, training fails with:
+
+"TypeError: sqrt(): argument 'input' (position 1) must be Tensor, not float"
+
+The error originates from `scale_lr()` [on line 159 in `deepspeed/runtime/data_pipeline/data_sampling/variable_batch_size_and_lr.py`](https://github.com/deepspeedai/DeepSpeed/blob/5373a88000d8017e269277662cd8e93a814c66e1/deepspeed/runtime/data_pipeline/data_sampling/variable_batch_size_and_lr.py#L159):
+
+```python
+return base_lr * torch.sqrt(batch_size / base_batch_size)
+```
+
+Here, `batch_size` and `base_batch_size` are Python integers, so `batch_size / base_batch_size` is a Python float. Passing this float to `torch.sqrt()` raises a TypeError. `torch.sqrt` should probably be replaced with `math.sqrt` here.

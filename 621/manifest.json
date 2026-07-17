@@ -1,0 +1,9 @@
+{
+  "title": "[DiffusionGemmaGenerationOutput] image-text-to-text pipeline does not work",
+  "source": "bug_report.txt",
+  "main_script": "repro.py",
+  "setup_script": "setup_env.sh",
+  "run_script": "run_repro.sh",
+  "result_file": "reproduction.json",
+  "reproduction_command": "bash run_repro.sh"
+}

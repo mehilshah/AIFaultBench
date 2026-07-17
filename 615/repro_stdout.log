@@ -1,0 +1,13 @@
+base action spec: Categorical(
+    shape=torch.Size([2]),
+    space=CategoricalBox(n=5),
+    device=cpu,
+    dtype=torch.int64,
+    domain=discrete)
+[92m2026-07-17 12:02:45,069 [torchrl][INFO][0m    check_env_specs succeeded![92m [END][0m
+transformed action spec: Categorical(
+    shape=torch.Size([2]),
+    space=CategoricalBox(n=5),
+    device=cpu,
+    dtype=torch.int64,
+    domain=discrete)

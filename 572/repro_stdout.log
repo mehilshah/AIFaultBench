@@ -1,0 +1,2 @@
+Visible CUDA devices: 1
+BLOCKED: the reported bug requires multiple GPUs, but this machine only exposes 1.

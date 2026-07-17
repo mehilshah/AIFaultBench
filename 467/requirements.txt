@@ -1,0 +1,4 @@
+numpy>=1.17
+packaging>=20.0
+psutil
+pyyaml

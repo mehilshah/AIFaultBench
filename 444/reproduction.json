@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Ran the minimal repro under jax 0.7.1 and the local numpyro 0.19.0 checkout. Legacy `jax.random.PRNGKey(0)` succeeded, but `jax.random.key(0)` with `Predictive(..., parallel=True)` raised `ValueError: Cannot convert_element_type from int32 to key<fry>` from `numpyro/util.py:443` inside `soft_vmap`.",
+  "steps": [
+    "Create and populate the isolated environment with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` to execute the minimal `Predictive(..., parallel=True)` example.",
+    "Observe that the legacy PRNGKey path succeeds and the typed-key path fails with the reported ValueError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

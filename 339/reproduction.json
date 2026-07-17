@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "In the distilled local Detectron2 package under codebase/, build_detection_test_loader(cfg, cfg.DATASETS.TEST[0]) raises ValueError: ['dummy_dataset'] is not in list from detectron2/data/build.py:_test_loader_from_config.",
+  "steps": [
+    "Create a config with DATASETS.TEST=('dummy_dataset',), DATASETS.PROPOSAL_FILES_TEST=('dummy.pkl',), and MODEL.LOAD_PROPOSALS=True.",
+    "Register a dummy dataset name so the loader path matches the reported eval-only setup.",
+    "Call build_detection_test_loader(cfg, cfg.DATASETS.TEST[0]).",
+    "Observe ValueError because _test_loader_from_config converts the string name to ['dummy_dataset'] and then uses that list as the argument to list(cfg.DATASETS.TEST).index(...)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

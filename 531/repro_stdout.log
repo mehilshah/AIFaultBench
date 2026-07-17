@@ -1,0 +1,13 @@
+torch=2.5.1+cpu
+transformers=5.13.0.dev0
+case=bug num_feature_levels=4
+BUG_REPRODUCED=True
+exception_type=TypeError
+exception_message=conv2d() received an invalid combination of arguments - got (list, Parameter, NoneType, tuple, tuple, tuple, int), but expected one of:
+ * (Tensor input, Tensor weight, Tensor bias = None, tuple of ints stride = 1, tuple of ints padding = 0, tuple of ints dilation = 1, int groups = 1)
+      didn't match because some of the arguments have invalid types: (!list of [Tensor, Tensor, Tensor]!, !Parameter!, !NoneType!, !tuple of (int, int)!, !tuple of (int, int)!, !tuple of (int, int)!, !int!)
+ * (Tensor input, Tensor weight, Tensor bias = None, tuple of ints stride = 1, str padding = "valid", tuple of ints dilation = 1, int groups = 1)
+      didn't match because some of the arguments have invalid types: (!list of [Tensor, Tensor, Tensor]!, !Parameter!, !NoneType!, !tuple of (int, int)!, !tuple of (int, int)!, !tuple of (int, int)!, !int!)
+
+case=control num_feature_levels=3
+CONTROL_PASS=True

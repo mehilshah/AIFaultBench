@@ -1,0 +1,12 @@
+{
+  "bug_id": "160",
+  "bug_dir": "160",
+  "issue_url": "https://github.com/influxdata/influxdb-client-python/issues/623",
+  "commit_hash": "",
+  "library_name": "influxdb-client-python",
+  "library_version": "1.40.0dev0 local snapshot",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../160"
+}

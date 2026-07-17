@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Running `bash run_repro.sh` in an isolated venv produced `before_import_error=RuntimeError: Unknown model (lsnet_t)`.",
+    "The same run then imported a local package that registers `lsnet_t`, after which `registered_after_import=True` and `after_import_model=LSNetTiny`."
+  ],
+  "steps": [
+    "Create a clean Python virtual environment.",
+    "Install CPU wheels for torch/torchvision plus `huggingface_hub`, `safetensors`, `numpy`, and `pyyaml`.",
+    "Run `python repro.py` with the local `codebase/` on `PYTHONPATH`.",
+    "Observe that `timm.create_model('lsnet_t')` fails before the custom package is imported, then succeeds after registration."
+  ],
+  "blocking_reason": "The reported failure is caused by the custom architecture not being registered in the Python process before `create_model()` is called. In this codebase, `timm` only knows model names after their module has been imported and decorated with `@register_model`.",
+  "reproduction_command": "bash run_repro.sh"
+}

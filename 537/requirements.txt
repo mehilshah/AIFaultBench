@@ -1,0 +1,6 @@
+torch==2.7.0+cpu
+torchvision==0.22.0+cpu
+numpy>=1.26
+pyyaml
+huggingface_hub
+safetensors

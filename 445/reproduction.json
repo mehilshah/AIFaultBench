@@ -1,0 +1,11 @@
+{
+  "blocking_reason": "The standardized snapshot already exposes pyro.optim.ExponentialLR, so the reported AttributeError does not occur here.",
+  "evidence": "Imported pyro.optim from codebase/pyro/optim/__init__.py; pyro.__version__=1.8.4+dd4e0f81; has ExponentialLR=True; attr_type=function.",
+  "reproducible": false,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Create a Python 3.10 virtual environment.",
+    "Install torch==2.0.0 and the local editable pyro snapshot from codebase/.",
+    "Import pyro.optim and check for the ExponentialLR attribute."
+  ]
+}

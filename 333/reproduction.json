@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "The report is about a GitHub tag being force-pushed. In this standardized folder, `codebase/src/version.info` reports 2.6.2 and `git -C codebase rev-parse --is-inside-work-tree` fails with `fatal: not a git repository`, so there is no local Git history to inspect or replay.",
+  "steps": [
+    "Read `bug_report.txt` and confirmed the issue concerns the `2.6.4` tag being force-pushed on GitHub.",
+    "Built a small repro script that checks the bundled snapshot version and probes for Git metadata.",
+    "Ran `bash run_repro.sh`; the run stops at the Git preflight because the bundled `codebase/` is not a Git repository."
+  ],
+  "blocking_reason": "This standardized folder does not include Git history or a remote repository checkout, so a tag-mutation issue on GitHub cannot be reproduced locally.",
+  "reproduction_command": "bash run_repro.sh"
+}

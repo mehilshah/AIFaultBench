@@ -1,0 +1,12 @@
+{
+  "bug_id": "063",
+  "bug_dir": "063",
+  "issue_url": "https://github.com/keras-team/keras-io/issues/1512",
+  "commit_hash": "aaefb6d40b4da79b3450e5cbf65155cbea49434b",
+  "library_name": "keras-io",
+  "library_version": "tensorflow==2.13.1, keras-cv==0.6.1, keras-core==0.1.5",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/@aaefb6d40b4da79b3450e5cbf65155cbea49434b",
+  "codebase_present": "true",
+  "standardized_dir": "../063"
+}

@@ -1,0 +1,20 @@
+Title: Using tz_offset breaks t == fromtimestamp(t).timestamp()
+Date: 2020-04-01T17:52:13+00:00
+URL: https://github.com/spulec/freezegun/issues/344
+
+Description:
+```python
+import freezegun
+
+def test_without_freezegun():
+    t = datetime.datetime.now().timestamp()
+    t2 = datetime.datetime.fromtimestamp(t).timestamp()
+    assert t == t2  # PASS
+
+
+@freezegun.freeze_time(datetime.datetime.fromtimestamp(100_000), tz_offset=-1)
+def test_with_freezegun():
+    t = datetime.datetime.now().timestamp()
+    t2 = datetime.datetime.fromtimestamp(t).timestamp()
+    assert t == t2  # FAIL
+```

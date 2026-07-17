@@ -1,0 +1,28 @@
+611/codebase/src/accelerate/utils/torch_xla.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+W0717 12:01:48.497000 2928431 .venv/lib/python3.12/site-packages/torch/multiprocessing/spawn.py:165] Terminating process 2928517 via signal SIGTERM
+Traceback (most recent call last):
+  File "611/repro.py", line 56, in <module>
+    main()
+  File "611/repro.py", line 52, in main
+    debug_launcher(repro_worker)
+  File "611/codebase/src/accelerate/launchers.py", line 163, in debug_launcher
+    start_processes(launcher, args=args, nprocs=num_processes, start_method="fork")
+  File "611/.venv/lib/python3.12/site-packages/torch/multiprocessing/spawn.py", line 296, in start_processes
+    while not context.join():
+              ^^^^^^^^^^^^^^
+  File "611/.venv/lib/python3.12/site-packages/torch/multiprocessing/spawn.py", line 211, in join
+    raise ProcessRaisedException(msg, error_index, failed_process.pid)
+torch.multiprocessing.spawn.ProcessRaisedException: 
+
+-- Process 0 terminated with the following error:
+Traceback (most recent call last):
+  File "611/.venv/lib/python3.12/site-packages/torch/multiprocessing/spawn.py", line 87, in _wrap
+    fn(i, *args)
+  File "611/codebase/src/accelerate/utils/launch.py", line 97, in __call__
+    self.launcher(*args)
+  File "611/repro.py", line 46, in repro_worker
+    assert tuple(gathered.shape) == (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: gather_for_metrics truncated a non-final train batch after eval
+

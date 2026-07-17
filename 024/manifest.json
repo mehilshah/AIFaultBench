@@ -1,0 +1,20 @@
+{
+  "bug_id": "024",
+  "bug_dir": "024",
+  "issue_url": "https://github.com/tensorflow/models/issues/10852",
+  "commit_hash": "2229297fa2a8ab354dbf68e6d61db99c51e57b2c",
+  "library_name": "tensorflow/models",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/research/delf",
+  "codebase_present": true,
+  "repro_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md"
+  ]
+}

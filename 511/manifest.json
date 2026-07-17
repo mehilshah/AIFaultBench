@@ -1,0 +1,12 @@
+{
+  "bug_id": "511",
+  "issue_url": "https://github.com/pyg-team/pytorch_geometric/issues/10019",
+  "title": "RuntimeError: Found invalid non-sorted temporal neighborhood",
+  "library_name": "torch-geometric",
+  "library_version": "2.7.0",
+  "commit_hash": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "local codebase/",
+  "codebase_present": true,
+  "standardized_dir": "../511"
+}

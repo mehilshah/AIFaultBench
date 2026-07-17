@@ -1,0 +1,77 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38268
+
+TITLE
+isinstance(x, ArrayLike) does not work as expected
+
+BODY
+### Description
+
+Hello,
+based on the implementation of `ArrayLike` I think that `isinstance(x, ArrayLike)` should work on traced arrays.
+
+The following code works as expected on my laptop, but not on the cluster I'm using for computations:
+
+```python
+import jax
+from jax import Array
+from jax.typing import ArrayLike
+
+
+def f(x):
+    print(x, isinstance(x, Array), isinstance(x, ArrayLike))
+
+
+jax.jit(f)(0)
+jax.print_environment_info()
+```
+
+Output on my laptop:
+```
+JitTracer(~int32[]) True True
+jax:    0.10.1
+jaxlib: 0.10.1
+numpy:  2.4.4
+python: 3.13.5 | packaged by conda-forge | (main, Jun 16 2025, 08:27:50) [GCC 13.3.0]
+device info: cpu-1, 1 local devices"
+process_count: 1
+platform: uname_result(system='Linux', node='martins-laptop', release='6.17.0-35-generic', version='#35~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue May 26 19:30:42 UTC 2', machine='x86_64')
+```
+
+Output on the cluster:
+```
+JitTracer(~int32[]) True False
+jax:    0.10.1
+jaxlib: 0.10.1
+numpy:  2.3.5
+python: 3.13.0 | packaged by conda-forge | (main, Nov 27 2024, 19:18:50) [GCC 13.3.0]
+device info: NVIDIA GeForce RTX 4090-1, 1 local devices"
+process_count: 1
+platform: uname_result(system='Linux', node='sgd01', release='5.15.0-126-generic', version='#136-Ubuntu SMP Wed Nov 6 10:38:22 UTC 2024', machine='x86_64')
+
+$ nvidia-smi
+Mon Jun  8 19:23:17 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.126.20             Driver Version: 580.126.20     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 4090        On  |   00000000:01:00.0 Off |                  Off |
+| 32%   41C    P2             26W /  450W |     420MiB /  24564MiB |      2%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A            7178      G   /usr/lib/xorg/Xorg                        6MiB |
+|    0   N/A  N/A         2135464      C   python                                  394MiB |
++-----------------------------------------------------------------------------------------+
+```
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+-

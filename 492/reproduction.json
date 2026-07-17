@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "In a fresh venv, installing numpyro==0.10.1 with jax==0.4.38 and jaxlib==0.4.38 then running import numpyro fails during import. The captured stderr ends with ModuleNotFoundError: No module named 'jax.linear_util' from numpyro/ops/provenance.py.",
+  "steps": [
+    "Create an isolated Python virtual environment.",
+    "Install the pinned requirements from requirements.txt.",
+    "Run repro.py via run_repro.sh and observe the import-time traceback."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

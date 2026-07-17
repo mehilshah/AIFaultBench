@@ -1,0 +1,48 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2839
+
+TITLE
+Metadata visualization shows table key not relationship key for relationships
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:
+* Python version:
+* Operating System:
+
+### Error Description
+Currently, Metadata visualization always shows the parent table primary key in the relationship, even if the `'parent_primary_key'` value in the relationship is a different column. The metadata visualization should show the values set by the relationship to help with visual debugging when validation fails.
+
+### Steps to reproduce
+
+```python
+metadata = Metadata.load_from_dict({
+    'tables': {
+        'parent': {
+            'columns': {
+                'pk': {'sdtype': 'id'},
+                'other': {'sdtype': 'categorical'},
+            },
+            'primary_key': 'pk',
+        },
+        'child': {
+            'columns': {
+                'fk': {'sdtype': 'id'},
+            },
+        },
+    },
+    'relationships': [{
+        'parent_table_name': 'parent',
+        'child_table_name': 'child',
+        'parent_primary_key': 'other',
+        'child_foreign_key': 'fk',
+    }]
+})
+metadata.visualize()
+```
+
+<img width="206" height="323" alt="Image" src="https://github.com/user-attachments/assets/3ad31774-c5ce-4ee7-9f03-a72a12d3b592" />
+
+

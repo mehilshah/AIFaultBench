@@ -1,0 +1,11 @@
+{
+  "title": "PromptEncoderConfig missing modules_to_save for SEQ_CLS",
+  "description": "Repro for PEFT issue 2477: get_peft_model crashes with AttributeError when PromptEncoderConfig is used for sequence classification.",
+  "reproduction_command": "bash run_repro.sh",
+  "dependencies": [
+    "peft==0.15.1",
+    "transformers==4.50.2",
+    "torch"
+  ],
+  "entrypoint": "repro.py"
+}

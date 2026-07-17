@@ -1,0 +1,4 @@
+distributed_type=DistributedType.DEEPSPEED
+about to call Accelerator.save_state()
+save_checkpoint('trainable_model', frozen=False) -> repro_output/pytorch_model
+save_checkpoint('frozen_model', frozen=True) -> repro_output/pytorch_model_1

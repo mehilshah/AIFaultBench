@@ -1,0 +1,46 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2703
+
+TITLE
+[DayZ Parameters] Validation results in unexpected errors for some edge cases
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:
+* Python version:
+* Operating System:
+
+### Error Description
+
+Edge cases:
+- Single table DayZSynthesizer does _not_ error if multi-table metadata/table passed if no `'relationship'` parameter is present. We should update validation to error in this case and guide the user to use multi-table DayZ instead.
+- `ValueError` if the `'relationships'` parameter is not a list of dicts. We should validate that the parameter is a list and every entry in the list is a dictionary with the expected keys.
+- The `'min_cardinality'` validation errors if it the `'min_cardinality'` is zero. This is a valid case and we should update the check to allow it.
+
+### Steps to reproduce
+```python
+data, metadata = download_demo('multi_table', 'financial_v1')
+
+# Single table validation works with multi-table data and metadata
+dayz_parameters = DayZSynthesizer.create_parameters(metadata, data)
+del dayz_parameters['relationships']
+
+SingleTableDayZSynthesizer.validate_parameters(metadata, dayz_parameters)
+
+# Bad 'relationships' value
+dayz_parameters['relationships'] = ['a', 'b', 'c']
+DayZSynthesizer.validate_parameters(metadata, data)
+
+
+# Error for valid 'min_cardinality'
+dayz_parameters['relationships'] = [{
+  'parent_table_name': 'district',
+  'parent_primary_key': 'district_id',
+  'child_table_name': 'account',
+  'child_foreign_key': 'district_id',
+  'min_cardinality': 0,
+}]
+```
+

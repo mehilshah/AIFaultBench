@@ -1,0 +1,32 @@
+{
+  "trial_count": 3,
+  "trials": [
+    {
+      "number": 0,
+      "params": {
+        "x": 0,
+        "y": 1
+      },
+      "state": "COMPLETE",
+      "value": 1.0
+    },
+    {
+      "number": 1,
+      "params": {
+        "x": 1,
+        "y": 0
+      },
+      "state": "COMPLETE",
+      "value": 1.0
+    },
+    {
+      "number": 2,
+      "params": {
+        "x": 0,
+        "y": 0
+      },
+      "state": "COMPLETE",
+      "value": 0.0
+    }
+  ]
+}

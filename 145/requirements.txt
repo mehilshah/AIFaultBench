@@ -1,0 +1,10 @@
+model2vec==0.3.6
+transformers==4.57.6
+tokenizers==0.22.2
+huggingface-hub==0.36.2
+torch==2.13.0
+numpy==2.5.1
+scipy==1.18.0
+scikit-learn==1.9.0
+safetensors==0.8.0
+tqdm==4.68.4

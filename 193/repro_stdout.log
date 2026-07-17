@@ -1,0 +1,8 @@
+{
+  "equinox_version": "0.13.3",
+  "exception_message": "can only concatenate str (not \"_Sentinel\") to str",
+  "exception_type": "TypeError",
+  "jax_version": "0.11.0",
+  "reproduced": true
+}
+BUG REPRODUCED

@@ -1,0 +1,20 @@
+{
+  "bug_id": "280",
+  "bug_dir": "280",
+  "issue_url": "https://github.com/PythonOT/POT/issues/418",
+  "commit_hash": "0411ea22a96f9c22af30156b45c16ef39ffb520d",
+  "library_name": "POT",
+  "library_version": "0.8.3dev",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "PythonOT/POT@0411ea22a96f9c22af30156b45c16ef39ffb520d",
+  "codebase_present": "true",
+  "standardized_dir": "../280",
+  "repro_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ]
+}

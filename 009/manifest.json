@@ -1,0 +1,16 @@
+{
+  "bug_id": "009",
+  "issue_url": "https://github.com/tensorflow/models/issues/11133",
+  "library_name": "tensorflow/models",
+  "library_version": "unknown",
+  "repro_status": "not_reproducible_here",
+  "repro_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ],
+  "blocking_reason": "TensorFlow is not installed in the current workspace, so the exporter runtime path cannot be executed."
+}

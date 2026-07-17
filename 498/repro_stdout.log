@@ -1,0 +1,5 @@
+python=3.12.3
+torch=2.7.1+cu128
+cuda_available=True
+cuda_device=NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition
+device_mode=cpu_offload fallback (OutOfMemoryError)

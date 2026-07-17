@@ -1,0 +1,34 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38969
+
+TITLE
+_SubParsersAction.__init__() got an unexpected keyword argument 'required'
+
+BODY
+### Description
+
+I would like to build jaxlib 0.10.2 against Python 3.10 / pydantic-2.13.4, but it fails due to:
+
+```
+Traceback (most recent call last):
+  File "./jax-jax-v0.10.2/build/build.py", line 839, in <module>
+    asyncio.run(main())
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "./jax-jax-v0.10.2/build/build.py", line 380, in main
+    subparsers = parser.add_subparsers(dest="command", required=True)
+  File "/usr/lib/python3.10/site-packages/argparse.py", line 1698, in add_subparsers
+    action = parsers_class(option_strings=[], **kwargs)
+TypeError: _SubParsersAction.__init__() got an unexpected keyword argument 'required'
+```
+originating from
+```
+  # Create subparsers for build and requirements_update
+  subparsers = parser.add_subparsers(dest="command", required=True)
+```
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+Python 3.10
+jaxlib 0.10.2 (but not yet there)

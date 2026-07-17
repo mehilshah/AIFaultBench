@@ -1,0 +1,83 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/14103
+
+TITLE
+Custom AttentionProcessor lost/fallback occurring after forward pass
+
+BODY
+### Describe the bug
+
+I am attempting to inject a custom attention processor (IPAdapter) into the UNet2DConditionModel attention blocks (specifically attn2 layers) using set_attn_processor. While the processor is correctly assigned and verified immediately after the forward passs it is being silently overwritten.
+
+Upon debugging the model structure before and after the forward pass, the custom IPAdapter wrapper disappears from the processor attribute of the attention layers, reverting back to the standard LoRAAttnProcessor2_0 (or the underlying attention processor). This indicates that the UNet or its internal Transformer2DModel components are re-triggering a processor assignment, effectively discarding the custom processor injected during setup.
+
+```python
+# This prints
+for name, module in unet.named_modules():
+    if "IPAdapter" in module.__class__.__name__:
+        param = next(module.parameters())
+        if param.grad is None:
+            logger.warning(f"Sanity Check: {name} has NO GRADIENTS!")
+        else:
+            logger.info(f"Sanity Check: {name} gradient norm: {param.grad.norm().item():.4f}")
+        break
+print("="*100)
+# Predict the noise residual
+model_pred = unet(
+    noisy_model_input,
+    timesteps,
+    encoder_hidden_states,
+    class_labels=class_labels,
+).sample
+
+# This doesn't
+for name, module in unet.named_modules():
+    if "IPAdapter" in module.__class__.__name__:
+        param = next(module.parameters())
+        if param.grad is None:
+            logger.warning(f"Sanity Check: {name} has NO GRADIENTS!")
+        else:
+            logger.info(f"Sanity Check: {name} gradient norm: {param.grad.norm().item():.4f}")
+        break
+```
+
+### Reproduction
+
+- Assign custom processors:
+
+```python
+processors = {}
+for name, proc in unet.attn_processors.items():
+    if "attn2" in name:
+        processors[name] = IPAdapter(module=proc)
+    else:
+        processors[name] = proc
+unet.set_attn_processor(processors)
+Run a single forward pass: unet(sample, timestep, encoder_hidden_states, ...).
+```
+- Inspect unet.attn_processors or module.processor after the pass. The custom IPAdapter is no longer present.
+
+### Logs
+
+```shell
+Sanity Check: down_blocks.0.attentions.0.transformer_blocks.0.attn2.processor has NO GRADIENTS!
+====================================================================================================
+/home/student/miniconda3/envs/disenbooth/lib/python3.12/site-packages/diffusers/models/attention_processor.py:1821: FutureWarning: `LoRAAttnProcessor2_0` is deprecated and will be removed in version 0.26.0. Make sure use AttnProcessor2_0 instead by settingLoRA layers to `self.{to_q,to_k,to_v,to_out[0]}.lora_layer` respectively. This will be done automatically when using `LoraLoaderMixin.load_lora_weights`
+  deprecate(
+```
+
+### System Info
+
+- `diffusers` version: 0.23.1
+- Platform: Linux-6.8.0-124-generic-x86_64-with-glibc2.39
+- Python version: 3.12.13
+- PyTorch version (GPU?): 2.12.0+cu130 (True)
+- Huggingface_hub version: 0.25.2
+- Transformers version: 4.44.2
+- Accelerate version: 1.14.0
+- xFormers version: not installed
+- Using GPU in script?: Yes
+- Using distributed or parallel set-up in script?: No
+
+### Who can help?
+
+@yiyixuxu @asomoza @sayakpaul

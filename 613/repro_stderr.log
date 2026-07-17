@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "613/repro.py", line 71, in main
+    _ = Gemma4ForConditionalGeneration(language_model)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "613/repro.py", line 47, in __init__
+    self.expert_weights = self.language_model.expert_weights
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Gemma4ForCausalLM' object has no attribute 'expert_weights'

@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running `timeout 20s .venv/bin/python repro.py` exits with code 124.",
+    "stderr shows `_pickle.PicklingError: Can't pickle <class 'safetensors_rust.SafetensorError'>: import of module 'safetensors_rust' failed`.",
+    "The dataloader does not surface the underlying `File does not contain tensor 5` exception from the worker."
+  ],
+  "steps": [
+    "Create a local virtualenv and install `numpy==1.26.4`, `safetensors==0.4.4`, and `torch==2.3.0`.",
+    "Run `repro.py`, which writes a tiny safetensors file and then iterates a `torch.utils.data.DataLoader` with `num_workers=2`.",
+    "Trigger an out-of-range tensor lookup in the worker and observe the pickling failure in multiprocessing queue handling."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

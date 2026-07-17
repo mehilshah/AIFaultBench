@@ -1,0 +1,3 @@
+tensorflow_version=2.18.0
+has_tf_keras_layers_experimental=False
+import_failed=AttributeError: module 'keras._tf_keras.keras.layers' has no attribute 'experimental'

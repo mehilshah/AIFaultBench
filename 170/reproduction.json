@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running bash run_repro.sh produced src_equal=True and dst_equal=False in repro_stdout.log, then repro.py failed with AssertionError: RandomThinPlateSpline should reuse identical TPS control points across the batch in repro_stderr.log.",
+  "steps": [
+    "Created a venv and installed the runtime dependencies from requirements.txt.",
+    "Executed repro.py through run_repro.sh with torch.manual_seed(42), a 4-image batch, and RandomThinPlateSpline(p=1.0, same_on_batch=True).",
+    "Observed src_equal=True and dst_equal=False for aug._params, which violates the same_on_batch contract.",
+    "The script ended with an AssertionError because the destination control points differ across batch elements."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

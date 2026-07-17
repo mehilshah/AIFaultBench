@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "Running `python3 repro.py` raises `AttributeError: 'NoneType' object has no attribute 'all_reduce'` at the unguarded `cdb.all_reduce(...)` call in `repro.py:19`, matching the DeepSpeed Domino report.",
+  "steps": [
+    "Run `bash run_repro.sh` from the standardized folder root.",
+    "Inspect `repro_stderr.log` for the traceback showing `cdb` is still None when `all_reduce()` is called."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

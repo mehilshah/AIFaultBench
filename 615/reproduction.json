@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the bundled repro against the local codebase prints an action spec of `Categorical(shape=torch.Size([2]), space=CategoricalBox(n=5))` for `MultiDiscrete([5, 5])`, then `check_env_specs(env_transformed)` fails inside `ActionMask._call()` with `RuntimeError: Cannot expand mask to the desired shape.` The captured logs are in `repro_stdout.log` and `repro_stderr.log`.",
+  "steps": [
+    "Create a clean virtual environment with `setup_env.sh` and install `torch==2.3.1`, `tensordict==0.10.0`, `gymnasium==1.2.2`, and `numpy>=1.26`.",
+    "Run `bash run_repro.sh` from the bug folder with `PYTHONPATH` pointing at `codebase/`.",
+    "Observe that the base GymWrapper spec is incorrectly stacked as a 1D categorical action spec instead of a `MultiCategorical`, then `ActionMask` raises a shape mismatch during `check_env_specs()`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "The repro generated 24 sweep permutations and every one kept the same output_dir: ./outputs/sweep-test. The script printed 'unique_output_dirs: 1' and 'BUG_REPRODUCED: all sweep permutations reuse the same output_dir (./outputs/sweep-test).'",
+  "steps": [
+    "Created a minimal base config with output_dir set to ./outputs/sweep-test.",
+    "Created a sweep config with multiple values for learning_rate, lora_r, lora_alpha, and paired load_in_8bit variants.",
+    "Ran bash run_repro.sh to load the local sweep generator from codebase/src and enumerate all permutations.",
+    "Verified that 24 permutations were produced and all 24 reused the same output_dir."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

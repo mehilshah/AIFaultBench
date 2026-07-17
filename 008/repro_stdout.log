@@ -1,0 +1,3 @@
+Loaded pipeline config: codebase/research/object_detection/configs/tf2/faster_rcnn_resnet50_v1_640x640_coco17_tpu-8.config
+Detected model type: faster_rcnn
+Calling the TF2 TFLite export guard...

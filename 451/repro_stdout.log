@@ -1,0 +1,1 @@
+EXPECTED_FAILURE: parser rejected trainer.strategy.device_mesh=[1, 4]

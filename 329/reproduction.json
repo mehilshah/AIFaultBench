@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `torch.jit.script(HGTConv(16, 16, ([], [])))` in a clean venv with torch 2.8.0+cpu and the local codebase raises `TypeError: 'set' object in attribute 'ParameterDict.CLASS_ATTRS' is not a valid constant.`",
+  "steps": [
+    "Create a fresh Python 3.12 virtualenv.",
+    "Install the dependencies from `requirements.txt` using the CPU PyTorch index.",
+    "Run `PYTHONPATH=codebase python repro.py`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

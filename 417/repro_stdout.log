@@ -1,0 +1,4 @@
+{
+  "expected": "InvalidMetadataError: The primary_keys [['col1', 'col2']] must have a column of type 'id' or another PII type.",
+  "observed": "InvalidMetadataError: 'primary_key' must be a string."
+}

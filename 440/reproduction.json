@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running `bash run_repro.sh` against the checked-out b1059b73aab9043b118ff19b0cf96263ea86248a snapshot prints original_r=87 and copied_r=8 for the deep-copied adapter.",
+    "The failure happens without downloading any external model because a tiny local nn.Module is enough to exercise `get_peft_model` and `copy.deepcopy`."
+  ],
+  "steps": [
+    "Create a tiny local torch.nn.Module with a single linear layer.",
+    "Wrap it with peft.get_peft_model using LoraConfig(r=87, target_modules=['linear']).",
+    "Deep-copy the wrapped model.",
+    "Inspect the copied adapter config and observe that r falls back to 8 instead of staying at 87."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

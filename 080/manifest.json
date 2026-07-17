@@ -1,0 +1,22 @@
+{
+  "bug_id": "080",
+  "bug_dir": "080",
+  "issue_url": "https://github.com/lucidrains/vit-pytorch/issues/311",
+  "commit_hash": "90be7233a3f55c29692a72da6ee4dcb5aab267d4",
+  "library_name": "vit-pytorch",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report/080.txt",
+  "codebase_source": "lucidrains/vit-pytorch@90be7233a3f55c29692a72da6ee4dcb5aab267d4",
+  "codebase_present": "true",
+  "standardized_dir": "../080",
+  "generated_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

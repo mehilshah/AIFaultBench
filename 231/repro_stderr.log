@@ -1,0 +1,6 @@
+[I 2026-07-17 03:18:19,262] A new study created in memory with name: no-name-8f8af24c-2ff2-477c-887f-fb079a6cf508
+[I 2026-07-17 03:18:19,263] Trial 0 finished with value: 0.0 and parameters: {'c0': '0', 'c1': '0'}. Best is trial 0 with value: 0.0.
+[I 2026-07-17 03:18:19,263] Trial 1 finished with value: 0.0 and parameters: {'c0': '1', 'c1': '1'}. Best is trial 0 with value: 0.0.
+[I 2026-07-17 03:18:19,263] Trial 2 finished with value: 0.0 and parameters: {'c0': '0', 'c1': '1'}. Best is trial 0 with value: 0.0.
+[I 2026-07-17 03:18:19,264] Trial 3 finished with value: 0.0 and parameters: {'c0': '0', 'c1': '0'}. Best is trial 0 with value: 0.0.
+[I 2026-07-17 03:18:19,264] Trial 4 finished with value: 0.0 and parameters: {'c0': '1', 'c1': '0'}. Best is trial 0 with value: 0.0.

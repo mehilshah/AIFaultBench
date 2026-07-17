@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Qwen3_5TextConfig.base_model_tp_plan still has no linear_attn entries: ['layers.*.linear_attn.in_proj_qkv', 'layers.*.linear_attn.in_proj_z', 'layers.*.linear_attn.in_proj_b', 'layers.*.linear_attn.in_proj_a', 'layers.*.linear_attn.out_proj']",
+    "A tiny Qwen3.5 linear-attention block with a simulated colwise shard of in_proj_qkv fails with RuntimeError: Given groups=12, weight of size [12, 1, 4], expected input[1, 6, 3] to have 12 channels, but got 6 channels instead"
+  ],
+  "steps": [
+    "Created an isolated venv and installed the repro dependencies plus the local transformers checkout in editable mode.",
+    "Confirmed the current Qwen3.5 TP plan omits all linear_attn projections.",
+    "Sharded linear_attn.in_proj_qkv the way a naive colwise TP plan would and ran the block forward pass to trigger the Conv1d channel mismatch."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh > repro_stdout.log 2> repro_stderr.log"
+}

@@ -1,0 +1,3 @@
+PYG_VERSION 2.6.1
+IMPORT_OK BaseData
+MODULE torch_geometric.data.data

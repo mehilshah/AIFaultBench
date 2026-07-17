@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running the report snippet on this checkout prints POT 0.9.6dev0 with [[0.32205361, 0.11847690], [0.11847690, 0.32205361]]. A clean venv with POT==0.9.4 prints [[0.51122814, 0.18807032], [0.18807032, 0.51122814]], while POT==0.9.5 prints the same matrix as the checkout. The numerical output changed between 0.9.4 and 0.9.5.",
+  "steps": [
+    "Created isolated virtual environments for POT 0.9.4 and POT 0.9.5 with numpy==1.26.4 and scipy==1.13.1.",
+    "Executed the issue's sinkhorn_knopp_unbalanced example in each environment and in the local checkout.",
+    "Compared the resulting transport matrices and confirmed that 0.9.4 differs from 0.9.5.",
+    "Recorded the run output in repro_stdout.log and repro_stderr.log."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

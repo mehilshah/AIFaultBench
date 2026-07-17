@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "131/repro.py", line 55, in <module>
+    main()
+  File "131/repro.py", line 51, in main
+    model.forward_loss([sentence])
+  File "131/codebase/flair/models/text_regression_model.py", line 59, in forward_loss
+    labels = self._labels_to_tensor(sentences)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "131/codebase/flair/models/text_regression_model.py", line 67, in _labels_to_tensor
+    torch.tensor([float(label.value) for label in sentence.labels], dtype=torch.float) for sentence in sentences
+                  ^^^^^^^^^^^^^^^^^^
+ValueError: could not convert string to float: 'bar'

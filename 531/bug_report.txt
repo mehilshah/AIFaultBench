@@ -1,0 +1,92 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46832
+
+TITLE
+[RT-DETR] TypeError in RTDetrModel.forward when num_feature_levels > len(backbone outputs)
+
+BODY
+### System Info
+
+transformers version: 5.12.1
+Platform: Windows-10-10.0.26200-SP0
+Python version: 3.11.9
+PyTorch version: 2.12.1+cpu
+CUDA available: False
+
+Note: transformers env crashed for me on 5.12.1 (NameError: CompletionCreateParamsStreaming), so system info was collected manually.
+
+
+RTDetrForObjectDetection raises a TypeError when num_feature_levels is set higher than the number of backbone output levels (default being 3). Normal inference with default config is unaffected. The bug is latent until num_feature_levels is explicitly increased, for example when experimenting with additional decoder feature levels for small object detection.
+
+Root cause: in RTDetrModel.forward, when num_feature_levels > len(sources), the first extra level is built with a misplaced [-1] index:
+
+```python
+# Line 1626 in modeling_rt_detr.py (generated from modular_rt_detr.py line 1865)
+# BUGGY: passes the full list to conv2d, then tries to index [-1] on the result
+sources.append(self.decoder_input_proj[_len_sources](encoder_outputs.last_hidden_state)[-1])
+
+# The correct pattern already exists on the very next iteration (line 1627):
+sources.append(self.decoder_input_proj[i](encoder_outputs.last_hidden_state[-1]))
+```
+
+encoder_outputs.last_hidden_state is a list of feature-map tensors. The [-1] index should select the last tensor from the list before passing it to the Conv2d projection layer, not after. The correct pattern is already used on the immediately following line, making the fix a single bracket move.
+
+
+### Who can help?
+
+@yonigozlan @molbap
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+```python
+import torch
+from transformers import RTDetrConfig, RTDetrForObjectDetection
+
+# Triggers the bug: num_feature_levels=4 > 3 backbone output levels
+config = RTDetrConfig(num_feature_levels=4, num_labels=80, image_size=640)
+model = RTDetrForObjectDetection(config)
+model.eval()
+pixel_values = torch.rand(1, 3, 640, 640)
+
+with torch.no_grad():
+    outputs = model(pixel_values=pixel_values)  # raises TypeError
+```
+
+Traceback:
+```
+Traceback (most recent call last):
+  File "repro_traceback.py", line 12, in <module>
+    outputs = model(pixel_values=pixel_values)
+  File ".../transformers/models/rt_detr/modeling_rt_detr.py", line 1841, in forward
+    outputs = self.model(...)
+  File ".../transformers/models/rt_detr/modeling_rt_detr.py", line 1626, in forward
+    sources.append(self.decoder_input_proj[_len_sources](encoder_outputs.last_hidden_state)[-1])
+  File ".../torch/nn/modules/conv.py", line 560, in _conv_forward
+    return F.conv2d(...)
+TypeError: conv2d() received an invalid combination of arguments - got (list, Parameter, NoneType, tuple, tuple, tuple, int)
+  list of [Tensor, Tensor, Tensor] was passed where a single Tensor was expected
+```
+
+Default config passes without error:
+```python
+config_default = RTDetrConfig(num_labels=80, image_size=640)
+model_default = RTDetrForObjectDetection(config_default)
+model_default.eval()
+
+with torch.no_grad():
+    outputs = model_default(pixel_values=pixel_values)  # passes cleanly
+```
+
+### Expected behavior
+
+Expected Behavior: Forward pass completes and returns object detection outputs when num_feature_levels=4.
+Actual Behavior: TypeError: conv2d() received an invalid combination of arguments — got (list of [Tensor, Tensor, Tensor], ...) instead of a single Tensor.

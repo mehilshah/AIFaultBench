@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the 2-process launcher on the local source tree produced {\"expected\": [\"cpu: 0\", \"cpu: 1\", \"cpu: 2\", \"cpu: 3\"], \"gathered\": [\"cpu:0: 0\", \"cpu:0: 1\", \"cpu:0: 0\", \"cpu:0: 1\", \"cpu:0: 2\", \"cpu:0: 3\", \"cpu:0: 2\", \"cpu:0: 3\"], \"matches_expected\": false}, showing duplicated padded output.",
+  "steps": [
+    "Create a CPU-only Python 3.12 virtual environment and install torch from the PyTorch CPU wheel index plus the runtime dependencies needed by accelerate.",
+    "Run `torchrun --standalone --nproc-per-node=2 repro.py` with `PYTHONPATH=codebase/src` so the local accelerate source tree is exercised.",
+    "Observe that the gathered completions contain duplicated entries and do not match the expected four-item list."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

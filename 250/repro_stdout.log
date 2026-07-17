@@ -1,0 +1,5 @@
+torch=2.4.0+cpu
+sample.device=None
+observation.device=cpu
+observation.is_pinned=False
+reproducible=True

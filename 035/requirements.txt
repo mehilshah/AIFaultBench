@@ -1,0 +1,3 @@
+torch>=2.13.0
+labml>=0.5.3
+labml-helpers>=0.4.89

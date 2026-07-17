@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running ./run_repro.sh prints a sentence.to_dict() entry with id (5, 6) that lacks xpos, then crashes on entry[\"xpos\"] with KeyError: 'xpos'.",
+  "steps": [
+    "Created a sentence containing a multi-word token and loaded the local Stanza data-object modules without the broken global torch.",
+    "Called sentence.to_dict() and iterated over the returned dictionaries the same way described in the bug report.",
+    "Observed that the multi-word-token dictionary has no xpos key and that indexing entry[\"xpos\"] raises KeyError: 'xpos'."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

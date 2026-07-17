@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "bash run_repro.sh exited with status 1.",
+    "repro_stdout.log shows both `no_batchnorm` and `batchnorm` cases failing with `KeyError: \"No RngStream named 'dropout' found in Rngs.\"`."
+  ],
+  "steps": [
+    "Created a local virtualenv with `bash setup_env.sh`.",
+    "Installed `numpyro` from the local codebase plus `flax==0.11.0`, `jax==0.6.2`, and `jaxlib==0.6.2`.",
+    "Executed `bash run_repro.sh` and observed the reported NNX dropout `KeyError` in both smoke-test variants."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

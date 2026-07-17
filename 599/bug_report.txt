@@ -1,0 +1,58 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7711
+
+TITLE
+[BUG] OSError: MPI environment variables are not set.
+
+BODY
+**Describe the bug**
+I am using ds-0.18.0 setting the launcher as openmpi, and get an error about MPI environment variables.
+
+**To Reproduce**
+run like following commond:
+```
+deepspeed \
+    --hostfile=${HOSTFILE_PATH} \
+    --launcher=OPENMPI \
+    --launcher_args="-bind-to none -map-by slot --mca pml ob1 --oversubscribe --display-allocation --display-map" \
+    --master_addr=${MASTER_ADDR} \
+    --master_port=${_M_PORT} \
+    --no_ssh_check \
+    test.py
+```
+test.py could be any simple code.The error like:
+```
+Traceback (most recent call last):
+  File "/usr/local/bin/deepspeed", line 6, in <module>
+    main()
+  File "/usr/local/lib/python3.12/dist-packages/deepspeed/launcher/runner.py", line 583, in main
+    runner = OpenMPIRunner(args, world_info_base64, resource_pool)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/deepspeed/launcher/multinode_runner.py", line 129, in __init__
+    super().__init__(args, world_info_base64)
+  File "/usr/local/lib/python3.12/dist-packages/deepspeed/launcher/multinode_runner.py", line 23, in __init__
+    self.validate_args()
+  File "/usr/local/lib/python3.12/dist-packages/deepspeed/launcher/multinode_runner.py", line 145, in validate_args
+    self._setup_mpi_environment()
+  File "/usr/local/lib/python3.12/dist-packages/deepspeed/launcher/multinode_runner.py", line 160, in _setup_mpi_environment
+    raise EnvironmentError("MPI environment variables are not set. "
+OSError: MPI environment variables are not set. Ensure you are running the script with an MPI-compatible launcher.
+
+```
+I find the link:[[#6979-disscuss](https://github.com/deepspeedai/DeepSpeed/pull/6979/files#r1934769722)] mentioned likes my quesiton.
+If I comment the self._setup_mpi_environment() in https://github.com/deepspeedai/DeepSpeed/blob/79caae1c04fca210345bdeb03bcacf87b1ac2f23/deepspeed/launcher/multinode_runner.py#L145, the error disappears. 
+**Expected behavior**
+no error about MPI environment variables.
+
+
+**System info (please complete the following information):**
+ - OS: ubuntu22.04
+ - GPU count and types H20 x 16
+ - Interconnects (if applicable) 
+ - Python version 3.10
+ - Any other relevant info about your setup: deepspeed-0.18.0
+
+**Launcher context**
+Are you launching your experiment with the `deepspeed` launcher, MPI, or something else?
+MPI
+
+

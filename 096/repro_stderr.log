@@ -1,0 +1,8 @@
+096/codebase/denoising_diffusion_pytorch/denoising_diffusion_pytorch.py:756: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  @autocast(enabled = False)
+096/codebase/denoising_diffusion_pytorch/continuous_time_gaussian_diffusion.py:237: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  @autocast(enabled = False)
+096/codebase/denoising_diffusion_pytorch/v_param_continuous_time_gaussian_diffusion.py:153: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  @autocast(enabled = False)
+096/codebase/denoising_diffusion_pytorch/denoising_diffusion_pytorch_1d.py:661: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  @autocast(enabled = False)

@@ -1,0 +1,8 @@
+torch_version=2.13.0+cpu
+tensor_case_event_files= ['events.out.tfevents.1784273543.raiselab.2431840.0']
+tensor_case_tags= {'images': [], 'audio': [], 'histograms': [], 'scalars': [], 'distributions': [], 'tensors': [], 'graph': False, 'meta_graph': False, 'run_metadata': []}
+tensor_case_scalar_events= []
+float_case_event_files= ['events.out.tfevents.1784273543.raiselab.2431840.1']
+float_case_tags= {'images': [], 'audio': [], 'histograms': [], 'scalars': ['loss'], 'distributions': [], 'tensors': [], 'graph': False, 'meta_graph': False, 'run_metadata': []}
+float_case_scalar_events= [(1, 1.0)]
+BUG_REPRODUCED: tensor input is silently ignored while float input is logged.

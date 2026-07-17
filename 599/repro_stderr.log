@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "599/repro.py", line 169, in main
+    multinode_runner.OpenMPIRunner(args, world_info_base64, resource_pool)
+  File "599/codebase/deepspeed/launcher/multinode_runner.py", line 129, in __init__
+    super().__init__(args, world_info_base64)
+  File "599/codebase/deepspeed/launcher/multinode_runner.py", line 23, in __init__
+    self.validate_args()
+  File "599/codebase/deepspeed/launcher/multinode_runner.py", line 145, in validate_args
+    self._setup_mpi_environment()
+  File "599/codebase/deepspeed/launcher/multinode_runner.py", line 160, in _setup_mpi_environment
+    raise EnvironmentError("MPI environment variables are not set. "
+OSError: MPI environment variables are not set. Ensure you are running the script with an MPI-compatible launcher.

@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `DayZSynthesizer.create_parameters(pd.DataFrame(), Metadata())` in the local codebase raises `KeyError: None`. The traceback points to `sdv/single_table/_dayz_utils.py:37` at `metadata.tables[table_name]` after `Metadata._get_single_table_name()` returns `None` for empty metadata.",
+  "steps": [
+    "Create an empty `pandas.DataFrame()`.",
+    "Create an empty `sdv.metadata.Metadata()`.",
+    "Call `sdv.single_table.DayZSynthesizer.create_parameters(data, metadata)`.",
+    "Observe the `KeyError: None` traceback."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

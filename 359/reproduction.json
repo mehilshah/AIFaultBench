@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "In a clean CPU-only Python 3.12 venv with torch 2.8.0+cpu and the local codebase on PYTHONPATH, `torch.jit.script(HypergraphConv(...))` fails for both modes: `use_attention=False` raises `Module 'HypergraphConv' has no attribute 'att'`, and `use_attention=True` raises `Variable 'alpha' previously had type NoneType but is now being assigned to a value of type Tensor`.",
+  "steps": [
+    "Created a fresh `.venv` and installed the CPU torch wheel plus the minimal runtime dependencies from `requirements.txt`.",
+    "Ran `bash run_repro.sh` from the standardized bug folder.",
+    "Observed the expected TorchScript failures for `HypergraphConv` with and without attention."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

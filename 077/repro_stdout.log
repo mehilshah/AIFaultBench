@@ -1,0 +1,5 @@
+Using TensorBoard log_dir: /tmp/tensorboard_logs_evn0bux4
+Valid image: 077/codebase/images/2516944023_d00345997d_z.jpg
+Missing image: 077/codebase/images/definitely_missing.jpg
+
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 440ms/step - accuracy: 1.0000 - loss: 0.3242

@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "A pickle that mimics an older PyG Data object without _store loads successfully, but printing it raises RuntimeError from torch_geometric/data/data.py:557 while __repr__ accesses self._store.",
+  "steps": [
+    "Create a torch_geometric.data.Data object.",
+    "Remove its internal _store attribute before pickling to simulate an older PyG payload.",
+    "pickle.load() the object and print it.",
+    "Observe the RuntimeError: The 'data' object was created by an older version of PyG."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "./run_repro.sh"
+}

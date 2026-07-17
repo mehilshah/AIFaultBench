@@ -1,0 +1,32 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2711
+
+TITLE
+HMA sampling raises a pandas FutureWarning: Downcasting object dtype arrays
+
+BODY
+### Environment Details
+
+* SDV version: 1.27.0
+
+### Error Description
+
+When sampling from a HMASynthesizer, I see FutureWarnings coming from pandas about deprecated behavior.
+The warning message is:
+```
+FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+```
+
+It seems to be coming from this line:
+https://github.com/sdv-dev/SDV/blob/ae6e1c01a9b4d06bbc13868071a3ec36c5ed2d33/sdv/multi_table/hma.py#L728
+
+### Steps to reproduce
+
+```python
+from sdv.datasets.demo import download_demo
+from sdv.multi_table import HMASynthesizer
+
+data, metadata = download_demo('multi_table', 'Dunur_v1')
+synthesizer = HMASynthesizer(metadata)
+synthesizer.fit(data)
+sample = synthesizer.sample()
+```

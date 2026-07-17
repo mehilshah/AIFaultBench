@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "512/repro.py", line 53, in <module>
+    main()
+  File "512/repro.py", line 49, in main
+    assert actual == expected, f"Expected module init to keep parameters in {expected}, got {actual}"
+           ^^^^^^^^^^^^^^^^^^
+AssertionError: Expected module init to keep parameters in torch.float32, got torch.bfloat16

@@ -1,0 +1,17 @@
+{
+  "bug_id": "473",
+  "bug_dir": "473",
+  "issue_url": "https://github.com/pyro-ppl/numpyro/issues/2055",
+  "commit_hash": "0d4f40c5a25633591388f12372cdb31f9dff0f29",
+  "library_name": "numpyro",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pyro-ppl/numpyro@0d4f40c5a25633591388f12372cdb31f9dff0f29",
+  "codebase_present": "true",
+  "standardized_dir": "../473",
+  "repro_dependencies": {
+    "jax": "0.6.2",
+    "jaxlib": "0.6.2",
+    "flax": "0.11.0"
+  }
+}

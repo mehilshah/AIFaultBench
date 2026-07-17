@@ -1,0 +1,14 @@
+{
+  "bug_id": "127",
+  "bug_dir": "127",
+  "issue_url": "https://github.com/exaloop/codon/issues/609",
+  "commit_hash": "",
+  "library_name": "unknown",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": true,
+  "standardized_dir": "../127",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh"
+}

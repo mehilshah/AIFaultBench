@@ -1,0 +1,112 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3430
+
+TITLE
+Serializing an easyguide corrupts it
+
+BODY
+### Issue Description
+
+Serializing an easyguide corrupts the easyguide being serialized, while the deserialized easyguide actually works.
+ 
+### Environment
+
+ - OS: WSL
+ -  Python version: `3.11.7`
+ - PyTorch version: `2.6.0+cu124`
+ - Pyro version: `1.9.1+455f7b3b`
+
+### Code Snippet
+
+The issue can be replicated by running the easyguide serialization test:
+```
+pyro-ppl$ pytest tests/contrib/easyguide/test_easyguide.py::test_serialize
+=============================================================================== test session starts ===============================================================================
+platform linux -- Python 3.11.7, pytest-8.3.5, pluggy-1.5.0
+benchmark: 4.0.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: /mnt/c/sw/pyro-ppl
+configfile: setup.cfg
+plugins: nbval-0.11.0, benchmark-4.0.0, cov-6.1.1, xdist-3.6.1, anyio-4.9.0
+collected 1 item
+
+tests/contrib/easyguide/test_easyguide.py F                                                                                                                                 [100%]
+
+==================================================================================== FAILURES =====================================================================================
+_________________________________________________________________________________ test_serialize __________________________________________________________________________________
+
+    def test_serialize():
+        guide = PickleGuide(model)
+        check_guide(guide)
+
+        # Work around https://github.com/pytorch/pytorch/issues/27972
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            f = io.BytesIO()
+            torch.save(guide, f)
+            f.seek(0)
+            actual = torch.load(f, weights_only=False)
+
+        assert type(actual) == type(guide)
+        assert dir(actual) == dir(guide)
+>       check_guide(guide)
+
+tests/contrib/easyguide/test_easyguide.py:96:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/contrib/easyguide/test_easyguide.py:54: in check_guide
+    svi.step(batch, subsample, full_size=full_size)
+pyro/infer/svi.py:145: in step
+    loss = self.loss_and_grads(self.model, self.guide, *args, **kwargs)
+pyro/infer/trace_elbo.py:140: in loss_and_grads
+    for model_trace, guide_trace in self._get_traces(model, guide, args, kwargs):
+pyro/infer/elbo.py:239: in _get_traces
+    yield self._get_trace(model, guide, args, kwargs)
+pyro/infer/trace_elbo.py:57: in _get_trace
+    model_trace, guide_trace = get_importance_trace(
+pyro/infer/enum.py:60: in get_importance_trace
+    guide_trace = poutine.trace(guide, graph_type=graph_type).get_trace(
+pyro/poutine/trace_messenger.py:216: in get_trace
+    self(*args, **kwargs)
+pyro/poutine/trace_messenger.py:191: in __call__
+    ret = self.fn(*args, **kwargs)
+pyro/nn/module.py:527: in __call__
+    result = super().__call__(*args, **kwargs)
+/home/ben/anaconda3/lib/python3.11/site-packages/torch/nn/modules/module.py:1739: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+/home/ben/anaconda3/lib/python3.11/site-packages/torch/nn/modules/module.py:1750: in _call_impl
+    return forward_call(*args, **kwargs)
+pyro/contrib/easyguide/easyguide.py:104: in forward
+    result = self.guide(*args, **kwargs)
+tests/contrib/easyguide/test_easyguide.py:79: in guide
+    self.group(match="state_[0-9]*").map_estimate()
+pyro/contrib/easyguide/easyguide.py:312: in map_estimate
+    return {
+pyro/contrib/easyguide/easyguide.py:313: in <dictcomp>
+    site["name"]: self.guide.map_estimate(site["name"])
+pyro/contrib/easyguide/easyguide.py:243: in guide
+    return self._guide()
+pyro/nn/module.py:527: in __call__
+    result = super().__call__(*args, **kwargs)
+/home/ben/anaconda3/lib/python3.11/site-packages/torch/nn/modules/module.py:1739: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+/home/ben/anaconda3/lib/python3.11/site-packages/torch/nn/modules/module.py:1750: in _call_impl
+    return forward_call(*args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PickleGuide(), args = (), kwargs = {}
+
+    def forward(self, *args, **kwargs):
+        """
+        Runs the guide. This is typically used by inference algorithms.
+
+        .. note:: This method is used internally by :class:`~torch.nn.Module`.
+            Users should instead use :meth:`~torch.nn.Module.__call__`.
+        """
+        if self.prototype_trace is None:
+            self._setup_prototype(*args, **kwargs)
+>       result = self.guide(*args, **kwargs)
+E       TypeError: PickleGuide.guide() missing 3 required positional arguments: 'batch', 'subsample', and 'full_size'
+
+pyro/contrib/easyguide/easyguide.py:104: TypeError
+============================================================================= short test summary info =============================================================================
+FAILED tests/contrib/easyguide/test_easyguide.py::test_serialize - TypeError: PickleGuide.guide() missing 3 required positional arguments: 'batch', 'subsample', and 'full_size'
+=============================================================================== 1 failed in 19.37s ================================================================================
+```

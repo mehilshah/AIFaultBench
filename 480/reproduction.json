@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `import numpyro` with `numpyro==0.18.0`, `jax==0.7.0`, and `jaxlib==0.7.0` fails during import with `ImportError: cannot import name 'pjit_p' from 'jax.experimental.pjit'`.",
+  "steps": [
+    "Create a fresh Python virtual environment with `setup_env.sh`.",
+    "Install `jax==0.7.0`, `jaxlib==0.7.0`, and `numpyro==0.18.0`.",
+    "Run `run_repro.sh` to execute `repro.py`.",
+    "Observe the import failure in `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

@@ -1,0 +1,20 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7925
+
+TITLE
+[BUG] SuperOfflload does not work on single GPU
+
+BODY
+**Describe the bug**
+Try using superoffload on single GPU.
+
+The `len(self.sub_group_to_param_num)` is `0`, and the `self._cur_bucket_index` is `-1`, so the bug appears.
+
+
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/deepspeed/runtime/superoffload/superoffload_stage3.py", line 107, in reduce_independent_p_g_buckets_and_remove_grads
+[rank0]:     if self.sub_group_to_param_num[self._cur_bucket_index] == 1:
+[rank0]:        ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: KeyError: 0
+
+
+
+

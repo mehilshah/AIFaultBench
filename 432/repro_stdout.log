@@ -1,0 +1,5 @@
+python=3.9.25 (main, Oct 31 2025, 23:00:23) 
+[Clang 21.1.4 ]
+pgmpy=1.0.0
+importing pgmpy.estimators.CITests.chi_square, which is the lazy dependency used by
+torch_geometric.contrib.explain.PGMExplainer in codebase/torch_geometric/contrib/explain/pgm_explainer.py

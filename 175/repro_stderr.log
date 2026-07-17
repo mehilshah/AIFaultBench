@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "175/repro.py", line 40, in <module>
+    main()
+  File "175/repro.py", line 36, in main
+    assert str(result) == expected, "Transformer callback was not applied"
+           ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Transformer callback was not applied

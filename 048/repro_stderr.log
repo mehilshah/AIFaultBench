@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "048/repro.py", line 85, in <module>
+    main()
+  File "048/repro.py", line 81, in main
+    generate_emissions()
+  File "048/repro.py", line 73, in generate_emissions
+    return fake_cat(emissions_arr, dim=1)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "048/repro.py", line 41, in fake_cat
+    raise RuntimeError(
+RuntimeError: Sizes of tensors must match except in dimension 1. Expected size 1649 but got size 1799 for tensor number 1 in the list.

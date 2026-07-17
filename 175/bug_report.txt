@@ -1,0 +1,52 @@
+Title: Transformer Not Applying Expected Transformations in Lark Parser
+Date: 2024-05-21T09:53:58+00:00
+URL: https://github.com/lark-parser/lark/issues/1416
+
+Description:
+```markdown
+## Description
+When using the Lark parser with a custom Transformer to parse and transform a simple grammar, the expected transformations specified in the Transformer class do not seem to be applied. Instead of getting the transformed output, I receive the raw parsed data.
+
+## Steps to Reproduce
+Here is the minimal code snippet to reproduce the issue:
+
+```python
+from lark import Lark, Transformer
+
+grammar = """
+?start: acos_func
+?acos_func: ("acos" | "ACOS") "(" NUMBER ")"
+NUMBER: /-?\d+(\.\d+)?/
+%import common.WS
+%ignore WS
+"""
+
+class MyTransformer(Transformer):
+    def acos_func(self, args):
+        return "ACOS called with argument: " + str(args[0])
+
+parser = Lark(grammar, parser='lalr', transformer=MyTransformer())
+test_input = "ACOS(1.0)"
+print(parser.parse(test_input))
+```
+
+## Expected Behavior
+I expect the output to be:
+```
+ACOS called with argument: 1.0
+```
+This is based on the transformation defined in `MyTransformer` class for the `acos_func`.
+
+## Actual Behavior
+Instead of the expected string, the output is just:
+```
+1.0
+```
+This suggests that the transformation `acos_func` in `MyTransformer` is not being applied.
+
+## Environment
+- Lark version: [lark-parser==0.12.0]
+- Python version: [3.10]
+- Operating System: [macOS]
+
+```

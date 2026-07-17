@@ -1,0 +1,19 @@
+{
+  "bug_id": "227",
+  "bug_dir": "227",
+  "issue_url": "https://github.com/PythonOT/POT/issues/229",
+  "commit_hash": "",
+  "library_name": "POT",
+  "library_version": "0.7.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "reproduction_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ]
+}

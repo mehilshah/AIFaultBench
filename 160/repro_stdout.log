@@ -1,0 +1,40 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.1.2)
+Requirement already satisfied: reactivex>=4.0.4 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 1)) (4.1.0)
+Requirement already satisfied: certifi>=14.05.14 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 2)) (2026.6.17)
+Requirement already satisfied: python_dateutil>=2.5.3 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 3)) (2.9.0.post0)
+Requirement already satisfied: urllib3>=1.26.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 4)) (2.7.0)
+Requirement already satisfied: typing-extensions<5.0.0,>=4.1.1 in ./.venv/lib/python3.12/site-packages (from reactivex>=4.0.4->-r requirements.txt (line 1)) (4.16.0)
+Requirement already satisfied: six>=1.5 in ./.venv/lib/python3.12/site-packages (from python_dateutil>=2.5.3->-r requirements.txt (line 3)) (1.17.0)
+Obtaining file://160/codebase
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: reactivex>=4.0.4 in ./.venv/lib/python3.12/site-packages (from influxdb_client==1.40.0.dev0) (4.1.0)
+Requirement already satisfied: certifi>=14.05.14 in ./.venv/lib/python3.12/site-packages (from influxdb_client==1.40.0.dev0) (2026.6.17)
+Requirement already satisfied: python_dateutil>=2.5.3 in ./.venv/lib/python3.12/site-packages (from influxdb_client==1.40.0.dev0) (2.9.0.post0)
+Requirement already satisfied: setuptools>=21.0.0 in ./.venv/lib/python3.12/site-packages (from influxdb_client==1.40.0.dev0) (83.0.0)
+Requirement already satisfied: urllib3>=1.26.0 in ./.venv/lib/python3.12/site-packages (from influxdb_client==1.40.0.dev0) (2.7.0)
+Requirement already satisfied: six>=1.5 in ./.venv/lib/python3.12/site-packages (from python_dateutil>=2.5.3->influxdb_client==1.40.0.dev0) (1.17.0)
+Requirement already satisfied: typing-extensions<5.0.0,>=4.1.1 in ./.venv/lib/python3.12/site-packages (from reactivex>=4.0.4->influxdb_client==1.40.0.dev0) (4.16.0)
+Building wheels for collected packages: influxdb_client
+  Building editable for influxdb_client (pyproject.toml): started
+  Building editable for influxdb_client (pyproject.toml): finished with status 'done'
+  Created wheel for influxdb_client: filename=influxdb_client-1.40.0.dev0-0.editable-py3-none-any.whl size=19670 sha256=c6b3b578a3c823094181aa6ee6beede619c5eaf74e722e37b4e252478d4c2ff0
+  Stored in directory: /tmp/pip-ephem-wheel-cache-whsuca_v/wheels/2c/65/c1/c4e57c12c428292059d1575186a2f4712f7b0f6ba7f4a9476e
+Successfully built influxdb_client
+Installing collected packages: influxdb_client
+  Attempting uninstall: influxdb_client
+    Found existing installation: influxdb_client 1.40.0.dev0
+    Uninstalling influxdb_client-1.40.0.dev0:
+      Successfully uninstalled influxdb_client-1.40.0.dev0
+Successfully installed influxdb_client-1.40.0.dev0
+point_a.to_line_protocol(): asd,foo=bar value=123.45 1702992462215000000
+point_b.to_line_protocol(): asd,foo=bar value=123.45 1702992462215000000
+line_protocol_equal: True
+point_equality: False
+bug reproduced: structurally identical Point objects compare unequal

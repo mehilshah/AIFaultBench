@@ -1,0 +1,3 @@
+Running codebase/imagenet/main.py with --dummy
+torch.backends.mps removed to emulate a build without MPS support
+=> creating model 'resnet18'

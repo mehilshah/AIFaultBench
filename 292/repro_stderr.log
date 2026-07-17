@@ -1,0 +1,31 @@
+292/codebase/torchrl/_extension.py:42: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+Traceback (most recent call last):
+  File "292/repro.py", line 34, in <module>
+    main()
+  File "292/repro.py", line 25, in main
+    env = OpenSpielEnv("chess", return_state=True, batch_size=(100,))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "292/codebase/torchrl/envs/common.py", line 312, in __call__
+    instance: EnvBase = super().__call__(*args, **kwargs)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "292/codebase/torchrl/envs/libs/openspiel.py", line 610, in __init__
+    super().__init__(
+  File "292/codebase/torchrl/envs/libs/openspiel.py", line 173, in __init__
+    super().__init__(**kwargs)
+  File "292/codebase/torchrl/envs/common.py", line 4511, in __init__
+    self._make_specs(self._env)  # writes the self._env attribute
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "292/codebase/torchrl/envs/libs/openspiel.py", line 291, in _make_specs
+    self.done_spec = Categorical(
+    ^^^^^^^^^^^^^^
+  File "292/codebase/torchrl/envs/common.py", line 1082, in __setattr__
+    super().__setattr__(key, value)
+  File "/users/grad/mehil/.local/lib/python3.12/site-packages/torch/nn/modules/module.py", line 2074, in __setattr__
+    super().__setattr__(name, value)
+  File "292/codebase/torchrl/envs/common.py", line 77, in wrapper
+    result = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "292/codebase/torchrl/envs/common.py", line 1971, in done_spec
+    raise ValueError(
+ValueError: The value of spec.shape (torch.Size([1])) must match the env batch size (torch.Size([100])).

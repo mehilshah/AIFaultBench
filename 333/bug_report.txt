@@ -1,0 +1,49 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21740
+
+TITLE
+On enforcing immutable tags
+
+BODY
+### Bug description
+
+Hello,
+I'm contacting you as the [nixpkgs](https://github.com/NixOS/nixpkgs) maintainer of `pytorch-lightning`.
+I recently noticed that the [2.6.4](https://github.com/Lightning-AI/pytorch-lightning/tree/2.6.4) tag was force-pushed.
+As far as I'm aware, this is a generally discouraged practice as many consumers are expecting semantic git tags to remain immutable.
+
+Was this action made on purpose? Would it be possible to avoid repeating such actions in the future?
+
+The follow article expands on the concept of _Immutable releases_:
+https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases
+
+Thanks a lot in advance for your help.
+
+### What version are you seeing the problem on?
+
+v2.6
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+DNA
+```
+
+### Error messages and logs
+
+DNA
+
+
+### Environment
+
+DNA
+
+
+### More info
+
+_No response_
+
+cc @ethanwharris

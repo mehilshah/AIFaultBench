@@ -1,0 +1,11 @@
+{
+  "blocking_reason": "",
+  "evidence": "pip failed to resolve kfp==2.7.0 and kubeflow-katib==0.17.0rc0 together because kfp requires kubernetes<27 and kubeflow-katib requires kubernetes>=27.2.0.",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Create a virtual environment.",
+    "Run `python -m pip install kfp==2.7.0 kubeflow-katib==0.17.0rc0`.",
+    "Observe pip's ResolutionImpossible error on the kubernetes dependency."
+  ]
+}

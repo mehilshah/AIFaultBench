@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "repro.py parsed codebase/src/lightning/fabric/utilities/throughput.py and printed the Hopper FLOPs table. The output shows H100 NVL float32 = 1.338e+14 vs H100 SXM float32 = 6.69e+13 (2.00x), and H200 SXM1 float16 = 2.02x / H200 NVL1 float16 = 1.72x relative to H100 SXM, confirming the mixed dense/sparse-style Hopper values described in the report.",
+  "steps": [
+    "Clone the pinned Lightning snapshot from efb73287b6db1bc86d1eb94fde2378a3dfb87be1 into codebase/.",
+    "Run bash setup_env.sh.",
+    "Run bash run_repro.sh to extract and print the Hopper FLOPs table from throughput.py.",
+    "Inspect repro_stdout.log for the ratios and repro_stderr.log for absence of errors."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

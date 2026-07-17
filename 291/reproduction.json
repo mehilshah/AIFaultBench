@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` reached `AssertionError: torch.Size([1, 65536])` from `codebase/detectron2/structures/masks.py:104` after `BitMasks.__getitem__` used `self.tensor[item].view(1, -1)` at line 133.",
+  "steps": [
+    "Loaded `detectron2.structures.masks.BitMasks` from the local codebase with lightweight import stubs for unrelated optional packages.",
+    "Constructed `BitMasks(torch.ones(10, 256, 256))`.",
+    "Indexed `masks[4]` and observed the constructor assertion failure caused by the flattened `[1, 65536]` tensor."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

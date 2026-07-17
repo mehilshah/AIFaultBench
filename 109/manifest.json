@@ -1,0 +1,20 @@
+{
+  "bug_id": "109",
+  "bug_dir": "109",
+  "issue_url": "https://github.com/adapter-hub/adapters/issues/794",
+  "commit_hash": "",
+  "library_name": "adapters",
+  "library_version": "1.1.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../109",
+  "repro_files": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ]
+}

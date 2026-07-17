@@ -1,0 +1,38 @@
+Title: H5 file cannot be scanned
+Date: 2024-01-26T19:14:14+00:00
+URL: https://github.com/protectai/modelscan/issues/93
+
+Description:
+**Describe the bug**
+Use model scan to scan an h5 file in the Hugging Face model, bert-base-uncased. It reports:
+
+```code
+Error 1:
+The following error was raised during a saved_model scan: 
+To use modelscan.scanners.H5Scan, please install modelscan with h5py extras. 
+'pip install "modelscan[h5py]"' if you are using pip.
+```
+
+With h5py installed it will reports:
+Exception: the JSON object must be str, bytes or bytearray, not dict
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Download the h5 file, namely tf_model.h5, from https://huggingface.co/bert-base-uncased
+2. run the command modelscan --path <path_to_h5_file>
+3. See error described above
+
+**Expected behavior**
+A clear and concise description of what you expected to happen.
+
+**Screenshots**
+If applicable, add screenshots to help explain your problem.
+
+**Environment (please complete the following information):**
+ - OS [e.g. macOS 13.4 (ARM)]
+ - Modelscan Version [v0.5.0]
+ - ML Framework version [e.g. Tensorflow v2.13.0] (if applicable)
+ - Describe the model serialization format that triggered this error (if applicable) H5 file
+
+**Additional context**
+Add any other context about the problem here.

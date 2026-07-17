@@ -1,0 +1,17 @@
+Source inspected: 410/codebase/vllm/model_executor/models/qwen3_asr_realtime.py
+Hard-coded 5-second realtime segmenting: True
+Simulated input: 10.0s of audio fed in 0.5s chunks
+Output segment lengths (samples): [80000, 80000]
+Output segment lengths (seconds): [5.0, 5.0]
+Interpretation: the realtime path intentionally emits 5-second chunks, so a single utterance can surface as multiple streamed segments.
+{
+  "hard_coded_segment_duration_s": 5.0,
+  "segment_lengths_samples": [
+    80000,
+    80000
+  ],
+  "segment_lengths_seconds": [
+    5.0,
+    5.0
+  ]
+}

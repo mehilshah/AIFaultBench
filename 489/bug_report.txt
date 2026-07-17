@@ -1,0 +1,44 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2546
+
+TITLE
+[BUG] timm is unable to load the huggingface custom model
+
+BODY
+**Describe the bug**
+
+
+import timm
+
+model_list = timm.list_models()
+print(model_list)
+
+The above is my code. The following error was reported after execution:
+
+Traceback (most recent call last):
+File "d:\Programmer\important things\lsnet-master\fy-test.py", line 4, in
+model = timm.create_model(
+File "C:\Users\fangy\miniconda3\envs\gcdp\lib\site-packages\timm\models_factory.py", line 134, in create_model
+raise RuntimeError('Unknown model (%s)' % model_name)
+RuntimeError: Unknown model (lsnet_t)
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. install python=3.8
+2.install timm=1.0.17 and huggingface-hub=0.33.2
+3.then run the program
+
+**Expected behavior**
+
+lsnet_t should be created correctly
+
+
+**Screenshots**
+
+<img width="1156" height="154" alt="Image" src="https://github.com/user-attachments/assets/f5c511ba-1463-49db-a959-5af20cc794dc" />
+
+**Desktop (please complete the following information):**
+ - OS: windows11
+ - timm=1.0.17 and huggingface-hub=0.33.2 python=3.8
+ - torch=2.4.1+cu124
+
+

@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "In a fresh virtualenv, `pip install ./codebase` succeeds and `python repro.py` fails at `import eel` with `ModuleNotFoundError: No module named 'typing_extensions'` from `eel/__init__.py:6`.",
+  "steps": [
+    "Create a clean virtual environment.",
+    "Install the local `codebase/` package with pip.",
+    "Run `import eel` via `repro.py`.",
+    "Observe the missing `typing_extensions` runtime dependency error."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

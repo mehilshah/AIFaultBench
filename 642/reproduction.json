@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running `bash run_repro.sh` in the prepared Python 3.12 venv fails with `Exception: Leaked trace DynamicJaxprTrace` while tracing `body_fn` in `numpyro/contrib/control_flow/scan.py`.",
+    "The leaked tracer is an `int32[10]` discrete `states` value retained through `AdjointTape._eager_to_lazy` during `infer_discrete(config_enumerate(hmm))`.",
+    "The same failure is visible in the earlier targeted pytest run as `test_scan_hmm_smoke[0-2]` and `test_scan_hmm_smoke[1-2]` under `JAX_CHECK_TRACER_LEAKS=1`."
+  ],
+  "steps": [
+    "Create a local Python 3.12 virtual environment.",
+    "Install the pinned JAX/funsor/scipy/tqdm dependencies and the local `codebase/` package in editable mode.",
+    "Run `bash run_repro.sh`, which executes `repro.py` with `JAX_CHECK_TRACER_LEAKS=1`.",
+    "Observe the tracer-leak exception from `numpyro.contrib.control_flow.scan`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

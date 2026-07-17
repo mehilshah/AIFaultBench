@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "398/repro.py", line 109, in <module>
+    main()
+  File "398/repro.py", line 102, in main
+    CascadeROIHeads._forward_box(dummy, features, proposals)
+  File "398/codebase/detectron2/modeling/roi_heads/cascade_rcnn.py", line 149, in _forward_box
+    self.test_score_thresh,
+    ^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/repro_bug_398_venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1709, in __getattr__
+    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+AttributeError: 'CascadeROIHeads' object has no attribute 'test_score_thresh'

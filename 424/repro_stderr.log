@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "424/repro.py", line 167, in <module>
+    main()
+  File "424/repro.py", line 161, in main
+    loss.backward()
+  File "424/.venv/lib/python3.12/site-packages/torch/_tensor.py", line 648, in backward
+    torch.autograd.backward(
+  File "424/.venv/lib/python3.12/site-packages/torch/autograd/__init__.py", line 353, in backward
+    _engine_run_backward(
+  File "424/.venv/lib/python3.12/site-packages/torch/autograd/graph.py", line 824, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "424/repro.py", line 156, in hook
+    seen["count"] = ds_utils.count_used_parameters_in_backward([param])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "424/codebase/deepspeed/runtime/utils.py", line 1458, in count_used_parameters_in_backward
+    grad_fn = _get_grad_fn_or_grad_acc(param)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "424/repro.py", line 146, in guarded_lookup
+    raise RuntimeError("grad mode must be enabled for grad-acc lookup")
+RuntimeError: grad mode must be enabled for grad-acc lookup

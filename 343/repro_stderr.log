@@ -1,0 +1,41 @@
+343/codebase/sdv/single_table/base.py:804: UserWarning: Boolean Series key will be reindexed to match DataFrame index.
+  sampled = sampled[valid_rows]
+Traceback (most recent call last):
+  File "343/codebase/sdv/single_table/base.py", line 1186, in _sample_with_progress_bar
+    sampled = self._sample_in_batches(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "343/codebase/sdv/single_table/base.py", line 1101, in _sample_in_batches
+    sampled_rows = self._sample_batch(
+                   ^^^^^^^^^^^^^^^^^^^
+  File "343/codebase/sdv/single_table/base.py", line 1015, in _sample_batch
+    sampled, num_valid = self._sample_rows(
+                         ^^^^^^^^^^^^^^^^^^
+  File "343/codebase/sdv/single_table/base.py", line 925, in _sample_rows
+    sampled = self.reverse_transform_constraints(sampled)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "343/codebase/sdv/single_table/base.py", line 804, in reverse_transform_constraints
+    sampled = sampled[valid_rows]
+              ~~~~~~~^^^^^^^^^^^^
+  File "343/.venv/lib/python3.12/site-packages/pandas/core/frame.py", line 4104, in __getitem__
+    return self._getitem_bool_array(key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "343/.venv/lib/python3.12/site-packages/pandas/core/frame.py", line 4160, in _getitem_bool_array
+    key = check_bool_indexer(self.index, key)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "343/.venv/lib/python3.12/site-packages/pandas/core/indexing.py", line 2698, in check_bool_indexer
+    raise IndexingError(
+pandas.errors.IndexingError: Unalignable boolean Series provided as indexer (index of the boolean Series and of the indexed object do not match).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "343/repro.py", line 107, in main
+    synthesizer.sample(20)
+  File "343/codebase/sdv/single_table/base.py", line 1231, in sample
+    sampled_data = self._sample_with_progress_bar(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "343/codebase/sdv/single_table/base.py", line 1195, in _sample_with_progress_bar
+    handle_sampling_error(output_file_path, error)
+  File "343/codebase/sdv/single_table/utils.py", line 110, in handle_sampling_error
+    raise type(sampling_error)(error_msg) from sampling_error
+pandas.errors.IndexingError: Error: Sampling terminated. No results were saved due to unspecified "output_file_path".

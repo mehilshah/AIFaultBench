@@ -1,0 +1,14 @@
+{
+  "bug_id": "028",
+  "bug_dir": "028",
+  "title": "vision_transformer num_classes default is 16 instead of 10",
+  "issue_url": "https://github.com/pytorch/examples/issues/1175",
+  "commit_hash": "6fc19c76b9f5550d8d3cb38284845ac7ed14223c",
+  "library_name": "examples",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report/028.txt",
+  "codebase_source": "pytorch/examples@6fc19c76b9f5550d8d3cb38284845ac7ed14223c",
+  "codebase_present": "true",
+  "standardized_dir": "../028",
+  "reproduction_command": "bash run_repro.sh"
+}

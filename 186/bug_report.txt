@@ -1,0 +1,182 @@
+Title: pylsp WebSocket endpoint ignores --base-url argument behind reverse proxy
+Date: 2026-01-19T19:09:38+00:00
+URL: https://github.com/marimo-team/marimo/issues/7898
+
+Description:
+
+Summary
+
+When launching Marimo with the --base-url flag, the main UI and the Kernel WebSocket correctly adhere to the specified path prefix. However, the Python Language Server (pylsp) WebSocket endpoint appears to ignore this configuration and continues to listen on the root path (/lsp/pylsp), rather than appending itself to the base URL (e.g., /my/custom/path/lsp/pylsp).
+
+This causes the LSP connection to fail (404 Not Found) when accessed through a reverse proxy (like Nginx Ingress) that expects traffic to match the base path, or when the frontend attempts to connect using the configured base URL.
+
+Environment
+
+Marimo Version: 0.19.4 (Latest)
+
+OS: Linux (Containerized in Kubernetes)
+
+Deployment: Kubernetes (AKS) behind Nginx Ingress
+
+Python Version: 3.13.5
+
+Setup & Configuration
+
+I am running Marimo in a Kubernetes Pod. The application is started with the following arguments:
+
+marimo edit \
+  --host 0.0.0.0 \
+  --port 8000 \
+  --base-url /my/custom/path \
+  --allow-origins "http://localhost:8000" \
+  --headless \
+  --no-token
+
+
+Steps to Reproduce
+
+Start Marimo with a deep base URL (e.g., /my/custom/path).
+
+Access the Pod directly (bypassing all Ingress/Proxies) via kubectl port-forward pod/marimo-pod 8000:8000.
+
+Attempt a WebSocket handshake to the LSP endpoint using the expected path.
+
+Test 1: Expected Path (Fails)
+
+Trying to connect to the LSP at the configured base URL:
+
+# Generating a valid WS Key
+KEY=$(python3 -c "import base64, os; print(base64.b64encode(os.urandom(16)).decode('utf-8'))")
+
+curl -i -N \
+  -H "Connection: Upgrade" \
+  -H "Upgrade: websocket" \
+  -H "Sec-WebSocket-Key: $KEY" \
+  -H "Sec-WebSocket-Version: 13" \
+  -H "Origin: http://localhost:8000" \
+  http://localhost:8000/my/custom/path/lsp/pylsp
+
+
+Result: HTTP/1.1 404 Not Found (or equivalent indicating no handler).
+
+Test 2: Root Path (Succeeds)
+
+Trying to connect to the LSP at the root, ignoring the base URL configuration:
+
+curl -i -N \
+  -H "Connection: Upgrade" \
+  -H "Upgrade: websocket" \
+  -H "Sec-WebSocket-Key: $KEY" \
+  -H "Sec-WebSocket-Version: 13" \
+  -H "Origin: http://localhost:8000" \
+  http://localhost:8000/lsp/pylsp
+
+
+Result: HTTP/1.1 101 Switching Protocols (Connection established).
+
+Browser Console Evidence
+
+When accessing the Web UI at http://localhost:8000/my/custom/path, the frontend JavaScript correctly constructs the WebSocket URL using the base path:
+
+ws://localhost:8000/my/custom/path/lsp/pylsp
+
+However, this connection fails. Modifying the JS in the console to strip the base path allows the connection to succeed:
+
+// FAILS (Default behavior of the frontend)
+const basePath = "/my/custom/path";
+const socketPath = "/lsp/pylsp"; 
+new WebSocket("ws://localhost:8000" + basePath + socketPath); // -> Connection Failed (404)
+
+// SUCCEEDS (Manual override)
+new WebSocket("ws://localhost:8000" + socketPath); // -> Connection Established (101)
+
+
+Validated Workaround
+
+I have further confirmed this behavior by modifying my Kubernetes Ingress controller to perform a URL rewrite, effectively stripping the base path before the request reaches the container.
+
+Configuration:
+
+Ingress: Added nginx.ingress.kubernetes.io/rewrite-target: /$2 to strip the /my/custom/path prefix.
+
+Marimo: Removed the --base-url argument entirely from the container startup command.
+
+Result:
+With this configuration, the LSP connection succeeds because Marimo is running at the root context / inside the container, and Nginx handles the routing translation. This confirms the LSP server works correctly only when running at root, but fails to respect the --base-url flag when it is provided.
+
+Expected Behavior
+
+The pylsp server should mount its routes relative to the provided --base-url, similar to how the main kernel WebSocket works.
+
+If --base-url /foo is set:
+
+UI should be at /foo (Works)
+
+Kernel WS should be at /foo/iosocket (Works)
+
+LSP WS should be at /foo/lsp/pylsp (Fails, currently listens at /lsp/pylsp)
+
+Additional Context / Disclaimer
+
+We are operating in a strict corporate environment with complex Kubernetes Ingress and OAuth constraints. While I initially suspected our proxy configuration, I have isolated this issue by using kubectl port-forward to connect directly to the container's localhost, bypassing all external network layers.
+
+The logs inside the container show no errors regarding the path mounting, but the curl tests confirm the routing discrepancy.
+
+### Will you submit a PR?
+
+- [ ] Yes
+
+### Environment
+
+{
+  "marimo": "0.19.4",
+  "editable": false,
+  "location": "/home/appuser/venv/lib/python3.13/site-packages/marimo",
+  "OS": "Linux",
+  "OS Version": "5.15.0-1101-azure",
+  "Processor": "",
+  "Python Version": "3.13.5",
+  "Locale": "en_US",
+  "Binaries": {
+    "Browser": "--",
+    "Node": "--"
+  },
+  "Dependencies": {
+    "click": "8.3.0",
+    "docutils": "0.22.3",
+    "itsdangerous": "2.2.0",
+    "jedi": "0.19.2",
+    "markdown": "3.10",
+    "narwhals": "2.10.2",
+    "packaging": "25.0",
+    "psutil": "7.1.3",
+    "pygments": "2.19.2",
+    "pymdown-extensions": "10.16.1",
+    "pyyaml": "6.0.3",
+    "starlette": "0.50.0",
+    "tomlkit": "0.13.3",
+    "typing-extensions": "4.15.0",
+    "uvicorn": "0.38.0",
+    "websockets": "15.0.1"
+  },
+  "Optional Dependencies": {
+    "altair": "6.0.0",
+    "duckdb": "1.4.3",
+    "loro": "1.8.2",
+    "mcp": "1.25.0",
+    "openai": "2.15.0",
+    "pandas": "2.3.3",
+    "polars": "1.37.0",
+    "pyarrow": "22.0.0",
+    "python-lsp-ruff": "2.3.0",
+    "python-lsp-server": "1.14.0",
+    "ruff": "0.14.11",
+    "sqlglot": "28.5.0",
+    "vegafusion": "2.0.3"
+  },
+  "Experimental Flags": {}
+}
+
+### Code to reproduce
+
+_No response_

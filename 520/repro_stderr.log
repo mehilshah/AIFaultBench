@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "520/repro.py", line 29, in <module>
+    main()
+  File "520/repro.py", line 19, in main
+    np.testing.assert_allclose(
+  File "520/.venv/lib/python3.12/site-packages/numpy/testing/_private/utils.py", line 1780, in assert_allclose
+    assert_array_compare(compare, actual, desired, err_msg=str(err_msg),
+  File "520/.venv/lib/python3.12/site-packages/numpy/testing/_private/utils.py", line 858, in assert_array_compare
+    infs_mask = func_assert_same_pos(
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "520/.venv/lib/python3.12/site-packages/numpy/testing/_private/utils.py", line 795, in func_assert_same_pos
+    raise AssertionError(msg)
+AssertionError: 
+Not equal to tolerance rtol=1e-05, atol=1e-05
+jit(vmap(f)) != vmap(f) for relu -> square -> sqrt_abs
+inf location mismatch:
+ ACTUAL: array([3.402823e+38], dtype=float32)
+ DESIRED: array([inf], dtype=float32)

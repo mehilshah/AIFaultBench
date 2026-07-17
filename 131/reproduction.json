@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` prints `sentence labels: [(4.5, 1.0), ('bar', 1.0)]` and then fails in `TextRegressor._labels_to_tensor` with `ValueError: could not convert string to float: 'bar'`.",
+  "steps": [
+    "Create a sentence with both `regression_label` and an unrelated string label.",
+    "Instantiate `TextRegressor` with `label_name='regression_label'` and a tiny local `DocumentEmbeddings` implementation.",
+    "Call `forward_loss([sentence])` through `bash run_repro.sh`.",
+    "Observe that the model still iterates over all labels and crashes on the unrelated string label."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

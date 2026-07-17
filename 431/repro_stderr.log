@@ -1,0 +1,8 @@
+431/codebase/sdv/metadata/visualization.py:119: RuntimeWarning: Graphviz does not seem to be installed on this system. For full metadata visualization capabilities, please make sure to have its binaries propertly installed: https://graphviz.gitlab.io/download/
+  warnings.warn(warning_message, RuntimeWarning)
+Traceback (most recent call last):
+  File "431/repro.py", line 163, in <module>
+    main()
+  File "431/repro.py", line 155, in main
+    raise AssertionError(
+AssertionError: Expected only the table1 -> table3 relationship to remain after removing table2.fk_1, but got: []

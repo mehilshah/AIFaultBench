@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` raises `omegaconf.errors.ConfigAttributeError: Key 'input_feat_per_channel' is not in struct` when the script writes `cfg.model.input_feat_per_channel = 80`. The traceback matches the reported missing-key struct failure.",
+  "steps": [
+    "Create a structured OmegaConf config with a `model` node named `s2ut_transformer_fisher`.",
+    "Lock the config with `OmegaConf.set_struct(cfg, True)`.",
+    "Attempt to assign `cfg.model.input_feat_per_channel = 80`.",
+    "Observe the `ConfigAttributeError` with `full_key: model.input_feat_per_channel`."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

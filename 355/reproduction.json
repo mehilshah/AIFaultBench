@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` executes the tutorial-visible snippet without the hidden `from torch import multiprocessing` import and fails with `NameError: name 'multiprocessing' is not defined`. The source file confirms the import is hidden inside `# sphinx_gallery_start_ignore` / `# sphinx_gallery_end_ignore` at lines 108-119, while the visible failing line is `is_fork = multiprocessing.get_start_method() == \"fork\"` at line 160.",
+  "steps": [
+    "Created a minimal reproducer that mirrors the tutorial-visible code path and intentionally omits the hidden `multiprocessing` import.",
+    "Built a local virtual environment with `python3 -m venv .venv` using the bundled setup script.",
+    "Ran `bash run_repro.sh` and captured the traceback in `repro_stdout.log` and `repro_stderr.log`.",
+    "Observed the expected `NameError` when the visible snippet reached `multiprocessing.get_start_method()`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

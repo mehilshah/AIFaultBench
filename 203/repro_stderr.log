@@ -1,0 +1,14 @@
+WARNING:2026-07-17 03:01:28,254:jax._src.xla_bridge:969: An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+
+  0%|          | 0/20 [00:00<?, ?it/s]
+warmup:   5%|▌         | 1/20 [00:00<00:05,  3.60it/s, 1 steps of size 1.44e+01. acc. prob=1.00]
+sample: 100%|██████████| 20/20 [00:00<00:00, 71.65it/s, 1 steps of size 6.83e+02. acc. prob=1.00]
+Traceback (most recent call last):
+  File "203/repro.py", line 24, in main
+    mcmc.print_summary()
+  File "203/codebase/numpyro/infer/mcmc.py", line 768, in print_summary
+    print_summary(sites, prob=prob)
+  File "203/codebase/numpyro/diagnostics.py", line 311, in print_summary
+    max_len = max(max(map(lambda x: len(x), row_names.values())), 10)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: max() iterable argument is empty

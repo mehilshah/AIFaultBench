@@ -1,0 +1,4 @@
+Expected one relationship for semantic foreign key detection.
+Expected relationship: {'parent_table_name': 'parent', 'parent_primary_key': 'email', 'child_table_name': 'child', 'child_foreign_key': 'email'}
+Actual relationships: []
+{'tables': {'parent': {'columns': {'email': {'pii': True, 'sdtype': 'email'}}, 'primary_key': 'email'}, 'child': {'columns': {'child_id': {'sdtype': 'id'}, 'email': {'sdtype': 'email'}}, 'primary_key': 'child_id'}}, 'relationships': [], 'METADATA_SPEC_VERSION': 'V1'}

@@ -1,0 +1,12 @@
+Python 3.12.3
+Working directory: 466
+Codebase path: 466/codebase
+
+No local @Blaizzy/Blaizzy mention exists in the checked-out repo.
+
+Related non-repro context found for @ethanwharris:
+.github/CODEOWNERS:8:* @lantiga @tchaton @justusschock @ethanwharris
+.github/workflows/release-pkg.yml:130:            ethanwharris
+docs/source-pytorch/community/governance.rst:22:- Ethan Harris (`ethanwharris <https://github.com/ethanwharris>`_) (Torchbearer founder)
+
+reproducible=false

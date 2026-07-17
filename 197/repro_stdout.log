@@ -1,0 +1,4 @@
+buffer_shape=(12, 5)
+mean_batch_shape=(5,)
+mean_channel_shape=(12,)
+shape_mismatch=expected mean_batch=(3,), mean_channel=(5,); got mean_batch=(5,), mean_channel=(12,)

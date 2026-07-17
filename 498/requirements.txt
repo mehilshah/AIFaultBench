@@ -1,0 +1,18 @@
+--extra-index-url https://download.pytorch.org/whl/cu128
+
+torch==2.7.1
+torchvision==0.22.1
+accelerate>=0.31.0
+huggingface-hub>=0.34.0,<2.0
+numpy
+Pillow
+protobuf>=3.20.3,<5
+requests
+safetensors>=0.8.0
+scipy
+sentencepiece>=0.1.91,!=0.1.92
+transformers==4.53.3
+httpx<1.0.0
+filelock
+regex
+qwen-vl-utils

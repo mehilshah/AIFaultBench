@@ -1,0 +1,282 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/8003
+
+TITLE
+[BUG] FastFileWriter leaks one fd per save, causing orphan inodes and filesystem ENOSPC on checkpoint rotation workloads
+
+BODY
+**Describe the bug**
+FastFileWriter._fini() overwrites self._aio_fd with INVALID_FD without calling os.close(). As a result, every save() (i.e. every close()) leaks exactly one open file descriptor pointing at the just-written file.
+
+When the user code subsequently unlink()s the file (e.g. checkpoint rotation that keeps only the last N saves), the leaked fd holds the inode alive in the ext4 orphan list, so the file's blocks are never returned to the filesystem's free pool. The filesystem fills up linearly with each save even though ls / du show only N checkpoints on disk, and the process eventually fails with OSError: [Errno 28] No space left on device.
+
+This is independent of whether the underlying NVMe namespace is full; the device may have terabytes free while the filesystem reports 100% used.
+
+
+**To Reproduce**
+We first hit this in a long-running checkpoint endurance harness (a Python loop that repeatedly creates a FastFileWriter, calls torch.save through it, close()s it, and rotates the resulting checkpoints via os.unlink). The minimal standalone script below — derived from that workflow — reproduces the leak in 20 iterations on a fresh environment.
+
+<details>
+<summary><b>Minimal repro script</b> (<code>ffw_repro.py</code>, ~30 lines)</summary>
+
+```python
+"""FastFileWriter fd-leak repro.
+
+Saves a small tensor via FastFileWriter, closes, unlinks. Repeats N times.
+After the loop, counts /proc/<pid>/fd entries that point at deleted files.
+
+Expected:
+  - Buggy upstream:    deleted_fds == N (one leak per save)
+  - With proposed fix: deleted_fds == 0
+"""
+import os, sys, glob, torch
+from deepspeed.ops.op_builder import AsyncIOBuilder
+from deepspeed.io import FastFileWriter, FastFileWriterConfig
+
+N = int(sys.argv[1]) if len(sys.argv) > 1 else 20
+FOLDER = sys.argv[2] if len(sys.argv) > 2 else '/mnt/nvme0/ffw_repro'
+
+os.makedirs(FOLDER, exist_ok=True)
+for f in glob.glob(f'{FOLDER}/repro_*.pt'):
+    os.unlink(f)
+
+aio = AsyncIOBuilder().load(verbose=False).aio_handle(
+    block_size=1 * 1024 * 1024, queue_depth=8,
+    single_submit=False, overlap_events=False, intra_op_parallelism=1)
+pinned = torch.zeros(8 * 1024 * 1024, dtype=torch.uint8).pin_memory()
+buf = torch.zeros(1 * 1024 * 1024, dtype=torch.uint8)   # 1 MiB
+
+for i in range(N):
+    path = f'{FOLDER}/repro_{i}.pt'
+    cfg = FastFileWriterConfig(dnvme_handle=aio, pinned_tensor=pinned,
+                               double_buffer=True, num_parallel_writers=1,
+                               writer_rank=0)
+    w = FastFileWriter(file_path=path, config=cfg)
+    torch.save(obj=buf, f=w)
+    w.close()
+    os.unlink(path)
+
+pid = os.getpid()
+deleted = sum(1 for ln in os.popen(f'ls -l /proc/{pid}/fd 2>/dev/null')
+              if '(deleted)' in ln)
+print(f'RESULT  N={N}  deleted_fds_pointing_at_unlinked={deleted}'
+      f'  (expect {N} if buggy, 0 if fixed)')
+```
+
+</details>
+
+**Verified output** (DeepSpeed 0.18.9 — `_fini` and `_unaligned_drain` identical to master HEAD as of 2026-05-11, NGC `pytorch:25.11-py3`, single-node DGX Spark, ext4 on local NVMe):
+
+```
+$ python ffw_repro.py 20 /mnt/nvme0/ffw_repro
+RESULT  N=20  deleted_fds_pointing_at_unlinked=20  (expect 20 if buggy, 0 if fixed)
+```
+
+After applying the proposed fix below, the same script reports:
+
+```
+RESULT  N=20  deleted_fds_pointing_at_unlinked=0   (expect 20 if buggy, 0 if fixed)
+```
+
+
+
+**Expected behavior**
+- After `FastFileWriter.close()` returns, no fd should remain in `/proc/<pid>/fd` pointing at the just-closed file.
+- With a fixed-N checkpoint rotation policy, filesystem `Used` should plateau once N checkpoints are on disk.
+- Long-running save loops should not exhaust filesystem free space due to writer-internal fd leaks.
+
+
+**ds_report output**
+<details>
+<summary>ds_report output</summary>
+
+```
+--------------------------------------------------
+DeepSpeed C++/CUDA extension op report
+--------------------------------------------------
+NOTE: Ops not installed will be just-in-time (JIT) compiled at
+      runtime if needed. Op compatibility means that your system
+      meet the required dependencies to JIT install the op.
+--------------------------------------------------
+JIT compiled ops requires ninja
+ninja .................. [OKAY]
+--------------------------------------------------
+op name ................ installed .. compatible
+--------------------------------------------------
+async_io ............... [NO] ....... [OKAY]
+fused_adam ............. [NO] ....... [OKAY]
+cpu_adam ............... [NO] ....... [OKAY]
+cpu_adagrad ............ [NO] ....... [OKAY]
+cpu_lion ............... [NO] ....... [OKAY]
+dc ..................... [NO] ....... [OKAY]
+ [WARNING]  Please specify CUTLASS location directory as environment variable CUTLASS_PATH
+ [WARNING]  Possible values are: a path, DS_IGNORE_CUTLASS_DETECTION and DS_USE_CUTLASS_PYTHON_BINDINGS
+evoformer_attn ......... [NO] ....... [NO]
+ [WARNING]  FP Quantizer is using an untested triton version (3.5.0), only 2.3.(0, 1) and 3.0.0 are known to be compatible with these kernels
+fp_quantizer ........... [NO] ....... [NO]
+fused_lamb ............. [NO] ....... [OKAY]
+fused_lion ............. [NO] ....... [OKAY]
+gds .................... [NO] ....... [OKAY]
+transformer_inference .. [NO] ....... [OKAY]
+inference_core_ops ..... [NO] ....... [OKAY]
+cutlass_ops ............ [NO] ....... [OKAY]
+quantizer .............. [NO] ....... [OKAY]
+ragged_device_ops ...... [NO] ....... [OKAY]
+ragged_ops ............. [NO] ....... [OKAY]
+random_ltd ............. [NO] ....... [OKAY]
+ [WARNING]  sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.10
+ [WARNING]  using untested triton version (3.5.0), only 1.0.0 is known to be compatible
+sparse_attn ............ [NO] ....... [NO]
+spatial_inference ...... [NO] ....... [OKAY]
+transformer ............ [NO] ....... [OKAY]
+stochastic_transformer . [NO] ....... [OKAY]
+utils .................. [NO] ....... [OKAY]
+--------------------------------------------------
+DeepSpeed general environment info:
+torch install path ............... ['/usr/local/lib/python3.12/dist-packages/torch']
+torch version .................... 2.10.0a0+b558c986e8.nv25.11
+deepspeed install path ........... ['/usr/local/lib/python3.12/dist-packages/deepspeed']
+deepspeed info ................... 0.18.9, unknown, unknown
+torch cuda version ............... 13.0
+torch hip version ................ None
+nvcc version ..................... 13.0
+deepspeed wheel compiled w. ...... torch 0.0, cuda 0.0
+shared memory (/dev/shm) size .... 59.85 GB
+```
+
+Note: `ds_report` shows "unknown" for the wheel git metadata because DeepSpeed was installed from the NGC `pytorch:25.11-py3` base image's pip-installed wheel. The bug as analyzed also reproduces against current `master` — the relevant `_fini()` and `_unaligned_drain()` code paths in `deepspeed/io/fast_file_writer.py` on `master` (verified 2026-05-11) are identical to the 0.18.9 release.
+
+</details>
+
+
+
+**Screenshots**
+N/A
+
+
+**System info (please complete the following information):**
+- OS: Ubuntu 24.04.3 LTS (Noble Numbat), kernel `6.14.0-1015-nvidia`, **aarch64**
+- GPU count and types: 1× NVIDIA GB10 (DGX Spark), driver 580.95.05, CUDA 13.0
+- Interconnects: single-node, no NCCL involvement (single-process script)
+- Python version: 3.12.3 (identical in host and container)
+- Any other relevant info: DeepSpeed 0.18.9 from NGC `pytorch:25.11-py3` base image. Bug reproduces in a single-process Python script — no distributed launch required. aarch64 noted because DeepSpeed `async_io` (io_uring) is exercised here on ARM, but the leak is at the Python lifecycle level and is architecture-independent.
+
+
+**Launcher context**
+Not launched via `deepspeed` or MPI. Plain `python <script>.py` in a single process. The bug is in the per-writer lifecycle and reproduces with a single rank.
+
+
+**Docker context**
+- Base image: `nvcr.io/nvidia/pytorch:25.11-py3`
+- Container runs as a long-lived dev container; the bug accumulates over the lifetime of one Python process inside it.
+
+
+**Additional context**
+#### Root cause
+
+The leak is in `deepspeed/io/fast_file_writer.py`. `_fini()` only overwrites the Python attribute; the OS-level fd opened in `__init__` (and any fd subsequently re-opened by `_unaligned_drain`) is never `os.close()`d. The `__del__` assertion does not detect this because it checks the attribute, which `_fini()` itself sets.
+
+<details>
+<summary><b>Relevant code (current master, 2026-05-11)</b></summary>
+
+`__init__` opens the OS-level fd:
+
+```python
+self._aio_fd = os.open(self._file_path,
+                       flags=os.O_DIRECT | os.O_CREAT | os.O_WRONLY)
+```
+
+`_fini()` (lifecycle teardown — called by `close()` and `__del__`):
+
+```python
+def _fini(self):
+    if not self._io_buffer_is_empty():
+        self._force_drain()
+    self._io_buffer.reset()
+    self._aio_fd = INVALID_FD          # <-- only overwrites the Python attribute
+```
+
+`_unaligned_drain()` (second leak path — closes the original fd but re-opens a new one that is never closed):
+
+```python
+def _unaligned_drain(self, unaligned_tensor):
+    os.close(self._aio_fd)                                   # original closed
+    fp = open(self._file_path, 'ab')
+    fp.write(...)
+    fp.close()
+    ...
+    self._aio_fd = os.open(self._file_path,                  # re-opened, never closed
+                           flags=os.O_DIRECT | os.O_WRONLY | os.O_APPEND)
+```
+
+`__del__` — the assertion that masks the bug:
+
+```python
+def __del__(self):
+    self._fini()
+    assert self._aio_fd == INVALID_FD   # always passes — _fini sets the attr
+```
+
+</details>
+
+#### Proposed fix
+
+```diff
+ def _fini(self):
+     if not self._io_buffer_is_empty():
+         self._force_drain()
+     self._io_buffer.reset()
++    if self._aio_fd != INVALID_FD:
++        try:
++            os.fsync(self._aio_fd)
++        finally:
++            os.close(self._aio_fd)
+     self._aio_fd = INVALID_FD
+```
+
+Notes:
+- `os.fsync()` before `close()` is a deliberate choice. Without it the guarantee "after `close()` returns, the bytes are durable" — which callers typically expect from a checkpoint writer — does not hold for the unaligned tail written via the buffered re-open path. The fsync cost was measured at ~5% wall-time on our workload. Dropping the fsync line still fixes the leak — `close()` alone is sufficient to release the inode.
+- The `try/finally` keeps `close()` reachable even if `fsync()` raises.
+
+#### Verification (long-form)
+
+In addition to the 20-iteration `/proc/<pid>/fd` test above, we exercised the patched build on a long-running workload:
+
+- Model: KORMo-10B + optimizer state → ~60 GB per checkpoint
+- Storage: ext4 on local NVMe, namespace 4TB, ~3.30 TB free at start
+- Rotation: keep last 3 checkpoints
+- Duration: **700 iterations / ~60 hours / ~42 TB host writes**
+
+Filesystem `Used` (from `df -B1`, sampled every iteration):
+
+| iter | df_used | comment |
+|---|---|---|
+| 0 (baseline) | 555.7 GB | system + leftover |
+| 3 | 736.0 GB | 3 ckpts × 60 GB filled up |
+| 4 | 736.001 GB | rotation kicks in, fs stable |
+| 99 | 736.228 GB | +228 MB over 95 rotations |
+| 299 | 736.253 GB | +253 MB |
+| 699 | 736.282 GB | +282 MB |
+| 700 | 736.282 GB | end |
+
+**Filesystem usage drifted +281 MB over 697 rotations (~410 KB/iter, 6.4×10⁻⁶ of the 60 GB written per iter), i.e. effectively flat.** Before the patch the same setup hit ENOSPC at iteration ~60 because each iteration leaked ~60 GB of orphan-inode space.
+
+Performance impact of the `os.fsync()` addition: peak write throughput 9–10 GB/s, ~5% lower than without the fsync.
+
+#### Impact / who is affected
+
+Anyone using `FastFileWriter` in a long-running process that creates many distinct output files:
+
+- Trainer-style loops with `save_total_limit` rotation
+- DeepSpeed checkpoint saves in a `Trainer.train()` loop
+- Endurance / benchmark harnesses writing a series of files through FastFileWriter
+
+Single-save scripts that exit immediately after `close()` are not affected in practice — the kernel reclaims fds at process exit.
+
+#### Notes for triage
+
+- We initially diagnosed this as a filesystem/SSD issue (NVMe NUSE, TRIM behavior, ext4 allocator) before tracing it to the writer. The smoking-gun signal in retrospect is `lsof | grep deleted` (or `/proc/<pid>/fd` for processes you can't `lsof`) showing N orphaned references after N saves.
+- The `__del__` assertion's false-positive nature (asserting on the Python attribute instead of an OS-level state) is what allowed this to ship undetected.
+
+I'm happy to send a PR with the fix above and a small regression test (open N writers, close them, assert `/proc/self/fd` clean). Let me know if you'd like me to proceed, or if you prefer a different shape for the fix.
+
+

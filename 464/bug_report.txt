@@ -1,0 +1,182 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46899
+
+TITLE
+[Gemma4] Audio (and vision) processing broken with 4‑bit quantization due to unsafe dtype cast in multimodal embedders
+
+BODY
+### System Info
+
+
+-   `transformers` version: 5.12.1
+    
+-   `bitsandbytes` version: 0.49.2
+    
+-   Platform: Linux, Python 3.13, CUDA 12.x
+    
+-   GPU: NVIDIA RTX 5090
+    
+-   Quantization config: `BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=torch.bfloat16, bnb_4bit_use_double_quant=True)`
+    
+
+
+### Who can help?
+
+
+@ArthurZucker @zucchini-nlp
+
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+```python
+
+import torch
+import librosa
+from transformers import AutoModelForMultimodalLM, AutoProcessor, BitsAndBytesConfig
+MODEL_NAME = "google/gemma-4-12b-it"
+bnb_config = BitsAndBytesConfig(
+ load_in_4bit=True,
+ bnb_4bit_quant_type="nf4",
+ bnb_4bit_compute_dtype=torch.bfloat16,
+ bnb_4bit_use_double_quant=True
+)
+model = AutoModelForMultimodalLM.from_pretrained(
+ MODEL_NAME,
+ quantization_config=bnb_config,
+ device_map="cuda",
+ dtype=torch.bfloat16
+)
+processor = AutoProcessor.from_pretrained(MODEL_NAME)
+# Simulate loading audio (replace with actual audio)
+import numpy as np
+audio_waveform = np.random.randn(16000 * 5).astype(np.float32)  # 5 seconds, float32 as returned by librosa
+messages = [{
+ "role": "user",
+ "content": [
+ {"type": "text", "text": "Describe this audio."},
+ {"type": "audio", "audio": audio_waveform},
+ ]
+}]
+inputs = processor.apply_chat_template(
+ messages,
+ tokenize=True,
+ return_dict=True,
+ return_tensors="pt",
+ add_generation_prompt=True,
+).to(model.device)
+# This will trigger the error
+with torch.no_grad():
+ model.generate(**inputs, max_new_tokens=10)
+```
+
+### Expected behavior
+
+The model should process the audio without dtype mismatch errors when loaded with 4‑bit quantization.
+
+
+## Actual behavior
+
+A `RuntimeError` is raised during the `masked_scatter` operation inside `Gemma4UnifiedModel.forward`:
+
+```text
+
+RuntimeError: masked_scatter_: expected self and source to have same dtypes but got BFloat16 and Byte
+```
+If the problematic cast inside the embedder is simply removed (see root cause), a different mismatch occurs:
+```text
+
+RuntimeError: masked_scatter_: expected self and source to have same dtypes but got BFloat16 and Float
+```
+## Full error trace (original)
+
+```text
+
+File .../modeling_gemma4_unified.py:1088, in Gemma4UnifiedModel.forward()
+ inputs_embeds = inputs_embeds.masked_scatter(
+ audio_mask.to(inputs_embeds.device), audio_features.to(inputs_embeds.device)
+ )
+RuntimeError: masked_scatter_: expected self and source to have same dtypes but got BFloat16 and Byte
+```
+## Root cause
+
+The issue originates in `Gemma4UnifiedMultimodalEmbedder.forward()` (used for audio, and similarly in `Gemma4UnifiedVisionEmbedder` for vision) [here](https://github.com/huggingface/transformers/blob/c96378c4136f5882fee50d8ff8ee1e9588a17eb6/src/transformers/models/gemma4_unified/modular_gemma4_unified.py#L897):
+
+```python
+
+class Gemma4UnifiedMultimodalEmbedder(nn.Module):
+ ...
+ def forward(self, inputs_embeds: torch.Tensor) -> torch.Tensor:
+   # Additional dtype casting
+   inputs_embeds = inputs_embeds.to(self.embedding_projection.weight.dtype)
+   embs_normed = self.embedding_pre_projection_norm(inputs_embeds)
+   return self.embedding_projection(embs_normed)
+```
+When the model is **not quantized**, `weight.dtype` is `torch.bfloat16` (or `float32`), and the cast is harmless.  
+When loaded in **4‑bit**, `self.embedding_projection` becomes a `Linear4bit` layer whose `.weight` is stored as `torch.uint8` (the packed low‑precision data). The cast `inputs_embeds.to(weight.dtype)`  **destroys** the tensor by converting it to `uint8`, causing downstream operations to fail with `BFloat16` vs `Byte`.
+
+Additionally, the audio input tensor coming from the processor is `float32`. Previously this was inadvertently cast to `bfloat16` via the same `weight.dtype` mechanism (when unquantized). With the line removed, the tensor stays `float32`, leading to the second mismatch (`bfloat16` vs `float32`).
+
+Thus, two problems exist:
+
+1.  The cast to `weight.dtype` is unsafe when the model is quantized.
+    
+2.  The embedder does not ensure the input matches the model’s _compute_ dtype.
+    
+
+## Suggested fix
+
+Replace the unsafe `weight.dtype` cast with a check for the layer’s actual compute dtype, which is available via `compute_dtype` attribute for `bitsandbytes` layers.
+
+**[In](https://github.com/huggingface/transformers/blob/c96378c4136f5882fee50d8ff8ee1e9588a17eb6/src/transformers/models/gemma4_unified/modular_gemma4_unified.py#L897) `Gemma4UnifiedMultimodalEmbedder.forward`:**
+
+```python
+
+def forward(self, inputs_embeds: torch.Tensor) -> torch.Tensor:
+  if hasattr(self.embedding_projection, "compute_dtype"):
+    target_dtype = self.embedding_projection.compute_dtype
+  else:
+    target_dtype = self.embedding_projection.weight.dtype
+  inputs_embeds = inputs_embeds.to(target_dtype)
+  embs_normed = self.embedding_pre_projection_norm(inputs_embeds)
+  return self.embedding_projection(embs_normed)
+```
+**[In](https://github.com/huggingface/transformers/blob/c96378c4136f5882fee50d8ff8ee1e9588a17eb6/src/transformers/models/gemma4_unified/modular_gemma4_unified.py#L866) `Gemma4UnifiedVisionEmbedder.forward`** (same pattern, for consistency and safety):
+
+```python
+
+def forward(self, pixel_values, image_position_ids):
+ ...
+  if hasattr(self.patch_dense, "compute_dtype"):
+    target_dtype = self.patch_dense.compute_dtype
+  else:
+    target_dtype = self.patch_dense.weight.dtype
+  hidden_states = self.patch_ln1(pixel_values.to(target_dtype))
+  ...
+```
+This guarantees:
+
+-   For normal `nn.Linear`: `target_dtype = weight.dtype` (exact previous behavior).
+    
+-   For `Linear4bit`: `target_dtype = compute_dtype` (e.g., `torch.bfloat16`), which matches the rest of the model and the expected input for the quantized layer.
+    
+
+It also eliminates the requirement for users to manually cast `input_features` before calling `generate()`.
+
+## Additional context
+
+-   The same bug affects **vision inputs** (images / videos) when quantized, though the trace might differ. The fix in `Gemma4UnifiedVisionEmbedder` should be applied as well.
+    
+-   The issue is **not present** when quantization is disabled, which is why it has likely gone unnoticed.
+    
+
+Please apply the above changes to [`modular_gemma4_unified.py`](https://github.com/huggingface/transformers/blob/c96378c4136f5882fee50d8ff8ee1e9588a17eb6/src/transformers/models/gemma4_unified/modular_gemma4_unified.py#L897). Thank you!
+

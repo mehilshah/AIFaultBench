@@ -1,0 +1,3 @@
+pyro=1.6.0
+torch=1.13.1+cpu
+guess=8.5

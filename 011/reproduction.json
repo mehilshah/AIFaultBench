@@ -1,0 +1,15 @@
+{
+  "blocking_reason": "In this Python 3.11 + TensorFlow 2.20 environment, the bundled snapshot does not reproduce the reported NaN loss. The run stays finite and finishes 100 training steps; the behavior differs from the issue report.",
+  "evidence": [
+    "The 100-step run completed without NaN.",
+    "Training loss exploded into the billions but stayed finite through step 100."
+  ],
+  "reproducible": false,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Installed the bytecode loader for the bundled tensorflow/models snapshot.",
+    "Generated local TFRecord training and validation data.",
+    "Ran ImageClassificationTask with resnet_rs_imagenet-style settings for 100 steps.",
+    "Observed exploding but finite loss values instead of NaN."
+  ]
+}

@@ -1,0 +1,2 @@
+accelerate return code: 0
+BUG reproduced: the launcher swallowed the injected failure and returned 0.

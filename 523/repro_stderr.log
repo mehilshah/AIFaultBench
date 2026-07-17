@@ -1,0 +1,27 @@
+523/codebase/src/accelerate/utils/torch_xla.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Traceback (most recent call last):
+  File "523/repro.py", line 36, in <module>
+    main()
+  File "523/repro.py", line 31, in main
+    accelerator.prepare(optimizer)
+  File "523/codebase/src/accelerate/accelerator.py", line 1094, in prepare
+    result = tuple(
+             ^^^^^^
+  File "523/codebase/src/accelerate/accelerator.py", line 1095, in <genexpr>
+    self._prepare_one(obj, first_pass=True, device_placement=d) for obj, d in zip(args, device_placement)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "523/codebase/src/accelerate/accelerator.py", line 951, in _prepare_one
+    optimizer = self.prepare_optimizer(obj, device_placement=device_placement)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "523/codebase/src/accelerate/accelerator.py", line 1568, in prepare_optimizer
+    optimizer = AcceleratedOptimizer(optimizer, device_placement=device_placement, scaler=self.scaler)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "523/codebase/src/accelerate/optimizer.py", line 58, in __init__
+    self.accelerator_state = AcceleratorState()
+                             ^^^^^^^^^^^^^^^^^^
+  File "523/codebase/src/accelerate/state.py", line 544, in __init__
+    PartialState(cpu, **kwargs)
+  File "523/codebase/src/accelerate/state.py", line 83, in __init__
+    raise AssertionError(
+AssertionError: The current device and desired device are not the same. If the `PartialState` was generated before the `Accelerator` has been instantiated, ensure the `cpu` flag is the same for both. In this case, the `PartialState` has True and the desired device is False. Please use `cpu=True`.

@@ -1,0 +1,30 @@
+Title: Misleading exception when runtime type checker is used directly
+Date: 2024-07-16T11:02:06+00:00
+URL: https://github.com/patrick-kidger/jaxtyping/issues/231
+
+Description:
+When I run
+
+```python
+from jaxtyping import Integer, jaxtyped
+import numpy as np
+from beartype import beartype
+
+
+@beartype
+#@jaxtyped(typechecker=beartype)  # Works fine with this line
+def append_one(array: Integer[np.ndarray, "dim"]) -> Integer[np.ndarray, "dim+1"]:
+    return np.append(array, 1)
+
+
+append_one(np.array([1, 2]))
+```
+
+I get
+
+```
+jaxtyping.AnnotationError: Cannot process symbolic axis 'dim+1' as some axis names have not been processed. In practice you should usually only use symbolic axes in annotations for return types, referring only to axes annotated for arguments.
+```
+
+When I replace `@beartype` with `@jaxtyped(typechecker=beartype)` the code runs fine. However, the error seems a bit misleading to me: Instead of pointing me to the correct decorator, it indicates an error in the shape annotation.
+This error was especially misleading to me as in the [beartype documentation](https://beartype.readthedocs.io/en/latest/faq/#jax-arrays) `jaxtyping` support is emphasized, giving the impression that `jaxtyping` annotations work out of the box (which they actually do, except the symbolic expressions). 

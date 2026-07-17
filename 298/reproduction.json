@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "Running ./run_repro.sh in a fresh venv from this checkout printed `jax: [nan, 1.0, 0.0]` and `expected: [nan, 1.0, 0.0]`, then exited with code 1. The current source tree already matches NumPy for the NaN case.",
+  "steps": [
+    "Created a virtual environment and installed the local checkout with `./setup_env.sh`.",
+    "Ran the standardized repro entrypoint with `./run_repro.sh`.",
+    "Confirmed the observed JAX output matched NumPy for the reported NaN input."
+  ],
+  "blocking_reason": "The checked-out JAX source already contains the NaN-handling behavior fix for `jax.numpy.heaviside`, so the reported bug does not reproduce in this folder.",
+  "reproduction_command": "./run_repro.sh"
+}

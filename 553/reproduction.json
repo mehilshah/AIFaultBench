@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "HMASynthesizer printed an uncapped column count: (1000000000000000000000000000000 columns) instead of the requested (1000000+ columns) cap.",
+  "steps": [
+    "Created a minimal Metadata object with one table.",
+    "Patched HMASynthesizer._estimate_num_columns to return a huge value and _get_distributions to avoid unrelated setup.",
+    "Instantiated HMASynthesizer and captured the PerformanceAlert output."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

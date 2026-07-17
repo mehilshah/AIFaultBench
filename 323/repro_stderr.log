@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "323/repro.py", line 41, in <module>
+    main()
+  File "323/repro.py", line 37, in main
+    MapDataset(dataset, map_func)
+  File "323/codebase/detectron2/data/common.py", line 77, in __new__
+    return super().__new__(cls, dataset, map_func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: object.__new__() takes exactly one argument (the type to instantiate)

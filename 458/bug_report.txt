@@ -1,0 +1,43 @@
+# recovered-from-issue: https://github.com/pytorch/rl/issues/3508
+
+TITLE
+[BUG] SumSegmentTreeFp32 not available
+
+BODY
+## Describe the bug
+
+When instantiating  a PrioritizedSampler, I get an `RuntimeError: SumSegmentTreeFp32 is not available.` in `torchrl/data/replay_buffers/samplers.py", line 462, in _init`.
+
+## To Reproduce
+
+```python
+from torchrl.data import TensorDictReplayBuffer, LazyTensorStorage, PrioritizedSampler
+device = torch.device("cuda:0")
+
+rb = TensorDictReplayBuffer(
+        storage=LazyTensorStorage(max_size=100, device=device),
+        batch_size=4,
+        sampler=PrioritizedSampler(max_capacity=100, alpha=0.7, beta=0.5, dtype=torch.float),
+        priority_key="priority"
+    )
+``` 
+
+## System info
+
+Python 3.12.11
+
+Package management done via uv with the following versions
+
+- torch 2.8.0
+- torchrl 0.11.1
+- tensordict 0.11.0
+- numpy <2.0 (1.26.4)
+
+System OS is linux.
+
+## Checklist
+
+- [x] I have checked that there is no similar issue in the repo (**required**)
+- [x] I have read the [documentation](https://github.com/pytorch/rl/tree/main/docs/) (**required**)
+- [x] I have provided a minimal working example to reproduce the bug (**required**)
+

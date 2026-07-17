@@ -1,0 +1,33 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2826
+
+TITLE
+[Metadata composite keys] Disallow primary key columns in column relationships
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:
+* Python version:
+* Operating System:
+
+### Error Description
+Currently, I can set a composite primary key that includes a column that is involved in a column relationship. We should update metadata validation so that (1) you cannot set a column as a primary key if it is involved in a column relationship, (2) you cannot add a column relationship to a column that is part of the primary key, and (3) validate that no primary key columns are part of a column relationship.
+
+### Steps to reproduce
+
+```python
+from sdv.single_table import GaussianCopulaSynthesizer
+from sdv.datasets.demo import download_demo
+
+data, metadata = download_demo(modality='single_table', dataset_name='fake_hotel_guests')
+metadata.update_column(column_name='billing_address', sdtype='street_address')
+metadata.add_column_relationship(column_names=['billing_address'], relationship_type='address')
+metadata.set_primary_key(['guest_email', 'billing_address']) # If this line is commented then it runs fine
+
+synthesizer = GaussianCopulaSynthesizer(metadata)
+synthesizer.fit(data)
+synthesizer.sample(10)
+```
+

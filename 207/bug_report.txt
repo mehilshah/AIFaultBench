@@ -1,0 +1,54 @@
+Title: ot.dist with metric='minkowski' always gives p=1 despite setting it to other values
+Date: 2025-01-08T03:15:56+00:00
+URL: https://github.com/PythonOT/POT/issues/712
+
+Description:
+## Describe the bug
+ot.dist with metric='minkowski' always gives p=1 despite setting it to other values
+
+### To Reproduce
+See code sample
+
+<!-- If you have error messages or stack traces, please provide it here as well -->
+
+#### Screenshots
+![image](https://github.com/user-attachments/assets/2a583469-46f6-421a-b88f-7674bbd6a73f)
+
+#### Code sample
+```
+import numpy as np
+import matplotlib.pyplot as plt
+import ot
+x = np.linspace(0, 1, 1001)
+M1 = ot.dist(x.reshape(-1, 1), metric='minkowski', p=1)
+M2 = ot.dist(x.reshape(-1, 1), metric='minkowski', p=2)
+E1 = ot.dist(x.reshape(-1, 1), metric='euclidean')
+E2 = ot.dist(x.reshape(-1, 1), metric='sqeuclidean')
+
+fig, ax = plt.subplots(1, 4, figsize=(20, 4))
+ax[0].plot(M1[500])
+ax[0].set_title('Minkowski p=1')
+ax[1].plot(M2[500])
+ax[1].set_title('Minkowski p=2')
+ax[2].plot(E1[500])
+ax[2].set_title('Euclidean')
+ax[3].plot(E2[500])
+ax[3].set_title('Squared Euclidean')
+```
+
+### Expected behavior
+E.g. setting p=2 should produce the same result is sqeuclidean
+
+
+### Environment (please complete the following information):
+- OS (e.g. MacOS, Windows, Linux): MacOS
+- Python version: 3.10.16
+- How was POT installed (source, `pip`, `conda`): pip
+
+Output of the following code snippet:
+macOS-15.1.1-arm64-arm-64bit
+Python 3.10.16 | packaged by conda-forge | (main, Dec  5 2024, 14:20:01) [Clang 18.1.8 ]
+NumPy 1.26.4
+SciPy 1.15.0
+POT 0.9.5
+

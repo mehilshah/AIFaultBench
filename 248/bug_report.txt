@@ -1,0 +1,48 @@
+Title: Missing typing_extensions dependency
+Date: 2024-11-22T09:07:16+00:00
+URL: https://github.com/python-eel/Eel/issues/748
+
+Description:
+**Eel version**
+
+0.18.0
+
+**Describe the bug**
+
+When installing the latest version of Eel and importing it, it will raise a `ModuleNotFoundError`.
+
+**To Reproduce**
+
+1. Get a clean environment (`python -m venv .venv` and `.\.venv\Scripts\Activate.ps1` - or any other method)
+2. Install Eel: `python -m pip install Eel`
+3. Open a Python shell: `python`
+4. Import Eel: `import eel`
+
+You will get the error,
+
+```
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "WORKING_DIR\.venv\lib\site-packages\eel\__init__.py", line 6, in <module>
+    from typing_extensions import Literal
+ModuleNotFoundError: No module named 'typing_extensions'
+```
+
+**Expected behavior**
+
+For an error not to be thrown and Eel import.
+
+**System Information**
+ - OS: Windows 10 x64
+ - Browser: N/A
+ - Python Distribution: Python 3.9.9
+
+**Screenshots**
+
+N/A
+
+**Additional context**
+
+Looking at the [diff from the latest release](https://github.com/python-eel/Eel/compare/v0.17.0...v0.18.0), I can see `typing-extensions` was added to `requirements.txt` but it was not added to `install_requires` in `setup.py`.
+
+This means when installing modules using `requirements.txt`, Eel will work, however when installing using pip, `install_requires` will never get installed as it's not in `setup.py`.

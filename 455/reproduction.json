@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "merge_and_unload succeeded on an unsharded control model, then failed after the target weight was shrunk to a zero-width shard. The failure was: RuntimeError: The size of tensor a (0) must match the size of tensor b (2048) at non-singleton dimension 1",
+  "steps": [
+    "Build a tiny 2048x2048 LoRA-wrapped linear layer from the local PEFT source.",
+    "Verify merge_and_unload() works on the unsharded control model.",
+    "Replace the target weight with a ZeRO-3-like shard shaped [2048, 0].",
+    "Call merge_and_unload() again and observe the tensor-size RuntimeError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

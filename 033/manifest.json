@@ -1,0 +1,14 @@
+{
+  "bug_id": "033",
+  "bug_dir": "033",
+  "issue_url": "https://github.com/NVIDIA/DeepLearningExamples/issues/1250",
+  "commit_hash": "35d8759cb8cf52f8c7d33900ef27fd0f16d6cff3",
+  "library_name": "DeepLearningExamples",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "NVIDIA/DeepLearningExamples@35d8759cb8cf52f8c7d33900ef27fd0f16d6cff3",
+  "codebase_present": "true",
+  "standardized_dir": "../033",
+  "repro_status": "reproducible",
+  "reproduction_command": "bash run_repro.sh"
+}

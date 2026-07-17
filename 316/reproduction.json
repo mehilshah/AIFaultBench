@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Contiguous mask matched the reference path: forward_max_abs_diff=0.000000 and grad_max_abs_diff=0.000000.",
+    "Non-contiguous mask diverged from the reference path: forward_max_abs_diff=8.000122 and grad_max_abs_diff=24516.000000.",
+    "The repro terminated with AssertionError: Tensor-likes are not close!"
+  ],
+  "steps": [
+    "Created a CPU-safe stub for the `_flash_3_varlen_hub` kernel that preserves the backend's packed-prefix slicing behavior.",
+    "Ran the backend on a contiguous all-ones mask and confirmed it matches the masked reference implementation.",
+    "Ran the backend on a non-contiguous mask with holes and compared both forward output and gradients against the reference implementation."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

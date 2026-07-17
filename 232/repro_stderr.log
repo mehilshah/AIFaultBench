@@ -1,0 +1,123 @@
+Importing plotly failed. Interactive plots will not work.
+Importing plotly failed. Interactive plots will not work.
+Importing plotly failed. Interactive plots will not work.
+Importing plotly failed. Interactive plots will not work.
+WARNING - (NP.forecaster.fit) - When Global modeling with local normalization, metrics are displayed in normalized scale.
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:464: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  if df.groupby("ID").apply(lambda x: x.duplicated("ds").any()).any():
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency D corresponds to 96.667% of the data.
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - D
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/data/process.py:496: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  df_grouped = df.groupby("ID").apply(lambda x: x.set_index("ds").resample(freq).asfreq()).drop(columns=["ID"])
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/data/process.py:507: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  df_dropped = df.groupby("ID", group_keys=False).apply(lambda x: x.loc[: last_valid_index[x.name]])
+
+INFO - (NP.config.init_data_params) - Setting normalization to global as only one dataframe provided for training.
+INFO - (NP.utils.set_auto_seasonalities) - Disabling yearly seasonality. Run NeuralProphet with yearly_seasonality=True to override this.
+INFO - (NP.utils.set_auto_seasonalities) - Disabling daily seasonality. Run NeuralProphet with daily_seasonality=True to override this.
+INFO - (NP.config.set_auto_batch_epoch) - Auto-set batch_size to 1
+WARNING - (py.warnings._showwarnmsg) - 232/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:230: UserWarning: 
+NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition with CUDA capability sm_120 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_50 sm_60 sm_70 sm_75 sm_80 sm_86 sm_90.
+If you want to use the NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency D corresponds to 96.667% of the data.
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - D
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/data/split.py:69: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+  df_i = pd.concat([df_i, future_df])
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency D corresponds to 97.778% of the data.
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - D
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:464: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  if df.groupby("ID").apply(lambda x: x.duplicated("ds").any()).any():
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/data/process.py:496: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  df_grouped = df.groupby("ID").apply(lambda x: x.set_index("ds").resample(freq).asfreq()).drop(columns=["ID"])
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/data/process.py:507: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  df_dropped = df.groupby("ID", group_keys=False).apply(lambda x: x.loc[: last_valid_index[x.name]])
+
+INFO - (NP.data.processing._handle_missing_data) - Dropped 15 rows at the end with NaNs in future regressors.
+INFO - (NP.df_utils.return_df_in_original_format) - Returning df with no ID column
+WARNING - (NP.forecaster.fit) - When Global modeling with local normalization, metrics are displayed in normalized scale.
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:464: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  if df.groupby("ID").apply(lambda x: x.duplicated("ds").any()).any():
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency D corresponds to 96.667% of the data.
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - D
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/data/process.py:496: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  df_grouped = df.groupby("ID").apply(lambda x: x.set_index("ds").resample(freq).asfreq()).drop(columns=["ID"])
+
+INFO - (NP.config.init_data_params) - Setting normalization to global as only one dataframe provided for training.
+INFO - (NP.utils.set_auto_seasonalities) - Disabling yearly seasonality. Run NeuralProphet with yearly_seasonality=True to override this.
+INFO - (NP.utils.set_auto_seasonalities) - Disabling daily seasonality. Run NeuralProphet with daily_seasonality=True to override this.
+INFO - (NP.config.set_auto_batch_epoch) - Auto-set batch_size to 1
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency D corresponds to 96.667% of the data.
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - D
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency D corresponds to 96.667% of the data.
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - D
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/df_utils.py:464: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  if df.groupby("ID").apply(lambda x: x.duplicated("ds").any()).any():
+
+WARNING - (py.warnings._showwarnmsg) - 232/codebase/neuralprophet/data/process.py:496: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  df_grouped = df.groupby("ID").apply(lambda x: x.set_index("ds").resample(freq).asfreq()).drop(columns=["ID"])
+
+INFO - (NP.df_utils.return_df_in_original_format) - Returning df with no ID column

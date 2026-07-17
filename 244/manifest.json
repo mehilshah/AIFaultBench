@@ -1,0 +1,8 @@
+{
+  "title": "numpyro import requires typing_extensions but does not declare it",
+  "package": "numpyro",
+  "source_bug_report": "bug_report.txt",
+  "root_cause": "numpyro/_typing.py and numpyro/infer/elbo.py import typing_extensions at module load time, but setup.py does not list typing_extensions in install_requires.",
+  "reproduction_command": "bash run_repro.sh",
+  "expected_failure": "ModuleNotFoundError: No module named 'typing_extensions'"
+}

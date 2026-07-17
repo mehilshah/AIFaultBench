@@ -1,0 +1,10 @@
+torch==2.8.0
+numpy==2.2.6
+aiohttp
+fsspec
+jinja2
+psutil>=5.8.0
+pyparsing
+requests
+tqdm
+xxhash

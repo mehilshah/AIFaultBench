@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Both fresh-process reproductions fail on the local temporary LoRA directory. The `HF_HUB_OFFLINE=1` case and the `local_files_only=True` case both raise `ValueError: When using the offline mode, you must specify a weight_name.` from `codebase/src/diffusers/loaders/lora_base.py:_best_guess_weight_name()`. The saved logs show the failure occurs before any successful LoRA loading.",
+  "steps": [
+    "Install the local reproduction environment with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh`, which executes `repro.py` twice in separate fresh processes: once with `HF_HUB_OFFLINE=1` and once with `local_files_only=True`.",
+    "Observe that both runs create a temporary `adapter.safetensors` file and then fail with the offline-mode `weight_name` ValueError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

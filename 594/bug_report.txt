@@ -1,0 +1,38 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38087
+
+TITLE
+Incorrect documentation of `jax.numpy.dot`
+
+BODY
+### Description
+
+
+The documentation says about the second parameter `b`:
+
+    In the multi-dimensional case, leading dimensions must be broadcast-compatible
+        with the leading dimensions of ``a``.
+
+However, this contradicts the earlier statement in the documentation (and the actual behaviour of `jax.numpy..dot`, as well as the documented behaviour of `numpy.dot`) that the "batch" indices of the arguments are not broadcast but stacked.
+
+
+Example where leading dimensions of `b` are not broadcast-compatible with the leading dimensions of `a` and yet `dot` works:
+
+```Python
+import jax.numpy as jnp
+a = jnp.zeros(shape=(3, 4, 2))
+b = jnp.zeros(shape=(26, 2, 1))
+jnp.dot(a, b).shape
+# (3, 4, 26, 1)
+```
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+```text
+jax:    0.10.1
+jaxlib: 0.10.1
+numpy:  2.4.6
+python: 3.14.3 (main, Mar 10 2026, 18:18:50) [Clang 21.1.4 ]
+device info: cpu-1, 1 local devices"
+process_count: 1
+platform: uname_result(system='Linux', node='hp', release='6.8.0-111-generic', version='#111-Ubuntu SMP PREEMPT_DYNAMIC Sat Apr 11 23:16:02 UTC 2026', machine='x86_64')
+```

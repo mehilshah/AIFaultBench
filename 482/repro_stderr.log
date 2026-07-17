@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "482/repro.py", line 103, in <module>
+    main()
+  File "482/repro.py", line 93, in main
+    out = jax.vmap(
+          ^^^^^^^^^
+AttributeError: 'TupTy' object has no attribute 'ndim'
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.

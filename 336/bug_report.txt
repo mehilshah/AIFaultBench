@@ -1,0 +1,50 @@
+# recovered-from-issue: https://github.com/vllm-project/vllm/issues/48124
+
+TITLE
+[Bug]: The deepseek_v2.py function misses the output activation values ​​of the last layer when extracting hidden states.
+
+BODY
+There will be no operations to extract hidden state before and after the last layer. <code>model_executor/models/deepseek_v2.py 
+
+### 🐛 Describe the bug
+
+The forward of <code> model_executor/models/deepseek_v2.py </code> code as below 
+It can be observed that if there are 60 hidden layers, there will be no operation to extract hidden state after the 60th layer forward, which will affect the training of models such as dflash (the last layer activation value is needed to calculate the loss).
+```python
+        aux_hidden_states = []
+        for idx, layer in enumerate(
+            islice(self.layers, self.start_layer, self.end_layer),
+            start=self.start_layer,
+        ):
+            # all gather if we need to use the whole states
+            if (
+                hidden_states.shape[0] != positions.shape[0]
+                and not layer.use_sequence_parallel_moe
+            ):
+                combined_states = torch.cat([hidden_states, residual], dim=-1)
+                combined_states = tensor_model_parallel_all_gather(combined_states, 0)
+                combined_states = combined_states[: positions.shape[0]]
+                hidden_states, residual = combined_states.split(
+                    [self.hidden_size, self.hidden_size], dim=-1
+                )
+                # fused_add_rms_norm requires a contiguous residual
+                residual = residual.contiguous()
+            if idx in self.aux_hidden_state_layers:
+                aux_hidden_state = hidden_states + residual
+                if aux_hidden_state.shape[0] != positions.shape[0]:
+                    aux_hidden_state = tensor_model_parallel_all_gather(
+                        aux_hidden_state, 0
+                    )
+                    aux_hidden_state = aux_hidden_state[: positions.shape[0]]
+                aux_hidden_states.append(aux_hidden_state)
+            hidden_states, residual = layer(
+                positions, hidden_states, residual, llama_4_scaling
+            )
+```
+[https://github.com/vllm-project/vllm/blob/main/vllm/model_executor/models/deepseek_v2.py](url)
+fix eg:
+```python
+            if idx + 1 in self.aux_hidden_state_layers:
+                aux_hidden_states.append(hidden_states + residual)
+```
+

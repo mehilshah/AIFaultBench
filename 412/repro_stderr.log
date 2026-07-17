@@ -1,0 +1,54 @@
+Torch version 2.8.0+cu128 has not been tested with coremltools. You may run into unexpected errors. Torch 2.7.0 is the most recent version that has been tested.
+Failed to load _MLModelProxy: No module named 'coremltools.libcoremlpython'
+Failed to load _MLCPUComputeDeviceProxy: No module named 'coremltools.libcoremlpython'
+Failed to load _MLGPUComputeDeviceProxy: No module named 'coremltools.libcoremlpython'
+Failed to load _MLNeuralEngineComputeDeviceProxy: No module named 'coremltools.libcoremlpython'
+Failed to load _MLModelProxy: No module named 'coremltools.libcoremlpython'
+Failed to load _MLComputePlanProxy: No module named 'coremltools.libcoremlpython'
+Failed to load _MLModelProxy: No module named 'coremltools.libcoremlpython'
+Failed to load _MLModelAssetProxy: No module named 'coremltools.libcoremlpython'
+
+Converting PyTorch Frontend ==> MIL Ops:   0%|          | 0/36 [00:00<?, ? ops/s]
+
+ERROR - converting 'tensor_split' op (located at: '5'):
+
+
+Converting PyTorch Frontend ==> MIL Ops:   6%|▌         | 2/36 [00:00<00:00, 3754.97 ops/s]
+Traceback (most recent call last):
+  File "412/repro.py", line 47, in <module>
+    main()
+  File "412/repro.py", line 35, in main
+    ct.convert(
+  File "412/.venv/lib/python3.12/site-packages/coremltools/converters/_converters_entry.py", line 646, in convert
+    mlmodel = mil_convert(
+              ^^^^^^^^^^^^
+  File "412/.venv/lib/python3.12/site-packages/coremltools/converters/mil/converter.py", line 186, in mil_convert
+    return _mil_convert(
+           ^^^^^^^^^^^^^
+  File "412/.venv/lib/python3.12/site-packages/coremltools/converters/mil/converter.py", line 218, in _mil_convert
+    proto, mil_program = mil_convert_to_proto(
+                         ^^^^^^^^^^^^^^^^^^^^^
+  File "412/.venv/lib/python3.12/site-packages/coremltools/converters/mil/converter.py", line 294, in mil_convert_to_proto
+    prog = frontend_converter(model, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "412/.venv/lib/python3.12/site-packages/coremltools/converters/mil/converter.py", line 106, in __call__
+    return load(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "412/.venv/lib/python3.12/site-packages/coremltools/converters/mil/frontend/torch/load.py", line 87, in load
+    return _perform_torch_convert(converter, debug)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "412/.venv/lib/python3.12/site-packages/coremltools/converters/mil/frontend/torch/load.py", line 158, in _perform_torch_convert
+    raise e
+  File "412/.venv/lib/python3.12/site-packages/coremltools/converters/mil/frontend/torch/load.py", line 150, in _perform_torch_convert
+    prog = converter.convert()
+           ^^^^^^^^^^^^^^^^^^^
+  File "412/.venv/lib/python3.12/site-packages/coremltools/converters/mil/frontend/torch/converter.py", line 1392, in convert
+    convert_nodes(self.context, self.graph, early_exit=not has_states)
+  File "412/.venv/lib/python3.12/site-packages/coremltools/converters/mil/frontend/torch/ops.py", line 118, in convert_nodes
+    raise e     # re-raise exception
+    ^^^^^^^
+  File "412/.venv/lib/python3.12/site-packages/coremltools/converters/mil/frontend/torch/ops.py", line 113, in convert_nodes
+    convert_single_node(context, node)
+  File "412/.venv/lib/python3.12/site-packages/coremltools/converters/mil/frontend/torch/ops.py", line 143, in convert_single_node
+    raise NotImplementedError(
+NotImplementedError: PyTorch convert function for op 'tensor_split' not implemented.

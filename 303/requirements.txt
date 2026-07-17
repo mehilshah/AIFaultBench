@@ -1,0 +1,2 @@
+# No Python packages are required for the standalone compile repro.
+

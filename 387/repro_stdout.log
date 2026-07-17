@@ -1,0 +1,2 @@
+BLOCKED: current snapshot rejects composite primary keys before relationship
+InvalidMetadataError: 'primary_key' must be a string.

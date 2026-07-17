@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "The MMS Japanese vocab in jvn.tar.gz does not contain Japanese characters.",
+    "filter_oov() prints an empty string for Japanese-script input.",
+    "The filtered text length is 0, so downstream inference would receive empty text."
+  ],
+  "steps": [
+    "Inspect examples/mms/tts/infer.py and note the filter_oov() print.",
+    "Use the official MMS Japanese vocab extracted from jvn.tar.gz.",
+    "Run the same OOV filtering on Japanese-script input."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

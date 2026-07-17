@@ -1,0 +1,12 @@
+{
+  "bug_id": "216",
+  "bug_dir": "216",
+  "issue_url": "https://github.com/spulec/freezegun/issues/344",
+  "commit_hash": "",
+  "library_name": "freezegun",
+  "library_version": "0.3.15",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../216"
+}

@@ -1,0 +1,12 @@
+{
+  "bug_id": "188",
+  "bug_dir": "188",
+  "issue_url": "https://github.com/meta-pytorch/torchtune/issues/2828",
+  "commit_hash": "",
+  "library_name": "torchtune",
+  "library_version": "0.7.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../188"
+}

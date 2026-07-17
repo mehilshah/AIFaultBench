@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "codebase/docs/deepvariant-details.md line 1 is `f# DeepVariant usage guide` instead of `# DeepVariant usage guide`.",
+    "Running `bash run_repro.sh` produced `{\"file\": \"codebase/docs/deepvariant-details.md\", \"expected_first_line\": \"# DeepVariant usage guide\", \"observed_first_line\": \"f# DeepVariant usage guide\", \"reproduced\": true}`."
+  ],
+  "steps": [
+    "Open `codebase/docs/deepvariant-details.md`.",
+    "Read the first line and compare it to the expected heading.",
+    "Run `bash run_repro.sh` to confirm the typo is present."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

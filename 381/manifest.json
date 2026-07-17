@@ -1,0 +1,15 @@
+{
+  "bug_id": "381",
+  "bug_dir": "381",
+  "issue_url": "https://github.com/vllm-project/vllm/issues/47935",
+  "commit_hash": "4aceabf8c1a40f8d576ba9b83e4b9a8854eda2d5",
+  "library_name": "vllm",
+  "library_version": "unknown",
+  "bug_title": "DP/EP with fp8 KV Cache Brokens for FlashMLA",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "vllm-project/vllm@4aceabf8c1a40f8d576ba9b83e4b9a8854eda2d5",
+  "codebase_present": "true",
+  "standardized_dir": "../381",
+  "reproduction_command": "bash run_repro.sh",
+  "reproducible": false
+}

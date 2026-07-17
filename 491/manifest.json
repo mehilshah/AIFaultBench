@@ -1,0 +1,23 @@
+{
+  "bug_id": "491",
+  "issue_url": "https://github.com/pytorch/rl/issues/3409",
+  "title": "Composite tensor spec encode does not set batch size correctly",
+  "library_name": "torchrl",
+  "library_version": "0.11.0",
+  "reproduction_command": "bash run_repro.sh",
+  "inputs": [
+    "bug_report.txt",
+    "codebase/"
+  ],
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

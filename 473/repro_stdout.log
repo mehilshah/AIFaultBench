@@ -1,0 +1,7 @@
+case=no_batchnorm
+  failed: KeyError: "No RngStream named 'dropout' found in Rngs."
+case=batchnorm
+  failed: KeyError: "No RngStream named 'dropout' found in Rngs."
+summary: reproduces the reported flax 0.11.0 KeyError
+  no_batchnorm: KeyError: "No RngStream named 'dropout' found in Rngs."
+  batchnorm: KeyError: "No RngStream named 'dropout' found in Rngs."

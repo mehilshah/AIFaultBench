@@ -1,0 +1,93 @@
+Title: SafetensorError is not pickleable, potentially causing hangs in multi-process environments
+Date: 2024-06-28T19:09:12+00:00
+URL: https://github.com/huggingface/safetensors/issues/492
+
+Description:
+### System Info
+
+- `transformers` version: 4.28.1
+- Platform: Linux-6.5.0-1023-gcp-x86_64-with-glibc2.37
+- Python version: 3.10.11
+- Huggingface_hub version: 0.14.1
+- Safetensors version: 0.4.3
+- PyTorch version (GPU?): 2.3.0+cu121 (False)
+- Tensorflow version (GPU?): not installed (NA)
+- Flax version (CPU?/GPU?/TPU?): not installed (NA)
+- Jax version: not installed
+- JaxLib version: not installed
+- Using GPU in script?: No
+- Using distributed or parallel set-up in script?: Not distributed, but multiple dataloader workers
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Reproduction
+
+The below script will hang and print out a pickling error, rather than terminating with an informative error.
+
+Changing `CATCH_EXCEPTION = True` will not hang, and additionally print out the full exception with stack trace to the offending line as expected.
+
+```
+import safetensors, safetensors.torch
+import torch.utils.data
+
+NUM_ITEMS = 5
+CATCH_EXCEPTION = False
+
+class SafeTensorDataset(torch.utils.data.Dataset):
+  def __init__(self):
+    super().__init__()
+    # Write safetensors file
+    data = { str(i): torch.ones((1, )) for i in range(NUM_ITEMS) }
+    safetensors.torch.save_file(data, "my_tensor.safetensors")
+    
+  def __getitem__(self, idx):
+    with safetensors.safe_open(
+      "my_tensor.safetensors", framework="pt", device="cpu"
+    ) as f:
+      if CATCH_EXCEPTION:
+        try:
+          return f.get_tensor(str(idx))
+        except Exception as e:
+          raise Exception(str(e))
+      else:
+        return f.get_tensor(str(idx))
+  def __len__(self):
+    return NUM_ITEMS + 1
+
+if __name__ == "__main__":
+  dataset = SafeTensorDataset()
+  dataloader = torch.utils.data.DataLoader(
+    dataset,
+    num_workers=2
+  )
+
+  for i, batch in enumerate(dataloader):
+    print(f"Retrieved batch {i}")
+```
+
+Pickling error (`CATCH_EXCEPTION = False`)
+```
+Traceback (most recent call last):
+  File "/nix/store/rwxj49zghamyhy07b67yhiq64bmznvmm-python3-3.10.14/lib/python3.10/multiprocessing/queues.py", line 244, in _feed
+    obj = _ForkingPickler.dumps(obj)
+  File "/nix/store/rwxj49zghamyhy07b67yhiq64bmznvmm-python3-3.10.14/lib/python3.10/multiprocessing/reduction.py", line 51, in dumps
+    cls(buf, protocol).dump(obj)
+_pickle.PicklingError: Can't pickle <class 'safetensors_rust.SafetensorError'>: import of module 'safetensors_rust' failed
+```
+
+Error when catching and re-throwing as a vanilla `Exception` (`CATCH_EXCEPTION = True`):
+```
+...
+  File "/home/runner/SafeTensorHang/main.py", line 22, in __getitem__
+    raise Exception(str(e))
+Exception: File does not contain tensor 5
+```
+
+### Expected behavior
+
+Because `SafetensorError` can't be pickled, if it gets thrown from inside a PyTorch dataset running under a multi-worker dataloader, the exception does not get propagated up to the main process and the dataloader hangs. If the exception were pickleable, then it would be received and terminate with the error message.
+
+Although in the reproduction this still provides a PickleError, in our production system, even this error did not get printed. In that case, it is very difficult to debug the deadlocked dataloader processes and identify the source of the bug.

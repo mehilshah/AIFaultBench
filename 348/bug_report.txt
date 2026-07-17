@@ -1,0 +1,214 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21703
+
+TITLE
+Bug: explicit dataloader iterator `_shutdown_workers()` call causes lightning to crash when pytorch ignores the error
+
+BODY
+### Bug description
+
+When using `CombinedLoader` with persistent workers and large tensors, Lightning calls `_shutdown_workers()` explicitly, which exposes a PyTorch race condition that PyTorch normally suppresses via `__del__`. This causes jobs to exit with non-zero code.
+
+**File:** [`src/lightning/pytorch/utilities/combined_loader.py:400`](https://github.com/Lightning-AI/pytorch-lightning/blob/master/src/lightning/pytorch/utilities/combined_loader.py#L400)
+
+## Expected Behavior
+
+Lightning should match PyTorch's behavior and suppress worker shutdown errors (exit code 0).
+
+## Actual Behavior
+
+Lightning explicitly calls `_shutdown_workers()`, causing the error to propagate and the process to terminate non zero exit code.
+
+## Error Output
+
+```
+Predicting ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 0:00:00 • 0:00:00 0.00it/s  terminate called without an active exception
+Predicting ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 0:00:00 • 0:00:00 0.00it/s  
+Traceback (most recent call last):
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/trainer/call.py", line 49, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/trainer/trainer.py", line 996, in _predict_impl
+    results = self._run(model, ckpt_path=ckpt_path, weights_only=weights_only)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/trainer/trainer.py", line 1091, in _run
+    self._teardown()
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/trainer/trainer.py", line 1112, in _teardown
+    loop.teardown()
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/loops/prediction_loop.py", line 210, in teardown
+    self._data_fetcher.teardown()
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/loops/fetchers.py", line 82, in teardown
+    self._combined_loader.reset()
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/utilities/combined_loader.py", line 367, in reset
+    _shutdown_workers_and_reset_iterator(iterable)
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/utilities/combined_loader.py", line 400, in _shutdown_workers_and_reset_iterator
+    dataloader._iterator._shutdown_workers()
+  File "/home/michaelva/.conda/envs/lightning-dev/lib/python3.11/site-packages/torch/utils/data/dataloader.py", line 1618, in _shutdown_workers
+    w.join(timeout=_utils.MP_STATUS_CHECK_INTERVAL)
+  File "/home/michaelva/.conda/envs/lightning-dev/lib/python3.11/multiprocessing/process.py", line 149, in join
+    res = self._popen.wait(timeout)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/michaelva/.conda/envs/lightning-dev/lib/python3.11/multiprocessing/popen_fork.py", line 40, in wait
+    if not wait([self.sentinel], timeout):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/michaelva/.conda/envs/lightning-dev/lib/python3.11/multiprocessing/connection.py", line 930, in wait
+    ready = selector.select(timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/michaelva/.conda/envs/lightning-dev/lib/python3.11/selectors.py", line 415, in select
+    fd_event_list = self._selector.poll(timeout)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/michaelva/.conda/envs/lightning-dev/lib/python3.11/site-packages/torch/utils/data/_utils/signal_handling.py", line 73, in handler
+    _error_if_any_worker_fails()
+RuntimeError: DataLoader worker (pid 1931486) is killed by signal: Aborted. 
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/homes/michaelva/personal_repos/pytorch-lightning/pytorch_lightning_reproduce.py", line 53, in <module>
+    trainer.predict(model=TestModel(), dataloaders=dataloader)
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/trainer/trainer.py", line 947, in predict
+    return call._call_and_handle_interrupt(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/trainer/call.py", line 70, in _call_and_handle_interrupt
+    trainer._teardown()
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/trainer/trainer.py", line 1112, in _teardown
+    loop.teardown()
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/loops/prediction_loop.py", line 210, in teardown
+    self._data_fetcher.teardown()
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/loops/fetchers.py", line 80, in teardown
+    self.reset()
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/loops/fetchers.py", line 142, in reset
+    super().reset()
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/loops/fetchers.py", line 76, in reset
+    self.length = sized_len(self.combined_loader)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/fabric/utilities/data.py", line 52, in sized_len
+    length = len(dataloader)  # type: ignore [arg-type]
+             ^^^^^^^^^^^^^^^
+  File "/homes/michaelva/personal_repos/pytorch-lightning/src/lightning/pytorch/utilities/combined_loader.py", line 358, in __len__
+    raise RuntimeError("Please call `iter(combined_loader)` first.")
+RuntimeError: Please call `iter(combined_loader)` first.
+```
+
+## Root Cause
+
+This is a timing-dependent race condition in PyTorch when shutting down workers with large tensors in memory. PyTorch suppresses this error in `__del__`, but Lightning's explicit `_shutdown_workers()` call exposes it.
+
+The issue occurs when:
+- Using `num_workers > 1`
+- Using `multiprocessing_context="spawn"`
+- Using `persistent_workers=True`
+- Processing large tensors (e.g., multi camera high-resolution images)
+
+## Reproduction
+
+```python
+import os
+import torch
+from torch.utils.data import Dataset, DataLoader
+from lightning import Trainer
+from lightning import LightningModule
+
+class LargeTensorDataset(Dataset):
+    def __init__(self, size=100):
+        self.size = size
+    
+    def __len__(self):
+        return self.size
+    
+    def __getitem__(self, idx):
+        # Create large tensors (98.3 MB per tensor)
+        images = torch.randn(8, 640, 640, 3, dtype=torch.float64)
+        return {'images': images, 'index': idx}
+
+def get_dataloader():  
+    dataset = LargeTensorDataset(size=50)
+    num_workers = os.cpu_count()
+    print(f"Creating DataLoader with {num_workers} workers...")
+    dataloader = DataLoader(
+        dataset,
+        batch_size=8,
+        num_workers=num_workers,
+        multiprocessing_context='spawn',
+        persistent_workers=True
+    )
+    return dataloader
+
+class TestModel(LightningModule):
+    def predict_step(self, batch, batch_idx, dataloader_idx=0):
+        return batch
+
+if __name__ == "__main__":
+    trainer = Trainer(max_epochs=1, limit_predict_batches=1)
+    dataloader = get_dataloader()
+    trainer.predict(model=TestModel(), dataloaders=dataloader)
+```
+
+**Note:** This is timing-dependent and may not reproduce every time. More likely with higher worker counts and larger tensors.
+
+## Proposed Solution
+
+Change `_shutdown_workers_and_reset_iterator()` in combined_loader.py:
+
+**Current (line 397-402):**
+```python
+def _shutdown_workers_and_reset_iterator(dataloader: object) -> None:
+    if hasattr(dataloader, "_iterator"):
+        if isinstance(dataloader._iterator, _MultiProcessingDataLoaderIter):
+            dataloader._iterator._shutdown_workers()
+        dataloader._iterator = None
+```
+
+**Proposed:**
+```python
+def _shutdown_workers_and_reset_iterator(dataloader: object) -> None:
+    if hasattr(dataloader, "_iterator"):
+        if isinstance(dataloader._iterator, _MultiProcessingDataLoaderIter):
+            del dataloader._iterator
+        dataloader._iterator = None
+```
+
+## Environment
+
+- **Lightning:** 2.6.1
+- **PyTorch:** 2.9.1
+- **OS:** Ubuntu 22.04.5 LTS
+
+
+
+- **CPU:** Intel(R) Xeon(R) Gold 6354 CPU @ 3.00GHz (4 cores)
+
+
+### What version are you seeing the problem on?
+
+v2.6
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+
+```
+
+### Error messages and logs
+
+
+
+
+### Environment
+
+_No response_
+
+### More info
+
+Pytorch uses `_shutdown_workers` only in __del__:
+https://github.com/pytorch/pytorch/blob/main/torch/utils/data/dataloader.py#L1685
+
+They also mention that __del__ should be the way to shutdown in the `_MultiProcessingDataLoaderIter` shutdown design note:
+https://github.com/pytorch/pytorch/blob/main/torch/utils/data/dataloader.py#L787
+
+It seems that using `_shutdown_workers` explicitly breaks the pytorch abstraction
+
+cc @ethanwharris

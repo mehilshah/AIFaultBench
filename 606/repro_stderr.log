@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "606/repro.py", line 67, in main
+    build_repro()
+  File "606/repro.py", line 49, in build_repro
+    explainer(data.x, data.edge_index, data=data)
+  File "606/codebase/torch_geometric/explain/explainer.py", line 196, in __call__
+    prediction = self.get_prediction(x, edge_index, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "606/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "606/codebase/torch_geometric/explain/explainer.py", line 115, in get_prediction
+    out = self.model(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "606/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "606/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: build_repro.<locals>.ToyModel.forward() got multiple values for argument 'data'

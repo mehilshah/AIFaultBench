@@ -1,0 +1,11 @@
+{
+  "bug_id": "518",
+  "issue_url": "https://github.com/sdv-dev/SDV/issues/2736",
+  "library_name": "SDV",
+  "library_version": "1.28.1.dev0",
+  "reproduction_type": "runtime crash",
+  "entrypoint": "run_repro.sh",
+  "repro_script": "repro.py",
+  "environment_script": "setup_env.sh",
+  "dependencies": "requirements.txt"
+}

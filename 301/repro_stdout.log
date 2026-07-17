@@ -1,0 +1,7 @@
+torch=2.13.0+cu130
+lightning=2.6.2
+distributed_initialized=True
+root_device=cpu
+root_device.index=None
+attempting FSDPStrategy._setup_model(model) on CPU
+FSDPStrategy._setup_model completed without raising

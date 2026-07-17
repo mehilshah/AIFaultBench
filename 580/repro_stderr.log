@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "580/repro.py", line 117, in <module>
+    main()
+  File "580/repro.py", line 113, in main
+    model.train("gnn", object(), object(), None, 1, False, False)
+  File "580/codebase/torch_geometric/nn/models/glem.py", line 147, in train
+    pseudo_labels = pseudo_labels.to(self.device)
+                    ^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'to'

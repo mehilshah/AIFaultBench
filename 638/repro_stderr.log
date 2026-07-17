@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "638/repro.py", line 72, in <module>
+    main()
+  File "638/repro.py", line 68, in main
+    optimizer.group_step([param])
+  File "638/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "638/codebase/deepspeed/ops/adam/zenflow_torch_adam.py", line 427, in group_step
+    param_2d = param.ds_tensor.data.narrow(0, param.complete_column_offset,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: narrow() cannot be applied to a 0-dim tensor.

@@ -1,0 +1,5 @@
+tensordict==0.10.0
+gymnasium==0.29.1
+numpy
+packaging
+cloudpickle

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Exit code 1 from `./run_repro.sh`. Ruff reported 5 files that would be reformatted: `EVALUATION.md`, `README.md`, `sdv/sequential/par.py`, `tests/_external/gdrive_utils.py`, and `tests/unit/datasets/test_demo.py`.",
+  "steps": [
+    "Create a local virtualenv with `./setup_env.sh`.",
+    "Run `./run_repro.sh` from the standardized bug folder.",
+    "Observe Ruff format check failures and the printed diffs in `repro_stdout.log`."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "./run_repro.sh"
+}

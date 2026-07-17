@@ -1,0 +1,29 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2663
+
+TITLE
+[BUG] Deprecation of `@torch.jit.interface`
+
+BODY
+Catch by our CIs:
+
+```
+    import timm
+.venv/lib/python3.13/site-packages/timm/__init__.py:8: in <module>
+    from .models import (
+.venv/lib/python3.13/site-packages/timm/models/__init__.py:33: in <module>
+    from .hrnet import *
+.venv/lib/python3.13/site-packages/timm/models/hrnet.py:521: in <module>
+    @torch.jit.interface
+     ^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/torch/jit/_script.py:1639: in interface
+    warnings.warn(
+E   DeprecationWarning: `torch.jit.interface` is deprecated. Please use `torch.compile` instead.
+```
+
+Running against nightly:
+
+```
+✔︎ torch (>=2.10):         2.11.0.dev20260206+cpu
+✔︎ torchcodec (>=0.10):    0.11.0.dev20260206
+✔︎ torchvision (>=0.25):   0.26.0.dev20260206+cpu
+```

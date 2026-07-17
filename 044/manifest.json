@@ -1,0 +1,15 @@
+{
+  "bug_id": "044",
+  "bug_dir": "044",
+  "issue_url": "https://github.com/facebookresearch/fairseq/issues/5142",
+  "commit_hash": "1082b61b12ec92d6c813906fcec90139b85fb039",
+  "library_name": "fairseq",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report/044.txt",
+  "codebase_source": "facebookresearch/fairseq@1082b61b12ec92d6c813906fcec90139b85fb039",
+  "codebase_present": "true",
+  "standardized_dir": "../044",
+  "repro_status": "reproducible",
+  "reproduction_command": "bash run_repro.sh",
+  "dependencies": []
+}

@@ -1,0 +1,9 @@
+before: [{'parent_table_name': 'table1', 'parent_primary_key': 'id', 'child_table_name': 'table2', 'child_foreign_key': 'fk_1'}, {'parent_table_name': 'table1', 'parent_primary_key': 'id', 'child_table_name': 'table3', 'child_foreign_key': 'fk_1'}]
+after: []
+visualization: digraph Metadata {
+	node [fillcolor="#B7E9FF" shape=Mrecord style=filled]
+	table1 [label="{table1|id : id\lA : numerical\lB : categorical\l|Primary key: id\l}"]
+	table2 [label="{table2|id : id\lA : numerical\lB : categorical\l|Primary key: id\l}"]
+	table3 [label="{table3|id : id\lfk_1 : id\lA : numerical\lB : categorical\l|Primary key: id\l}"]
+}
+

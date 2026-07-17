@@ -1,0 +1,83 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38100
+
+TITLE
+`jax.jit + jnp.log2 + jnp.exp2`: jit(log2(exp2(x))) hides exp2 overflow — XLA rewrites log2(exp2(x)) to x
+
+BODY
+### Description
+
+
+XLA's algebraic rewrite `log2(exp2(x)) → x` suppresses the `inf` that eager mode produces when `exp2(x)` overflows (at x ≥ 128 for float32). It also masks small float32 round-trip errors at lower values where `log2(exp2(x)) ≠ x` due to float32 rounding. Two distinct failures were found.
+
+Minimal reproducer:
+
+```python
+import numpy as np
+import jax, jax.numpy as jnp
+
+# Case 1: exp2(128) overflows to inf in float32
+x1 = jnp.array(128.0, dtype=jnp.float32)
+jit1   = float(jax.jit(lambda x: jnp.log2(jnp.exp2(x)))(x1))
+eager1 = float(jnp.log2(jnp.exp2(x1)))
+print(f"x=128: jit={jit1}, eager={eager1}")  # 128.0 vs inf
+
+# Case 2: float32 round-trip error at x=13
+x2 = jnp.array(13.0, dtype=jnp.float32)
+jit2   = float(jax.jit(lambda x: jnp.log2(jnp.exp2(x)))(x2))
+eager2 = float(jnp.log2(jnp.exp2(x2)))
+print(f"x=13:  jit={jit2}, eager={eager2}")  # 13.0 vs 13.000001
+```
+
+Expected output:
+```
+x=128: jit=inf,      eager=inf
+x=13:  jit=13.000001, eager=13.000001
+```
+
+Actual output:
+```
+x=128: jit=128.0, eager=inf
+x=13:  jit=13.0,  eager=13.000001
+```
+
+Full pytest output:
+
+```
+=================================== FAILURES ===================================
+_____________________ test_jit_log2_exp2_overflow_float32 ______________________
+  ExceptionGroup: Hypothesis found 2 distinct failures. (2 sub-exceptions)
+  +-+---------------- 1 ----------------
+    | AssertionError: 
+    | Arrays are not equal
+    | jit(log2(exp2(128.0))) = 128.0 but eager = inf: JIT hides exp2 overflow
+    | inf location mismatch:
+    |  ACTUAL: array(128., dtype=float32)
+    |  DESIRED: array(inf, dtype=float32)
+    | Falsifying example: test_jit_log2_exp2_overflow_float32(
+    |     x_np=float32(128.0),
+    | )
+    +---------------- 2 ----------------
+    | AssertionError: 
+    | Arrays are not equal
+    | jit(log2(exp2(13.0))) = 13.0 but eager = 13.000000953674316: JIT hides exp2 overflow
+    | Mismatched elements: 1 / 1 (100%)
+    | Max absolute difference among violations: 9.536743e-07
+    |  ACTUAL: array(13., dtype=float32)
+    |  DESIRED: array(13.000001, dtype=float32)
+    | Falsifying example: test_jit_log2_exp2_overflow_float32(
+    |     x_np=float32(13.0),
+    | )
+    +------------------------------------
+============================== 1 failed in 0.69s ===============================
+```
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+```
+jax:      0.10.1.dev20260513+64f6e229b
+jaxlib:   0.10.0
+numpy:    2.4.4
+Python:   3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]
+Platform: Linux-6.14.0-37-generic-x86_64-with-glibc2.39
+Device:   CpuDevice(id=0)
+```

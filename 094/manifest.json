@@ -1,0 +1,23 @@
+{
+  "bug_id": "094",
+  "bug_dir": "094",
+  "issue_url": "https://github.com/lucidrains/PaLM-rlhf-pytorch/issues/46",
+  "library_name": "PaLM-rlhf-pytorch",
+  "library_version": "e624afd8860d6df8f7a429dbe518a2fd40b4cc34",
+  "reproducible": false,
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "lucidrains/PaLM-rlhf-pytorch@e624afd8860d6df8f7a429dbe518a2fd40b4cc34",
+  "codebase_present": true,
+  "standardized_dir": "../094",
+  "reproduction_command": "bash run_repro.sh",
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md",
+    "reproduction.json"
+  ]
+}

@@ -1,0 +1,5 @@
+buggy_line_present=True
+low_std=0.25 mean=5.012255 pstdev=1.026028
+high_std=2.5 mean=5.012255 pstdev=1.026028
+identical_sequences=True
+wrote=022/reproduction.json

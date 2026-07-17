@@ -1,0 +1,22 @@
+{
+  "2d_control": {
+    "2d_m1_equals_m2": false,
+    "2d_m2_equals_m3": false,
+    "2d_max_abs_m1_minus_m2": 0.9482254169281208,
+    "2d_max_abs_m2_minus_m3": 0.232708495426051,
+    "2d_max_abs_p1_minus_scipy": 0.0,
+    "2d_max_abs_p2_minus_scipy": 0.0,
+    "2d_max_abs_p3_minus_scipy": 0.0
+  },
+  "note": "The 1D sample is not discriminating because Minkowski distances in one dimension are identical for all p. The 2D control shows p is propagated and matches SciPy.",
+  "numpy_version": "2.5.1",
+  "ot_version": "0.9.6dev0",
+  "report_sample": {
+    "1d_m1_equals_m2": true,
+    "1d_m2_equals_e2": false,
+    "1d_max_abs_m1_minus_e1": 9.664534797448887e-14,
+    "1d_max_abs_m2_minus_e2": 0.2500000000000001
+  },
+  "reproducible": false,
+  "scipy_version": "1.18.0"
+}

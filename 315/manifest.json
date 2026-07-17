@@ -1,0 +1,10 @@
+{
+  "title": "Misleading synced_gpus warning message in continuous batching",
+  "description": "Reproduces the warning emitted by GenerationMixin.generate when cache_implementation=paged and synced_gpus=True.",
+  "entrypoint": "bash run_repro.sh",
+  "python": "3.12",
+  "dependencies": [
+    "torch==2.4.1",
+    "huggingface_hub==1.22.0"
+  ]
+}

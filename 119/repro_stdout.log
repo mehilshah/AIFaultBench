@@ -1,0 +1,6 @@
+torch=2.13.0
+building training data
+training model
+creating fantasy model
+warming up fantasy model under trace_mode
+tracing fantasy model

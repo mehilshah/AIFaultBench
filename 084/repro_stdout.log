@@ -1,0 +1,5 @@
+Epoch : 1 - loss : 0.3669 - acc: 1.0000 - val_loss : 0.1134 - val_acc: 1.0000
+Epoch : 2 - loss : 0.1696 - acc: 0.9500 - val_loss : 0.0530 - val_acc: 1.0000
+Epoch : 3 - loss : 0.0921 - acc: 1.0000 - val_loss : 0.0353 - val_acc: 1.0000
+Epoch : 4 - loss : 0.1048 - acc: 1.0000 - val_loss : 0.0280 - val_acc: 1.0000
+Epoch : 5 - loss : 0.0395 - acc: 1.0000 - val_loss : 0.0244 - val_acc: 1.0000

@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` in the prepared Python 3.9 virtualenv raises `RuntimeError: cannot reshape tensor of 0 elements into shape [-1, 0, 0] because the unspecified dimension size -1 can be any value and is ambiguous` from `pyro/distributions/torch_patch.py:_PositiveDefinite_check` while constructing `dist.MultivariateNormal(mean, covariance)` with `covariance.shape == (3, 0, 0)`.",
+  "steps": [
+    "Create a Python 3.9 virtualenv with torch 1.8.1+cpu and NumPy < 2.",
+    "Install the local Pyro codebase in editable mode.",
+    "Run `python repro.py`, which constructs a zero-element covariance tensor and passes it to `pyro.distributions.MultivariateNormal`.",
+    "Observe the reshape failure in `pyro/distributions/torch_patch.py`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

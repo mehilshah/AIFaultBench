@@ -1,0 +1,22 @@
+{
+  "bug_id": "014",
+  "bug_dir": "014",
+  "issue_url": "https://github.com/tensorflow/models/issues/11076",
+  "commit_hash": "47571f3b2247b68a4370a3dd7c659d87e0affcad",
+  "library_name": "models",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "tensorflow/models@47571f3b2247b68a4370a3dd7c659d87e0affcad",
+  "codebase_present": "true",
+  "standardized_dir": "../014",
+  "repro_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

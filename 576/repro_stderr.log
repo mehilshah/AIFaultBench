@@ -1,0 +1,14 @@
+576/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+Traceback (most recent call last):
+  File "576/repro.py", line 22, in <module>
+    main()
+  File "576/repro.py", line 18, in main
+    rb.register_save_hook(TED2Flat())
+  File "576/codebase/torchrl/data/replay_buffers/replay_buffers.py", line 87, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "576/codebase/torchrl/data/replay_buffers/replay_buffers.py", line 833, in register_save_hook
+    self._storage.register_save_hook(hook)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'LazyMemmapStorage' object has no attribute 'register_save_hook'

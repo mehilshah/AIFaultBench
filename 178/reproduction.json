@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` constructs the parser, then fails during `list(parser.lex(\"\\n\"))` with `re.error: global flags not at the start of the expression at position 13` from `codebase/lark/lexer.py` while compiling the terminal regex for `/(?s)./`.",
+  "steps": [
+    "Create a Lark grammar with `char: /(?s)./` and `lexer=\"basic\"`.",
+    "Construct `Lark(GRAMMAR, lexer=\"basic\")` from the local `codebase/` checkout.",
+    "Call `list(parser.lex(\"\\n\"))` to force scanner compilation.",
+    "Observe the stdlib `re` crash when Lark wraps the terminal regex in a grouped alternation."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

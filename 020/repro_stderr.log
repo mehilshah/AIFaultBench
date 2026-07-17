@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "repro.py", line 35, in main
+    namespace["eval_step"]()
+  File "/workspace/codebase/official/core/base_trainer.py", line 4, in eval_step
+    # you may not use this file except in compliance with the License.
+TypeError: unsupported operand type(s) for |: 'dict' and 'dict'

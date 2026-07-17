@@ -1,0 +1,26 @@
+{
+  "bug_id": "582",
+  "bug_dir": "582",
+  "issue_url": "https://github.com/huggingface/transformers/issues/46752",
+  "commit_hash": "2b422bde64",
+  "library_name": "transformers",
+  "library_version": "5.13.0.dev0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": "true",
+  "standardized_dir": "../582",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh",
+  "repro_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md",
+    "manifest.json",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

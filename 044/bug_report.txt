@@ -1,0 +1,12 @@
+# recovered-from-issue: https://github.com/facebookresearch/fairseq/issues/5142
+
+TITLE
+text after filtering OOV is empty output 
+
+BODY
+Japanese TTS
+downloaded the model with - wget https://dl.fbaipublicfiles.com/mms/tts/jvn.tar.gz
+
+after running infer.py, there is no text after the line - text after filtering OOV:
+
+What's the problem？

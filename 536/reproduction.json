@@ -1,0 +1,19 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Sparse MLA build() recomputes shared work buffers via get_mla_metadata_v1() at codebase/vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse.py:542-560.",
+    "Dense MLA build() also recomputes persistent decode metadata via get_mla_metadata_v1() at codebase/vllm/v1/attention/backends/mla/rocm_aiter_mla.py:523-543.",
+    "Neither MLA build() path inserts a stream sync after the metadata write before returning the tensors to the captured decode path.",
+    "torch import failed: /users/grad/mehil/.local/lib/python3.12/site-packages/torch/lib/libtorch_cuda.so: undefined symbol: ncclCommResume",
+    "aiter is not installed",
+    "no ROCm runtime utilities found"
+  ],
+  "steps": [
+    "Inspect the ROCm sparse-MLA builder in codebase/vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse.py.",
+    "Inspect the dense MLA builder in codebase/vllm/v1/attention/backends/mla/rocm_aiter_mla.py.",
+    "Attempt to import the local runtime dependencies and probe for ROCm/GPU support.",
+    "Record the result in reproduction.json."
+  ],
+  "blocking_reason": "torch import failed: /users/grad/mehil/.local/lib/python3.12/site-packages/torch/lib/libtorch_cuda.so: undefined symbol: ncclCommResume; aiter is not installed; no ROCm runtime utilities found",
+  "reproduction_command": "bash run_repro.sh"
+}

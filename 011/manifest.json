@@ -1,0 +1,15 @@
+{
+  "bug_id": "011",
+  "bug_dir": "011",
+  "issue_url": "https://github.com/tensorflow/models/issues/11121",
+  "commit_hash": "e4afd05425bc5a6a74e1b1163cdeacd2e7437174",
+  "library_name": "models",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report/011.txt",
+  "codebase_source": "tensorflow/models@e4afd05425bc5a6a74e1b1163cdeacd2e7437174",
+  "codebase_present": "true",
+  "standardized_dir": "../011",
+  "reproducible": false,
+  "reproduction_command": "bash run_repro.sh",
+  "notes": "The local harness completed 100 training steps with finite loss; the reported NaN did not reproduce here."
+}

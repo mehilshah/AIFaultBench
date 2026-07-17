@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `codon run repro.py` with codon 0.19.6 fails at compile time with `error: argument after * must be a tuple, not 'List[int]'`.",
+  "steps": [
+    "Create `repro.py` containing `arr = [1, 2]` and `print(*arr)`.",
+    "Run `bash run_repro.sh` or equivalently `codon run repro.py`.",
+    "Observe the compiler error on the starred argument expansion."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

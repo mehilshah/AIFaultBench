@@ -1,0 +1,9 @@
+Tutorial helper line: 255/codebase/intermediate_source/torch_compile_tutorial.py:166
+Fixed example line: 255/codebase/intermediate_source/torch_compile_full_example.py:75
+Tutorial helper source: return result, start.elapsed_time(end) / 1024
+Corrected helper source: return result, start.elapsed_time(end) / 1000
+Example event duration: 1024.0 ms
+Tutorial helper reports: 1.000 s
+Correct value is: 1.024 s
+Absolute error: 0.024 s
+Result: reproducible.

@@ -1,0 +1,11 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3203
+
+TITLE
+module 'torch.distributions.constraints' has no attribute '_CorrCholesky'
+
+BODY
+Moving here from [this PyTorch issue](https://github.com/pytorch/pytorch/issues/77555).
+
+We should
+1. fix `patch_dependency` to gracefully fail on `AttributeError`
+2. remove the old `_CorrCholesky` patch at some point

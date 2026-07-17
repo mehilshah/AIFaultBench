@@ -1,0 +1,26 @@
+{
+  "bug_id": "222",
+  "bug_dir": "222",
+  "issue_url": "https://github.com/towhee-io/towhee/issues/2714",
+  "commit_hash": "",
+  "library_name": "towhee",
+  "library_version": "1.1.3",
+  "reproducible": true,
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": true,
+  "standardized_dir": "../222",
+  "reproduction_command": "bash run_repro.sh",
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

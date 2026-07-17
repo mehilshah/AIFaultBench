@@ -1,0 +1,10 @@
+Successful CPU/gloo probe summary:
+
+$ torchrun --standalone --nproc_per_node=2 /tmp/repro_probe.py
+DDP grad norm:   2.2715824653
+ZeRO-2 grad norm: 2.2715824653
+ZeRO-3 grad norm: 2.2715824653
+ZeRO-2 max diff vs DDP: 0.0000000000
+ZeRO-3 max diff vs DDP: 0.0000000000
+ZeRO-2 matches DDP: True
+ZeRO-3 matches DDP: True

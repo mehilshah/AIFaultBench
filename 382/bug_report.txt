@@ -1,0 +1,77 @@
+# recovered-from-issue: https://github.com/huggingface/peft/issues/850
+
+TITLE
+Bug when loading modules_to_save and disabling adapters
+
+BODY
+### System Info
+
+-
+
+### Who can help?
+
+_No response_
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+I came across this issue while investigating #756 (see footnote of [this comment](https://github.com/huggingface/peft/issues/756#issuecomment-1688106913)). In practice, I think this is only of minor importance, but I wanted to document it anyway.
+
+The problem is that when we save the adapter weights (LoRA in this case), we do store the _new weights_ added by `ModuleToSaveWrapper`. However, we do not store the _original weights_, which are being replaced by it. Normally, this is not a problem, as we don't need the original weights when predicting with the adapter turned on. However, when we _disable_ the adapter, we do need the original weight. Therefore, for the disabling feature to work correctly, we would theoretically need to store the original weights too.
+
+This is an issue specifically for those cases where the `modules_to_save` are randomly initialized, like the classification head for a LM. Those are typically the modules that we want to add to `modules_to_save`. When a user loads the PEFT adapter, they will have different weights on their classification head, so when the adapter is disabled, the output will be different.
+
+Here is a script to reproduce the error:
+
+```python
+import torch
+
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+from peft import LoraConfig, get_peft_model, PeftModel
+
+torch.manual_seed(0)
+
+name = "roberta-base"
+x = ["hello there"]
+
+tokenizer = AutoTokenizer.from_pretrained(name)
+config = LoraConfig(
+    task_type="SEQ_CLS",
+    modules_to_save=["classifier", "pooler"],
+)
+peft_model = get_peft_model(AutoModelForSequenceClassification.from_pretrained(name), config)
+
+out0 = peft_model(**tokenizer(x, return_tensors="pt")).logits
+
+with peft_model.disable_adapter():
+    out0_disabled = peft_model(**tokenizer(x, return_tensors="pt")).logits
+
+assert torch.allclose(out0, out0_disabled)
+
+path = "/tmp/test-peft"
+peft_model.save_pretrained(path)
+peft_loaded = PeftModel.from_pretrained(AutoModelForSequenceClassification.from_pretrained(name), path)
+
+out1 = peft_loaded(**tokenizer(x, return_tensors="pt")).logits
+
+with peft_loaded.disable_adapter():
+    out1_disabled = peft_loaded(**tokenizer(x, return_tensors="pt")).logits
+
+assert torch.allclose(out1, out0)  # passes
+assert torch.allclose(out1, out1_disabled)  # fails
+```
+
+### Expected behavior
+
+After loading the adapter weights, when adapters are disabled, the model output should be the same as for the original base model.
+
+When fixing this, we need to be careful. We cannot make the assumption that the original weights are always there, otherwise old saves will be invalid. I think the code should already work even if some weights are missing, but we should take care not to break anything.

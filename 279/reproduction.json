@@ -1,0 +1,23 @@
+{
+  "reproducible": false,
+  "evidence": {
+    "codebase_version": "1.37.3.dev1",
+    "columnformula_scan": {
+      "exported_from_sdv_cag": false,
+      "files_with_columnformula_mentions": [
+        "codebase/sdv/metadata/metadata_upgrader.py",
+        "codebase/tests/unit/metadata/test_metadata_upgrader.py"
+      ],
+      "sandbox_module_exists": false,
+      "sandbox_package_exists": false
+    },
+    "issue_url": "https://github.com/sdv-dev/SDV/issues/2915"
+  },
+  "steps": [
+    "Read `bug_report.txt` and identified the reported failure as a `ColumnFormula` serialization crash in SDV Enterprise 0.47.4.",
+    "Inspected the local `codebase/` for `ColumnFormula` and sandbox support.",
+    "Confirmed that the checked-in source tree exports only the open-source CAG classes and does not define `ColumnFormula`."
+  ],
+  "blocking_reason": "The local repository is open-source SDV 1.37.3.dev1 and does not contain the enterprise `ColumnFormula` constraint or an `sdv.cag.sandbox` module, so the reported crash cannot be exercised from this source tree.",
+  "reproduction_command": "bash run_repro.sh"
+}

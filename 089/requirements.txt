@@ -1,0 +1,5 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.13.0+cpu
+einops>=0.8.0
+packaging>=24.0
+numpy>=1.26

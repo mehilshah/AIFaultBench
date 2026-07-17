@@ -1,0 +1,6 @@
+ERROR Object of class `Array` has no attribute `platform` [missing-attribute]
+ --> snippet:4:1
+  |
+4 | jnp.zeros(3).platform()
+  | ^^^^^^^^^^^^^^^^^^^^^
+  |

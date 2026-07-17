@@ -1,0 +1,24 @@
+Title: Incorrect implementation of `BlockDiagonalCausalMask.to(..)`
+Date: 2024-12-26T05:53:25+00:00
+URL: https://github.com/facebookresearch/xformers/issues/1185
+
+Description:
+There is a bug in `BlockDiagonalCausalMask.to(..)` implementation from xformers. Currently, it calls the parent class function  `BlockDiagonalMask.to(..)` and returns a `BlockDiagonalMask` .
+
+```
+mask = BlockDiagonalCausalMask.from_seqlens([2, 2])
+print("mask", mask.materialize([1, 4, 4]))
+[[[0., -inf, -inf, -inf],
+   [0., 0., -inf, -inf],
+   [-inf, -inf, 0., -inf],
+   [-inf, -inf, 0., 0.]]])
+
+mask2 = mask.to(device="cuda")
+print("mask2", mask2.materialize([1, 4, 4]))
+[[[0., 0., -inf, -inf],
+   [0., 0., -inf, -inf],
+   [-inf, -inf, 0., 0.],
+   [-inf, -inf, 0., 0.]]])
+```
+
+Tested on xformers version 0.0.28.post3

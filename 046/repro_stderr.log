@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "046/repro.py", line 31, in <module>
+    main()
+  File "046/repro.py", line 21, in main
+    F.forced_align(
+  File "046/.venv/lib/python3.12/site-packages/torchaudio/functional/_alignment.py", line 72, in forced_align
+    paths, scores = torch.ops.torchaudio.forced_align(log_probs, targets, input_lengths, target_lengths, blank)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "046/.venv/lib/python3.12/site-packages/torch/_ops.py", line 1116, in __call__
+    return self._op(*args, **(kwargs or {}))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: log_probs must be 3-D (batch_size, input length, num classes)

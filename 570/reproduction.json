@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "In the bundled CPU/gloo repro, the SP and non-SP outputs diverge: max_abs_diff=0.022140145301818848 with 30 / 512 mismatched elements, and torch.testing.assert_close fails at rtol=1e-2, atol=1e-2.",
+  "steps": [
+    "Created a local CPU-compatible venv and installed torch plus the diffusers source snapshot from codebase/.",
+    "Ran `bash run_repro.sh`, which launches a 2-process distributed QwenImageTransformer2DModel comparison with a non-contiguous encoder_hidden_states_mask.",
+    "Observed a mismatch between Ulysses context-parallel output and the non-SP baseline, with torch.testing.assert_close raising an AssertionError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

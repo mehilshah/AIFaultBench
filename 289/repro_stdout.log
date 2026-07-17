@@ -1,0 +1,116 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (24.0)
+Collecting pip
+  Downloading pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
+Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 21.5 MB/s eta 0:00:00
+
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed pip-26.1.2
+Collecting peft==0.15.1 (from -r 289/requirements.txt (line 1))
+  Downloading peft-0.15.1-py3-none-any.whl.metadata (13 kB)
+Collecting transformers==4.50.2 (from -r 289/requirements.txt (line 2))
+  Downloading transformers-4.50.2-py3-none-any.whl.metadata (39 kB)
+Collecting accelerate==1.14.0 (from -r 289/requirements.txt (line 3))
+  Downloading accelerate-1.14.0-py3-none-any.whl.metadata (19 kB)
+Requirement already satisfied: huggingface_hub==0.36.2 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 289/requirements.txt (line 4)) (0.36.2)
+Requirement already satisfied: safetensors==0.8.0 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 289/requirements.txt (line 5)) (0.8.0)
+Collecting tokenizers==0.21.4 (from -r 289/requirements.txt (line 6))
+  Downloading tokenizers-0.21.4-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.7 kB)
+Requirement already satisfied: numpy==2.5.1 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 289/requirements.txt (line 7)) (2.5.1)
+Collecting pyyaml==6.0.3 (from -r 289/requirements.txt (line 8))
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Requirement already satisfied: regex==2026.7.10 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 289/requirements.txt (line 9)) (2026.7.10)
+Requirement already satisfied: requests==2.34.2 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 289/requirements.txt (line 10)) (2.34.2)
+Collecting filelock==3.30.2 (from -r 289/requirements.txt (line 11))
+  Downloading filelock-3.30.2-py3-none-any.whl.metadata (2.0 kB)
+Requirement already satisfied: tqdm==4.68.4 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 289/requirements.txt (line 12)) (4.68.4)
+Collecting psutil==7.2.2 (from -r 289/requirements.txt (line 13))
+  Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+Requirement already satisfied: packaging==26.2 in /users/grad/mehil/.local/lib/python3.12/site-packages (from -r 289/requirements.txt (line 14)) (26.2)
+Requirement already satisfied: torch>=1.13.0 in /users/grad/mehil/.local/lib/python3.12/site-packages (from peft==0.15.1->-r 289/requirements.txt (line 1)) (2.13.0)
+Requirement already satisfied: fsspec>=2023.5.0 in /users/grad/mehil/.local/lib/python3.12/site-packages (from huggingface_hub==0.36.2->-r 289/requirements.txt (line 4)) (2025.3.0)
+Requirement already satisfied: hf-xet<2.0.0,>=1.1.3 in /users/grad/mehil/.local/lib/python3.12/site-packages (from huggingface_hub==0.36.2->-r 289/requirements.txt (line 4)) (1.5.2)
+Requirement already satisfied: typing-extensions>=3.7.4.3 in /usr/lib/python3/dist-packages (from huggingface_hub==0.36.2->-r 289/requirements.txt (line 4)) (4.10.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in /users/grad/mehil/.local/lib/python3.12/site-packages (from requests==2.34.2->-r 289/requirements.txt (line 10)) (3.4.9)
+Requirement already satisfied: idna<4,>=2.5 in /usr/lib/python3/dist-packages (from requests==2.34.2->-r 289/requirements.txt (line 10)) (3.6)
+Requirement already satisfied: urllib3<3,>=1.26 in /usr/lib/python3/dist-packages (from requests==2.34.2->-r 289/requirements.txt (line 10)) (2.0.7)
+Requirement already satisfied: certifi>=2023.5.7 in /usr/lib/python3/dist-packages (from requests==2.34.2->-r 289/requirements.txt (line 10)) (2023.11.17)
+Requirement already satisfied: setuptools>=77.0.3 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (83.0.0)
+Requirement already satisfied: sympy>=1.13.3 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (3.6.1)
+Requirement already satisfied: jinja2 in /usr/lib/python3/dist-packages (from torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (3.1.2)
+Requirement already satisfied: cuda-toolkit==13.0.3 in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (13.0.3.0)
+Requirement already satisfied: cuda-bindings<14,>=13.0.3 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (13.3.1)
+Requirement already satisfied: nvidia-cudnn-cu13==9.20.0.48 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (9.20.0.48)
+Requirement already satisfied: nvidia-cusparselt-cu13==0.8.1 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (0.8.1)
+Requirement already satisfied: nvidia-nccl-cu13==2.29.7 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (2.29.7)
+Requirement already satisfied: nvidia-nvshmem-cu13==3.4.5 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (3.4.5)
+Requirement already satisfied: triton==3.7.1 in /users/grad/mehil/.local/lib/python3.12/site-packages (from torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (3.7.1)
+Requirement already satisfied: nvidia-cublas==13.1.1.3.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (13.1.1.3)
+Requirement already satisfied: nvidia-cuda-nvrtc==13.0.88.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (13.0.88)
+Requirement already satisfied: nvidia-cuda-runtime==13.0.96.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (13.0.96)
+Requirement already satisfied: nvidia-cufft==12.0.0.61.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (12.0.0.61)
+Requirement already satisfied: nvidia-nvjitlink<14,>=13.0.88 in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (13.3.33)
+Requirement already satisfied: nvidia-cufile==1.15.1.6.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (1.15.1.6)
+Requirement already satisfied: nvidia-cuda-cupti==13.0.85.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (13.0.85)
+Requirement already satisfied: nvidia-curand==10.4.0.35.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (10.4.0.35)
+Requirement already satisfied: nvidia-cusolver==12.0.4.66.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (12.0.4.66)
+Requirement already satisfied: nvidia-cusparse==12.6.3.3.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (12.6.3.3)
+Requirement already satisfied: nvidia-nvtx==13.0.85.* in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (13.0.85)
+Requirement already satisfied: cuda-pathfinder>=1.4.2 in /users/grad/mehil/.local/lib/python3.12/site-packages (from cuda-bindings<14,>=13.0.3->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (1.5.6)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /users/grad/mehil/.local/lib/python3.12/site-packages (from sympy>=1.13.3->torch>=1.13.0->peft==0.15.1->-r 289/requirements.txt (line 1)) (1.3.0)
+Downloading peft-0.15.1-py3-none-any.whl (411 kB)
+Downloading transformers-4.50.2-py3-none-any.whl (10.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.2/10.2 MB 25.9 MB/s  0:00:00
+
+Downloading tokenizers-0.21.4-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 27.5 MB/s  0:00:00
+
+Downloading accelerate-1.14.0-py3-none-any.whl (389 kB)
+Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 29.1 MB/s  0:00:00
+
+Downloading filelock-3.30.2-py3-none-any.whl (94 kB)
+Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+Installing collected packages: pyyaml, psutil, filelock, tokenizers, transformers, accelerate, peft
+  Attempting uninstall: pyyaml
+    Found existing installation: PyYAML 6.0.1
+    Not uninstalling pyyaml at /usr/lib/python3/dist-packages, outside environment 289/.venv
+    Can't uninstall 'PyYAML'. No files were found to uninstall.
+  Attempting uninstall: filelock
+    Found existing installation: filelock 3.13.1
+    Not uninstalling filelock at /usr/lib/python3/dist-packages, outside environment 289/.venv
+    Can't uninstall 'filelock'. No files were found to uninstall.
+  Attempting uninstall: tokenizers
+    Found existing installation: tokenizers 0.22.2
+    Not uninstalling tokenizers at /users/grad/mehil/.local/lib/python3.12/site-packages, outside environment 289/.venv
+    Can't uninstall 'tokenizers'. No files were found to uninstall.
+  Attempting uninstall: transformers
+    Found existing installation: transformers 4.57.6
+    Not uninstalling transformers at /users/grad/mehil/.local/lib/python3.12/site-packages, outside environment 289/.venv
+    Can't uninstall 'transformers'. No files were found to uninstall.
+
+
+Successfully installed accelerate-1.14.0 filelock-3.30.2 peft-0.15.1 psutil-7.2.2 pyyaml-6.0.3 tokenizers-0.21.4 transformers-4.50.2
+Running repro with:
+  peft=0.15.1
+  transformers=4.50.2
+{
+  "reproducible": true,
+  "evidence": [
+    "Raised AttributeError: 'PromptEncoderConfig' object has no attribute 'modules_to_save'",
+    "The crash occurs while PeftModelForSequenceClassification.__init__ accesses peft_config.modules_to_save.",
+    "The resulting traceback points to peft_model.py line 1506."
+  ],
+  "steps": [
+    "Created a BERT sequence-classification model from configuration.",
+    "Constructed PromptEncoderConfig(task_type='SEQ_CLS', num_virtual_tokens=20).",
+    "Called get_peft_model(base_model, ptuning_config)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

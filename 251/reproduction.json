@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the benchmark in a clean venv reproduced the slowdown. Baseline ReplayBuffer sampling took 0.00018371284628907839 s, while the same benchmark with SliceSampler took 0.00512981618133684 s, for a 27.923012924555646x slowdown.",
+  "steps": [
+    "Created a minimal benchmark in repro.py that matches the issue report's sampling pattern.",
+    "Added a compatibility shim for tensordict's renamed interaction_mode API so the repository snapshot can import cleanly.",
+    "Ran the benchmark against the local codebase and measured a ~27.9x slowdown with SliceSampler enabled."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "PYTHONPATH=codebase /tmp/bug251-venv/bin/python repro.py"
+}

@@ -1,0 +1,7 @@
+Source evidence:
+- ChatCompletionRequest.build_chat_params only injects enable_thinking from reasoning_effort.
+- response_format is translated into StructuredOutputsParams, not into a thinking toggle.
+- Qwen3Parser defaults thinking on unless enable_thinking is explicitly false.
+
+Runtime probe:
+- exit_code: 1

@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "275/repro.py", line 57, in <module>
+    main()
+  File "275/repro.py", line 52, in main
+    torch.jit.save(scripted, str(out))
+  File "275/.venv_repro/lib/python3.12/site-packages/torch/jit/_serialization.py", line 84, in save
+    m.save(f, _extra_files=_extra_files)
+  File "275/.venv_repro/lib/python3.12/site-packages/torch/jit/_script.py", line 754, in save
+    return self._c.save(str(f), **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: 
+Could not export Python function call 'is_fx_tracing'. Remove calls to Python functions before export. Did you forget to add @script or @script_method annotation? If this is a nn.ModuleList, add it to __constants__:
+  File "275/codebase/detectron2/modeling/poolers.py", line 223
+        num_level_assignments = len(self.level_poolers)
+    
+        if not is_fx_tracing():
+               ~~~~~~~~~~~~~ <--- HERE
+            torch._assert(
+                isinstance(x, list) and isinstance(box_lists, list),
+

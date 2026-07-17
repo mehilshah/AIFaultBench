@@ -1,0 +1,100 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/2132
+
+TITLE
+Sampling ~10× slower when using same MCMC object after warmup() vs creating new MCMC with num_warmup=0
+
+BODY
+Disclaimer: I let my coding agent formulate this issue
+
+## Short summary
+
+After running warmup with a NumPyro MCMC object, continuing sampling by calling `mcmc.run()` on the *same* MCMC object is ~10× slower than creating a *new* MCMC object with `num_warmup=0` and using `init_params` from the warmup results.
+
+This affects checkpointed sampling workflows where warmup is done once and sampling is performed in batches.
+
+---
+
+## Environment / hardware
+
+- Python: 3.13
+- JAX: 0.9.0 (GPU backend)
+- Device: NVIDIA GeForce RTX 5070 Ti
+- NumPyro: 0.19.0
+
+---
+
+## Minimal reproducible example (sketch)
+
+```python
+import time
+import jax
+import jax.numpy as jnp
+import numpyro
+from numpyro.infer import MCMC, NUTS
+import numpyro.distributions as dist
+
+numpyro.set_host_device_count(4)
+
+def model(x, y=None):
+    amp = numpyro.sample('amp', dist.Uniform(-8, -5))
+    scale = numpyro.sample('scale', dist.Uniform(-1, 1))
+    noise = numpyro.sample('noise', dist.Uniform(-8, -5))
+    K = jnp.exp(amp) * jnp.exp(-0.5 * ((x[:, None] - x[None, :]) / jnp.exp(scale))**2)
+    K = K + jnp.exp(noise) * jnp.eye(len(x))
+    numpyro.sample('y', dist.MultivariateNormal(jnp.zeros(len(x)), K), obs=y)
+
+key = jax.random.PRNGKey(0)
+x = jnp.linspace(0, 10, 100)
+y = jnp.sin(x) + 0.1 * jax.random.normal(key, (100,))
+
+# APPROACH 1: warmup() then run() on same object (observed SLOW)
+kernel = NUTS(model)
+mcmc = MCMC(kernel, num_warmup=100, num_samples=100, num_chains=4, chain_method='vectorized', progress_bar=False)
+
+mcmc.warmup(jax.random.PRNGKey(0), x, y=y)
+# ... then:
+mcmc.run(jax.random.PRNGKey(1), x, y=y)
+
+# APPROACH 2: new MCMC with num_warmup=0 (FAST)
+init_params = {k: v[:, -1] for k, v in mcmc.get_samples(group_by_chain=True).items()}
+kernel2 = NUTS(model)
+mcmc2 = MCMC(kernel2, num_warmup=0, num_samples=100, num_chains=4, chain_method='vectorized', progress_bar=False)
+mcmc2.run(jax.random.PRNGKey(2), x, y=y, init_params=init_params)
+```
+
+---
+
+## Observed behavior (real model)
+
+Using a GP-heavy model (~1300 data points, 11 parameters):
+
+- Fresh run (warmup on same MCMC object): ~78s per 100 samples (≈1.28 it/s).
+- Restart/extend run (new MCMC with `num_warmup=0`): ~7–8s per 100 samples (≈11–16 it/s). First restart batch can be slower due to JIT compile overhead, subsequent batches are fast.
+
+This is repeatable in my environment.
+
+---
+
+## What I tried (unsuccessful)
+
+- Setting `mcmc.num_warmup = 0` after `mcmc.warmup()` — did not produce the fast behavior.
+- Manually updating `mcmc._collection_params` — unsuccessful (internal logic overwrote or ignored it).
+- Creating a new `MCMC(..., num_warmup=0)` and passing `init_params` from warmup — worked for speed in the simple test, but in the full vectorized GP case I occasionally hit `vmap` shape errors when initializing chains and saw an extra compile cost for the very first batch.
+
+---
+
+## Questions / requests for guidance
+
+1. Is this performance difference expected (design choice) or a bug in NumPyro?
+2. If expected, is there a recommended, supported way to continue fast sampling after warmup **without** creating a separate MCMC object each time? (e.g., a supported API to transfer adapted mass matrix / step-size / internal state from warmup to a new `MCMC` instance)
+3. If creating a new `MCMC` is the intended solution, is there guidance on the correct and robust `init_params` format for `chain_method='vectorized'` to avoid `vmap` shape errors, and on minimizing the first-batch compile overhead?
+
+---
+
+## Attachments / logs
+
+I can attach a small log excerpt showing warmup and per-batch timings, or provide a fuller minimal example if needed.
+
+---
+
+Thanks in advance for any guidance — happy to provide a short recording or run additional small repro cases if it helps diagnose whether this is an internal behavior or an API usage issue.

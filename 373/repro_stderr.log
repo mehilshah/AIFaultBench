@@ -1,0 +1,16 @@
+373/codebase/sdv/metadata/visualization.py:131: RuntimeWarning: Graphviz does not seem to be installed on this system. For full metadata visualization capabilities, please make sure to have its binaries propertly installed: https://graphviz.gitlab.io/download/
+  warnings.warn(warning_message, RuntimeWarning)
+Traceback (most recent call last):
+  File "373/repro.py", line 124, in <module>
+    main()
+  File "373/repro.py", line 120, in main
+    assert "fk → other" in source, f"Expected relationship label 'fk → other' but got:\n{source}"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected relationship label 'fk → other' but got:
+digraph Metadata {
+	node [fillcolor="#B7E9FF" shape=Mrecord style=filled]
+	parent [label="{parent|pk : id\lother : categorical\l|Primary key: pk\l}"]
+	child [label="{child|fk : id\l|Primary key: None\lForeign key (parent): fk\l}"]
+	parent -> child [label="  fk → pk" arrowhead=oinv]
+}
+

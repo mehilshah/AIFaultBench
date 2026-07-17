@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With torch=2.13.0+cu130, RotaryEmbedding(dim=32, use_xpos=True) on all-ones tensors produces finite q and non-finite k at seq_len=96; the repro prints {'seq_len': 96, 'k_finite': False, 'k_nan': True, 'k_inf': True, 'k_non_finite_count': 91}.",
+  "steps": [
+    "Created a local venv and installed torch==2.13.0 and einops==0.8.2.",
+    "Ran repro.py against the local codebase with RotaryEmbedding(dim=32, use_xpos=True).",
+    "Confirmed that seq_len=64 stays finite, but seq_len=96 makes k non-finite."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,6 @@
+malicious weight_map value: ../outside/secret.safetensors
+resolved shard path: /tmp/diffusers-path-traversal-h3rb471h/malicious_model/../outside/secret.safetensors
+resolved realpath: /tmp/diffusers-path-traversal-h3rb471h/outside/secret.safetensors
+outside realpath: /tmp/diffusers-path-traversal-h3rb471h/outside/secret.safetensors
+escaped model dir: True
+loaded model class: AutoencoderTiny

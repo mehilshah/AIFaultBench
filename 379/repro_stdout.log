@@ -1,0 +1,8 @@
+python=3.12.3
+torch=2.4.1+cu121
+cwd=379
+start_method_before_set=None
+CASE: baseline model
+child process started
+EXIT: 0
+CASE: dispatch_model({"": "cpu"})

@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "205/repro.py", line 104, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "205/repro.py", line 97, in main
+    raise AssertionError(
+AssertionError: BUG REPRODUCED: ot.emd returned a feasible but suboptimal plan (cost 354.43787279000003 vs reference 57.54321038317501)

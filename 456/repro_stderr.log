@@ -1,0 +1,8 @@
+warning: Requirements file `requirements.txt` does not contain any dependencies
+Checked in 43ms
+Traceback (most recent call last):
+  File "456/repro.py", line 32, in <module>
+    main()
+  File "456/repro.py", line 25, in main
+    def nullwrap(fn: F | None = None):
+TypeError: unsupported operand type(s) for |: 'TypeVar' and 'NoneType'

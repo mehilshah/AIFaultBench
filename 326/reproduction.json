@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Editable-installing the local codebase leaves `py.typed` absent in `codebase/pyro/`, and mypy reports 5 `import-not-found` errors for `pyro`, `pyro.distributions`, `pyro.infer`, `pyro.infer.autoguide`, and `pyro.optim`.",
+  "steps": [
+    "Created a Python 3.12 virtual environment and installed `mypy==1.8.0`.",
+    "Installed `codebase/` in editable mode with dependencies disabled.",
+    "Ran `bash run_repro.sh`, which executes `repro.py` and checks mypy against an external file importing Pyro modules."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

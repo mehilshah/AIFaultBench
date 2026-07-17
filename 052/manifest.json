@@ -1,0 +1,9 @@
+{
+  "bug_id": "052",
+  "issue_url": "https://github.com/keras-team/keras-io/issues/1795",
+  "library_name": "keras-io",
+  "library_version": "unknown",
+  "reproducible": false,
+  "reproduction_command": "./run_repro.sh",
+  "notes": "Minimal local repro uses TensorFlow 2.16.1 and Keras 3.1.0."
+}

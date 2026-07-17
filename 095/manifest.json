@@ -1,0 +1,10 @@
+{
+  "bug_id": "095",
+  "bug_dir": "095",
+  "issue_url": "https://github.com/lucidrains/denoising-diffusion-pytorch/issues/292",
+  "library_name": "denoising-diffusion-pytorch",
+  "library_version": "unknown",
+  "reproduction_style": "minimal-callsite-harness",
+  "repro_script": "repro.py",
+  "reproduction_command": "bash run_repro.sh"
+}

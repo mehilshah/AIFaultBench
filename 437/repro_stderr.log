@@ -1,0 +1,33 @@
+437/codebase/src/accelerate/utils/torch_xla.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+wandb: Tracking run with wandb version 0.17.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+wandb: - 0.000 MB of 0.000 MB uploaded
+wandb:                                                                                
+wandb: 
+wandb: Run history:
+wandb:  batch_eval_loss ▁
+wandb: batch_train_loss ▂▁█
+wandb:            epoch ▁
+wandb:        eval_loss ▁
+wandb:       perplexity ▁
+wandb:             step ▁
+wandb:       train_loss ▁
+wandb: 
+wandb: Run summary:
+wandb:  batch_eval_loss 1.9637
+wandb: batch_train_loss 4.44016
+wandb:            epoch 0
+wandb:        eval_loss 0.9832
+wandb:       perplexity 2.673
+wandb:             step 3
+wandb:       train_loss 2.59428
+wandb: 
+wandb: You can sync this run to the cloud by running:
+wandb: wandb sync 437/wandb-jz3ao570/wandb/offline-run-20260717_050546-yeesmsrg
+wandb: Find logs at: ./wandb-jz3ao570/wandb/offline-run-20260717_050546-yeesmsrg/logs
+wandb: WARNING The new W&B backend becomes opt-out in version 0.18.0; try it out with `wandb.require("core")`! See https://wandb.me/wandb-core for more information.
+wandb: WARNING Step only supports monotonically increasing values, use define_metric to set a custom x axis. For details see: https://wandb.me/define-metric
+wandb: WARNING (User provided step: 1 is less than current step: 3. Dropping entry: {'batch_eval_loss': 0.08656799793243408, '_timestamp': 1784275547.5386477}).
+wandb: WARNING (User provided step: 2 is less than current step: 3. Dropping entry: {'batch_eval_loss': 0.8993435502052307, '_timestamp': 1784275547.5388184}).

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "455/repro.py", line 81, in main
+    model.merge_and_unload()
+  File "455/codebase/src/peft/tuners/lora.py", line 317, in merge_and_unload
+    target.merge()
+  File "455/codebase/src/peft/tuners/lora.py", line 429, in merge
+    self.weight.data += (
+RuntimeError: The size of tensor a (0) must match the size of tensor b (2048) at non-singleton dimension 1

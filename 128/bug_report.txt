@@ -1,0 +1,32 @@
+Title: Codon python extension with numpy ndarray return type
+Date: 2025-04-27T19:40:13+00:00
+URL: https://github.com/exaloop/codon/issues/652
+
+Description:
+I'm looking to use Codon to create fast compiled Python extensions and push them to artifactory where we could then import and use pre-compiled optimized code elsewhere.
+
+Since many of our methods work with `np.ndarray`, I was excited to see that Numpy support is present in Codon.
+
+When compiling and running normally via codon run --release example.py, returning `np.ndarray` types works without any issues.
+
+However, when building a Python extension according to the Codon [docs](https://docs.exaloop.io/codon/interoperability/pyext), the build fails when the return type is `np.ndarray` (also fails when a method argument is of this array type).
+
+```
+internal.codon:650:36-49: error: 'Ptr[float]' object has no attribute '__to_py__'
+├─ ndarray.codon:310:1-37685: error: during the realization of to_py(slf: ndarray[float,1])
+├─ python.codon:1951:24-42: error: during the realization of __to_py__(self: ndarray[float,1])
+╰─ error: during the realization of wrap_multiple(obj: Ptr[byte], args: Ptr[Ptr[byte]], nargs: int, _kwds: Ptr[byte], T: .toplevel, F: 'example_method_ndarray', M: 0)
+error: command '~/.codon/bin/codon' failed with exit code 1
+```
+
+All of our core methods accept and return `np.ndarray` since many of the calculations we do are vectorized. It would be less than ideal to do a conversion to `list[float]` in all spots where we would normally pass and return `np.ndarray` types.
+
+I created a small [repo](https://github.com/gavinaten/codon_extension_numpy/tree/main) to make the issue reproducible in a docker container.
+
+I've produced the error using python3.10:
+* Locally: MacOS Darwin ARM64
+* Docker: Linux AMD64 (example included in the repo)
+
+Question:
+Is this limitation expected when targeting Python extensions?
+And if so, is there a simple recommended workaround to maintain `np.ndarray` compatibility?

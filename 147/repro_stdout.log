@@ -1,0 +1,1 @@
+BUG_REPRODUCED: encode(..., output_value=None) crashes on prompt_length

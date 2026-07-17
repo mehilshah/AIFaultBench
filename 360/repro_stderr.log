@@ -1,0 +1,27 @@
+Traceback (most recent call last):
+  File "360/codebase/jax/_src/cudnn/scaled_matmul_stablehlo.py", line 397, in _scaled_matmul
+    output = _scaled_matmul_p_wrapper.bind(
+jax._src.source_info_util.JaxStackTraceBeforeTransformation: NotImplementedError: MLIR translation rule for primitive 'scaled_matmul' not found for platform cpu
+
+The preceding stack trace is the source of the JAX operation that, once transformed by JAX, triggered the following exception.
+
+--------------------
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "360/repro.py", line 28, in main
+    out = jax.nn.scaled_matmul(x, x, x, x)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "360/codebase/jax/_src/nn/functions.py", line 1367, in scaled_matmul
+    out = cudnn_scaled_matmul(
+          ^^^^^^^^^^^^^^^^^^^^
+  File "360/codebase/jax/_src/cudnn/scaled_matmul_stablehlo.py", line 445, in scaled_matmul_wrapper
+    out = _scaled_matmul(
+          ^^^^^^^^^^^^^^^
+  File "360/codebase/jax/_src/custom_partitioning.py", line 598, in _custom_partitioning_lowering_rule
+    return mlir.lower_fun(
+           ^^^^^^^^^^^^^^^
+NotImplementedError: MLIR translation rule for primitive 'scaled_matmul' not found for platform cpu
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.

@@ -1,0 +1,193 @@
+# recovered-from-issue: https://github.com/pyg-team/pytorch_geometric/issues/10276
+
+TITLE
+PyG crashes when dealing special graph
+
+BODY
+### 🐛 Describe the bug
+
+I want to train a GNN model on special graph but it crashed and this is my code:
+```
+import networkx as nx
+import os
+import torch
+import lightning_fabric
+import torch.nn as nn
+import gconv_gru
+
+# Numbers of basins are not important
+graph_lists = [['13010065', '13011000', '13011500', '13013650', '13018750', '13022500', '13032500', '13037500',
+                  '13038500', '13057000', '13057155', '13060000', '13062500', '13069500'],
+                 ['13014500', '13015000', '13018750', '13022500', '13032500', '13037500', '13038500', '13057000', '13057155', '13060000', '13062500', '13069500'],
+                 ['13011900', '13013650', '13018750', '13022500', '13032500', '13037500', '13038500', '13057000', '13057155', '13060000', '13062500', '13069500'],
+                 ['13018300', '13018350', '13018750', '13022500', '13032500', '13037500', '13038500', '13057000', '13057155', '13060000', '13062500', '13069500'],
+                 ['13016450', '13018750', '13022500', '13032500', '13037500', '13038500', '13057000', '13057155', '13060000', '13062500', '13069500'],
+                 ['13016305', '13018750', '13022500', '13032500', '13037500', '13038500', '13057000', '13057155', '13060000', '13062500', '13069500'],
+                 ['13046995', '13047500', '13047600', '13049500', '13050500', '13056500', '13057000', '13057155', '13060000', '13062500', '13069500'],
+                 ['13039500', '13042500', '13046000', '13050500', '13056500', '13057000', '13057155', '13060000', '13062500', '13069500'],
+                 ['13052200', '13055000', '13055250', '13056500', '13057000', '13057155', '13060000', '13062500', '13069500'],
+                 ['13027500', '13032500', '13037500', '13038500', '13057000', '13057155', '13060000', '13062500', '13069500'],
+                 ['13023000', '13032500', '13037500', '13038500', '13057000', '13057155', '13060000', '13062500', '13069500'],
+                 ['13055340', '13056500', '13057000', '13057155', '13060000', '13062500', '13069500'],
+                 ['13057940', '13058000', '13068500', '13069500'],
+                 ['13063000', '13066000', '13068500', '13069500']]
+
+class RepModel(nn.Module):
+    def __init__(self, edge_index):
+        super().__init__()
+        self.gcgru0 = gconv_gru.GConvGRU(in_channels=24, out_channels=32, K=5)
+        self.edge_index = edge_index
+
+    def forward(self, x):
+        x = self.gcgru0(x, self.edge_index)
+        return x
+
+def gen_nx_graph(basin_path_lists):
+    dg = nx.DiGraph()
+    for path in basin_path_lists:
+        nx.add_path(dg, path)
+    node_mapping = {node: idx for idx, node in enumerate(dg.nodes)}
+    edges = [(node_mapping[u], node_mapping[v]) for u, v in dg.edges]
+    return dg, edges
+
+if  __name__ == '__main__':
+    os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
+    os.environ['TORCH_USE_CUDA_DSA'] = '1'
+    total_fab = lightning_fabric.Fabric(devices=[0, 1], strategy='ddp')
+    total_fab.launch()
+    G, basin_edges = gen_nx_graph(graph_lists)
+    edge_index = torch.tensor(basin_edges, device=total_fab.device).t().contiguous()
+    model = total_fab.setup_module(RepModel(edge_index))
+    test_tensor = torch.randn(16, len(G), 24, device=total_fab.device)
+    output = model(test_tensor)
+    print(output)
+```
+This is my version of PyG:
+```
+torch-geometric           2.6.1                    pypi_0    pypi
+torch-scatter             2.1.2+pt25cu124          pypi_0    pypi
+torch-sparse              0.6.18+pt25cu124          pypi_0    pypi
+torch-spatiotemporal      0.9.5                    pypi_0    pypi
+```
+Crash report is [here](https://pastebin.ubuntu.com/p/9hQMbQws2r/) and `GConvGRU` which I use comes from [this link](https://pastebin.ubuntu.com/p/dFQhZJV33j/).
+
+When I use more than one GPUs in `total_fab`, the program occurs this problem:
+
+![Image](https://github.com/user-attachments/assets/69bd4ef1-8c5e-47da-befd-a5e486605f70)
+
+![Image](https://github.com/user-attachments/assets/e38bb3f0-7c68-4667-bec9-ab7118f58d5f)
+
+but when I change to single GPU, the problem disappeared.
+
+What happened to my program and how to solve it? Hope for your reply.
+
+### Versions
+
+<details>
+PyTorch version: 2.5.1
+Is debug build: False
+CUDA used to build PyTorch: 12.1
+ROCM used to build PyTorch: N/A
+
+OS: Ubuntu 20.04.5 LTS (x86_64)
+GCC version: (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0
+Clang version: Could not collect
+CMake version: version 3.16.3
+Libc version: glibc-2.31
+
+Python version: 3.12.8 | packaged by conda-forge | (main, Dec  5 2024, 14:24:40) [GCC 13.3.0] (64-bit runtime)
+Python platform: Linux-5.4.0-208-generic-x86_64-with-glibc2.31
+Is CUDA available: True
+CUDA runtime version: 12.6.77
+CUDA_MODULE_LOADING set to: LAZY
+GPU models and configuration: 
+GPU 0: NVIDIA A100-PCIE-40GB
+GPU 1: NVIDIA RTX 5000 Ada Generation
+GPU 2: NVIDIA RTX 6000 Ada Generation
+
+Nvidia driver version: 535.146.02
+cuDNN version: Could not collect
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+Is XNNPACK available: True
+
+CPU:
+Architecture:                       x86_64
+CPU op-mode(s):                     32-bit, 64-bit
+Byte Order:                         Little Endian
+Address sizes:                      46 bits physical, 48 bits virtual
+CPU(s):                             60
+On-line CPU(s) list:                0-59
+Thread(s) per core:                 1
+Core(s) per socket:                 6
+Socket(s):                          10
+NUMA node(s):                       1
+Vendor ID:                          GenuineIntel
+CPU family:                         6
+Model:                              85
+Model name:                         Intel(R) Xeon(R) Gold 5218R CPU @ 2.10GHz
+Stepping:                           7
+CPU MHz:                            2095.076
+BogoMIPS:                           4190.15
+Virtualization:                     VT-x
+Hypervisor vendor:                  KVM
+Virtualization type:                full
+L1d cache:                          1.9 MiB
+L1i cache:                          1.9 MiB
+L2 cache:                           240 MiB
+L3 cache:                           160 MiB
+NUMA node0 CPU(s):                  0-59
+Vulnerability Gather data sampling: Unknown: Dependent on hypervisor status
+Vulnerability Itlb multihit:        Not affected
+Vulnerability L1tf:                 Not affected
+Vulnerability Mds:                  Not affected
+Vulnerability Meltdown:             Not affected
+Vulnerability Mmio stale data:      Vulnerable: Clear CPU buffers attempted, no microcode; SMT Host state unknown
+Vulnerability Retbleed:             Mitigation; Enhanced IBRS
+Vulnerability Spec store bypass:    Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:           Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:           Mitigation; Enhanced / Automatic IBRS; IBPB conditional; RSB filling; PBRSB-eIBRS SW sequence; BHI SW loop, KVM SW loop
+Vulnerability Srbds:                Not affected
+Vulnerability Tsx async abort:      Mitigation; TSX disabled
+Flags:                              fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch cpuid_fault invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx avx512f avx512dq rdseed adx smap clflushopt clwb avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves arat umip pku ospke avx512_vnni md_clear arch_capabilities
+
+Versions of relevant libraries:
+[pip3] numpy==2.2.2
+[pip3] pytorch-lightning==2.5.0.post0
+[pip3] torch==2.5.1
+[pip3] torchaudio==2.5.1
+[pip3] torchmetrics==1.6.2
+[pip3] torchvision==0.20.1
+[pip3] triton==3.1.0
+[conda] blas                      2.116                       mkl    conda-forge
+[conda] blas-devel                3.9.0            16_linux64_mkl    conda-forge
+[conda] cuda-cudart               12.1.105                      0    nvidia
+[conda] cuda-cupti                12.1.105                      0    nvidia
+[conda] cuda-libraries            12.1.0                        0    nvidia
+[conda] cuda-nvrtc                12.1.105                      0    nvidia
+[conda] cuda-nvtx                 12.1.105                      0    nvidia
+[conda] cuda-opencl               12.8.55                       0    nvidia
+[conda] cuda-runtime              12.1.0                        0    nvidia
+[conda] libblas                   3.9.0            16_linux64_mkl    conda-forge
+[conda] libcblas                  3.9.0            16_linux64_mkl    conda-forge
+[conda] libcublas                 12.1.0.26                     0    nvidia
+[conda] libcufft                  11.0.2.4                      0    nvidia
+[conda] libcurand                 10.3.9.55                     0    nvidia
+[conda] libcusolver               11.4.4.55                     0    nvidia
+[conda] libcusparse               12.0.2.55                     0    nvidia
+[conda] liblapack                 3.9.0            16_linux64_mkl    conda-forge
+[conda] liblapacke                3.9.0            16_linux64_mkl    conda-forge
+[conda] libnvjitlink              12.1.105                      0    nvidia
+[conda] mkl                       2022.1.0           h84fe81f_915    conda-forge
+[conda] mkl-devel                 2022.1.0           ha770c72_916    conda-forge
+[conda] mkl-include               2022.1.0           h84fe81f_915    conda-forge
+[conda] numpy                     2.2.2           py312h72c5963_0    conda-forge
+[conda] pytorch                   2.5.1           py3.12_cuda12.1_cudnn9.1.0_0    pytorch
+[conda] pytorch-cuda              12.1                 ha16c6d3_6    pytorch
+[conda] pytorch-lightning         2.5.0.post0              pypi_0    pypi
+[conda] pytorch-mutex             1.0                        cuda    pytorch
+[conda] torchaudio                2.5.1               py312_cu121    pytorch
+[conda] torchmetrics              1.6.2                    pypi_0    pypi
+[conda] torchtriton               3.1.0                     py312    pytorch
+[conda] torchvision               0.20.1              py312_cu121    pytorch
+</details>

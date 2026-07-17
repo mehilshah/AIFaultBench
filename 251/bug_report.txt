@@ -1,0 +1,72 @@
+Title: [BUG] `SliceSampler` is slow
+Date: 2024-09-05T17:53:30+00:00
+URL: https://github.com/pytorch/rl/issues/2422
+
+Description:
+## Describe the bug
+
+Adding a `SliceSampler` to a `ReplayBuffer` can significantly slow down performance when taking a sample.
+
+## To Reproduce
+
+Run the following script
+
+```python
+import torch
+from tensordict import TensorDict
+from torchrl.data.replay_buffers import ReplayBuffer, LazyTensorStorage
+from torchrl.data.replay_buffers.samplers import SliceSampler
+import timeit
+
+def make_rb(*, use_slice_sampler):
+    torch.manual_seed(0)
+    sampler = SliceSampler(num_slices=32) if use_slice_sampler else None
+    rb = ReplayBuffer(
+        sampler=sampler,
+        storage=LazyTensorStorage(100),
+        generator=torch.Generator(),
+    )
+    done = torch.zeros(100, 1, dtype=torch.bool)
+    done[49] = 1
+    done[-1] = 1
+    data = TensorDict(
+        {("next", "done"): done},
+        batch_size=[100],
+    )
+    rb.extend(data)
+    return rb
+
+def sample(rb, num_samples, sample_size):
+    for _ in range(num_samples):
+        sample = rb.sample(sample_size)
+
+def measure_time(num_samples, sample_size, *, use_slice_sampler):
+    rb = make_rb(use_slice_sampler=use_slice_sampler)
+    timer = timeit.Timer(stmt=lambda: sample(rb, num_samples, sample_size))
+    num_iters = 30
+    t = timer.timeit(num_iters) / num_iters
+    return t
+
+num_samples = 10
+sample_size = 32
+t0 = measure_time(num_samples, sample_size, use_slice_sampler=False)
+t1 = measure_time(num_samples, sample_size, use_slice_sampler=True)
+factor = t1 / t0
+print(f"Without SliceSampler: {t0} s")
+print(f"With SliceSampler: {t1} s")
+print(f"Slowdown factor: {factor}x")
+```
+
+On my machine, I get a slowdown of ~25x
+
+```
+Without SliceSampler: 0.0001870056662786131 s
+With SliceSampler: 0.0046725646670286855 s
+Slowdown factor: 24.98621972270721x
+```
+
+## Checklist
+
+- [x] I have checked that there is no similar issue in the repo (**required**)
+- [x] I have read the [documentation](https://github.com/pytorch/rl/tree/main/docs/) (**required**)
+- [x] I have provided a minimal working example to reproduce the bug (**required**)

@@ -1,0 +1,5 @@
+input_uri=s3://my-bucket/checkpoints/epoch=5.ckpt
+pathlib_normalized=s3:/my-bucket/checkpoints/epoch=5.ckpt
+raised=FileNotFoundError
+message=The provided path is not a valid DeepSpeed checkpoint: s3:/my-bucket/checkpoints/epoch=5.ckpt
+reproduced=True

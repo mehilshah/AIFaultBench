@@ -1,0 +1,48 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46897
+
+TITLE
+Florence2 training-loss double-shift bug (same pattern as Moonshine #46784)
+
+BODY
+### System Info
+
+- `transformers` version: 5.13.0.dev0 (main branch at commit dc5a497c18)
+- - Platform: Windows
+- - - Python version: 3.x
+- - - - Using GPU: N/A (code-level bug, not runtime)
+
+### Who can help?
+
+@zucchini-nlp @yonigozlan
+
+### Information
+
+- [x] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+aIn `src/transformers/models/florence2/modular_florence2.py`, `Florence2ForConditionalGeneration.forward()` has a double-shift bug introduced in PR #40914:
+
+1. Labels are shifted right via `shift_tokens_right()` (line 1588) to create `decoder_input_ids`
+2. 2. Then `self.loss_function()` is called (line 1613), which maps to `ForCausalLMLoss`
+3. 3. `ForCausalLMLoss` shifts labels again internally (`labels[..., 1:]` in `loss/loss_utils.py` line 63-64)
+This means the model trains against `labels[..., 1:]` instead of `labels`. Same bug fixed in Moonshine PR #46784.
+
+```python
+# Buggy code:
+loss = self.loss_function(logits=logits, labels=labels, vocab_size=self.config.text_config.vocab_size, **kwargs)
+
+# Should be:
+loss_fct = CrossEntropyLoss()
+loss = loss_fct(logits.reshape(-1, self.config.text_config.vocab_size), labels.reshape(-1))
+```
+
+### Expected behavior
+
+Training loss should be computed directly against `labels` without any additional shifting, since `shift_tokens_right()` already handles the decoder input alignment. This matches the behavior of Whisper, Bart, and the now-fixed Moonshine and CohereASR models. The fix should use `CrossEntropyLoss()` instead of `self.loss_function()`, as done in Moonshine PR #46784.

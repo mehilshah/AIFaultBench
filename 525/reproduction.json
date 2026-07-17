@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With a minimal ImageNet-style root containing `val/` and `meta.bin`, `create_dataset('torch/imagenet', root=...)` fails in `torchvision/datasets/imagenet.py:56` with `TypeError: ImageFolder.__init__() got an unexpected keyword argument 'download'`.",
+  "steps": [
+    "Create a temporary ImageNet-like root with `val/n00000000/0.jpg` and a compatible `meta.bin`.",
+    "Import `create_dataset` from `timm.data.dataset_factory`.",
+    "Call `create_dataset('torch/imagenet', root=<temp root>)` and observe the TypeError from `ImageFolder.__init__()`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

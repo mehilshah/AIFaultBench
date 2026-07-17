@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the local harness prints is_uva_available=False and then raises RuntimeError: UVA is not available from vllm/v1/worker/gpu/buffer_utils.py while constructing RequestState, matching the reported failure path. The WSL2-specific pin-memory-off branch was emulated on this host to reach the same code path.",
+  "steps": [
+    "Create an isolated Python 3.12 virtual environment and install the small runtime dependency set from requirements.txt.",
+    "Force vLLM's pin-memory check to return False, which matches the WSL2 default behavior described in the bug report.",
+    "Instantiate vllm.v1.worker.gpu.states.RequestState so it constructs StagedWriteTensor(..., uva_instead_of_gpu=True) and raises RuntimeError: UVA is not available."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

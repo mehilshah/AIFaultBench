@@ -1,0 +1,12 @@
+{
+  "reproducible": false,
+  "evidence": "Two consecutive seed-42 runs produced identical epoch losses, predictions, and model SHA256 hashes; a seed-43 control run produced different losses and a different hash.",
+  "steps": [
+    "Created a clean CPU-only Python environment with torch 2.7.1 and torchvision 0.22.1.",
+    "Ran the local ViT training harness twice with the same seed (42).",
+    "Ran the same harness once with a different seed (43) as a control.",
+    "Compared the captured outputs and model hashes."
+  ],
+  "blocking_reason": "The reported nondeterminism did not appear here. Same-seed ViT runs were exactly reproducible in this environment, so the issue could not be reproduced from the provided inputs.",
+  "reproduction_command": "bash run_repro.sh"
+}

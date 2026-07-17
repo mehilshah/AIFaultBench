@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "154/repro.py", line 32, in main
+    TvpModel(config)
+  File "154/codebase/src/transformers/models/tvp/modeling_tvp.py", line 696, in __init__
+    self.embeddings = TvpTextInputEmbeddings(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "154/codebase/src/transformers/models/tvp/modeling_tvp.py", line 297, in __init__
+    self.token_type_embeddings = nn.Embedding(config.type_vocab_size, config.hidden_size)
+                                              ^^^^^^^^^^^^^^^^^^^^^^
+  File "154/codebase/src/transformers/configuration_utils.py", line 198, in __getattribute__
+    return super().__getattribute__(key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'TvpConfig' object has no attribute 'type_vocab_size'

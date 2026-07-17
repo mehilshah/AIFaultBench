@@ -1,0 +1,6 @@
+jax==0.4.38
+jaxlib==0.4.38
+numpy>=1.26,<3
+scipy>=1.11
+multipledispatch
+tqdm

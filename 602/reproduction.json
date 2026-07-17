@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "In a clean Python 3.12 venv with torch 2.5.1+cpu, torchvision 0.20.1+cpu, and tensordict 0.10.0, `VIPTransform(model_name='resnet50', download=True)` completed successfully. The VIP weights URL `https://pytorch.s3.amazonaws.com/models/rl/vip/model.pt` returned HTTP 200 and the constructor finished without raising.",
+  "steps": [
+    "Created an isolated virtual environment and installed the minimal TorchRL dependencies.",
+    "Added the local `codebase/` directory to `PYTHONPATH` and ran the exact constructor from the report.",
+    "Verified that the VIP model downloaded and loaded successfully instead of failing."
+  ],
+  "blocking_reason": "The reported failure is not reproducible in this environment because the VIP weights URL is reachable and the constructor succeeds.",
+  "reproduction_command": "bash run_repro.sh"
+}

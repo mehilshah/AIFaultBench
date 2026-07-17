@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "177/repro.py", line 52, in <module>
+    InlineVisitor().visit(tree)
+  File "177/codebase/lark/visitors.py", line 369, in visit
+    self._call_userfunc(subtree)
+  File "177/codebase/lark/visitors.py", line 347, in _call_userfunc
+    return getattr(self, tree.data, self.__default__)(tree)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: InlineVisitor.pair() missing 1 required positional argument: 'right'

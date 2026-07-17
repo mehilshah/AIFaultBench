@@ -1,0 +1,6 @@
+source: 548/codebase/vllm/v1/engine/async_llm.py
+pause_generation lines: 750-793
+reset_mm_cache lines: 917-919
+pause_generation() clears frontend and backend state in this checkout.
+reset_mm_cache() also clears frontend and backend state.
+RESULT: non-reproducible here; the reported bug is already fixed.

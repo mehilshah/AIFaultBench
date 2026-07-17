@@ -1,0 +1,49 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/3087
+
+TITLE
+`_get_named_parameters()` seems to have met a regression 
+
+BODY
+If we run `pytest tests/models/autoencoders/test_models_vae.py::ConsistencyDecoderVAETests::test_sharded_checkpoints` with the latest `accelerate` release (and source), it fails:
+
+```bash
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+../.pyenv/versions/3.10.12/envs/diffusers/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py:114: in _inner_fn
+    return fn(*args, **kwargs)
+src/diffusers/models/modeling_utils.py:818: in from_pretrained
+    raise e
+src/diffusers/models/modeling_utils.py:775: in from_pretrained
+    accelerate.load_checkpoint_and_dispatch(
+../.pyenv/versions/3.10.12/envs/diffusers/lib/python3.10/site-packages/accelerate/big_modeling.py:613: in load_checkpoint_and_dispatch
+    load_checkpoint_in_model(
+../.pyenv/versions/3.10.12/envs/diffusers/lib/python3.10/site-packages/accelerate/utils/modeling.py:1739: in load_checkpoint_in_model
+    tied_params = find_tied_parameters(model)
+../.pyenv/versions/3.10.12/envs/diffusers/lib/python3.10/site-packages/accelerate/utils/modeling.py:708: in find_tied_parameters
+    all_named_parameters = {name: param for name, param in _get_named_parameters(model, remove_duplicate=False)}
+../.pyenv/versions/3.10.12/envs/diffusers/lib/python3.10/site-packages/accelerate/utils/modeling.py:708: in <dictcomp>
+    all_named_parameters = {name: param for name, param in _get_named_parameters(model, remove_duplicate=False)}
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+module = None, prefix = '', recurse = True, remove_duplicate = False
+
+    def _get_named_parameters(module: torch.nn.Module, prefix="", recurse=True, remove_duplicate: bool = True):
+        """
+        Help yield various names + members of modules. Copied from PyTorch `torch.nn.Module.named_modules` for
+        compatability with torch < 2.0 versions with `remove_duplicate` option added.
+        """
+        memo = set()
+        modules = (
+            _get_named_modules(module, prefix=prefix, remove_duplicate=remove_duplicate) if recurse else [(prefix, module)]
+        )
+        for module_prefix, module in modules:
+>           members = module._parameters.items()
+E           AttributeError: 'NoneType' object has no attribute '_parameters'
+
+../.pyenv/versions/3.10.12/envs/diffusers/lib/python3.10/site-packages/accelerate/utils/modeling.py:667: AttributeError
+```
+
+But with accelerate 0.33.0, the test passes. 
+
+You need a GPU to run the test.
+
+Cc: @muellerzr @SunMarc @DN6 

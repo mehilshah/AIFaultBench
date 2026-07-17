@@ -1,0 +1,14 @@
+{
+  "bug_id": "308",
+  "bug_dir": "308",
+  "issue_url": "https://github.com/pytorch/rl/issues/3870",
+  "commit_hash": "52cf596100dc2d0e6d678835fe05d88dc8584fd9",
+  "library_name": "torchrl",
+  "library_version": "0.13.0",
+  "python_version": "3.12.3",
+  "torch_version": "2.5.1+cpu",
+  "tensordict_version": "0.13.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "reproducible": true
+}

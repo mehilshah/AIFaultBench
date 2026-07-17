@@ -1,0 +1,9 @@
+{
+  "bug_id": "255",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "main_repro_script": "repro.py",
+  "reproduction_command": "bash run_repro.sh",
+  "dependencies": [],
+  "notes": "Source-level repro for the torch_compile tutorial timing helper using the checked-in tutorial sources."
+}

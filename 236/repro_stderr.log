@@ -1,0 +1,11 @@
+WARNING:2026-07-17 03:31:43,925:jax._src.xla_bridge:969: An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+Traceback (most recent call last):
+  File "236/repro.py", line 35, in main
+    result = jnp.asarray(y)
+             ^^^^^^^^^^^^^^
+  File "236/.venv/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py", line 5821, in asarray
+    return array(a, dtype=dtype, copy=bool(copy), order=order, device=device)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "236/.venv/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py", line 5652, in array
+    raise TypeError(f"Unexpected input type for array: {type(object)}")
+TypeError: Unexpected input type for array: <class '__main__.MyEqxArray'>

@@ -1,0 +1,16 @@
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+    WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+    WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+    WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+torchvision 0.28.0 requires torch==2.13.0, but you have torch 2.4.1+cpu which is incompatible.
+transformers 4.57.6 requires huggingface-hub<1.0,>=0.34.0, but you have huggingface-hub 1.22.0 which is incompatible.
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+  WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+    WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)

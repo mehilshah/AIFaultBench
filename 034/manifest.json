@@ -1,0 +1,13 @@
+{
+  "bug_id": "034",
+  "bug_dir": "034",
+  "issue_url": "https://github.com/NVIDIA/DeepLearningExamples/issues/1187",
+  "commit_hash": "0e20ac8e84db2f879c4388b6bcaa11a93a0599a1",
+  "library_name": "DeepLearningExamples",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/PyTorch/LanguageModeling/BERT",
+  "codebase_present": true,
+  "standardized_dir": "../034",
+  "repro_entrypoint": "run_repro.sh"
+}

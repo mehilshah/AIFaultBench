@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "102/repro.py", line 31, in main
+    model(x)
+  File "102/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "102/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "102/codebase/vector_quantize_pytorch/residual_sim_vq.py", line 153, in forward
+    should_quantize_dropout = self.training and self.quantize_dropout and not return_loss
+                                                                              ^^^^^^^^^^^
+NameError: name 'return_loss' is not defined

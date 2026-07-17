@@ -1,0 +1,6 @@
+using world_size=4 port=46939
+rank=3 starting nested-dict split check
+rank=2 starting nested-dict split check
+rank=0 starting nested-dict split check
+rank=1 starting nested-dict split check
+rank=0 passed

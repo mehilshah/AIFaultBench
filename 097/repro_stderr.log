@@ -1,0 +1,2 @@
+097/codebase/denoising_diffusion_pytorch/classifier_free_guidance.py:718: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  @autocast(enabled = False)

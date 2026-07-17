@@ -1,0 +1,4 @@
+mean.shape = (1, 0)
+covariance.shape = (3, 0, 0)
+constructing dist.MultivariateNormal(...)
+RuntimeError: cannot reshape tensor of 0 elements into shape [-1, 0, 0] because the unspecified dimension size -1 can be any value and is ambiguous

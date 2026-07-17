@@ -1,0 +1,16 @@
+347/.venv/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:295: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:84.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+Traceback (most recent call last):
+  File "347/repro.py", line 38, in main
+    torch.cat([latents, image_latents, torch.ones_like(latents[..., :1])], dim=-1)
+  File "347/.venv/lib/python3.12/site-packages/torch/_prims_common/wrappers.py", line 273, in _fn
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "347/.venv/lib/python3.12/site-packages/torch/_prims_common/wrappers.py", line 141, in _fn
+    result = fn(**bound.arguments)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "347/.venv/lib/python3.12/site-packages/torch/_refs/__init__.py", line 2737, in cat
+    utils.check_same_device(*tensors, allow_cpu_scalar_tensors=False)
+  File "347/.venv/lib/python3.12/site-packages/torch/_prims_common/__init__.py", line 742, in check_same_device
+    raise RuntimeError(msg)
+RuntimeError: Tensor on device meta is not on the expected device cpu!

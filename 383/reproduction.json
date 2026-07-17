@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "`repro.py` creates `FeatureListNet` via `timm.create_model(\"convnextv2_base\", pretrained=False, features_only=True)`, prints `model_type=FeatureListNet`, and then `fully_shard(encoder)` raises `ValueError: fully_shard does not support containers that do not implement forward`. The timm class defines `forward()` at `codebase/timm/models/_features.py:344-345`, but torch rejects it at `_fully_shard.py:145-148` purely because it inherits `nn.ModuleDict`.",
+  "steps": [
+    "Run `bash setup_env.sh` to create a clean venv with torch 2.6.0+cpu and the local timm source installed editable.",
+    "Run `bash run_repro.sh` to execute `repro.py` and capture stdout/stderr into `repro_stdout.log` and `repro_stderr.log`.",
+    "Observe that the script prints `model_type=FeatureListNet` and fails with the reported `ValueError` from torch's `fully_shard` guard."
+  ],
+  "blocking_reason": "The exact high-level `FullyShardedDataParallel(..., ShardingStrategy.FULL_SHARD)` path is not runnable on this machine because no accelerator is present; the same buggy validation is reproduced directly through `fully_shard`.",
+  "reproduction_command": "bash run_repro.sh"
+}

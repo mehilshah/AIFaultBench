@@ -1,0 +1,12 @@
+{
+  "bug_id": "220",
+  "bug_dir": "220",
+  "issue_url": "https://github.com/tensorflow/datasets/issues/5397",
+  "commit_hash": "",
+  "library_name": "tensorflow-datasets",
+  "library_version": "4.9.4+nightly",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../220"
+}

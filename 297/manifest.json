@@ -1,0 +1,14 @@
+{
+  "name": "uv-pyg-repro",
+  "description": "Minimal reproduction for uv failing to resolve torch_geometric from the PyG wheel index.",
+  "entrypoint": "run_repro.sh",
+  "reproduction_command": "bash run_repro.sh",
+  "files": [
+    "pyproject.toml",
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile"
+  ]
+}

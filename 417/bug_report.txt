@@ -1,0 +1,40 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2823
+
+TITLE
+[Metadata composite keys] Typo in error message for invalid primary keys
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:
+* Python version:
+* Operating System:
+
+### Error Description
+Trying to set a composite primary key with a set of columns that does not contain an ID or PII sdtype column generates the following error: `InvalidMetadataError: The primary_keys [['col1', 'col2']] must have a column of type 'id' or another PII type.`. Instead, the primary key definition should appear as a single list of columns, not a list of lists.
+
+### Steps to reproduce
+
+```python
+import pandas as pd
+import numpy as np
+from sdv.metadata import Metadata
+
+account_metadata = Metadata.load_from_dict({
+    'tables': {
+        'accounts': {
+            'columns': {
+                'user_id': {'sdtype': 'id', 'regex_format': 'ID_[0-9]{1,2}'},
+                'account_type': {'sdtype': 'categorical'},
+                'col1': {'sdtype': 'numerical'},
+                'col2': {'sdtype': 'numerical'},
+            }
+        }
+    }
+})
+
+account_metadata.set_primary_key(['col1', 'col2'])
+```
+

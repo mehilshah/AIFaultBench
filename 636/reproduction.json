@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "In a clean venv with Lightning 2.6.0 from the bundled codebase, the captured hook sequence was [\"optimizer_step:0:0\", \"training_step:0:0\", \"validation_step:0:0\", \"on_validation_epoch_end:0\"]. The script reports optimizer_step_before_validation_epoch_end: true.",
+  "steps": [
+    "Create a clean virtual environment and install torch 2.7.1+cpu plus the bundled Lightning codebase.",
+    "Run `bash run_repro.sh`.",
+    "Observe that `optimizer_step` happens before `on_validation_epoch_end`."
+  ],
+  "blocking_reason": "The reported ordering does not occur on the current codebase snapshot; the bug is not reproducible here.",
+  "reproduction_command": "bash run_repro.sh"
+}

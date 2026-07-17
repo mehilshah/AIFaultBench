@@ -1,0 +1,61 @@
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+tensorflow-text 2.20.1 requires tensorflow<2.21,>=2.20.0, but you have tensorflow 2.15.1 which is incompatible.
+2026-07-17 10:36:34.866396: I tensorflow/core/util/port.cc:113] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-07-17 10:36:34.891509: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:9261] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2026-07-17 10:36:34.891530: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:607] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2026-07-17 10:36:34.892149: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1515] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2026-07-17 10:36:34.896231: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+AttributeError: 'MessageFactory' object has no attribute 'GetPrototype'
+AttributeError: 'MessageFactory' object has no attribute 'GetPrototype'
+AttributeError: 'MessageFactory' object has no attribute 'GetPrototype'
+AttributeError: 'MessageFactory' object has no attribute 'GetPrototype'
+2026-07-17 10:36:35.340194: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+AttributeError: 'MessageFactory' object has no attribute 'GetPrototype'
+WARNING:absl:Encountered error when importing tensorflow_text: 019/.venv/lib/python3.10/site-packages/tensorflow_text/python/ops/_regex_split_ops.so: undefined symbol: _ZN10tensorflow12OpDefBuilder10SetShapeFnESt8functionIFN4absl12lts_202501276StatusEPNS_15shape_inference16InferenceContextEEE
+Traceback (most recent call last):
+  File "019/repro.py", line 12, in try_import
+    module = importlib.import_module(module_name)
+  File "/users/grad/mehil/.local/share/uv/python/cpython-3.10.13-linux-x86_64-gnu/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "019/codebase/tensorflow_models/__init__.py", line 17, in <module>
+    from tensorflow_models import nlp
+  File "019/codebase/tensorflow_models/nlp/__init__.py", line 17, in <module>
+    from official.nlp import tasks
+  File "019/codebase/official/nlp/tasks/__init__.py", line 19, in <module>
+    from official.nlp.tasks.question_answering import QuestionAnsweringConfig, QuestionAnsweringTask
+  File "019/codebase/official/nlp/tasks/question_answering.py", line 32, in <module>
+    from official.nlp.data import squad_lib as squad_lib_wp
+  File "019/codebase/official/nlp/data/squad_lib.py", line 28, in <module>
+    from official.nlp.tools import tokenization
+  File "019/codebase/official/nlp/tools/tokenization.py", line 29, in <module>
+    import sentencepiece as spm
+ModuleNotFoundError: No module named 'sentencepiece'
+Traceback (most recent call last):
+  File "019/repro.py", line 30, in <module>
+    main()
+  File "019/repro.py", line 26, in main
+    import tensorflow_text  # noqa: F401
+  File "019/.venv/lib/python3.10/site-packages/tensorflow_text/__init__.py", line 21, in <module>
+    from tensorflow_text.python import keras
+  File "019/.venv/lib/python3.10/site-packages/tensorflow_text/python/keras/__init__.py", line 21, in <module>
+    from tensorflow_text.python.keras.layers import *
+  File "019/.venv/lib/python3.10/site-packages/tensorflow_text/python/keras/layers/__init__.py", line 22, in <module>
+    from tensorflow_text.python.keras.layers.tokenization_layers import *
+  File "019/.venv/lib/python3.10/site-packages/tensorflow_text/python/keras/layers/tokenization_layers.py", line 24, in <module>
+    from tensorflow_text.python.ops import unicode_script_tokenizer
+  File "019/.venv/lib/python3.10/site-packages/tensorflow_text/python/ops/__init__.py", line 25, in <module>
+    from tensorflow_text.python.ops.bert_tokenizer import BertTokenizer
+  File "019/.venv/lib/python3.10/site-packages/tensorflow_text/python/ops/bert_tokenizer.py", line 28, in <module>
+    from tensorflow_text.python.ops import regex_split_ops
+  File "019/.venv/lib/python3.10/site-packages/tensorflow_text/python/ops/regex_split_ops.py", line 23, in <module>
+    gen_regex_split_ops = load_library.load_op_library(resource_loader.get_path_to_datafile('_regex_split_ops.so'))
+  File "019/.venv/lib/python3.10/site-packages/tensorflow/python/framework/load_library.py", line 54, in load_op_library
+    lib_handle = py_tf.TF_LoadLibrary(library_filename)
+tensorflow.python.framework.errors_impl.NotFoundError: 019/.venv/lib/python3.10/site-packages/tensorflow_text/python/ops/_regex_split_ops.so: undefined symbol: _ZN10tensorflow12OpDefBuilder10SetShapeFnESt8functionIFN4absl12lts_202501276StatusEPNS_15shape_inference16InferenceContextEEE

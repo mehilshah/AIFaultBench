@@ -1,0 +1,3 @@
+-r ./codebase/latest_requirements.txt
+-e ./codebase
+

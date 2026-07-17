@@ -1,0 +1,11 @@
+002/codebase/research/object_detection/exporter.py:33:   from tensorflow.contrib.quantize.python import graph_matcher
+002/codebase/research/object_detection/exporter.py:100:     input_pattern = graph_matcher.OpTypePattern(
+002/codebase/research/object_detection/exporter.py:102:     stack_1_pattern = graph_matcher.OpTypePattern(
+002/codebase/research/object_detection/exporter.py:104:     reshape_1_pattern = graph_matcher.OpTypePattern(
+002/codebase/research/object_detection/exporter.py:106:     stack_2_pattern = graph_matcher.OpTypePattern(
+002/codebase/research/object_detection/exporter.py:110:     reshape_2_pattern = graph_matcher.OpTypePattern(
+002/codebase/research/object_detection/exporter.py:112:     consumer_pattern1 = graph_matcher.OpTypePattern(
+002/codebase/research/object_detection/exporter.py:116:     consumer_pattern2 = graph_matcher.OpTypePattern(
+002/codebase/research/object_detection/exporter.py:124:       matcher = graph_matcher.GraphMatcher(consumer_pattern)
+TensorFlow version: 2.17.1
+Executing eagerly: True

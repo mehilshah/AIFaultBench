@@ -1,0 +1,2 @@
+Observed expected failure: KeyError('agent_1')
+Wrote reproduction.json

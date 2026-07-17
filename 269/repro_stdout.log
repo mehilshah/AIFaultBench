@@ -1,0 +1,6 @@
+weights_only_keys ['hyper_parameters', 'pytorch-lightning_version', 'state_dict']
+weights_only_instantiator payloadpkg.payload
+loaded_class Victim
+import_marker imported
+call_marker called
+reproducible True

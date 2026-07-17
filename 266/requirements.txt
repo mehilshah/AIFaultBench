@@ -1,0 +1,2 @@
+-e codebase
+tensorflow==2.21.0

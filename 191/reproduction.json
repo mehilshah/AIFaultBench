@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "pip install failed during build-isolation with ModuleNotFoundError: No module named 'torch'.",
+  "steps": [
+    "Run `bash run_repro.sh` from the standardized bug folder.",
+    "The script runs `pip install -v --disable-pip-version-check --no-cache-dir --global-option=--cpp_ext --global-option=--cuda_ext .` in `codebase/`.",
+    "The build backend imports `setup.py` in an isolated environment that does not contain `torch`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

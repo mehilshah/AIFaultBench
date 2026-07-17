@@ -1,0 +1,12 @@
+{
+  "reproducible": false,
+  "evidence": "The local TFDS checksum validator raises NonMatchingChecksumError when the reported plant_leaves checksum metadata is compared against a tiny local archive, but the live upstream URL from the report now returns HTTP 403 in this environment.",
+  "steps": [
+    "Created a local virtual environment and installed the TFDS runtime dependencies plus the editable codebase snapshot.",
+    "Loaded the checked-in plant_leaves checksum metadata from codebase/tensorflow_datasets/datasets/plant_leaves/checksums.tsv.",
+    "Probed the reported upstream dataset URL and observed HTTP 403.",
+    "Validated a tiny local archive against the reported checksum and observed tensorflow_datasets.core.download.download_manager.NonMatchingChecksumError."
+  ],
+  "blocking_reason": "The exact upstream dataset artifact is no longer downloadable here, so the original remote checksum mismatch from the report cannot be reproduced directly.",
+  "reproduction_command": "./run_repro.sh"
+}

@@ -1,0 +1,5 @@
+Keras output shape: (1, 9, 5)
+SavedModel dir: /tmp/ner_tflite_bkahw733
+Reloaded model type: NERModel
+TFLite input details: {'name': 'serving_default_input_1:0', 'index': 0, 'shape': array([1, 1], dtype=int32), 'shape_signature': array([-1,  1], dtype=int32), 'dtype': <class 'numpy.int64'>, 'quantization': (0.0, 0), 'quantization_parameters': {'scales': array([], dtype=float32), 'zero_points': array([], dtype=int32), 'quantized_dimension': 0}, 'sparsity_parameters': {}}
+EXPECTED_FAILURE: ValueError Cannot set tensor: Dimension mismatch. Got 9 but expected 1 for dimension 1 of input 0.

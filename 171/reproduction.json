@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "projections_from_fundamental(torch.randn(1, 3, 3)) returns shape [1, 3, 4, 2], while torch.randn(1, 1, 3, 3) raises AssertionError: torch.Size([1, 1, 3]) and torch.randn(3, 3) raises AssertionError: torch.Size([3]).",
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh",
+    "Observed one passing input shape and two failing input shapes from the bug report"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

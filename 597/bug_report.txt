@@ -1,0 +1,57 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21450
+
+TITLE
+Throughput monitor spamming `flops_per_batch` missing warning
+
+BODY
+### Bug description
+
+The warning is triggered every on every update call, can it be moved to the setup in ThroughputMonitor?
+https://github.com/Lightning-AI/pytorch-lightning/blame/master/src/lightning/pytorch/callbacks/throughput_monitor.py#L139
+
+
+
+### What version are you seeing the problem on?
+
+master
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+
+```
+
+### Error messages and logs
+
+```
+# Error messages and logs here please
+```
+
+
+### Environment
+
+<details>
+  <summary>Current environment</summary>
+
+```
+#- PyTorch Lightning Version (e.g., 2.5.0):
+#- PyTorch Version (e.g., 2.5):
+#- Python version (e.g., 3.12):
+#- OS (e.g., Linux):
+#- CUDA/cuDNN version:
+#- GPU models and configuration:
+#- How you installed Lightning(`conda`, `pip`, source):
+```
+
+</details>
+
+
+### More info
+
+_No response_
+
+cc @ethanwharris @lantiga

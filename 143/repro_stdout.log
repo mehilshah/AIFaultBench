@@ -1,0 +1,30 @@
+{
+  "phase": "save",
+  "save_dir": "/tmp/bug143-save-k9qe8nq_",
+  "files": [
+    "1_Pooling/config.json",
+    "README.md",
+    "config.json",
+    "config_sentence_transformers.json",
+    "configuration_hf_nomic_bert.py",
+    "model.safetensors",
+    "modeling_hf_nomic_bert.py",
+    "modules.json",
+    "sentence_bert_config.json",
+    "special_tokens_map.json",
+    "tokenizer.json",
+    "tokenizer_config.json",
+    "vocab.txt"
+  ],
+  "missing_required_code_files": []
+}
+{
+  "phase": "reload",
+  "save_dir": "/tmp/bug143-save-k9qe8nq_",
+  "loaded_class": "SentenceTransformer",
+  "status": "ok"
+}
+{
+  "result": "not_reproduced",
+  "reason": "The saved directory already contains the remote code files, and a fresh offline process reloads successfully."
+}

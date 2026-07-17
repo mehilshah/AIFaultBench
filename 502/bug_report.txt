@@ -1,0 +1,61 @@
+# recovered-from-issue: https://github.com/vllm-project/vllm/issues/47215
+
+TITLE
+[Bug]: nvidia/Qwen3.6-27B-NVFP4 (dense, MIXED_PRECISION W4A16_NVFP4) fails to load — "RuntimeError: start (0) + length (17408) exceeds dimension size (8704)"
+
+BODY
+### Your current environment
+
+- vLLM: `0.23.1rc1.dev515+g68ee8300a` (upstream image `vllm/vllm-openai:nightly`)
+- GPU: NVIDIA GB10 / DGX Spark, compute capability sm_121
+- Model: nvidia/Qwen3.6-27B-NVFP4 (released 2026-06-26)
+- Arch: `Qwen3_5ForCausalLM` (dense; hybrid Gated-DeltaNet + Gated-Attention)
+
+### 🐛 Describe the bug
+
+Loading the newly released **dense** `nvidia/Qwen3.6-27B-NVFP4` checkpoint fails during weight loading.
+The checkpoint's `config.json` has a top-level `quant_algo: "MIXED_PRECISION"` (`quant_method: "modelopt"`), where per-layer entries mix `FP8` and `W4A16_NVFP4`. The MLP `down_proj` (a `W4A16_NVFP4` layer) is **not** dispatched to `ModelOptNvFp4W4A16LinearMethod`: its `input_scale` is reported missing, and the NVFP4-packed 4-bit weight (half the FFN intermediate size) is then loaded as a full-size tensor, causing a `narrow()` out-of-range error.
+```
+WARNING [qwen3_5.py:435] Parameter layers.0.mlp.down_proj.input_scale not found in params_dict, skip loading
+...
+  File ".../vllm/model_executor/models/qwen3_5.py", line 443, in load_weights
+    weight_loader(param, loaded_weight)
+  File ".../vllm/model_executor/layers/linear.py", line 1529, in weight_loader_v2
+    param.load_row_parallel_weight(loaded_weight=loaded_weight)
+  File ".../vllm/model_executor/parameter.py", line 222, in load_row_parallel_weight
+    loaded_weight = loaded_weight.narrow(...)
+RuntimeError: start (0) + length (17408) exceeds dimension size (8704).
+```
+`17408` = FFN `intermediate_size`; `8704 = 17408 / 2` = the NVFP4-packed (2 fp4/byte) dimension. vLLM is treating a packed W4A16_NVFP4 weight as an unquantized full-size tensor, i.e. the quant method for this dense Linear layer was never selected.
+### Likely cause
+PR #42566 ("[Quantization][ModelOpt] W4A16 NVFP4 fused MoE + mixed-precision dispatch", merged 2026-05-22) added `W4A16_NVFP4` mixed-precision dispatch, but its end-to-end validation was on the **MoE** model `nvidia/Qwen3.6-35B-A3B-NVFP4`. The **dense** Linear path here (`qwen3_5.py` `down_proj` -> `weight_loader_v2` -> `load_row_parallel_weight`) does not appear to be covered: per-layer `W4A16_NVFP4` entries are not routed to `ModelOptNvFp4W4A16LinearMethod` for dense Linear layers, so they fall through to the unquantized loader.
+Consistent with this: `nvidia/Qwen3.6-35B-A3B-NVFP4` (the MoE sibling) loads and runs fine on the same image; only the dense 27B fails.
+### config.json (excerpt)
+```
+"quantization_config": {
+  "quant_algo": "MIXED_PRECISION",
+  "quant_method": "modelopt",
+  "quantized_layers": {
+    "...": { "quant_algo": "FP8" },
+    "...mlp.down_proj": { "quant_algo": "W4A16_NVFP4" }
+  }
+}
+```
+### To Reproduce
+```
+vllm serve nvidia/Qwen3.6-27B-NVFP4 \
+  --quantization modelopt \
+  --trust-remote-code \
+  --max-model-len 65536 \
+  --kv-cache-dtype fp8
+```
+### Expected behavior
+Dense `W4A16_NVFP4` Linear layers (e.g. `mlp.down_proj`) in a `MIXED_PRECISION` modelopt checkpoint should dispatch to the Marlin W4A16 path (`ModelOptNvFp4W4A16LinearMethod`), the same way MoE layers do after #42566, and the model should load and serve.
+### Notes
+- Also reproduced with `--quantization modelopt_fp4`.
+- sm_121 (GB10) has no native FP4, so the intended path is Marlin W4A16 (weight-only).
+- Tested on the latest upstream nightly, so this is not a "stale image" issue.
+
+### Before submitting a new issue...
+
+- [x] Make sure you already searched for relevant issues, and asked the chatbot living at the bottom right corner of the [documentation page](https://docs.vllm.ai/en/latest/), which can answer lots of frequently asked questions.

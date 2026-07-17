@@ -1,0 +1,4 @@
+tensordict==0.5.0
+numpy>=1.24
+packaging
+cloudpickle

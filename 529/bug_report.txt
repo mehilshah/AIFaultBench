@@ -1,0 +1,95 @@
+# recovered-from-issue: https://github.com/pyg-team/pytorch_geometric/issues/9974
+
+TITLE
+PyTorch Geometric issue: Segmentation fault (core dumped)
+
+BODY
+### 🐛 Describe the bug
+
+Hello everyone,
+
+I'm currently experiencing an issue while training my Graph Convolutional Network (GCN) in a distributed system. I use Conda to manage my environment. However, when I start training with the GCN, which has approximately 9,000 parameters, I encounter a "Segmentation fault (core dumped)" error.
+
+Interestingly, I have run the same code on my local machine, which has a GTX 4060 with 8 GB of VRAM, and I did not encounter any errors. It's worth noting that my local setup uses a different version of CUDA (12.7) compared to the distributed system (12.2), as well as different versions of PyTorch dependencies.
+
+Any insights or suggestions would be greatly appreciated!
+
+Main specifics and dependecies:
+- CentOS Linux 7 (Core)
+- GPU: Tesla V100-DGXS-32GB
+- CUDA: NVIDIA-SMI 535.86.10, Driver Version: 535.86.10, CUDA Version: 12.2 
+- CUDA tools: Cuda compilation tools, release 9.1, V9.1.85
+- Conda: 24.11.2
+- Python: 3.10.6
+- PyTorch Geometric: 2.5.3
+- PyTorch: 2.3.1
+Other dependencies in conda-env.yml that I uploaded. 
+
+Conda environment configuration file:
+[conda-env.zip](https://github.com/user-attachments/files/18519876/conda-env.zip)
+
+Network architecture:
+```python
+class GraphConvNetwork(torch.nn.Module):
+    """Graph Convolutional Network for whole-graph binary classification. With GraphConv layers."""
+    def __init__(self, dim_in=151, dim_h:int=256, dim_out:int=1, `num_layers:int=4):`
+        super().__init__()
+
+        # Create a list of GCNConv layers
+        self.convs = ModuleList()
+        self.convs.append(GraphConv(dim_in, dim_h))  # First layer
+        self.ln = LayerNorm(dim_h)
+        # Add additional GCNConv layers based on dim_h
+        for _ in range(num_layers - 1):
+            self.convs.append(GraphConv(dim_h, dim_h))
+
+        # Correct concatenation size
+        concat_size = dim_h * 3 * (num_layers)  # Adjusted for pooling
+        dim_inter_0 = min(1024, max(2, concat_size // 2))
+        dim_inter_1 = max(2, dim_inter_0 // 2)
+
+        self.linear = Sequential(
+            Linear(concat_size, dim_inter_0),
+            BatchNorm1d(dim_inter_0),
+            ReLU(),
+            Linear(dim_inter_0, dim_inter_1),
+            Dropout(0.5),
+            ReLU(),
+            Linear(dim_inter_1, dim_out)
+        )
+
+        self.num_layers = num_layers
+        self.to(DEVICE)
+
+    def forward(self, x, edge_index, edge_attr, batch):
+        # Assume only positive correlation as weight edges
+        if torch.any(edge_attr < 0):
+            edge_attr = torch.abs(edge_attr)
+
+        _global_repr = []
+        # Pass through all GCN layers
+        for i, conv in enumerate(self.convs):
+            x = conv(x, edge_index) #, edge_attr)
+            emb = x
+            x = F.leaky_relu(x)
+            x = F.dropout(x, p=0.1, training=self.training)
+            if i != self.num_layers - 1:
+                x = self.ln(x)
+
+            # Graph-level readout: add, mean, max
+            max_pool = global_max_pool(x, batch)
+            _global_repr.append(max_pool)
+            add_pool = global_add_pool(x, batch)
+            _global_repr.append(add_pool)
+            mean_pool = global_mean_pool(x, batch)
+            _global_repr.append(mean_pool)
+
+        # Concatenate graph embeddings
+        h = torch.cat(_global_repr, dim=1)
+        h = self.linear(h)
+
+        return emb, torch.sigmoid(h)
+```
+P.S. I would greatly appreciate any advice on how to extract the most relevant sub-graphs for classification. Thank you!
+P.P.S. I am trying to perform a whole-graph binary classification using a set of undirected and weighted graphs with 148 nodes and 147+4(+64) features per node
+```

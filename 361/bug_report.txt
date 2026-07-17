@@ -1,0 +1,71 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/47068
+
+TITLE
+Potential host synchronization in deepspeed_sp_compute_loss due to Python conditional on CUDA tensor
+
+BODY
+### System Info
+
+- Transformers: 4.57.2
+- PyTorch: 2.7.1+cu128
+- DeepSpeed: 0.17.6
+- CUDA: 12.8
+- GPU: NVIDIA B300 SXM6 (2 nodes × 8 GPUs, 16 GPUs total)
+- Interconnect:
+  - Intra-node: NVSwitch
+  - Inter-node: InfiniBand
+
+### Information
+
+While profiling a distributed training workload with Nsight Systems, I observed what appears to be repeated host synchronization inside `deepspeed_sp_compute_loss`. The relevant code is located in: `src/transformers/integrations/deepspeed.py`
+
+```python
+good_tokens_per_rank = torch.distributed.nn.functional.all_gather(good_tokens, group=sp_group)
+
+total_loss = sum(
+    losses_per_rank[rank] * good_tokens_per_rank[rank]
+    for rank in range(sp_world_size)
+    if good_tokens_per_rank[rank] > 0
+)
+```
+
+Assuming `good_tokens_per_rank` contains CUDA tensors, the Python conditional appears to evaluate a CUDA tensor in Python, which may introduce an implicit host synchronization.
+
+https://github.com/huggingface/transformers/blob/main/src/transformers/integrations/deepspeed.py
+```python
+if good_tokens_per_rank[rank] > 0
+```
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [x] My own task or dataset (give details below)
+
+### Possible implementation
+
+Would it make sense to avoid the Python conditional and perform the filtering entirely on the GPU?
+For example, something along the lines of:
+
+```python
+good_tokens = torch.stack(good_tokens_per_rank)
+losses = torch.stack(losses_per_rank)
+
+mask = good_tokens > 0
+
+# Preserve the original "skip zero-token ranks" behavior.
+safe_losses = torch.where(
+    mask,
+    losses,
+    torch.zeros_like(losses),
+)
+
+total_loss = (safe_losses * good_tokens).sum()
+```
+
+This could potentially avoid evaluating CUDA tensors in Python while preserving the same semantics. However, I'm not sure whether the current implementation intentionally skips zero-token ranks to avoid NaN propagation or for some other reason, so I'd appreciate your thoughts before attempting a PR.
+
+### Expected behavior
+
+The loss aggregation should avoid unnecessary host synchronization while preserving the current semantics. If this behavior is intentional, it would be helpful to understand the rationale. Otherwise, I'd be happy to submit a PR after discussing the preferred implementation.
+
+Thank you!

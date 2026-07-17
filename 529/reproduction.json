@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "FORCE_CPU=1 WORLD_SIZE=1 bash run_repro.sh completed successfully.",
+    "Captured stdout ended with 'completed without segfault'.",
+    "A prior GPU-path attempt on this machine exposed a PyTorch CUDA compatibility warning for an RTX PRO 6000 Blackwell Max-Q (sm_120), so the reported CUDA/NCCL environment is not available here."
+  ],
+  "steps": [
+    "Created a minimal distributed graph-classification repro based on the reported GraphConv + global pooling architecture.",
+    "Installed a clean local PyTorch 2.3.1 environment and used the checked-in PyG source tree via PYTHONPATH.",
+    "Ran the repro in CPU/gloo mode and confirmed the model forward/backward path completes without a segfault."
+  ],
+  "blocking_reason": "The local machine does not match the reported GPU/runtime stack; the available GPU is incompatible with the installed PyTorch wheel (sm_120 vs supported up to sm_90), so the reported CUDA/NCCL segfault could not be exercised here.",
+  "reproduction_command": "FORCE_CPU=1 WORLD_SIZE=1 bash run_repro.sh"
+}

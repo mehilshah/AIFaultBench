@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "OpenSpielEnv(\"chess\", return_state=True, batch_size=(100,)) raises ValueError during construction: \"The value of spec.shape (torch.Size([1])) must match the env batch size (torch.Size([100])).\" The exception is thrown from torchrl/envs/libs/openspiel.py while assigning done_spec, before reset() runs.",
+  "steps": [
+    "Created a venv with system site packages so the preinstalled torch could be reused.",
+    "Installed the runtime dependencies needed for the local torchrl source: tensordict and open_spiel.",
+    "Ran repro.py with PYTHONPATH pointing at codebase/ and observed the expected ValueError during OpenSpielEnv construction."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

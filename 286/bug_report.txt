@@ -1,0 +1,134 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/3502
+
+TITLE
+Hang Issue at accelerator.prepare()
+
+BODY
+### System Info
+
+```Shell
+I'm following this document.
+https://github.com/huggingface/diffusers/blob/main/examples/dreambooth/README_lumina2.md
+
+Training Process work well when i use this accelerator config file 
+
+compute_environment: LOCAL_MACHINE
+debug: false
+distributed_type: MULTI_GPU
+downcast_bf16: 'no'
+enable_cpu_affinity: false
+gpu_ids: 0,1
+machine_rank: 0
+main_training_function: main
+mixed_precision: bf16
+num_machines: 1
+num_processes: 2
+rdzv_backend: static
+same_network: true
+tpu_env: []
+tpu_use_cluster: false
+tpu_use_sudo: false
+use_cpu: false
+
+
+But
+when I change accelerator config file like this
+
+compute_environment: LOCAL_MACHINE
+debug: false
+distributed_type: MULTI_GPU
+downcast_bf16: 'no'
+enable_cpu_affinity: false
+gpu_ids: 0,1,2,3
+machine_rank: 0
+main_training_function: main
+mixed_precision: bf16
+num_machines: 1
+num_processes: 4
+rdzv_backend: static
+same_network: true
+tpu_env: []
+tpu_use_cluster: false
+tpu_use_sudo: false
+use_cpu: false
+
+
+Training Process Stuck at 
+accelerator.prepare(transformer, optimizer, train_dataloader, lr_scheduler)
+
+-----
+python : 3.11.12
+cuda: 12.4
+nvcc: 12.2
+GPU: H200 * 8
+accelerate: 1.6.0
+```
+
+### Information
+
+- [x] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [x] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+Training Process:
+1. accelerate config (gpu_id: 0,1 & process 2)
+2. export MODEL_NAME="Alpha-VLLM/Lumina-Image-2.0"
+export INSTANCE_DIR="dog"
+export OUTPUT_DIR="trained-lumina2-lora"
+
+accelerate launch train_dreambooth_lora_lumina2.py \
+  --pretrained_model_name_or_path=$MODEL_NAME  \
+  --instance_data_dir=$INSTANCE_DIR \
+  --output_dir=$OUTPUT_DIR \
+  --mixed_precision="bf16" \
+  --instance_prompt="a photo of sks dog" \
+  --resolution=1024 \
+  --train_batch_size=1 \
+  --gradient_accumulation_steps=4 \
+  --use_8bit_adam \
+  --learning_rate=1e-4 \
+  --report_to="wandb" \
+  --lr_scheduler="constant" \
+  --lr_warmup_steps=0 \
+  --max_train_steps=500 \
+  --validation_prompt="A photo of sks dog in a bucket" \
+  --validation_epochs=25 \
+  --seed="0" \
+  --push_to_hub
+
+3. accelerate config (gpu_id: 0,1,2,3 & process 4)
+2. export MODEL_NAME="Alpha-VLLM/Lumina-Image-2.0"
+export INSTANCE_DIR="dog"
+export OUTPUT_DIR="trained-lumina2-lora"
+
+accelerate launch train_dreambooth_lora_lumina2.py \
+  --pretrained_model_name_or_path=$MODEL_NAME  \
+  --instance_data_dir=$INSTANCE_DIR \
+  --output_dir=$OUTPUT_DIR \
+  --mixed_precision="bf16" \
+  --instance_prompt="a photo of sks dog" \
+  --resolution=1024 \
+  --train_batch_size=1 \
+  --gradient_accumulation_steps=4 \
+  --use_8bit_adam \
+  --learning_rate=1e-4 \
+  --report_to="wandb" \
+  --lr_scheduler="constant" \
+  --lr_warmup_steps=0 \
+  --max_train_steps=500 \
+  --validation_prompt="A photo of sks dog in a bucket" \
+  --validation_epochs=25 \
+  --seed="0" \
+  --push_to_hub
+
+
+
+### Expected behavior
+
+When I use multiple GPUs, the training process should work well

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Nested-dict split assertion fails in a 4-process run at accelerate/test_utils/scripts/test_script.py:479: assert results[\"a\"] == data_copy[\"a\"][-1]",
+  "steps": [
+    "Create an isolated venv and install the pinned CPU-only dependencies.",
+    "Run the 4-process CPU distributed harness in repro.py.",
+    "Observe the assertion failure from test_split_between_processes_nested_dict on ranks 1-3."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

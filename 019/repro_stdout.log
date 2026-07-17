@@ -1,0 +1,114 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.10/site-packages (26.1.2)
+Requirement already satisfied: setuptools in ./.venv/lib/python3.10/site-packages (83.0.0)
+Requirement already satisfied: wheel in ./.venv/lib/python3.10/site-packages (0.47.0)
+Requirement already satisfied: packaging>=24.0 in ./.venv/lib/python3.10/site-packages (from wheel) (26.2)
+Requirement already satisfied: tensorflow==2.15.1 in ./.venv/lib/python3.10/site-packages (2.15.1)
+Requirement already satisfied: absl-py>=1.0.0 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (2.5.0)
+Requirement already satisfied: astunparse>=1.6.0 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (1.6.3)
+Requirement already satisfied: flatbuffers>=23.5.26 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (25.12.19)
+Requirement already satisfied: gast!=0.5.0,!=0.5.1,!=0.5.2,>=0.2.1 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (0.7.0)
+Requirement already satisfied: google-pasta>=0.1.1 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (0.2.0)
+Requirement already satisfied: h5py>=2.9.0 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (3.16.0)
+Requirement already satisfied: libclang>=13.0.0 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (18.1.1)
+Requirement already satisfied: ml-dtypes~=0.3.1 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (0.3.2)
+Requirement already satisfied: numpy<2.0.0,>=1.23.5 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (1.26.4)
+Requirement already satisfied: opt-einsum>=2.3.2 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (3.4.0)
+Requirement already satisfied: packaging in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (26.2)
+Collecting protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<5.0.0dev,>=3.20.3 (from tensorflow==2.15.1)
+  Downloading protobuf-4.25.9-cp37-abi3-manylinux2014_x86_64.whl.metadata (541 bytes)
+Requirement already satisfied: setuptools in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (83.0.0)
+Requirement already satisfied: six>=1.12.0 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (1.17.0)
+Requirement already satisfied: termcolor>=1.1.0 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (3.3.0)
+Requirement already satisfied: typing-extensions>=3.6.6 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (4.16.0)
+Requirement already satisfied: wrapt<1.15,>=1.11.0 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (1.14.2)
+Requirement already satisfied: tensorflow-io-gcs-filesystem>=0.23.1 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (0.37.1)
+Requirement already satisfied: grpcio<2.0,>=1.24.3 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (1.82.1)
+Requirement already satisfied: tensorboard<2.16,>=2.15 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (2.15.2)
+Requirement already satisfied: tensorflow-estimator<2.16,>=2.15.0 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (2.15.0)
+Requirement already satisfied: keras<2.16,>=2.15.0 in ./.venv/lib/python3.10/site-packages (from tensorflow==2.15.1) (2.15.0)
+Requirement already satisfied: google-auth<3,>=1.6.3 in ./.venv/lib/python3.10/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1) (2.56.0)
+Requirement already satisfied: google-auth-oauthlib<2,>=0.5 in ./.venv/lib/python3.10/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1) (1.4.0)
+Requirement already satisfied: markdown>=2.6.8 in ./.venv/lib/python3.10/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1) (3.10.2)
+Requirement already satisfied: requests<3,>=2.21.0 in ./.venv/lib/python3.10/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1) (2.34.2)
+Requirement already satisfied: tensorboard-data-server<0.8.0,>=0.7.0 in ./.venv/lib/python3.10/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1) (0.7.2)
+Requirement already satisfied: werkzeug>=1.0.1 in ./.venv/lib/python3.10/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1) (3.1.8)
+Requirement already satisfied: pyasn1-modules>=0.2.1 in ./.venv/lib/python3.10/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1) (0.4.2)
+Requirement already satisfied: cryptography>=38.0.3 in ./.venv/lib/python3.10/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1) (49.0.0)
+Requirement already satisfied: requests-oauthlib>=0.7.0 in ./.venv/lib/python3.10/site-packages (from google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1) (2.0.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./.venv/lib/python3.10/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1) (3.4.9)
+Requirement already satisfied: idna<4,>=2.5 in ./.venv/lib/python3.10/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1) (3.18)
+Requirement already satisfied: urllib3<3,>=1.26 in ./.venv/lib/python3.10/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1) (2.7.0)
+Requirement already satisfied: certifi>=2023.5.7 in ./.venv/lib/python3.10/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1) (2026.6.17)
+Requirement already satisfied: wheel<1.0,>=0.23.0 in ./.venv/lib/python3.10/site-packages (from astunparse>=1.6.0->tensorflow==2.15.1) (0.47.0)
+Requirement already satisfied: cffi>=2.0.0 in ./.venv/lib/python3.10/site-packages (from cryptography>=38.0.3->google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1) (2.1.0)
+Requirement already satisfied: pycparser in ./.venv/lib/python3.10/site-packages (from cffi>=2.0.0->cryptography>=38.0.3->google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1) (3.0)
+Requirement already satisfied: pyasn1<0.7.0,>=0.6.1 in ./.venv/lib/python3.10/site-packages (from pyasn1-modules>=0.2.1->google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1) (0.6.4)
+Requirement already satisfied: oauthlib>=3.0.0 in ./.venv/lib/python3.10/site-packages (from requests-oauthlib>=0.7.0->google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1) (3.3.1)
+Requirement already satisfied: markupsafe>=2.1.1 in ./.venv/lib/python3.10/site-packages (from werkzeug>=1.0.1->tensorboard<2.16,>=2.15->tensorflow==2.15.1) (3.0.3)
+Downloading protobuf-4.25.9-cp37-abi3-manylinux2014_x86_64.whl (295 kB)
+Installing collected packages: protobuf
+  Attempting uninstall: protobuf
+    Found existing installation: protobuf 6.31.1
+    Uninstalling protobuf-6.31.1:
+      Successfully uninstalled protobuf-6.31.1
+Successfully installed protobuf-4.25.9
+Collecting protobuf==6.31.1
+  Downloading protobuf-6.31.1-cp39-abi3-manylinux2014_x86_64.whl.metadata (593 bytes)
+Downloading protobuf-6.31.1-cp39-abi3-manylinux2014_x86_64.whl (321 kB)
+Installing collected packages: protobuf
+  Attempting uninstall: protobuf
+    Found existing installation: protobuf 4.25.9
+    Uninstalling protobuf-4.25.9:
+      Successfully uninstalled protobuf-4.25.9
+Successfully installed protobuf-6.31.1
+Collecting tensorflow-text==2.20.1
+  Downloading tensorflow_text-2.20.1-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.1 kB)
+Downloading tensorflow_text-2.20.1-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (62.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.4/62.4 MB 60.5 MB/s  0:00:01
+Installing collected packages: tensorflow-text
+  Attempting uninstall: tensorflow-text
+    Found existing installation: tensorflow-text 2.20.1
+    Uninstalling tensorflow-text-2.20.1:
+      Successfully uninstalled tensorflow-text-2.20.1
+Successfully installed tensorflow-text-2.20.1
+Requirement already satisfied: tensorflow-datasets in ./.venv/lib/python3.10/site-packages (4.9.10)
+Requirement already satisfied: gin-config in ./.venv/lib/python3.10/site-packages (0.5.0)
+Collecting scipy
+  Downloading scipy-1.15.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+Requirement already satisfied: pyyaml==6.0.2 in ./.venv/lib/python3.10/site-packages (6.0.2)
+Requirement already satisfied: absl-py in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (2.5.0)
+Requirement already satisfied: array_record>=0.5.0 in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (0.8.1)
+Requirement already satisfied: dm-tree in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (0.1.10)
+Requirement already satisfied: etils>=1.6.0 in ./.venv/lib/python3.10/site-packages (from etils[edc,enp,epath,epy,etree]>=1.6.0; python_version < "3.11"->tensorflow-datasets) (1.13.0)
+Requirement already satisfied: immutabledict in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (4.3.1)
+Requirement already satisfied: numpy in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (1.26.4)
+Requirement already satisfied: promise in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (2.3)
+Requirement already satisfied: protobuf>=3.20 in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (6.31.1)
+Requirement already satisfied: psutil in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (7.2.2)
+Requirement already satisfied: pyarrow in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (25.0.0)
+Requirement already satisfied: requests>=2.19.0 in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (2.34.2)
+Requirement already satisfied: simple_parsing in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (0.1.8)
+Requirement already satisfied: tensorflow-metadata in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (1.21.0)
+Requirement already satisfied: termcolor in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (3.3.0)
+Requirement already satisfied: toml in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (0.10.2)
+Requirement already satisfied: tqdm in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (4.68.4)
+Requirement already satisfied: wrapt in ./.venv/lib/python3.10/site-packages (from tensorflow-datasets) (1.14.2)
+Requirement already satisfied: typing_extensions in ./.venv/lib/python3.10/site-packages (from etils[edc,enp,epath,epy,etree]>=1.6.0; python_version < "3.11"->tensorflow-datasets) (4.16.0)
+Requirement already satisfied: fsspec in ./.venv/lib/python3.10/site-packages (from etils[edc,enp,epath,epy,etree]>=1.6.0; python_version < "3.11"->tensorflow-datasets) (2026.6.0)
+Requirement already satisfied: importlib_resources in ./.venv/lib/python3.10/site-packages (from etils[edc,enp,epath,epy,etree]>=1.6.0; python_version < "3.11"->tensorflow-datasets) (7.1.0)
+Requirement already satisfied: zipp in ./.venv/lib/python3.10/site-packages (from etils[edc,enp,epath,epy,etree]>=1.6.0; python_version < "3.11"->tensorflow-datasets) (4.1.0)
+Requirement already satisfied: einops in ./.venv/lib/python3.10/site-packages (from etils[edc,enp,epath,epy,etree]>=1.6.0; python_version < "3.11"->tensorflow-datasets) (0.8.2)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./.venv/lib/python3.10/site-packages (from requests>=2.19.0->tensorflow-datasets) (3.4.9)
+Requirement already satisfied: idna<4,>=2.5 in ./.venv/lib/python3.10/site-packages (from requests>=2.19.0->tensorflow-datasets) (3.18)
+Requirement already satisfied: urllib3<3,>=1.26 in ./.venv/lib/python3.10/site-packages (from requests>=2.19.0->tensorflow-datasets) (2.7.0)
+Requirement already satisfied: certifi>=2023.5.7 in ./.venv/lib/python3.10/site-packages (from requests>=2.19.0->tensorflow-datasets) (2026.6.17)
+Requirement already satisfied: attrs>=18.2.0 in ./.venv/lib/python3.10/site-packages (from dm-tree->tensorflow-datasets) (26.1.0)
+Requirement already satisfied: six in ./.venv/lib/python3.10/site-packages (from promise->tensorflow-datasets) (1.17.0)
+Requirement already satisfied: docstring-parser~=0.15 in ./.venv/lib/python3.10/site-packages (from simple_parsing->tensorflow-datasets) (0.18.0)
+Downloading scipy-1.15.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (37.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 37.7/37.7 MB 68.6 MB/s  0:00:00
+Installing collected packages: scipy
+Successfully installed scipy-1.15.3
+tensorflow=2.15.1
+
+== import tensorflow_models ==

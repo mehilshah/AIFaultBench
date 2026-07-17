@@ -1,0 +1,2 @@
+Running Decoder with flash attention and custom ALiBi positions
+x.shape=(2, 4, 512) pos.shape=(2, 4)

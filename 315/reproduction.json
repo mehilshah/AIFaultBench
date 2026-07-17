@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `model.generate(input_ids, synced_gpus=True, cache_implementation='paged')` on a tiny GPT-2 config emits `synced_gpus is not ignored for continuous batching. Got synced_gpus = True`, matching the bug report's misleading wording.",
+  "steps": [
+    "Create the isolated environment with `bash setup_env.sh`.",
+    "Run the reproduction with `bash run_repro.sh`.",
+    "Observe the warning line `synced_gpus is not ignored for continuous batching. Got synced_gpus = True` in the captured logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

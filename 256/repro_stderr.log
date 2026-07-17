@@ -1,0 +1,93 @@
+256/.venv/lib/python3.12/site-packages/rdt/transformers/id.py:88: FutureWarning: The 'IDGenerator' has been renamed to 'IndexGenerator'. Please update thename to ensure compatibility with future versions of RDT.
+  warnings.warn(
+Traceback (most recent call last):
+  File "256/codebase/sdv/single_table/base.py", line 739, in _sample_with_progress_bar
+    sampled = self._sample_in_batches(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "256/codebase/sdv/single_table/base.py", line 670, in _sample_in_batches
+    sampled_rows = self._sample_batch(
+                   ^^^^^^^^^^^^^^^^^^^
+  File "256/codebase/sdv/single_table/base.py", line 602, in _sample_batch
+    sampled, num_valid = self._sample_rows(
+                         ^^^^^^^^^^^^^^^^^^
+  File "256/codebase/sdv/single_table/base.py", line 505, in _sample_rows
+    if self._model and not self._random_state_set:
+       ^^^^^^^^^^^
+AttributeError: 'CTGANSynthesizer' object has no attribute '_model'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "256/repro.py", line 47, in _run_case
+    synth.sample(10)
+  File "256/codebase/sdv/single_table/base.py", line 778, in sample
+    return self._sample_with_progress_bar(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "256/codebase/sdv/single_table/base.py", line 748, in _sample_with_progress_bar
+    handle_sampling_error(output_file_path == TMP_FILE_NAME, output_file_path, error)
+  File "256/codebase/sdv/single_table/utils.py", line 112, in handle_sampling_error
+    raise type(sampling_error)(error_msg + '\n' + str(sampling_error))
+AttributeError: Error: Sampling terminated. Partial results are stored in a temporary file: .sample.csv.temp. This file will be overridden the next time you sample. Please rename the file if you wish to save these results.
+'CTGANSynthesizer' object has no attribute '_model'
+256/.venv/lib/python3.12/site-packages/rdt/transformers/id.py:88: FutureWarning: The 'IDGenerator' has been renamed to 'IndexGenerator'. Please update thename to ensure compatibility with future versions of RDT.
+  warnings.warn(
+Traceback (most recent call last):
+  File "256/codebase/sdv/single_table/base.py", line 739, in _sample_with_progress_bar
+    sampled = self._sample_in_batches(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "256/codebase/sdv/single_table/base.py", line 670, in _sample_in_batches
+    sampled_rows = self._sample_batch(
+                   ^^^^^^^^^^^^^^^^^^^
+  File "256/codebase/sdv/single_table/base.py", line 602, in _sample_batch
+    sampled, num_valid = self._sample_rows(
+                         ^^^^^^^^^^^^^^^^^^
+  File "256/codebase/sdv/single_table/base.py", line 505, in _sample_rows
+    if self._model and not self._random_state_set:
+       ^^^^^^^^^^^
+AttributeError: 'TVAESynthesizer' object has no attribute '_model'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "256/repro.py", line 47, in _run_case
+    synth.sample(10)
+  File "256/codebase/sdv/single_table/base.py", line 778, in sample
+    return self._sample_with_progress_bar(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "256/codebase/sdv/single_table/base.py", line 748, in _sample_with_progress_bar
+    handle_sampling_error(output_file_path == TMP_FILE_NAME, output_file_path, error)
+  File "256/codebase/sdv/single_table/utils.py", line 112, in handle_sampling_error
+    raise type(sampling_error)(error_msg + '\n' + str(sampling_error))
+AttributeError: Error: Sampling terminated. Partial results are stored in a temporary file: .sample.csv.temp. This file will be overridden the next time you sample. Please rename the file if you wish to save these results.
+'TVAESynthesizer' object has no attribute '_model'
+256/.venv/lib/python3.12/site-packages/rdt/transformers/id.py:88: FutureWarning: The 'IDGenerator' has been renamed to 'IndexGenerator'. Please update thename to ensure compatibility with future versions of RDT.
+  warnings.warn(
+Traceback (most recent call last):
+  File "256/codebase/sdv/single_table/base.py", line 739, in _sample_with_progress_bar
+    sampled = self._sample_in_batches(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "256/codebase/sdv/single_table/base.py", line 670, in _sample_in_batches
+    sampled_rows = self._sample_batch(
+                   ^^^^^^^^^^^^^^^^^^^
+  File "256/codebase/sdv/single_table/base.py", line 602, in _sample_batch
+    sampled, num_valid = self._sample_rows(
+                         ^^^^^^^^^^^^^^^^^^
+  File "256/codebase/sdv/single_table/base.py", line 505, in _sample_rows
+    if self._model and not self._random_state_set:
+       ^^^^^^^^^^^
+AttributeError: 'CopulaGANSynthesizer' object has no attribute '_model'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "256/repro.py", line 47, in _run_case
+    synth.sample(10)
+  File "256/codebase/sdv/single_table/base.py", line 778, in sample
+    return self._sample_with_progress_bar(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "256/codebase/sdv/single_table/base.py", line 748, in _sample_with_progress_bar
+    handle_sampling_error(output_file_path == TMP_FILE_NAME, output_file_path, error)
+  File "256/codebase/sdv/single_table/utils.py", line 112, in handle_sampling_error
+    raise type(sampling_error)(error_msg + '\n' + str(sampling_error))
+AttributeError: Error: Sampling terminated. Partial results are stored in a temporary file: .sample.csv.temp. This file will be overridden the next time you sample. Please rename the file if you wish to save these results.
+'CopulaGANSynthesizer' object has no attribute '_model'

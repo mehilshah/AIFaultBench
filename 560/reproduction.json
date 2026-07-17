@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "run_repro.sh completed with rank-0 stdout showing exception_type=OSError and exception_message=Can't load the configuration of a PeftModelForCausalLM object; stderr shows the traceback ending at deepspeed/runtime/sequence_parallel/ulysses_sp.py:397 in AutoConfig.from_pretrained(model_name_or_path).",
+  "steps": [
+    "Created a CPU-only virtualenv and installed torch 2.6.0+cpu plus transformers 4.53.3, peft 0.16.0, and DeepSpeed runtime dependencies.",
+    "Launched the repro under 2 distributed CPU ranks with `run_repro.sh`.",
+    "Observed the expected OSError when `UlyssesSPAttentionHF.register_with_transformers()` received a PEFT-wrapped model object instead of a path or PreTrainedModel."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

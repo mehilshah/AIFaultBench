@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "170/repro.py", line 42, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "170/repro.py", line 37, in main
+    assert dst_equal, "RandomThinPlateSpline should reuse identical TPS control points across the batch"
+           ^^^^^^^^^
+AssertionError: RandomThinPlateSpline should reuse identical TPS control points across the batch

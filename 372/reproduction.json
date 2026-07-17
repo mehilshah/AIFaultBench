@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "AutoNormal(model_with_MixtureOfDiagNormals) raises NotImplementedError when accessing site['fn'].support.",
+    "MixtureOfDiagNormals.rsample(torch.Size([2, 3])) raises RuntimeError in _MixDiagNormalSample.forward with a tensor expansion shape mismatch."
+  ],
+  "steps": [
+    "Create a Python 3.11 virtual environment with setup_env.sh.",
+    "Install numpy<2, torch==2.0.1, pyro-api, opt_einsum, and tqdm, then install the local codebase in editable mode.",
+    "Run repro.py through run_repro.sh and observe both the missing-support failure and the rsample shape failure."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

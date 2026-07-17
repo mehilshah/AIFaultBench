@@ -1,0 +1,13 @@
+{
+  "reproducible": true,
+  "evidence": "In a fresh Python 3.12 venv with the local SDV checkout installed editable, fitting a dataset whose metadata drops every modeled column left each synthesizer without _model. CTGANSynthesizer, TVAESynthesizer, and CopulaGANSynthesizer each failed on sample(10) with AttributeError: '...Synthesizer' object has no attribute '_model'.",
+  "steps": [
+    "Created a fresh Python 3.12 virtual environment.",
+    "Installed the runtime dependencies and the local SDV checkout in editable mode.",
+    "Ran the issue's minimal data/metadata setup for CTGANSynthesizer, TVAESynthesizer, and CopulaGANSynthesizer.",
+    "Observed that fit completed with has _model=False for each synthesizer.",
+    "Observed sample(10) raise AttributeError for each synthesizer."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

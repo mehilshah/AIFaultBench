@@ -1,0 +1,7 @@
+{
+  "bug_id": 546,
+  "source_issue": "https://github.com/huggingface/accelerate/issues/1116",
+  "title": "Multi-node launch is bypassed when gpu_ids is a single id",
+  "reproduction_command": "bash run_repro.sh",
+  "primary_artifact": "repro.py"
+}

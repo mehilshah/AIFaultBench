@@ -1,0 +1,146 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2691
+
+TITLE
+[BUG] The behaviour of `param_groups_layer_decay()` towards `requires_grad==False` parameters
+
+BODY
+**Describe the bug**
+I am not sure this is a bug or desired behaviour.
+`param_groups_layer_decay()` mismatches `lr_scale` when there are `requires_grad==False` parameters in a model.
+
+**To Reproduce**
+
+```python
+from typing import Tuple
+from torch import nn, Tensor
+from timm.optim import create_optimizer_v2
+from timm.utils import ModelEmaV3
+
+from typing import Dict, Union, List
+
+
+class myModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.blocks = nn.Sequential(
+            *[nn.Linear(32, 32) for i in range(3)]
+        )
+        self.emablocks = ModelEmaV3(nn.Sequential(
+            *[nn.Linear(32, 32) for i in range(3)]
+        ))
+        self.emablocks.requires_grad_(False)  # NOTE
+
+    def group_matcher(
+        self,
+        coarse: bool = False,
+    ) -> Dict[str, Union[str, List]]:
+        # just as other timm models
+        return dict(
+            blocks=r'^blocks\.(\d+)',
+            emablocks=r'^emablocks\.',  # dispensable, assign to one group
+        )
+
+    def forward(self, x: Tensor) -> Tuple[Tensor, ...]:
+        x_ = x
+        for blk in self.blocks:
+            x = blk(x)
+
+        for emablk in self.emablocks.module:
+            x_ = emablk(x_)
+
+        return x, x_
+
+
+if __name__ == '__main__':
+    model = myModel()
+    print(model)
+    optim = create_optimizer_v2(
+        model_or_params=model,
+        opt='adamw',
+        lr=1e-3,
+        weight_decay=0.05,
+        layer_decay=0.9,
+    )
+    print(len(optim.param_groups))  # 6
+    print(len(list(model.named_parameters())))  # 12
+
+    for groupid, param_group in enumerate(optim.param_groups):
+        print(f"{groupid}: {param_group['lr_scale']}")
+```
+
+The final prints:
+
+```shell
+0: 0.7290000000000001
+1: 0.7290000000000001
+2: 0.81
+3: 0.81
+4: 0.9
+5: 0.9
+```
+
+**Expected behavior**
+
+```shell
+0: 0.81
+1: 0.81
+2: 0.9
+3: 0.9
+4: 1.0
+5: 1.0
+```
+
+**Analysis**
+
+If you print `layer_map`,
+
+https://github.com/huggingface/pytorch-image-models/blob/af354f6a671083624482df637c0252f0504e5e87/timm/optim/_param_groups.py#L138
+
+it looks like
+
+```json
+{
+    "blocks.0.weight": 0,
+    "blocks.0.bias": 0,
+    "blocks.1.weight": 1,
+    "blocks.1.bias": 1,
+    "blocks.2.weight": 2,
+    "blocks.2.bias": 2,
+    "emablocks.module.0.weight": 3,
+    "emablocks.module.0.bias": 3,
+    "emablocks.module.1.weight": 3,
+    "emablocks.module.1.bias": 3,
+    "emablocks.module.2.weight": 3,
+    "emablocks.module.2.bias": 3
+}
+```
+
+emablocks assigned layerid==3, results in the `lr_scale` assignment to be:
+
+|layerid|lr_scale|requires_grad|
+|-------|--------|--------------|
+|3|1.0||
+|2|0.9||
+|1|0.81||
+|0|0.7290000000000001||
+
+This is because `layer_scales` takes `requires_grad==False` layers into consideration,
+but the subsequent matching procudure ignores them.
+
+https://github.com/huggingface/pytorch-image-models/blob/af354f6a671083624482df637c0252f0504e5e87/timm/optim/_param_groups.py#L144-L148
+
+BUT, should we expect
+
+|layerid|lr_scale|requires_grad|
+|-------|--------|--------------|
+|3|-||
+|2|1.0||
+|1|0.9||
+|0|0.81||
+
+Let's first discuss is this a desired behaviour or not.
+
+**Desktop (please complete the following information):**
+
+irrelevant
+

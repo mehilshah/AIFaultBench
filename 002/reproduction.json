@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` with TensorFlow 2.17.1 prints the legacy import reference from `codebase/research/object_detection/exporter.py` and then fails with `ModuleNotFoundError: No module named 'tensorflow.contrib'`.",
+  "steps": [
+    "Created a TensorFlow 2.17.1 virtual environment from `requirements.txt`.",
+    "Ran `python repro.py` through `run_repro.sh`.",
+    "Observed the expected `ModuleNotFoundError` from `from tensorflow.contrib.quantize.python import graph_matcher`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

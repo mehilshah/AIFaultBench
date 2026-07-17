@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "repro_stdout.log shows expected_dtype=torch.float32 and actual_dtype=torch.bfloat16; repro_stderr.log shows AssertionError: Expected module init to keep parameters in torch.float32, got torch.bfloat16.",
+  "steps": [
+    "Created a clean Python venv and installed a CPU-only torch plus the minimal Lightning Fabric runtime dependencies.",
+    "Loaded the checked-in Lightning source from codebase/src while bypassing the top-level lightning package import path.",
+    "Instantiated FSDPPrecision(\"bf16-mixed\") and created a module inside module_init_context().",
+    "Observed the initialized parameter dtype was torch.bfloat16 instead of the expected torch.float32, which triggered the assertion."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

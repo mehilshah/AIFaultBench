@@ -1,0 +1,4 @@
+warning_count=2
+warning[1]=When using the `ThroughputMonitor`, you need to define a `flops_per_batch` attribute or property in BoringModel to compute the FLOPs.
+warning[2]=When using the `ThroughputMonitor`, you need to define a `flops_per_batch` attribute or property in BoringModel to compute the FLOPs.
+wrote=597/reproduction.json

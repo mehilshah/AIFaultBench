@@ -1,0 +1,62 @@
+Title: `ot.unbalanced.sinkhorn_knopp_unbalanced` change between `POT==0.9.4`  and `POT==0.9.5`. 
+Date: 2024-11-17T12:37:16+00:00
+URL: https://github.com/PythonOT/POT/issues/691
+
+Description:
+## Describe the bug
+
+The output of `ot.unbalanced.sinkhorn_knopp_unbalanced` has changed quite significantly between versions `POT==0.9.4` 
+and `POT==0.9.5`. 
+
+CI Test failing in `torchcfm` package across all python and OS versions tested: https://github.com/atong01/conditional-flow-matching/actions/runs/11873892894/job/33098878771?pr=145
+
+Behavior has been consistent since at least 0.9.1.
+
+### To Reproduce
+Steps to reproduce the behavior:
+```
+[alextong:~] [base] % pip install POT==0.9.4 -q
+[alextong:~] [base] % python
+Python 3.9.7 (default, Sep 16 2021, 08:50:36)
+[Clang 10.0.0 ] :: Anaconda, Inc. on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import ot
+>>> a=[.5, .5]
+>>> b=[.5, .5]
+>>> M=[[0., 1.],[1., 0.]]
+>>> ot.unbalanced.sinkhorn_knopp_unbalanced(a, b, M, 1., 1.)
+array([[0.51122814, 0.18807032],
+       [0.18807032, 0.51122814]])
+>>>
+[alextong:~] [base] % pip install POT==0.9.5 -q
+[alextong:~] [base] % python
+Python 3.9.7 (default, Sep 16 2021, 08:50:36)
+[Clang 10.0.0 ] :: Anaconda, Inc. on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import ot
+>>> a=[.5, .5]
+>>> b=[.5, .5]
+>>> M=[[0., 1.],[1., 0.]]
+>>> ot.unbalanced.sinkhorn_knopp_unbalanced(a, b, M, 1., 1.)
+array([[0.32205361, 0.1184769 ],
+       [0.1184769 , 0.32205361]])
+```
+
+### Environment (please complete the following information):
+Output of the following code snippet:
+```
+Python 3.9.7 (default, Sep 16 2021, 08:50:36)
+[Clang 10.0.0 ] :: Anaconda, Inc. on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import platform; print(platform.platform())
+macOS-10.16-x86_64-i386-64bit
+>>> import sys; print("Python", sys.version)
+Python 3.9.7 (default, Sep 16 2021, 08:50:36)
+[Clang 10.0.0 ]
+>>> import numpy; print("NumPy", numpy.__version__)
+NumPy 1.26.4
+>>> import scipy; print("SciPy", scipy.__version__)
+SciPy 1.13.1
+>>> import ot; print("POT", ot.__version__)
+POT 0.9.5
+```

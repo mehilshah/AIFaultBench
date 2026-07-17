@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "repro.py prints model_device=cuda:0, input_device=cuda:0, and explainer_mlp_device=cpu before training.",
+    "run_repro.sh fails in codebase/torch_geometric/explain/algorithm/pg_explainer.py:130 with RuntimeError: Expected all tensors to be on the same device, but got mat1 is on cuda:0, different from other tensors on cpu."
+  ],
+  "steps": [
+    "Create a clean virtual environment with CUDA-enabled torch 2.11.0+cu128 and install the local codebase editable.",
+    "Run a minimal graph model on cuda and instantiate PGExplainer without moving the explainer to cuda.",
+    "Call PGExplainer.train(); the internal MLP remains on cpu and F.linear raises the reported device-mismatch RuntimeError."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

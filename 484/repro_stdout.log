@@ -1,0 +1,2 @@
+verified source marker: codebase/src/diffusers/pipelines/cosmos/pipeline_cosmos2_5_predict.py:677
+running with a pipeline object incorrectly assigned to safety_checker

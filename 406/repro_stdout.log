@@ -1,0 +1,12 @@
+{
+  "flux_modular_pipeline_bases": [
+    "ModularPipeline",
+    "FluxLoraLoaderMixin",
+    "TextualInversionLoaderMixin"
+  ],
+  "ideogram4_lora_loader_has_load_lora_weights": true,
+  "ideogram4_modular_pipeline_bases": [
+    "ModularPipeline"
+  ],
+  "missing_lora_mixin": true
+}

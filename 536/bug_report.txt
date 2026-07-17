@@ -1,0 +1,164 @@
+# recovered-from-issue: https://github.com/vllm-project/vllm/issues/47196
+
+TITLE
+[Bug]: [ROCm][gfx942] GPU memory access fault with MTP spec-decode + sparse-MLA decode under cuda graph (GLM-5.1-FP8)
+
+BODY
+### Your current environment
+
+<details>
+<summary>The output of <code>python collect_env.py</code></summary>
+
+```text
+==============================
+        System Info
+==============================
+OS                           : Ubuntu 22.04.5 LTS (x86_64)
+GCC version                  : (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0
+Clang version                : 22.0.0git (https://github.com/RadeonOpenCompute/llvm-project roc-7.2.3 26084 f58b06dce1f9c15707c5f808fd002e18c2accf7e)
+CMake version                : version 3.31.10
+Libc version                 : glibc-2.35
+
+==============================
+       PyTorch Info
+==============================
+PyTorch version              : 2.10.0+git8514f05
+Is debug build               : False
+CUDA used to build PyTorch   : N/A
+ROCM used to build PyTorch   : 7.2.53211
+XPU used to build PyTorch    : N/A
+
+==============================
+      Python Environment
+==============================
+Python version               : 3.12.13 (main, Mar  4 2026, 09:23:07) [GCC 11.4.0] (64-bit runtime)
+Python platform              : Linux-5.15.0-70-generic-x86_64-with-glibc2.35
+
+==============================
+       CUDA / GPU Info
+==============================
+Is CUDA available            : True
+CUDA runtime version         : Could not collect
+CUDA_MODULE_LOADING set to   :
+GPU models and configuration :  (gfx942:sramecc+:xnack-)
+Nvidia driver version        : Could not collect
+cuDNN version                : Could not collect
+HIP runtime version          : 7.2.53211
+MIOpen runtime version       : 3.5.1
+Is XNNPACK available         : True
+
+==============================
+          CPU Info
+==============================
+Architecture:                    x86_64
+CPU(s):                          224
+Model name:                      Intel(R) Xeon(R) Platinum 8480C
+Thread(s) per core:              2
+Core(s) per socket:              56
+Socket(s):                       2
+NUMA node(s):                    2
+NUMA node0 CPU(s):               0-55,112-167
+NUMA node1 CPU(s):               56-111,168-223
+
+==============================
+Versions of relevant libraries
+==============================
+[pip3] conch-triton-kernels==1.2.1
+[pip3] numpy==2.1.3
+[pip3] pyzmq==27.1.0
+[pip3] torch==2.10.0+git8514f05
+[pip3] torch_c_dlpack_ext==0.1.5
+[pip3] torchaudio==2.9.0+eaa9e4e
+[pip3] torchvision==0.24.1+d801a34
+[pip3] transformers==5.12.0
+[pip3] triton==3.6.0
+[pip3] triton_kernels==1.0.0
+[conda] Could not collect
+
+==============================
+         vLLM Info
+==============================
+ROCM Version                 : 7.2.53211-c2d9476115
+vLLM Version                 : 0.23.0
+vLLM Build Flags:
+  CUDA Archs: Not Set; ROCm: Disabled; XPU: Disabled
+GPU Topology:
+  8x AMD Instinct MI300X (gfx942:sramecc+:xnack-), all-to-all XGMI (1 hop), 2 NUMA nodes.
+
+==============================
+     Environment Variables
+==============================
+PYTORCH_HIP_ALLOC_CONF=expandable_segments:True
+VLLM_ROCM_USE_AITER=1
+NCCL_MIN_NCHANNELS=112
+TORCH_BLAS_PREFER_HIPBLASLT=1
+PYTORCH_ROCM_ARCH=gfx90a;gfx942;gfx950;gfx1100;gfx1101;gfx1200;gfx1201;gfx1150;gfx1151
+TORCHINDUCTOR_COMPILE_THREADS=1
+```
+
+</details>
+
+
+### 🐛 Describe the bug
+
+On **gfx942 (MI300X)**, serving `zai-org/GLM-5.1-FP8` with **MTP speculative decoding** under
+**torch.compile / CUDA-graph** intermittently crashes the engine with a GPU memory access fault:
+
+```text
+Memory access fault by GPU node-N (Agent handle: ...) on address 0x... . Reason: Unknown.
+... Worker proc VllmWorker-N died unexpectedly ...
+vllm.v1.engine.exceptions.EngineDeadError
+```
+
+**Only `--enforce-eager` (cudagraph=NONE) is immune** — the crash occurs in both
+`FULL_AND_PIECEWISE` and `PIECEWISE`.
+
+### Reproduce
+
+```bash
+VLLM_ROCM_USE_AITER=1 vllm serve zai-org/GLM-5.1-FP8 \
+  --tensor-parallel-size 8 --block-size 1 --kv-cache-dtype fp8 \
+  --max-model-len 200000 \
+  --speculative-config '{"method":"mtp","num_speculative_tokens":2}'
+# Send a few ~8K-token requests at concurrency 1.
+```
+
+Containerized launch we used (public base image + the still-unmerged #45324 sparse-attn
+masking patch applied on top):
+
+```bash
+# Base: vllm/vllm-openai-rocm:v0.23.0 + #45324 applied on top
+docker run -d --name glm5_server \
+  --device /dev/kfd --device /dev/dri --group-add video --group-add render \
+  --ipc host --network host -v $CACHE_DIR:/model \
+  -e VLLM_ROCM_USE_AITER=1 -e HIP_FORCE_DEV_KERNARG=1 -e NCCL_MIN_NCHANNELS=112 \
+  -e TORCH_BLAS_PREFER_HIPBLASLT=1 -e PYTORCH_HIP_ALLOC_CONF=expandable_segments:True \
+  -e HF_HOME=/model -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 \
+  vllm/vllm-openai-rocm:v0.23.0 \
+  --model zai-org/GLM-5.1-FP8 --tensor-parallel-size 8 --block-size 1 \
+  --kv-cache-dtype fp8 --max-model-len 200000 \
+  --speculative-config '{"method":"mtp","num_speculative_tokens":2}'
+```
+
+### Root cause
+
+In `vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse.py`, the sparse-MLA backend uses
+persistent work-split metadata buffers (`_mla_work_*`) that are allocated once and reused. They
+are **written host-asynchronously in `build()` by `get_mla_metadata_v1(...)` outside the captured
+graph**, but **read by the decode kernel inside the captured CUDA graph**. With no ordering
+between the write and the graph replay, the kernel can read stale/partially-written metadata and
+go out of bounds → GPU memory fault. Evidence: serializing kernels (`AMD_SERIALIZE_KERNEL=3`)
+avoids the crash for n=1/n=3, and `work_indptr` values are in-bounds at the fault — i.e. an
+ordering/race, not bad metadata values. Eager is immune because it uses dynamic per-call buffers.
+
+### Fix
+
+A one-line current-stream host sync in `build()` (after the metadata recompute) that orders the
+write before the graph-captured read eliminates the crash; it is performance-neutral (it runs
+before the heavy forward, waiting only on the tiny metadata write). Validated across 100+
+requests at n=2/n=3 with fault=0 and unchanged TPOT. **I will open a PR with this fix.**
+
+
+### Before submitting a new issue...
+
+- [x] Make sure you already searched for relevant issues, and asked the chatbot living at the bottom right corner of the [documentation page](https://docs.vllm.ai/en/latest/), which can answer lots of frequently asked questions.

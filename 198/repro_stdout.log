@@ -1,0 +1,7 @@
+Using codebase at: 198/codebase
+Created minimal HDF5 file at: /tmp/modelscan-h5-repro-9qy25dgy/repro.h5
+File size: 2072 bytes
+No settings file detected at 198/modelscan-settings.toml. Using defaults. 
+
+Exception: the JSON object must be str, bytes or bytearray, not dict
+Wrote result JSON to: 198/reproduction.json

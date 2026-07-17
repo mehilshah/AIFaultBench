@@ -1,0 +1,5 @@
+device=cpu
+torch=2.4.1+cpu
+inputs_equal=True
+double_rows_equal=True
+max_abs_diff_single_vs_double0=0.000244140625

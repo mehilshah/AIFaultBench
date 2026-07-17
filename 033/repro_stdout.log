@@ -1,0 +1,4 @@
+Running ConvSE3-style self interaction
+kernel_self.shape=(1, 1)
+dst_features.shape=(8910, 3, 1)
+About to execute kernel_self @ dst_features

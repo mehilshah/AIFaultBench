@@ -1,0 +1,25 @@
+{
+  "bug_id": "147",
+  "bug_dir": "147",
+  "issue_url": "https://github.com/huggingface/sentence-transformers/issues/3325",
+  "commit_hash": "",
+  "library_name": "sentence-transformers",
+  "library_version": "4.1.0.dev0",
+  "reproduction_command": "bash run_repro.sh",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../147",
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

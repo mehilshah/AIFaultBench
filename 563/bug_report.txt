@@ -1,0 +1,204 @@
+# recovered-from-issue: https://github.com/pytorch/rl/issues/3260
+
+TITLE
+[BUG] check_env_specs() fails if the state_spec contains tensors not in the observation
+
+BODY
+## Describe the bug
+
+I have the below specs. Of particular importance are my observation_spec and state_spec (the first two specs):
+```python
+self.observation_spec = Composite(
+    {
+        "timestep": Unbounded(
+            shape=torch.Size([n_envs]),
+            dtype=torch.int64,
+            device=self.device,
+        ),
+        "agents": Composite(
+            {
+                "observations": Categorical(
+                    n=40,
+                    shape=torch.Size([n_envs, n_agents, obs_dim_raw]),
+                    dtype=torch.int64,
+                    device=self.device,
+                ),
+                "action_mask": Binary(
+                    n=action_mask_dim,
+                    shape=torch.Size([n_envs, n_agents, action_mask_dim]),
+                    dtype=torch.bool,
+                    device=self.device,
+                ),
+            },
+            shape=agent_batch_size,
+        ),
+    },
+    shape=self.batch_size,
+)
+self.state_spec = Composite(
+    {
+        "randomStates": Unbounded(
+            shape=torch.Size([n_envs, 6, 24, 48]),
+            dtype=torch.uint8,
+            device=self.device,
+        ),
+        "agents": Composite(
+            {
+                "rewards": reward_spec
+            },
+            shape=agent_batch_size,
+        )
+    },
+    shape=self.batch_size,
+)
+self.action_spec = Composite(
+    {
+        "agents": Composite(
+            {
+                "actions": Categorical(
+                    n=action_mask_dim,
+                    shape=torch.Size([n_envs, n_agents, 1]),
+                    dtype=torch.int64,
+                    device=self.device,
+                )
+            },
+            shape=agent_batch_size,
+        ),
+    },
+    shape=self.batch_size,
+)
+self.reward_spec = Composite(
+    {
+        "agents": Composite(
+            {
+                "rewards": reward_spec
+            },
+            shape=agent_batch_size,
+        )
+    },
+    shape=self.batch_size,
+)
+self.done_spec = Composite(
+    {
+        "done": Categorical(
+            n=2,
+            shape=torch.Size([n_envs, 1]),
+            dtype=torch.bool,
+            device=self.device,
+        ),
+        "agents": Composite(
+            {
+                "stepDones": Categorical(
+                    n=2,
+                    shape=torch.Size([n_envs, n_agents, 1]),
+                    dtype=torch.bool,
+                    device=self.device,
+                )
+            },
+            shape=agent_batch_size,
+        ),
+    },
+    shape=self.batch_size,
+)
+```
+
+`randomStates` contains current random seed used to generate random numbers for the next step's computations. This is necessary to have repeatable states/transitions (like needing to backtrack to previous state for MCTS) but shouldn't be in the observation, so I put it in the state_spec since afaik that is the correct spot. I also include `rewards` in my state_spec because I update my `rewards` tensor in-place in my custom Torch op step.
+
+However, `check_env_specs()` fails due to the below error: 
+```
+AssertionError: The keys of the specs and data do not match:
+- List of keys present in real but not in fake: keys_in_real_not_in_fake={('next', 'agents', 'actions'), ('next', 'randomStates')},
+- List of keys present in fake but not in real: keys_in_fake_not_in_real=set().
+```
+I believe the root-cause of the `('next', 'randomStates')` is [this line in `envs/common.py`](https://github.com/pytorch/rl/blob/v0.10.1/torchrl/envs/common.py#L3875). I think the `next` TensorDict attribute should be the next state after RL step transition. Instead, it clones from the observation which results in a difference in keys. When `check_env_specs()` calls `rollout()` the real TensorDict has `next` including Tensors from the state_spec resulting in the discrepancy.
+
+I am also confused why the `fake_state` gets updated with actions [here](https://github.com/pytorch/rl/blob/main/torchrl/envs/common.py#L3883). Shouldn't actions stay separate from the state and be added to `next_output` later? I think I am misunderstanding something about how specs are intended to work here.
+
+## To Reproduce
+
+#### Steps to reproduce the behavior.
+
+Call `check_env_specs()` where the `state_spec` includes a separate Tensor besides `rewards`
+
+## Expected behavior
+
+`check_env_specs()` would succeed, where the generated fake TensorDict's `next` contains attributes from the state_spec.
+
+## Screenshots
+
+Can't easily provide screenshots, but maybe the below is useful:
+At [this line](https://github.com/pytorch/rl/blob/v0.10.1/torchrl/envs/common.py#L3863), `fake_state` is this:
+```
+TensorDict(
+    fields={
+        agents: TensorDict(
+            fields={
+                rewards: Tensor(shape=torch.Size([4, 4]), device=cuda:0, dtype=torch.float32, is_shared=True)},
+            batch_size=torch.Size([4, 4]),
+            device=cuda:0,
+            is_shared=True),
+        randomStates: Tensor(shape=torch.Size([4, 6, 24, 48]), device=cuda:0, dtype=torch.uint8, is_shared=True)},
+    batch_size=torch.Size([4]),
+    device=cuda:0,
+    is_shared=True)
+```
+At [this line](https://github.com/pytorch/rl/blob/v0.10.1/torchrl/envs/common.py#L3871), `fake_state` has been updated to this (this is `fake_input` as well):
+```
+TensorDict(
+    fields={
+        agents: TensorDict(
+            fields={
+                actions: Tensor(shape=torch.Size([4, 4, 1]), device=cuda:0, dtype=torch.int64, is_shared=True),
+                rewards: Tensor(shape=torch.Size([4, 4]), device=cuda:0, dtype=torch.float32, is_shared=True)},
+            batch_size=torch.Size([4, 4]),
+            device=cuda:0,
+            is_shared=True),
+        randomStates: Tensor(shape=torch.Size([4, 6, 24, 48]), device=cuda:0, dtype=torch.uint8, is_shared=True)},
+    batch_size=torch.Size([4]),
+    device=cuda:0,
+    is_shared=True)
+```
+At [this line](https://github.com/pytorch/rl/blob/v0.10.1/torchrl/envs/common.py#L3879), before consolidating with `fake_in_out`, `next_output` is this:
+```
+TensorDict(
+    fields={
+        agents: TensorDict(
+            fields={
+                action_mask: Tensor(shape=torch.Size([4, 4, 79]), device=cuda:0, dtype=torch.bool, is_shared=True),
+                observations: Tensor(shape=torch.Size([4, 4, 52]), device=cuda:0, dtype=torch.int64, is_shared=True),
+                rewards: Tensor(shape=torch.Size([4, 4]), device=cuda:0, dtype=torch.float32, is_shared=True),
+                stepDones: Tensor(shape=torch.Size([4, 4, 1]), device=cuda:0, dtype=torch.bool, is_shared=True)},
+            batch_size=torch.Size([4, 4]),
+            device=cuda:0,
+            is_shared=True),
+        done: Tensor(shape=torch.Size([4, 1]), device=cuda:0, dtype=torch.bool, is_shared=True),
+        terminated: Tensor(shape=torch.Size([4, 1]), device=cuda:0, dtype=torch.bool, is_shared=True),
+        timestep: Tensor(shape=torch.Size([4]), device=cuda:0, dtype=torch.int64, is_shared=True)},
+    batch_size=torch.Size([4]),
+    device=cuda:0,
+    is_shared=True)
+```
+
+## System info
+
+Describe the characteristic of your environment:
+ * Describe how the library was installed: Initially installed via `pip` as v0.9, then installed from-source as v10.1. Issue is in both versions.
+ * Python version: Python 3.11
+ * Versions of any other relevant libraries:
+    * torch = 2.7.1
+    * tensordict = 0.10.0
+
+## Additional context
+
+My environment uses a custom CUDA kernel to step the vectorized environment, so I need the `randomStates` for cuRAND randomness.
+
+## Reason and Possible fixes
+
+Linked above
+
+## Checklist
+
+- [X] I have checked that there is no similar issue in the repo (**required**)
+- [X] I have read the [documentation](https://github.com/pytorch/rl/tree/main/docs/) (**required**)
+- [X] I have provided a minimal working example to reproduce the bug (**required**) - I believe the above is enough, I can try to pare down my environment to an even smaller example if necessary
+

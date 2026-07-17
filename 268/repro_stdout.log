@@ -1,0 +1,13 @@
+=== offline ===
+case=offline
+HF_HUB_OFFLINE=1
+created_weight=/tmp/tmp774m87p5/adapter.safetensors
+ValueError: When using the offline mode, you must specify a `weight_name`.
+offline: expected failure observed
+=== local_files_only ===
+case=local_files_only
+HF_HUB_OFFLINE=<unset>
+created_weight=/tmp/tmp4kj6l_mh/adapter.safetensors
+ValueError: When using the offline mode, you must specify a `weight_name`.
+local_files_only: expected failure observed
+Both reproduction paths failed with the expected offline-mode ValueError.

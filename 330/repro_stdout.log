@@ -1,0 +1,67 @@
+devices: [CpuDevice(id=0), CpuDevice(id=1)]
+
+part 1: spurious second cache entry on the 3rd invocation
+run 1:
+  i=0: cpp cache size = 1, traces = 1
+  i=1: cpp cache size = 1, traces = 1
+  i=2: cpp cache size = 2, traces = 1
+run 2:
+  i=0: cpp cache size = 2, traces = 0
+  i=1: cpp cache size = 2, traces = 0
+  i=2: cpp cache size = 2, traces = 0
+
+negative controls: no spurious entry, cache sizes all 1
+
+unsharded_key:
+run 1:
+  i=0: cpp cache size = 1, traces = 1
+  i=1: cpp cache size = 1, traces = 1
+  i=2: cpp cache size = 1, traces = 1
+run 2:
+  i=0: cpp cache size = 1, traces = 0
+  i=1: cpp cache size = 1, traces = 0
+  i=2: cpp cache size = 1, traces = 0
+
+single_device_key:
+run 1:
+  i=0: cpp cache size = 1, traces = 1
+  i=1: cpp cache size = 1, traces = 1
+  i=2: cpp cache size = 1, traces = 1
+run 2:
+  i=0: cpp cache size = 1, traces = 0
+  i=1: cpp cache size = 1, traces = 0
+  i=2: cpp cache size = 1, traces = 0
+
+sharded_float:
+run 1:
+  i=0: cpp cache size = 1, traces = 1
+  i=1: cpp cache size = 1, traces = 1
+  i=2: cpp cache size = 1, traces = 1
+run 2:
+  i=0: cpp cache size = 1, traces = 0
+  i=1: cpp cache size = 1, traces = 0
+  i=2: cpp cache size = 1, traces = 0
+
+sharded_key, same fresh key every call (no feedback):
+run 1:
+  i=0: cpp cache size = 1, traces = 1
+  i=1: cpp cache size = 1, traces = 1
+  i=2: cpp cache size = 1, traces = 1
+run 2:
+  i=0: cpp cache size = 1, traces = 0
+  i=1: cpp cache size = 1, traces = 0
+  i=2: cpp cache size = 1, traces = 0
+
+part 2: no_tracing catches the extra dispatch (2 invocations per run)
+  i=0: cpp cache size = 1, traces = 1
+  i=1: cpp cache size = 1, traces = 1
+  i=0: cpp cache size = 1, traces = 0
+RAISED: re-tracing function jitted_identity at 330/repro.py:22 for `jit`, but 'no_tracing' is set
+
+part 3: workaround: pass raw key data across the jit boundary
+  i=0: cpp cache size = 1
+  i=1: cpp cache size = 1
+  i=2: cpp cache size = 1
+  i=3: cpp cache size = 1
+
+REPRODUCED: sharded PRNG key outputs create a second C++ fastpath cache entry.

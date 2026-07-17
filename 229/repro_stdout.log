@@ -1,0 +1,41 @@
+Requirement already satisfied: pip in ./.venv_repro/lib/python3.12/site-packages (26.1.2)
+Requirement already satisfied: setuptools in ./.venv_repro/lib/python3.12/site-packages (83.0.0)
+Requirement already satisfied: wheel in ./.venv_repro/lib/python3.12/site-packages (0.47.0)
+Requirement already satisfied: packaging>=24.0 in ./.venv_repro/lib/python3.12/site-packages (from wheel) (26.2)
+Requirement already satisfied: numpy==2.2.6 in ./.venv_repro/lib/python3.12/site-packages (from -r 229/requirements.txt (line 1)) (2.2.6)
+Requirement already satisfied: scipy==1.15.3 in ./.venv_repro/lib/python3.12/site-packages (from -r 229/requirements.txt (line 2)) (1.15.3)
+Requirement already satisfied: cython==3.2.8 in ./.venv_repro/lib/python3.12/site-packages (from -r 229/requirements.txt (line 3)) (3.2.8)
+Obtaining file://229/codebase
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy>=1.16 in ./.venv_repro/lib/python3.12/site-packages (from POT==0.9.6.dev0) (2.2.6)
+Requirement already satisfied: scipy>=1.6 in ./.venv_repro/lib/python3.12/site-packages (from POT==0.9.6.dev0) (1.15.3)
+Building wheels for collected packages: POT
+  Building editable for POT (pyproject.toml): started
+  Building editable for POT (pyproject.toml): finished with status 'done'
+  Created wheel for POT: filename=pot-0.9.6.dev0-0.editable-cp312-cp312-linux_x86_64.whl size=15691 sha256=07f4cfdd3c3dd66c0b501e5648a1ba3961654f3466887013530770c69234c32a
+  Stored in directory: /tmp/pip-ephem-wheel-cache-fru7yvo7/wheels/48/15/98/750dcf675f33c5853f7da0199ac88a8247331a5ba400fb60f4
+Successfully built POT
+Installing collected packages: POT
+  Attempting uninstall: POT
+    Found existing installation: POT 0.9.6.dev0
+    Uninstalling POT-0.9.6.dev0:
+      Successfully uninstalled POT-0.9.6.dev0
+Successfully installed POT-0.9.6.dev0
+sample1 = [0.1, 0.11, 0.4, 0.6]
+sample2 = [0.21, 0.15, 0.7, 0.95]
+delta = 0.02
+p=1, original   = [0.09500000000000001]
+p=2, original   = [0.017550000000000007]
+p=1, shifted    = [0.09000000000000001]
+p=1, shifted %1  = [0.09000000000000001]
+p=2, shifted    = [0.017550000000000003]
+p=1 abs diff    = 0.0050000000000000044
+p=1 abs diff %1 = 0.0050000000000000044
+p=2 abs diff    = 3.469446951953614e-18

@@ -1,0 +1,14 @@
+accelerate>=1.1.0
+filelock
+huggingface-hub>=1.2.1,<2.0
+numpy>=1.17
+packaging>=20.0
+Pillow>=10.0.1,<=15.0
+pyyaml>=5.1
+regex!=2019.12.17
+requests
+safetensors>=0.4.3
+sentencepiece>=0.1.91,!=0.1.92
+tokenizers>=0.22.0,<=0.23.0
+torch>=2.2
+tqdm>=4.27

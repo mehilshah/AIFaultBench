@@ -1,0 +1,13 @@
+setuptools<81
+-e ./codebase
+boto3==1.43.50
+botocore==1.43.50
+cloudpickle==3.1.2
+copulas==0.14.1
+ctgan==0.12.1
+deepecho==0.8.1
+graphviz==0.21
+numpy==2.5.1
+pandas==2.3.3
+sdmetrics==0.28.1
+tqdm==4.68.4

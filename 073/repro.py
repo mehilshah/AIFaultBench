@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+"""Minimal reproduction of the Domino/DeepSpeed cdb initialization bug.
+
+The upstream failure reported in DeepSpeedExamples #940 is an AttributeError
+inside DeepSpeed's communication wrapper when `cdb` is still None and
+`all_reduce()` dereferences it directly.
+"""
+
+from __future__ import annotations
+
+import traceback
+
+
+cdb = None
+
+
+def all_reduce(tensor, op="SUM", group=None, async_op=False):
+    # Mirrors deepspeed/comm/comm.py: all_reduce() without the guard.
+    return cdb.all_reduce(tensor, op, group, async_op)
+
+
+def main() -> int:
+    tensor = [1, 2, 3]
+    try:
+        all_reduce(tensor)
+    except Exception:
+        traceback.print_exc()
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

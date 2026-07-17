@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`bash run_repro.sh` completed the isolated environment setup and then loaded `towhee.serve.triton.pipeline_client.Client` from `codebase/towhee/serve/triton/pipeline_client.py`.",
+    "Constructing `Client('127.0.0.1:8000')` raised `RuntimeError: no running event loop` from `aiohttp/connector.py` inside `tritonclient.http.aio.InferenceServerClient`.",
+    "The traceback pinpoints the local source line `codebase/towhee/serve/triton/pipeline_client.py:55` as the call site."
+  ],
+  "steps": [
+    "Create an isolated virtual environment and install `requirements.txt`.",
+    "Run `bash run_repro.sh` with `PYTHONPATH` pointing at the local `codebase/` snapshot.",
+    "Observe the constructor failure when the local Triton client wrapper instantiates `aio_httpclient.InferenceServerClient`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

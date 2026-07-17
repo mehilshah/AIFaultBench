@@ -1,0 +1,12 @@
+{
+  "bug_id": "622",
+  "bug_dir": "622",
+  "issue_url": "https://github.com/huggingface/diffusers/issues/13477",
+  "commit_hash": "c41a3c3ed8ab16d4fadd2f08ee0f49cb78e79994",
+  "library_name": "diffusers",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "huggingface/diffusers@c41a3c3ed8ab16d4fadd2f08ee0f49cb78e79994",
+  "codebase_present": "true",
+  "standardized_dir": "../622"
+}

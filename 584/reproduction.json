@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "DistributedSamplerWrapper.set_epoch(7) did not forward to the wrapped sampler: sampler.set_epoch_calls=[], wrapper.epoch=7",
+  "steps": [
+    "Create a custom sampler that records set_epoch calls.",
+    "Wrap it with DistributedSamplerWrapper(num_replicas=1, rank=0, shuffle=False).",
+    "Call wrapper.set_epoch(7) and inspect the wrapped sampler."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

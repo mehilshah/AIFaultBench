@@ -1,0 +1,4 @@
+src_equal=True
+dst_equal=False
+src_shape=(4, 5, 2)
+dst_shape=(4, 5, 2)

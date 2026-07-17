@@ -1,0 +1,74 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/14063
+
+TITLE
+Kandinsky5 pipeline does not support device_map=balanced
+
+BODY
+### Describe the bug
+
+Kandinsky5 I2I/I2V failures with multi-GPU device_map: Under device_map="balanced", VAE-encoded image latents may be produced on a different GPU than the generated noise latents. And it will return error:
+`RuntimeError: Expected all tensors to be on the same device, but got tensors is on cuda:1, different from other tensors on cuda:0 (when checking argument in method wrapper_CUDA_cat)`
+
+### Reproduction
+
+```
+import torch
+from diffusers import Kandinsky5I2IPipeline # use duffusers fork: pip install git+https://github.com/leffff/diffusers
+from diffusers.utils import load_image 
+# Load the pipeline
+model_id = "kandinskylab/Kandinsky-5.0-I2I-Lite-sft-Diffusers"
+pipe = Kandinsky5I2IPipeline.from_pretrained(model_id, torch_dtype=torch.bfloat16, device_map="balanced") # <--- Load the model with automatic device mapping
+                                            # <--- Enable CPU offloading for single GPU inference
+
+# Edit the input image
+image = load_image(
+    "https://huggingface.co/kandinsky-community/kandinsky-3/resolve/main/assets/title.jpg?download=true"
+)
+
+prompt = "Change the background from a winter night scene to a bright summer day. Place the character on a sandy beach with clear blue sky, soft sunlight, and gentle waves in the distance. Replace the winter clothing with a light short-sleeved T-shirt (in soft pastel colors) and casual shorts. Ensure the character’s fur reflects warm daylight instead of cold winter tones. Add small beach details such as seashells, footprints in the sand, and a few scattered beach toys nearby. Keep the oranges in the scene, but place them naturally on the sand."
+negative_prompt = ""
+
+output = pipe(
+    image=image,
+    prompt=prompt,
+    negative_prompt=negative_prompt,
+    guidance_scale=3.5,
+).image[0]
+```
+
+### Logs
+
+```shell
+
+```
+
+### System Info
+
+- 🤗 Diffusers version: 0.38.0
+- Platform: Linux-5.15.209-1.el8.elrepo.x86_64-x86_64-with-glibc2.39
+- Running on Google Colab?: No
+- Python version: 3.12.3
+- PyTorch version (GPU?): 2.12.0+cu130 (True)
+- Flax version (CPU?/GPU?/TPU?): not installed (NA)
+- Jax version: not installed
+- JaxLib version: not installed
+- Huggingface_hub version: 0.36.2
+- Transformers version: 4.55.4
+- Accelerate version: 1.14.0
+- PEFT version: 0.19.1
+- Bitsandbytes version: 0.49.2
+- Safetensors version: 0.8.0
+- xFormers version: not installed
+- Accelerator: NVIDIA A100 80GB PCIe, 81920 MiB
+NVIDIA A100 80GB PCIe, 81920 MiB
+NVIDIA A100 80GB PCIe, 81920 MiB
+NVIDIA A100 80GB PCIe, 81920 MiB
+NVIDIA A100 80GB PCIe, 81920 MiB
+NVIDIA A100 80GB PCIe, 81920 MiB
+NVIDIA A100 80GB PCIe, 81920 MiB
+- Using GPU in script?: <fill in>
+- Using distributed or parallel set-up in script?: <fill in>
+
+### Who can help?
+
+Kandinsky @yiyixuxu 

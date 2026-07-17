@@ -1,0 +1,14 @@
+ot version: 0.7.0
+transport plan P:
+ [[0.    0.125 0.    0.    0.   ]
+ [0.125 0.    0.    0.    0.   ]
+ [0.    0.    0.125 0.    0.   ]
+ [0.    0.    0.    0.125 0.   ]
+ [0.    0.    0.    0.    0.5  ]]
+row sums: [0.125 0.125 0.125 0.125 0.5  ]
+col sums: [0.125 0.125 0.125 0.125 0.5  ]
+P cost: 354.43787279000003
+Q cost: 57.54321038317501
+P equals Q: False
+marginals exact: True
+warning: None

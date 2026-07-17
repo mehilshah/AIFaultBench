@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "`run_repro.sh` completed the dry-run prompt construction and printed the exact 4-turn Gemma-4 multimodal payload shape, including the long final NIAH-style prompt with `final_prompt_token_count` 144480. The script then exited with `Blocked: no CUDA GPU is available, so the SM90 FlashAttention 4 path cannot be exercised here.`",
+  "steps": [
+    "Built the Gemma-4 multimodal conversation from the issue report: 3 image turns followed by the long text-only turn.",
+    "Validated the bundle locally with the offline dry-run path.",
+    "Stopped before server launch because this machine does not provide the required CUDA GPU / SM90 Hopper environment."
+  ],
+  "blocking_reason": "No CUDA GPU is available in this environment, so the H100/SM90 FlashAttention 4 code path described in the bug report cannot be exercised.",
+  "reproduction_command": "bash run_repro.sh"
+}

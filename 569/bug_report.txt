@@ -1,0 +1,57 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46762
+
+TITLE
+Substantial numerical differences with Minimax MSA attention vs Minimax's Reference
+
+BODY
+### System Info
+
+-> Minimax-M3/references/transformers/modular_minimax_m3_vl.py:550
+
+  The problematic operation is:
+```
+  block_scores = scores.amax(dim=-1).amax(dim=1)
+```
+
+That first max pools within the 128-token block, which is expected. The second max, amax(dim=1), collapses H_idx, producing one shared selected block list per query. This is operationally different than minimax's reference which keeps things per-head. -> [minimax reference asserts](https://github.com/MiniMax-AI/MSA/blob/main/python/fmha_sm100/api.py#L207-L216)
+
+I ran some tests to quantify the divergence between methods:
+```
+Selection divergence: 11759/11808 (99.5%) 
+-- 99.5% of the time, the HF code produces a different result than the minimax reference
+
+Mean overlap: 10.4 / 16 ~ 35% of each head selected blocks are being excluded from the HF method.
+
+distinct blocks reached / token: 27.1 VS 16 ~ huggingface is touching nearly double the number of blocks minimax reference does.
+```
+
+Some useful references here: 
+https://github.com/MiniMax-AI/MSA/blob/main/python/fmha_sm100/api.py#L1060-L1063
+
+https://github.com/MiniMax-AI/MSA/blob/main/python/fmha_sm100/api.py#L1179-L1192
+
+https://github.com/MiniMax-AI/MSA/blob/main/python/fmha_sm100/api.py#L1219-L1223
+
+@ArthurZucker @vasqu
+
+### Who can help?
+
+_No response_
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+Run minimax m3 model.
+
+### Expected behavior
+
+The attention produced by the reference. (VLLM also matches minimax M3's method)

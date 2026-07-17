@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "In a fresh venv with NumPy 2.3.1, SciPy 1.18.0, and local TensorLy 0.9.0, the complex TT rank sweep prints [1.972 2.018 2.028 2.057 2.085 2.122 2.156 2.234 2.297 2.401 2.387 2.378 2.433 2.587], and the last value is larger than the first, so the error is not monotonically decreasing with rank.",
+  "steps": [
+    "Create an isolated Python 3.12 virtual environment.",
+    "Install NumPy 2.3.1, SciPy, and the local TensorLy codebase in editable mode.",
+    "Run the complex-valued Tensor Train rank sweep from the bug report on a fixed random seed.",
+    "Observe that the reconstruction MSE increases overall as rank grows."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

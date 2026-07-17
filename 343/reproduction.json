@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Sampling raised pandas.errors.IndexingError: Error: Sampling terminated. No results were saved due to unspecified \"output_file_path\".. The traceback reaches sdv/single_table/base.py:804 while applying reverse_transform_constraints.",
+  "steps": [
+    "Build a single-table dataset with boolean, categorical, and numerical columns.",
+    "Fit GaussianCopulaSynthesizer with FixedCombinations plus a row-dropping programmable constraint.",
+    "Call sample(20).",
+    "Observe pandas.errors.IndexingError from boolean index misalignment in reverse_transform_constraints."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./setup_env.sh && ./run_repro.sh"
+}

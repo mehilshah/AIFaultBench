@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "The mirrored notebook import cell ran to completion in a clean environment. `tensorflow`, `orbit`, `tensorflow_models`, and the official vision imports all loaded successfully and the script exited 0.",
+  "steps": [
+    "Run `bash setup_env.sh` to install the notebook dependencies into `.deps`.",
+    "Run `bash run_repro.sh` to execute the mirrored import cell.",
+    "Observe that the script prints module locations and exits with status 0 instead of raising the reported import error."
+  ],
+  "blocking_reason": "The reported notebook import failure is not reproducible here after installing the required packages; the import cell succeeds.",
+  "reproduction_command": "bash run_repro.sh"
+}

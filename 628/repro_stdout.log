@@ -1,0 +1,7 @@
+[92m2026-07-17 12:16:30,639 [torchrl][INFO][0m    Initialized LazyTensorStorage with torch.Size([1024]) shape[92m [END][0m
+manual_extend_ok len=8 write_count=8
+[92m2026-07-17 12:16:31,252 [torchrl][INFO][0m    Initialized LazyTensorStorage with torch.Size([2000000, 1]) shape[92m [END][0m
+[92m2026-07-17 12:16:31,253 [torchrl][WARNING][0m    Replay buffer is not shared. Sharing it.[92m [END][0m
+collector_created
+[92m2026-07-17 12:16:34,597 [torchrl][INFO][0m    Returning final rollout with NO buffer (maybe_dense_stack).[92m [END][0m
+collector_timeout: collector did not yield a batch within 30 seconds

@@ -1,0 +1,75 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/39109
+
+TITLE
+jax.numpy.heaviside returns x2 value for NaN input instead of propagating NaN
+
+BODY
+### Description
+
+`jax.numpy.heaviside` appears to handle `NaN` input differently from NumPy.
+
+For `numpy.heaviside`, when the input `x` is `NaN`, the result is also `NaN`. However, JAX returns the `x2` value for the `NaN` input, as if `NaN` were treated like zero.
+
+### Minimal reproducible example
+
+```
+#!/usr/bin/env python3
+import os
+import sys
+import warnings
+
+warnings.filterwarnings("ignore")
+os.environ.setdefault("JAX_PLATFORMS", "cpu")
+
+try:
+    import numpy as np
+    import jax.numpy as jnp
+except ImportError as e:
+    print(f"missing dep: {e}")
+    sys.exit(2)
+
+x = np.array([np.nan, 0.0, -1.0], dtype=np.float32)
+x2 = np.array([1.0, 1.0, 1.0], dtype=np.float32)
+
+out = np.asarray(jnp.heaviside(jnp.asarray(x), jnp.asarray(x2)))
+expected = np.heaviside(x, x2)
+
+print("jax:", out.tolist())
+print("expected:", expected.tolist())
+
+if not np.allclose(out, expected, atol=1e-4, rtol=1e-3, equal_nan=True):
+    sys.exit(0)
+sys.exit(1)
+```
+
+### Actual result
+
+```
+jax: [1.0, 1.0, 0.0]
+expected: [nan, 1.0, 0.0]
+```
+
+### Expected result
+
+```
+[nan, 1.0, 0.0]
+```
+
+The first element should be `NaN`, matching NumPy behavior:
+
+```
+numpy.heaviside(np.nan, 1.0) -> nan
+```
+
+JAX instead returns `1.0`, which is the `x2` value used only for the zero case. This suggests that `NaN` may be incorrectly routed through the `x == 0` branch.
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+jax: 0.10.1
+jaxlib: 0.10.1
+numpy: 2.4.6
+python: 3.13.13
+platform: Ubuntu 24.04.3 LTS, Linux x86_64
+accelerator: CPU backend
+
+Note: GPU is present, but CUDA-enabled jaxlib is not installed, so JAX falls back to CPU.

@@ -1,0 +1,35 @@
+# recovered-from-issue: https://github.com/PythonOT/POT/issues/24
+
+TITLE
+Another issue on Windows with ot.da.OTDA()
+
+BODY
+The following script:
+```
+import numpy as np
+import ot
+a = np.random.rand(1500, 95)
+b = np.random.rand(50000, 95)
+opt = ot.da.OTDA()
+opt.fit(a,b)
+print(np.sum(opt.G))
+```
+returns me on Windows
+`0`
+```
+Windows-10-10.0.15063-SP0
+Python 3.6.1 |Anaconda custom (64-bit)| (default, May 11 2017, 13:25:24) [MSC v.1900 64 bit (AMD64)]
+NumPy 1.12.1
+SciPy 0.19.0
+POT 0.3.1
+```
+while it returns me on debian 
+`0.716`
+```
+Linux-3.2.0-4-amd64-x86_64-with-debian-7.11
+('Python', '2.7.3 (default, Jun 21 2016, 18:38:19) \n[GCC 4.7.2]')
+('NumPy', '1.13.1')
+('SciPy', '0.19.1')
+('POT', '0.3.1')
+```
+If I'm not mistaken, it should always return 1

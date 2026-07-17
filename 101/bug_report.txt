@@ -1,0 +1,7 @@
+# recovered-from-issue: https://github.com/lucidrains/rotary-embedding-torch/issues/8
+
+TITLE
+Using with xpos causes NaNs after rotating Q, K
+
+BODY
+I discovered that after rotary_emb.rotate_queries_and_keys(Q, K), K now contains a very small fraction of NaNs, which then propagate through the rest of the transformer and result in a NaN loss. What could be causing this / how to address? Happy to provide code if it helps.

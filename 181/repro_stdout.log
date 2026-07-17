@@ -1,0 +1,2 @@
+available_accelerators=['cpu', 'cuda', 'mps', 'tpu']
+attempting Trainer(accelerator='xpu', devices=1, max_epochs=1)

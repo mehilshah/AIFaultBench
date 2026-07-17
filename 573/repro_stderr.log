@@ -1,0 +1,844 @@
+Traceback (most recent call last):
+  File "573/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 424, in cached_files
+    hf_hub_download(
+  File "573/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+    validate_repo_id(arg_value)
+  File "573/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 160, in validate_repo_id
+    raise HFValidationError(
+huggingface_hub.errors.HFValidationError: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 64)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=64, out_features=64, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=64, out_features=64, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=64, out_features=128, bias=False)
+              (up_proj): Linear(in_features=64, out_features=128, bias=False)
+              (down_proj): Linear(in_features=128, out_features=64, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((64,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=64, out_features=128, bias=False)
+    )
+  )
+)'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "573/.venv/lib/python3.12/site-packages/transformers/configuration_utils.py", line 649, in _get_config_dict
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 266, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 471, in cached_files
+    _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision) for filename in full_filenames
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 134, in _get_cache_file_to_return
+    resolved_file = try_to_load_from_cache(path_or_repo_id, full_filename, cache_dir=cache_dir, revision=revision)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+    validate_repo_id(arg_value)
+  File "573/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 160, in validate_repo_id
+    raise HFValidationError(
+huggingface_hub.errors.HFValidationError: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 64)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=64, out_features=64, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=64, out_features=64, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=64, out_features=128, bias=False)
+              (up_proj): Linear(in_features=64, out_features=128, bias=False)
+              (down_proj): Linear(in_features=128, out_features=64, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((64,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=64, out_features=128, bias=False)
+    )
+  )
+)'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "573/repro.py", line 61, in _worker
+    UlyssesSPAttentionHF.register_with_transformers(
+  File "573/codebase/deepspeed/runtime/sequence_parallel/ulysses_sp.py", line 397, in register_with_transformers
+    hf_model_config = AutoConfig.from_pretrained(model_name_or_path)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/models/auto/configuration_auto.py", line 1114, in from_pretrained
+    config_dict, unused_kwargs = PretrainedConfig.get_config_dict(pretrained_model_name_or_path, **kwargs)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/configuration_utils.py", line 590, in get_config_dict
+    config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/configuration_utils.py", line 672, in _get_config_dict
+    raise OSError(
+OSError: Can't load the configuration of 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 64)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=64, out_features=64, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=64, out_features=64, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=64, out_features=128, bias=False)
+              (up_proj): Linear(in_features=64, out_features=128, bias=False)
+              (down_proj): Linear(in_features=128, out_features=64, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((64,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=64, out_features=128, bias=False)
+    )
+  )
+)'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 64)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=64, out_features=64, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=64, out_features=64, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=64, out_features=128, bias=False)
+              (up_proj): Linear(in_features=64, out_features=128, bias=False)
+              (down_proj): Linear(in_features=128, out_features=64, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((64,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=64, out_features=128, bias=False)
+    )
+  )
+)' is the correct path to a directory containing a config.json file
+Traceback (most recent call last):
+  File "573/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 424, in cached_files
+    hf_hub_download(
+  File "573/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+    validate_repo_id(arg_value)
+  File "573/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 160, in validate_repo_id
+    raise HFValidationError(
+huggingface_hub.errors.HFValidationError: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 64)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=64, out_features=64, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=64, out_features=64, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=64, out_features=128, bias=False)
+              (up_proj): Linear(in_features=64, out_features=128, bias=False)
+              (down_proj): Linear(in_features=128, out_features=64, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((64,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=64, out_features=128, bias=False)
+    )
+  )
+)'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "573/.venv/lib/python3.12/site-packages/transformers/configuration_utils.py", line 649, in _get_config_dict
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 266, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 471, in cached_files
+    _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision) for filename in full_filenames
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 134, in _get_cache_file_to_return
+    resolved_file = try_to_load_from_cache(path_or_repo_id, full_filename, cache_dir=cache_dir, revision=revision)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+    validate_repo_id(arg_value)
+  File "573/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 160, in validate_repo_id
+    raise HFValidationError(
+huggingface_hub.errors.HFValidationError: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 64)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=64, out_features=64, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=64, out_features=64, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=64, out_features=128, bias=False)
+              (up_proj): Linear(in_features=64, out_features=128, bias=False)
+              (down_proj): Linear(in_features=128, out_features=64, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((64,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=64, out_features=128, bias=False)
+    )
+  )
+)'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "573/repro.py", line 61, in _worker
+    UlyssesSPAttentionHF.register_with_transformers(
+  File "573/codebase/deepspeed/runtime/sequence_parallel/ulysses_sp.py", line 397, in register_with_transformers
+    hf_model_config = AutoConfig.from_pretrained(model_name_or_path)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/models/auto/configuration_auto.py", line 1114, in from_pretrained
+    config_dict, unused_kwargs = PretrainedConfig.get_config_dict(pretrained_model_name_or_path, **kwargs)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/configuration_utils.py", line 590, in get_config_dict
+    config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/configuration_utils.py", line 672, in _get_config_dict
+    raise OSError(
+OSError: Can't load the configuration of 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 64)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=64, out_features=64, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=64, out_features=64, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=64, out_features=128, bias=False)
+              (up_proj): Linear(in_features=64, out_features=128, bias=False)
+              (down_proj): Linear(in_features=128, out_features=64, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((64,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=64, out_features=128, bias=False)
+    )
+  )
+)'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 64)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=64, out_features=64, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=64, out_features=64, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=64, out_features=128, bias=False)
+              (up_proj): Linear(in_features=64, out_features=128, bias=False)
+              (down_proj): Linear(in_features=128, out_features=64, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((64,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=64, out_features=128, bias=False)
+    )
+  )
+)' is the correct path to a directory containing a config.json file
+Traceback (most recent call last):
+  File "573/repro.py", line 90, in <module>
+    main()
+  File "573/repro.py", line 86, in main
+    mp.spawn(_worker, args=(world_size, port), nprocs=world_size, join=True)
+  File "573/.venv/lib/python3.12/site-packages/torch/multiprocessing/spawn.py", line 328, in spawn
+    return start_processes(fn, args, nprocs, join, daemon, start_method="spawn")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/torch/multiprocessing/spawn.py", line 284, in start_processes
+    while not context.join():
+              ^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/torch/multiprocessing/spawn.py", line 203, in join
+    raise ProcessRaisedException(msg, error_index, failed_process.pid)
+torch.multiprocessing.spawn.ProcessRaisedException: 
+
+-- Process 0 terminated with the following error:
+Traceback (most recent call last):
+  File "573/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 424, in cached_files
+    hf_hub_download(
+  File "573/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+    validate_repo_id(arg_value)
+  File "573/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 160, in validate_repo_id
+    raise HFValidationError(
+huggingface_hub.errors.HFValidationError: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 64)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=64, out_features=64, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=64, out_features=64, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=64, out_features=128, bias=False)
+              (up_proj): Linear(in_features=64, out_features=128, bias=False)
+              (down_proj): Linear(in_features=128, out_features=64, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((64,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=64, out_features=128, bias=False)
+    )
+  )
+)'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "573/.venv/lib/python3.12/site-packages/transformers/configuration_utils.py", line 649, in _get_config_dict
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 266, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 471, in cached_files
+    _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision) for filename in full_filenames
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 134, in _get_cache_file_to_return
+    resolved_file = try_to_load_from_cache(path_or_repo_id, full_filename, cache_dir=cache_dir, revision=revision)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+    validate_repo_id(arg_value)
+  File "573/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 160, in validate_repo_id
+    raise HFValidationError(
+huggingface_hub.errors.HFValidationError: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 64)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=64, out_features=64, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=64, out_features=64, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=64, out_features=128, bias=False)
+              (up_proj): Linear(in_features=64, out_features=128, bias=False)
+              (down_proj): Linear(in_features=128, out_features=64, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((64,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=64, out_features=128, bias=False)
+    )
+  )
+)'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "573/.venv/lib/python3.12/site-packages/torch/multiprocessing/spawn.py", line 90, in _wrap
+    fn(i, *args)
+  File "573/repro.py", line 61, in _worker
+    UlyssesSPAttentionHF.register_with_transformers(
+  File "573/codebase/deepspeed/runtime/sequence_parallel/ulysses_sp.py", line 397, in register_with_transformers
+    hf_model_config = AutoConfig.from_pretrained(model_name_or_path)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/models/auto/configuration_auto.py", line 1114, in from_pretrained
+    config_dict, unused_kwargs = PretrainedConfig.get_config_dict(pretrained_model_name_or_path, **kwargs)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/configuration_utils.py", line 590, in get_config_dict
+    config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "573/.venv/lib/python3.12/site-packages/transformers/configuration_utils.py", line 672, in _get_config_dict
+    raise OSError(
+OSError: Can't load the configuration of 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 64)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=64, out_features=64, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=64, out_features=64, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=64, out_features=128, bias=False)
+              (up_proj): Linear(in_features=64, out_features=128, bias=False)
+              (down_proj): Linear(in_features=128, out_features=64, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((64,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=64, out_features=128, bias=False)
+    )
+  )
+)'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(128, 64)
+        (layers): ModuleList(
+          (0-1): 2 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): Linear(in_features=64, out_features=64, bias=False)
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=64, out_features=64, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Identity()
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=64, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): Linear(in_features=64, out_features=64, bias=False)
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear(in_features=64, out_features=128, bias=False)
+              (up_proj): Linear(in_features=64, out_features=128, bias=False)
+              (down_proj): Linear(in_features=128, out_features=64, bias=False)
+              (act_fn): SiLU()
+            )
+            (input_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+            (post_attention_layernorm): LlamaRMSNorm((64,), eps=1e-06)
+          )
+        )
+        (norm): LlamaRMSNorm((64,), eps=1e-06)
+        (rotary_emb): LlamaRotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=64, out_features=128, bias=False)
+    )
+  )
+)' is the correct path to a directory containing a config.json file
+

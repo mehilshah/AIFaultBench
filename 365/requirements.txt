@@ -1,0 +1,2 @@
+# No additional pip dependencies are required for this minimal repro.
+# The harness uses only the Python standard library.

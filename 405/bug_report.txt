@@ -1,0 +1,57 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46981
+
+TITLE
+AutoProcessor.from_pretrained retries HTTP 429 responses multiple times for every config file when using HF_ENDPOINT
+
+BODY
+### System Info
+
+(uv run transformers env fails with name « CompletionCreateParamsStreaming » is not defined, but this is a separate issue) 
+
+- transformers 5.12.1
+- windows 11 
+
+### Who can help?
+
+@Cyrilvallez 
+
+### Information
+
+- [x] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [x] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+When `AutoProcessor.from_pretrained()` is used with a proxy configured through the `HF_ENDPOINT` environment variable, the method retries every request that receives an HTTP 429 (Too Many Requests) response several times before moving on.
+
+For example, it attempts up to 5 GET requests for each of the following files:
+- processor_config.json
+- tokenizer_config.json
+- tokenizer.json
+and several other optional configuration files
+
+Eventually, from_pretrained() returns but the repeated retries significantly increase the loading time and flood the logs with 429 errors.
+
+I'm not sure whether this is intended behavior, but retrying multiple times on every 429 for optional files seems excessive. It makes me wonder whether the retry logic is being applied correctly / too broadly.
+
+```py
+import os
+
+os.environ["HF_ENDPOINT"] = "https://<your-proxy>"
+
+from transformers import AutoProcessor
+
+AutoProcessor.from_pretrained(
+    "facebook/dinov3-vits16-pretrain-lvd1689m"
+)
+```
+
+### Expected behavior
+
+Either avoid retrying optional files after repeated 429 responses, or
+Retry more selectively, so that model loading does not incur dozens of failed requests before returning.

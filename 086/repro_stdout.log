@@ -1,0 +1,3 @@
+running RotaryEmbedding.forward_from_seq_len with use_xpos=True
+seq_len=32
+forward_failed

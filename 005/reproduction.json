@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "The repro probe exited 0 on this host.",
+    "stdout shows tensorflow=2.16.1, tf_keras=2.16.0, and tensorflow.python.framework.tensor resolves to site-packages/tensorflow/python/framework/tensor.py.",
+    "The reported ImportError did not occur here; the import chain completed successfully."
+  ],
+  "steps": [
+    "Created an isolated environment with TensorFlow 2.16.1 and tf-keras 2.16.0.",
+    "Ran the import probe in repro.py.",
+    "Confirmed that tensorflow.python.framework.tensor is present and importable on this Linux/Python 3.12 host."
+  ],
+  "blocking_reason": "The reported failure is not reproducible on this host. The issue appears to depend on a different platform or wheel combination than the one available here; the local Linux/Python 3.12 environment imports tf_keras successfully.",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

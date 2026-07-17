@@ -1,0 +1,12 @@
+numpy
+pandas
+xarray
+matplotlib
+scikit-learn
+scipy
+statsmodels
+pmdarima
+tbats
+nfoursid
+holidays
+tqdm

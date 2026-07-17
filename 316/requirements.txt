@@ -1,0 +1,6 @@
+torch>=2.6,<2.8
+numpy>=1.26
+Pillow>=10.0
+requests>=2.31
+huggingface-hub>=0.34,<2.0
+packaging>=24

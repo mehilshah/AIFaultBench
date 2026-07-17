@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the repro on 2 CPU ranks with a real PEFT-wrapped `PeftModelForCausalLM` prints `isinstance_pretrained=False` and then fails inside `UlyssesSPAttentionHF.register_with_transformers(...)` at `codebase/deepspeed/runtime/sequence_parallel/ulysses_sp.py:397`, where `AutoConfig.from_pretrained(model_name_or_path)` is called on the PEFT object and raises `OSError` after `HFValidationError` because the wrapper is not treated as an already-loaded model.",
+  "steps": [
+    "Create and activate the local virtualenv with `bash setup_env.sh`.",
+    "Run the distributed repro with `bash run_repro.sh`.",
+    "Observe the traceback showing the PEFT model is not a `PreTrainedModel` and DeepSpeed falls through to `AutoConfig.from_pretrained(...)` on the wrapper object."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

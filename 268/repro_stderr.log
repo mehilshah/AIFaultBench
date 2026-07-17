@@ -1,0 +1,42 @@
+=== offline ===
+Traceback (most recent call last):
+  File "268/repro.py", line 61, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "268/repro.py", line 56, in main
+    run_case(args.case)
+  File "268/repro.py", line 40, in run_case
+    StableDiffusionLoraLoaderMixin.lora_state_dict(tmpdir, **kwargs)
+  File "268/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 88, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "268/codebase/src/diffusers/loaders/lora_pipeline.py", line 318, in lora_state_dict
+    state_dict, metadata = _fetch_state_dict(
+                           ^^^^^^^^^^^^^^^^^^
+  File "268/codebase/src/diffusers/loaders/lora_base.py", line 224, in _fetch_state_dict
+    weight_name = _best_guess_weight_name(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "268/codebase/src/diffusers/loaders/lora_base.py", line 281, in _best_guess_weight_name
+    raise ValueError("When using the offline mode, you must specify a `weight_name`.")
+ValueError: When using the offline mode, you must specify a `weight_name`.
+=== local_files_only ===
+Traceback (most recent call last):
+  File "268/repro.py", line 61, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "268/repro.py", line 56, in main
+    run_case(args.case)
+  File "268/repro.py", line 40, in run_case
+    StableDiffusionLoraLoaderMixin.lora_state_dict(tmpdir, **kwargs)
+  File "268/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 88, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "268/codebase/src/diffusers/loaders/lora_pipeline.py", line 318, in lora_state_dict
+    state_dict, metadata = _fetch_state_dict(
+                           ^^^^^^^^^^^^^^^^^^
+  File "268/codebase/src/diffusers/loaders/lora_base.py", line 224, in _fetch_state_dict
+    weight_name = _best_guess_weight_name(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "268/codebase/src/diffusers/loaders/lora_base.py", line 281, in _best_guess_weight_name
+    raise ValueError("When using the offline mode, you must specify a `weight_name`.")
+ValueError: When using the offline mode, you must specify a `weight_name`.

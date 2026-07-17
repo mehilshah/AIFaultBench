@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "In repro_stdout.log, the first recorded main-process event is rank 1, not rank 0: ordered_results starts with [('main', 1, False), ('main', 3, False), ('main', 2, False), ('main', 0, True), ...]. The repro then raises RuntimeError with 'main_process_first/local_main_process_first misordered'.",
+  "steps": [
+    "Created a clean .venv and installed the local accelerate snapshot from codebase/ with the repro dependencies.",
+    "Ran bash run_repro.sh, which launches 4 CPU distributed workers and exercises Accelerator.main_process_first() and Accelerator.local_main_process_first().",
+    "Observed out-of-order execution: non-main ranks printed before rank 0, and the shared ordered_results list confirmed the misordering."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

@@ -1,0 +1,4 @@
+Loaded: codebase/torchtitan/components/dataloader.py
+DataloaderStopIteration is subclass of StopIteration: True
+Starting data consumption loop...
+Caught unexpected exception: RuntimeError: generator raised StopIteration

@@ -1,0 +1,10 @@
+huggingface_hub==1.2.1
+packaging>=20.0
+filelock
+numpy
+pyyaml
+regex
+requests
+safetensors
+tqdm
+tokenizers==0.22.1

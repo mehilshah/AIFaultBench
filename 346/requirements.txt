@@ -1,0 +1,10 @@
+numpy
+packaging
+filelock
+huggingface_hub
+requests
+pyyaml
+regex
+safetensors
+tokenizers==0.22.2
+tqdm

@@ -1,0 +1,13 @@
+{
+  "title": "tf-models-official 2.12.0 fails on Python 3.8 dict union in base_trainer",
+  "source": "bug_report.txt",
+  "language_runtime": {
+    "python": "3.8"
+  },
+  "reproduction": {
+    "entrypoint": "run_repro.sh",
+    "command": "./run_repro.sh"
+  },
+  "observed_error": "TypeError: unsupported operand type(s) for |: 'dict' and 'dict'",
+  "root_cause": "official/core/base_trainer.py returns passthrough_logs | logs, which requires Python 3.9+"
+}

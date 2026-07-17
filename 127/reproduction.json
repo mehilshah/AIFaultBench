@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` with Codon 0.19.6 prints `empty 0 0`, `int float 1 2`, `int float 1 2`, `int float 3 5`. The `Foo(1, 2)` and `Foo(a, b)` calls should select the `__init__(self, x: int, y: int)` overload, but they incorrectly select the `y: float` overload.",
+  "steps": [
+    "Created a minimal Codon program in `repro.py` that matches the issue report.",
+    "Verified the local Codon binary with `./setup_env.sh`.",
+    "Ran `bash run_repro.sh` and captured output in `repro_stdout.log` and `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

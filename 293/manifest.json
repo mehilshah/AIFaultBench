@@ -1,0 +1,10 @@
+{
+  "title": "NumPyro import fails with JAX 0.10.0",
+  "description": "Repro for NumPyro issue 2174: importing numpyro fails because numpyro.ops.provenance imports xla_pmap_p from jax.extend.core.primitives, which is missing in JAX 0.10.0.",
+  "reproduction_command": "bash run_repro.sh",
+  "dependencies": [
+    "jax==0.10.0",
+    "jaxlib==0.10.0"
+  ],
+  "entrypoint": "repro.py"
+}

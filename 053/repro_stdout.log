@@ -1,0 +1,4 @@
+Using TensorFlow backend
+backend=tensorflow
+policy=<Policy "mixed_float16">
+loading preset=bert_tiny_en_uncased_sst2

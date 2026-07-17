@@ -1,0 +1,17 @@
+Title: Argument unpacking with `*` not supported
+Date: 2023-12-08T08:19:42+00:00
+URL: https://github.com/exaloop/codon/issues/506
+
+Description:
+Somehow argument unpacking does not work:
+```python
+arr = [1, 2]
+print(*arr)
+
+```
+Error: `error: argument after * must be a tuple, not 'List[int]'`
+(Codon version 0.16.3)
+
+Is there any way to do this?
+
+For the `print()`-case above I could find a workaround, but if I want to use e.g. [`math.lcm(*integers)`](https://pythonexamples.org/python-math-lcm/) with a list of variable length, I see no possible solution.

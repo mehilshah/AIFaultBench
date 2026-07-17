@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "repro_stdout.log shows that exporter_lib_v2.DetectionFromImageModule has no 'outputs' attribute assignment and exporter_main_v2.py has 0 'outputs' attribute reads.",
+    "repro_stderr.log shows the runtime blocker: No module named 'tensorflow'.",
+    "codebase/research/object_detection/exporter_lib_v2.py:137 defines DetectionFromImageModule as a tf.Module wrapper; code around lines 140-167 sets up __call__ but does not define an outputs property."
+  ],
+  "steps": [
+    "Read bug_report.txt and located the TF Object Detection TF2 export path.",
+    "Inspected codebase/research/object_detection/exporter_lib_v2.py and exporter_main_v2.py for the reported attribute error.",
+    "Ran bash run_repro.sh and captured stdout/stderr logs."
+  ],
+  "blocking_reason": "TensorFlow is not installed in this workspace, so the exporter runtime path cannot be executed here.",
+  "reproduction_command": "bash run_repro.sh"
+}

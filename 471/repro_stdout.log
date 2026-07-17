@@ -1,0 +1,4 @@
+python=3.12.3
+source=471/codebase/detectron2/data/transforms
+constructed=RandomCrop
+repr_attempt=begin

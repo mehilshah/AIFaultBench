@@ -1,0 +1,103 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46710
+
+TITLE
+Accuracy regression in DeepSeek-R1-Distill-Llama-8B after upgrading Transformers from 4.55 to 5.9
+
+BODY
+### System Info
+
+transformers: 4.55 vs 5.9.0
+PyTorch: 2.13
+
+### Who can help?
+
+@ArthurZucker and @itazap
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+
+```
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+
+model_name = "deepseek-ai/DeepSeek-R1-Distill-Llama-8B"
+
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    torch_dtype=torch.float16,
+).cuda()
+
+messages = [
+    {"role": "user", "content": "What is 1+1? Answer briefly."}
+]
+
+text = tokenizer.apply_chat_template(
+    messages,
+    tokenize=False,
+    add_generation_prompt=True
+)
+
+inputs = tokenizer(text, return_tensors="pt").to(model.device)
+
+with torch.no_grad():
+    outputs = model.generate(
+        **inputs,
+        max_new_tokens=512,
+        temperature=0.6,
+        top_p=0.95,
+        do_sample=True
+    )
+input_len = inputs["input_ids"].shape[-1]
+response = tokenizer.decode(
+    outputs[0][input_len:],
+    skip_special_tokens=True
+)
+print(response)
+```
+
+### Expected behavior
+
+v4.55 response:
+```
+First, I recognize that the question is asking for the sum of 1 and 1.
+
+Next, I identify the numbers involved in the addition, which are both 1.
+
+Then, I perform the addition: 1 plus 1 equals 2.
+
+Finally, I conclude that the correct answer is 2.
+</think>
+
+**Solution:**
+
+To find the sum of 1 and 1, follow these easy steps:
+
+1. **Identify the numbers to add:**
+   - First number: 1
+   - Second number: 1
+
+2. **Add the numbers together:**
+   \[
+   1 + 1 = 2
+   \]
+
+3. **State the final answer:**
+   \[
+   \boxed{2}
+   \]
+```
+v5.9.0 response:
+```
+ĊIĠneedĠtoĠdetermineĠtheĠsumĠofĠ1ĠandĠ1.ĊĊAddingĠ1ĠandĠ1ĠgivesĠaĠtotalĠofĠ2.Ċ</think>ĊĊ**Solution:**ĊĊToĠfindĠtheĠsumĠofĠ1ĠandĠ1,ĠfollowĠtheseĠsimpleĠsteps:ĊĊ1.Ġ**IdentifyĠtheĠnumbersĠtoĠadd:**ĊĠĠĠ-Ġ**FirstĠnumber:**Ġ1ĊĠĠĠ-Ġ**SecondĠnumber:**Ġ1ĊĊ2.Ġ**PerformĠtheĠaddition:**ĊĠĠĠ\[ĊĠĠĠ1Ġ+Ġ1Ġ=Ġ2ĊĠĠĠ\]ĊĊ**FinalĠAnswer:**Ġ\(\boxed{2}\)
+```

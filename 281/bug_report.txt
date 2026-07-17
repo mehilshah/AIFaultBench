@@ -1,0 +1,127 @@
+# recovered-from-issue: https://github.com/pyg-team/pytorch_geometric/issues/10703
+
+TITLE
+cannot export knn_graph
+
+BODY
+### 🐛 Cannot export knn_graph
+
+I'm trying to export a model for use in cpp. would like to use onnxruntime ideally but can work with libtorch as well.
+How do we export knn_graph?
+
+```
+import torch
+from torch import nn
+from torch_geometric.nn import ChebConv, knn_graph
+
+class SampleModule(nn.Module):
+    def __init__(self, in_channels:int, out_channels:int, K:int, aggr:str):
+        super().__init__()
+        self.conv1 : nn.Module = ChebConv(in_channels, out_channels, K=K, aggr=aggr)
+
+    def forward(self, x:torch.Tensor, position:torch.Tensor) -> torch.Tensor:
+        edges = knn_graph(position.squeeze(0), k=20, flow='target_to_source')
+        x = self.conv1(x.transpose(2,1), edges)
+        return x.transpose(2,1)
+
+
+m = SampleModule(512, 256, 2, 'add')
+m.eval()
+
+model = torch.export.export(m, args=(torch.randn(10, 10), torch.randn(10, 10)), strict=False)
+torch.export.save(model, "model.pt2")
+```
+
+Stacktrace
+
+```
+Traceback (most recent call last):                                                                                                                                                                             
+  File "/home/tsaiz/SphereGlue/test_export.py", line 20, in <module>                                                                                                                                           
+    model = torch.export.export(m, args=(torch.randn(10, 10), torch.randn(10, 10)), strict=False)                                                                                                              
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/export/__init__.py", line 205, in export                                                                                        
+    raise e                                                                                                                                                                                                    
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/export/__init__.py", line 171, in export                                                                                        
+    return _export(                                                                                                                                                                                            
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/export/_trace.py", line 1343, in wrapper                                                                                        
+    raise e                                                                                                                                                                                                    
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/export/_trace.py", line 1309, in wrapper                                                                                        
+    ep = fn(*args, **kwargs)                                                                                                                                                                                   
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/export/exported_program.py", line 124, in wrapper                                                                               
+    return fn(*args, **kwargs)                                                                                                                                                                                 
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/_utils_internal.py", line 96, in wrapper_function                                                                               
+    return function(*args, **kwargs)                                                                                                                                                                           
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/export/_trace.py", line 2508, in _export                                                                                        
+    ep = _export_for_training(                                                                                                                                                                                 
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/export/_trace.py", line 1343, in wrapper                                                                                        
+    raise e   
+.....
+  File "/home/tsaiz/SphereGlue/test_export.py", line 12, in forward
+    edges = knn_graph(position.squeeze(0), k=20, flow='target_to_source')
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch_geometric/nn/pool/__init__.py", line 175, in knn_graph
+    return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch_cluster/knn.py", line 132, in knn_graph
+    edge_index = knn(x, x, k if loop else k + 1, batch, batch, cosine,
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch_cluster/knn.py", line 81, in knn
+    return torch.ops.torch_cluster.knn(x, y, ptr_x, ptr_y, k, cosine,
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/_ops.py", line 1269, in __call__
+    return self._op(*args, **kwargs)
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/fx/experimental/proxy_tensor.py", line 1654, in __torch_function__
+    return func(*args, **kwargs)
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/_ops.py", line 1269, in __call__
+    return self._op(*args, **kwargs)
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/fx/experimental/proxy_tensor.py", line 1725, in __torch_function__
+    return func(*args, **kwargs)
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/_ops.py", line 1269, in __call__
+    return self._op(*args, **kwargs)
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/_export/non_strict_utils.py", line 1159, in __torch_function__
+    return func(*args, **kwargs)
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/_ops.py", line 1269, in __call__
+    return self._op(*args, **kwargs)
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/_ops.py", line 988, in handler
+    return torch._library.utils.handle_dispatch_mode(
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/_library/utils.py", line 325, in handle_dispatch_mode
+    return curr_mode.__torch_dispatch__(op_overload, overload_types, args, kwargs)
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/_compile.py", line 54, in inner
+    return disable_fn(*args, **kwargs)
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 1263, in _fn
+    return fn(*args, **kwargs)
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/utils/_stats.py", line 29, in wrapper
+    return fn(*args, **kwargs)
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/fx/experimental/proxy_tensor.py", line 1785, in __torch_dispatch__
+    return proxy_call(self, func, self.pre_dispatch, args, kwargs)
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/fx/experimental/proxy_tensor.py", line 1212, in proxy_call
+    out = func(*args, **kwargs)
+  File "/home/tsaiz/anaconda3/envs/pyG_test/lib/python3.10/site-packages/torch/_ops.py", line 865, in __call__
+    return self._op(*args, **kwargs)
+RuntimeError: The tensor has a non-zero number of elements, but its data is not allocated yet.
+If you're using torch.compile/export/fx, it is likely that we are erroneously tracing into a custom kernel. To fix this, please wrap the custom kernel into an opaque custom op. Please see the following for details: https://pytorch.org/tutorials/advanced/custom_ops_landing_page.html
+If you're using Caffe2, Caffe2 uses a lazy allocation, so you will need to call mutable_data() or raw_mutable_data() to actually allocate memory.
+```
+
+
+
+
+
+### Versions
+
+[conda] numpy                     2.2.6                    pypi_0    pypi
+[conda] nvidia-cublas-cu12        12.6.4.1                 pypi_0    pypi
+[conda] nvidia-cuda-cupti-cu12    12.6.80                  pypi_0    pypi
+[conda] nvidia-cuda-nvrtc-cu12    12.6.85                  pypi_0    pypi
+[conda] nvidia-cuda-runtime-cu12  12.6.77                  pypi_0    pypi
+[conda] nvidia-cudnn-cu12         9.10.2.21                pypi_0    pypi
+[conda] nvidia-cufft-cu12         11.3.0.4                 pypi_0    pypi
+[conda] nvidia-curand-cu12        10.3.7.77                pypi_0    pypi
+[conda] nvidia-cusolver-cu12      11.7.1.2                 pypi_0    pypi
+[conda] nvidia-cusparse-cu12      12.5.4.2                 pypi_0    pypi
+[conda] nvidia-cusparselt-cu12    0.7.1                    pypi_0    pypi
+[conda] nvidia-nccl-cu12          2.28.9                   pypi_0    pypi
+[conda] nvidia-nvjitlink-cu12     12.6.85                  pypi_0    pypi
+[conda] nvidia-nvtx-cu12          12.6.77                  pypi_0    pypi
+[conda] torch                     2.11.0+cu126             pypi_0    pypi
+[conda] torch-cluster             1.6.3                    pypi_0    pypi
+[conda] torch-geometric           2.7.0                    pypi_0    pypi
+[conda] torch-scatter             2.1.2+pt211cu126          pypi_0    pypi
+[conda] torch-sparse              0.6.18+pt211cu126          pypi_0    pypi
+[conda] torchvision               0.26.0+cu126             pypi_0    pypi
+[conda] triton                    3.6.0                    pypi_0    pypi

@@ -1,0 +1,5 @@
+Gemma4 parser reproduction
+non-streaming: reasoning=None, content='This is a direct final answer without channel markers.'
+streaming chunks: [{'reasoning': 'This is a'}, {'reasoning': ' direct final answer'}, {'reasoning': ' without channel markers.'}]
+final delta: None
+reproducible: True

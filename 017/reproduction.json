@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Running `./run_repro.sh` completed successfully on Python 3.12.3 with TensorFlow 2.21.0.",
+    "The object detection SavedModel loaded from `ssd_mobilenet_v1_coco_2017_11_17` and inference on `codebase/research/object_detection/test_images/image1.jpg` returned `num_detections=100` with `max_score=0.9406895041465759`.",
+    "The detection tensors were populated, with example outputs `detection_scores[:5]=[0.9407 0.9345 0.2309 0.2252 0.1725]` and `detection_classes[:5]=[18, 18, 18, 18, 18]`."
+  ],
+  "steps": [
+    "Created a local virtual environment with `./setup_env.sh` and installed TensorFlow 2.21.0 plus the small runtime dependencies.",
+    "Ran `./run_repro.sh` against the bundled TensorFlow Models checkout and local sample image.",
+    "Verified that inference produced non-empty detection outputs instead of the empty tensors described in the report."
+  ],
+  "blocking_reason": "The current checkout does not reproduce the reported TF1-era empty-tensor behavior; the TF2 SavedModel inference path returns populated detections on the local sample image.",
+  "reproduction_command": "./setup_env.sh && ./run_repro.sh"
+}

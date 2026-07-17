@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With torchvision blocked, AutoProcessor.from_pretrained(\"HuggingFaceTB/SmolVLM-256M-Instruct\") raises ValueError: Unrecognized image processor in HuggingFaceTB/SmolVLM-256M-Instruct..., matching the bug report.",
+  "steps": [
+    "Create an isolated venv with the local transformers source on PYTHONPATH.",
+    "Install torch and the non-vision runtime dependencies, but do not install torchvision.",
+    "Run repro.py, which blocks torchvision imports and calls AutoProcessor.from_pretrained(\"HuggingFaceTB/SmolVLM-256M-Instruct\")."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

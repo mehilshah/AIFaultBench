@@ -1,0 +1,2 @@
+368/codebase/timm/models/_factory.py:138: UserWarning: Mapping deprecated model name convnext_large_in22ft1k to current convnext_large.fb_in22k_ft_in1k.
+  model = create_fn(

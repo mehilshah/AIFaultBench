@@ -1,0 +1,9 @@
+keras==3.9.0
+jax==0.4.38
+jaxlib==0.4.38
+numpy==1.26.4
+scipy
+pandas
+matplotlib
+seaborn
+tqdm

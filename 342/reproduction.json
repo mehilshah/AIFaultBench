@@ -1,0 +1,13 @@
+{
+  "reproducible": false,
+  "evidence": "In a clean venv with the restored local codebase, ZeroInflatedPoisson(rate=100, gate_logits=log(p/(1-p))) reported zip_from_logits.gate=0.300000 and sampled zero_fraction_gate_logits=0.306000, while the gate=0.3 path produced zero_fraction_gate=0.297000.",
+  "steps": [
+    "Created a fresh Python 3.12 virtual environment.",
+    "Installed torch 2.5.1+cpu and the local dependency set.",
+    "Restored the local Pyro source tree into codebase/.",
+    "Ran the issue snippet against the restored local Pyro code.",
+    "Observed that gate_logits behaves like gate and the bug does not reproduce."
+  ],
+  "blocking_reason": "The restored local code snapshot already includes the fixed binary-logit handling in pyro/distributions/zero_inflated.py, so the reported bug is not present here.",
+  "reproduction_command": "bash run_repro.sh"
+}

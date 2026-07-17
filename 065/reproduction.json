@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` in a Python 3.10 container with `tensorflow==2.11.0` and `numpy<2` exits with code 1 after `ImportError: cannot import name 'FeatureSpace' from 'keras.utils' (/usr/local/lib/python3.10/site-packages/keras/utils/__init__.py)`.",
+  "steps": [
+    "Build the Docker image with `bash setup_env.sh`.",
+    "Run the repro with `bash run_repro.sh`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

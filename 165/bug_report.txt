@@ -1,0 +1,50 @@
+Title: Weird Behavior of PadTo and poor documentation
+Date: 2022-12-30T18:46:34+00:00
+URL: https://github.com/kornia/kornia/issues/2121
+
+Description:
+### Describe the bug
+
+Hi,
+
+First thank you for this great library, I'm currently trying to switch all my pipeline to kornia instead of albumentation.
+
+I was actually looking for a PadIfNeeded function in Kornia.
+I finally found that there exists a `PadTo` function (not available in the documentation website by the way).
+
+However, the behavior of the function is unclear when you pass a larger image "inside a smaller `PadTo`" (see bellow).
+
+There is also a small typo in the docstring saying : `p: probability of the image being flipped.`
+
+### Reproduction steps
+
+```bash
+import kornia.augmentation as K
+import torch
+a = torch.meshgrid(torch.arange(10), torch.arange(10))[0].float()
+
+transform = K.PadTo((5, 5), pad_value=0)
+
+transform(a)
+```
+
+
+### Expected behavior
+
+It seems that the transformation returns the upper left corner of the image, without any padding happening of course.
+
+I guess I would expect two possibilities:
+- raise an error: since the augmentation does not perform anything related to what it's supposed to do -> Error: PadSize should be larger than the input size.
+- return the original image: this would be equivalent to a pad if needed function.
+
+### Environment
+
+```shell
+kornia='0.6.9'
+torch='1.12.1+cu113'
+```
+
+
+### Additional context
+
+_No response_

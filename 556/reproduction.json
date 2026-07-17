@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Traceback (most recent call last):\n  File \"repro.py\", line 48, in <module>\n    main()\n  File \"repro.py\", line 44, in main\n    model(past_values=past_values, window_size=5)\n  File \".venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1736, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \".venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1747, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"codebase/src/transformers/utils/generic.py\", line 907, in wrapper\n    output = func(self, *args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"codebase/src/transformers/models/timesfm2_5/modeling_timesfm2_5.py\", line 780, in forward\n    new_inputs.extend(self._timesfm_moving_average(ts, window_size))\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \".venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1931, in __getattr__\n    raise AttributeError(\nAttributeError: 'TimesFm2_5ModelForPrediction' object has no attribute '_timesfm_moving_average'. Did you mean: '_timesfm2_5_moving_average'?",
+  "steps": [
+    "Install dependencies with setup_env.sh",
+    "Run repro.py against the local codebase/ checkout",
+    "Pass window_size=5 into TimesFm2_5ModelForPrediction.forward()"
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,14 @@
+{
+  "title": "FlowMatchEulerDiscreteScheduler keeps mismatched timesteps when custom timesteps are provided",
+  "description": "Repro for diffusers issue 14013: manual timesteps are preserved even though the scheduler recomputes the shifted sigma schedule, so the neural network receives timestep labels that do not match the noisy level schedule.",
+  "reproduction_command": "bash run_repro.sh",
+  "dependencies": [
+    "torch",
+    "numpy",
+    "packaging",
+    "huggingface-hub",
+    "Pillow",
+    "requests"
+  ],
+  "entrypoint": "repro.py"
+}

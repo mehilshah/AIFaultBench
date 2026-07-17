@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "python3 repro.py prints num_classes_default=16 from codebase/vision_transformer/main.py",
+    "stderr reports: BUG: expected default num_classes=10 for CIFAR10, but code sets 16.",
+    "run_repro.sh exits with code 1"
+  ],
+  "steps": [
+    "Inspect codebase/vision_transformer/main.py",
+    "Extract the --num-classes argparse default value",
+    "Compare the observed default against the CIFAR-10 expectation of 10"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

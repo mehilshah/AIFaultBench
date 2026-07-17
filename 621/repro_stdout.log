@@ -1,0 +1,38 @@
+Step 1: exercising DiffusionGemmaGenerationMixin._prepare_generation_config with a plain GenerationConfig
+Traceback (most recent call last):
+  File "621/repro.py", line 64, in main
+    DiffusionGemmaGenerationMixin._prepare_sampler(fake_model, prepared_generation_config)
+  File "621/codebase/src/transformers/models/diffusion_gemma/generation_diffusion_gemma.py", line 1235, in _prepare_sampler
+    config=generation_config.sampler_config,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GenerationConfig' object has no attribute 'sampler_config'. Did you mean: 'compile_config'?
+Step 2: exercising ImageTextToTextPipeline.postprocess with DiffusionGemmaGenerationOutput
+Traceback (most recent call last):
+  File "621/repro.py", line 90, in main
+    ImageTextToTextPipeline.postprocess(fake_pipeline, model_outputs)
+  File "621/codebase/src/transformers/pipelines/image_text_to_text.py", line 420, in postprocess
+    generated_texts = self.processor.post_process_image_text_to_text(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "621/repro.py", line 46, in post_process_image_text_to_text
+    return self.tokenizer.decode(generated_outputs, skip_special_tokens=skip_special_tokens, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "621/codebase/src/transformers/tokenization_utils_base.py", line 2897, in decode
+    return self._decode(
+           ^^^^^^^^^^^^^
+  File "621/codebase/src/transformers/tokenization_utils_tokenizers.py", line 1031, in _decode
+    token_ids = token_ids["input_ids"]
+                ~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'input_ids'
+{
+  "reproducible": true,
+  "evidence": [
+    "_prepare_sampler raised AttributeError: 'GenerationConfig' object has no attribute 'sampler_config'",
+    "postprocess raised KeyError: 'input_ids'"
+  ],
+  "steps": [
+    "A plain GenerationConfig reaches DiffusionGemmaGenerationMixin._prepare_sampler and raises AttributeError on sampler_config.",
+    "Passing DiffusionGemmaGenerationOutput into ImageTextToTextPipeline.postprocess raises KeyError on 'input_ids'."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

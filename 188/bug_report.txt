@@ -1,0 +1,81 @@
+Title: TensorSict `set_list_to_stack` causes TorchTune `RequestOutput` class error
+Date: 2025-06-13T19:43:43+00:00
+URL: https://github.com/meta-pytorch/torchtune/issues/2828
+
+Description:
+## Context
+
+TorchRL / TorchTune are making great progress in the LLM post-training front with RL.
+
+TorchTune recently built this recipe for Async GPRO with LLM (leveraging some primitives from TorchRL): https://github.com/pytorch/torchtune/blob/main/recipes/dev/async_grpo_full_finetune_distributed.py
+I have run it and it works nicely!
+
+TorchRL recently added this tutorial on how to work with multi turn (chat) language environments (even with tool calls):
+https://docs.pytorch.org/rl/main/tutorials/llm_browser.html?highlight=llm+browser
+
+I am very excited by these  2 recent pieces of work, and I am trying to combine them with my own data. I have created my own custom chat environment (based on [this one](https://github.com/pytorch/rl/blob/main/torchrl/envs/llm/chat.py))  and I am trying for now to generate rollouts with it, using the `vllm_generate` from the TorchTune recipe.
+
+## Describe the bug
+
+I have detected that calling `set_list_to_stack(True).set()` (from TensorDict),  which is required for proper batch handling in chat environments, causes errors in the `torchtune.dev.rl.datatypes.RequestOutput` class.
+
+More specifically setting:
+
+`set_list_to_stack(True).set()`
+
+Raises a KeyError when calling
+
+`RequestOutput.from_request_output()`
+
+on the generate method output.
+
+This seems to make incompatible both combining chat language environments with RequestOutput for now.
+
+I wonder if that is the reason this import is done later
+https://github.com/pytorch/torchtune/blob/main/torchtune/dev/rl/workers/datacollectors/sync.py#L106C34-L106C40
+
+## To Reproduce
+
+Steps to reproduce the behavior.
+
+```python
+from vllm import SamplingParams, LLM
+from torchtune.dev.rl.datatypes import RequestOutput
+
+from tensordict import set_list_to_stack
+
+REPRODUCE_ERROR = True
+
+def main():
+    model_id = "meta-llama/Llama-3.1-8B"
+
+    vllm_instance = LLM(model_id, tensor_parallel_size=8)
+
+    # Valid sampling params
+    sampling_params = SamplingParams(
+        temperature=1.0,
+        logprobs=True,
+        max_tokens=5,
+        detokenize=True,
+        prompt_logprobs=None,
+    )
+
+    input_text = ("Once upon a time",)
+    tokens_out = vllm_instance.generate(input_text, sampling_params=sampling_params, use_tqdm=False)
+
+    # This is required, as RequestOutput tried to convert num_cached_tokens to a tensor
+    for request_output in tokens_out: 
+        request_output.num_cached_tokens = 0
+
+    # This works only if list_to_stack is NOT enabled!
+    if REPRODUCE_ERROR:
+        set_list_to_stack(True).set()
+
+    tokens_out = RequestOutput.from_request_output(tokens_out)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+cc: @vmoens

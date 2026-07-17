@@ -1,0 +1,53 @@
+Bug report reproduction summary
+Repo root: 561
+Codebase path: 561/codebase
+
+python: 3.12.13
+platform: Linux-6.17.0-1024-oem-x86_64-with-glibc2.39
+torch_version: 2.13.0+cu130
+cuda_available: True
+cuda_device_count: 1
+cuda_device_name: NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition
+cuda_capability: 12.0
+
+Source evidence:
+
+--- codebase/vllm/v1/core/kv_cache_utils.py:1272-1282 ---
+1272:         str(extra_config.get("enable_cross_layers_blocks", "False")).lower() == "true"
+1273:     )
+1274:     return is_dsv4 or (enable_cross_layers and len(kv_cache_groups) > 1)
+1275: 
+1276: 
+1277: def _get_kv_cache_config_packed(
+1278:     vllm_config: VllmConfig,
+1279:     kv_cache_groups: list[KVCacheGroupSpec],
+1280:     available_memory: int,
+1281: ) -> tuple[int, list[KVCacheTensor]]:
+1282:     """Plan a packed per-block KV cache tensor layout.
+
+--- codebase/vllm/v1/attention/backends/flash_attn.py:785-795 ---
+ 785:                 attn_metadata,
+ 786:                 layer,
+ 787:             )
+ 788: 
+ 789:         # For decoder and cross-attention, use KV cache as before
+ 790:         key_cache, value_cache = kv_cache.unbind(1)
+ 791:         # Fix degenerate strides on size-1 dims (e.g. num_kv_heads=1 with TP).
+ 792:         # FA3/4 on H100+ uses TMA, which requires ≥16-byte stride alignment.
+ 793:         # See vllm.utils.torch_utils.canonicalize_singleton_dim_strides.
+ 794:         fixed_k = canonicalize_singleton_dim_strides(key_cache)
+ 795:         fixed_v = canonicalize_singleton_dim_strides(value_cache)
+
+Derived packing math:
+full_attention_page_size_bytes: 8192
+available_memory: 524288
+packed_num_blocks: 32
+page_size_elems: 4096
+packed_tensor[0]: size=524288, offset=0, block_stride_bytes=16384, block_stride_elems=8192
+packed_tensor[1]: size=524288, offset=8192, block_stride_bytes=16384, block_stride_elems=8192
+
+Root-cause check:
+packed block_stride bytes == 2 * page_size bytes: True
+key/value cache stride used by FlashAttention would be larger than a single layer page: True
+
+Wrote reproduction.json

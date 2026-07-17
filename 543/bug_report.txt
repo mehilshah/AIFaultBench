@@ -1,0 +1,65 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46829
+
+TITLE
+[Bug] VideoPrismForVideoClassification returns last_hidden_state tensor as hidden_states in ImageClassifierOutput
+
+BODY
+### System Info
+
+- `transformers` version: 5.13.0.dev0 (main branch, local dev install)
+- Platform: Linux (WSL2, kernel 6.6.114.1-microsoft-standard-WSL2)
+- Python version: 3.14.4
+- PyTorch version: 2.12.1+
+
+### Who can help?
+
+_No response_
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+```python
+import torch
+from transformers import VideoPrismVisionConfig
+from transformers.models.videoprism.modeling_videoprism import VideoPrismForVideoClassification
+
+config = VideoPrismVisionConfig(num_labels=4)
+model = VideoPrismForVideoClassification._from_config(config)
+model.eval()
+
+pixel_values = torch.randn(1, 2, 3, 288, 288)
+with torch.no_grad():
+    outputs = model(pixel_values_videos=pixel_values)
+
+print(type(outputs.hidden_states))
+# Output:  <class 'torch.Tensor'>
+
+# Should be None or tuple[torch.FloatTensor, ...] per ImageClassifierOutput contract
+assert outputs.hidden_states is None or isinstance(outputs.hidden_states, tuple), (
+    f"FAIL: hidden_states is {type(outputs.hidden_states)}, expected None or tuple"
+)
+# AssertionError: FAIL: hidden_states is <class 'torch.Tensor'>, expected None or tuple
+```
+
+### Expected behavior
+
+outputs.hidden_states should be None by default (when output_hidden_states=False),
+matching the ImageClassifierOutput type contract:
+
+    hidden_states: tuple[torch.FloatTensor, ...] | None = None
+    attentions: tuple[torch.FloatTensor, ...] | None = None
+
+Currently the model incorrectly returns vision_model_outputs.last_hidden_state
+(a raw tensor) as hidden_states, and omits attentions entirely.
+
+The sibling class VideoPrismVideoModel.forward() already handles this correctly
+by passing vision_model_outputs.hidden_states and vision_model_outputs.attentions.

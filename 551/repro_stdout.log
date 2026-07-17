@@ -1,0 +1,25 @@
+{
+  "reproducible": true,
+  "evidence": {
+    "docstring_lines": [
+      "1445:     Matrix variate normal distribution as described in [1] but with a lower_triangular parametrization,",
+      "1451:     :param array_like scale_tril_row: Lower cholesky of rows correlation matrix.",
+      "1452:     :param array_like scale_tril_column: Lower cholesky of columns correlation matrix."
+    ],
+    "implementation_lines": [
+      "1446:     i.e. :math:`U=scale_tril_row @ scale_tril_row^{T}` and :math:`V=scale_tril_column @ scale_tril_column^{T}`.",
+      "1461:         \"scale_tril_row\": constraints.lower_cholesky,",
+      "1462:         \"scale_tril_column\": constraints.lower_cholesky,",
+      "1499:         samples = self.loc + self.scale_tril_row @ eps @ jnp.swapaxes("
+    ],
+    "interpretation": "The docstring says 'correlation matrix' while the class enforces lower Cholesky factors and samples via matrix multiplication, which matches covariance factors."
+  },
+  "steps": [
+    "Open codebase/numpyro/distributions/continuous.py.",
+    "Inspect the MatrixNormal docstring at lines 1444-1452.",
+    "Inspect arg_constraints and sample() at lines 1459-1500.",
+    "Confirm the docstring says 'lower cholesky of rows/columns correlation matrix' while the implementation uses lower_cholesky factors and covariance-style sampling."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

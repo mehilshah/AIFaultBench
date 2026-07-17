@@ -1,0 +1,11 @@
+{
+  "bug_id": "019",
+  "issue_url": "https://github.com/tensorflow/models/issues/11018",
+  "library_name": "tensorflow/models",
+  "reproduction_command": "bash run_repro.sh",
+  "primary_failure": "tensorflow_text undefined symbol during import",
+  "python_version": "3.10",
+  "repro_script": "repro.py",
+  "environment_script": "setup_env.sh"
+}
+

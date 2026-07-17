@@ -1,0 +1,32 @@
+Title: wrong result when shrinking a realized, sharded tensor
+Date: 2025-12-27T21:41:18+00:00
+URL: https://github.com/tinygrad/tinygrad/issues/13853
+
+Description:
+bug.py
+```python
+from tinygrad import Tensor
+
+T = Tensor.arange(4, device='CPU:0')
+
+print(f"{T.tolist()=}")
+print(f"1. {T.shard(('CPU:0', 'CPU:1'), 0).realize().shrink(((2, 4),)).tolist()=} - should be [2,3]")
+print(f"2. {T.shard(('CPU:1', 'CPU:2'), 0).realize().shrink(((0, 2),)).tolist()=} - should be [0,1]")
+```
+Either get the wrong shard (1) or an empty buffer (2).
+```
+$ python bug.py      
+T.tolist()=[0, 1, 2, 3]
+1. T.shard(('CPU:0', 'CPU:1'), 0).realize().shrink(((2, 4),)).tolist()=[0, 1] - should be [2,3]
+2. T.shard(('CPU:1', 'CPU:2'), 0).realize().shrink(((0, 2),)).tolist()=[0, 0] - should be [0,1]
+```
+
+Caused by https://github.com/tinygrad/tinygrad/pull/13598
+
+```
+$ git checkout 76d465d~1
+$ python bug.py         
+T.tolist()=[0, 1, 2, 3]
+1. T.shard(('CPU:0', 'CPU:1'), 0).realize().shrink(((2, 4),)).tolist()=[2, 3] - should be [2,3]
+2. T.shard(('CPU:1', 'CPU:2'), 0).realize().shrink(((0, 2),)).tolist()=[0, 1] - should be [0,1]
+```

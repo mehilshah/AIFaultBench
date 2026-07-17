@@ -1,0 +1,11 @@
+{
+  "bug_id": "303",
+  "issue_url": "https://github.com/deepspeedai/DeepSpeed/issues/7971",
+  "commit_hash": "0ba235294fcbe35f5c42681bd85666dff5c48a93",
+  "library_name": "DeepSpeed",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "repro_artifact": "fp_quantizer_warning_repro.cu",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,20 @@
+{
+  "title": "TensorDictReplayBuffer pin_memory skips custom-transform outputs",
+  "bug_report": "bug_report.txt",
+  "reproducible": true,
+  "entrypoint": "run_repro.sh",
+  "environment": {
+    "python": "3.12",
+    "torch": "2.4.0+cpu",
+    "tensordict": "0.5.0"
+  },
+  "inputs": [
+    "bug_report.txt",
+    "codebase/"
+  ],
+  "outputs": [
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

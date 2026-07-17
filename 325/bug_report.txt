@@ -1,0 +1,30 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/2146
+
+TITLE
+Dirichlet and Beta forward sampling implementation uses `jnp.finfo` in a deprecated way
+
+BODY
+This leads to a deprecation warning if you run the following code on the latest `jax` (tested on `jax==0.9.1`) with `-W always`
+
+### Reprex
+```python
+import numpyro
+import jax.numpy as jnp
+import numpyro.distributions as dist
+
+with numpyro.handlers.seed(rng_seed=5):
+    numpyro.sample("my_dirichlet", dist.Dirichlet(jnp.array([1])))
+```
+### Output
+```python
+python3.13/site-packages/ml_dtypes/_finfo.py:709: DeprecationWarning: Implicit conversion of an array to a dtype is deprecated; rather than dtype=arr use dtype=arr.dtype. In the future this will result in an error.
+  key = np.dtype(dtype)
+Array([0.9999999], dtype=float32)
+```
+Because the `Beta` distribution uses a `Dirichlet` instance under the hood for forward sampling, this also affects it.
+
+The issue appears to be that `jnp.finfo` gets called on `samples` here:
+
+https://github.com/pyro-ppl/numpyro/blob/master/numpyro/distributions/continuous.py#L351
+
+Calling it on `samples.dtype` instead should fix the issue. I will open a PR.

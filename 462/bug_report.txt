@@ -1,0 +1,76 @@
+# recovered-from-issue: https://github.com/pyg-team/pytorch_geometric/issues/10138
+
+TITLE
+Type hint error for python 3.12.2(?)
+
+BODY
+### 🐛 Describe the bug
+
+Type hint expression used in Python >= 3.10 not working, e.g., `Tensor | None` instead of `Optional[Tensor]`
+
+```python
+from torch_geometric.nn import MessagePassing
+
+class Tmp(MessagePassing):
+    def __init__(self, in_channels: int, out_channels: int) -> None:
+        super().__init__(aggr='add')
+    def forward(self, x: Tensor, edge_index: Tensor) -> None:
+        ...
+        return None        
+
+    def message(self, x_j: Tensor, edge_attr: Tensor | None = None) -> None:
+        return None
+
+tmp = Tmp(123, 123)
+```
+
+```python
+---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+Cell In[24], line 1
+----> 1 tmp = Tmp(123, 123)
+
+Cell In[23], line 5, in Tmp.__init__(self, in_channels, out_channels)
+      4 def __init__(self, in_channels: int, out_channels: int) -> None:
+----> 5     super().__init__()
+
+File ~/anaconda3/envs/gnn/lib/python3.12/site-packages/torch_geometric/nn/conv/message_passing.py:140, in MessagePassing.__init__(self, aggr, aggr_kwargs, flow, node_dim, decomposed_layers)
+    138 # Collect attribute names requested in message passing hooks:
+    139 self.inspector = Inspector(self.__class__)
+--> 140 self.inspector.inspect_signature(self.message)
+    141 self.inspector.inspect_signature(self.aggregate, exclude=[0, 'aggr'])
+    142 self.inspector.inspect_signature(self.message_and_aggregate, [0])
+
+File ~/anaconda3/envs/gnn/lib/python3.12/site-packages/torch_geometric/inspector.py:118, in Inspector.inspect_signature(self, func, exclude)
+    112     # Mimic TorchScript to auto-infer `Tensor` on non-present types:
+    113     param_type = Tensor if param_type is inspect._empty else param_type
+    115     param_dict[param.name] = Parameter(
+    116         name=param.name,
+    117         type=self.eval_type(param_type),
+--> 118         type_repr=self.type_repr(param_type),
+    119         default=param.default,
+    120     )
+    122 return_type = signature.return_annotation
+    123 # Mimic TorchScript to auto-infer `Tensor` on non-present types:
+
+File ~/anaconda3/envs/gnn/lib/python3.12/site-packages/torch_geometric/inspector.py:67, in Inspector.type_repr(self, obj)
+     65 def type_repr(self, obj: Any) -> str:
+     66     r"""Returns the type hint representation of an object."""
+---> 67     return type_repr(obj, self._globals)
+
+File ~/anaconda3/envs/gnn/lib/python3.12/site-packages/torch_geometric/inspector.py:477, in type_repr(obj, _globals)
+    474 if obj.__module__ == 'builtins':
+    475     return obj.__qualname__
+--> 477 return _get_name(obj.__qualname__, obj.__module__)
+
+AttributeError: 'types.UnionType' object has no attribute '__qualname__'
+```
+
+### Versions
+
+Python version: 3.12.2
+PyTorch Version: 2.4.1
+Cuda Version: 12.4
+PyG Version: 2.6.1
+
+Installed via `conda install pyg -c pyg`

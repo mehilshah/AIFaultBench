@@ -1,0 +1,12 @@
+{
+  "bug_id": "110",
+  "bug_dir": "110",
+  "issue_url": "https://github.com/huggingface/safetensors/issues/492",
+  "commit_hash": "",
+  "library_name": "safetensors",
+  "library_version": "0.4.4",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../110"
+}

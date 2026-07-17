@@ -1,0 +1,28 @@
+Title: Does Rouge score support the multilingual language?
+Date: 2024-03-22T06:57:50+00:00
+URL: https://github.com/huggingface/evaluate/issues/564
+
+Description:
+Environment: **Google Colab**
+Evaluate version: **0.4.1**
+Installed for loading rouge metric: `!pip install rouge_score -q`
+
+```python
+sample_summary = "मलेसियन एयरलाइन्सको विमानमा दुई सय ९८"
+sample_reference = "मलेसियन एयरलाइन्सको विमानमा दुई सय ९८"
+
+# calculate all metric at once
+scores = rouge_score.compute(
+    predictions=[sample_summary],
+    references=[sample_reference]
+)
+scores
+```
+**Result is:**
+```
+{'rouge1': 0.0, 'rouge2': 0.0, 'rougeL': 0.0, 'rougeLsum': 0.0}
+```
+
+I want to know if rouge score is for English test only or also support multilingual?
+
+If not, will there be any future plan to introduce the multilingual support(nepali/hindi)?

@@ -1,0 +1,36 @@
+{'learning_rate': 0.0003, 'lora_r': 16, 'lora_alpha': 16, 'load_in_8bit': False, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0003, 'lora_r': 16, 'lora_alpha': 16, 'load_in_8bit': True, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0003, 'lora_r': 16, 'lora_alpha': 32, 'load_in_8bit': False, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0003, 'lora_r': 16, 'lora_alpha': 32, 'load_in_8bit': True, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0003, 'lora_r': 16, 'lora_alpha': 64, 'load_in_8bit': False, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0003, 'lora_r': 16, 'lora_alpha': 64, 'load_in_8bit': True, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0003, 'lora_r': 32, 'lora_alpha': 16, 'load_in_8bit': False, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0003, 'lora_r': 32, 'lora_alpha': 16, 'load_in_8bit': True, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0003, 'lora_r': 32, 'lora_alpha': 32, 'load_in_8bit': False, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0003, 'lora_r': 32, 'lora_alpha': 32, 'load_in_8bit': True, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0003, 'lora_r': 32, 'lora_alpha': 64, 'load_in_8bit': False, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0003, 'lora_r': 32, 'lora_alpha': 64, 'load_in_8bit': True, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0006, 'lora_r': 16, 'lora_alpha': 16, 'load_in_8bit': False, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0006, 'lora_r': 16, 'lora_alpha': 16, 'load_in_8bit': True, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0006, 'lora_r': 16, 'lora_alpha': 32, 'load_in_8bit': False, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0006, 'lora_r': 16, 'lora_alpha': 32, 'load_in_8bit': True, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0006, 'lora_r': 16, 'lora_alpha': 64, 'load_in_8bit': False, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0006, 'lora_r': 16, 'lora_alpha': 64, 'load_in_8bit': True, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0006, 'lora_r': 32, 'lora_alpha': 16, 'load_in_8bit': False, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0006, 'lora_r': 32, 'lora_alpha': 16, 'load_in_8bit': True, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0006, 'lora_r': 32, 'lora_alpha': 32, 'load_in_8bit': False, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0006, 'lora_r': 32, 'lora_alpha': 32, 'load_in_8bit': True, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0006, 'lora_r': 32, 'lora_alpha': 64, 'load_in_8bit': False, 'load_in_4bit': False, 'adapter': 'lora'}
+{'learning_rate': 0.0006, 'lora_r': 32, 'lora_alpha': 64, 'load_in_8bit': True, 'load_in_4bit': False, 'adapter': 'lora'}
+base_config: base_config.yml
+sweep_config: sweep.yml
+permutations_generated: 24
+unique_output_dirs: 1
+output_dirs: ['./outputs/sweep-test']
+sample_permutations:
+{'learning_rate': 0.0006, 'lora_r': 16, 'lora_alpha': 32, 'load_in_8bit': True, 'output_dir': './outputs/sweep-test'}
+{'learning_rate': 0.0003, 'lora_r': 16, 'lora_alpha': 64, 'load_in_8bit': True, 'output_dir': './outputs/sweep-test'}
+{'learning_rate': 0.0006, 'lora_r': 32, 'lora_alpha': 16, 'load_in_8bit': False, 'output_dir': './outputs/sweep-test'}
+{'learning_rate': 0.0006, 'lora_r': 32, 'lora_alpha': 64, 'load_in_8bit': True, 'output_dir': './outputs/sweep-test'}
+{'learning_rate': 0.0006, 'lora_r': 16, 'lora_alpha': 16, 'load_in_8bit': True, 'output_dir': './outputs/sweep-test'}
+BUG_REPRODUCED: all sweep permutations reuse the same output_dir (./outputs/sweep-test).

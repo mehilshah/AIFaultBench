@@ -1,0 +1,22 @@
+{
+  "bug_id": "349",
+  "bug_dir": "349",
+  "issue_url": "https://github.com/huggingface/accelerate/issues/3140",
+  "commit_hash": "5060574827ffcf1055179896cbb4f150caa3aec5",
+  "library_name": "accelerate",
+  "library_version": "0.35.0.dev0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "huggingface/accelerate@5060574827ffcf1055179896cbb4f150caa3aec5",
+  "codebase_present": "true",
+  "standardized_dir": "../349",
+  "reproduction_command": "bash run_repro.sh",
+  "dependencies": [
+    "torch==2.5.1+cpu",
+    "huggingface_hub>=0.21.0",
+    "numpy>=1.26,<3",
+    "packaging>=20.0",
+    "psutil>=5.9",
+    "pyyaml>=6.0",
+    "safetensors>=0.4.3"
+  ]
+}

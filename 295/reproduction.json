@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "After installing the local requirements in .venv, `bash run_repro.sh` printed `observed result: ['ab']` for `get_possible_chars('(ab)*')` and then raised `AssertionError` because no `ValueError` was raised. This matches the bug report's failing test expectation under rdt==1.21.0.",
+  "steps": [
+    "Run `bash setup_env.sh` to create `.venv` and install `pandas==2.3.3` plus `rdt==1.21.0`.",
+    "Run `bash run_repro.sh`.",
+    "Observe that `sdv._utils.get_possible_chars('(ab)*')` returns `['ab']` instead of raising `ValueError: REGEX operation: SUBPATTERN is not supported by SDV.`"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

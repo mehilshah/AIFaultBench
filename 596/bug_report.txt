@@ -1,0 +1,140 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/13488
+
+TITLE
+diffusers-0.38.0.dev0 breaks offloading
+
+BODY
+### Describe the bug
+
+Using Wan t2v model with diffusers installed from git version 0.38, any attempt to inference with group offloading or model_cpu_offload or sequential_cpu_offload results in an error after the first step of inferencing completes:-
+
+`Traceback (most recent call last):
+  File "/mnt/ai/inference/t2v-wan.py", line 370, in <module>
+    output = pipe(
+             ^^^^^
+  File "/mnt/ai/venv/rocm6.4/lib64/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ai/venv/rocm6.4/lib64/python3.12/site-packages/diffusers/pipelines/wan/pipeline_wan.py", line 632, in __call__
+    latents = self.scheduler.step(noise_pred, t, latents, return_dict=False)[0]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ai/venv/rocm6.4/lib64/python3.12/site-packages/diffusers/schedulers/scheduling_unipc_multistep.py", line 1217, in step
+    prev_sample = self.multistep_uni_p_bh_update(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ai/venv/rocm6.4/lib64/python3.12/site-packages/diffusers/schedulers/scheduling_unipc_multistep.py", line 907, in multistep_uni_p_bh_update
+    rks = torch.stack(rks)
+          ^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but got tensors is on cuda:0, different from other tensors on cpu (when checking argument in method wrapper_CUDA_cat)`
+
+Uninstalling the git version (0.38) and installing latest via pip 'diffusers-0.37.1' inferencing completes without issue with offloading working as expected.
+
+
+### Reproduction
+
+```
+import time
+import torch
+
+from diffusers.utils import export_to_video
+from diffusers import WanPipeline
+from transformers import UMT5EncoderModel
+from diffusers.hooks.group_offloading import apply_group_offloading
+from diffusers.schedulers.scheduling_unipc_multistep import UniPCMultistepScheduler
+
+MODEL = "/mnt/ai/models/wan2.2-t2v-a14b/"
+
+text_encoder = UMT5EncoderModel.from_pretrained(
+    str(MODEL),
+    subfolder="text_encoder",
+    torch_dtype=torch.bfloat16,
+    use_safetensors=True,
+    local_files_only=True,
+)
+
+# This ensures that the input embeddings are tied to the shared embeddings.
+text_encoder.set_input_embeddings(text_encoder.get_input_embeddings())
+
+# Group offloading - enabling this or model cpu offload causes error in 0.38
+# onload_device = torch.device("cuda")
+# offload_device = torch.device("cpu")
+# apply_group_offloading(
+#     text_encoder,
+#     onload_device=onload_device,
+#     offload_device=offload_device,
+#     offload_type="block_level",
+#     num_blocks_per_group=4,
+# )
+# transformer.enable_group_offload(
+#     onload_device=onload_device,
+#     offload_device=offload_device,
+#     offload_type="leaf_level",
+#     use_stream=True,
+# )
+
+pipe = WanPipeline.from_pretrained(
+    MODEL,
+    text_encoder=text_encoder,
+    torch_dtype=torch.bfloat16,
+    use_safetensors=True,
+    local_files_only=True,
+)
+
+pipe.transformer.set_attention_backend("flash")
+
+# 5.0 for 720p, 3.0 for 480p
+pipe.scheduler = UniPCMultistepScheduler.from_config(
+    pipe.scheduler.config,
+    flow_shift=3.0,
+)
+
+# pipe.vae.enable_tiling()
+# pipe.vae.enable_slicing()
+pipe.enable_model_cpu_offload()
+pipe.enable_attention_slicing("max")
+
+output = pipe(
+    prompt="A ball bouncing down a flight of stairs",
+    negative_prompt="",
+    height=480,
+    width=480,
+    num_frames=31,
+    num_inference_steps=30,
+    guidance_scale=1.0,
+    guidance_scale_2=1.0,
+).frames[0]
+
+timestr = time.strftime("%Y%m%d-%H%M%S")
+file_name = f"./{timestr}-test.mp4"
+export_to_video(output, file_name, fps=16)
+```
+
+### Logs
+
+```shell
+
+```
+
+### System Info
+
+- 🤗 Diffusers version: 0.37.1 and  0.38.0.dev0
+- Platform: Linux-6.18.16-200.fc43.x86_64-x86_64-with-glibc2.42
+- Running on Google Colab?: No
+- Python version: 3.12.13
+- PyTorch version (GPU?): 2.8.0+rocm6.4.4.gitc1404424 (True)
+- Flax version (CPU?/GPU?/TPU?): not installed (NA)
+- Jax version: not installed
+- JaxLib version: not installed
+- Huggingface_hub version: 1.10.2
+- Transformers version: 5.5.3
+- Accelerate version: 1.13.0
+- PEFT version: 0.18.1
+- Bitsandbytes version: 0.49.2
+- Safetensors version: 0.7.0
+- xFormers version: not installed
+- Accelerator: NA
+- Using GPU in script?: R9700 32GB
+- Using distributed or parallel set-up in script?: No. Single gpu.
+
+### Who can help?
+
+_No response_

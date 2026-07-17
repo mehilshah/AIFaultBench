@@ -1,0 +1,13 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running the repro in a CPU-only venv with torch 2.6.0+cpu and the checked-out DeepSpeed commit 5b2ccad96a2e8f0567f08714a07aa0baca11c7ef prints the expected AssertionError: DeepSpeed lamb optimizer requires dynamic loss scaling.",
+    "After that caught init failure, stderr shows Exception ignored in: <function DeepSpeedEngine.__del__ ...> and AttributeError: 'DeepSpeedEngine' object has no attribute '_deepcompile_active'."
+  ],
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

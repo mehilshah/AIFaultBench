@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "106/repro.py", line 48, in <module>
+    main()
+  File "106/repro.py", line 42, in main
+    assert result_single[0].equal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: outputs are different than one another for two identical samples in batches of different sizes

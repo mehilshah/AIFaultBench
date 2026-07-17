@@ -1,0 +1,11 @@
+{
+  "bug_id": "066",
+  "issue_url": "https://github.com/keras-team/keras-io/issues/1160",
+  "commit_hash": "b56f87af9e968003666e61f88185a93ff0f0eee8",
+  "library_name": "keras-io",
+  "library_version": "unknown",
+  "reproduction_type": "source-level-typo",
+  "target_file": "codebase/examples/vision/mirnet.py",
+  "reproduction_command": "bash run_repro.sh",
+  "dependencies": []
+}

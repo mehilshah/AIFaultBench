@@ -1,0 +1,28 @@
+{
+  "init_warning_count": 2,
+  "fit_warning_count": 0,
+  "sample_warning_count": 6,
+  "init_warnings": [
+    "FutureWarning: The 'MultiTableMetadata' is deprecated. Please use the new 'Metadata' class for synthesizers.",
+    "UserWarning: We strongly recommend saving the metadata using 'save_to_json' for replicability in future SDV versions."
+  ],
+  "fit_warnings": [],
+  "sample_warnings": [
+    "FutureWarning: The 'SingleTableMetadata' is deprecated. Please use the new 'Metadata' class for synthesizers.",
+    "FutureWarning: The 'SingleTableMetadata' is deprecated. Please use the new 'Metadata' class for synthesizers.",
+    "FutureWarning: The 'SingleTableMetadata' is deprecated. Please use the new 'Metadata' class for synthesizers.",
+    "FutureWarning: The 'SingleTableMetadata' is deprecated. Please use the new 'Metadata' class for synthesizers.",
+    "FutureWarning: The 'SingleTableMetadata' is deprecated. Please use the new 'Metadata' class for synthesizers.",
+    "FutureWarning: The 'SingleTableMetadata' is deprecated. Please use the new 'Metadata' class for synthesizers."
+  ],
+  "sample_shapes": {
+    "parent": [
+      6,
+      2
+    ],
+    "child": [
+      12,
+      3
+    ]
+  }
+}

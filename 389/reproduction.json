@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running the reproduced script under jax==0.10.1, jaxlib==0.10.1, numpy==2.4.6 on Python 3.12.3 prints 'third_element_is_negative_inf: False' and 'third_element_is_nan: True'; the third multiply result is nan instead of -inf.",
+  "steps": [
+    "Create an isolated virtual environment with Python 3.12.3.",
+    "Install numpy==2.4.6, jax==0.10.1, and jaxlib==0.10.1.",
+    "Run repro.py with JAX_PLATFORMS=cpu.",
+    "Observe that jax.lax.mul(-inf, 1.401298464324817e-45) returns nan."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

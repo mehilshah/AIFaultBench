@@ -1,0 +1,73 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38101
+
+TITLE
+`jax.jit + jax.vmap composition`: jit(vmap(f))(x) != vmap(f)(x) for `relu → square → sqrt_abs` at float32.max
+
+BODY
+### Description
+
+
+JIT-compiling a vmapped function suppresses `inf` that arises in eager vmap. For the program `relu → square → sqrt_abs`, squaring `float32.max` overflows to `inf` in eager mode, which propagates through `sqrt_abs` to give `inf`. JIT clips the overflow back to `float32.max` instead.
+
+Minimal reproducer:
+
+```python
+import numpy as np
+import jax, jax.numpy as jnp
+
+def program(x):
+    return jnp.sqrt(jnp.abs(jnp.square(jax.nn.relu(x))))  # relu → square → sqrt_abs
+
+x = jnp.array([3.4028235e+38], dtype=jnp.float32)  # float32.max
+
+jit_result   = np.asarray(jax.jit(jax.vmap(program))(x))
+eager_result = np.asarray(jax.vmap(program)(x))
+
+print("jit(vmap(f))(x):", jit_result)   # [3.4028235e+38]
+print("    vmap(f)(x): ", eager_result) # [inf]
+assert np.allclose(jit_result, eager_result, rtol=1e-5, atol=1e-5)  # AssertionError
+```
+
+Expected output:
+```
+jit(vmap(f))(x): [inf]
+    vmap(f)(x):  [inf]
+```
+
+Actual output:
+```
+jit(vmap(f))(x): [3.4028235e+38]
+    vmap(f)(x):  [inf]
+```
+
+Full pytest output:
+
+```
+=================================== FAILURES ===================================
+_____________________ test_jit_of_vmap_consistent_float32 ______________________
+    np.testing.assert_allclose(result, np.asarray(expected), rtol=1e-5, atol=1e-5, err_msg=f'jit(vmap(f)) != vmap(f) for program: {scenario[1]}')
+E   AssertionError: 
+E   Not equal to tolerance rtol=1e-05, atol=1e-05
+E   jit(vmap(f)) != vmap(f) for program: relu → square → sqrt_abs
+E   inf location mismatch:
+E    ACTUAL: array([3.402823e+38], dtype=float32)
+E    DESIRED: array([inf], dtype=float32)
+E   Falsifying example: test_jit_of_vmap_consistent_float32(
+E       scenario=(program, 'relu → square → sqrt_abs'),
+E       x_np=array([3.4028235e+38], dtype=float32),
+E   )
+============================== 1 failed in 0.64s ===============================
+```
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+
+```
+jax:      0.10.1.dev20260513+64f6e229b
+jaxlib:   0.10.0
+numpy:    2.4.4
+Python:   3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]
+Platform: Linux-6.14.0-37-generic-x86_64-with-glibc2.39
+Device:   CpuDevice(id=0)
+```
+

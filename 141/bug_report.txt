@@ -1,0 +1,65 @@
+Title: Failed to load `.safetensors` as state dict with error from `torch.frombuffer` in `safetensors.torch.load`
+Date: 2024-02-16T22:26:36+00:00
+URL: https://github.com/huggingface/safetensors/issues/442
+
+Description:
+### System Info
+
+OS: Win 10 64 bit
+Python: 3.9.13
+SafeTensors: 0.4.2
+
+### Information
+
+- [ ] The official example scripts
+- [X] My own modified scripts
+
+### Reproduction
+
+Loading the [attached `failed.safetensors` file](https://github.com/huggingface/safetensors/files/14316551/failed.zip) with `safetensors.torch.load_file` directly works, but reading the file into a `bytes` object first and then loading it with `safetensors.torch.load` fails.
+
+
+
+I get the following error:
+```
+Traceback (most recent call last):
+  File "C:\Users\micha\Git\spandrel\test.py", line 10, in <module>
+    state_dict = safetensors.torch.load(b)
+  File "C:\Users\micha\AppData\Local\Programs\Python\Python39\lib\site-packages\safetensors\torch.py", line 338, in load
+    return _view2torch(flat)
+  File "C:\Users\micha\AppData\Local\Programs\Python\Python39\lib\site-packages\safetensors\torch.py", line 386, in _view2torch
+    arr = torch.frombuffer(v["data"], dtype=dtype).reshape(v["shape"])
+ValueError: both buffer length (0) and count (-1) must not be 0
+```
+
+Same error with pytest formatting:
+```
+    def _view2torch(safeview) -> Dict[str, torch.Tensor]:
+        result = {}
+        for k, v in safeview:
+            dtype = _getdtype(v["dtype"])
+>           arr = torch.frombuffer(v["data"], dtype=dtype).reshape(v["shape"])
+E           ValueError: both buffer length (0) and count (-1) must not be 0
+```
+
+Steps to reproduce:
+1. Download `failed.safetensros`
+2. Read `failed.safetensros` into `bytes` object.
+3. Call `safetensors.torch.load`.
+
+I used the following script to get the above error:
+
+
+```py
+import safetensors.torch
+
+file_path = "./failed.safetensors"
+with open(file_path, "rb") as f:
+    b = f.read()
+state_dict = safetensors.torch.load(b)
+print(state_dict.keys())
+```
+
+### Expected behavior
+
+`safetensors.torch.load_file` and `safetensors.torch.load` should produce the same result and load the state dict correctly.

@@ -1,0 +1,13 @@
+original_type=BlockDiagonalCausalMask
+moved_type=BlockDiagonalMask
+original_mask:
+tensor([[[0., -inf, -inf, -inf],
+         [0., 0., -inf, -inf],
+         [-inf, -inf, 0., -inf],
+         [-inf, -inf, 0., 0.]]])
+moved_mask:
+tensor([[[0., 0., -inf, -inf],
+         [0., 0., -inf, -inf],
+         [-inf, -inf, 0., 0.],
+         [-inf, -inf, 0., 0.]]])
+preserves_subclass=False

@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "bug_report.txt states: \"N/A: This is a documentation-only improvement.\"",
+    "The standardized folder does not contain a local `codebase/` checkout.",
+    "Running `bash run_repro.sh` prints that there is no executable source tree and no runtime failure to trigger."
+  ],
+  "steps": [
+    "Read bug_report.txt and identified the issue as a documentation-only typo fix for diffusers.",
+    "Confirmed that `codebase/` is absent from this standardized folder.",
+    "Executed `bash run_repro.sh` and captured stdout/stderr in `repro_stdout.log` and `repro_stderr.log`."
+  ],
+  "blocking_reason": "This is a documentation-only issue with no runtime reproduction path, and the local source tree is missing from the standardized folder.",
+  "reproduction_command": "bash run_repro.sh"
+}

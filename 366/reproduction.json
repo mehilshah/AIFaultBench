@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "AutoConfig.from_pretrained() on a Qwen3-VL checkpoint-style config loads Qwen3VLConfig with top-level num_labels=20 and problem_type=multi_label_classification.",
+    "The nested Qwen3-VL text config still reports num_labels=2 and problem_type=None, so the serving path derives a 2-class head where the checkpoint expects 20 labels.",
+    "The captured repro output shows the mismatch explicitly: checkpoint score.weight shape (20, 4096) versus vLLM-side head shape (2, 4096)."
+  ],
+  "steps": [
+    "Created a checkpoint-style config.json matching the issue report.",
+    "Loaded it with transformers.AutoConfig in an isolated env.",
+    "Verified that the top-level Qwen3-VL config keeps num_labels=20 while the nested text config stays at 2.",
+    "Captured the reproduction output in repro_stdout.log and repro_stderr.log."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "VENV_DIR=/tmp/bug366-venv bash run_repro.sh"
+}

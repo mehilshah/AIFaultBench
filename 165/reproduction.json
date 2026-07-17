@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running PadTo((5, 5), pad_value=0) on a 1x1x10x10 tensor produced output_shape=(1, 1, 5, 5), and the output matched the top-left 5x5 crop of the input. The repro script then raised AssertionError because the transform cropped instead of acting as a no-op or erroring.",
+  "steps": [
+    "Created a Python 3.12 virtual environment with system site packages and installed the local kornia checkout in editable mode from codebase/.",
+    "Applied kornia.augmentation.PadTo((5, 5), pad_value=0) to a 10x10 tensor with values 0..99.",
+    "Observed that the output was the top-left 5x5 crop rather than the original image or an exception."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

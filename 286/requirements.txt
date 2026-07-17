@@ -1,0 +1,6 @@
+numpy>=1.17,<3.0.0
+packaging>=20.0
+psutil
+pyyaml
+huggingface_hub>=0.21.0
+safetensors>=0.4.3

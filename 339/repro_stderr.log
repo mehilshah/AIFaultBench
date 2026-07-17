@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "339/repro.py", line 56, in <module>
+    main()
+  File "339/repro.py", line 51, in main
+    build_detection_test_loader(cfg, cfg.DATASETS.TEST[0])
+  File "339/codebase/detectron2/config/config.py", line 31, in wrapped
+    explicit_args = from_config(cfg, *args[1:], **kwargs)
+  File "339/codebase/detectron2/data/build.py", line 28, in _test_loader_from_config
+    cfg.DATASETS.PROPOSAL_FILES_TEST[list(cfg.DATASETS.TEST).index(dataset_name)]
+ValueError: ['dummy_dataset'] is not in list
+Traceback (most recent call last):
+  File "339/repro.py", line 56, in <module>
+    main()
+  File "339/repro.py", line 51, in main
+    build_detection_test_loader(cfg, cfg.DATASETS.TEST[0])
+  File "339/codebase/detectron2/config/config.py", line 31, in wrapped
+    explicit_args = from_config(cfg, *args[1:], **kwargs)
+  File "339/codebase/detectron2/data/build.py", line 28, in _test_loader_from_config
+    cfg.DATASETS.PROPOSAL_FILES_TEST[list(cfg.DATASETS.TEST).index(dataset_name)]
+ValueError: ['dummy_dataset'] is not in list

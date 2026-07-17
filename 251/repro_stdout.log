@@ -1,0 +1,10 @@
+torch: 2.4.1+cu121
+tensordict: 0.13.0
+working_dir: 251
+Without SliceSampler: 0.00018371284628907839 s
+With SliceSampler: 0.00512981618133684 s
+Slowdown factor: 27.923012924555646x
+{
+  "reproducible": true,
+  "factor": 27.923012924555646
+}

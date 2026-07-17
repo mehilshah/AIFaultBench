@@ -1,0 +1,12 @@
+POT wasserstein_circle repro
+sample1=[0.1, 0.11, 0.4, 0.6]
+sample2=[0.21, 0.15, 0.7, 0.95]
+delta=0.02
+d1_p1=[0.09500000000000001]
+d2_p1=[0.09000000000000001]
+d2_mod_p1=[0.09000000000000001]
+d1_p2=[0.017550000000000007]
+d2_p2=[0.017550000000000003]
+p1_equal=False
+p1_allclose=False
+p2_allclose=True

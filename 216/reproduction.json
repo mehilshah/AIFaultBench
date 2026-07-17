@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "On freezegun 0.3.15, the baseline round-trip passes, but under freeze_time(datetime.datetime.fromtimestamp(100000), tz_offset=-1) the repro prints baseline_equal=True, then frozen_now=1970-01-01 22:46:40, timestamp=85600.0, round_trip_timestamp=96400.0, equal=False. The script then raises AssertionError: Expected t == datetime.fromtimestamp(t).timestamp() under tz_offset=-1, but got t=85600.0 and t2=96400.0.",
+  "steps": [
+    "Run `bash run_repro.sh` from the standardized bug folder.",
+    "The script creates a local `.venv`, installs `six` and `python-dateutil`, and executes `repro.py`.",
+    "Observe that the round-trip timestamp equality fails under `tz_offset=-1` and the script exits with AssertionError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

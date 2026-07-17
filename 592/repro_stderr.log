@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "592/repro.py", line 132, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "592/repro.py", line 125, in main
+    raise AssertionError(
+AssertionError: validate_parameters accepted a nonzero 'missing_values_proportion' for the primary key

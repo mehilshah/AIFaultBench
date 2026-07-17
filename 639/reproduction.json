@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running `bash run_repro.sh` exits with code 1.",
+    "The traceback ends at `TypeError: only integer tensors of a single element can be converted to an index`.",
+    "This matches the upstream failure mode in the dummy-run/speculator indexing path."
+  ],
+  "steps": [
+    "Created an isolated CPU torch environment with `bash setup_env.sh`.",
+    "Ran `bash run_repro.sh`.",
+    "Observed the failing tensor-index operation in `repro.py`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

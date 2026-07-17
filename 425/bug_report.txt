@@ -1,0 +1,211 @@
+# recovered-from-issue: https://github.com/vllm-project/vllm/issues/47418
+
+TITLE
+[Bug]: The spe function of the DeepSeek-v4-flash-DSpark model fails to run
+
+BODY
+### Your current environment
+
+Environment Details
+vLLM Version: main
+torch: 2.11.0
+torchvision: 0.26.0
+cu13
+
+GPU: H20
+CPU: Intel(R) Xeon(R) Platinum 8480+  CPU @ 2.0GHz
+
+
+### 🐛 Describe the bug
+
+Run successfully with the following command：
+`vllm serve /data/Weights/DeepSeek-V4-Flash-DSpark/ --tensor-parallel-size 2 --trust-remote-code --kv-cache-dtype fp8`
+
+Run failed with the following command：
+`vllm serve /data/Weights/DeepSeek-V4-Flash-DSpark/ --tensor-parallel-size 2 --trust-remote-code --kv-cache-dtype fp8 --speculative_config '{"method": "dspark", "num_speculative_tokens": 7, "draft_sample_method": "probabilistic"}'`
+The error message is as follows：
+```Loading safetensors checkpoint shards:  98% Completed | 47/48 [00:02<00:00,  6.20it/s]
+Loading safetensors checkpoint shards: 100% Completed | 48/48 [00:03<00:00, 12.90it/s]
+(Worker_TP0 pid=24712)
+(Worker_TP0 pid=24712) INFO 07-02 16:58:14 [dspark.py:455] DSpark draft model loaded: 96 params
+(Worker_TP0 pid=24712) INFO 07-02 16:58:14 [default_loader.py:430] Loading weights took 3.80 seconds
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898] WorkerProc failed to start.
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898] Traceback (most recent call last):
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/executor/multiproc_executor.py", line 865, in worker_main
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     worker = WorkerProc(*args, **kwargs)
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     return func(*args, **kwargs)
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/executor/multiproc_executor.py", line 634, in __init__
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     self.worker.load_model()
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/worker/gpu_worker.py", line 413, in load_model
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     self.model_runner.load_model(load_dummy_weights=load_dummy_weights)
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/worker/gpu/model_runner.py", line 295, in load_model
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     self.speculator.load_model(self.model)
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/worker/gpu/spec_decode/speculator.py", line 160, in load_model
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     self.model = self.load_draft_model(target_model, target_attn_layer_names)
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/worker/gpu/spec_decode/dspark/speculator.py", line 86, in load_draft_model
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     if self.draft_logits is not None and model.draft_id_to_target_id is not None:
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1968, in __getattr__
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     raise AttributeError(
+(Worker_TP0 pid=24712) ERROR 07-02 16:58:15 [multiproc_executor.py:898] AttributeError: 'DSparkDeepseekV4ForCausalLM' object has no attribute 'draft_id_to_target_id'
+(EngineCore pid=24448) INFO 07-02 16:58:15 [multiproc_executor.py:426] [shutdown] Executor: waiting for worker exit count=2
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898] WorkerProc failed to start.
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898] Traceback (most recent call last):
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/executor/multiproc_executor.py", line 865, in worker_main
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     worker = WorkerProc(*args, **kwargs)
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     return func(*args, **kwargs)
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/executor/multiproc_executor.py", line 634, in __init__
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     self.worker.load_model()
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/worker/gpu_worker.py", line 413, in load_model
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     self.model_runner.load_model(load_dummy_weights=load_dummy_weights)
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/worker/gpu/model_runner.py", line 295, in load_model
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     self.speculator.load_model(self.model)
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/worker/gpu/spec_decode/speculator.py", line 160, in load_model
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     self.model = self.load_draft_model(target_model, target_attn_layer_names)
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/worker/gpu/spec_decode/dspark/speculator.py", line 86, in load_draft_model
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     if self.draft_logits is not None and model.draft_id_to_target_id is not None:
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1968, in __getattr__
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898]     raise AttributeError(
+(Worker_TP1 pid=24713) ERROR 07-02 16:58:15 [multiproc_executor.py:898] AttributeError: 'DSparkDeepseekV4ForCausalLM' object has no attribute 'draft_id_to_target_id'
+[rank0]:[W702 16:58:16.219961279 ProcessGroupNCCL.cpp:1575] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ubuntu:24713:24713 [1] NCCL INFO ENV/Plugin: Closing env plugin ncclEnvDefault
+ubuntu:24712:24712 [0] NCCL INFO ENV/Plugin: Closing env plugin ncclEnvDefault
+ubuntu:24712:24854 [0] NCCL INFO [Service thread] Connection closed by localRank 1
+ubuntu:24712:24796 [0] NCCL INFO [Service thread] Connection closed by localRank 1
+(EngineCore pid=24448) INFO 07-02 16:58:18 [multiproc_executor.py:433] [shutdown] Executor: all workers exited gracefully
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231] EngineCore failed to start.
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231] Traceback (most recent call last):
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/core.py", line 1200, in run_engine_core
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]   File "/home/s30027115/dsv4_dspark/vllm/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]     return func(*args, **kwargs)
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/core.py", line 966, in __init__
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]     super().__init__(
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/core.py", line 123, in __init__
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]     self.model_executor = executor_class(vllm_config)
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/executor/multiproc_executor.py", line 108, in __init__
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]     super().__init__(vllm_config)
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]   File "/home/s30027115/dsv4_dspark/vllm/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]     return func(*args, **kwargs)
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/executor/abstract.py", line 109, in __init__
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]     self._init_executor()
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/executor/multiproc_executor.py", line 201, in _init_executor
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]     self.workers = WorkerProc.wait_for_ready(unready_workers)
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/executor/multiproc_executor.py", line 762, in wait_for_ready
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231]     raise e from None
+(EngineCore pid=24448) ERROR 07-02 16:58:18 [core.py:1231] Exception: WorkerProc initialization failed due to an exception in a background process. See stack trace for root cause.
+(EngineCore pid=24448) Process EngineCore:
+(EngineCore pid=24448) Traceback (most recent call last):
+(EngineCore pid=24448)   File "/usr/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+(EngineCore pid=24448)     self.run()
+(EngineCore pid=24448)   File "/usr/lib/python3.12/multiprocessing/process.py", line 108, in run
+(EngineCore pid=24448)     self._target(*self._args, **self._kwargs)
+(EngineCore pid=24448)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/core.py", line 1235, in run_engine_core
+(EngineCore pid=24448)     raise e
+(EngineCore pid=24448)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/core.py", line 1200, in run_engine_core
+(EngineCore pid=24448)     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+(EngineCore pid=24448)                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=24448)   File "/home/s30027115/dsv4_dspark/vllm/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=24448)     return func(*args, **kwargs)
+(EngineCore pid=24448)            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=24448)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/core.py", line 966, in __init__
+(EngineCore pid=24448)     super().__init__(
+(EngineCore pid=24448)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/core.py", line 123, in __init__
+(EngineCore pid=24448)     self.model_executor = executor_class(vllm_config)
+(EngineCore pid=24448)                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=24448)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/executor/multiproc_executor.py", line 108, in __init__
+(EngineCore pid=24448)     super().__init__(vllm_config)
+(EngineCore pid=24448)   File "/home/s30027115/dsv4_dspark/vllm/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=24448)     return func(*args, **kwargs)
+(EngineCore pid=24448)            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=24448)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/executor/abstract.py", line 109, in __init__
+(EngineCore pid=24448)     self._init_executor()
+(EngineCore pid=24448)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/executor/multiproc_executor.py", line 201, in _init_executor
+(EngineCore pid=24448)     self.workers = WorkerProc.wait_for_ready(unready_workers)
+(EngineCore pid=24448)                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=24448)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/executor/multiproc_executor.py", line 762, in wait_for_ready
+(EngineCore pid=24448)     raise e from None
+(EngineCore pid=24448) Exception: WorkerProc initialization failed due to an exception in a background process. See stack trace for root cause.
+(APIServer pid=24042) Traceback (most recent call last):
+(APIServer pid=24042)   File "/usr/local/bin/vllm", line 6, in <module>
+(APIServer pid=24042)     sys.exit(main())
+(APIServer pid=24042)              ^^^^^^
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/entrypoints/cli/main.py", line 95, in main
+(APIServer pid=24042)     args.dispatch_function(args)
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/entrypoints/cli/serve.py", line 148, in cmd
+(APIServer pid=24042)     uvloop.run(run_server(args))
+(APIServer pid=24042)   File "/usr/local/lib/python3.12/dist-packages/uvloop/__init__.py", line 96, in run
+(APIServer pid=24042)     return __asyncio.run(
+(APIServer pid=24042)            ^^^^^^^^^^^^^^
+(APIServer pid=24042)   File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+(APIServer pid=24042)     return runner.run(main)
+(APIServer pid=24042)            ^^^^^^^^^^^^^^^^
+(APIServer pid=24042)   File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+(APIServer pid=24042)     return self._loop.run_until_complete(task)
+(APIServer pid=24042)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=24042)   File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+(APIServer pid=24042)   File "/usr/local/lib/python3.12/dist-packages/uvloop/__init__.py", line 48, in wrapper
+(APIServer pid=24042)     return await main
+(APIServer pid=24042)            ^^^^^^^^^^
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/entrypoints/openai/api_server.py", line 692, in run_server
+(APIServer pid=24042)     await run_server_worker(listen_address, sock, args, **uvicorn_kwargs)
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/entrypoints/openai/api_server.py", line 706, in run_server_worker
+(APIServer pid=24042)     async with build_async_engine_client(
+(APIServer pid=24042)   File "/usr/lib/python3.12/contextlib.py", line 210, in __aenter__
+(APIServer pid=24042)     return await anext(self.gen)
+(APIServer pid=24042)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/entrypoints/openai/api_server.py", line 100, in build_async_engine_client
+(APIServer pid=24042)     async with build_async_engine_client_from_engine_args(
+(APIServer pid=24042)   File "/usr/lib/python3.12/contextlib.py", line 210, in __aenter__
+(APIServer pid=24042)     return await anext(self.gen)
+(APIServer pid=24042)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/entrypoints/openai/api_server.py", line 136, in build_async_engine_client_from_engine_args
+(APIServer pid=24042)     async_llm = AsyncLLM.from_vllm_config(
+(APIServer pid=24042)                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/async_llm.py", line 217, in from_vllm_config
+(APIServer pid=24042)     return cls(
+(APIServer pid=24042)            ^^^^
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/async_llm.py", line 146, in __init__
+(APIServer pid=24042)     self.engine_core = EngineCoreClient.make_async_mp_client(
+(APIServer pid=24042)                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/tracing/otel.py", line 178, in sync_wrapper
+(APIServer pid=24042)     return func(*args, **kwargs)
+(APIServer pid=24042)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/core_client.py", line 132, in make_async_mp_client
+(APIServer pid=24042)     return AsyncMPClient(*client_args)
+(APIServer pid=24042)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/tracing/otel.py", line 178, in sync_wrapper
+(APIServer pid=24042)     return func(*args, **kwargs)
+(APIServer pid=24042)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/core_client.py", line 963, in __init__
+(APIServer pid=24042)     super().__init__(
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/core_client.py", line 573, in __init__
+(APIServer pid=24042)     with launch_core_engines(
+(APIServer pid=24042)   File "/usr/lib/python3.12/contextlib.py", line 144, in __exit__
+(APIServer pid=24042)     next(self.gen)
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/utils.py", line 1213, in launch_core_engines
+(APIServer pid=24042)     wait_for_engine_startup(
+(APIServer pid=24042)   File "/home/s30027115/dsv4_dspark/vllm/vllm/v1/engine/utils.py", line 1272, in wait_for_engine_startup
+(APIServer pid=24042)     raise RuntimeError(
+(APIServer pid=24042) RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+/usr/lib/python3.12/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked shared_memory objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+```
+
+### Before submitting a new issue...
+
+- [x] Make sure you already searched for relevant issues, and asked the chatbot living at the bottom right corner of the [documentation page](https://docs.vllm.ai/en/latest/), which can answer lots of frequently asked questions.

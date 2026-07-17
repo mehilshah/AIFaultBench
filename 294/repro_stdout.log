@@ -1,0 +1,13 @@
+use_module_local_params=True: raised KeyError: 'constraint'
+use_module_local_params=False: render_model succeeded
+{
+  "blocking_reason": "",
+  "evidence": "With module_local_params=True, pyro.render_model(Model()) raised KeyError: 'constraint'. With module_local_params=False, the same model rendered successfully.",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Imported the local pyro code from codebase/.",
+    "Rendered the PyroModule model with module_local_params=True and False.",
+    "Observed KeyError: 'constraint' only when module_local_params=True."
+  ]
+}

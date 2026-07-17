@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the local repro raises ValueError during GaussianCopulaSynthesizer.fit(): \"The column 'a' contains float values [0.9999998807907104, 1.1920928955078125e-07, 1.1920928955078125e-07]. All values represented by 'Int64' must be integers.\" The traceback is captured in repro_stderr.log.",
+  "steps": [
+    "Create a small one-hot dataframe with integer values.",
+    "Detect single-table metadata and set the one-hot columns to sdtype='numerical' with computer_representation='Int64'.",
+    "Add OneHotEncoding(column_names=['a', 'b', 'c']) to GaussianCopulaSynthesizer and call fit()."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

@@ -1,0 +1,12 @@
+{
+  "bug_id": "614",
+  "bug_dir": "614",
+  "issue_url": "https://github.com/huggingface/pytorch-image-models/issues/2410",
+  "commit_hash": "c96e9e7ce03e34aa8812e4aa50463e46131793e5",
+  "library_name": "timm",
+  "library_version": "1.0.13",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "huggingface/pytorch-image-models@c96e9e7ce03e34aa8812e4aa50463e46131793e5",
+  "codebase_present": "true",
+  "standardized_dir": "../614"
+}

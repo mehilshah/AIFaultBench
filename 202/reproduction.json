@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "On the checked-out codebase, `bash run_repro.sh` produced `sample_mean=0.739689` versus the half-normal mean `0.797885`, with `mean_error=-0.058196` and `num_diverging=8522`. The posterior is biased low relative to the expected positive half-normal target.",
+  "steps": [
+    "Created a local virtual environment and installed the pinned runtime dependencies from `requirements.txt` against the local `codebase/` tree.",
+    "Ran `bash run_repro.sh`, which executes the report's NUTS model with `jump=1000.0`, `num_warmup=2000`, and `num_samples=20000`.",
+    "Observed a posterior mean of `0.739689`, which is materially below the half-normal mean `0.797885`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

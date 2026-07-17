@@ -1,0 +1,6 @@
+{
+  "file": "codebase/docs/deepvariant-details.md",
+  "expected_first_line": "# DeepVariant usage guide",
+  "observed_first_line": "f# DeepVariant usage guide",
+  "reproduced": true
+}

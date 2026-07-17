@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "On TensorFlow 2.16.1 and Keras 3.1.0, the minimal NER model fit completed successfully and prediction also completed; no OperatorNotAllowedInGraphError or Softmax.call() failure occurred.",
+  "steps": [
+    "Created a local virtualenv and installed the pinned repro stack from requirements.txt.",
+    "Ran run_repro.sh, which executed the minimal NER Transformer training loop on synthetic variable-length token/tag data.",
+    "Observed successful fit and predict output, including 'RESULT: success', instead of the reported softmax graph error."
+  ],
+  "blocking_reason": "The exact issue-specific Keras dev build is not available on PyPI, and the closest installable stack (TensorFlow 2.16.1 + Keras 3.1.0) does not reproduce the bug here.",
+  "reproduction_command": "bash ./run_repro.sh"
+}

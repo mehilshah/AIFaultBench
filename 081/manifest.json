@@ -1,0 +1,12 @@
+{
+  "bug_id": "081",
+  "bug_dir": "081",
+  "issue_url": "https://github.com/lucidrains/vit-pytorch/issues/304",
+  "commit_hash": "5578ac472faf3903d4739ba783f3875b77177e57",
+  "library_name": "vit-pytorch",
+  "library_version": "1.6.5",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": true,
+  "standardized_dir": "../081"
+}

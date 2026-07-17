@@ -1,0 +1,25 @@
+
+  0%|          | 0/909 [00:00<?, ?it/s]
+Sampling conditions:   0%|          | 0/909 [00:00<?, ?it/s]
+Sampling conditions:   0%|          | 0/909 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "213/codebase/sdv/single_table/base.py", line 1191, in sample_from_conditions
+    sampled_for_condition = self._sample_with_conditions(
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "213/codebase/sdv/single_table/base.py", line 1068, in _sample_with_conditions
+    transformed_condition = self._data_processor.transform(
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "213/codebase/sdv/data_processing/data_processor.py", line 821, in transform
+    raise NotFittedError()
+sdv.data_processing.errors.NotFittedError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "213/repro.py", line 51, in main
+    synthesizer.sample_from_conditions(
+  File "213/codebase/sdv/single_table/base.py", line 1211, in sample_from_conditions
+    handle_sampling_error(output_file_path, error)
+  File "213/codebase/sdv/single_table/utils.py", line 106, in handle_sampling_error
+    raise type(sampling_error)(error_msg) from sampling_error
+sdv.data_processing.errors.NotFittedError: Error: Sampling terminated. No results were saved due to unspecified "output_file_path".

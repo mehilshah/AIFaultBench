@@ -1,0 +1,35 @@
+Traceback (most recent call last):
+  File "396/repro.py", line 48, in <module>
+    main()
+  File "396/repro.py", line 43, in main
+    get_peft_model(model, config)
+  File "396/codebase/src/peft/mapping.py", line 98, in get_peft_model
+    return MODEL_TYPE_TO_PEFT_MODEL_MAPPING[peft_config.task_type](model, peft_config, adapter_name=adapter_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "396/codebase/src/peft/peft_model.py", line 715, in __init__
+    super().__init__(model, peft_config, adapter_name)
+  File "396/codebase/src/peft/peft_model.py", line 112, in __init__
+    self.base_model = PEFT_TYPE_TO_MODEL_MAPPING[peft_config.peft_type](
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "396/codebase/src/peft/tuners/adalora.py", line 94, in __init__
+    self.add_adapter(adapter_name, self.peft_config[adapter_name])
+  File "396/codebase/src/peft/tuners/adalora.py", line 101, in add_adapter
+    self._find_and_replace(adapter_name)
+  File "396/codebase/src/peft/tuners/adalora.py", line 210, in _find_and_replace
+    new_module = SVDLinear(adapter_name, in_features, out_features, bias=bias, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "396/codebase/src/peft/tuners/adalora.py", line 400, in __init__
+    self.update_layer(adapter_name, r, lora_alpha, lora_dropout, init_lora_weights)
+  File "396/codebase/src/peft/tuners/adalora.py", line 352, in update_layer
+    self.lora_dropout.update(nn.ModuleDict({adapter_name: lora_dropout_layer}))
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "396/.venv/lib/python3.12/site-packages/torch/nn/modules/container.py", line 498, in __init__
+    self.update(modules)
+  File "396/.venv/lib/python3.12/site-packages/torch/nn/modules/container.py", line 570, in update
+    self[key] = module
+    ~~~~^^^^^
+  File "396/.venv/lib/python3.12/site-packages/torch/nn/modules/container.py", line 505, in __setitem__
+    self.add_module(key, module)
+  File "396/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 642, in add_module
+    raise TypeError(f"{torch.typename(module)} is not a Module subclass")
+TypeError: peft.tuners.adalora.AdaLoraLayer.update_layer.<locals>.lora_dropout_layer is not a Module subclass

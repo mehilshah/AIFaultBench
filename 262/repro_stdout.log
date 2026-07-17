@@ -1,0 +1,36 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.1.2)
+Requirement already satisfied: wheel in ./.venv/lib/python3.12/site-packages (0.47.0)
+Requirement already satisfied: setuptools in ./.venv/lib/python3.12/site-packages (83.0.0)
+Requirement already satisfied: packaging>=24.0 in ./.venv/lib/python3.12/site-packages (from wheel) (26.2)
+Requirement already satisfied: numpy==2.3.1 in ./.venv/lib/python3.12/site-packages (from -r 262/requirements.txt (line 1)) (2.3.1)
+Requirement already satisfied: scipy in ./.venv/lib/python3.12/site-packages (from -r 262/requirements.txt (line 2)) (1.18.0)
+Obtaining file://262/codebase
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy in ./.venv/lib/python3.12/site-packages (from tensorly==0.9.0) (2.3.1)
+Requirement already satisfied: scipy in ./.venv/lib/python3.12/site-packages (from tensorly==0.9.0) (1.18.0)
+Building wheels for collected packages: tensorly
+  Building editable for tensorly (pyproject.toml): started
+  Building editable for tensorly (pyproject.toml): finished with status 'done'
+  Created wheel for tensorly: filename=tensorly-0.9.0-0.editable-py3-none-any.whl size=6930 sha256=7fe5b34f4cadcf664e355105e5fcc28c944c65aba355183e14139d6709a39de3
+  Stored in directory: /tmp/pip-ephem-wheel-cache-wtyvpesc/wheels/06/a2/aa/b602e5c7f4c75c246610415357df2f8e0fd96ac19c9a9e1d46
+Successfully built tensorly
+Installing collected packages: tensorly
+  Attempting uninstall: tensorly
+    Found existing installation: tensorly 0.9.0
+    Uninstalling tensorly-0.9.0:
+      Successfully uninstalled tensorly-0.9.0
+Successfully installed tensorly-0.9.0
+3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]
+numpy 2.3.1
+scipy 1.18.0
+tensorly 0.9.0
+[1.972 2.018 2.028 2.057 2.085 2.122 2.156 2.234 2.297 2.401 2.387 2.378
+ 2.433 2.587]
+first 1.9722237066033357 last 2.5872947723613837 monotone_nonincreasing False

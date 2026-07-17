@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "425/repro.py", line 35, in <module>
+    main()
+  File "425/repro.py", line 31, in main
+    buggy_load_draft_model(model)
+  File "425/repro.py", line 25, in buggy_load_draft_model
+    if draft_logits is not None and model.draft_id_to_target_id is not None:
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DSparkDeepseekV4ForCausalLM' object has no attribute 'draft_id_to_target_id'

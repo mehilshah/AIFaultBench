@@ -1,0 +1,18 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2410
+
+TITLE
+[BUG]the input of swin_transformer
+
+BODY
+Hello, I did the feature extraction trunk with swin_transformer in patchcore, it works when the input is 224, but it gives an error when the input is 512, is there any other way besides resize to 224, I want it to accept the input of 512
+
+
+**Additional context**
+ File "/workspace/dxy_1966/anomalib/src/anomalib/models/pytorchimage/timm/models/swin_transformer_v2_cr.py", line 491, in forward
+    _assert(H == self.img_size[0], f"Input image height ({H}) doesn't match model ({self.img_size[0]}).")
+  File "/opt/conda/lib/python3.10/site-packages/torch/__init__.py", line 1404, in _assert
+    assert condition, message
+AssertionError: Input image height (512) doesn't match model (224).
+Epoch 0:   0%|          | 0/126 [00:00<?, ?it/s]
+
+

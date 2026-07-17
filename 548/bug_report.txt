@@ -1,0 +1,188 @@
+# recovered-from-issue: https://github.com/vllm-project/vllm/issues/47147
+
+TITLE
+[Bug]: `pause_generation(clear_cache=True)` clears backend multimodal cache without clearing frontend cache
+
+BODY
+### Your current environment
+
+<details>
+<summary>The output of <code>python collect_env.py</code></summary>
+
+```text
+Collecting environment information...
+==============================
+        System Info
+==============================
+OS                           : Ubuntu 22.04.5 LTS (aarch64)
+GCC version                  : (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0
+Clang version                : Could not collect
+CMake version                : version 4.3.4
+Libc version                 : glibc-2.35
+
+==============================
+       PyTorch Info
+==============================
+PyTorch version              : 2.9.0+cpu
+Is debug build               : False
+CUDA used to build PyTorch   : None
+ROCM used to build PyTorch   : N/A
+XPU used to build PyTorch    : N/A
+
+==============================
+      Python Environment
+==============================
+Python version               : 3.11.15 (main, May 13 2026, 09:39:24) [GCC 11.4.0] (64-bit runtime)
+Python platform              : Linux-5.10.0-182.0.0.95.r2220_157.hce2.aarch64-aarch64-with-glibc2.35
+    
+
+==============================
+          CPU Info
+==============================
+Architecture:                         aarch64
+CPU op-mode(s):                       64-bit
+Byte Order:                           Little Endian
+CPU(s):                               192
+On-line CPU(s) list:                  0-191
+Vendor ID:                            HiSilicon
+BIOS Vendor ID:                       HiSilicon
+BIOS Model name:                      Kunpeng 920 5250Y
+Model:                                0
+Thread(s) per core:                   1
+Core(s) per socket:                   48
+Socket(s):                            4
+Stepping:                             0x0
+Frequency boost:                      disabled
+CPU max MHz:                          2000.0000
+CPU min MHz:                          1200.0000
+BogoMIPS:                             200.00
+Flags:                                fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm jscvt fcma lrcpc dcpop sha3 sm3 sm4 asimddp sha512 sve asimdfhm dit uscat ilrcpc flagm ssbs sb paca pacg dcpodp sve2 sveaes svepmull svebitperm svesha3 svesm4 flagm2 frint svei8mm svebf16 i8mm bf16 dgh rng ecv
+L1d cache:                            12 MiB (192 instances)
+L1i cache:                            24 MiB (192 instances)
+L2 cache:                             192 MiB (192 instances)
+L3 cache:                             336 MiB (8 instances)
+NUMA node(s):                         8
+NUMA node0 CPU(s):                    0-23
+NUMA node1 CPU(s):                    24-47
+NUMA node2 CPU(s):                    48-71
+NUMA node3 CPU(s):                    72-95
+NUMA node4 CPU(s):                    96-119
+NUMA node5 CPU(s):                    120-143
+NUMA node6 CPU(s):                    144-167
+NUMA node7 CPU(s):                    168-191
+Vulnerability Gather data sampling:   Not affected
+Vulnerability Itlb multihit:          Not affected
+Vulnerability L1tf:                   Not affected
+Vulnerability Mds:                    Not affected
+Vulnerability Meltdown:               Not affected
+Vulnerability Mmio stale data:        Not affected
+Vulnerability Reg file data sampling: Not affected
+Vulnerability Retbleed:               Not affected
+Vulnerability Spec rstack overflow:   Not affected
+Vulnerability Spec store bypass:      Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:             Mitigation; __user pointer sanitization
+Vulnerability Spectre v2:             Vulnerable: Unprivileged eBPF enabled
+Vulnerability Srbds:                  Not affected
+Vulnerability Tsx async abort:        Not affected
+
+==============================
+Versions of relevant libraries
+==============================
+[pip3] gpytorch==1.15.2
+[pip3] numpy==1.26.4
+[pip3] pyzmq==27.1.0
+[pip3] torch==2.9.0
+[pip3] torch_npu==2.9.0.post2
+[pip3] torchaudio==2.9.0
+[pip3] torchdata==0.11.0
+[pip3] torchvision==0.24.0
+[pip3] transformers==5.3.0
+[pip3] triton==3.5.0
+[pip3] triton_ascend==3.2.1
+[conda] Could not collect
+
+==============================
+         vLLM Info
+==============================
+ROCM Version                 : Could not collect
+vLLM Version                 : 0.18.0
+vLLM Build Flags:
+  CUDA Archs: Not Set; ROCm: Disabled; XPU: Disabled
+GPU Topology:
+  Could not collect
+
+==============================
+     Environment Variables
+==============================
+LD_LIBRARY_PATH=/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/cann-9.0.0/lib64:/usr/local/Ascend/cann-9.0.0/lib64/plugin/opskernel:/usr/local/Ascend/cann-9.0.0/lib64/plugin/nnengine:/usr/local/Ascend/cann-9.0.0/opp/built-in/op_impl/ai_core/tbe/op_tiling/lib/linux/aarch64:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64/plugin:/usr/local/Ascend/ascend-toolkit/latest/lib64:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/opskernel:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/nnengine:/usr/local/Ascend/ascend-toolkit/latest/opp/built-in/op_impl/ai_core/tbe/op_tiling:/usr/local/python3.11.15/lib:
+TORCH_DEVICE_BACKEND_AUTOLOAD=1
+PYTORCH_NVML_BASED_CUDA_CHECK=1
+TORCHINDUCTOR_COMPILE_THREADS=1
+```
+
+</details>
+
+
+### 🐛 Describe the bug
+
+### Description
+`AsyncLLM.pause_generation(clear_cache=True)` appears to clear EngineCore/backend multimodal cache state, but does not clear the frontend sender multimodal processor cache. This can desynchronize the P0 sender cache from the P1 receiver/backend cache.
+
+### Relevant Code
+`AsyncLLM.pause_generation()` only forwards `clear_cache` to EngineCore:
+
+```python
+await self.engine_core.pause_scheduler_async(mode=mode, clear_cache=clear_cache)
+```
+
+It does not call:
+
+```python
+self.renderer.clear_mm_cache()
+```
+
+By contrast, `AsyncLLM.reset_mm_cache()` clears both sides:
+
+```python
+self.renderer.clear_mm_cache()
+await self.engine_core.reset_mm_cache_async()
+```
+
+### Expected Behavior
+`pause_generation(clear_cache=True)` should keep frontend and backend multimodal cache state synchronized, likely by clearing the sender multimodal cache when backend multimodal cache state is cleared.
+
+### Actual Behavior
+Backend multimodal cache state is cleared through EngineCore, but frontend sender cache state is left intact.
+
+### Impact
+The multimodal cache contract says P0 and P1 caches must remain mirrored. Sender-side cache hits can cause P0 to omit multimodal payloads because it assumes P1 already has them. After backend-only clearing, that assumption is broken. It causes errors like
+```
+  File "/vllm/vllm/v1/engine/core.py", line 1403, in process_input_sockets
+    request = self.preprocess_add_request(req)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/vllm/vllm/v1/engine/core.py", line 745, in preprocess_add_request
+    request.mm_features = self.mm_receiver_cache.get_and_update_features(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/vllm/vllm/multimodal/cache.py", line 591, in get_and_update_features
+    feature.data = self.get_and_update_item(feature.data, cache_key)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/vllm/vllm/multimodal/cache.py", line 644, in get_and_update_item
+    assert mm_item is not None, f"Expected a cached item for {mm_hash=}"
+           ^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected a cached item for mm_hash='5d0188cf9bdbdd0e8f780284073515d51f6b53f53aedaf4468c4a3e4a743f9e6'
+```
+
+### Possible Fix
+Update `AsyncLLM.pause_generation()` so that when `clear_cache=True`, it also clears the renderer multimodal cache, similar to `reset_mm_cache()`:
+
+```python
+if clear_cache:
+    self.renderer.clear_mm_cache()
+await self.engine_core.pause_scheduler_async(mode=mode, clear_cache=clear_cache)
+```
+
+The exact ordering may need care around in-flight requests and pause modes, like `wait` and `keep`.
+
+### Before submitting a new issue...
+
+- [x] Make sure you already searched for relevant issues, and asked the chatbot living at the bottom right corner of the [documentation page](https://docs.vllm.ai/en/latest/), which can answer lots of frequently asked questions.

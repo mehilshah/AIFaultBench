@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "545/repro.py", line 38, in <module>
+    main()
+  File "545/repro.py", line 33, in main
+    raise AssertionError("arg2 unexpectedly persisted in hparams")
+AssertionError: arg2 unexpectedly persisted in hparams

@@ -1,0 +1,6 @@
+jax=0.11.0.dev20260717
+jaxlib=0.10.2
+jax: [1.0]
+expected: [1.0]
+BUG NOT REPRODUCED: current environment returns the expected value
+0.10.1 compatibility check failed as expected

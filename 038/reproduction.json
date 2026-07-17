@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "bash run_repro.sh reproduces a RuntimeError in codebase/labml_nn/transformers/rope/__init__.py:188.",
+    "The failing input is input_shape=(3, 1, 1, 4) with rope_features=3.",
+    "Observed message: The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 3."
+  ],
+  "steps": [
+    "Created a local virtual environment and installed the minimal dependencies from requirements.txt.",
+    "Loaded the RoPE implementation directly from codebase/labml_nn/transformers/rope/__init__.py with import stubs for unrelated modules.",
+    "Called RotaryPositionalEmbeddings(3) on a tensor shaped (3, 1, 1, 4).",
+    "Observed the tensor size mismatch at the RoPE multiplication line."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` prints `sum=tensor([16, 20, 24, 28])` and `mean=tensor([16, 20, 24, 28])`, then raises `AssertionError: BUG: reduction='mean' returned the same tensor as reduction='sum'`.",
+  "steps": [
+    "Created a clean virtual environment with the CPU PyTorch wheel and the local Accelerate source dependencies.",
+    "Loaded the local `codebase/src` copy of Accelerate.",
+    "Forced `PartialState` onto the distributed `MULTI_CPU` branch and stubbed `torch.distributed.all_reduce` to return the summed tensor.",
+    "Called the reducer with `reduction='sum'` and `reduction='mean'` on the same input tensor and observed identical outputs."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

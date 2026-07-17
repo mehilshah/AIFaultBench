@@ -1,0 +1,67 @@
+GPU available: False, used: False
+TPU available: False, using: 0 TPU cores
+💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+`Trainer(limit_train_batches=1)` was configured so 1 batch per epoch will be used.
+
+  | Name  | Type   | Params | Mode  | FLOPs
+-------------------------------------------------
+0 | layer | Linear | 110    | train | 0    
+-------------------------------------------------
+110       Trainable params
+0         Non-trainable params
+110       Total params
+0.000     Total estimated model params size (MB)
+1         Modules in train mode
+0         Modules in eval mode
+0         Total Flops
+533/codebase/src/lightning/pytorch/trainer/connectors/data_connector.py:434: The 'train_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=47` in the `DataLoader` to improve performance.
+Traceback (most recent call last):
+  File "533/repro.py", line 54, in <module>
+    main()
+  File "533/repro.py", line 49, in main
+    trainer.fit(model, loader)
+  File "533/codebase/src/lightning/pytorch/trainer/trainer.py", line 584, in fit
+    call._call_and_handle_interrupt(
+  File "533/codebase/src/lightning/pytorch/trainer/call.py", line 49, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "533/codebase/src/lightning/pytorch/trainer/trainer.py", line 630, in _fit_impl
+    self._run(model, ckpt_path=ckpt_path, weights_only=weights_only)
+  File "533/codebase/src/lightning/pytorch/trainer/trainer.py", line 1079, in _run
+    results = self._run_stage()
+              ^^^^^^^^^^^^^^^^^
+  File "533/codebase/src/lightning/pytorch/trainer/trainer.py", line 1123, in _run_stage
+    self.fit_loop.run()
+  File "533/codebase/src/lightning/pytorch/loops/fit_loop.py", line 217, in run
+    self.advance()
+  File "533/codebase/src/lightning/pytorch/loops/fit_loop.py", line 465, in advance
+    self.epoch_loop.run(self._data_fetcher)
+  File "533/codebase/src/lightning/pytorch/loops/training_epoch_loop.py", line 153, in run
+    self.advance(data_fetcher)
+  File "533/codebase/src/lightning/pytorch/loops/training_epoch_loop.py", line 354, in advance
+    batch_output = self.manual_optimization.run(kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "533/codebase/src/lightning/pytorch/loops/optimization/manual.py", line 95, in run
+    self.advance(kwargs)
+  File "533/codebase/src/lightning/pytorch/loops/optimization/manual.py", line 115, in advance
+    training_step_output = call._call_strategy_hook(trainer, "training_step", *kwargs.values())
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "533/codebase/src/lightning/pytorch/trainer/call.py", line 329, in _call_strategy_hook
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "533/codebase/src/lightning/pytorch/strategies/strategy.py", line 391, in training_step
+    return self.lightning_module.training_step(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "533/.venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 465, in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "533/repro.py", line 20, in training_step
+    def training_step(self, batch, batch_idx):
+  File "533/codebase/src/lightning/pytorch/core/module.py", line 1159, in toggle_optimizer
+    param.requires_grad = False
+  File "533/codebase/src/lightning/pytorch/core/module.py", line 1159, in torch_dynamo_resume_in_toggle_optimizer_at_1159
+    param.requires_grad = False
+  File "533/.venv/lib/python3.12/site-packages/torch/_dynamo/utils.py", line 1420, in tuple_iterator_getitem
+    return obj[start + index]
+           ~~~^^^^^^^^^^^^^^^
+IndexError: tuple index out of range

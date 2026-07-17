@@ -1,0 +1,306 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/14013
+
+TITLE
+A bug on the set_timesteps function of the FlowMatchEulerDiscreteScheduler
+
+BODY
+### Describe the bug
+
+We fix a bug in the FlowMatchEulerDiscreteScheduler. If we call set_timesteps(num_inference_steps=2, timesteps=[1000.        ,    2.99401209]), the timesteps will be different from when we call set_timesteps(num_inference_steps=2), when the shift factor is not 1.  However, its sigma list is equal.
+
+More explicitly, before line 366 in src/diffusers/schedulers/scheduling_flow_match_euler_discrete.py, both sigmas, timesteps, self.config.num_train_timesteps, self.shift is identical, the timesteps become different after line 366. 
+
+And in the Euler ODE/SDE solver designed for flow matching, the timestep only affects the input of the neural network; it doesn't affect the noisy level of the next step input/ the noisy level of this step's output.  
+In the code it's:
+`
+
+
+            sigmas = self.sigmas[:, None, None]
+            lower_mask = sigmas < per_token_sigmas[None] - 1e-6
+            lower_sigmas = lower_mask * sigmas
+            lower_sigmas, _ = lower_sigmas.max(dim=0)
+
+            current_sigma = per_token_sigmas[..., None]
+            next_sigma = lower_sigmas[..., None]
+            dt = current_sigma - next_sigma
+        else:
+            sigma_idx = self.step_index
+            sigma = self.sigmas[sigma_idx]
+            sigma_next = self.sigmas[sigma_idx + 1]
+
+            current_sigma = sigma
+            next_sigma = sigma_next
+            dt = sigma_next - sigma
+
+        if self.config.stochastic_sampling:
+            x0 = sample - current_sigma * model_output
+            noise = randn_tensor(sample.shape, generator=generator, device=sample.device, dtype=sample.dtype)
+            prev_sample = (1.0 - next_sigma) * x0 + next_sigma * noise
+        else:
+            prev_sample = sample + dt * model_output`
+
+But, as I have said, before line 366, the sigmas, timesteps, self.config.num_train_timesteps, self.shift is identical, and only the timesteps become different after line 366. So, if the input timestep is not OOD in the automatic setting, the input timestep in the manual setting version will be OOD, at least one of it is wrong. That problem will appear when the user manually sets the inference loop. For example, like the situation that she want to follow the tutorial in the https://huggingface.co/docs/diffusers/using-diffusers/write_own_pipeline, or want to write a personal loop with using AFS in the paper: A Unified Sampling Framework for Solver Searching of Diffusion Probabilistic Models.
+
+Maybe someone will say such OOD is a feature, but if the user directly provides timesteps without providing a num_inference_steps, and no matter whether the timesteps are linear, such OOD will still happen, which means the timesteps array denotes a special noisy level sequence, but the t label input to the NN in the inference does not correspond to the noisy level.  That is not a result expected for the user. 
+ 
+
+### Reproduction
+
+We call set_timesteps(timesteps=[1000,2.99401209]), the timesteps will be different from when we call set_timesteps(num_inference_steps=2), if the shift factor is not 1,  But the noisy level given by sigma is identical.
+
+`
+
+    accelerator = accelerate.Accelerator()
+    device = accelerator.device
+    if device.type != "cuda":
+        raise RuntimeError("This script expects a CUDA device for Stable Diffusion 3 inference.")
+
+    seed_everything(14)
+    seeds = torch.randint(-2 ** 63, 2 ** 63 - 1, [accelerator.num_processes])
+    torch.manual_seed(seeds[accelerator.process_index].item())
+
+    dtype = torch.float16
+    pipe = StableDiffusion3Pipeline.from_pretrained("stabilityai/stable-diffusion-3-medium-diffusers", torch_dtype=dtype)
+    pipe.scheduler = FlowMatchEulerDiscreteScheduler.from_config(pipe.scheduler.config)
+    
+    pipe.scheduler.set_timesteps(timesteps=[1000.        ,    2.99401209])
+    print(pipe.scheduler.timesteps.tolist())
+    print(pipe.scheduler.sigmas.tolist())
+
+    pipe.scheduler.set_timesteps(2)
+    print(pipe.scheduler.timesteps.tolist())
+    print(pipe.scheduler.sigmas.tolist())
+
+`
+
+
+### Logs
+
+```shell
+[1000.0, 2.9940121173858643]
+[1.0, 0.008928571827709675, 0.0]
+[1000.0, 8.928571701049805]
+[1.0, 0.008928571827709675, 0.0]
+```
+
+### Additional verification
+
+The following script demonstrates that the same sigma schedule is used while different timestep values are passed into the transformer.
+
+```python
+import accelerate
+import torch
+from diffusers import StableDiffusion3Pipeline, FlowMatchEulerDiscreteScheduler
+
+from pytorch_lightning import seed_everything
+
+
+def prepare_sd3_manual_loop_inputs(pipe, prompt, device, guidance_scale):
+    do_cfg = guidance_scale > 1.0
+    negative_prompt = [""] if do_cfg else None
+    (
+        prompt_embeds,
+        negative_prompt_embeds,
+        pooled_prompt_embeds,
+        negative_pooled_prompt_embeds,
+    ) = pipe.encode_prompt(
+        prompt=[prompt],
+        prompt_2=None,
+        prompt_3=None,
+        negative_prompt=negative_prompt,
+        device=device,
+        do_classifier_free_guidance=do_cfg,
+    )
+
+    prompt_embeds = prompt_embeds.to(device)
+    pooled_prompt_embeds = pooled_prompt_embeds.to(device)
+
+    if do_cfg:
+        negative_prompt_embeds = negative_prompt_embeds.to(device)
+        negative_pooled_prompt_embeds = negative_pooled_prompt_embeds.to(device)
+
+        prompt_embeds = torch.cat(
+            [negative_prompt_embeds, prompt_embeds], dim=0
+        )
+        pooled_prompt_embeds = torch.cat(
+            [negative_pooled_prompt_embeds, pooled_prompt_embeds], dim=0
+        )
+
+    return prompt_embeds, pooled_prompt_embeds, do_cfg
+
+
+def run_sd3_manual_loop(pipe, prompt, device, guidance_scale=7.0):
+    height = pipe.default_sample_size * pipe.vae_scale_factor
+    width = pipe.default_sample_size * pipe.vae_scale_factor
+
+    prompt_embeds, pooled_prompt_embeds, do_cfg = (
+        prepare_sd3_manual_loop_inputs(
+            pipe,
+            prompt,
+            device,
+            guidance_scale,
+        )
+    )
+
+    latents = pipe.prepare_latents(
+        batch_size=1,
+        num_channels_latents=pipe.transformer.config.in_channels,
+        height=height,
+        width=width,
+        dtype=prompt_embeds.dtype,
+        device=device,
+        generator=None,
+        latents=None,
+    )
+
+    with torch.no_grad():
+        for step_index, timestep in enumerate(pipe.scheduler.timesteps):
+            latent_model_input = (
+                torch.cat([latents, latents], dim=0)
+                if do_cfg
+                else latents
+            )
+
+            expanded_timestep = timestep.expand(
+                latent_model_input.shape[0]
+            ).to(device)
+
+            print("timestep =", timestep.item())
+            print("sigma    =", pipe.scheduler.sigmas[step_index].item())
+
+            noise_pred = pipe.transformer(
+                hidden_states=latent_model_input,
+                timestep=expanded_timestep,
+                encoder_hidden_states=prompt_embeds,
+                pooled_projections=pooled_prompt_embeds,
+                return_dict=False,
+            )[0]
+
+            if do_cfg:
+                noise_pred_uncond, noise_pred_cond = noise_pred.chunk(2)
+                noise_pred = (
+                    noise_pred_uncond
+                    + (noise_pred_cond - noise_pred_uncond)
+                    * guidance_scale
+                )
+
+            latents = pipe.scheduler.step(
+                noise_pred,
+                timestep,
+                latents,
+                return_dict=False,
+            )[0]
+
+
+def main():
+    accelerator = accelerate.Accelerator()
+    device = accelerator.device
+
+    if device.type != "cuda":
+        raise RuntimeError(
+            "This script expects a CUDA device for Stable Diffusion 3 inference."
+        )
+
+    seed_everything(14)
+
+    seeds = torch.randint(
+        -2**63,
+        2**63 - 1,
+        [accelerator.num_processes],
+    )
+
+    torch.manual_seed(
+        seeds[accelerator.process_index].item()
+    )
+
+    dtype = torch.float16
+    prompt = "a photo of an astronaut riding a horse on mars"
+
+    pipe = StableDiffusion3Pipeline.from_pretrained(
+        "stabilityai/stable-diffusion-3-medium-diffusers",
+        torch_dtype=dtype,
+    )
+
+    pipe.scheduler = (
+        FlowMatchEulerDiscreteScheduler.from_config(
+            pipe.scheduler.config
+        )
+    )
+
+    pipe.to(device)
+
+    pipe.scheduler.set_timesteps(
+        timesteps=[1000.0, 2.99401209],
+        device=device,
+    )
+
+    print(pipe.scheduler.timesteps.tolist())
+    print(pipe.scheduler.sigmas.tolist())
+
+    run_sd3_manual_loop(
+        pipe,
+        prompt=prompt,
+        device=device,
+    )
+
+    pipe.scheduler.set_timesteps(
+        2,
+        device=device,
+    )
+
+    print(pipe.scheduler.timesteps.tolist())
+    print(pipe.scheduler.sigmas.tolist())
+
+    run_sd3_manual_loop(
+        pipe,
+        prompt=prompt,
+        device=device,
+    )
+
+
+if __name__ == "__main__":
+    main()
+```
+
+### Additional Logs
+
+```shell
+[1000.0, 2.9940121173858643]
+[1.0, 0.008928571827709675, 0.0]
+tensor(1000., device='cuda:0')
+tensor(1., device='cuda:0')
+tensor(2.9940, device='cuda:0')
+tensor(0.0089, device='cuda:0')
+[1000.0, 8.928571701049805]
+[1.0, 0.008928571827709675, 0.0]
+tensor(1000., device='cuda:0')
+tensor(1., device='cuda:0')
+tensor(8.9286, device='cuda:0')
+tensor(0.0089, device='cuda:0')
+```
+
+### System Info
+
+
+- 🤗 Diffusers version: 0.38.0
+- Platform: Windows-10-10.0.26200-SP0
+- Running on Google Colab?: No
+- Python version: 3.11.15
+- PyTorch version (GPU?): 2.12.0+cu132 (True)
+- Flax version (CPU?/GPU?/TPU?): not installed (NA)
+- Jax version: not installed
+- JaxLib version: not installed
+- Huggingface_hub version: 1.18.0
+- Transformers version: 5.10.2
+- Accelerate version: not installed
+- PEFT version: not installed
+- Bitsandbytes version: not installed
+- Safetensors version: 0.8.0-rc.1
+- xFormers version: not installed
+- Accelerator: NVIDIA GeForce RTX 5060 Ti, 16311 MiB
+- Using GPU in script?: No
+- Using distributed or parallel set-up in script?: No
+
+### Who can help?
+
+@yiyixuxu @sayakpaul @DN6 @asomoza

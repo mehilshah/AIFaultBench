@@ -1,0 +1,3 @@
+torch=2.10.0+cu128
+reproduced: DeprecationWarning raised during DeepSpeed import
+`torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.

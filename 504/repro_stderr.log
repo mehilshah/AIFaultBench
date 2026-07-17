@@ -1,0 +1,9 @@
+504/codebase/torchrl/_extension.py:42: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+Traceback (most recent call last):
+  File "504/repro.py", line 36, in <module>
+    main()
+  File "504/repro.py", line 27, in main
+    assert ("next", "data", "step_count") in keys, (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: StepCounter did not create a nested step_count key when a root done key was present

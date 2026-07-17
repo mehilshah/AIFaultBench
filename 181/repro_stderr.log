@@ -1,0 +1,2 @@
+caught_exception=ValueError
+You selected an invalid accelerator name: `accelerator='xpu'`. Available names are: auto, cpu, cuda, mps, tpu.

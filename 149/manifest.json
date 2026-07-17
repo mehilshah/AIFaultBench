@@ -1,0 +1,8 @@
+{
+  "title": "Missing requests dependency in sentence-transformers 5.2.1",
+  "package": "sentence-transformers",
+  "version": "5.2.1",
+  "reproducible": true,
+  "entrypoint": "bash run_repro.sh",
+  "expected_failure": "ModuleNotFoundError: No module named 'requests'"
+}

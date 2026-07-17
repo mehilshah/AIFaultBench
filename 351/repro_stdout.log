@@ -1,0 +1,5 @@
+request.parallel_tool_calls=None
+CRASH: 1 validation error for ResponsesResponse
+parallel_tool_calls
+  Input should be a valid boolean [type=bool_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.13/v/bool_type

@@ -1,0 +1,258 @@
+# recovered-from-issue: https://github.com/pyg-team/pytorch_geometric/issues/10396
+
+TITLE
+ModelNet10 dataset appears to be offline and raises HTTP Error 404
+
+BODY
+### 🐛 Describe the bug
+
+Trying to instantiate a new ModelNet10 Dataset object results in a HTTP Error 404.
+The issue seems to be, that the Dataset is not available anymore at
+http://vision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip
+
+The link appears to have changed to:
+http://3dvision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip
+
+```python
+from torch_geometric.datasets import ModelNet
+
+train_dataset = ModelNet("data/modelnet10", '10', True)
+```
+
+```pytb
+---------------------------------------------------------------------------
+HTTPError                                 Traceback (most recent call last)
+Cell In[1], line 3
+      1 from torch_geometric.datasets import ModelNet
+----> 3 train_dataset = ModelNet("data/modelnet10", '10', True)
+
+File ~/micromamba/envs/dev/lib/python3.12/site-packages/torch_geometric/datasets/modelnet.py:98, in ModelNet.__init__(self, root, name, train, transform, pre_transform, pre_filter, force_reload)
+     96 assert name in ['10', '40']
+     97 self.name = name
+---> 98 super().__init__(root, transform, pre_transform, pre_filter,
+     99                  force_reload=force_reload)
+    100 path = self.processed_paths[0] if train else self.processed_paths[1]
+    101 self.load(path)
+
+File ~/micromamba/envs/dev/lib/python3.12/site-packages/torch_geometric/data/in_memory_dataset.py:81, in InMemoryDataset.__init__(self, root, transform, pre_transform, pre_filter, log, force_reload)
+     72 def __init__(
+     73     self,
+     74     root: Optional[str] = None,
+   (...)     79     force_reload: bool = False,
+     80 ) -> None:
+---> 81     super().__init__(root, transform, pre_transform, pre_filter, log,
+     82                      force_reload)
+     84     self._data: Optional[BaseData] = None
+     85     self.slices: Optional[Dict[str, Tensor]] = None
+
+File ~/micromamba/envs/dev/lib/python3.12/site-packages/torch_geometric/data/dataset.py:112, in Dataset.__init__(self, root, transform, pre_transform, pre_filter, log, force_reload)
+    109 self.force_reload = force_reload
+    111 if self.has_download:
+--> 112     self._download()
+    114 if self.has_process:
+    115     self._process()
+
+File ~/micromamba/envs/dev/lib/python3.12/site-packages/torch_geometric/data/dataset.py:229, in Dataset._download(self)
+    226     return
+    228 fs.makedirs(self.raw_dir, exist_ok=True)
+--> 229 self.download()
+
+File ~/micromamba/envs/dev/lib/python3.12/site-packages/torch_geometric/datasets/modelnet.py:115, in ModelNet.download(self)
+    114 def download(self) -> None:
+--> 115     path = download_url(self.urls[self.name], self.root)
+    116     extract_zip(path, self.root)
+    117     os.unlink(path)
+
+File ~/micromamba/envs/dev/lib/python3.12/site-packages/torch_geometric/data/download.py:47, in download_url(url, folder, log, filename)
+     44 os.makedirs(folder, exist_ok=True)
+     46 context = ssl._create_unverified_context()
+---> 47 data = urllib.request.urlopen(url, context=context)
+     49 with fsspec.open(path, 'wb') as f:
+     50     # workaround for https://bugs.python.org/issue42853
+     51     while True:
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:215, in urlopen(url, data, timeout, cafile, capath, cadefault, context)
+    213 else:
+    214     opener = _opener
+--> 215 return opener.open(url, data, timeout)
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:521, in OpenerDirector.open(self, fullurl, data, timeout)
+    519 for processor in self.process_response.get(protocol, []):
+    520     meth = getattr(processor, meth_name)
+--> 521     response = meth(req, response)
+    523 return response
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:630, in HTTPErrorProcessor.http_response(self, request, response)
+    627 # According to RFC 2616, "2xx" code indicates that the client's
+    628 # request was successfully received, understood, and accepted.
+    629 if not (200 <= code < 300):
+--> 630     response = self.parent.error(
+    631         'http', request, response, code, msg, hdrs)
+    633 return response
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:553, in OpenerDirector.error(self, proto, *args)
+    551     http_err = 0
+    552 args = (dict, proto, meth_name) + args
+--> 553 result = self._call_chain(*args)
+    554 if result:
+    555     return result
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:492, in OpenerDirector._call_chain(self, chain, kind, meth_name, *args)
+    490 for handler in handlers:
+    491     func = getattr(handler, meth_name)
+--> 492     result = func(*args)
+    493     if result is not None:
+    494         return result
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:745, in HTTPRedirectHandler.http_error_302(self, req, fp, code, msg, headers)
+    742 fp.read()
+    743 fp.close()
+--> 745 return self.parent.open(new, timeout=req.timeout)
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:521, in OpenerDirector.open(self, fullurl, data, timeout)
+    519 for processor in self.process_response.get(protocol, []):
+    520     meth = getattr(processor, meth_name)
+--> 521     response = meth(req, response)
+    523 return response
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:630, in HTTPErrorProcessor.http_response(self, request, response)
+    627 # According to RFC 2616, "2xx" code indicates that the client's
+    628 # request was successfully received, understood, and accepted.
+    629 if not (200 <= code < 300):
+--> 630     response = self.parent.error(
+    631         'http', request, response, code, msg, hdrs)
+    633 return response
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:553, in OpenerDirector.error(self, proto, *args)
+    551     http_err = 0
+    552 args = (dict, proto, meth_name) + args
+--> 553 result = self._call_chain(*args)
+    554 if result:
+    555     return result
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:492, in OpenerDirector._call_chain(self, chain, kind, meth_name, *args)
+    490 for handler in handlers:
+    491     func = getattr(handler, meth_name)
+--> 492     result = func(*args)
+    493     if result is not None:
+    494         return result
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:745, in HTTPRedirectHandler.http_error_302(self, req, fp, code, msg, headers)
+    742 fp.read()
+    743 fp.close()
+--> 745 return self.parent.open(new, timeout=req.timeout)
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:521, in OpenerDirector.open(self, fullurl, data, timeout)
+    519 for processor in self.process_response.get(protocol, []):
+    520     meth = getattr(processor, meth_name)
+--> 521     response = meth(req, response)
+    523 return response
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:630, in HTTPErrorProcessor.http_response(self, request, response)
+    627 # According to RFC 2616, "2xx" code indicates that the client's
+    628 # request was successfully received, understood, and accepted.
+    629 if not (200 <= code < 300):
+--> 630     response = self.parent.error(
+    631         'http', request, response, code, msg, hdrs)
+    633 return response
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:559, in OpenerDirector.error(self, proto, *args)
+    557 if http_err:
+    558     args = (dict, 'default', 'http_error_default') + orig_args
+--> 559     return self._call_chain(*args)
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:492, in OpenerDirector._call_chain(self, chain, kind, meth_name, *args)
+    490 for handler in handlers:
+    491     func = getattr(handler, meth_name)
+--> 492     result = func(*args)
+    493     if result is not None:
+    494         return result
+
+File ~/micromamba/envs/dev/lib/python3.12/urllib/request.py:639, in HTTPDefaultErrorHandler.http_error_default(self, req, fp, code, msg, hdrs)
+    638 def http_error_default(self, req, fp, code, msg, hdrs):
+--> 639     raise HTTPError(req.full_url, code, msg, hdrs, fp)
+
+HTTPError: HTTP Error 404: Not Found
+```
+
+### Versions
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 30687  100 30687    0     0    98k      0 --:--:-- --:--:-- --:--:--   98k
+Collecting environment information...
+PyTorch version: 2.6.0
+Is debug build: False
+CUDA used to build PyTorch: 12.6
+ROCM used to build PyTorch: N/A
+
+OS: Debian GNU/Linux 12 (bookworm) (x86_64)
+GCC version: (Debian 12.2.0-14+deb12u1) 12.2.0
+Clang version: Could not collect
+CMake version: Could not collect
+Libc version: glibc-2.36
+
+Python version: 3.12.11 | packaged by conda-forge | (main, Jun  4 2025, 14:45:31) [GCC 13.3.0] (64-bit runtime)
+Python platform: Linux-5.15.0-142-generic-x86_64-with-glibc2.36
+Is CUDA available: True
+CUDA runtime version: 12.9.86
+CUDA_MODULE_LOADING set to: LAZY
+GPU models and configuration: GPU 0: NVIDIA H100 NVL
+Nvidia driver version: 535.230.02
+cuDNN version: Could not collect
+Is XPU available: False
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+Is XNNPACK available: True
+
+CPU:
+Architecture:                         x86_64
+CPU op-mode(s):                       32-bit, 64-bit
+Address sizes:                        52 bits physical, 57 bits virtual
+Byte Order:                           Little Endian
+CPU(s):                               128
+On-line CPU(s) list:                  0-127
+Vendor ID:                            AuthenticAMD
+Model name:                           AMD EPYC 9554 64-Core Processor
+CPU family:                           25
+Model:                                17
+Thread(s) per core:                   1
+Core(s) per socket:                   64
+Socket(s):                            2
+Stepping:                             1
+BogoMIPS:                             6199.99
+Flags:                                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm rep_good nopl cpuid extd_apicid tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm cmp_legacy svm cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw perfctr_core invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced vmmcall fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves avx512_bf16 clzero xsaveerptr wbnoinvd arat npt lbrv nrip_save tsc_scale vmcb_clean flushbyasid pausefilter pfthreshold v_vmsave_vmload vgif avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq la57 rdpid overflow_recov succor fsrm flush_l1d arch_capabilities
+Virtualization:                       AMD-V
+Hypervisor vendor:                    KVM
+Virtualization type:                  full
+L1d cache:                            8 MiB (128 instances)
+L1i cache:                            8 MiB (128 instances)
+L2 cache:                             64 MiB (128 instances)
+L3 cache:                             2 GiB (128 instances)
+NUMA node(s):                         1
+NUMA node0 CPU(s):                    0-127
+Vulnerability Gather data sampling:   Not affected
+Vulnerability Itlb multihit:          Not affected
+Vulnerability L1tf:                   Not affected
+Vulnerability Mds:                    Not affected
+Vulnerability Meltdown:               Not affected
+Vulnerability Mmio stale data:        Not affected
+Vulnerability Reg file data sampling: Not affected
+Vulnerability Retbleed:               Not affected
+Vulnerability Spec rstack overflow:   Mitigation; safe RET
+Vulnerability Spec store bypass:      Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:             Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:             Mitigation; Enhanced / Automatic IBRS; IBPB conditional; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected
+Vulnerability Srbds:                  Not affected
+Vulnerability Tsx async abort:        Not affected
+
+Versions of relevant libraries:
+[pip3] numpy==1.26.4
+[pip3] optree==0.17.0
+[pip3] pytorch-lightning==2.5.2
+[pip3] torch==2.6.0
+[pip3] torch_cluster==1.6.3
+[pip3] torch-geometric==2.6.1
+[pip3] torchmetrics==1.8.0
+[pip3] triton==3.2.0+git576374f8
+[conda] Could not collect

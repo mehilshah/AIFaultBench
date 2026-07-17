@@ -1,0 +1,55 @@
+Title: '<Synthesizer>' object has no attribute '_model'
+Date: 2024-01-12T16:37:33+00:00
+URL: https://github.com/sdv-dev/SDV/issues/1741
+
+Description:
+### Environment Details
+* SDV version: 1.9.0
+
+### Error Description
+The CTGANSynthesizer, TVAESynthesizer, and CopulaGANSynthesizer fail to sample synthetic data in a specific case: If the data contains columns that are all dropped during the modeling phase.
+
+This could happen because all of the sdtypes are ID or PII in some way. In this case, during the data pre-processing phase, all the columns are dropped. So there is essentially nothing for the ML model to learn.
+
+### Steps to reproduce
+
+```python
+import pandas as pd
+from sdv.metadata import SingleTableMetadata
+from sdv.single_table import CTGANSynthesizer, TVAESynthesizer, CopulaGANSynthesizer
+
+data = pd.DataFrame(data={
+    'user_id': ['100', '101', '102', '103', '104'],
+    'user_ssn': ['111-11-1111', '222-22-2222', '333-33-3333', '444-44-4444', '555-55-5555']
+})
+
+
+metadata_dict = {
+    'primary_key': 'user_id',
+    'columns': {
+        'user_id': { 'sdtype': 'id' },
+        'user_ssn': { 'sdtype': 'ssn' }
+    }
+}
+
+metadata = SingleTableMetadata.load_from_dict(metadata_dict)
+
+synth = CTGANSynthesizer(metadata) # also replicable for TVAE and CopulaGAN
+synth.fit(data)
+synth.sample(10)
+```
+
+[stack_trace.txt](https://github.com/sdv-dev/SDV/files/13921595/stack_trace.txt)
+
+
+### Workarounds
+If you are encountering this issue, it is because you are requesting that _all_ columns should be generated from scratch with no possible machine learning.
+
+If this is not correct, and you would like to use machine learning for some of the columns, you should instead [update your metadata](https://docs.sdv.dev/sdv/single-table-data/data-preparation/single-table-metadata-api#update_column):
+- If you want ML to learn from columns, please mark them as `'numerical'`, `'datetime'`, `'boolean'` or `'categorical'`
+- For other higher-level concepts such as `'city'`, you can mark `pii=False` to consider these as discrete values to learn
+
+If this is correct, then it shouldn't matter which synthesizer you use because there is nothing to learn. Currently, the `GaussianCopulaSynthesizer` works on this data without issue.
+
+### Related Issues
+- #1503 

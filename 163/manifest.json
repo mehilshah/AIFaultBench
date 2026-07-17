@@ -1,0 +1,22 @@
+{
+  "name": "keras-cv-yolov8-savedmodel-box-shape",
+  "source": {
+    "bug_report": "bug_report.txt",
+    "codebase": "codebase/"
+  },
+  "runtime": {
+    "python": "3.12",
+    "tensorflow": "2.20.0",
+    "keras": "3.15.0"
+  },
+  "reproduction_command": "bash run_repro.sh",
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md"
+  ]
+}

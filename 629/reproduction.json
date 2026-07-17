@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "JAX_CHECK_TRACER_LEAKS=1 ./run_repro.sh exits with status 1 and raises Exception: Leaked trace MainTrace(3,JVPTrace) from SVI.run(...), with the leaked tracer retained through mutable_state[\"loc1p\"][\"value\"].",
+  "steps": [
+    "Create and populate the isolated environment with ./setup_env.sh.",
+    "Run the minimal reproduction with JAX_CHECK_TRACER_LEAKS=1 ./run_repro.sh.",
+    "Observe the JAX leaked-trace exception during the first SVI update."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "JAX_CHECK_TRACER_LEAKS=1 ./run_repro.sh"
+}

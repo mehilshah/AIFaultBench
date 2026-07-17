@@ -1,0 +1,4 @@
+Loaded config: 398/codebase/configs/Misc/cascade_mask_rcnn_X_152_32x8d_FPN_IN5k_gn_dconv.yaml
+ROI head name: CascadeROIHeads
+Cascade stages: 3
+AttributeError: 'CascadeROIHeads' object has no attribute 'test_score_thresh'

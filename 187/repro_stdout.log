@@ -1,0 +1,1 @@
+first output: <div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class="markdown prose dark:prose-invert contents"><span class="paragraph"><code>arr.shape = (1,)</code></span></span></div>

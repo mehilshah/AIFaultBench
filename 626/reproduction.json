@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "run_repro.sh records nvidia_smi_gpu_count=1 in repro_stdout.log and exits with the blocker that at least 2 CUDA devices are required.",
+    "The issue report's trigger is TP=2 with OffloadingConnector + CPUOffloadingSpec and CUDA graph capture, which matches the launch command in repro.py and the capture loop in codebase/vllm/v1/worker/gpu_model_runner.py."
+  ],
+  "steps": [
+    "Read bug_report.txt and traced the corresponding vLLM code path.",
+    "Created repro.py, run_repro.sh, setup_env.sh, requirements.txt, Dockerfile, manifest.json, and README.md.",
+    "Ran bash run_repro.sh; the local machine exposed only one CUDA device, so the repro stopped before starting vLLM."
+  ],
+  "blocking_reason": "This folder's machine only exposes one CUDA GPU, while the bug report requires tensor_parallel_size=2. The reported hang cannot be exercised without at least two GPUs, so the exact bug is not reproducible here.",
+  "reproduction_command": "bash run_repro.sh"
+}

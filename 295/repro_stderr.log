@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "295/repro.py", line 66, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "295/repro.py", line 62, in main
+    raise AssertionError('Expected get_possible_chars to raise ValueError, but it returned normally.')
+AssertionError: Expected get_possible_chars to raise ValueError, but it returned normally.

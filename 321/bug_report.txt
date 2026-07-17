@@ -1,0 +1,61 @@
+# recovered-from-issue: https://github.com/huggingface/peft/issues/2184
+
+TITLE
+PiSSA Updates Base Model Weights Silently
+
+BODY
+### System Info
+
+Peft v0.13.0
+Transformers v4.46.0
+
+### Who can help?
+
+Since this relates to an interaction with PEFT maybe @BenjaminBossan @sayakpaul?
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+1. Load any model
+2. Load a trained LoRA adapter that was trained without PiSSA
+3. Load a trained LoRA adapter that was trained with PiSSA
+4. Run inference and see that now if you set_adapter to the first adapter, it will output garbage
+
+This is because PiSSA silently updates the weights of the base model and there is nothing checking what else might be impacted by this operation
+
+https://github.com/huggingface/peft/blob/b3176eff49574057d91445e23a0d2f50706f05de/src/peft/tuners/lora/layer.py#L249
+
+```
+model_dir = "/path/to/seq2seq/model"
+tokenizer = AutoTokenizer.from_pretrained(model_dir)
+model:PeftAdapterMixin = AutoModelForSeq2SeqLM.from_pretrained(model_di).to(device)
+profiles = {
+    "non-pissa" : "path/to/model/trained/without/pissa",
+    "pissa": "path/to/model/trained/with/pissa"
+}
+for profile in profiles:
+    adapter_path = profiles[profile]
+    adapter_name = profile
+    model.load_adapter(adapter_path, adapter_name)
+### Running inference on 'non-pissa' will output garbage because 'pissa' updated the base model weights
+```
+
+### Expected behavior
+
+I'm not sure if this ticket belongs here or in the PEFT lib.
+
+I think there are a few options:
+
+a. Throw an error if trying to load a PiSSA adapter when another adapter is loaded, or throw an error if trying to load a non-pissa adapter after a pissa adapter has been loaded
+b. Log a warning message that PiSSA updates the base model weights
+c. Update PEFT documentation to make it clear that PiSSA updates base model weights and cannot be combined with other adapters. (In this case this ticket probably belongs in the PEFT lib)
+d.  something else?

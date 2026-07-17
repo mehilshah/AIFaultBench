@@ -1,0 +1,12 @@
+{
+  "bug_id": "363",
+  "bug_dir": "363",
+  "issue_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21693",
+  "commit_hash": "0e20e15f2376f4f356470b08875639a945c43334",
+  "library_name": "whisperx",
+  "library_version": "3.4.3",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "Lightning-AI/pytorch-lightning@0e20e15f2376f4f356470b08875639a945c43334",
+  "codebase_present": "true",
+  "standardized_dir": "../363"
+}

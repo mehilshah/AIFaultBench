@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "A baseline TinyModel process starts successfully under spawn, but after dispatch_model(model, {\"\": \"cpu\"}) the parent fails during p.start() with _pickle.PicklingError: Can't pickle <function Embedding.forward ...>: it's not the same object as torch.nn.modules.sparse.Embedding.forward.",
+  "steps": [
+    "Create a tiny nn.Module with Embedding and Linear layers.",
+    "Start a multiprocessing.Process with the spawn start method using the undecorated model; the child starts successfully.",
+    "Run accelerate.big_modeling.dispatch_model(model, {\"\": \"cpu\"}) and pass the wrapped model to multiprocessing.Process; p.start() raises PicklingError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

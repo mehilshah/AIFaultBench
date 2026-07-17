@@ -1,0 +1,3 @@
+keras=3.0.0
+backend=tensorflow
+resized_dtype=<dtype: 'int32'>

@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "476/repro.py", line 11, in <module>
+    main()
+  File "476/repro.py", line 7, in main
+    from torch_geometric import HashTensor  # noqa: F401
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ImportError: cannot import name 'HashTensor' from 'torch_geometric' (476/.venv/lib/python3.12/site-packages/torch_geometric/__init__.py)

@@ -1,0 +1,10 @@
+sdv_version= 1.35.1.dev0
+python_version= 3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]
+real_datetime2_range= 2020-01-01 00:00:00 -> 2020-01-01 00:00:00
+sample_datetime2_range= 2019-07-04 09:28:36.084043560 -> 2019-12-31 00:17:55.517074492
+diagnostic_score= 0.75
+report_properties=
+      Property  Score
+ Data Validity    0.5
+Data Structure    1.0
+reproducible= True

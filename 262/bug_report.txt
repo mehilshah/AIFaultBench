@@ -1,0 +1,58 @@
+Title: Tensor Train fails to approximate complex-valued tensors (error grows with rank)
+Date: 2025-09-03T12:30:23+00:00
+URL: https://github.com/tensorly/tensorly/issues/607
+
+Description:
+#### Describe the bug
+For a fixed complex-valued tensor, it was observed that the approximation error **increases** when the rank of the Tensor Train decomposition increases.  
+
+
+#### Steps or Code to Reproduce
+The issue can be reproduced, for example, in Google Colab by installing NumPy ≥2.0 (or by using other backends e.g. torch). The following code prints the mean squared error of a complex-valued Tensor Train approximation for different decomposition ranks (from 1 up to 15):
+
+```python
+#!pip install numpy==1.26.0 
+!pip install numpy==2.3.1
+!pip install tensorly
+
+import numpy as np
+import tensorly as tl
+print(np.__version__)
+np.set_printoptions(precision=3, floatmode='fixed')
+tl.set_backend('numpy')
+
+tensor_shape = (32, 32, 32)
+rank_range = list(range(1, 15))
+rng = tl.check_random_state(None)
+tensor = tl.tensor(rng.normal(size=tensor_shape)) + 1j*tl.tensor(rng.normal(size=tensor_shape))
+
+mse = []
+for r in rank_range:
+    tensor_approx = tl.tt_to_tensor(
+        tl.decomposition.tensor_train(tensor, rank = r)
+        )
+    mse.append(tl.mean(tl.abs(tensor_approx - tensor)**2))
+
+print(np.array(mse))
+```
+
+#### Expected behavior
+For a fixed complex-valued tensor, the reconstruction error is expected to **decrease** monotonically as the decomposition rank increases.
+For numpy 1.26.0 backend the output is following:
+```[1.995 1.979 1.955 1.928 1.894 1.857 1.818 1.773 1.725 1.675 1.621 1.562 1.502 1.439]```
+
+#### Actual result
+The approximation error **increases** when the rank of the Tensor Train decomposition increases.  
+The output of provided code for numpy 2.3.1 backend: 
+```[2.003 2.038 2.096 2.095 2.133 2.147 2.188 2.216 2.311 2.387 2.423 2.370 2.447 2.497]``` 
+
+#### Versions
+```Linux-6.1.123+-x86_64-with-glibc2.35
+Python 3.12.11 (main, Jun  4 2025, 08:56:18) [GCC 11.4.0]
+NumPy 2.3.1
+SciPy 1.16.1
+TensorLy 0.9.0
+Pytorch 2.8.0+cu126
+```
+
+The issue does not appear when using the NumPy backend with version <2.0, but it does appear with NumPy ≥2.0 and with other backends (checked with PyTorch).

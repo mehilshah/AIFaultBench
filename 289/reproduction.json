@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Raised AttributeError: 'PromptEncoderConfig' object has no attribute 'modules_to_save'",
+    "The crash occurs while PeftModelForSequenceClassification.__init__ accesses peft_config.modules_to_save.",
+    "The resulting traceback points to peft_model.py line 1506."
+  ],
+  "steps": [
+    "Created a BERT sequence-classification model from configuration.",
+    "Constructed PromptEncoderConfig(task_type='SEQ_CLS', num_virtual_tokens=20).",
+    "Called get_peft_model(base_model, ptuning_config)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

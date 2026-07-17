@@ -1,0 +1,24 @@
+{
+  "bug_id": "166",
+  "bug_dir": "166",
+  "issue_url": "https://github.com/kornia/kornia/issues/2822",
+  "commit_hash": "",
+  "library_name": "kornia",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../166",
+  "generated_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "run_repro.sh exited with code 1.",
+    "repro_stdout.log shows `inverse_finite=False`, `inverse_has_inf=True`, and `bug_reproduced=non_finite_inverse` for seed 0.",
+    "repro_stderr.log contains `RuntimeWarning: overflow encountered in cast` from `numpy.linalg.inv` while inverting the covariance."
+  ],
+  "steps": [
+    "Create the isolated venv and install the bundled requirements plus the local `codebase/` editable package.",
+    "Run `bash run_repro.sh` with `KERAS_BACKEND=numpy`.",
+    "Observe that `PointInferenceNetwork(...)[\"mvn\"][\"covariance\"]` produces a non-finite inverse immediately after initialization."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

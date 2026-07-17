@@ -1,0 +1,11 @@
+{
+  "blocking_reason": null,
+  "evidence": "Lightning emitted the ambiguous batch-size warning during validation. Captured warning(s): ['Trying to infer the `batch_size` from an ambiguous collection. The batch size we found is 3161. To avoid any miscalculations, use `self.log(..., batch_size=batch_size)`.']",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Create a single-graph PyG `Data` object with 3161 nodes.",
+    "Run `pytorch_lightning.Trainer.validate` on a module whose `validation_step` calls `self.log('val_loss', loss)` without `batch_size`.",
+    "Observe Lightning warn that it inferred batch size 3161 from an ambiguous collection, even though the other metric log passes `batch_size=batch.num_graphs`."
+  ]
+}

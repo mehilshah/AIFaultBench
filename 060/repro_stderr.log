@@ -1,0 +1,222 @@
+2026-07-17 01:39:34.897890: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:9261] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2026-07-17 01:39:34.897929: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:607] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2026-07-17 01:39:34.898586: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1515] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+ERROR:absl:cannot import name 'runtime_version' from 'google.protobuf' (060/.venv/lib/python3.11/site-packages/google/protobuf/__init__.py)
+Traceback (most recent call last):
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/__init__.py", line 79, in <module>
+    from tensorflow_datasets import rlds  # pylint: disable=g-bad-import-order
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/rlds/__init__.py", line 21, in <module>
+    from tensorflow_datasets.rlds import envlogger_reader
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/rlds/envlogger_reader.py", line 21, in <module>
+    from tensorflow_datasets.core.utils.lazy_imports_utils import tree
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/__init__.py", line 21, in <module>
+    from tensorflow_datasets.core import community
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/community/__init__.py", line 19, in <module>
+    from tensorflow_datasets.core.community.huggingface_wrapper import mock_builtin_to_use_gfile
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/community/huggingface_wrapper.py", line 32, in <module>
+    from tensorflow_datasets.core import dataset_builder
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/dataset_builder.py", line 162, in <module>
+    class DatasetBuilder(registered.RegisteredDataset):
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/etils/epy/lazy_imports_utils.py", line 123, in __getattr__
+    return getattr(self._module, name)
+                   ^^^^^^^^^^^^
+  File "/users/grad/mehil/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/functools.py", line 1001, in __get__
+    val = self.func(instance)
+          ^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/etils/epy/lazy_imports_utils.py", line 84, in _module
+    module = importlib.import_module(self.module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/registered.py", line 36, in <module>
+    import tensorflow_datasets.core.logging as _tfds_logging
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/logging/__init__.py", line 29, in <module>
+    from tensorflow_datasets.core.logging import logging_logger
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/logging/logging_logger.py", line 21, in <module>
+    from tensorflow_datasets.core import decode
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/decode/__init__.py", line 22, in <module>
+    from tensorflow_datasets.core.decode.partial_decode import PartialDecoding
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/decode/partial_decode.py", line 21, in <module>
+    from tensorflow_datasets.core import features as features_lib
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/features/__init__.py", line 22, in <module>
+    from tensorflow_datasets.core.features.audio_feature import Audio
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/features/audio_feature.py", line 33, in <module>
+    from tensorflow_datasets.core.features import feature as feature_lib
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/features/feature.py", line 36, in <module>
+    from tensorflow_datasets.core.proto import feature_pb2
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/proto/__init__.py", line 18, in <module>
+    from tensorflow_datasets.core.proto import dataset_info_generated_pb2 as dataset_info_pb2  # pylint: disable=line-too-long
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_datasets/core/proto/dataset_info_generated_pb2.py", line 32, in <module>
+    from tensorflow_metadata.proto.v0 import schema_pb2 as tensorflow__metadata_dot_proto_dot_v0_dot_schema__pb2
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_metadata/proto/__init__.py", line 16, in <module>
+    from tensorflow_metadata.proto.v0 import (
+  File "060/.venv/lib/python3.11/site-packages/tensorflow_metadata/proto/v0/anomalies_pb2.py", line 9, in <module>
+    from google.protobuf import runtime_version as _runtime_version
+ImportError: cannot import name 'runtime_version' from 'google.protobuf' (060/.venv/lib/python3.11/site-packages/google/protobuf/__init__.py)
+Traceback (most recent call last):
+  File "060/repro.py", line 53, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "060/repro.py", line 35, in main
+    .map(augment_fn, num_parallel_calls=tf.data.AUTOTUNE)
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/data/ops/dataset_ops.py", line 2280, in map
+    return map_op._map_v2(
+           ^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/data/ops/map_op.py", line 40, in _map_v2
+    return _ParallelMapDataset(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/data/ops/map_op.py", line 148, in __init__
+    self._map_func = structured_function.StructuredFunctionWrapper(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/data/ops/structured_function.py", line 265, in __init__
+    self._function = fn_factory()
+                     ^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/eager/polymorphic_function/polymorphic_function.py", line 1227, in get_concrete_function
+    concrete = self._get_concrete_function_garbage_collected(*args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/eager/polymorphic_function/polymorphic_function.py", line 1197, in _get_concrete_function_garbage_collected
+    self._initialize(args, kwargs, add_initializers_to=initializers)
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/eager/polymorphic_function/polymorphic_function.py", line 695, in _initialize
+    self._concrete_variable_creation_fn = tracing_compilation.trace_function(
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/eager/polymorphic_function/tracing_compilation.py", line 178, in trace_function
+    concrete_function = _maybe_define_function(
+                        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/eager/polymorphic_function/tracing_compilation.py", line 283, in _maybe_define_function
+    concrete_function = _create_concrete_function(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/eager/polymorphic_function/tracing_compilation.py", line 310, in _create_concrete_function
+    traced_func_graph = func_graph_module.func_graph_from_py_func(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/framework/func_graph.py", line 1059, in func_graph_from_py_func
+    func_outputs = python_func(*func_args, **func_kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/eager/polymorphic_function/polymorphic_function.py", line 598, in wrapped_fn
+    out = weak_wrapped_fn().__wrapped__(*args, **kwds)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/data/ops/structured_function.py", line 231, in wrapped_fn
+    ret = wrapper_helper(*args)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/data/ops/structured_function.py", line 161, in wrapper_helper
+    ret = autograph.tf_convert(self._func, ag_ctx)(*nested_args)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/autograph/impl/api.py", line 693, in wrapper
+    raise e.ag_error_metadata.to_exception(e)
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/autograph/impl/api.py", line 690, in wrapper
+    return converted_call(f, args, kwargs, options=options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/autograph/impl/api.py", line 439, in converted_call
+    result = converted_f(*effective_args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/__autograph_generated_file712fzipy.py", line 13, in tf__augment_fn
+    retval_ = ag__.converted_call(ag__.ld(rand_augment), (ag__.ld(sample),), None, fscope)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/autograph/impl/api.py", line 377, in converted_call
+    return _call_unconverted(f, args, kwargs, options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/tensorflow/python/autograph/impl/api.py", line 460, in _call_unconverted
+    return f(*args)
+           ^^^^^^^^
+  File "060/.venv/lib/python3.11/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/tmp/__autograph_generated_file8c30xhtq.py", line 46, in tf__call
+    ag__.if_stmt(ag__.ld(images).shape.rank == 3, if_body_1, else_body_1, get_state_1, set_state_1, ('outputs',), 1)
+  File "/tmp/__autograph_generated_file8c30xhtq.py", line 24, in if_body_1
+    outputs = ag__.converted_call(ag__.ld(self)._format_output, (ag__.converted_call(ag__.ld(self)._augment, (ag__.ld(inputs),), None, fscope), ag__.ld(metadata)), None, fscope)
+                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/__autograph_generated_fileigyjin4f.py", line 12, in tf___augment
+    result = ag__.converted_call(ag__.converted_call(ag__.ld(super), (), None, fscope)._augment, (ag__.ld(sample),), None, fscope)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/__autograph_generated_filer2csv7u2.py", line 55, in tf___augment
+    ag__.if_stmt(ag__.ld(self).layers == [], if_body, else_body, get_state_1, set_state_1, ('do_return', 'retval_'), 2)
+  File "/tmp/__autograph_generated_filer2csv7u2.py", line 45, in else_body
+    ag__.for_stmt(ag__.converted_call(ag__.ld(range), (ag__.ld(self).augmentations_per_image,), None, fscope), None, loop_body, get_state, set_state, ('result',), {'iterate_names': '_'})
+  File "/tmp/__autograph_generated_filer2csv7u2.py", line 42, in loop_body
+    result = ag__.converted_call(ag__.ld(tf).cond, (ag__.ld(skip_augment) > ag__.ld(self).rate, ag__.autograph_artifact(lambda: ag__.ld(inputs)), ag__.autograph_artifact(lambda: ag__.converted_call(ag__.ld(self)._random_choice, (ag__.ld(result),), None, fscope))), None, fscope)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/__autograph_generated_filer2csv7u2.py", line 42, in <lambda>
+    result = ag__.converted_call(ag__.ld(tf).cond, (ag__.ld(skip_augment) > ag__.ld(self).rate, ag__.autograph_artifact(lambda: ag__.ld(inputs)), ag__.autograph_artifact(lambda: ag__.converted_call(ag__.ld(self)._random_choice, (ag__.ld(result),), None, fscope))), None, fscope)
+                                                                                                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/__autograph_generated_file8c30xhtq.py", line 46, in tf__call
+    ag__.if_stmt(ag__.ld(images).shape.rank == 3, if_body_1, else_body_1, get_state_1, set_state_1, ('outputs',), 1)
+  File "/tmp/__autograph_generated_file8c30xhtq.py", line 24, in if_body_1
+    outputs = ag__.converted_call(ag__.ld(self)._format_output, (ag__.converted_call(ag__.ld(self)._augment, (ag__.ld(inputs),), None, fscope), ag__.ld(metadata)), None, fscope)
+                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/__autograph_generated_fileem63nepd.py", line 17, in tf___augment
+    raise
+TypeError: in user code:
+
+    File "060/repro.py", line 24, in augment_fn  *
+        return rand_augment(sample)
+    File "060/.venv/lib/python3.11/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler  **
+        raise e.with_traceback(filtered_tb) from None
+    File "/tmp/__autograph_generated_file8c30xhtq.py", line 46, in tf__call
+        ag__.if_stmt(ag__.ld(images).shape.rank == 3, if_body_1, else_body_1, get_state_1, set_state_1, ('outputs',), 1)
+    File "/tmp/__autograph_generated_file8c30xhtq.py", line 24, in if_body_1
+        outputs = ag__.converted_call(ag__.ld(self)._format_output, (ag__.converted_call(ag__.ld(self)._augment, (ag__.ld(inputs),), None, fscope), ag__.ld(metadata)), None, fscope)
+    File "/tmp/__autograph_generated_fileigyjin4f.py", line 12, in tf___augment
+        result = ag__.converted_call(ag__.converted_call(ag__.ld(super), (), None, fscope)._augment, (ag__.ld(sample),), None, fscope)
+    File "/tmp/__autograph_generated_filer2csv7u2.py", line 55, in tf___augment
+        ag__.if_stmt(ag__.ld(self).layers == [], if_body, else_body, get_state_1, set_state_1, ('do_return', 'retval_'), 2)
+    File "/tmp/__autograph_generated_filer2csv7u2.py", line 45, in else_body
+        ag__.for_stmt(ag__.converted_call(ag__.ld(range), (ag__.ld(self).augmentations_per_image,), None, fscope), None, loop_body, get_state, set_state, ('result',), {'iterate_names': '_'})
+    File "/tmp/__autograph_generated_filer2csv7u2.py", line 42, in loop_body
+        result = ag__.converted_call(ag__.ld(tf).cond, (ag__.ld(skip_augment) > ag__.ld(self).rate, ag__.autograph_artifact(lambda: ag__.ld(inputs)), ag__.autograph_artifact(lambda: ag__.converted_call(ag__.ld(self)._random_choice, (ag__.ld(result),), None, fscope))), None, fscope)
+    File "/tmp/__autograph_generated_filer2csv7u2.py", line 42, in <lambda>
+        result = ag__.converted_call(ag__.ld(tf).cond, (ag__.ld(skip_augment) > ag__.ld(self).rate, ag__.autograph_artifact(lambda: ag__.ld(inputs)), ag__.autograph_artifact(lambda: ag__.converted_call(ag__.ld(self)._random_choice, (ag__.ld(result),), None, fscope))), None, fscope)
+    File "/tmp/__autograph_generated_file8c30xhtq.py", line 46, in tf__call
+        ag__.if_stmt(ag__.ld(images).shape.rank == 3, if_body_1, else_body_1, get_state_1, set_state_1, ('outputs',), 1)
+    File "/tmp/__autograph_generated_file8c30xhtq.py", line 24, in if_body_1
+        outputs = ag__.converted_call(ag__.ld(self)._format_output, (ag__.converted_call(ag__.ld(self)._augment, (ag__.ld(inputs),), None, fscope), ag__.ld(metadata)), None, fscope)
+    File "/tmp/__autograph_generated_fileem63nepd.py", line 17, in tf___augment
+        raise
+
+    TypeError: Exception encountered when calling layer 'rand_augment' (type RandAugment).
+    
+    in user code:
+    
+        File "060/.venv/lib/python3.11/site-packages/keras_cv/src/layers/preprocessing/base_image_augmentation_layer.py", line 420, in call  *
+            outputs = self._format_output(self._augment(inputs), metadata)
+        File "060/.venv/lib/python3.11/site-packages/keras_cv/src/layers/preprocessing/rand_augment.py", line 127, in _augment  *
+            result = super()._augment(sample)
+        File "060/.venv/lib/python3.11/site-packages/keras_cv/src/layers/preprocessing/random_augmentation_pipeline.py", line 104, in _augment  *
+            result = tf.cond(
+        File "060/.venv/lib/python3.11/site-packages/keras/src/utils/traceback_utils.py", line 72, in error_handler
+            del filtered_tb
+        File "/tmp/__autograph_generated_file8c30xhtq.py", line 46, in tf__call
+            ag__.if_stmt(ag__.ld(images).shape.rank == 3, if_body_1, else_body_1, get_state_1, set_state_1, ('outputs',), 1)
+        File "/tmp/__autograph_generated_file8c30xhtq.py", line 24, in if_body_1
+            outputs = ag__.converted_call(ag__.ld(self)._format_output, (ag__.converted_call(ag__.ld(self)._augment, (ag__.ld(inputs),), None, fscope), ag__.ld(metadata)), None, fscope)
+        File "/tmp/__autograph_generated_fileem63nepd.py", line 17, in tf___augment
+            raise
+    
+        TypeError: Exception encountered when calling layer 'random_choice' (type RandomChoice).
+        
+        in user code:
+        
+            File "060/.venv/lib/python3.11/site-packages/keras_cv/src/layers/preprocessing/base_image_augmentation_layer.py", line 420, in call  *
+                outputs = self._format_output(self._augment(inputs), metadata)
+            File "060/.venv/lib/python3.11/site-packages/keras_cv/src/layers/preprocessing/random_choice.py", line 110, in _augment  *
+                default=lambda: inputs,
+        
+            TypeError: branches[0] and branches[1] arguments to tf.switch_case must have the same number, type, and overall structure of return values.
+            
+            branches[0] output: {'images': <tf.Tensor 'rand_augment/cond/random_choice/switch_case/indexed_case/Identity:0' shape=(160, 160, 3) dtype=float32>, 'segmentation_masks': <tf.Tensor 'rand_augment/cond/random_choice/switch_case/indexed_case/Identity_1:0' shape=(160, 160, 1) dtype=float32>}
+            branches[1] output: {'images': <tf.Tensor 'rand_augment/cond/random_choice/switch_case/indexed_case/Identity:0' shape=(160, 160, 3) dtype=float32>, 'segmentation_masks': <tf.Tensor 'rand_augment/cond/random_choice/switch_case/indexed_case/Identity_1:0' shape=(160, 160, 1) dtype=int64>}
+            
+            Error details:
+            Tensor("rand_augment/cond/random_choice/switch_case/indexed_case/Identity_1:0", shape=(160, 160, 1), dtype=float32) and Tensor("rand_augment/cond/random_choice/switch_case/indexed_case/Identity_1:0", shape=(160, 160, 1), dtype=int64) have different types
+        
+        
+        Call arguments received by layer 'random_choice' (type RandomChoice):
+          • inputs={'images': 'tf.Tensor(shape=(160, 160, 3), dtype=float32)', 'segmentation_masks': 'tf.Tensor(shape=(160, 160, 1), dtype=int64)'}
+    
+    
+    Call arguments received by layer 'rand_augment' (type RandAugment):
+      • inputs={'images': 'tf.Tensor(shape=(160, 160, 3), dtype=float32)', 'segmentation_masks': 'tf.Tensor(shape=(160, 160, 1), dtype=int64)'}
+

@@ -1,0 +1,8 @@
+python=3.12.3
+torch=2.4.1+cpu
+torch_geometric=2.7.0
+device=cpu
+cuda_available=False
+first_max_diff=0.0
+rest_max_diff=0.0
+reproducible=False

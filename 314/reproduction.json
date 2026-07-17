@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "With the supported runtime set used by this bundle, `jax.scipy.special.gammaincc(np.inf, 2.0)` returned `[1.]` instead of `NaN`.",
+    "Trying to downgrade to `jaxlib==0.10.1` is blocked by the checked-in source tree: it raises `RuntimeError: jaxlib is version 0.10.1, but this version of jax requires version >= 0.10.2`."
+  ],
+  "steps": [
+    "Create a virtual environment with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` to execute the minimal example on CPU.",
+    "Observe that the output is `[1.]` and the script exits with status 1, so the bug is absent here."
+  ],
+  "blocking_reason": "The local codebase is newer than the buggy release and requires `jaxlib >= 0.10.2`; with the supported 0.10.2 wheel the issue is already fixed, and the older 0.10.1 wheel from the report is rejected by the version gate.",
+  "reproduction_command": "bash run_repro.sh"
+}

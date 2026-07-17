@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "082/repro.py", line 67, in <module>
+    main()
+  File "082/repro.py", line 62, in main
+    loss = mpp_trainer(images)
+           ^^^^^^^^^^^^^^^^^^^
+  File "082/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "082/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "082/codebase/vit_pytorch/mpp.py", line 154, in forward
+    masked_input = transformer.to_patch_embedding[-1](masked_input)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "082/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "082/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "082/.venv/lib/python3.12/site-packages/torch/nn/modules/normalization.py", line 228, in forward
+    return F.layer_norm(
+           ^^^^^^^^^^^^^
+  File "082/.venv/lib/python3.12/site-packages/torch/nn/functional.py", line 2987, in layer_norm
+    return torch.layer_norm(
+           ^^^^^^^^^^^^^^^^^
+RuntimeError: Given normalized_shape=[1024], expected input with shape [*, 1024], but got input of size[20, 64, 3072]

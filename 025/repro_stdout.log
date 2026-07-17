@@ -1,0 +1,7 @@
+Python 3.12.3
+TFM_IMPORT_OK=True
+VISION_MODULE=tensorflow_models.vision
+VISION_FILE=025/codebase/tensorflow_models/vision/__init__.py
+HAS_AUGMENT=False
+ERROR=AttributeError: module 'tensorflow_models.vision' has no attribute 'augment'
+RESULT=bug_reproduced

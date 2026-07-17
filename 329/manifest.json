@@ -1,0 +1,12 @@
+{
+  "bug_id": "329",
+  "bug_dir": "329",
+  "issue_url": "https://github.com/pyg-team/pytorch_geometric/issues/10505",
+  "commit_hash": "76ff9c2ce18c8cebf52122b57e2aeadce9793d10",
+  "library_name": "pytorch_geometric",
+  "library_version": "2.7.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pyg-team/pytorch_geometric@76ff9c2ce18c8cebf52122b57e2aeadce9793d10",
+  "codebase_present": "true",
+  "standardized_dir": "../329"
+}

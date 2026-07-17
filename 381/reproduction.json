@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "The current source already pads C128A top-k width to 128 in vllm/models/deepseek_v4/sparse_mla.py.",
+    "FlashMLA sparse support is gated to Hopper/Blackwell in vllm/v1/attention/ops/flashmla.py.",
+    "torch import failed: ImportError: /users/grad/mehil/.local/lib/python3.12/site-packages/torch/lib/libtorch_cuda.so: undefined symbol: ncclCommResume"
+  ],
+  "steps": [
+    "Inspect the issue source and the relevant FlashMLA code path.",
+    "Attempted to import torch; the local environment failed before FlashMLA could load."
+  ],
+  "blocking_reason": "torch import failed: ImportError: /users/grad/mehil/.local/lib/python3.12/site-packages/torch/lib/libtorch_cuda.so: undefined symbol: ncclCommResume",
+  "reproduction_command": "bash run_repro.sh"
+}

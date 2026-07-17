@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "codebase/src/lightning/__init__.py does not contain the reported _runtime launcher or router_runtime.js reference",
+    "run_repro.sh -> repro.py failed to download lightning==2.6.3: pip reported 'No matching distribution found for lightning==2.6.3'",
+    "repro_stdout.log captures the clean source-tree check and the unavailable-wheel failure"
+  ],
+  "steps": [
+    "Cloned Lightning-AI/pytorch-lightning at 0e20e15f2376f4f356470b08875639a945c43334 into codebase/",
+    "Inspected codebase/src/lightning/__init__.py and verified the import-time runtime hook is absent in the checked-out source",
+    "Ran bash run_repro.sh, which attempted pip download lightning==2.6.3 --no-deps and failed because the version is no longer available on the live index"
+  ],
+  "blocking_reason": "The exact lightning==2.6.3 wheel described in the report is no longer available from PyPI in this workspace, so the malicious archive cannot be downloaded and inspected here.",
+  "reproduction_command": "bash run_repro.sh"
+}

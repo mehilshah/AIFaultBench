@@ -1,0 +1,2 @@
+image_device=cuda:0
+segmentation_map_device=cuda:0

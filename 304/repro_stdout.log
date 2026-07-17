@@ -1,0 +1,16 @@
+Python 3.12.3
+Source: 304/codebase/vllm/compilation/passes/fusion/allreduce_rms_fusion.py
+
+Registration summary:
+- AllReduceFusedRMSNormStaticQuantFP8Pattern: line 671, extra_check='_rms_input_weight_dtype_match', expected=True -> OK
+- AllReduceFusedAddRMSNormStaticQuantFP8Pattern: line 754, extra_check=None, expected=False -> OK
+- AllReduceFusedRMSNormStaticQuantNVFP4Pattern: line 841, extra_check='_rms_input_weight_dtype_match', expected=True -> OK
+- AllReduceFusedAddRMSNormStaticQuantNVFP4Pattern: line 943, extra_check=None, expected=False -> OK
+
+Interpretation:
+- The residual quant patterns are missing the dtype guard, so a mixed BF16 input / FP32 norm-weight graph can still match.
+- The adjacent non-residual quant patterns do carry a guard, which matches the bug report's diagnosis.
+- Buggy residual quant patterns: ['AllReduceFusedAddRMSNormStaticQuantFP8Pattern', 'AllReduceFusedAddRMSNormStaticQuantNVFP4Pattern']
+- Guarded non-residual quant patterns: ['AllReduceFusedRMSNormStaticQuantFP8Pattern', 'AllReduceFusedRMSNormStaticQuantNVFP4Pattern']
+
+BUG REPRODUCED: the unsafe fusion registration is present in this checkout.

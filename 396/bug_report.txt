@@ -1,0 +1,84 @@
+# recovered-from-issue: https://github.com/huggingface/peft/issues/730
+
+TITLE
+Adalora :when set the dropout=0,we get the type error;
+
+BODY
+### System Info
+
+transformers=4.18.0.dev0
+peft=0.4.0.dev0
+
+### Who can help?
+
+_No response_
+
+### Information
+
+- [ ] The official example scripts
+- [X] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder
+- [X] My own task or dataset (give details below)
+
+### Reproduction
+
+We set paramters as below.( lora_dropout =0)
+""
+ ```
+from peft import AdaLoraConfig, get_peft_model
+        adalora_config = AdaLoraConfig(
+                peft_type="ADALORA",
+                task_type="SEQ_CLS", 
+                r=4, 
+                lora_alpha=16, 
+                init_r=6,
+                target_modules=["query", "value"], 
+                bias="lora_only",
+                orth_reg_weight=0.5,
+                lora_dropout=0,
+                tinit=0,
+                modules_to_save=["classifier"],
+        )
+        model = get_peft_model(model, adalora_config)
+```
+""
+
+But,we get the error :
+```
+File "/home/normal103/liuxu/Bert-text-classification_for_PyTorch_liuxu/peft/src/peft/tuners/adalora.py", line 355, in update_layer
+    self.lora_dropout.update(nn.ModuleDict({adapter_name: lora_dropout_layer}))
+  File "/root/miniconda3/envs/bert1/lib/python3.7/site-packages/torch/nn/modules/container.py", line 324, in __init__
+    self.update(modules)
+  File "/root/miniconda3/envs/bert1/lib/python3.7/site-packages/torch/nn/modules/container.py", line 400, in update
+    self[key] = module
+  File "/root/miniconda3/envs/bert1/lib/python3.7/site-packages/torch/nn/modules/container.py", line 331, in __setitem__
+    self.add_module(key, module)
+  File "/root/miniconda3/envs/bert1/lib/python3.7/site-packages/torch/nn/modules/module.py", line 382, in add_module
+    torch.typename(module)))
+TypeError: peft.tuners.adalora.AdaLoraLayer.update_layer.<locals>.lora_dropout_layer is not a Module subclass.
+```
+
+look at the "peft/src/peft/tuners/adalora.py" file, and locate to the "update_layer" function as follow:
+
+```
+    def update_layer(self, adapter_name, r, lora_alpha, lora_dropout, init_lora_weights):
+        self.r[adapter_name] = r
+        self.lora_alpha[adapter_name] = lora_alpha
+        if lora_dropout > 0.0:
+            lora_dropout_layer = nn.Dropout(p=lora_dropout)
+        else:
+
+            def lora_dropout_layer(x):
+                return x
+```
+
+We modified the " def lora_dropout_layer(x):return x " to "lora_dropout_layer = nn.Identity()", with reference to file "lora.py".
+Then ,the type error solved.
+
+
+### Expected behavior
+
+We would like to know if there is really an error in the code here, and if so, whether the modification we made is correct, or please provide the correct modification method.

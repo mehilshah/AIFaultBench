@@ -1,0 +1,41 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/37991
+
+TITLE
+`jnp.cumsum(x, dtype=bool)` produces wrong values for integer input
+
+BODY
+### Description
+
+
+When `dtype=bool` is passed explicitly to `jnp.cumsum` with integer input, JAX produces incorrect values. NumPy casts the input to `bool` first and then accumulates; JAX instead accumulates in the integer domain and casts at the end, giving a different result.
+
+```python
+import jax, jax.numpy as jnp
+import numpy as np
+jax.config.update('jax_enable_x64', True)
+
+x = np.array([-1, 1], dtype=np.int32)
+
+print(np.cumsum(x, dtype=bool))                   # [ True  True]  ← correct
+print(jnp.cumsum(jnp.array(x), dtype=bool))       # [ True False]  ← bug
+```
+
+**Why the values differ:**
+
+NumPy casts `[-1, 1]` to bool first → `[True, True]`, then accumulates → `[True, True]`.
+
+JAX skips the cast-first step due to a guard `if a_type != np.bool_ and dtype == np.bool_:` that uses the un-canonicalized user-passed dtype. When the user passes Python's builtin `bool`, this check does not fire as expected, so JAX accumulates `[-1, 0]` as integers and casts at the end → `[True, False]`.
+
+This is distinct from the `jnp.cumsum` output-dtype promotion bug (integer inputs returning `int32` instead of `int64` under `jax_enable_x64`). The issue here is wrong *values*, not wrong dtype.
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+```
+jax:    0.10.1.dev20260513+64f6e229b
+jaxlib: 0.10.0
+numpy:  2.4.4
+python: 3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]
+device info: cpu-1, 1 local devices
+process_count: 1
+platform: uname_result(system='Linux', node='eb2-3228-lin08.csc.ncsu.edu', release='6.14.0-37-generic', version='#37~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Nov 20 10:25:38 UTC 2', machine='x86_64')
+```

@@ -1,0 +1,15 @@
+385/codebase/torchrl/_extension.py:42: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+Traceback (most recent call last):
+  File "385/repro.py", line 93, in run
+    env.step(action_td)
+  File "385/codebase/torchrl/envs/common.py", line 2243, in step
+    next_tensordict = self._step(tensordict)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "385/codebase/torchrl/envs/libs/pettingzoo.py", line 630, in _step
+    observation_dict, info_dict = self._update_action_mask(
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "385/codebase/torchrl/envs/libs/pettingzoo.py", line 807, in _update_action_mask
+    agent_obs = observation_dict[agent]
+                ~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'agent_1'

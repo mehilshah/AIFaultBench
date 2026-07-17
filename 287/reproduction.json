@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh 20` produced `iterations=20`, `deleted_fds=20`, and 20 leaked `/proc/<pid>/fd` entries pointing at deleted checkpoint files.",
+  "steps": [
+    "Load the DeepSpeed `io` modules directly from `codebase/deepspeed/io/` with small stubs for `deepspeed.accelerator` and `deepspeed.ops.op_builder`.",
+    "Create a `FastFileWriter`, call `close()`, unlink the file, and repeat for 20 iterations.",
+    "Count deleted file descriptors under `/proc/<pid>/fd` and observe that the count matches the number of iterations."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh 20"
+}

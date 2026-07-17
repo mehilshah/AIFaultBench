@@ -1,0 +1,26 @@
+{
+  "bug_id": "279",
+  "issue_url": "https://github.com/sdv-dev/SDV/issues/2915",
+  "library_name": "sdv",
+  "library_version": "1.37.3.dev1",
+  "reproducible": false,
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "reproduction_command": "bash run_repro.sh",
+  "setup_command": "bash setup_env.sh",
+  "runtime": {
+    "python": "3.12"
+  },
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

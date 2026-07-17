@@ -1,0 +1,6 @@
+517/codebase/pyro/util.py:544: UserWarning: assignment
+If you want to enumerate sites, you need to use TraceEnum_ELBO instead.
+  warnings.warn(
+517/codebase/pyro/util.py:544: UserWarning: assignment
+If you want to enumerate sites, you need to use TraceEnum_ELBO instead.
+  warnings.warn(

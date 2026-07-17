@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` in the local venv exits with `TypeError: cannot unpack non-iterable NoneType object` at `codebase/torch_geometric/distributed/rpc.py:123` inside `rpc_partition_to_workers`.",
+  "steps": [
+    "Created a local CPU-only virtualenv and installed `torch==2.5.1+cpu` plus `numpy==2.2.1`.",
+    "Bootstrapped `torch.distributed.rpc` with a single local worker so the RPC decorator gate is satisfied.",
+    "Patched `global_all_gather` to return a worker map containing one `None` value.",
+    "Called `rpc_partition_to_workers(...)` and observed the same unpacking TypeError from the issue report."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

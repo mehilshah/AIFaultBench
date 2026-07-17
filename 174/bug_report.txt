@@ -1,0 +1,52 @@
+Title: GrammarError: Rule 'anycase' used but not defined (in rule pipesyn)
+Date: 2023-10-22T00:13:29+00:00
+URL: https://github.com/lark-parser/lark/issues/1355
+
+Description:
+When attempting to load a small grammar, Lark reports that a rule alias name is "used but not defined".  It's rather obviously defined, as the only usage of the name is the alias.  The specific alias that gets flagged varies - running the example below flags `anycase`, `anyof`, and `mask`, seemingly randomly.
+
+The grammar is intended to recognize simple operand strings like:
+
+```
+AnYcA mIXEd
+
+ONEs
+
+zero ANYOF
+```
+
+To reproduce, run the following:
+
+```python
+import lark
+
+grammar = '''
+start: pipesyn
+pipesyn: ["any"i ("c"i ("a"i ("s"i ("e"i)? )? )? )? -> anycase]
+ | [("mixed"i
+ | "one"i ("s"i)?
+ | "zero"i ("s"i)?) -> mask]
+ | ["anyo"i ("f"i)? -> anyof]
+'''
+
+parser = lark.Lark(grammar, parser="lalr")
+```
+
+You'll get an exception like the following:
+```
+(.venv) C:\Ross\Source\Pype>py src\pype\issue.py
+Traceback (most recent call last):
+  File "C:\Ross\Source\Pype\src\pype\issue.py", line 12, in <module>
+    parser = lark.Lark(grammar, parser="lalr")
+  File "C:\Ross\Source\Pype\.venv\lib\site-packages\lark\lark.py", line 356, in __init__
+    self.grammar, used_files = load_grammar(grammar, self.source_path, self.options.import_paths, self.options.keep_all_tokens)
+  File "C:\Ross\Source\Pype\.venv\lib\site-packages\lark\load_grammar.py", line 1411, in load_grammar
+    return builder.build(), builder.used_files
+  File "C:\Ross\Source\Pype\.venv\lib\site-packages\lark\load_grammar.py", line 1370, in build
+    self.validate()
+  File "C:\Ross\Source\Pype\.venv\lib\site-packages\lark\load_grammar.py", line 1364, in validate
+    self._grammar_error(d.is_term, "{Type} '{name}' used but not defined (in {type2} {name2})", sym, name)
+  File "C:\Ross\Source\Pype\.venv\lib\site-packages\lark\load_grammar.py", line 1104, in _grammar_error
+    raise GrammarError(msg.format(**args))
+lark.exceptions.GrammarError: Rule 'anycase' used but not defined (in rule pipesyn)
+```

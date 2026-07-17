@@ -1,0 +1,14 @@
+{
+  "bug_id": "060",
+  "bug_dir": "060",
+  "issue_url": "https://github.com/keras-team/keras-io/issues/1583",
+  "commit_hash": "bd6963345e520ab8b2cbf5894645ab070514aae1",
+  "library_name": "keras-cv",
+  "library_version": "0.6.4",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "keras-team/keras-io@bd6963345e520ab8b2cbf5894645ab070514aae1",
+  "codebase_present": "true",
+  "standardized_dir": "../060",
+  "repro_script": "repro.py",
+  "requirements": "requirements.txt"
+}

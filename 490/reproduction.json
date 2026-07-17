@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Docker build succeeded and the container run failed exactly at the CUDA handoff: `torch_version=2.3.1`, `cuda_is_available=False`, then `torch.zeros(1).cuda()` raised `RuntimeError: Found no NVIDIA driver on your system. Please check that you have an NVIDIA GPU and installed a driver from http://www.nvidia.com/Download/index.aspx`.",
+  "steps": [
+    "Build the repro image with `bash run_repro.sh`.",
+    "Run the resulting container without `--gpus` so it has no NVIDIA runtime access.",
+    "Observe the `RuntimeError` when the script moves a tensor to CUDA."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,83 @@
+Title: Failure on ubuntu22.04: sizeof(Big Struct) differs between binary wheel and local "pip install"
+Date: 2024-01-19T01:18:51+00:00
+URL: https://github.com/pypa/cibuildwheel/issues/1724
+
+Description:
+### Description
+
+# Issue summary:
+
+I'm facing a strange situation where, on Ubuntu-22.04, using cp310-cp310-manylinux_2_17_x86_64:
+
+- A binary wheels built with cibuildwheel will fail after a simple call to `new(ImGuiContext)`
+  (where `ImGuiContext` is a large struct)
+- However, an installation with `pip install -v .` works correctly
+- A binary wheel built with `python setup.py bdist_wheel` works correctly
+- `sizeof(ImGuiContext)` differs between the cibuildwheel wheel and the other cases!
+
+
+This issue was discovered on one of my libraries that provides bindings for ImGui: see [related issue](https://github.com/pthom/imgui_bundle/issues/170)
+
+
+# Minimal reproduction
+
+I did setup a minimal repository to reproduce the issue. It is tiny, and the wheel build takes about 2 minutes.
+See [cibuildwheel_imgui_issue](https://github.com/pthom/cibuildwheel_imgui_issue). The readme in this repro repository gives lots of details. 
+
+Below is a summary:
+
+
+## Pip install:  success
+
+Install with `pip install -v .`
+
+then run the test with 
+```
+python -c "import imgui; imgui.create_context(None)"
+```
+The output is:
+```
+sizeof ImGuiContext = 25680
+```
+(This is a success)
+
+## Wheel without cibuildwheel: success
+
+```
+pip install scikit-build
+python setup.py bdist_wheel
+pip install dist/imgui-0.0.1-cp310-cp310-linux_x86_64.whl
+```
+
+```
+python -c "import imgui; imgui.create_context(None)"
+```
+
+(This is a success)
+
+
+## Binary wheel built with cibuildwheel (failure):
+
+Install from a binary wheel provided by cibuildwheel:
+
+```
+python -c "import imgui; imgui.create_context(None)"
+```
+
+The output is
+
+```
+sizeof ImGuiContext = 25648                // The size of ImGui Context is different!
+Segmentation fault (core dumped)           // a call to new(ImGuiContext) fails !!!
+```
+
+Am I doing something wrong, or is there something here?
+
+
+### Build log
+
+_No response_
+
+### CI config
+
+_No response_

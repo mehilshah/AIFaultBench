@@ -1,0 +1,14 @@
+211/codebase/sdv/__init__.py:16: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import iter_entry_points
+211/codebase/sdv/evaluation/single_table.py:5: FutureWarning: The single table diagnostic report is deprecated. Please use the DiagnosticReport from 'sdmetrics.reports' instead.
+  from sdmetrics.reports.single_table.diagnostic_report import DiagnosticReport
+211/codebase/sdv/evaluation/single_table.py:6: FutureWarning: The single table quality report is deprecated. Please use the QualityReport from 'sdmetrics.reports' instead.
+  from sdmetrics.reports.single_table.quality_report import QualityReport
+211/codebase/sdv/single_table/base.py:80: UserWarning: We strongly recommend saving the metadata using 'save_to_json' for replicability in future SDV versions.
+  warnings.warn(
+211/.venv/lib/python3.12/site-packages/rdt/transformers/utils.py:405: FutureWarning: The 'enforce_uniqueness' parameter is no longer supported. Please use the 'cardinality_rule' parameter instead.
+  warnings.warn(
+211/codebase/sdv/sequential/par.py:171: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  sequence_index_sequence = sequence_index.groupby(self._sequence_key).apply(
+211/.venv/lib/python3.12/site-packages/rdt/transformers/utils.py:405: FutureWarning: The 'enforce_uniqueness' parameter is no longer supported. Please use the 'cardinality_rule' parameter instead.
+  warnings.warn(

@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Importing pyro.distributions after replacing torch.nn.ModuleList with an incompatible metaclass raises the same metaclass conflict in pyro.infer.autoguide.guides.AutoGuideList.",
+  "steps": [
+    "Create a Python 3.10 virtual environment.",
+    "Install pyro-ppl==1.8.4 and torch==2.4.0.dev20240605+cpu.",
+    "Patch torch.nn.ModuleList to use an incompatible metaclass.",
+    "Import pyro.distributions and observe the TypeError during AutoGuideList definition."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash ./run_repro.sh > repro_stdout.log 2> repro_stderr.log"
+}

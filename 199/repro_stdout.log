@@ -1,0 +1,4 @@
+get_num_hops: 1
+actual hops: 2
+output: [0.9999999403953552, -0.7071067690849304, 0.7071067094802856, 0.0, 0.0, 0.0]
+BUG REPRODUCED: get_num_hops counts MessagePassing layers rather than effective receptive-field hops for ChebConv(K=3).

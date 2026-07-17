@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With jax==0.4.38 and equinox==0.11.8, a plain class implementing __array__ converts with jnp.asarray, but an eqx.Module subclass with the same __array__ method raises TypeError: Unexpected input type for array: <class '__main__.MyEqxArray'>.",
+  "steps": [
+    "Created a local virtualenv and installed jax[cpu]==0.4.38, jaxtyping==0.3.11, typing_extensions==4.16.0, and equinox==0.11.8 from the pinned requirements.",
+    "Ran the minimal example from the bug report using a plain class and an eqx.Module subclass that both define __array__.",
+    "Confirmed that jnp.asarray(MyArray(...)) succeeds and jnp.asarray(MyEqxArray(...)) raises the reported TypeError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

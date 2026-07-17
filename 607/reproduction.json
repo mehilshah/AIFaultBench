@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "With PYTHONPATH=codebase and the local .venv, the repro prints `numpy.std(x) = np.float32(nan)` and `jax.std(x) = inf`. The saved logs in repro_stdout.log and repro_stderr.log show the same result.",
+  "steps": [
+    "Create and activate a local virtualenv with the packages in requirements.txt.",
+    "Run `PYTHONPATH=codebase .venv/bin/python repro.py` via run_repro.sh.",
+    "Compare NumPy and JAX on the float32 near-overflow array from bug_report.txt.",
+    "Observe that NumPy returns nan while JAX returns inf."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

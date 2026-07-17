@@ -1,0 +1,88 @@
+Title: Error when calling classes through Fire
+Date: 2024-05-17T14:35:28+00:00
+URL: https://github.com/clearml/clearml/issues/1268
+
+Description:
+## Describe the bug
+I try to run python script using [Python Fire](https://github.com/google/python-fire) and ClearML packages.
+In my case I call classes using Fire interface and getting error just by doing `from clearml import Task` even without creating `Task`.
+
+## To reproduce
+This is simple code example to reproduce:
+
+```python
+from clearml import Task
+import fire
+
+
+class Add:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __call__(self, verbose: bool = False):
+        res = self.x + self.y
+        if verbose:
+            print(f"x = {self.x}")
+            print(f"y = {self.y}")
+            print(f"x + y = {res}")
+        return res
+
+
+class Mult:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __call__(self, verbose: bool = False):
+        res = self.x * self.y
+        if verbose:
+            print(f"x = {self.x}")
+            print(f"y = {self.y}")
+            print(f"x * y = {res}")
+        return res
+
+
+if __name__ == "__main__":
+    # Task.init(project_name="examples", task_name="Fire dict command")
+    fire.Fire(
+        {
+            "add": Add,
+            "multiply": Mult,
+        }
+    )
+```
+I am running the code like this:
+`python tmp.py multiply --x 2 --y 10 --verbose`
+
+And getting this error:
+```
+Traceback (most recent call last):
+  File "/home/user/myproject/tmp.py", line 35, in <module>
+    fire.Fire(
+  File "/home/user/venvs/myvenv/lib/python3.10/site-packages/fire/core.py", line 143, in Fire
+    component_trace = _Fire(component, args, parsed_flag_args, context, name)
+  File "/home/user/venvs/myvenv/lib/python3.10/site-packages/fire/core.py", line 568, in _Fire
+    component, remaining_args = _CallAndUpdateTrace(
+  File "/home/user/venvs/myvenv/lib/python3.10/site-packages/clearml/binding/frameworks/__init__.py", line 36, in _inner_patch
+    raise ex
+  File "/home/user/venvs/myvenv/lib/python3.10/site-packages/clearml/binding/frameworks/__init__.py", line 34, in _inner_patch
+    ret = patched_fn(original_fn, *args, **kwargs)
+TypeError: PatchFire.__CallAndUpdateTrace() missing 1 required positional argument: 'target'
+```
+
+If `from clearml import Task` is commented out - everything works fine.
+It could be avoided by importing `clearml` into the `__call__` method but I don't think that it is nice workaround.
+
+
+## Expected behaviour
+ClearML should not throw an error when using Fire in this way.
+Or maybe I am doing something wrong? Thank you in advance.
+
+## Environment
+* Server type - self hosted
+* ClearML SDK Version - 1.15.1
+* ClearML Server Version (Only for self hosted) - WebApp: 1.15.1-478 • Server: 1.15.1-478 • API: 2.29
+* Python Version - 3.10.14
+* OS - Ubuntu 20.04.06 LTS
+* Python Fire Version - 0.6.0

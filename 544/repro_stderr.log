@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "544/repro.py", line 70, in main
+    pipe.load_lora_weights(str(OFFENDING_CHECKPOINT), adapter_name="lora-detailed_notrigger")
+  File "544/codebase/src/diffusers/loaders/lora_pipeline.py", line 645, in load_lora_weights
+    raise ValueError("Invalid LoRA checkpoint. Make sure all LoRA param names contain `'lora'` substring.")
+ValueError: Invalid LoRA checkpoint. Make sure all LoRA param names contain `'lora'` substring.

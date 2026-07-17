@@ -1,0 +1,21 @@
+{
+  "bug_id": "238",
+  "bug_dir": "238",
+  "issue_url": "https://github.com/patrick-kidger/jaxtyping/issues/349",
+  "commit_hash": "",
+  "library_name": "jaxtyping",
+  "library_version": "0.3.2",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../238",
+  "generated_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md",
+    "reproduction.json"
+  ]
+}

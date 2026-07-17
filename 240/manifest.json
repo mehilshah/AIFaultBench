@@ -1,0 +1,17 @@
+{
+  "title": "Tracer error in blocked AutoGuide",
+  "issue_url": "https://github.com/pyro-ppl/numpyro/issues/1753",
+  "library": "numpyro",
+  "library_version": "0.13.2",
+  "python_version": "3.12.3",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh",
+  "runtime_files": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "bug_id": "126",
+  "bug_dir": "126",
+  "issue_url": "https://github.com/exaloop/codon/issues/506",
+  "commit_hash": "",
+  "library_name": "codon",
+  "library_version": "0.19.6",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../126"
+}

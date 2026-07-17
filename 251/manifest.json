@@ -1,0 +1,14 @@
+{
+  "title": "SliceSampler replay buffer slowdown",
+  "source": "bug_report.txt",
+  "entrypoint": "bash run_repro.sh",
+  "main_script": "repro.py",
+  "dependencies": [
+    "torch==2.4.1+cpu",
+    "tensordict==0.13.0"
+  ],
+  "notes": [
+    "repro.py shims deprecated tensordict interaction_mode names to keep the snapshot importable",
+    "benchmark compares ReplayBuffer.sample() with and without SliceSampler"
+  ]
+}

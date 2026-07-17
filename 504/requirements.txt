@@ -1,0 +1,3 @@
+torch==2.7.1
+tensordict==0.11.0
+pyvers==0.2.3

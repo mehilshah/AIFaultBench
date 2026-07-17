@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "pip 26.1.2 rejects --use-feature=2020-resolver with invalid choice; the command exits with status 2.",
+  "steps": [
+    "Open codebase/research/object_detection/g3doc/tf2.md and find the install command.",
+    "Run python3 -m pip install --use-feature=2020-resolver . from codebase/research/object_detection/packages/tf2.",
+    "Observe pip fail before installation starts with invalid choice: '2020-resolver'."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

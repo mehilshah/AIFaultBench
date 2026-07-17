@@ -1,0 +1,13 @@
+{
+  "title": "OneHotEncoding constraint can error when numerical columns use integer computer_representation",
+  "bug_report": "bug_report.txt",
+  "reproduction_script": "repro.py",
+  "run_script": "run_repro.sh",
+  "setup_script": "setup_env.sh",
+  "environment": {
+    "python": "3.12",
+    "package": "sdv",
+    "source_tree": "codebase"
+  },
+  "expected_failure": "ValueError from RDT numerical transformer complaining that Int64 values contain floats after OneHotEncoding adds epsilon"
+}

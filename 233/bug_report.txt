@@ -1,0 +1,56 @@
+Title: Non-hashable static arguments are not supported.
+Date: 2025-08-25T18:59:34+00:00
+URL: https://github.com/patrick-kidger/equinox/issues/1089
+
+Description:
+Since I think this issue got lost in a closed PR (see https://github.com/patrick-kidger/equinox/pull/1028#discussion_r2231865329), I'm making a single issue for it. Also I just encountered it for the first time in a real code base so I'm more invested now. 
+
+With the new module there is a breaking change, because now the hash is based on the value of the fields, whereas before it was a hash based on the leaves of the pytree (https://github.com/patrick-kidger/equinox/blob/0-4-33-errors-fix/equinox/_module.py#L1073). So if there is a non hashable value in a field, it errors (even if that is just a pytree itself that could be traversed). I feel like the old way was better, but I'm not sure if this was actually unintentional. 
+
+MVP (I have also seen this even with filter_jit, not just static). This works fine on older versions, but breaks with the new equinox module.
+
+```python
+import sys
+import jax
+import equinox as eqx
+
+print(f"Version of Python:  {sys.version}")
+print(f"Version of Equinox: {eqx.__version__}")
+print(f"Version of JAX:     {jax.__version__}")
+
+class Problematic(eqx.Module):
+    nested: dict
+
+    def __init__(self, nested):
+        self.nested = nested
+
+    def __call__(self):
+        return 1.0
+
+
+model = Problematic({0: 0.0})
+
+
+try:
+    _ = model()
+    print("Calling the model directly succeeded.")
+except Exception as exception:
+    print("Calling the model directly failed:")
+    print(exception)
+
+
+def merge(parameters, static):
+    return eqx.combine(parameters, static)()
+
+arr, static = eqx.partition(model, eqx.is_array)
+
+try:
+    _ = jax.jit(merge, static_argnames="static")(arr, static)
+    print("Calling the model after filtering and jitting succeeded.")
+except Exception as exception:
+    print("Calling the model after filtering and jitting failed:")
+    print(exception)
+```
+
+
+

@@ -1,0 +1,106 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7885
+
+TITLE
+[BUG] Training with Zero-2 slow down a lot from v0.18.4 to v0.18.5
+
+BODY
+**Describe the bug**
+Training with Zero-2 slow down a lot from v0.18.4 to v0.18.5 / v0.18.6.
+
+**ds_report output**
+```
+--------------------------------------------------
+DeepSpeed C++/CUDA extension op report
+--------------------------------------------------
+NOTE: Ops not installed will be just-in-time (JIT) compiled at
+      runtime if needed. Op compatibility means that your system
+      meet the required dependencies to JIT install the op.
+--------------------------------------------------
+JIT compiled ops requires ninja
+ninja .................. [OKAY]
+--------------------------------------------------
+op name ................ installed .. compatible
+--------------------------------------------------
+ [WARNING]  async_io requires the dev libaio .so object and headers but these were not found.
+ [WARNING]  async_io: please install the libaio-devel package with yum
+ [WARNING]  If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+async_io ............... [NO] ....... [NO]
+fused_adam ............. [NO] ....... [OKAY]
+cpu_adam ............... [NO] ....... [OKAY]
+cpu_adagrad ............ [NO] ....... [OKAY]
+cpu_lion ............... [NO] ....... [OKAY]
+dc ..................... [NO] ....... [OKAY]
+ [WARNING]  Please specify CUTLASS location directory as environment variable CUTLASS_PATH
+ [WARNING]  Possible values are: a path, DS_IGNORE_CUTLASS_DETECTION and DS_USE_CUTLASS_PYTHON_BINDINGS
+evoformer_attn ......... [NO] ....... [NO]
+ [WARNING]  FP Quantizer is using an untested triton version (3.6.0), only 2.3.(0, 1) and 3.0.0 are known to be compatible with these kernels
+fp_quantizer ........... [NO] ....... [NO]
+fused_lamb ............. [NO] ....... [OKAY]
+fused_lion ............. [NO] ....... [OKAY]
+ [WARNING]  gds requires the dev libaio .so object and headers but these were not found.
+ [WARNING]  gds: please install the libaio-devel package with yum
+ [WARNING]  If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+gds .................... [NO] ....... [NO]
+transformer_inference .. [NO] ....... [OKAY]
+inference_core_ops ..... [NO] ....... [OKAY]
+cutlass_ops ............ [NO] ....... [OKAY]
+quantizer .............. [NO] ....... [OKAY]
+ragged_device_ops ...... [NO] ....... [OKAY]
+ragged_ops ............. [NO] ....... [OKAY]
+random_ltd ............. [NO] ....... [OKAY]
+ [WARNING]  sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.10
+ [WARNING]  using untested triton version (3.6.0), only 1.0.0 is known to be compatible
+sparse_attn ............ [NO] ....... [NO]
+spatial_inference ...... [NO] ....... [OKAY]
+transformer ............ [NO] ....... [OKAY]
+stochastic_transformer . [NO] ....... [OKAY]
+utils .................. [NO] ....... [OKAY]
+--------------------------------------------------
+DeepSpeed general environment info:
+torch install path ............... ['/data/miniconda3/envs/runtime/lib/python3.12/site-packages/torch']
+torch version .................... 2.10.0+cu126
+deepspeed install path ........... ['/data/miniconda3/envs/runtime/lib/python3.12/site-packages/deepspeed']
+deepspeed info ................... 0.18.6, unknown, unknown
+torch cuda version ............... 12.6
+torch hip version ................ None
+nvcc version ..................... 12.6
+deepspeed wheel compiled w. ...... torch 0.0, cuda 0.0
+shared memory (/dev/shm) size .... 1005.66 GB
+```
+
+**Screenshots**
+<img width="734" height="383" alt="Image" src="https://github.com/user-attachments/assets/77b15632-4625-4c68-a935-f796b317cffd" />
+
+**System info (please complete the following information):**
+ - OS: CentOS
+ - GPU count and types: one machine with x8 H20s
+ - Interconnects (if applicable): NVLINK
+ - Python version: 3.12.12
+
+**Launcher context**
+accelerator + deepspeed zero2
+
+```yaml
+compute_environment: LOCAL_MACHINE
+debug: false
+deepspeed_config:
+  gradient_clipping: auto
+  offload_optimizer_device: none
+  offload_param_device: none
+  zero3_init_flag: false
+  zero_stage: 2
+distributed_type: DEEPSPEED
+downcast_bf16: 'no'
+enable_cpu_affinity: false
+machine_rank: 0
+main_training_function: main
+mixed_precision: 'no'
+num_machines: 1
+num_processes: 8
+rdzv_backend: static
+same_network: true
+tpu_env: []
+tpu_use_cluster: false
+tpu_use_sudo: false
+use_cpu: false
+```

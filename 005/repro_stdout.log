@@ -1,0 +1,4 @@
+tensorflow=2.16.1
+tf_keras=2.16.0
+tensor_module=005/.venv/lib/python3.12/site-packages/tensorflow/python/framework/tensor.py
+repro_status=import_succeeded

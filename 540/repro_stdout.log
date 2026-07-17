@@ -1,0 +1,3 @@
+sdv import ok
+init ok
+TypeError the resolved dtypes are not compatible with add.reduce. Resolved (dtype('<U1'), dtype('<U1'), dtype('<U2'))

@@ -1,0 +1,12 @@
+{
+  "reproducible": false,
+  "evidence": "Running the exact GPT-2 repro from the issue against the local editable checkout on CPU with torch 2.10.0+cpu completed both model.generate() calls successfully. The captured output shows first_output_shape=(1, 3) and second_output_shape=(1, 3), both with the same token ids, and the script printed repro_status=not_reproduced.",
+  "steps": [
+    "Created a local .venv with the CPU torch wheel and the small dependency set inferred from the bug report and codebase.",
+    "Installed the checked-out codebase in editable mode with --no-deps so the repro used this folder's transformers sources.",
+    "Ran run_repro.sh, which loads pretrained gpt2, sets generation_config.cache_implementation=\"static\", compiles model.forward with torch.compile(backend=\"inductor\"), and calls generate() twice.",
+    "Confirmed that both generate() calls succeeded without the reported crash."
+  ],
+  "blocking_reason": "The reported failure could not be triggered in this checkout. On CPU with torch 2.10.0+cpu, the exact issue sequence completed normally, so there is no crash to capture.",
+  "reproduction_command": "bash run_repro.sh"
+}

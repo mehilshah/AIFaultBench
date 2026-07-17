@@ -1,0 +1,5 @@
+numpy>=2.0
+scipy>=1.13
+multipledispatch>=1.0
+tqdm>=4.67
+jax[cpu]>=0.7.0

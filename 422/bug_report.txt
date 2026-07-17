@@ -1,0 +1,139 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21635
+
+TITLE
+DeepSpeed _validate_checkpoint_directory fails with remote filesystem URIs (e.g. HDFS, S3, CFS)
+
+BODY
+### Bug description
+
+## Bug description
+
+`_validate_checkpoint_directory` in `lightning/fabric/strategies/deepspeed.py` uses `pathlib.Path` and `os.path` operations (`is_dir()`, `is_file()`) to validate DeepSpeed checkpoint paths. These operations only work with the local filesystem and break when given remote filesystem URIs such as `hdfs://`, `s3://`, `cfs://`, etc.
+
+Specifically, `Path("cfs://fileset/path/to/checkpoint")` treats the URI as a local path, and Python's `os.path` normalization collapses the double slash in the scheme (`://`) to a single slash, producing a mangled path like `cfs:/fileset/path/to/checkpoint`. Then `path.is_dir()` checks the local filesystem for this nonsensical path and returns `False`, causing a `FileNotFoundError`.
+
+This is inconsistent with the DDP strategy's `load_checkpoint`, which passes the path directly to `torch.load` without local filesystem validation — allowing remote URIs to work if the underlying filesystem is properly registered.
+
+## The problematic code
+
+https://github.com/Lightning-AI/lightning/blob/master/src/lightning/fabric/strategies/deepspeed.py#L1063-L1101
+
+```python
+def _is_deepspeed_checkpoint(path: Path) -> bool:
+    """Heuristic check whether the path points to a top-level DeepSpeed checkpoint directory."""
+    return path.is_dir() and (path / "checkpoint").is_dir()
+
+
+def _validate_checkpoint_directory(path: _PATH) -> None:
+    path = Path(path)  # <-- converts URI string to pathlib.Path, which only supports local FS
+    path_is_ds_checkpoint = _is_deepspeed_checkpoint(path)  # <-- is_dir() fails on remote URIs
+    ...
+```
+
+And this is called from `DeepSpeedStrategy.load_checkpoint`:
+
+```python
+def load_checkpoint(self, checkpoint_path, ...):
+    ...
+    _validate_checkpoint_directory(checkpoint_path)  # <-- fails for remote paths
+```
+
+## How to reproduce
+
+```python
+import pytorch_lightning as pl
+from pytorch_lightning.strategies import DeepSpeedStrategy
+
+trainer = pl.Trainer(strategy=DeepSpeedStrategy(stage=3))
+# Any remote URI will fail:
+trainer.fit(model, datamodule=dm, ckpt_path="s3://my-bucket/checkpoints/epoch=5.ckpt")
+# Or HDFS:
+trainer.fit(model, datamodule=dm, ckpt_path="hdfs://namenode/path/to/checkpoint.ckpt")
+```
+
+**Error:**
+```
+FileNotFoundError: The provided path is not a valid DeepSpeed checkpoint: s3:/my-bucket/checkpoints/epoch=5.ckpt
+```
+
+Note `s3:/` with a single slash — the `://` was normalized to `:/` by `pathlib.Path`.
+
+## Expected behavior
+
+`_validate_checkpoint_directory` should support remote filesystem URIs, since Lightning already supports remote checkpointing via `fsspec` in other areas (e.g., `ModelCheckpoint`, DDP strategy). The validation should use `fsspec` to check whether the remote path is a valid directory.
+
+## Suggested fix
+
+Replace `pathlib.Path` operations with `fsspec`-based equivalents:
+
+```python
+import fsspec
+
+def _is_deepspeed_checkpoint(path: str) -> bool:
+    fs, urlpath = fsspec.core.url_to_fs(str(path))
+    return fs.isdir(urlpath) and fs.isdir(f"{urlpath}/checkpoint")
+
+
+def _validate_checkpoint_directory(path: _PATH) -> None:
+    path_str = str(path)
+    path_is_ds_checkpoint = _is_deepspeed_checkpoint(path_str)
+    default_message = f"The provided path is not a valid DeepSpeed checkpoint: {path_str}"
+
+    if not path_is_ds_checkpoint:
+        # Adjust parent-path heuristics to use string manipulation or fsspec
+        ...
+        raise FileNotFoundError(default_message)
+```
+
+## Environment
+
+- PyTorch Lightning 2.4.0 (also verified on `master`)
+- Python 3.9
+- Remote filesystem: HDFS/CFS (Hadoop-compatible)
+
+## Additional context
+
+The current workaround is to download the remote checkpoint to a local path before passing it to `trainer.fit(ckpt_path=...)`. This adds unnecessary I/O overhead that could be avoided if `_validate_checkpoint_directory` used `fsspec`.
+
+
+### What version are you seeing the problem on?
+
+master
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+
+```
+
+### Error messages and logs
+
+_No response_
+
+### Environment
+
+<details>
+  <summary>Current environment</summary>
+
+```
+#- PyTorch Lightning Version (e.g., 2.6.0):
+#- PyTorch Version (e.g., 2.5):
+#- Python version (e.g., 3.12):
+#- OS (e.g., Linux):
+#- CUDA/cuDNN version:
+#- GPU models and configuration:
+#- How you installed Lightning(`conda`, `pip`, source):
+```
+
+</details>
+
+
+### More info
+
+_No response_
+
+cc @ethanwharris @lantiga @justusschock

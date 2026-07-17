@@ -1,0 +1,8 @@
+308/codebase/torchrl/_extension.py:42: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+Traceback (most recent call last):
+  File "308/repro.py", line 35, in <module>
+    main()
+  File "308/repro.py", line 30, in main
+    queue_length == 1
+AssertionError: Bug present: Expected prefetch queue to have 1 item, but got 0.

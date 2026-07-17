@@ -1,0 +1,63 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2612
+
+TITLE
+[BUG] Slow forward for conv_dw and mlp in ConvNeXt
+
+BODY
+**Describe the bug**
+The ConvNeXt forward pass time varies significantly across different PyTorch versions.
+
+**To Reproduce**
+Here is the code to reproduce the bug.
+
+```python
+import time
+
+import timm
+import torch
+
+
+image_backbone = timm.create_model(
+    "convnext_large_in22ft1k", pretrained=True, features_only=True, out_indices=(1, 2, 3)
+)
+
+dummy_input = torch.randn(1, 3, 320, 320).to("cuda")
+image_backbone = image_backbone.to("cuda")
+
+
+t1 = time.time()
+with torch.no_grad():
+    outputs = image_backbone(dummy_input)
+t2 = time.time()
+print(f"Time taken for forward pass: {t2 - t1:.4f} seconds")
+```
+
+The forward time is much different under different environments.
+
+**Screenshots**
+<img width="732" height="198" alt="Image" src="https://github.com/user-attachments/assets/3f19d908-b352-4f13-a5a1-f2a0e51d6b75" />
+
+<img width="732" height="163" alt="Image" src="https://github.com/user-attachments/assets/dd9ee3b8-3401-4fec-b24e-994aa53aa6e6" />
+
+I found that the time difference occurs in the `conv_dw` and `mlp` modules of the `ConvNeXtBlock`. Adding `.contiguous()` resolves the slowdown caused by `conv_dw`, but this does not work for the `mlp` module.
+
+```python
+        """Forward pass."""
+        shortcut = x
+        # x = self.conv_dw(x)
+        x = self.conv_dw(x.contiguous())
+        if self.use_conv_mlp:
+            x = self.norm(x)
+            x = self.mlp(x)
+        else:
+            x = x.permute(0, 2, 3, 1)
+            x = self.norm(x)
+            x = self.mlp(x)  # slow
+            x = x.permute(0, 3, 1, 2)
+        if self.gamma is not None:
+            x = x.mul(self.gamma.reshape(1, -1, 1, 1))
+
+        x = self.drop_path(x) + self.shortcut(shortcut)
+```
+
+

@@ -1,0 +1,15 @@
+An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+Traceback (most recent call last):
+  File "590/repro.py", line 25, in <module>
+    loss = infer.TraceEnum_ELBO().loss(jax.random.PRNGKey(0), {}, model, guide)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "590/codebase/numpyro/infer/elbo.py", line 1284, in loss
+    return -single_particle_elbo(rng_key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "590/codebase/numpyro/infer/elbo.py", line 1145, in single_particle_elbo
+    model_trace, guide_trace, sum_vars = get_importance_trace_enum(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "590/codebase/numpyro/infer/elbo.py", line 982, in get_importance_trace_enum
+    elif not is_model and (model_trace[name].get("kl") is not None):
+                           ~~~~~~~~~~~^^^^^^
+KeyError: 'aux'

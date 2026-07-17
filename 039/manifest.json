@@ -1,0 +1,16 @@
+{
+  "bug_id": "039",
+  "bug_dir": "039",
+  "issue_url": "https://github.com/labmlai/annotated_deep_learning_paper_implementations/issues/215",
+  "commit_hash": "732aedcfc664d032f3a9b90c623e1dbe9ef3fba9",
+  "library_name": "annotated_deep_learning_paper_implementations",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report/039.txt",
+  "codebase_source": "labmlai/annotated_deep_learning_paper_implementations@732aedcfc664d032f3a9b90c623e1dbe9ef3fba9",
+  "codebase_present": "true",
+  "standardized_dir": "../039",
+  "repro_script": "repro.py",
+  "runner_script": "run_repro.sh",
+  "env_script": "setup_env.sh",
+  "dockerfile": "Dockerfile"
+}

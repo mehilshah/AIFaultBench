@@ -1,0 +1,12 @@
+{
+  "bug_id": "404",
+  "bug_dir": "404",
+  "issue_url": "https://github.com/jax-ml/jax/issues/38622",
+  "commit_hash": "4250605d1e353e8f3e5f943abc485d5bbe1fb250",
+  "library_name": "jax",
+  "library_version": "0.11.0.dev20260620+4250605d1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "jax-ml/jax@4250605d1e353e8f3e5f943abc485d5bbe1fb250",
+  "codebase_present": "true",
+  "standardized_dir": "../404"
+}

@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "On the local checkout with jax 0.10.2.dev20260717 and jaxlib 0.10.1, `jit(log(exp(89)))` printed 89.0 while eager `log(exp(89))` printed inf, and the bundled assertion failed with an inf location mismatch.",
+  "steps": [
+    "Created a virtual environment and installed the runtime dependencies from requirements.txt.",
+    "Ran bash run_repro.sh with JAX_PLATFORMS=cpu and PYTHONPATH pointing at codebase/.",
+    "Observed the mismatch: jit(log(exp(89))) = 89.0 and eager log(exp(89)) = inf.",
+    "Confirmed the bundled assertion failed with an AssertionError describing the overflow rewrite discrepancy."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

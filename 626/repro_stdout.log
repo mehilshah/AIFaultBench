@@ -1,0 +1,7 @@
+Bug signature: TP + CPU KV Offloading + CUDA Graph capture hang
+repo_root=626
+model=openai/gpt-oss-120b
+tp_size=2
+cpu_bytes=26843545600
+nvidia_smi_gpu_count=1
+GPU 0: NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition (UUID: GPU-fcb34eb2-5294-dc54-1fcd-56ba726a2152)

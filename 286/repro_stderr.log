@@ -1,0 +1,2 @@
+BLOCKED: requested 4 GPUs, but only 1 CUDA device(s) are available.
+Running smoke test instead.

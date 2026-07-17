@@ -1,0 +1,16 @@
+Title: Replace deprecated call to `datetime.utcfromtimestamp`
+Date: 2023-08-20T12:48:13+00:00
+URL: https://github.com/influxdata/influxdb-client-python/issues/603
+
+Description:
+__Proposal:__
+Starting with Python 3.12 `datetime.utcfromtimestamp` will be deprecated in favor of the timezone aware `datetime.fromtimestamp`. https://docs.python.org/3.12/library/datetime.html#datetime.datetime.utcfromtimestamp
+AFAICT this only effects one instance in the active (excluding examples) code base and the fix should be pretty simple
+https://github.com/influxdata/influxdb-client-python/blob/1ec64b7e1039c891ac3a667ee6697731c61ddbaf/influxdb_client/client/write/point.py#L13
+
+```diff
+-    EPOCH = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
++    EPOCH = datetime.fromtimestamp(0, tz=timezone.utc)
+```
+
+_Note: `datetime.utcnow()` will also be deprecated in favor of `datetime.now(tz=timezone.utc)` but that's only used in examples or tests._ https://docs.python.org/3.12/library/datetime.html#datetime.datetime.utcnow

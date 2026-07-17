@@ -1,0 +1,13 @@
+Running: accelerate test --config_file 637/sagemaker_default_config.yaml
+
+Running:  accelerate-launch --config_file=637/sagemaker_default_config.yaml 637/.venv/lib/python3.10/site-packages/accelerate/test_utils/scripts/test_script.py
+{
+  "command": [
+    "accelerate",
+    "test",
+    "--config_file",
+    "637/sagemaker_default_config.yaml"
+  ],
+  "reproduced": true,
+  "returncode": 1
+}

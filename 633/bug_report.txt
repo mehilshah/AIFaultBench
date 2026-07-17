@@ -1,0 +1,58 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/37921
+
+TITLE
+`jnp.searchsorted` returns `int32` instead of `int64` regardless of `jax_enable_x64`
+
+BODY
+### Description
+
+
+`jnp.searchsorted` always returns an `int32` index array, even when `jax_enable_x64=True` is set. NumPy's `np.searchsorted` always returns `int64` on a 64-bit platform. The values are correct; the dtype is wrong.
+
+```python
+import jax
+jax.config.update("jax_enable_x64", True)
+
+import jax.numpy as jnp
+import numpy as np
+
+a    = np.array([1, 3, 5, 7, 9, 11], dtype=np.int32)
+vals = np.array([1, 5, 11],          dtype=np.int32)
+
+np_out  = np.searchsorted(a, vals)
+jnp_out = jnp.searchsorted(jnp.array(a), jnp.array(vals))
+
+print(np_out,  np_out.dtype)                     # [0 2 5]  int64  ← correct
+print(np.asarray(jnp_out), jnp_out.dtype)        # [0 2 5]  int32  ← BUG
+```
+
+The bug affects every supported input dtype — the x64 flag makes no difference:
+
+```
+x32 mode (jax_enable_x64=False): jnp.searchsorted → int32
+x64 mode (jax_enable_x64=True):  jnp.searchsorted → int32  ← should be int64
+numpy (same platform):            np.searchsorted  → int64
+```
+
+Other index-returning operations (`jnp.argmax`, `jnp.argmin`, `jnp.argsort`, `jnp.nonzero`) all correctly return `int64` under x64 mode, so the bug is localised to `jnp.searchsorted`'s implementation. It appears `searchsorted` hardcodes `int32` as the output type and was not updated when the other index operations were fixed.
+
+This can cause silent downstream dtype mismatches and, on very large arrays (> 2 billion elements), silent index overflow/wrap rather than a visible error.
+
+A workaround until fixed:
+
+```python
+indices = jnp.searchsorted(a, vals).astype(np.int64 if jax.config.jax_enable_x64 else np.int32)
+```
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+
+```
+JAX version:    0.10.1.dev20260513+64f6e229b
+jaxlib version: (matching dev build)
+NumPy version:  2.4.4
+Python:         3.12.13
+Platform:       macOS arm64
+Accelerator:    CPU
+```
+

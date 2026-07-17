@@ -1,0 +1,10 @@
+{
+  "reproducible": false,
+  "evidence": "With the restored local codebase, ./run_repro.sh completes successfully and prints torch.Size([8, 1024]) torch.int64 followed by torch.Size([8, 1024, 32]) torch.float32. No tensor-size mismatch is raised.",
+  "steps": [
+    "Create a local virtualenv and install the dependencies from requirements.txt.",
+    "Run repro.py via ./run_repro.sh, which instantiates TransformerWrapper with Decoder(attn_num_mem_kv=20, attn_one_kv_head=True) and feeds an 8x1024 token batch."
+  ],
+  "blocking_reason": "The current local checkout does not trigger the reported failure; the model forward pass succeeds.",
+  "reproduction_command": "./run_repro.sh"
+}

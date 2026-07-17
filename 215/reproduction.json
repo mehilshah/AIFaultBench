@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` prints `VALIDATE_OK` and `BUG_REPRODUCED: duplicated foreign key reuse was accepted`, which means `Metadata.validate()` did not raise `InvalidMetadataError` for the reused child foreign key.",
+  "steps": [
+    "Loaded the local SDV metadata modules from `codebase/` with minimal import stubs for unrelated optional dependencies.",
+    "Constructed metadata with two relationships that both point `C.parent_id` at different parent tables (`A` and `B`).",
+    "Called `Metadata.validate()` and observed that it completed successfully instead of rejecting the schema."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

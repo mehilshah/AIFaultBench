@@ -1,0 +1,10 @@
+Requirement already satisfied: certifi>=14.05.14 in ./.venv/lib/python3.12/site-packages (from -r 159/requirements.txt (line 1)) (2026.6.17)
+Requirement already satisfied: python-dateutil>=2.5.3 in ./.venv/lib/python3.12/site-packages (from -r 159/requirements.txt (line 2)) (2.9.0.post0)
+Requirement already satisfied: reactivex>=4.0.4 in ./.venv/lib/python3.12/site-packages (from -r 159/requirements.txt (line 3)) (4.1.0)
+Requirement already satisfied: urllib3>=1.26.0 in ./.venv/lib/python3.12/site-packages (from -r 159/requirements.txt (line 4)) (2.7.0)
+Requirement already satisfied: six>=1.5 in ./.venv/lib/python3.12/site-packages (from python-dateutil>=2.5.3->-r 159/requirements.txt (line 2)) (1.17.0)
+Requirement already satisfied: typing-extensions<5.0.0,>=4.1.1 in ./.venv/lib/python3.12/site-packages (from reactivex>=4.0.4->-r 159/requirements.txt (line 3)) (4.16.0)
+imported influxdb_client.client.write.point
+epoch=1970-01-01T00:00:00+00:00
+deprecation_warnings=1
+warning=DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).

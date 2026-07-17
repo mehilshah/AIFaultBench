@@ -1,0 +1,50 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46877
+
+TITLE
+auto_docstring prints [ERROR] doc-lint diagnostics to stdout at import time
+
+BODY
+### System Info
+
+- `transformers` version: 5.13.0.dev0
+- Platform: Windows-11-10.0.26200-SP0
+- Python version: 3.13.11
+- PyTorch version (GPU?): 2.12.0+cu132 (CUDA 13.2, GPU available: yes)
+- GPU: NVIDIA RTX 2000 Ada Generation Laptop GPU
+- Accelerate version: 1.14.0
+- Safetensors version: 0.8.0
+
+### Who can help?
+
+@stevhliu 
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+from transformers.models.qwen2_5_vl import modeling_qwen2_5_vl  # noqa
+
+Output:
+```
+[ERROR] `loss` is part of Qwen2_5_VLCausalLMOutputWithPast.__init__'s signature, but not documented. Make sure to add it to the docstring of the function in .../modeling_qwen2_5_vl.py.
+[ERROR] `logits` is part of Qwen2_5_VLCausalLMOutputWithPast.__init__'s signature, but not documented. Make sure to add it to the docstring of the function in .../modeling_qwen2_5_vl.py.
+```
+Same for Qwen3VLCausalLMOutputWithPast and GlmImageCausalLMOutputWithPast (loss, logits).
+
+Source: src/transformers/utils/auto_docstring.py:
+- Message built (undocumented_parameters.append(...)), _process_regular_parameters,
+- Emitted unconditionally: _process_parameters_section,
+if len(undocumented_parameters) > 0:
+    print("\n".join(undocumented_parameters))
+
+### Expected behavior
+
+Doc-lint diagnostics should not reach stdout during normal import. Either gate behind a docs-build/check flag, or route through logging at an appropriate level (dropping the literal [ERROR] prefix in favor of the log level).

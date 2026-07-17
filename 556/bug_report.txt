@@ -1,0 +1,88 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46821
+
+TITLE
+[TimesFM 2.5]:`window_size` argument raises `AttributeError`
+
+BODY
+### System Info
+
+- `transformers` version: 5.13.0.dev0
+- Platform: macOS-26.5.1-arm64-arm-64bit
+- Python version: 3.11.3
+- Huggingface_hub version: 1.20.1
+- Safetensors version: 0.8.0
+- Accelerate version: 1.14.0
+- Accelerate config:    not found
+- DeepSpeed version: not installed
+- PyTorch version (accelerator?): 2.12.1 (NA)
+- Using distributed or parallel set-up in script?: No
+
+### Who can help?
+
+The model behaves correctly when `window_size=None` (default). Setting `window_size` to any value instead results in an `AttributeError`.
+
+Happy to submit a fix.
+
+@vasqu 
+@kashif 
+
+### Information
+
+- [x] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+Example script based on the documentation [example](https://huggingface.co/docs/transformers/en/model_doc/timesfm2_5#usage-example)
+```python
+import torch
+
+from transformers import TimesFm2_5ModelForPrediction
+
+
+model = TimesFm2_5ModelForPrediction.from_pretrained(
+    "google/timesfm-2.5-200m-transformers",
+    device_map="auto",
+)
+
+forecast_input_tensor = [
+    torch.sin(torch.linspace(0, 20, 100, dtype=torch.float32, device=model.device)),
+    torch.sin(torch.linspace(0, 20, 200, dtype=torch.float32, device=model.device)),
+    torch.sin(torch.linspace(0, 20, 400, dtype=torch.float32, device=model.device)),
+]
+
+with torch.no_grad():
+    outputs = model(past_values=forecast_input_tensor, window_size=5)
+```
+
+Error
+```
+Traceback (most recent call last):
+  File "/transformers/bug.py", line 18, in <module>
+    outputs = model(past_values=forecast_input_tensor, window_size=5)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/transformers/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/transformers/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/transformers/src/transformers/utils/generic.py", line 907, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/transformers/src/transformers/models/timesfm2_5/modeling_timesfm2_5.py", line 780, in forward
+    new_inputs.extend(self._timesfm_moving_average(ts, window_size))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/transformers/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1967, in __getattr__
+    raise AttributeError(
+AttributeError: 'TimesFm2_5ModelForPrediction' object has no attribute '_timesfm_moving_average'. Did you mean: '_timesfm2_5_moving_average'?
+```
+
+### Expected behavior
+
+Expect return `TimesFm2_5OutputForPrediction`

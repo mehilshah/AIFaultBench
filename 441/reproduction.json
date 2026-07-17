@@ -1,0 +1,13 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` loads the local `codebase/timm/data/transforms.py` snapshot and prints `random_scale_range=(0.500, 1.100)` for `ResizeKeepRatio(size=224, random_scale_range=(0.50, 1.20), random_aspect_range=(0.90, 1.10))`. The script then fails an assertion because the expected fragment `random_scale_range=(0.500, 1.200)` is missing.",
+  "steps": [
+    "Materialize the referenced pytorch-image-models commit with `setup_codebase.sh`.",
+    "Load `codebase/timm/data/transforms.py` through local torch/torchvision stubs so the broken system torch install is bypassed.",
+    "Instantiate `ResizeKeepRatio` with `random_scale_range=(0.50, 1.20)` and `random_aspect_range=(0.90, 1.10)`.",
+    "Observe that `repr()` prints the wrong upper bound `1.100` for `random_scale_range`.",
+    "Assert that `random_scale_range=(0.500, 1.200)` should appear, which fails."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

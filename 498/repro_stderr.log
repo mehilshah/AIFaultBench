@@ -1,0 +1,74 @@
+498/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:111: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+
+Loading pipeline components...:   0%|          | 0/6 [00:00<?, ?it/s]
+Loading pipeline components...:  17%|█▋        | 1/6 [00:00<00:02,  1.84it/s]
+Loading pipeline components...:  33%|███▎      | 2/6 [00:00<00:01,  3.32it/s]
+
+Loading checkpoint shards:   0%|          | 0/9 [00:00<?, ?it/s][A
+Loading checkpoint shards: 100%|██████████| 9/9 [00:00<00:00, 91.15it/s]
+
+Loading pipeline components...:  50%|█████     | 3/6 [00:00<00:00,  4.16it/s]
+
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s][A
+Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 122.53it/s]
+
+Loading pipeline components...:  83%|████████▎ | 5/6 [00:01<00:00,  6.10it/s]
+Loading pipeline components...: 100%|██████████| 6/6 [00:01<00:00,  5.69it/s]
+true_cfg_scale is passed as 4.0, but classifier-free guidance is not enabled since no negative_prompt is provided.
+Traceback (most recent call last):
+  File "498/repro.py", line 88, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "498/repro.py", line 54, in main
+    output = pipe(image, prompt, num_inference_steps=50).images[0]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "498/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "498/codebase/src/diffusers/pipelines/qwenimage/pipeline_qwenimage_edit.py", line 733, in __call__
+    prompt_embeds, prompt_embeds_mask = self.encode_prompt(
+                                        ^^^^^^^^^^^^^^^^^^^
+  File "498/codebase/src/diffusers/pipelines/qwenimage/pipeline_qwenimage_edit.py", line 304, in encode_prompt
+    prompt_embeds, prompt_embeds_mask = self._get_qwen_prompt_embeds(prompt, image, device)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "498/codebase/src/diffusers/pipelines/qwenimage/pipeline_qwenimage_edit.py", line 249, in _get_qwen_prompt_embeds
+    outputs = self.text_encoder(
+              ^^^^^^^^^^^^^^^^^^
+  File "498/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "498/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "498/.venv/lib/python3.12/site-packages/accelerate/hooks.py", line 187, in new_forward
+    args, kwargs = module._hf_hook.pre_forward(module, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "498/.venv/lib/python3.12/site-packages/accelerate/hooks.py", line 50, in wrapper
+    return wrapper._compiled_fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "498/.venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 838, in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "498/.venv/lib/python3.12/site-packages/accelerate/hooks.py", line 763, in pre_forward
+    module.to(self.execution_device)
+  File "498/.venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 4110, in to
+    return super().to(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "498/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1355, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "498/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 915, in _apply
+    module._apply(fn)
+  File "498/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 915, in _apply
+    module._apply(fn)
+  File "498/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 915, in _apply
+    module._apply(fn)
+  [Previous line repeated 3 more times]
+  File "498/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 942, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "498/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1341, in convert
+    return t.to(
+           ^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 130.00 MiB. GPU 0 has a total capacity of 94.96 GiB of which 59.69 MiB is free. Process 502587 has 1.78 GiB memory in use. Process 745081 has 86.44 GiB memory in use. Including non-PyTorch memory, this process has 6.62 GiB memory in use. Of the allocated memory 5.97 GiB is allocated by PyTorch, and 116.33 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

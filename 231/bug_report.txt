@@ -1,0 +1,50 @@
+Title: `GridSampler` duplicates enqueued parameters
+Date: 2025-05-06T07:51:09+00:00
+URL: https://github.com/optuna/optuna/issues/6073
+
+Description:
+### Expected behavior
+
+`GridSampler` should not duplicate parameters, but it does when using `enqueue_trial` or `add_trial`.
+
+Most likely, the following part must be adapted as enqueued trials do not have `grid_id` in the system attributes.
+
+https://github.com/optuna/optuna/blob/1e14484a9916cadbb738b1c8e9f987075cec16c3/optuna/samplers/_grid.py#L245
+
+### Environment
+
+- Optuna version: 4.3.1
+- Python version: 3.12
+- OS: Ubuntu
+
+### Error messages, stack traces, or logs
+
+```shell
+See below.
+```
+
+### Steps to reproduce
+
+```python
+import optuna
+
+
+search_space = {f"c{i}": [str(i) for i in range(2)] for i in range(2)}
+
+def objective(trial: optuna.Trial) -> float:
+    for k, v in search_space.items():
+        trial.suggest_categorical(k, v)
+    return 0.0
+
+
+study = optuna.create_study(sampler=optuna.samplers.GridSampler(search_space=search_space))
+study.enqueue_trial({k: v[0] for k, v in search_space.items()})
+study.optimize(objective)
+
+```
+
+The study duplicates `{"c0": 0, "c1": 0}`.
+
+### Additional context (optional)
+
+_No response_

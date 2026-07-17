@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "073/repro.py", line 25, in main
+    all_reduce(tensor)
+  File "073/repro.py", line 19, in all_reduce
+    return cdb.all_reduce(tensor, op, group, async_op)
+           ^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'all_reduce'

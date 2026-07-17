@@ -1,0 +1,134 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7710
+
+TITLE
+[BUG] self.average_tensor(bucket.buffer[bucket.index].narrow(0, 0, bucket.elements), comm_dtype) IndexError: list index out of range
+
+BODY
+**Describe the bug**
+it crash on first backward in train when i use Deepspeed-zero2
+
+**Information**
+Here is traceback:
+```
+Training: 0it [00:00, ?it/s]
+Training:   0%|          | 0/40320 [00:00<?, ?it/s]
+Epoch 0:   0%|          | 0/40320 [00:00<?, ?it/s] /home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/strategies/ddp.py:437: UserWarning: Error handling mechanism for deadlock detection is uninitialized. Skipping check.
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/mnt/fd741584-4993-4079-ae43-dfd853280c82/runningway/1.0/main/train.py", line 288, in <module>
+[rank0]:     trainer.fit(model, data_loader)
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/trainer/trainer.py", line 608, in fit
+[rank0]:     call._call_and_handle_interrupt(
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/trainer/call.py", line 36, in _call_and_handle_interrupt
+[rank0]:     return trainer.strategy.launcher.launch(trainer_fn, *args, trainer=trainer, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/strategies/launchers/subprocess_script.py", line 88, in launch
+[rank0]:     return function(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/trainer/trainer.py", line 650, in _fit_impl
+[rank0]:     self._run(model, ckpt_path=self.ckpt_path)
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/trainer/trainer.py", line 1112, in _run
+[rank0]:     results = self._run_stage()
+[rank0]:               ^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/trainer/trainer.py", line 1191, in _run_stage
+[rank0]:     self._run_train()
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/trainer/trainer.py", line 1214, in _run_train
+[rank0]:     self.fit_loop.run()
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+[rank0]:     self.advance(*args, **kwargs)
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/loops/fit_loop.py", line 267, in advance
+[rank0]:     self._outputs = self.epoch_loop.run(self._data_fetcher)
+[rank0]:                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+[rank0]:     self.advance(*args, **kwargs)
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/loops/epoch/training_epoch_loop.py", line 213, in advance
+[rank0]:     batch_output = self.batch_loop.run(kwargs)
+[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+[rank0]:     self.advance(*args, **kwargs)
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/loops/batch/training_batch_loop.py", line 88, in advance
+[rank0]:     outputs = self.optimizer_loop.run(optimizers, kwargs)
+[rank0]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+[rank0]:     self.advance(*args, **kwargs)
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/loops/optimization/optimizer_loop.py", line 202, in advance
+[rank0]:     result = self._run_optimization(kwargs, self._optimizers[self.optim_progress.optimizer_position])
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/loops/optimization/optimizer_loop.py", line 249, in _run_optimization
+[rank0]:     self._optimizer_step(optimizer, opt_idx, kwargs.get("batch_idx", 0), closure)
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/loops/optimization/optimizer_loop.py", line 370, in _optimizer_step
+[rank0]:     self.trainer._call_lightning_module_hook(
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/trainer/trainer.py", line 1356, in _call_lightning_module_hook
+[rank0]:     output = fn(*args, **kwargs)
+[rank0]:              ^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/core/module.py", line 1754, in optimizer_step
+[rank0]:     optimizer.step(closure=optimizer_closure)
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/core/optimizer.py", line 169, in step
+[rank0]:     step_output = self._strategy.optimizer_step(self._optimizer, self._optimizer_idx, closure, **kwargs)
+[rank0]:                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/strategies/ddp.py", line 280, in optimizer_step
+[rank0]:     optimizer_output = super().optimizer_step(optimizer, opt_idx, closure, model, **kwargs)
+[rank0]:                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/strategies/strategy.py", line 234, in optimizer_step
+[rank0]:     return self.precision_plugin.optimizer_step(
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/plugins/precision/deepspeed.py", line 132, in optimizer_step
+[rank0]:     closure_result = closure()
+[rank0]:                      ^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/loops/optimization/optimizer_loop.py", line 149, in __call__
+[rank0]:     self._result = self.closure(*args, **kwargs)
+[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/loops/optimization/optimizer_loop.py", line 144, in closure
+[rank0]:     self._backward_fn(step_output.closure_loss)
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/loops/optimization/optimizer_loop.py", line 305, in backward_fn
+[rank0]:     self.trainer._call_strategy_hook("backward", loss, optimizer, opt_idx)
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/trainer/trainer.py", line 1494, in _call_strategy_hook
+[rank0]:     output = fn(*args, **kwargs)
+[rank0]:              ^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/strategies/strategy.py", line 207, in backward
+[rank0]:     self.precision_plugin.backward(closure_loss, self.lightning_module, optimizer, optimizer_idx, *args, **kwargs)
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/pytorch_lightning/plugins/precision/deepspeed.py", line 118, in backward
+[rank0]:     deepspeed_engine.backward(tensor, *args, **kwargs)
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:               ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/deepspeed/runtime/engine.py", line 2357, in backward
+[rank0]:     self._backward_epilogue()
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/deepspeed/runtime/engine.py", line 2288, in _backward_epilogue
+[rank0]:     self.allreduce_gradients()
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/deepspeed/utils/nvtx.py", line 20, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:               ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/deepspeed/runtime/engine.py", line 2239, in allreduce_gradients
+[rank0]:     self.optimizer.overlapping_partition_gradients_reduce_epilogue()
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/deepspeed/runtime/zero/stage_1_and_2.py", line 947, in overlapping_partition_gradients_reduce_epilogue
+[rank0]:     self.independent_gradient_partition_epilogue()
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/deepspeed/runtime/zero/stage_1_and_2.py", line 839, in independent_gradient_partition_epilogue
+[rank0]:     self.reduce_ipg_grads()
+[rank0]:   File "/home/chumenta/miniconda3/envs/runningway-train/lib/python3.12/site-packages/deepspeed/runtime/zero/stage_1_and_2.py", line 1478, in reduce_ipg_grads
+[rank0]:     self.average_tensor(bucket.buffer[bucket.index].narrow(0, 0, bucket.elements), comm_dtype)
+[rank0]:                         ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+[rank0]: IndexError: list index out of range
+
+```
+
+**System info (please complete the following information):**
+ - OS: Ubuntu 22.04
+ - 2* V100 32G SXM2 and nvlink
+ - Python version 3.12.11
+
+**Launcher context**
+I use Pytorch Lightning (Version: 1.9.5)
+```
+        trainer.strategy.config["zero_optimization"]["allgather_bucket_size"] = 200 * 1000 * 1000
+        trainer.strategy.config["zero_optimization"]["reduce_bucket_size"] = 200 * 1000 * 1000
+        trainer.strategy.config["zero_optimization"]["overlap_comm"] = False
+        trainer.strategy.config["zero_optimization"]["contiguous_gradients"] = True
+```
+Train args:
+node: 1
+device: 2
+batch: 1
+accelerator: gpu
+precision: fp32
+grad_clip: 1.0
+

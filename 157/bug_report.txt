@@ -1,0 +1,58 @@
+Title: opt-125m is missing weight for embed and lm_head when use_safetensors=True
+Date: 2026-01-08T01:32:04+00:00
+URL: https://github.com/huggingface/transformers/issues/43159
+
+Description:
+### System Info
+
+- `transformers` version: 4.57.3
+- Platform: Linux-5.4.0-169-generic-x86_64-with-glibc2.35
+- Python version: 3.12.9
+- Huggingface_hub version: 0.36.0
+- Safetensors version: 0.5.3
+- Accelerate version: 1.11.0
+- Accelerate config:    not found
+- DeepSpeed version: 0.17.5
+- PyTorch version (accelerator?): 2.9.0+cu128 (CUDA)
+- Tensorflow version (GPU?): not installed (NA)
+- Flax version (CPU?/GPU?/TPU?): not installed (NA)
+- Jax version: not installed
+- JaxLib version: not installed
+- Using distributed or parallel set-up in script?: <fill in>
+- Using GPU in script?: <fill in>
+- GPU type: NVIDIA A100-SXM4-80GB
+
+
+### Who can help?
+
+@ArthurZucker @Cyrilvallez
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+I found that the lm_head is not loaded correctly for `opt-125m` while llama3.2 1B is fine.
+
+```python
+import transformers
+import torch
+model = transformers.AutoModelForCausalLM.from_pretrained("facebook/opt-125m", torch_dtype=torch.float16, use_safetensors=True)
+
+>>> print(model.lm_head.weight)
+Parameter containing:
+tensor(..., device='meta', size=(50272, 768), dtype=torch.bfloat16,
+       requires_grad=True)
+
+```
+
+### Expected behavior
+
+Expecting weights are loaded correctly.

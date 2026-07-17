@@ -1,0 +1,2 @@
+# No external dependencies are required.
+# The repro imports the bundled local codebase directly via PYTHONPATH.

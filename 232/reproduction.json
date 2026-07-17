@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "With a future regressor enabled, the forecast summary reports 0 non-null values for every yhat column across 15 rows.",
+    "The control model without the future regressor reports one non-null value in each yhat column across 30 rows.",
+    "stderr shows NeuralProphet dropping 15 trailing rows because future regressor values are NaN: 'Dropped 15 rows at the end with NaNs in future regressors.'"
+  ],
+  "steps": [
+    "Create a 30-row daily dataframe with ds, y, and reg columns.",
+    "Fit NeuralProphet with n_lags=15, n_forecasts=15, and a future regressor named reg.",
+    "Call predict on the same dataframe and observe that all yhat columns are NaN.",
+    "Fit the same model without the future regressor and confirm predict returns populated yhat values."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

@@ -1,0 +1,2 @@
+# This negative repro only inspects the checked-in source tree.
+# No extra Python packages are required beyond a standard Python 3 runtime.

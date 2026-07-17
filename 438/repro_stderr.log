@@ -1,0 +1,13 @@
+Exception ignored in: <function DeepSpeedEngine.__del__ at 0x7404d2af80e0>
+Traceback (most recent call last):
+  File ".repo_cache/microsoft__DeepSpeed/deepspeed/runtime/engine.py", line 568, in __del__
+    self.destroy()
+  File ".repo_cache/microsoft__DeepSpeed/deepspeed/runtime/engine.py", line 573, in destroy
+    if self.is_deepcompile_active():
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".repo_cache/microsoft__DeepSpeed/deepspeed/runtime/engine.py", line 4379, in is_deepcompile_active
+    return self._deepcompile_active
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".repo_cache/microsoft__DeepSpeed/deepspeed/runtime/engine.py", line 680, in __getattr__
+    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+AttributeError: 'DeepSpeedEngine' object has no attribute '_deepcompile_active'

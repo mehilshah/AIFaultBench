@@ -1,0 +1,34 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/13967
+
+TITLE
+Can't use `load_lora_weights()` on `ErnieImageModularPipeline`
+
+BODY
+Hello,
+
+When I try to load a LoRA with `load_lora_weights()` directly on a modular ERNIE-Image pipeline, library crashes saying such method doesn't exist.
+
+PS: I submitted a PR before creating this issue.
+
+### Reproduction
+
+```python
+manager = ComponentsManager()
+
+pipe = ModularPipeline.from_pretrained(
+    "baidu/ERNIE-Image-Turbo",
+    components_manager=manager,
+)
+
+pipe.load_lora_weights(...)
+```
+
+### System Info
+
+Diffusers: 41add3410424cc33d748a7fd3409132d2f6b4ad2
+Platform: Windows
+Python: 3.13
+
+### Who can help?
+
+@asomoza @sayakpaul

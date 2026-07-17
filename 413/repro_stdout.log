@@ -1,0 +1,4 @@
+instances_len=1
+field_shape=(1,)
+indexing_instances[0] ...
+caught_exception=TypeError: len() of a 0-d tensor

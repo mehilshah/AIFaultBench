@@ -1,0 +1,12 @@
+{
+  "bug_id": "143",
+  "bug_dir": "143",
+  "issue_url": "https://github.com/huggingface/sentence-transformers/issues/3043",
+  "commit_hash": "",
+  "library_name": "sentence-transformers",
+  "library_version": "3.3.0.dev0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../143"
+}

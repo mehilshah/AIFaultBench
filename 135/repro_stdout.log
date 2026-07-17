@@ -1,0 +1,5 @@
+Inspecting google/deepvariant:1.6.1
+Manifest content-type: application/vnd.docker.distribution.manifest.v2+json
+Config digest: sha256:0373ceb1ac9e561999580c513954376e36210dbbcb9c72d6e805cda52e7b266c
+Image VERSION env: 1.6.0
+Expected VERSION: 1.6.1

@@ -1,0 +1,141 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2736
+
+TITLE
+Adding constraints to multi-table synthesizer in multiple steps causes fit to crash
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:  1.28.0
+
+### Error Description
+
+If I add constraints that are applied to a single table to a multi-table synthesizer in steps, it crashes. By in steps, I mean if I add some constraints with one call and then the rest later. If I add the same constraints all at once, even in the same order, it works.
+
+This seems to be due to a call being made to self._initialize_models inside the function that adds the constraints.
+https://github.com/sdv-dev/SDV/blob/934ba74c5e3f0bc3c07f3b8e2ad204d3fec6006e/sdv/multi_table/base.py#L233
+
+### Steps to reproduce
+
+Below I show this by:
+
+1. Creating two multi-table synthesizers
+2. Making a list of constraints
+3. To one synthesizer, I add the whole list at once
+4. To the other, I add some constraints with one call, and then the rest in a second call
+5. I try to fit both synthesizers. The second one crashes
+
+```python
+from sdv.cag import Inequality
+from sdv.datasets.demo import download_demo
+from sdv.multi_table import HMASynthesizer
+from sdv.utils import load_synthesizer
+
+data, metadata = download_demo('multi_table', 'NCAA_v1')
+synthesizer = HMASynthesizer(metadata=metadata)
+step_synthesizer = HMASynthesizer(metadata=metadata)
+constraints = []
+
+# Score constraints: Winner's score must be >= loser's score
+# For all result tables (compact and detailed, regular season and tournament)
+result_tables = [
+    'regular_season_compact_results',
+    'regular_season_detailed_results',
+    'tourney_compact_results',
+    'tourney_detailed_results'
+]
+
+for table_name in result_tables:
+    constraints.append(
+        Inequality(
+            low_column_name='lscore',
+            high_column_name='wscore',
+            strict_boundaries=False,  # Allow equal scores (though rare in basketball)
+            table_name=table_name
+        )
+    )
+    print(f"Added constraint: lscore <= wscore to {table_name}")
+
+# Shooting constraints: Made shots must be <= attempted shots
+# Only for detailed results tables
+detailed_tables = [
+    'regular_season_detailed_results',
+    'tourney_detailed_results'
+]
+
+# Field goals (winner and loser)
+for table_name in detailed_tables:
+    constraints.append(
+        Inequality(
+            low_column_name='wfgm',
+            high_column_name='wfga',
+            strict_boundaries=False,  # Made can equal attempted in theory
+            table_name=table_name
+        )
+    )
+    print(f"Added constraint: wfgm <= wfga to {table_name}")
+    
+    constraints.append(
+        Inequality(
+            low_column_name='lfgm',
+            high_column_name='lfga',
+            strict_boundaries=False,
+            table_name=table_name
+        )
+    )
+    print(f"Added constraint: lfgm <= lfga to {table_name}")
+
+# 3-pointers (winner and loser)
+for table_name in detailed_tables:
+    constraints.append(
+        Inequality(
+            low_column_name='wfgm3',
+            high_column_name='wfga3',
+            strict_boundaries=False,
+            table_name=table_name
+        )
+    )
+    print(f"Added constraint: wfgm3 <= wfga3 to {table_name}")
+    
+    constraints.append(
+        Inequality(
+            low_column_name='lfgm3',
+            high_column_name='lfga3',
+            strict_boundaries=False,
+            table_name=table_name
+        )
+    )
+    print(f"Added constraint: lfgm3 <= lfga3 to {table_name}")
+
+# Free throws (winner and loser)
+for table_name in detailed_tables:
+    constraints.append(
+        Inequality(
+            low_column_name='wftm',
+            high_column_name='wfta',
+            strict_boundaries=False,
+            table_name=table_name
+        )
+    )
+    print(f"Added constraint: wftm <= wfta to {table_name}")
+    
+    constraints.append(
+        Inequality(
+            low_column_name='lftm',
+            high_column_name='lfta',
+            strict_boundaries=False,
+            table_name=table_name
+        )
+    )
+    print(f"Added constraint: lftm <= lfta to {table_name}")
+
+synthesizer.add_constraints(constraints)
+step_synthesizer.add_constraints(constraints[0:2])
+step_synthesizer.add_constraints(constraints[2:])
+step_synthesizer.fit(data)
+# synthesizer.fit(data)
+
+```
+

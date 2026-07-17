@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running ./run_repro.sh under Python 3.10 with torch 1.13.1+cpu prints 'pyro 1.8.0', 'torch 1.13.1+cpu', and 'starting run', then fails with Traceback in codebase/pyro/poutine/messenger.py line 11: 'with context:' -> AttributeError: __enter__.",
+  "steps": [
+    "Create a Python 3.10 virtual environment.",
+    "Install numpy<2, torch==1.13.1+cpu, pyro-api, opt_einsum, and tqdm.",
+    "Run repro.py through ./run_repro.sh with the local codebase on sys.path.",
+    "Observe the AttributeError: __enter__ raised from pyro/poutine/messenger.py:_context_wrap."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

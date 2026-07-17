@@ -1,0 +1,96 @@
+--- EVALUATION.md
++++ EVALUATION.md
+@@ -73,11 +73,7 @@
+ using `dask` and a timeout of 60 seconds:
+ 
+ ```python
+-scores = run_benchmark(
+-    datasets=['DCG_v1', 'trains_v1', 'UTube_v1'],
+-    distributed=True,
+-    timeout=60
+-)
++scores = run_benchmark(datasets=['DCG_v1', 'trains_v1', 'UTube_v1'], distributed=True, timeout=60)
+ ```
+ 
+ And the result will be a DataFrame containing a table with the columns `dataset`, `score`:
+
+--- README.md
++++ README.md
+@@ -81,9 +81,7 @@
+ ```python
+ from sdv.datasets.demo import download_demo
+ 
+-real_data, metadata = download_demo(
+-    modality='single_table',
+-    dataset_name='fake_hotel_guests')
++real_data, metadata = download_demo(modality='single_table', dataset_name='fake_hotel_guests')
+ ```
+ 
+ ![Single Table Metadata Example](https://github.com/sdv-dev/SDV/blob/stable/docs/images/Single-Table-Metadata-Example.png)
+@@ -124,10 +122,7 @@
+ ```python
+ from sdv.evaluation.single_table import evaluate_quality
+ 
+-quality_report = evaluate_quality(
+-    real_data,
+-    synthetic_data,
+-    metadata)
++quality_report = evaluate_quality(real_data, synthetic_data, metadata)
+ ```
+ 
+ ```
+@@ -152,9 +147,9 @@
+     real_data=real_data,
+     synthetic_data=synthetic_data,
+     column_name='amenities_fee',
+-    metadata=metadata
++    metadata=metadata,
+ )
+-    
++
+ fig.show()
+ ```
+ 
+
+--- sdv/sequential/par.py
++++ sdv/sequential/par.py
+@@ -493,7 +493,8 @@
+             if kind in ('i', 'f'):
+                 data_type = 'continuous'
+                 sdtype = (
+-                    self.metadata.tables[self._table_name]
++                    self.metadata
++                    .tables[self._table_name]
+                     .columns.get(field, {})
+                     .get('sdtype', None)
+                 )
+
+--- tests/_external/gdrive_utils.py
++++ tests/_external/gdrive_utils.py
+@@ -67,7 +67,8 @@
+ 
+     query = f"'{folder_id}' in parents and trashed = false"
+     results = (
+-        service.files()
++        service
++        .files()
+         .list(q=query, orderBy='modifiedTime desc', pageSize=1, fields='files(id, name)')
+         .execute()
+     )
+
+--- tests/unit/datasets/test_demo.py
++++ tests/unit/datasets/test_demo.py
+@@ -636,9 +636,9 @@
+         {'Key': 'single_table/word/data.zip'},
+         {'Key': 'single_table/word/metadata.json'},
+     ]
+-    mock_get.side_effect = lambda key, bucket, client: (
+-        json.dumps({'METADATA_SPEC_VERSION': 'V2'}).encode()
+-    )
++    mock_get.side_effect = lambda key, bucket, client: json.dumps({
++        'METADATA_SPEC_VERSION': 'V2'
++    }).encode()
+ 
+     # Run and Assert
+     error_msg = (
+

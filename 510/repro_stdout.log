@@ -1,0 +1,66 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.1.2)
+Requirement already satisfied: setuptools in ./.venv/lib/python3.12/site-packages (83.0.0)
+Requirement already satisfied: wheel in ./.venv/lib/python3.12/site-packages (0.47.0)
+Requirement already satisfied: packaging>=24.0 in ./.venv/lib/python3.12/site-packages (from wheel) (26.2)
+Obtaining file://510/codebase
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: sdv
+  Building editable for sdv (pyproject.toml): started
+  Building editable for sdv (pyproject.toml): finished with status 'done'
+  Created wheel for sdv: filename=sdv-1.28.1.dev0-0.editable-py3-none-any.whl size=9973 sha256=eb10ceb630e9241dd097ac1108d1a4659f5634a0d5895c5c6225d94b7f2fe730
+  Stored in directory: /tmp/pip-ephem-wheel-cache-jlsf6cix/wheels/85/35/cc/93556eab95d6bc901571399bb820a7a907a218d8a8ec030a6f
+Successfully built sdv
+Installing collected packages: sdv
+  Attempting uninstall: sdv
+    Found existing installation: sdv 1.28.1.dev0
+    Uninstalling sdv-1.28.1.dev0:
+      Successfully uninstalled sdv-1.28.1.dev0
+Successfully installed sdv-1.28.1.dev0
+Requirement already satisfied: cloudpickle==3.1.2 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 1)) (3.1.2)
+Requirement already satisfied: copulas==0.12.3 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 2)) (0.12.3)
+Requirement already satisfied: graphviz==0.21 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 3)) (0.21)
+Requirement already satisfied: numpy==2.3.4 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 4)) (2.3.4)
+Requirement already satisfied: pandas==2.3.3 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 5)) (2.3.3)
+Requirement already satisfied: platformdirs==4.5.0 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 6)) (4.5.0)
+Collecting psutil==7.2.2 (from -r 510/requirements.txt (line 7))
+  Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+Requirement already satisfied: pyyaml==6.0.3 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 8)) (6.0.3)
+Requirement already satisfied: rdt==1.18.2 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 9)) (1.18.2)
+Requirement already satisfied: scikit-learn==1.9.0 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 10)) (1.9.0)
+Requirement already satisfied: scipy==1.18.0 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 11)) (1.18.0)
+Requirement already satisfied: sdmetrics==0.24.0 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 12)) (0.24.0)
+Requirement already satisfied: tqdm==4.67.1 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 13)) (4.67.1)
+Requirement already satisfied: Faker==40.31.0 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 14)) (40.31.0)
+Requirement already satisfied: plotly==6.9.0 in ./.venv/lib/python3.12/site-packages (from -r 510/requirements.txt (line 15)) (6.9.0)
+Requirement already satisfied: python-dateutil>=2.8.2 in ./.venv/lib/python3.12/site-packages (from pandas==2.3.3->-r 510/requirements.txt (line 5)) (2.9.0.post0)
+Requirement already satisfied: pytz>=2020.1 in ./.venv/lib/python3.12/site-packages (from pandas==2.3.3->-r 510/requirements.txt (line 5)) (2026.2)
+Requirement already satisfied: tzdata>=2022.7 in ./.venv/lib/python3.12/site-packages (from pandas==2.3.3->-r 510/requirements.txt (line 5)) (2026.3)
+Requirement already satisfied: joblib>=1.4.0 in ./.venv/lib/python3.12/site-packages (from scikit-learn==1.9.0->-r 510/requirements.txt (line 10)) (1.5.3)
+Requirement already satisfied: narwhals>=2.0.1 in ./.venv/lib/python3.12/site-packages (from scikit-learn==1.9.0->-r 510/requirements.txt (line 10)) (2.24.0)
+Requirement already satisfied: threadpoolctl>=3.5.0 in ./.venv/lib/python3.12/site-packages (from scikit-learn==1.9.0->-r 510/requirements.txt (line 10)) (3.6.0)
+Requirement already satisfied: packaging in ./.venv/lib/python3.12/site-packages (from plotly==6.9.0->-r 510/requirements.txt (line 15)) (26.2)
+Requirement already satisfied: six>=1.5 in ./.venv/lib/python3.12/site-packages (from python-dateutil>=2.8.2->pandas==2.3.3->-r 510/requirements.txt (line 5)) (1.17.0)
+Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+Installing collected packages: psutil
+Successfully installed psutil-7.2.2
+total_captured_warnings=3
+datetime_warning_count=3
+datetime_warning_1=No 'datetime_format' is present in the metadata for the following columns:
+ Table Name         Column Name   sdtype datetime_format
+      main denormalized_column datetime            None
+Without this specification, SDV may not be able to accurately parse the data. We recommend adding datetime formats using 'update_column'.
+datetime_warning_2=No 'datetime_format' is present in the metadata for the following columns:
+ Table Name         Column Name   sdtype datetime_format
+      main denormalized_column datetime            None
+Without this specification, SDV may not be able to accurately parse the data. We recommend adding datetime formats using 'update_column'.
+datetime_warning_3=No 'datetime_format' is present in the metadata for the following columns:
+ Table Name         Column Name   sdtype datetime_format
+      main denormalized_column datetime            None
+Without this specification, SDV may not be able to accurately parse the data. We recommend adding datetime formats using 'update_column'.

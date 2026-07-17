@@ -1,0 +1,40 @@
+
+Preprocess Tables:   0%|          | 0/2 [00:00<?, ?it/s]
+Preprocess Tables: 100%|██████████| 2/2 [00:00<00:00, 16.63it/s]
+Preprocess Tables: 100%|██████████| 2/2 [00:00<00:00, 16.61it/s]
+
+(1/1) Tables 'parent' and 'child' ('parent_id'):   0%|          | 0/10 [00:00<?, ?it/s]
+(1/1) Tables 'parent' and 'child' ('parent_id'): 100%|██████████| 10/10 [00:00<00:00, 390.00it/s]
+
+Modeling Tables:   0%|          | 0/2 [00:00<?, ?it/s]
+Modeling Tables: 100%|██████████| 2/2 [00:00<00:00, 23.53it/s]
+
+Preprocess Tables:   0%|          | 0/2 [00:00<?, ?it/s]
+Preprocess Tables:   0%|          | 0/2 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "518/repro.py", line 88, in <module>
+    main()
+  File "518/repro.py", line 84, in main
+    stepwise.fit(data)
+  File "518/codebase/sdv/multi_table/base.py", line 660, in fit
+    processed_data = self.preprocess(data)
+                     ^^^^^^^^^^^^^^^^^^^^^
+  File "518/codebase/sdv/multi_table/hma.py", line 311, in preprocess
+    processed_data = super().preprocess(data)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "518/codebase/sdv/multi_table/base.py", line 566, in preprocess
+    self._assign_table_transformers(synthesizer, table_name, table_data)
+  File "518/codebase/sdv/multi_table/base.py", line 463, in _assign_table_transformers
+    synthesizer.auto_assign_transformers(table_data)
+  File "518/codebase/sdv/single_table/base.py", line 365, in auto_assign_transformers
+    self.validate(data)
+  File "518/codebase/sdv/single_table/base.py", line 564, in validate
+    self._original_metadata.validate_data({self._table_name: data})
+  File "518/codebase/sdv/metadata/multi_table.py", line 971, in validate_data
+    self._validate_data(data)
+  File "518/codebase/sdv/metadata/multi_table.py", line 949, in _validate_data
+    raise InvalidDataError(errors)
+sdv.errors.InvalidDataError: The provided data does not match the metadata:
+Errors in parent:
+Error: The columns ['h1', 'l1'] are not present in the metadata.
+Error: The metadata columns ['l1#h1', 'l1#h1.nan_component', 'l1.fillna'] are not present in the data.

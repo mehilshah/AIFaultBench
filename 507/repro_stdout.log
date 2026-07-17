@@ -1,0 +1,6 @@
+Reproduction command: bash run_repro.sh
+Low-level activation guard still exists: yes
+Marlin MoE path threads clamp_limit: yes
+Unquantized MoE config plumbs swiglu_limit into gemm1_clamp_limit: yes
+Conclusion: not reproducible
+Result written to: reproduction.json

@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "527/repro.py", line 99, in main
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "527/codebase/pyro/distributions/torch_patch.py", line 87, in <module>
+    @patch_dependency("torch.distributions.constraints._CorrCholesky.check")
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "527/codebase/pyro/distributions/torch_patch.py", line 18, in patch_dependency
+    module = getattr(module, part)
+             ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'torch.distributions.constraints' has no attribute '_CorrCholesky'

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` prints `reproducible=True` and `verbose_tensor_repr=True`; the captured TypeCheckError includes `Actual value: tensor([[...` for the bad `y` argument instead of a compact shape/dtype summary.",
+  "steps": [
+    "Create a fresh virtualenv and install `numpy`, `torch==2.13.0+cpu`, and `typeguard==2.13.3`.",
+    "Install the local `codebase/` as an editable package so `jaxtyping` metadata is available.",
+    "Run `bash run_repro.sh` to call a mismatched `jaxtyped` matmul and capture the resulting `TypeCheckError`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "cd ../237 && bash run_repro.sh"
+}

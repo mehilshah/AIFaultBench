@@ -1,0 +1,38 @@
+Title: Slice loading errors with integer indices
+Date: 2024-02-14T11:31:39+00:00
+URL: https://github.com/huggingface/safetensors/issues/439
+
+Description:
+### System Info
+
+safetensors==0.4.2
+
+### Information
+
+- [X] The official example scripts
+- [X] My own modified scripts
+
+### Reproduction
+
+```python
+from safetensors import safe_open
+from safetensors.torch import save_file
+
+import torch
+
+save_file({"test":torch.zeros([10,10])}, "test.st")
+
+with safe_open("test.st", framework="pt", device="cpu") as f:
+    print(f.get_slice("test")[0, :])
+```
+
+
+
+### Expected behavior
+
+I expect this to return a slice of the tensor "test", instead I get the error:
+
+`argument 'slices': failed to extract enum Slice ('Slice | Slices')`
+
+As far as I can see there's no notes in the documentation or examples about integer slices not working?
+https://huggingface.co/docs/safetensors/en/index

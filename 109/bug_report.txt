@@ -1,0 +1,76 @@
+Title: `PrefixTuning` and `BatchSplit`
+Date: 2025-02-09T21:25:54+00:00
+URL: https://github.com/adapter-hub/adapters/issues/794
+
+Description:
+## Environment info
+<!-- You can run the command `transformers-cli env` and copy-and-paste its output below.
+     Don't forget to fill out the missing fields in that output! -->
+     
+- `adapters` version: `1.1.0`
+- Platform: `linux-5.15.0-131-generic`
+- Python version: `3.10.12`
+- PyTorch version (GPU?): `2.3.1`
+- Tensorflow version (GPU?):
+- Using GPU in script?: No
+- Using distributed or parallel set-up in script?: No
+
+## Information
+
+Model I am using (Bert, XLNet ...): any
+
+Language I am using the model on (English, Chinese ...): any
+
+Adapter setup I am using (if any): `PrefixTuning`
+
+## To reproduce
+
+Steps to reproduce the behavior:
+
+```python
+from transformers import BertForSequenceClassification, BertConfig
+from adapters import init, PrefixTuningConfig
+import adapters.composition as ac
+
+model = BertForSequenceClassification(
+    BertConfig(
+        num_hidden_layers=2
+    )
+)
+init(model)
+config = PrefixTuningConfig()
+model.add_adapter("a", config)
+model.add_adapter("b", config)
+model.active_adapters = ac.BatchSplit("a", "b", batch_sizes=[2, 0])
+
+model(input_ids=torch.randint(1000, (2, 128)))
+```
+
+```python
+./adapters/src/adapters/methods/prefix_tuning.py:659, in PrefixTuningLayer.compose_single(self, adapter_setup, state, lvl)
+    654 # Replicate for Parallel block
+    655 prefix_keys, prefix_values = adjust_tensors_for_parallel(
+    656     state.key_states, prefix_keys, prefix_values
+    657 )
+--> 659 key_states = torch.cat([prefix_keys, state.key_states], dim=2)
+    660 value_states = torch.cat([prefix_values, state.value_states], dim=2)
+    661 if state.attention_mask is not None:
+
+RuntimeError: Sizes of tensors must match except in dimension 2. Expected size 2 but got size 0 for tensor number 1 in the list.
+```
+
+## Expected behavior
+
+Forward is working with :
+
+```python
+...
+model.active_adapters = ac.BatchSplit("a", "b", batch_sizes=[0, 2])
+
+model(input_ids=torch.randint(1000, (2, 128)))
+...
+```
+```python
+SequenceClassifierOutput(loss=None, logits=tensor([[ 0.0762, -0.0233],
+        [ 0.5634, -0.0932]], grad_fn=<AddmmBackward0>), hidden_states=None, attentions=None)
+```

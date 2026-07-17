@@ -1,0 +1,5 @@
+torch=2.5.1+cu124
+torchaudio=2.5.1+cu124
+emissions_shape=(6, 4)
+targets_shape=(1, 2)
+calling torchaudio.functional.forced_align...

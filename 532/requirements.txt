@@ -1,0 +1,9 @@
+filelock
+httpx
+huggingface-hub
+numpy
+packaging
+Pillow
+regex
+requests
+safetensors

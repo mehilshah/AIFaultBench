@@ -1,0 +1,68 @@
+Title: Quaternion multiplication wrong, because of Tensor.cross
+Date: 2024-03-03T07:26:17+00:00
+URL: https://github.com/kornia/kornia/issues/2822
+
+Description:
+### Describe the bug
+
+The expression `c` should give the same result but it actually goes wrong.
+
+```python
+import torch
+torch.manual_seed(42)
+import kornia
+from kornia.geometry.quaternion import Quaternion
+x = Quaternion.random(3)
+a = x * x
+b = x[0] * x[0]
+c = x[[0,0,0]] * x
+d = x[[0,1,2]] * x
+print(a[0], b, c[0], d[0])
+```
+
+The code gives
+```
+Parameter containing:
+tensor([-0.9849, -0.0576, -0.1629,  0.0067], requires_grad=True) Parameter containing:
+tensor([-0.9849, -0.0576, -0.1629,  0.0067], requires_grad=True) Parameter containing:
+tensor([-0.9849, -0.1930,  0.4901, -0.0056], requires_grad=True) Parameter containing:
+tensor([-0.9849, -0.0576, -0.1629,  0.0067], requires_grad=True)
+```
+
+## May affect more behaviors
+
+For example the so3 and se3 lie group actions also depend on quaternions.
+
+## Tracing the bug
+
+The bug is caused by a call to `Tensor.cross`, which finds the first dimension of size=3 as vec3. The code can be found in `Quaternion.__mul__`. Replacing the call with a more stable `torch.linalg.cross` can fix the issue, according to my experiment.
+
+It is weird that only expression `c` actually triggers the bug. PyTorch actually gives a warning of Tensor.cross deprecated but no one seems to be caring?
+
+Can I possibly help fix it in a PR?
+
+## One more question
+
+Is Quaternion class designed to be not supporting broadcasting? Why those modules default to be `requires_grad=True` even when initializers are `requires_grad=False`?
+
+### Reproduction steps
+
+```bash
+Just run the sample code.
+```
+
+
+### Expected behavior
+
+All four expressions should give the same result.
+
+### Environment
+
+```shell
+kornia 0.7.2.dev0, torch 2.2.1
+```
+
+
+### Additional context
+
+_No response_

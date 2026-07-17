@@ -1,0 +1,76 @@
+# recovered-from-issue: https://github.com/facebookresearch/detectron2/issues/1207
+
+TITLE
+Incorrect output from pairwise_iou_rotated
+
+BODY
+I believe I have found a bug in `pairwise_iou_rotated`. Of course it could be that the visualizer is wrong, but I don't think that's the case.
+
+## Instructions To Reproduce the Issue:
+```python
+import cv2
+import numpy as np
+import torch
+
+from detectron2.structures import Instances, pairwise_iou_rotated, RotatedBoxes
+from detectron2.utils.visualizer import Visualizer
+
+boxes1 = torch.tensor([[160.0, 153.0, 230.0,  23.0, -37.0]], device='cuda')
+boxes2 = torch.tensor([[190.0, 127.0,  80.0,  21.0, -46.0]], device='cuda')
+print(pairwise_iou_rotated(RotatedBoxes(boxes1), RotatedBoxes(boxes2)))
+
+instances = Instances((300, 300))
+instances.pred_boxes = torch.cat((boxes1, boxes2)).cpu()
+instances.scores = torch.tensor([1.0, 1.0])
+instances.pred_classes = torch.tensor([0, 0])
+
+viz = Visualizer(np.full((300, 300, 3), 127, dtype=np.uint8), {'thing_classes': ['thing']})
+image = viz.draw_instance_predictions(instances).get_image()[:, :, ::-1]
+cv2.imwrite('out.png', image)
+```
+## Behavior:
+```python
+tensor([[0.2655]], device='cuda:0')
+```
+![out](https://user-images.githubusercontent.com/4382608/79168106-e85d7d80-7d9d-11ea-9592-f82d95769408.png)
+
+## Expected behavior:
+```python
+tensor([[0.0]], device='cuda:0')
+```
+## Environment:
+
+Provide your environment information using the following command:
+```bash
+------------------------  --------------------------------------------------------------------------
+sys.platform              linux
+Python                    3.7.7 (default, Mar 26 2020, 15:48:22) [GCC 7.3.0]
+numpy                     1.18.1
+detectron2                0.1.1 @zzzzzzz/detectron2/detectron2
+detectron2 compiler       GCC 7.5
+detectron2 CUDA compiler  10.1
+detectron2 arch flags     sm_75
+DETECTRON2_ENV_MODULE     <not set>
+PyTorch                   1.4.0 @zzzzzzz/lib/python3.7/site-packages/torch
+PyTorch debug build       False
+CUDA available            True
+GPU 0                     GeForce RTX 2080 Ti
+CUDA_HOME                 /usr/local/cuda
+NVCC                      Cuda compilation tools, release 10.1, V10.1.243
+Pillow                    7.0.0
+torchvision               0.5.0 @zzzzzzz/lib/python3.7/site-packages/torchvision
+torchvision arch flags    sm_35, sm_50, sm_60, sm_70, sm_75
+cv2                       4.2.0
+------------------------  --------------------------------------------------------------------------
+PyTorch built with:
+  - GCC 7.3
+  - Intel(R) Math Kernel Library Version 2020.0.0 Product Build 20191122 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v0.21.1 (Git Hash 7d2fd500bc78936d1d648ca713b901012f470dbc)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - NNPACK is enabled
+  - CUDA Runtime 10.1
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_37,code=compute_37
+  - CuDNN 7.6.3
+  - Magma 2.5.1
+  - Build settings: BLAS=MKL, BUILD_NAMEDTENSOR=OFF, BUILD_TYPE=Release, CXX_FLAGS= -Wno-deprecated -fvisibility-inlines-hidden -fopenmp -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -O2 -fPIC -Wno-narrowing -Wall -Wextra -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wno-unused-result -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Wno-stringop-overflow, DISABLE_NUMA=1, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, USE_CUDA=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, USE_STATIC_DISPATCH=OFF, 
+```

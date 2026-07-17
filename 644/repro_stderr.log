@@ -1,0 +1,28 @@
+644/codebase/sdv/metadata/metadata.py:224: UserWarning: This metadata does not contain only a single table. Could not determine single table name and will return None.
+  warnings.warn(
+Traceback (most recent call last):
+  File "644/repro.py", line 21, in main
+    DayZSynthesizer.create_parameters(data, metadata)
+  File "644/codebase/sdv/single_table/dayz.py", line 254, in create_parameters
+    return create_parameters(data, metadata, output_filename)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "644/codebase/sdv/single_table/_dayz_utils.py", line 88, in create_parameters
+    detect_column_parameters(table_data, metadata, table_name)
+  File "644/codebase/sdv/single_table/_dayz_utils.py", line 37, in detect_column_parameters
+    table_metadata = metadata.tables[table_name]
+                     ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: None
+Traceback (most recent call last):
+  File "644/repro.py", line 30, in <module>
+    main()
+  File "644/repro.py", line 21, in main
+    DayZSynthesizer.create_parameters(data, metadata)
+  File "644/codebase/sdv/single_table/dayz.py", line 254, in create_parameters
+    return create_parameters(data, metadata, output_filename)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "644/codebase/sdv/single_table/_dayz_utils.py", line 88, in create_parameters
+    detect_column_parameters(table_data, metadata, table_name)
+  File "644/codebase/sdv/single_table/_dayz_utils.py", line 37, in detect_column_parameters
+    table_metadata = metadata.tables[table_name]
+                     ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: None

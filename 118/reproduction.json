@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Pip reported that clearml 2.0.0 requires requests>=2.32.0 while clearml-agent 1.9.3 requires requests<=2.31.0, making the resolver fail.",
+  "steps": [
+    "Create a fresh Python virtual environment.",
+    "Upgrade pip inside the virtual environment.",
+    "Run pip install --dry-run -r requirements.txt with clearml==2.0.0 and clearml-agent==1.9.3.",
+    "Observe pip fail with a requests version conflict."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

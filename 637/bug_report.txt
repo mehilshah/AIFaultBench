@@ -1,0 +1,91 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/898
+
+TITLE
+`accelerate test` fails with `'Namespace' object has no attribute 'use_cpu'`
+
+BODY
+### System Info
+
+```Shell
+- `Accelerate` version: 0.14.0
+- Platform: Linux-5.15.0-1026-aws-x86_64-with-glibc2.35
+- Python version: 3.10.6
+- Numpy version: 1.23.5
+- PyTorch version (GPU?): 1.13.0+cu117 (False)
+- `Accelerate` default config:
+        - compute_environment: AMAZON_SAGEMAKER
+        - distributed_type: NO
+        - mixed_precision: FP16
+        - use_cpu: False
+        - ec2_instance_type: ml.t3.2xlarge
+        - iam_role_name: AmazonSageMaker-ExecutionRole
+        - image_uri: None
+        - profile: None
+        - region: us-east-1
+        - num_machines: 1
+        - gpu_ids: all
+        - base_job_name: accelerate-sagemaker-1
+        - pytorch_version: 1.10.2
+        - transformers_version: 4.17.0
+        - py_version: py38
+        - sagemaker_inputs_file: None
+        - sagemaker_metrics_file:
+```
+
+
+### Information
+
+- [X] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [X] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+1. Start AWS EC2 ubuntu 22.04 instance (4vCPU, 16 ram)
+2. Install accelerate
+3. Configure accelerate to use SageMaker
+4. Run `accelerate test --config_file ~/.cache/huggingface/accelerate/default_config.yaml`
+
+Immediately breaks with the following error:
+```
+Running:  accelerate-launch --config_file=/home/ubuntu/.cache/huggingface/accelerate/default_config.yaml /home/ubuntu/.local/lib/python3.10/site-packages/accelerate/test_utils/scripts/test_script.py
+stderr: Traceback (most recent call last):
+stderr:   File "/home/ubuntu/.local/bin/accelerate-launch", line 8, in <module>
+stderr:     sys.exit(main())
+stderr:   File "/home/ubuntu/.local/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1075, in main
+stderr:     launch_command(args)
+stderr:   File "/home/ubuntu/.local/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1036, in launch_command
+stderr:     if args.use_cpu and args.num_processes > 1:
+stderr: AttributeError: 'Namespace' object has no attribute 'use_cpu'
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/accelerate/commands/accelerate_cli.py", line 45, in main
+    args.func(args)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/accelerate/commands/test.py", line 52, in test_command
+    result = execute_subprocess_async(cmd, env=os.environ.copy())
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/accelerate/test_utils/testing.py", line 328, in execute_subprocess_async
+    raise RuntimeError(
+RuntimeError: 'accelerate-launch --config_file=/home/ubuntu/.cache/huggingface/accelerate/default_config.yaml /home/ubuntu/.local/lib/python3.10/site-packages/accelerate/test_utils/scripts/test_script.py' failed with returncode 1
+
+The combined stderr from workers follows:
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/bin/accelerate-launch", line 8, in <module>
+    sys.exit(main())
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1075, in main
+    launch_command(args)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1036, in launch_command
+    if args.use_cpu and args.num_processes > 1:
+AttributeError: 'Namespace' object has no attribute 'use_cpu'
+```
+
+### Expected behavior
+
+```Shell
+I expect it to run test, or at least tell me that my SageMaker instance has no GPU. I am not expecting it to break at level of reading the config. Maybe I forgot to execute some steps? Or improper configuration?
+```
+

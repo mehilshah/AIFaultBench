@@ -1,0 +1,12 @@
+{
+  "bug_id": "347",
+  "bug_dir": "347",
+  "issue_url": "https://github.com/huggingface/diffusers/issues/14063",
+  "commit_hash": "21ba39457d0b9b72dc59ef8aec7981c947c59f6b",
+  "library_name": "diffusers",
+  "library_version": "0.38.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "huggingface/diffusers@21ba39457d0b9b72dc59ef8aec7981c947c59f6b",
+  "codebase_present": "true",
+  "standardized_dir": "../347"
+}

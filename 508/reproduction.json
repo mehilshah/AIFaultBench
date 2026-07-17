@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "In an isolated Python 3.12 virtual environment, installing the local NumPyro snapshot with its runtime dependencies but without typing_extensions and then running import numpyro fails with ModuleNotFoundError: No module named 'typing_extensions'. The traceback enters numpyro/_typing.py from numpyro/distributions/conjugate.py during the top-level import.",
+  "steps": [
+    "Create a fresh venv with python3 -m venv .venv",
+    "Install requirements from requirements.txt and install the local codebase with pip install --no-deps -e codebase",
+    "Run python repro.py to import numpyro"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

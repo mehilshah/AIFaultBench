@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "In a clean CPU-only virtualenv with torch==2.6.0+cpu and tensordict==0.12.0, the repro prints split_step_sum=0.331211 and last_step_sum=0.000000. The final step of the shorter second trajectory has zeroed recurrent_state_h/recurrent_state_c values.",
+  "steps": [
+    "Created a fresh .venv and installed torch==2.6.0+cpu, tensordict==0.12.0, numpy, and packaging.",
+    "Ran bash run_repro.sh with PYTHONPATH pointing at codebase/.",
+    "Observed that the end of the first trajectory is populated while the final step of the shorter second trajectory remains all zeros."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

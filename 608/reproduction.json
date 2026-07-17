@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "In a clean virtualenv with transformers 5.9.0, AutoTokenizer.from_pretrained(\"deepseek-ai/DeepSeek-R1-Distill-Llama-8B\") loads LlamaTokenizer and round-tripping \"What is 1+1? Answer briefly.\" decodes to \"Whatis1+1?Answerbriefly.\" instead of preserving spaces.",
+    "The chat-template prompt for the same model also round-trips incorrectly: \"<｜begin▁of▁sentence｜><｜User｜>What is 1+1? Answer briefly.<｜Assistant｜><think>\\n\" decodes to \"<｜begin of sentence｜><｜User｜>Whatis1+1?Answerbriefly.<｜Assistant｜><think>\"."
+  ],
+  "steps": [
+    "Create the isolated environment with `bash setup_env.sh`.",
+    "Run the repro with `bash run_repro.sh`.",
+    "Inspect `repro_stdout.log` and `repro_stderr.log` for the failing round-trip comparisons."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

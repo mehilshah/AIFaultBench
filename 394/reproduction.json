@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "In stage 0, the gradient norm grew monotonically across three identical steps: 1.326786 -> 2.653573 -> 3.980515, with `post_step_non_none_grads=2` after every `engine.step()`.",
+    "In stage 1, the same script cleared gradients after each step and reported `post_step_non_none_grads=0` with stable zero gradient norms."
+  ],
+  "steps": [
+    "Installed the pinned DeepSpeed checkout from `codebase/` into a local virtualenv with ops disabled.",
+    "Ran `bash run_repro.sh`, which executes the bf16 ZeRO-0 and ZeRO-1 paths in separate fresh subprocesses.",
+    "Observed that ZeRO-0 retained gradients after `engine.step()` and the norm tripled over three iterations, while ZeRO-1 cleared gradients."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,72 @@
+Title: Inline regex flags like `(?s)` crash Lark lexer
+Date: 2025-12-01T02:53:39+00:00
+URL: https://github.com/lark-parser/lark/issues/1569
+
+Description:
+**Describe the bug**
+
+Using an inline flag at the start of a token regex (e.g., `/(?s)./`) is valid in Python’s `re`, but Lark wraps terminals inside grouping constructs before compilation. 
+
+**To Reproduce**
+```python
+from lark import Lark
+
+grammar = r"""
+start: char+
+char: /(?s)./
+"""
+
+parser = Lark(grammar, lexer="basic")
+list(parser.lex("\n"))
+```
+
+```
+Traceback (most recent call last):
+  File "/datasrc/test.py", line 9, in <module>
+    list(parser.lex("\n"))
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/site-packages/lark/lexer.py", line 539, in lex
+    yield self.next_token(state, parser_state)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/site-packages/lark/lexer.py", line 617, in next_token
+    res = self.match(lex_state.text, line_ctr.char_pos)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/site-packages/lark/lexer.py", line 612, in match
+    return self.scanner.match(text, pos)
+           ^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/site-packages/lark/lexer.py", line 608, in scanner
+    self._scanner = self._build_scanner()
+                    ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/site-packages/lark/lexer.py", line 603, in _build_scanner
+    return Scanner(terminals, self.g_regex_flags, self.re, self.use_bytes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/site-packages/lark/lexer.py", line 365, in __init__
+    self._mres = self._build_mres(terminals, len(terminals))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/site-packages/lark/lexer.py", line 377, in _build_mres
+    mre = self.re_.compile(pattern, self.g_regex_flags)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/re/__init__.py", line 228, in compile
+    return _compile(pattern, flags)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/re/__init__.py", line 307, in _compile
+    p = _compiler.compile(pattern, flags)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/re/_compiler.py", line 750, in compile
+    p = _parser.parse(p, flags)
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/re/_parser.py", line 979, in parse
+    p = _parse_sub(source, state, flags & SRE_FLAG_VERBOSE, 0)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/re/_parser.py", line 460, in _parse_sub
+    itemsappend(_parse(source, state, verbose, nested + 1,
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/re/_parser.py", line 862, in _parse
+    p = _parse_sub(source, state, sub_verbose, nested + 1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/re/_parser.py", line 460, in _parse_sub
+    itemsappend(_parse(source, state, verbose, nested + 1,
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hdd/miniconda3/envs/py312/lib/python3.12/re/_parser.py", line 840, in _parse
+    raise source.error('global flags not at the start '
+re.error: global flags not at the start of the expression at position 13
+```

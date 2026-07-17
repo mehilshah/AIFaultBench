@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "On this checkout, `Eva(patch_drop_rate=0.75, use_rot_pos_emb=True)` in training mode succeeds for batch size 1 and fails for batch size 8 with `RuntimeError: The size of tensor a (12) must match the size of tensor b (8) at non-singleton dimension 1` from `timm/models/eva.py:180`.",
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

@@ -1,0 +1,31 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2849
+
+TITLE
+`OneHotEncoding` constraint can error if numerical columns have integer `computer_representation`
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:
+* Python version:
+* Operating System:
+
+### Error Description
+The `OneHotEncoding` constraint can error with a `ValueError` during synthesizer `fit` if the columns are numerical with `'computer_representation'` set to an integer dtype. This is because the `'one_hot'` `learning_strategy` (default) adds a small epsilon value to the one hot columns, but the output metadata just copies the columns' metadata if the sdtype is numerical.
+
+To fix, we should not include the `computer_representation` parameter in output columns' metadata if the `learning_strategy` is `'one_hot'`.
+
+Related issue: https://github.com/datacebo/SDV-Enterprise/issues/1934
+
+### Steps to reproduce
+```python
+data, metadata = download_demo('multi_table', 'PremierLeague')
+constraint = OneHotEncoding(column_names=['Starts', 'SubstituteOn'], table_name='Actions')
+
+synthesizer = HSASynthesizer(metadata)
+synthesizer.add_constraints([constraint])
+synthesizer.fit(data)
+```
+

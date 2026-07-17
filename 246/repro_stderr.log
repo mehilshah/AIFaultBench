@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "246/repro.py", line 40, in <module>
+    "param" in det_graph.source
+AssertionError: render_model(render_params=True) omits a parameter that feeds only deterministic sites

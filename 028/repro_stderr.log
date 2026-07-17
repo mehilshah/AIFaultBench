@@ -1,0 +1,1 @@
+BUG: expected default num_classes=10 for CIFAR10, but code sets 16.

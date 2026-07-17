@@ -1,0 +1,3 @@
+prepared_type=torch._dynamo.eval_frame.OptimizedModule
+unwrapped_type=torch._dynamo.eval_frame.OptimizedModule
+is_same_object=True

@@ -1,0 +1,23 @@
+{
+  "bug_id": "103",
+  "bug_dir": "103",
+  "issue_url": "https://github.com/lucidrains/vector-quantize-pytorch/issues/188",
+  "commit_hash": "59a30b68a83be710638184764c025b54693c82cc",
+  "library_name": "vector-quantize-pytorch",
+  "library_version": "1.21.2",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": true,
+  "standardized_dir": "../103",
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

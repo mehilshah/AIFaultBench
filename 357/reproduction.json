@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running ./.venv/bin/mypy --cache-dir .mypy_cache --install-types --non-interactive --config-file codebase/setup.cfg repro.py exits with status 2.",
+    "stderr reports: .venv/lib/python3.12/site-packages/numpy/_typing/_nested_sequence.py:60: error: Positional-only parameters are only supported in Python 3.8 and greater  [syntax]"
+  ],
+  "steps": [
+    "Create a clean virtualenv and install mypy==1.5.1 plus numpy==1.26.4.",
+    "Run mypy against repro.py using codebase/setup.cfg, which keeps python_version at 3.7.",
+    "Observe that mypy fails while parsing NumPy's typing file."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./.venv/bin/mypy --cache-dir .mypy_cache --install-types --non-interactive --config-file codebase/setup.cfg repro.py"
+}

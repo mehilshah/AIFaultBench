@@ -1,0 +1,17 @@
+{
+  "blocking_reason": "Could not complete the runtime probe in this workspace. Importing vLLM fails before the request path runs because the preinstalled Torch/NCCL stack is inconsistent, so the full server-side reproduction cannot be executed here.",
+  "evidence": [
+    "- ChatCompletionRequest.build_chat_params only injects enable_thinking from reasoning_effort.",
+    "- response_format is translated into StructuredOutputsParams, not into a thinking toggle.",
+    "- Qwen3Parser defaults thinking on unless enable_thinking is explicitly false.",
+    "",
+    "Runtime probe:",
+    "- exit_code: 1"
+  ],
+  "reproducible": false,
+  "reproduction_command": "./run_repro.sh",
+  "steps": [
+    "Inspected the local vLLM request/rendering path for response_format and thinking handling.",
+    "Attempted a narrow runtime import of ChatCompletionRequest in a subprocess."
+  ]
+}

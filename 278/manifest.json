@@ -1,0 +1,14 @@
+{
+  "bug_id": "278",
+  "bug_dir": "278",
+  "issue_url": "https://github.com/pyro-ppl/pyro/issues/3430",
+  "commit_hash": "bfe88ed8f000b88a546dc1c8848ecf5905082df2",
+  "library_name": "pyro",
+  "library_version": "unknown",
+  "reproducible": true,
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "local codebase/",
+  "codebase_present": true,
+  "standardized_dir": "../278",
+  "reproduction_command": "bash run_repro.sh"
+}

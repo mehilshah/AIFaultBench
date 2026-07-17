@@ -1,0 +1,17 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/2051
+
+TITLE
+Incompatibility with jax 0.7.0
+
+BODY
+`import numpyro` fails with jax 0.7.0 with the following error
+
+```pycon
+>>> import numpyro
+ImportError: cannot import name 'pjit_p' from 'jax.experimental.pjit' (/Users/damon/Documents/GitHub/stf-pyrenew-added-value/.venv/lib/python3.13/site-packages/jax/experimental/pjit.py)
+```
+
+This is because of the following note from the jax 0.7.0 [release](https://github.com/jax-ml/jax/releases/tag/jax-v0.7.0):
+
+
+> The `jax.extend.core.primitives.pjit_p` primitive has been renamed to `jit_p`, and its `name` attribute has changed from `"pjit"` to `"jit"`. This affects the string representations of jaxprs. The same primitive is no longer exported from the `jax.experimental.pjit` module.

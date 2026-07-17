@@ -1,0 +1,1 @@
+bug reproduced: p=1 distance changes under a shared shift; the report's equality assertion fails

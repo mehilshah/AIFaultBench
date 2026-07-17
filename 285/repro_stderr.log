@@ -1,0 +1,35 @@
+Initializing distributed: GLOBAL_RANK: 0, MEMBER: 1/2
+Initializing distributed: GLOBAL_RANK: 1, MEMBER: 2/2
+----------------------------------------------------------------------------------------------------
+distributed_backend=gloo
+All distributed processes registered. Starting with 2 processes
+----------------------------------------------------------------------------------------------------
+
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "285/repro.py", line 44, in <module>
+[rank1]:     run()
+[rank1]:   File "285/repro.py", line 39, in run
+[rank1]:     fabric.launch(main)
+[rank1]:   File "285/codebase/src/lightning/fabric/fabric.py", line 1010, in launch
+[rank1]:     return self._wrap_and_launch(function, self, *args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "285/codebase/src/lightning/fabric/fabric.py", line 1121, in _wrap_and_launch
+[rank1]:     return to_run(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "285/codebase/src/lightning/fabric/fabric.py", line 1126, in _wrap_with_setup
+[rank1]:     return to_run(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "285/repro.py", line 31, in main
+[rank1]:     fabric.save(checkpoint_path, {"model": model})
+[rank1]:   File "285/codebase/src/lightning/fabric/fabric.py", line 867, in save
+[rank1]:     self.barrier()
+[rank1]:   File "285/codebase/src/lightning/fabric/fabric.py", line 638, in barrier
+[rank1]:     self._strategy.barrier(name=name)
+[rank1]:   File "285/codebase/src/lightning/fabric/strategies/fsdp.py", line 387, in barrier
+[rank1]:     torch.distributed.barrier()
+[rank1]:   File "/users/grad/mehil/.local/lib/python3.12/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
+[rank1]:     return func(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/users/grad/mehil/.local/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py", line 5356, in barrier
+[rank1]:     work.wait()
+[rank1]: RuntimeError: [/__w/pytorch/pytorch/third_party/gloo/gloo/transport/tcp/pair.cc:537] Read error [129.173.67.44]:17294: Connection reset by peer. This is typically caused by a remote worker hanging or bugs in the application. Check the logs of the remote worker before reporting an error. GLHF! 🏖️

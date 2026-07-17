@@ -1,0 +1,52 @@
+Title: `BruteForceSampler` stops before suggesting all combinations in parallel optimization
+Date: 2024-11-22T08:50:04+00:00
+URL: https://github.com/optuna/optuna/issues/5780
+
+Description:
+### Expected behavior
+
+`BruteForceSampler` should suggest all parameter combinations, but it stops unexpectedly before that in parallel optimization.
+
+### Environment
+
+- Optuna version:4.2.0.dev
+- Python version:3.9.4
+- OS:macOS-15.1-x86_64-i386-64bit
+- (Optional) Other libraries and their versions:
+
+
+### Error messages, stack traces, or logs
+
+```shell
+See the following MRE.
+```
+
+
+### Steps to reproduce
+
+```python
+import time
+import optuna
+
+def objective(trial):
+    x = trial.suggest_int("x", 0, 1)
+    time.sleep(x)
+    y = trial.suggest_int("y", 0, 1)
+    return x + y
+
+sampler = optuna.samplers.BruteForceSampler(seed=42)
+study = optuna.create_study(sampler=sampler)
+study.optimize(objective, n_jobs=2)
+```
+
+```
+[I 2024-11-22 17:43:20,854] A new study created in memory with name: no-name-86ca63d9-e334-4237-a5a5-854dd2483f9f
+[I 2024-11-22 17:43:20,855] Trial 0 finished with value: 1.0 and parameters: {'x': 0, 'y': 1}. Best is trial 0 with value: 1.0.
+[I 2024-11-22 17:43:20,856] Trial 2 finished with value: 0.0 and parameters: {'x': 0, 'y': 0}. Best is trial 2 with value: 0.0.
+[I 2024-11-22 17:43:21,861] Trial 1 finished with value: 1.0 and parameters: {'x': 1, 'y': 0}. Best is trial 2 with value: 0.0.
+```
+
+
+### Additional context (optional)
+
+_No response_

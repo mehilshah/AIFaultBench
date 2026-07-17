@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "A mixed CPU/disk-offloaded Qwen3VL checkpoint loads and saves successfully in this checkout. The repro emits a warning about offloaded modules and writes model.safetensors without error.",
+  "steps": [
+    "Create a tiny local Qwen3VL checkpoint from config.",
+    "Reload it with device_map='auto' and max_memory={'cpu': '50KB'} to force CPU/disk offloading.",
+    "Call save_pretrained() on the offloaded model."
+  ],
+  "blocking_reason": "The current codebase already handles saving a mixed CPU/disk-offloaded Qwen3VL model, so the reported meta-tensor failure does not occur here.",
+  "reproduction_command": "./run_repro.sh"
+}

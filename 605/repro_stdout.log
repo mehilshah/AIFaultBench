@@ -1,0 +1,8 @@
+case1: single-table validation with multi-table metadata and no relationships
+  result=NO_EXCEPTION
+case2: invalid 'relationships' entries
+  exception=AttributeError
+  message='str' object has no attribute 'keys'
+case3: 'min_cardinality' set to zero
+  result=NO_EXCEPTION
+summary={"reproducible": true, "results": {"invalid_relationship_entries_raise_structured_error": ["AttributeError", "'str' object has no attribute 'keys'"], "min_cardinality_zero_is_allowed": [null, null], "single_table_accepts_multi_table_metadata_without_relationships": [null, null]}}

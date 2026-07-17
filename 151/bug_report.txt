@@ -1,0 +1,115 @@
+Title: Generation config merging logic prevents explicit override of model-specific defaults back to global defaults
+Date: 2025-12-10T08:11:35+00:00
+URL: https://github.com/huggingface/transformers/issues/42762
+
+Description:
+Generation config merging logic prevents explicit override of model-specific defaults back to global defaults
+
+### Problem Summary
+
+The current generation config merging logic in `generation/utils.py` makes it impossible to explicitly override a model's generation config parameter back to the global default value. This breaks the principle of explicit parameter passing and creates surprising behavior.
+
+### Minimal Reproduction
+
+```python
+from transformers import AutoModelForCausalLM, GenerationConfig
+import torch
+
+# Load a model with non-standard generation config
+model = AutoModelForCausalLM.from_pretrained("trl-internal-testing/tiny-Qwen2_5_VLForConditionalGeneration")
+print(f"Model's temperature: {model.generation_config.temperature}")  # 1e-06
+
+# User explicitly wants temperature=1.0 (the global default)
+custom_config = GenerationConfig(
+    temperature=1.0,  # Explicit choice
+    max_new_tokens=50,
+    do_sample=True,
+)
+print(f"Custom config temperature: {custom_config.temperature}")  # 1.0
+
+# Generate with explicit config
+inputs = tokenizer("Hello", return_tensors="pt")
+outputs = model.generate(**inputs, generation_config=custom_config)
+
+# SURPRISE: The temperature=1.0 was silently overwritten to 1e-06!
+# This happens because transformers thinks 1.0 is just the default,
+# not an explicit user choice
+```
+
+### Root Cause
+
+The merging logic in `generation/utils.py`: https://github.com/huggingface/transformers/blob/ec37fc88097423e2950d7ad74fe9e652ab001ca9/src/transformers/generation/utils.py#L1830-L1835
+
+```python
+for key, model_gen_config_value in model_generation_config.__dict__.items():
+    global_default_value = getattr(global_default_generation_config, key, None)
+    custom_gen_config_value = getattr(generation_config, key, None)
+
+    if (
+        custom_gen_config_value == global_default_value
+        and model_gen_config_value != global_default_value
+    ):
+        # Assumes user didn't explicitly set this value
+        setattr(generation_config, key, model_gen_config_value)  # Overwrites!
+```
+
+**Logic:** "If custom value equals global default AND model has a different value, assume user didn't explicitly set it and use model's value."
+
+**Problem:** Cannot distinguish between:
+- User explicitly sets `temperature=1.0` (should be respected)
+- User accepts default `temperature=1.0` (could use model's value)
+
+### Why This Is Wrong
+
+1. **Violates Principle of Explicit Parameters**
+   ```python
+   # User explicitly passes config, expects it to be used!
+   model.generate(..., generation_config=custom_config)
+   # Surprise! Some values are silently overwritten
+   ```
+
+2. **Makes Override Impossible**
+   - If model has `temperature=1e-06` and you want global default `1.0`
+   - Setting `temperature=1.0` doesn't work (gets overwritten)
+   - Have to use hacky workarounds: we are proposing to temporarily overwrite model generation config and then restore its original value
+
+3. **No Escape Hatch**
+   - No way to say "I really mean 1.0, don't override it"
+   - No `override_model_defaults=True` flag or similar
+
+4. **Surprising Behavior**
+   - Most users don't expect hidden merging
+   - Explicit parameter passing should be transparent
+   - A warning message is easy to miss/ignore
+
+### Real-World Impact
+
+This issue affects some TRL's trainers (GRPO, RLOO,...) and likely other training libraries:
+
+- GRPO training requires `temperature=1.0` for proper variance in rewards
+- Qwen models have `temperature=1e-06` in their `generation_config.json`
+- Setting `temperature=1.0` via `GRPOConfig` gets silently overwritten to `1e-06`
+- Result: Zero variance in rewards, GRPO training fails
+
+**Workaround in TRL:** Have to directly modify `model.generation_config` to avoid the merging logic, which has its own problems (changes the generation config file of the trained model pushed to Hub).
+
+### Environment
+
+- transformers version: main branch
+- Model: trl-internal-testing/tiny-Qwen2_5_VLForConditionalGeneration (and any model with non-standard generation_config.json)
+- Affected use cases: Training libraries (TRL, etc.), fine-tuning, custom generation
+
+### Additional Context
+
+A comment describing a similar issue to the one reported here:
+- https://github.com/huggingface/transformers/pull/36881#issuecomment-2814976652
+
+PR which introduced this merging logic:
+- #36684
+
+Related discussion in TRL:
+- https://github.com/huggingface/trl/pull/4647
+
+This issue makes it difficult to build training libraries that need different generation parameters than the model's inference defaults. The current workaround (modifying `model.generation_config` directly) has side effects.
+
+CC: @gante (who proposed this merging logic in #36684), @zucchini-nlp (who reviewed it), and @ArthurZucker (who also commented the PR) 

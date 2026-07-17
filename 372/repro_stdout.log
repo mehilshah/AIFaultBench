@@ -1,0 +1,323 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.11/site-packages (24.0)
+Collecting pip
+  Downloading pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
+Requirement already satisfied: setuptools in ./.venv/lib/python3.11/site-packages (79.0.1)
+Collecting setuptools
+  Downloading setuptools-83.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting wheel
+  Downloading wheel-0.47.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting packaging>=24.0 (from wheel)
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 22.4 MB/s eta 0:00:00
+
+Downloading setuptools-83.0.0-py3-none-any.whl (1.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 61.4 MB/s eta 0:00:00
+
+Downloading wheel-0.47.0-py3-none-any.whl (32 kB)
+Downloading packaging-26.2-py3-none-any.whl (100 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.2/100.2 kB 299.2 MB/s eta 0:00:00
+
+Installing collected packages: setuptools, pip, packaging, wheel
+  Attempting uninstall: setuptools
+    Found existing installation: setuptools 79.0.1
+    Uninstalling setuptools-79.0.1:
+      Successfully uninstalled setuptools-79.0.1
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed packaging-26.2 pip-26.1.2 setuptools-83.0.0 wheel-0.47.0
+Collecting numpy<2 (from -r 372/requirements.txt (line 1))
+  Downloading numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+Collecting opt_einsum>=2.3.2 (from -r 372/requirements.txt (line 2))
+  Downloading opt_einsum-3.4.0-py3-none-any.whl.metadata (6.3 kB)
+Collecting pyro-api>=0.1.1 (from -r 372/requirements.txt (line 3))
+  Downloading pyro_api-0.1.2-py3-none-any.whl.metadata (2.5 kB)
+Collecting torch==2.0.1 (from -r 372/requirements.txt (line 4))
+  Downloading torch-2.0.1-cp311-cp311-manylinux1_x86_64.whl.metadata (24 kB)
+Collecting tqdm>=4.36 (from -r 372/requirements.txt (line 5))
+  Downloading tqdm-4.68.4-py3-none-any.whl.metadata (57 kB)
+Collecting filelock (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading filelock-3.30.2-py3-none-any.whl.metadata (2.0 kB)
+Collecting typing-extensions (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting sympy (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+Collecting networkx (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+Collecting jinja2 (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting nvidia-cuda-nvrtc-cu11==11.7.99 (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading nvidia_cuda_nvrtc_cu11-11.7.99-2-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cuda-runtime-cu11==11.7.99 (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading nvidia_cuda_runtime_cu11-11.7.99-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cuda-cupti-cu11==11.7.101 (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading nvidia_cuda_cupti_cu11-11.7.101-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cudnn-cu11==8.5.0.96 (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading nvidia_cudnn_cu11-8.5.0.96-2-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cublas-cu11==11.10.3.66 (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading nvidia_cublas_cu11-11.10.3.66-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cufft-cu11==10.9.0.58 (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading nvidia_cufft_cu11-10.9.0.58-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-curand-cu11==10.2.10.91 (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading nvidia_curand_cu11-10.2.10.91-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cusolver-cu11==11.4.0.1 (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading nvidia_cusolver_cu11-11.4.0.1-2-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cusparse-cu11==11.7.4.91 (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading nvidia_cusparse_cu11-11.7.4.91-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-nccl-cu11==2.14.3 (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading nvidia_nccl_cu11-2.14.3-py3-none-manylinux1_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-nvtx-cu11==11.7.91 (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading nvidia_nvtx_cu11-11.7.91-py3-none-manylinux1_x86_64.whl.metadata (1.7 kB)
+Collecting triton==2.0.0 (from torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading triton-2.0.0-1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.0 kB)
+Requirement already satisfied: setuptools in ./.venv/lib/python3.11/site-packages (from nvidia-cublas-cu11==11.10.3.66->torch==2.0.1->-r 372/requirements.txt (line 4)) (83.0.0)
+Requirement already satisfied: wheel in ./.venv/lib/python3.11/site-packages (from nvidia-cublas-cu11==11.10.3.66->torch==2.0.1->-r 372/requirements.txt (line 4)) (0.47.0)
+Collecting cmake (from triton==2.0.0->torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading cmake-4.4.0-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (7.0 kB)
+Collecting lit (from triton==2.0.0->torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading lit-18.1.8-py3-none-any.whl.metadata (2.5 kB)
+Collecting MarkupSafe>=2.0 (from jinja2->torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy->torch==2.0.1->-r 372/requirements.txt (line 4))
+  Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Requirement already satisfied: packaging>=24.0 in ./.venv/lib/python3.11/site-packages (from wheel->nvidia-cublas-cu11==11.10.3.66->torch==2.0.1->-r 372/requirements.txt (line 4)) (26.2)
+Downloading torch-2.0.1-cp311-cp311-manylinux1_x86_64.whl (619.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 619.9/619.9 MB 68.2 MB/s  0:00:08
+
+Downloading nvidia_cublas_cu11-11.10.3.66-py3-none-manylinux1_x86_64.whl (317.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 317.1/317.1 MB 75.5 MB/s  0:00:04
+
+Downloading nvidia_cuda_cupti_cu11-11.7.101-py3-none-manylinux1_x86_64.whl (11.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.8/11.8 MB 89.5 MB/s  0:00:00
+
+Downloading nvidia_cuda_nvrtc_cu11-11.7.99-2-py3-none-manylinux1_x86_64.whl (21.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 21.0/21.0 MB 91.2 MB/s  0:00:00
+
+Downloading nvidia_cuda_runtime_cu11-11.7.99-py3-none-manylinux1_x86_64.whl (849 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 849.3/849.3 kB 78.5 MB/s  0:00:00
+
+Downloading nvidia_cudnn_cu11-8.5.0.96-2-py3-none-manylinux1_x86_64.whl (557.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 557.1/557.1 MB 80.9 MB/s  0:00:07
+
+Downloading nvidia_cufft_cu11-10.9.0.58-py3-none-manylinux2014_x86_64.whl (168.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 168.4/168.4 MB 82.2 MB/s  0:00:02
+
+Downloading nvidia_curand_cu11-10.2.10.91-py3-none-manylinux1_x86_64.whl (54.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 54.6/54.6 MB 85.6 MB/s  0:00:00
+
+Downloading nvidia_cusolver_cu11-11.4.0.1-2-py3-none-manylinux1_x86_64.whl (102.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 102.6/102.6 MB 90.4 MB/s  0:00:01
+
+Downloading nvidia_cusparse_cu11-11.7.4.91-py3-none-manylinux1_x86_64.whl (173.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 173.2/173.2 MB 93.0 MB/s  0:00:01
+
+Downloading nvidia_nccl_cu11-2.14.3-py3-none-manylinux1_x86_64.whl (177.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 177.1/177.1 MB 64.0 MB/s  0:00:02
+
+Downloading nvidia_nvtx_cu11-11.7.91-py3-none-manylinux1_x86_64.whl (98 kB)
+Downloading triton-2.0.0-1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (63.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 63.3/63.3 MB 71.7 MB/s  0:00:00
+
+Downloading numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.3/18.3 MB 58.7 MB/s  0:00:00
+
+Downloading opt_einsum-3.4.0-py3-none-any.whl (71 kB)
+Downloading pyro_api-0.1.2-py3-none-any.whl (11 kB)
+Downloading tqdm-4.68.4-py3-none-any.whl (676 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 676.6/676.6 kB 57.7 MB/s  0:00:00
+
+Downloading cmake-4.4.0-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (30.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 30.2/30.2 MB 59.4 MB/s  0:00:00
+
+Downloading filelock-3.30.2-py3-none-any.whl (94 kB)
+Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Downloading lit-18.1.8-py3-none-any.whl (96 kB)
+Downloading networkx-3.6.1-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 64.6 MB/s  0:00:00
+
+Downloading sympy-1.14.0-py3-none-any.whl (6.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.3/6.3 MB 64.2 MB/s  0:00:00
+
+Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 78.6 MB/s  0:00:00
+
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Installing collected packages: pyro-api, mpmath, lit, typing-extensions, tqdm, sympy, opt_einsum, nvidia-nccl-cu11, nvidia-cufft-cu11, nvidia-cuda-nvrtc-cu11, numpy, networkx, MarkupSafe, filelock, cmake, nvidia-nvtx-cu11, nvidia-cusparse-cu11, nvidia-curand-cu11, nvidia-cuda-runtime-cu11, nvidia-cuda-cupti-cu11, nvidia-cublas-cu11, jinja2, nvidia-cusolver-cu11, nvidia-cudnn-cu11, triton, torch
+
+
+Successfully installed MarkupSafe-3.0.3 cmake-4.4.0 filelock-3.30.2 jinja2-3.1.6 lit-18.1.8 mpmath-1.3.0 networkx-3.6.1 numpy-1.26.4 nvidia-cublas-cu11-11.10.3.66 nvidia-cuda-cupti-cu11-11.7.101 nvidia-cuda-nvrtc-cu11-11.7.99 nvidia-cuda-runtime-cu11-11.7.99 nvidia-cudnn-cu11-8.5.0.96 nvidia-cufft-cu11-10.9.0.58 nvidia-curand-cu11-10.2.10.91 nvidia-cusolver-cu11-11.4.0.1 nvidia-cusparse-cu11-11.7.4.91 nvidia-nccl-cu11-2.14.3 nvidia-nvtx-cu11-11.7.91 opt_einsum-3.4.0 pyro-api-0.1.2 sympy-1.14.0 torch-2.0.1 tqdm-4.68.4 triton-2.0.0 typing-extensions-4.16.0
+Obtaining file://372/codebase
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy>=1.7 in ./.venv/lib/python3.11/site-packages (from pyro-ppl==1.8.6) (1.26.4)
+Requirement already satisfied: opt_einsum>=2.3.2 in ./.venv/lib/python3.11/site-packages (from pyro-ppl==1.8.6) (3.4.0)
+Requirement already satisfied: pyro-api>=0.1.1 in ./.venv/lib/python3.11/site-packages (from pyro-ppl==1.8.6) (0.1.2)
+Requirement already satisfied: torch>=2.0 in ./.venv/lib/python3.11/site-packages (from pyro-ppl==1.8.6) (2.0.1)
+Requirement already satisfied: tqdm>=4.36 in ./.venv/lib/python3.11/site-packages (from pyro-ppl==1.8.6) (4.68.4)
+Requirement already satisfied: filelock in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (3.30.2)
+Requirement already satisfied: typing-extensions in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (4.16.0)
+Requirement already satisfied: sympy in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (1.14.0)
+Requirement already satisfied: networkx in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (3.1.6)
+Requirement already satisfied: nvidia-cuda-nvrtc-cu11==11.7.99 in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (11.7.99)
+Requirement already satisfied: nvidia-cuda-runtime-cu11==11.7.99 in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (11.7.99)
+Requirement already satisfied: nvidia-cuda-cupti-cu11==11.7.101 in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (11.7.101)
+Requirement already satisfied: nvidia-cudnn-cu11==8.5.0.96 in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (8.5.0.96)
+Requirement already satisfied: nvidia-cublas-cu11==11.10.3.66 in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (11.10.3.66)
+Requirement already satisfied: nvidia-cufft-cu11==10.9.0.58 in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (10.9.0.58)
+Requirement already satisfied: nvidia-curand-cu11==10.2.10.91 in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (10.2.10.91)
+Requirement already satisfied: nvidia-cusolver-cu11==11.4.0.1 in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (11.4.0.1)
+Requirement already satisfied: nvidia-cusparse-cu11==11.7.4.91 in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (11.7.4.91)
+Requirement already satisfied: nvidia-nccl-cu11==2.14.3 in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (2.14.3)
+Requirement already satisfied: nvidia-nvtx-cu11==11.7.91 in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (11.7.91)
+Requirement already satisfied: triton==2.0.0 in ./.venv/lib/python3.11/site-packages (from torch>=2.0->pyro-ppl==1.8.6) (2.0.0)
+Requirement already satisfied: setuptools in ./.venv/lib/python3.11/site-packages (from nvidia-cublas-cu11==11.10.3.66->torch>=2.0->pyro-ppl==1.8.6) (83.0.0)
+Requirement already satisfied: wheel in ./.venv/lib/python3.11/site-packages (from nvidia-cublas-cu11==11.10.3.66->torch>=2.0->pyro-ppl==1.8.6) (0.47.0)
+Requirement already satisfied: cmake in ./.venv/lib/python3.11/site-packages (from triton==2.0.0->torch>=2.0->pyro-ppl==1.8.6) (4.4.0)
+Requirement already satisfied: lit in ./.venv/lib/python3.11/site-packages (from triton==2.0.0->torch>=2.0->pyro-ppl==1.8.6) (18.1.8)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.11/site-packages (from jinja2->torch>=2.0->pyro-ppl==1.8.6) (3.0.3)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.11/site-packages (from sympy->torch>=2.0->pyro-ppl==1.8.6) (1.3.0)
+Requirement already satisfied: packaging>=24.0 in ./.venv/lib/python3.11/site-packages (from wheel->nvidia-cublas-cu11==11.10.3.66->torch>=2.0->pyro-ppl==1.8.6) (26.2)
+Building wheels for collected packages: pyro-ppl
+  Building editable for pyro-ppl (pyproject.toml): started
+  Building editable for pyro-ppl (pyproject.toml): finished with status 'done'
+  Created wheel for pyro-ppl: filename=pyro_ppl-1.8.6-0.editable-py3-none-any.whl size=9418 sha256=2caa30b96997876a7ef55e1b3bdab225289796325dd16211cc3868e9e9a6919b
+  Stored in directory: /tmp/pip-ephem-wheel-cache-zri5r3op/wheels/7b/bb/d8/3f67c533ceac5fa68b4706b8d269118511e3f5a498ca973364
+Successfully built pyro-ppl
+Installing collected packages: pyro-ppl
+Successfully installed pyro-ppl-1.8.6
+python=3.11.15
+torch=2.0.1+cu117
+pyro=1.8.6
+
+[missing_support] reproduced=True
+Traceback (most recent call last):
+  File "372/codebase/pyro/infer/autoguide/utils.py", line 71, in helpful_support_errors
+    yield
+  File "372/codebase/pyro/infer/autoguide/initialization.py", line 237, in _pyro_sample
+    value = self.init_fn(msg)
+            ^^^^^^^^^^^^^^^^^
+  File "372/codebase/pyro/infer/autoguide/initialization.py", line 44, in init_to_feasible
+    t = transform_to(site["fn"].support)
+                     ^^^^^^^^^^^^^^^^^^
+  File "372/.venv/lib/python3.11/site-packages/torch/distributions/distribution.py", line 122, in support
+    raise NotImplementedError
+NotImplementedError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "372/codebase/pyro/poutine/trace_messenger.py", line 174, in __call__
+    ret = self.fn(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "372/codebase/pyro/poutine/messenger.py", line 12, in _context_wrap
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "372/codebase/pyro/poutine/messenger.py", line 12, in _context_wrap
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "372/repro.py", line 38, in model
+    pyro.sample("z", dist.MixtureOfDiagNormals(locs, scales, logits))
+  File "372/codebase/pyro/primitives.py", line 163, in sample
+    apply_stack(msg)
+  File "372/codebase/pyro/poutine/runtime.py", line 212, in apply_stack
+    frame._process_message(msg)
+  File "372/codebase/pyro/poutine/messenger.py", line 162, in _process_message
+    return method(msg)
+           ^^^^^^^^^^^
+  File "372/codebase/pyro/infer/autoguide/initialization.py", line 236, in _pyro_sample
+    with torch.no_grad(), helpful_support_errors(msg):
+  File "/users/grad/mehil/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "372/codebase/pyro/infer/autoguide/utils.py", line 73, in helpful_support_errors
+    support_name = repr(site["fn"].support).lower()
+                        ^^^^^^^^^^^^^^^^^^
+  File "372/.venv/lib/python3.11/site-packages/torch/distributions/distribution.py", line 122, in support
+    raise NotImplementedError
+NotImplementedError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "372/repro.py", line 42, in check_missing_support
+    guide()
+  File "372/codebase/pyro/nn/module.py", line 449, in __call__
+    result = super().__call__(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "372/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "372/codebase/pyro/infer/autoguide/guides.py", line 510, in forward
+    self._setup_prototype(*args, **kwargs)
+  File "372/codebase/pyro/infer/autoguide/guides.py", line 460, in _setup_prototype
+    super()._setup_prototype(*args, **kwargs)
+  File "372/codebase/pyro/infer/autoguide/guides.py", line 157, in _setup_prototype
+    self.prototype_trace = poutine.block(poutine.trace(model).get_trace)(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "372/codebase/pyro/poutine/messenger.py", line 12, in _context_wrap
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "372/codebase/pyro/poutine/trace_messenger.py", line 198, in get_trace
+    self(*args, **kwargs)
+  File "372/codebase/pyro/poutine/trace_messenger.py", line 180, in __call__
+    raise exc from e
+  File "372/codebase/pyro/poutine/trace_messenger.py", line 174, in __call__
+    ret = self.fn(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "372/codebase/pyro/poutine/messenger.py", line 12, in _context_wrap
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "372/codebase/pyro/poutine/messenger.py", line 12, in _context_wrap
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "372/repro.py", line 38, in model
+    pyro.sample("z", dist.MixtureOfDiagNormals(locs, scales, logits))
+  File "372/codebase/pyro/primitives.py", line 163, in sample
+    apply_stack(msg)
+  File "372/codebase/pyro/poutine/runtime.py", line 212, in apply_stack
+    frame._process_message(msg)
+  File "372/codebase/pyro/poutine/messenger.py", line 162, in _process_message
+    return method(msg)
+           ^^^^^^^^^^^
+  File "372/codebase/pyro/infer/autoguide/initialization.py", line 236, in _pyro_sample
+    with torch.no_grad(), helpful_support_errors(msg):
+  File "/users/grad/mehil/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "372/codebase/pyro/infer/autoguide/utils.py", line 73, in helpful_support_errors
+    support_name = repr(site["fn"].support).lower()
+                        ^^^^^^^^^^^^^^^^^^
+  File "372/.venv/lib/python3.11/site-packages/torch/distributions/distribution.py", line 122, in support
+    raise NotImplementedError
+NotImplementedError: 
+Trace Shapes:
+ Param Sites:
+Sample Sites:
+
+
+[rsample_shape] reproduced=True
+Traceback (most recent call last):
+  File "372/repro.py", line 58, in check_rsample_shape
+    value = d.rsample(sample_shape)
+            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "372/codebase/pyro/distributions/diag_normal_mixture.py", line 122, in rsample
+    return _MixDiagNormalSample.apply(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "372/.venv/lib/python3.11/site-packages/torch/autograd/function.py", line 506, in apply
+    return super().apply(*args, **kwargs)  # type: ignore[misc]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "372/codebase/pyro/distributions/diag_normal_mixture.py", line 140, in forward
+    which_expand = which.expand(tuple(which.shape[:-1] + (dim,)))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: The expanded size of the tensor (2) must match the existing size (3) at non-singleton dimension 1.  Target sizes: [2, 2].  Tensor sizes: [2, 3]
+
+
+reproducible=True

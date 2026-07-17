@@ -1,0 +1,88 @@
+{
+  "transformers_version": "5.9.0",
+  "tokenizer_class": "LlamaTokenizer",
+  "legacy": true,
+  "bos_token": "<｜begin▁of▁sentence｜>",
+  "samples": [
+    {
+      "input": "What is 1+1? Answer briefly.",
+      "ids": [
+        1671,
+        3689,
+        16,
+        10,
+        16,
+        30,
+        16533,
+        6796,
+        398,
+        13
+      ],
+      "expected": "<｜begin▁of▁sentence｜>What is 1+1? Answer briefly.",
+      "decoded": "Whatis1+1?Answerbriefly.",
+      "match": false
+    },
+    {
+      "input": "I need to determine the sum of 1 and 1. Adding 1 and 1 gives a total of 2.",
+      "ids": [
+        644,
+        12320,
+        68987,
+        16890,
+        774,
+        288,
+        372,
+        1073,
+        16,
+        438,
+        16,
+        1943,
+        287,
+        16,
+        438,
+        16,
+        70,
+        1924,
+        266,
+        2426,
+        1073,
+        17,
+        13
+      ],
+      "expected": "<｜begin▁of▁sentence｜>I need to determine the sum of 1 and 1. Adding 1 and 1 gives a total of 2.",
+      "decoded": "Ineedtodeterminethesumof1and1.Adding1and1givesatotalof2.",
+      "match": false
+    },
+    {
+      "input": "First, I recognize that the question is asking for the sum of 1 and 1.",
+      "ids": [
+        5451,
+        38868,
+        34551,
+        450,
+        774,
+        266,
+        1820,
+        7998,
+        285,
+        71805,
+        2000,
+        6509,
+        372,
+        1073,
+        16,
+        438,
+        16,
+        13
+      ],
+      "expected": "<｜begin▁of▁sentence｜>First, I recognize that the question is asking for the sum of 1 and 1.",
+      "decoded": "First,Irecognizethatthequestionisaskingforthesumof1and1.",
+      "match": false
+    }
+  ],
+  "chat_prompt": {
+    "prompt": "<｜begin▁of▁sentence｜><｜User｜>What is 1+1? Answer briefly.<｜Assistant｜><think>\n",
+    "decoded": "<｜begin of sentence｜><｜User｜>Whatis1+1?Answerbriefly.<｜Assistant｜><think>",
+    "match": false
+  }
+}

@@ -1,0 +1,10 @@
+torch==2.13.0
+numpy
+packaging
+regex
+requests
+filelock
+huggingface_hub
+tokenizers==0.22.1
+safetensors
+pillow

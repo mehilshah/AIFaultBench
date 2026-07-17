@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "MaskRCNN.load_weights() raised NotImplementedError when loading a legacy-format HDF5 file. The observed message was: \"Save or restore weights that is not an instance of `tf.Variable` is not supported in h5, use `save_format='tf'` instead.\"",
+  "steps": [
+    "Created a standalone keras Conv2D layer named conv1 whose weights are keras.src.backend.Variable objects.",
+    "Wrote a legacy-style HDF5 file with layer_names/weight_names entries for conv1.",
+    "Called the repository's MaskRCNN.load_weights(..., by_name=True) method against that file.",
+    "Observed the NotImplementedError from tensorflow.python.keras.saving.hdf5_format._legacy_weights."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

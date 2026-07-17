@@ -1,0 +1,15 @@
+{
+  "bug_id": "369",
+  "bug_dir": "369",
+  "issue_url": "https://github.com/facebookresearch/detectron2/issues/2154",
+  "commit_hash": "a2648075f2e76c0fbcef89c84db2319d7b56cc17",
+  "library_name": "detectron2",
+  "library_version": "0.2.1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "facebookresearch/detectron2@a2648075f2e76c0fbcef89c84db2319d7b56cc17",
+  "codebase_present": true,
+  "standardized_dir": "../369",
+  "entrypoint": "bash run_repro.sh",
+  "expected_behavior": "pairwise_iou_rotated should return 1.0 for both box pairs",
+  "observed_behavior": "iou1 is 0.600224 while iou2 is 1.000000"
+}

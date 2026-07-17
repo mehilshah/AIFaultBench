@@ -1,0 +1,99 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/2833
+
+TITLE
+RuntimeError: cannot reshape tensor of 0 elements into shape [-1, 0, 0] because the unspecified dimension size -1 can be any value and is ambiguous
+
+BODY
+System Info :
+
+<details>
+
+```
+Miniconda3-py37_4.9.2-Linux-x86_64.sh
+
+biopython==1.78
+brotlipy==0.7.0
+certifi==2020.6.20
+cffi @ file:///tmp/build/80754af9/cffi_1605538037615/work
+chardet @ file:///tmp/build/80754af9/chardet_1605303159953/work
+conda==4.9.2
+conda-package-handling @ file:///tmp/build/80754af9/conda-package-handling_1603018138503/work
+cryptography @ file:///tmp/build/80754af9/cryptography_1605544449973/work
+cycler==0.10.0
+DendroPy==4.5.2
+ete3==3.1.2
+idna @ file:///tmp/build/80754af9/idna_1593446292537/work
+kiwisolver==1.3.1
+matplotlib==3.4.1
+numpy==1.20.2
+opt-einsum==3.3.0
+pandas==1.2.4
+Pillow==8.2.0
+pycosat==0.6.3
+pycparser @ file:///tmp/build/80754af9/pycparser_1594388511720/work
+pyOpenSSL @ file:///tmp/build/80754af9/pyopenssl_1605545627475/work
+pyparsing==2.4.7
+pyro-api==0.1.2
+pyro-ppl==1.6.0
+PySocks @ file:///tmp/build/80754af9/pysocks_1594394576006/work
+python-dateutil==2.8.1
+pytorch-ignite==0.4.4
+pytz==2021.1
+requests @ file:///tmp/build/80754af9/requests_1592841827918/work
+ruamel-yaml==0.15.87
+scipy==1.6.3
+seaborn==0.11.1
+six @ file:///tmp/build/80754af9/six_1605205313296/work
+style==1.1.0
+torch==1.8.1
+torchaudio==0.8.1
+torchvision==0.9.1
+tqdm @ file:///tmp/build/80754af9/tqdm_1605303662894/work
+typing-extensions==3.10.0.0
+update==0.0.1
+urllib3 @ file:///tmp/build/80754af9/urllib3_1603305693037/work
+```
+
+</details>
+
+`gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)`
+
+Hi!!
+
+I tried to make make a runable code of the error but I cannot seem to recreate the error in a toy example without displaying the entire code. If you require to see the full code, we must find a private alternative.
+
+ I am working on a server and I do not have control over all the aspects. I already had a lot of issues with pytorch and the old version of the compiler. I have installed many versions of python and torch and all seem problematic.
+
+ The error occurs when creating new axis over tensors. I have tried both techniques the [None,:] and .unsqueeze() and both lead to "an empty tensor" / non-concrete value issue .
+
+In my personal computers, everything is running fine with the same script, so I discard a data issue.
+
+```
+#These are fake representations of the original variables as they should be
+mean = torch.zeros((2,)).unsqueeze(0) #[1,n]
+covariance = covariance = torch.eye(2).unsqueeze(0).repeat(3,1,1)#[z,n,n] #---> originally calculated using new axis
+```
+
+Error when running model
+
+```
+    latent_space = pyro.sample('z', dist.MultivariateNormal(mean, covariance).to_event(1))  
+  File "/home/.../miniconda3/lib/python3.7/site-packages/pyro/distributions/distribution.py", line 18, in __call__
+    return super().__call__(*args, **kwargs)
+  File "/home/.../miniconda3/lib/python3.7/site-packages/torch/distributions/multivariate_normal.py", line 146, in __init__
+    super(MultivariateNormal, self).__init__(batch_shape, event_shape, validate_args=validate_args)
+  File "/home/.../miniconda3/lib/python3.7/site-packages/torch/distributions/distribution.py", line 52, in __init__
+    if not constraint.check(getattr(self, param)).all():
+  File "/home/.../miniconda3/lib/python3.7/site-packages/pyro/distributions/torch_patch.py", line 80, in _PositiveDefinite_check
+    flattened_value = value.reshape((-1,) + matrix_shape)
+RuntimeError: cannot reshape tensor of 0 elements into shape [-1, 0, 0] because the unspecified dimension size -1 can be any value and is ambiguous
+
+```
+
+When printing the shape from covariance :
+
+`torch.Size([3, 0, 0])` #It's empty
+
+Do you have an intuition whether is a pytorch, pyro's torch patch or a compiler issue or where to look?
+
+Thank you very much in advance for your insights :)

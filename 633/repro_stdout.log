@@ -1,0 +1,33 @@
+[
+  {
+    "jax_enable_x64": false,
+    "numpy_dtype": "int64",
+    "jax_dtype": "int32",
+    "jax_values": [
+      0,
+      2,
+      5
+    ],
+    "numpy_values": [
+      0,
+      2,
+      5
+    ]
+  },
+  {
+    "jax_enable_x64": true,
+    "numpy_dtype": "int64",
+    "jax_dtype": "int32",
+    "jax_values": [
+      0,
+      2,
+      5
+    ],
+    "numpy_values": [
+      0,
+      2,
+      5
+    ]
+  }
+]
+BUG REPRODUCED - jnp.searchsorted ignores jax_enable_x64 for dtype selection

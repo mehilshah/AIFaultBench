@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "The synthetic tensor repro shows the current reduction collapses both heads to the same block ranking: current_block_scores=[[ [10.0, 10.0] ]] and current_top1=0. The per-head reference keeps distinct rankings: head 0 selects block 0 and head 1 selects block 1.",
+  "steps": [
+    "Installed a CPU-compatible torch runtime in the local Python 3.11 environment.",
+    "Ran `bash run_repro.sh` against a synthetic tensor case shaped to make the two heads prefer different key blocks.",
+    "Observed the current `amax(dim=1)` collapse return one shared top block, while the per-head reference selects different blocks."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

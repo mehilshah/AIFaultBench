@@ -1,0 +1,144 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/8072
+
+TITLE
+[BUG] ZeRO-3 + PEFT (LoRA) regression in 0.19.2: TypeError: output tensor must have the same type as input tensor in _allgather_params_coalesced
+
+BODY
+**Describe the bug**
+DeepSpeed 0.19.2 introduced a regression that breaks training with ZeRO Stage 3 + PEFT (LoRA) when the base model uses bfloat16. A dtype mismatch error is raised in `_allgather_params_coalesced` during `_post_step` when all-gathering persistent parameters after the optimizer step.
+
+Tracking issue on TRL: 
+- https://github.com/huggingface/trl/issues/6089
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Use a base model with native `torch_dtype = bfloat16` (e.g. Qwen2, Llama 3)
+2. Wrap it with a PEFT LoRA adapter (standard, non-quantized, default `autocast_adapter_dtype=True`)
+3. Train with ZeRO Stage 3 and bf16 enabled
+4. Error is raised on the first optimizer step
+
+Minimal reproduction using the TRL SFT script:
+```shell
+accelerate launch --config_file zero3.yaml trl/scripts/sft.py \
+    --model_name_or_path Qwen/Qwen2.5-0.5B \
+    --dataset_name trl-internal-testing/zen \
+    --dataset_config standard_language_modeling \
+    --use_peft \
+    --output_dir /tmp/sft-zero3-peft
+```
+zero3.yaml:
+```yaml
+distributed_type: DEEPSPEED
+deepspeed_config:
+  zero_stage: 3
+  bf16:
+    enabled: true
+num_processes: 2
+```
+
+**Expected behavior**
+Training should complete successfully, as it did with DeepSpeed 0.19.1.
+
+**Error traceback**
+```python
+[rank0]: Traceback (most recent call last):
+...
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/accelerate/utils/deepspeed.py", line 281, in backward
+[rank0]:     self.engine.step()
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/deepspeed/runtime/engine.py", line 3075, in step
+[rank0]:     self._take_model_step(lr_kwargs)
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/deepspeed/runtime/engine.py", line 2970, in _take_model_step
+[rank0]:     self.optimizer.step()
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/deepspeed/utils/nvtx.py", line 33, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:               ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/deepspeed/runtime/zero/stage3.py", line 2468, in step
+[rank0]:     self._post_step(timer_names)
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/deepspeed/utils/nvtx.py", line 33, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:               ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/deepspeed/runtime/zero/stage3.py", line 2392, in _post_step
+[rank0]:     self.persistent_parameters[0].all_gather(self.persistent_parameters)
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/deepspeed/runtime/zero/partition_parameters.py", line 1231, in all_gather
+[rank0]:     return self._all_gather(param_list, async_op=async_op, hierarchy=hierarchy)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/deepspeed/utils/nvtx.py", line 33, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:               ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/deepspeed/runtime/zero/partition_parameters.py", line 1636, in _all_gather
+[rank0]:     self._allgather_params_coalesced(all_gather_nonquantize_list, hierarchy, quantize=False)
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/deepspeed/runtime/zero/partition_parameters.py", line 1948, in _allgather_params_coalesced
+[rank0]:     h = dist.all_gather_into_tensor(allgather_params[param_idx],
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/deepspeed/comm/comm.py", line 118, in log_wrapper
+[rank0]:     return func(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/deepspeed/comm/comm.py", line 318, in all_gather_into_tensor
+[rank0]:     return cdb.all_gather_into_tensor(output_tensor=output_tensor, input_tensor=tensor, group=group, async_op=async_op)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/deepspeed/comm/torch.py", line 263, in all_gather_into_tensor
+[rank0]:     return self.all_gather_function(output_tensor=output_tensor,
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
+[rank0]:     return func(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/__w/trl/trl/.venv/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py", line 4316, in all_gather_into_tensor
+[rank0]:     work = group._allgather_base(output_tensor, input_tensor, opts)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: TypeError: output tensor must have the same type as input tensor
+```
+
+**Root cause analysis**
+
+I think the regression was introduced by commit b919284a ("Mixed-precision: per-policy param/buffer dtype cast (preserve fp32 buffers)")
+
+Before 0.19.2, _configure_distributed_model called module.bfloat16() unconditionally for bf16 ZeRO-Init models, which (as a side effect) cast PEFT adapter parameters to bf16:
+```python
+# 0.19.1
+elif self.bfloat16_enabled():
+    if is_zero_init_model:
+        self.__check_params(self.module, torch.bfloat16)
+    self.module.bfloat16()  # cast everything, including PEFT LoRA params
+```
+
+After 0.19.2, the cast is skipped for ZeRO-Init models:
+```python
+# 0.19.2 — _cast_module_mixed_precision
+if param_dtype is not None and not is_zero_init_model:  # <-- skipped for ZeRO-Init
+    for p in self.module.parameters(recurse=True):
+        ...
+```
+
+This exposes a mixed-dtype situation with PEFT: PEFT's default autocast_adapter_dtype=True intentionally upcasts LoRA adapter parameters to fp32, even when the base model is bf16. Before 0.19.2, the subsequent module.bfloat16() was accidentally normalizing all dtypes. After 0.19.2, persistent_parameters ends up with mixed dtypes:
+  - Base model parameters: ds_tensor.dtype = bfloat16 (from ZeRO-Init)
+  - LoRA adapter parameters: ds_tensor.dtype = float32 (from PEFT's autocast)
+
+`_allgather_params_coalesced` then allocates all output buffers using `param_list[0].ds_tensor.dtype` (line 1927), so if the first persistent parameter is a base model param (bf16), gathering a fp32 LoRA param into a bf16 output buffer raises the error. The bug in `_allgather_params_coalesced` itself is:
+
+```python
+# partition_parameters.py line 1925–1928 — uses param_list[0]'s dtype for ALL buffers
+for psize in partition_sizes:
+    tensor_size = psize * self.num_partitions
+    flat_tensor = torch.empty(tensor_size, dtype=param_list[0].ds_tensor.dtype, ...)
+```
+
+This assumption was safe before 0.19.2 because the blanket cast made all dtypes uniform. The 0.19.2 change is correct in intent but exposed this latent bug.
+
+**ds_report output**
+Please run `ds_report` to give us details about your setup.
+
+**System info (please complete the following information):**
+  - OS: Ubuntu 22.04 (CI runner: aws-g5-12xlarge)
+  - GPU: 4× NVIDIA A10G (tested with 2 processes)
+  - Python: 3.12
+  - PyTorch: 2.x
+  - DeepSpeed: 0.19.2 (regression vs 0.19.1)
+  - PEFT: 0.18.x
+  - Transformers: 5.x
+  - Launched via: accelerate launch (deepspeed launcher)
+
+**Additional context**
+  - The bug only manifests when `persistent_parameters` contains parameters of mixed dtypes, which is now possible since 0.19.2 no longer casts all params uniformly.
+  - Non-PEFT ZeRO-3 training is unaffected.
+  - Adding `autocast_adapter_dtype=False` to `get_peft_model()` is a user-side workaround (keeps LoRA adapters in bf16), but the correct fix is in DeepSpeed.
+

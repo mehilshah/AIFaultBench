@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash setup_env.sh && bash run_repro.sh` in the generated Python 3.9.25 environment raises `TypeError: unsupported operand type(s) for |: 'TypeVar' and 'NoneType'` at the `def nullwrap(fn: F | None = None)` line. `repro_stdout.log` shows the matched source line from `codebase/timm/layers/typing.py`, and `repro_stderr.log` contains the traceback.",
+  "steps": [
+    "Cloned `huggingface/pytorch-image-models` at `e6ab6bc3c6f40b5a9600051309eb5b1933845501` into `codebase/`.",
+    "Created a Python 3.9 virtual environment with `uv venv --python 3.9 .venv` via `setup_env.sh`.",
+    "Ran `bash run_repro.sh`, which executes `repro.py` and triggers the import-time `TypeVar | None` `TypeError`.",
+    "Confirmed the same `TypeError` with a direct Python 3.9 snippet using `TypeVar` and `F | None`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

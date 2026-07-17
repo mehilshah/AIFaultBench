@@ -1,0 +1,44 @@
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: pip in /users/grad/mehil/.local/lib/python3.12/site-packages (26.1.2)
+Collecting numpy<2 (from -r requirements.txt (line 1))
+  Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+Collecting jax==0.4.25 (from jax[cpu]==0.4.25->-r requirements.txt (line 2))
+  Downloading jax-0.4.25-py3-none-any.whl.metadata (24 kB)
+Collecting jaxlib==0.4.25 (from -r requirements.txt (line 3))
+  Downloading jaxlib-0.4.25-cp312-cp312-manylinux2014_x86_64.whl.metadata (2.1 kB)
+Collecting scipy>=1.9 (from -r requirements.txt (line 4))
+  Downloading scipy-1.18.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Collecting tqdm (from -r requirements.txt (line 5))
+  Downloading tqdm-4.68.4-py3-none-any.whl.metadata (57 kB)
+Collecting multipledispatch (from -r requirements.txt (line 6))
+  Downloading multipledispatch-1.0.0-py3-none-any.whl.metadata (3.8 kB)
+Collecting ml-dtypes>=0.2.0 (from jax==0.4.25->jax[cpu]==0.4.25->-r requirements.txt (line 2))
+  Downloading ml_dtypes-0.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (8.9 kB)
+Collecting opt-einsum (from jax==0.4.25->jax[cpu]==0.4.25->-r requirements.txt (line 2))
+  Downloading opt_einsum-3.4.0-py3-none-any.whl.metadata (6.3 kB)
+INFO: pip is looking at multiple versions of scipy to determine which version is compatible with other requirements. This could take a while.
+Collecting scipy>=1.9 (from -r requirements.txt (line 4))
+  Downloading scipy-1.17.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Downloading jax-0.4.25-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 11.9 MB/s  0:00:00
+Downloading jaxlib-0.4.25-cp312-cp312-manylinux2014_x86_64.whl (79.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 79.2/79.2 MB 28.3 MB/s  0:00:02
+Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.0/18.0 MB 44.9 MB/s  0:00:00
+Downloading scipy-1.17.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.2/35.2 MB 47.5 MB/s  0:00:00
+Downloading tqdm-4.68.4-py3-none-any.whl (676 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 676.6/676.6 kB 37.4 MB/s  0:00:00
+Downloading multipledispatch-1.0.0-py3-none-any.whl (12 kB)
+Downloading ml_dtypes-0.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (5.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.0/5.0 MB 36.3 MB/s  0:00:00
+Downloading opt_einsum-3.4.0-py3-none-any.whl (71 kB)
+Installing collected packages: multipledispatch, tqdm, opt-einsum, numpy, scipy, ml-dtypes, jaxlib, jax
+
+Successfully installed jax-0.4.25 jaxlib-0.4.25 ml-dtypes-0.5.4 multipledispatch-1.0.0 numpy-1.26.4 opt-einsum-3.4.0 scipy-1.17.1 tqdm-4.68.4
+jax=0.4.25
+numpyro=0.15.3
+num_chains=100
+warmup_ok=True
+warmup_state_rng_shape=(2,)
+run_failed=ValueError: split accepts a single key, but was given a key array of shape (100, 2) != (). Use jax.vmap for batching.

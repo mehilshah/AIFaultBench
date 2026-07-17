@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "402/repro.py", line 158, in <module>
+    main()
+  File "402/repro.py", line 139, in main
+    metadata.set_primary_key(["user_id", "user_id"], table_name="accounts")
+  File "402/codebase/sdv/metadata/metadata.py", line 437, in set_primary_key
+    super().set_primary_key(table_name, column_name)
+  File "402/codebase/sdv/metadata/multi_table.py", line 678, in set_primary_key
+    self.tables[table_name].set_primary_key(column_name)
+  File "402/codebase/sdv/metadata/single_table.py", line 826, in set_primary_key
+    self._validate_key(column_name, 'primary')
+  File "402/codebase/sdv/metadata/single_table.py", line 799, in _validate_key
+    raise InvalidMetadataError(f"'{key_type}_key' must be a string.")
+sdv.metadata.errors.InvalidMetadataError: 'primary_key' must be a string.

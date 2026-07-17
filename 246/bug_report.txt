@@ -1,0 +1,41 @@
+Title: [discussion] Parameters not rendering when feeding into `pyro.deterministic`
+Date: 2024-05-29T22:18:27+00:00
+URL: https://github.com/pyro-ppl/pyro/issues/3371
+
+Description:
+### Issue Description
+Parts of my programs are deterministic, and these parts still have latent parameters I would like to make inferences of. But when I try to render my program, my registered parameters are not showing up. It looks like this only happens when these parameters are feeding strictly deterministic variables.
+
+I suspect they're not rendering because parameters that feed only into deterministic "variables" will not actually be part of optimization. Is this true?
+
+### Environment
+ - OS:  macOS Sonoma 14.5
+ - Python version:  3.11.4
+ - PyTorch version:  2.0.0
+ - Pyro version: 1.9.0+f02dfb9
+
+### Code Snippet
+```
+import pyro
+import pyro.distributions as dist
+import torch
+
+
+data = torch.tensor([1.0, 2.0, 3.0])
+
+def deterministic_model(data):
+    value = pyro.param("param", torch.tensor(0.))
+    with pyro.plate("plate", len(data)):
+        pyro.deterministic("deterministic", data + value)
+
+pyro.render_model(deterministic_model, model_args=(data,), render_params=True)
+```
+
+```
+def probabilistic_model(data):
+    value = pyro.param("param", torch.tensor(0.))
+    with pyro.plate("plate", len(data)):
+        pyro.sample("probabilistic", dist.Normal(value, 1), obs=data)
+
+pyro.render_model(probabilistic_model, model_args=(data,), render_params=True)
+```

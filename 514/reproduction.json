@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Eager `torch.nn.functional.cross_entropy` succeeded at shape (8192, 4096) with `eager_loss=8.824750`.",
+    "The decomposed FX backward graph contains the dense intermediates reported in the bug, including `full_like`, `scatter`, `mul`, `exp`, and `sub`.",
+    "After lowering the memory cap to 1000 MB, executing the FX graph failed with `RuntimeError: DefaultCPUAllocator: can't allocate memory: you tried to allocate 134217728 bytes`."
+  ],
+  "steps": [
+    "Create the local venv and install dependencies with `./setup_env.sh`.",
+    "Run the repro with `./run_repro.sh`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./setup_env.sh && ./run_repro.sh"
+}

@@ -1,0 +1,5 @@
+jax==0.4.30
+jaxlib==0.4.30
+numpy==1.26.4
+jaxtyping==0.2.20
+beartype>=0.22.0

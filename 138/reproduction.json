@@ -1,0 +1,13 @@
+{
+  "reproducible": true,
+  "evidence": "On this machine, with torch 2.7.0+cu128 and CUDA available, convnext_tiny.fb_in22k in eval mode produced different outputs for the same sample when evaluated inside a batch versus alone. Observed values: batch_out[0][0] = -1.4428796768188477, single_out[0][0] = -1.4428775310516357, abs_diff = 2.1457672119140625e-06, max_abs_diff = 1.6242265701293945e-05, and torch.allclose(batch_out[0], single_out[0]) = False.",
+  "steps": [
+    "Created a CUDA-enabled virtual environment and installed the repro dependencies.",
+    "Loaded timm from the local codebase and instantiated convnext_tiny.fb_in22k with pretrained weights.",
+    "Ran the model in eval/inference mode on a batch of 4 inputs and on the first sample alone.",
+    "Compared the first logit and the full first-sample outputs.",
+    "Observed a nonzero numerical mismatch that matches the reported batch-size dependence."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

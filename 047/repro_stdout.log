@@ -1,0 +1,118 @@
+Using the exact reorder logic from examples/mms/asr/infer/mms_infer.py
+Audio inputs: 10
+Hypothesis lines: 10
+
+00 /Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0000.wav
+   expected: HE HOPED THERE WOULD BE STEW FOR DINNER TURNIPS AND CARROTS AND BRUISED POTATOES AND FAT MUTTON PIECES TO BE LADLED OUT IN THICK PEPPERED FLOUR FATTENED SAUCE
+   observed: AT MOST BY AN ALMS GIVEN TO A BEGGAR WHOSE BLESSING HE FLED FROM HE MIGHT HOPE WEARILY TO WIN FOR HIMSELF SOME MEASURE OF ACTUAL GRACE
+   status: MISMATCH
+01 /Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0001.wav
+   expected: STUFF IT INTO YOU HIS BELLY COUNSELLED HIM
+   observed: THE DULL LIGHT FELL MORE FAINTLY UPON THE PAGE WHEREON ANOTHER EQUATION BEGAN TO UNFOLD ITSELF SLOWLY AND TO SPREAD ABROAD ITS WIDENING TAIL
+   status: MISMATCH
+02 /Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0002.wav
+   expected: AFTER EARLY NIGHTFALL THE YELLOW LAMPS WOULD LIGHT UP HERE AND THERE THE SQUALID QUARTER OF THE BROTHELS
+   observed: HE HOPED THERE WOULD BE STEW FOR DINNER TURNIPS AND CARROTS AND BRUISED POTATOES AND FAT MUTTON PIECES TO BE LADLED OUT IN THICK PEPPERED FLOUR FATTENED SAUCE
+   status: MISMATCH
+03 /Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0003.wav
+   expected: HELLO BERTIE ANY GOOD IN YOUR MIND
+   observed: THE MUSIC CAME NEARER AND HE RECALLED THE WORDS THE WORDS OF SHELLEY'S FRAGMENT UPON THE MOON WANDERING COMPANIONLESS PALE FOR WEARINESS
+   status: MISMATCH
+04 /Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0004.wav
+   expected: NUMBER TEN FRESH NELLY IS WAITING ON YOU GOOD NIGHT HUSBAND
+   observed: THE CHAOS IN WHICH HIS ARDOUR EXTINGUISHED ITSELF WAS A COLD INDIFFERENT KNOWLEDGE OF HIMSELF
+   status: MISMATCH
+05 /Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0005.wav
+   expected: THE MUSIC CAME NEARER AND HE RECALLED THE WORDS THE WORDS OF SHELLEY'S FRAGMENT UPON THE MOON WANDERING COMPANIONLESS PALE FOR WEARINESS
+   observed: AFTER EARLY NIGHTFALL THE YELLOW LAMPS WOULD LIGHT UP HERE AND THERE THE SQUALID QUARTER OF THE BROTHELS
+   status: MISMATCH
+06 /Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0006.wav
+   expected: THE DULL LIGHT FELL MORE FAINTLY UPON THE PAGE WHEREON ANOTHER EQUATION BEGAN TO UNFOLD ITSELF SLOWLY AND TO SPREAD ABROAD ITS WIDENING TAIL
+   observed: NUMBER TEN FRESH NELLY IS WAITING ON YOU GOOD NIGHT HUSBAND
+   status: MISMATCH
+07 /Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0007.wav
+   expected: A COLD LUCID INDIFFERENCE REIGNED IN HIS SOUL
+   observed: A COLD LUCID INDIFFERENCE REIGNED IN HIS SOUL
+   status: MATCH
+08 /Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0008.wav
+   expected: THE CHAOS IN WHICH HIS ARDOUR EXTINGUISHED ITSELF WAS A COLD INDIFFERENT KNOWLEDGE OF HIMSELF
+   observed: STUFF IT INTO YOU HIS BELLY COUNSELLED HIM
+   status: MISMATCH
+09 /Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0009.wav
+   expected: AT MOST BY AN ALMS GIVEN TO A BEGGAR WHOSE BLESSING HE FLED FROM HE MIGHT HOPE WEARILY TO WIN FOR HIMSELF SOME MEASURE OF ACTUAL GRACE
+   observed: HELLO BERTIE ANY GOOD IN YOUR MIND
+   status: MISMATCH
+
+reproducible: true
+The wrapper preserves the wrong transcript order from hypo.word, so the logged Input/Output pairing is incorrect.
+{
+  "reproducible": true,
+  "mismatches": [
+    {
+      "index": 0,
+      "audio": "/Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0000.wav",
+      "expected": "HE HOPED THERE WOULD BE STEW FOR DINNER TURNIPS AND CARROTS AND BRUISED POTATOES AND FAT MUTTON PIECES TO BE LADLED OUT IN THICK PEPPERED FLOUR FATTENED SAUCE",
+      "observed": "AT MOST BY AN ALMS GIVEN TO A BEGGAR WHOSE BLESSING HE FLED FROM HE MIGHT HOPE WEARILY TO WIN FOR HIMSELF SOME MEASURE OF ACTUAL GRACE"
+    },
+    {
+      "index": 1,
+      "audio": "/Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0001.wav",
+      "expected": "STUFF IT INTO YOU HIS BELLY COUNSELLED HIM",
+      "observed": "THE DULL LIGHT FELL MORE FAINTLY UPON THE PAGE WHEREON ANOTHER EQUATION BEGAN TO UNFOLD ITSELF SLOWLY AND TO SPREAD ABROAD ITS WIDENING TAIL"
+    },
+    {
+      "index": 2,
+      "audio": "/Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0002.wav",
+      "expected": "AFTER EARLY NIGHTFALL THE YELLOW LAMPS WOULD LIGHT UP HERE AND THERE THE SQUALID QUARTER OF THE BROTHELS",
+      "observed": "HE HOPED THERE WOULD BE STEW FOR DINNER TURNIPS AND CARROTS AND BRUISED POTATOES AND FAT MUTTON PIECES TO BE LADLED OUT IN THICK PEPPERED FLOUR FATTENED SAUCE"
+    },
+    {
+      "index": 3,
+      "audio": "/Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0003.wav",
+      "expected": "HELLO BERTIE ANY GOOD IN YOUR MIND",
+      "observed": "THE MUSIC CAME NEARER AND HE RECALLED THE WORDS THE WORDS OF SHELLEY'S FRAGMENT UPON THE MOON WANDERING COMPANIONLESS PALE FOR WEARINESS"
+    },
+    {
+      "index": 4,
+      "audio": "/Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0004.wav",
+      "expected": "NUMBER TEN FRESH NELLY IS WAITING ON YOU GOOD NIGHT HUSBAND",
+      "observed": "THE CHAOS IN WHICH HIS ARDOUR EXTINGUISHED ITSELF WAS A COLD INDIFFERENT KNOWLEDGE OF HIMSELF"
+    },
+    {
+      "index": 5,
+      "audio": "/Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0005.wav",
+      "expected": "THE MUSIC CAME NEARER AND HE RECALLED THE WORDS THE WORDS OF SHELLEY'S FRAGMENT UPON THE MOON WANDERING COMPANIONLESS PALE FOR WEARINESS",
+      "observed": "AFTER EARLY NIGHTFALL THE YELLOW LAMPS WOULD LIGHT UP HERE AND THERE THE SQUALID QUARTER OF THE BROTHELS"
+    },
+    {
+      "index": 6,
+      "audio": "/Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0006.wav",
+      "expected": "THE DULL LIGHT FELL MORE FAINTLY UPON THE PAGE WHEREON ANOTHER EQUATION BEGAN TO UNFOLD ITSELF SLOWLY AND TO SPREAD ABROAD ITS WIDENING TAIL",
+      "observed": "NUMBER TEN FRESH NELLY IS WAITING ON YOU GOOD NIGHT HUSBAND"
+    },
+    {
+      "index": 8,
+      "audio": "/Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0008.wav",
+      "expected": "THE CHAOS IN WHICH HIS ARDOUR EXTINGUISHED ITSELF WAS A COLD INDIFFERENT KNOWLEDGE OF HIMSELF",
+      "observed": "STUFF IT INTO YOU HIS BELLY COUNSELLED HIM"
+    },
+    {
+      "index": 9,
+      "audio": "/Dataset/speech/english/test/libri_test_other/wav/wav/1/wav/1/1089-134686-0009.wav",
+      "expected": "AT MOST BY AN ALMS GIVEN TO A BEGGAR WHOSE BLESSING HE FLED FROM HE MIGHT HOPE WEARILY TO WIN FOR HIMSELF SOME MEASURE OF ACTUAL GRACE",
+      "observed": "HELLO BERTIE ANY GOOD IN YOUR MIND"
+    }
+  ],
+  "reordered_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ]
+}

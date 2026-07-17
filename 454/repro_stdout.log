@@ -1,0 +1,10 @@
+Bug 454 repro probe
+repo_root=454
+python=3.12.3
+fill_value=0xff
+gpu={"compute_cap": "12.0", "driver_version": "580.159.03", "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"}
+BLOCKER: the reported Triton MXFP4 corruption is Hopper-specific (sm90).
+Detected GPU NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition with compute capability 12.0.
+torch_spec True
+triton_kernels_spec False
+torch_import_error ImportError('/users/grad/mehil/.local/lib/python3.12/site-packages/torch/lib/libtorch_cuda.so: undefined symbol: ncclCommResume')

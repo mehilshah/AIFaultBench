@@ -1,0 +1,16 @@
+{
+  "bug_id": "136",
+  "issue_url": "https://github.com/google/deepvariant/issues/897",
+  "reproduction_command": "bash run_repro.sh",
+  "files": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

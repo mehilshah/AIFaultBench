@@ -1,0 +1,2 @@
+# No extra pip dependencies are needed for the container repro.
+# The Docker image already provides a CUDA-enabled PyTorch runtime.

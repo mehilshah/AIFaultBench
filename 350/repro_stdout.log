@@ -1,0 +1,9 @@
+{
+  "exception": "In order to use an autograd.Function with functorch transforms (vmap, grad, jvp, jacrev, ...), it must override the setup_context staticmethod. For more details, please see https://pytorch.org/docs/main/notes/extending.func.html",
+  "exception_type": "RuntimeError",
+  "linear_module": "350/codebase/deepspeed/runtime/zero/linear.py",
+  "reproducible": true,
+  "target": "LinearFunctionForZeroStage3.apply under torch.func.grad_and_value",
+  "torch_version": "2.13.0+cu130"
+}
+BUG REPRODUCED

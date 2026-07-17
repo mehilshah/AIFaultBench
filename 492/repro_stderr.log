@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "492/repro.py", line 14, in main
+    import numpyro  # noqa: F401
+    ^^^^^^^^^^^^^^
+  File "/tmp/repro_bug_492_venv/lib/python3.12/site-packages/numpyro/__init__.py", line 6, in <module>
+    from numpyro import compat, diagnostics, distributions, handlers, infer, ops, optim
+  File "/tmp/repro_bug_492_venv/lib/python3.12/site-packages/numpyro/infer/__init__.py", line 5, in <module>
+    from numpyro.infer.elbo import (
+  File "/tmp/repro_bug_492_venv/lib/python3.12/site-packages/numpyro/infer/elbo.py", line 18, in <module>
+    from numpyro.ops.provenance import eval_provenance, get_provenance
+  File "/tmp/repro_bug_492_venv/lib/python3.12/site-packages/numpyro/ops/provenance.py", line 6, in <module>
+    from jax.linear_util import wrap_init
+ModuleNotFoundError: No module named 'jax.linear_util'
+Traceback (most recent call last):
+  File "492/repro.py", line 24, in <module>
+    main()
+  File "492/repro.py", line 14, in main
+    import numpyro  # noqa: F401
+    ^^^^^^^^^^^^^^
+  File "/tmp/repro_bug_492_venv/lib/python3.12/site-packages/numpyro/__init__.py", line 6, in <module>
+    from numpyro import compat, diagnostics, distributions, handlers, infer, ops, optim
+  File "/tmp/repro_bug_492_venv/lib/python3.12/site-packages/numpyro/infer/__init__.py", line 5, in <module>
+    from numpyro.infer.elbo import (
+  File "/tmp/repro_bug_492_venv/lib/python3.12/site-packages/numpyro/infer/elbo.py", line 18, in <module>
+    from numpyro.ops.provenance import eval_provenance, get_provenance
+  File "/tmp/repro_bug_492_venv/lib/python3.12/site-packages/numpyro/ops/provenance.py", line 6, in <module>
+    from jax.linear_util import wrap_init
+ModuleNotFoundError: No module named 'jax.linear_util'

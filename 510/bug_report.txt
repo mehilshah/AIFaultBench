@@ -1,0 +1,64 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2739
+
+TITLE
+Warning raised multiple times when metadata does not have the 'datetime_format' key
+
+BODY
+### Problem Description
+When the metadata does not have the 'datetime_format' key for a column, a warning may be shown to the user multiple times, as can be seen in the example below:
+
+```python3
+from sdv.metadata import Metadata
+import pandas as pd
+from sdv.datasets.demo import download_demo, get_available_demos
+from sdv.single_table.dayz import DayZSynthesizer
+from sdv.multi_table import HMASynthesizer
+import numpy as np
+
+composite_data = {
+    'main': pd.DataFrame({
+        'pk': [1, 2, 3, 4, 5],
+        'denormalized_primary_key_1': [1, 1, 2, 2, 5],
+        'denormalized_primary_key_2': ['a', 'a', 'b', 'c', 'c'],
+        'denormalized_column': ['2020-01-01', '2020-01-01', '2020-01-02', '2020-01-02', '2020-01-03'],
+        'other_col': ['2020-01-01', '2020-01-02', '2020-01-03', '2020-01-04', '2020-01-05'],
+    })
+}
+
+composite_metadata = Metadata.load_from_dict({
+    'tables': {
+        'main': {
+            'columns': {
+                'pk': {'sdtype': 'id'},
+                'denormalized_primary_key_1': {'sdtype': 'id'},
+                'denormalized_primary_key_2': {'sdtype': 'categorical'},
+                'denormalized_column': {'sdtype': 'datetime'},
+                'other_col': {'sdtype': 'datetime', 'datetime_format': '%Y-%m-%d'},
+            },
+            'primary_key': 'pk',
+        },
+    },
+})
+
+comp_synth = HMASynthesizer(composite_metadata)
+comp_synth.fit(composite_data)
+comp_sampled = comp_synth.sample(1)
+```
+
+```
+No 'datetime_format' is present in the metadata for the following columns:
+         Table Name         Column Name   sdtype datetime_format
+main_denorm_parent denormalized_column datetime            None
+Without this specification, SDV may not be able to accurately parse the data. We recommend adding datetime formats using 'update_column'.
+
+No 'datetime_format' is present in the metadata for the following columns:
+ Table Name         Column Name   sdtype datetime_format
+      main denormalized_column datetime            None
+Without this specification, SDV may not be able to accurately parse the data. We recommend adding datetime formats using 'update_column'.
+```
+
+### Expected Behavior
+The warning should only show up once for each column that is missing the `datetime_format` key.
+
+### Additional Context
+This is the cause of a [similar issue](https://github.com/datacebo/SDV-Enterprise/issues/1569) in SDV-Enterprise.

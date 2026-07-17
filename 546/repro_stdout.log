@@ -1,0 +1,6 @@
+selected=simple_launcher multi_gpu=False num_machines=2 gpu_ids=0 nproc_per_node=None nnodes=None
+selected=multi_gpu_launcher multi_gpu=True num_machines=2 gpu_ids=all nproc_per_node=None nnodes=None
+
+summary
+gpu_ids=0   -> simple_launcher
+gpu_ids=all -> multi_gpu_launcher

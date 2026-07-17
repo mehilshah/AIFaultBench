@@ -1,0 +1,31 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2702
+
+TITLE
+[DayZ Parameters] `create_parameters` should fall back to default parameters if parameters cannot be detected
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:
+* Python version:
+* Operating System:
+
+### Error Description
+Currently, the `create_parameters` method will add invalid parameter values in cases like an entirely null column (`'min_value'` and `'max_value'` both get set to `None`).
+
+The `create_parameters` method should always return valid parameters - if a parameter can not be detected for a column for any reason, we should fall back to the expected default values.
+
+Cases to check:
+- Creating parameters for data with 0 rows
+- Creating parameters for an entirely null column (both numerical and datetime)
+
+### Steps to reproduce
+
+```python
+data = pd.DataFrame({'col': []})
+metadata = Metadata().detect_from_dataframe(data)
+DayZSynthesizer.create_parameters(data, metadata)
+```
+

@@ -1,0 +1,8 @@
+Loaded config: Qwen3VLConfig
+Top-level problem_type: multi_label_classification
+Top-level num_labels: 20
+Nested text num_labels: 2
+Nested text problem_type: None
+Expected labels from checkpoint metadata: 20
+Checkpoint score.weight shape: (20, 4096)
+vLLM-side head shape if derived from nested text config: (2, 4096)

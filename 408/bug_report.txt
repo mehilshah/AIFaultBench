@@ -1,0 +1,76 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/1546
+
+TITLE
+accelerator.log(...) silently does nothing when logging a torch.Tensor to TensorBoard
+
+BODY
+### System Info
+
+```Shell
+accelerate==0.16.0
+```
+
+
+### Information
+
+- [ ] The official example scripts
+- [X] My own modified scripts
+
+### Tasks
+
+- [ ] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [X] My own task or dataset (give details below)
+
+### Reproduction
+
+When passing a `torch.Tensor` as a value in the dictionary passed to `accelerator.log`, the tensor is ignored and its value is not included in the log file:
+
+```python
+import torch
+from accelerate import Accelerator
+
+accelerator = Accelerator(log_with="tensorboard", logging_dir="some_path")
+accelerator.init_trackers("train")
+accelerator.log({"loss": torch.tensor(1.0)}, step=1) # This line does nothing, but throws nothing!
+accelerator.end_training()
+
+list(SummaryIterator("some_path/train/events.out.tfevents.1686081050.18920.0"))
+# => Returns a single item:
+#  [wall_time: 1686081050.30094
+#   file_version: "brain.Event:2"
+#   source_metadata {
+#     writer: "tensorboard.summary.writer.event_file_writer"
+#   }]
+```
+
+Passing a single float value instead of a scalar tensor does successfully cause the value to be saved.
+
+### Expected behavior
+
+Accelerate should pass the provided tensor's scalar value through to the TensorBoard log file, _or_ should throw an exception to indicate that the provided data type is invalid:
+
+```python
+import torch
+from accelerate import Accelerator
+
+accelerator = Accelerator(log_with="tensorboard", logging_dir="some_path")
+accelerator.init_trackers("train")
+accelerator.log({"loss": torch.tensor(1.0)}, step=1)
+accelerator.end_training()
+
+list(SummaryIterator("some_path/train/events.out.tfevents.1686081050.18920.0"))
+# => Returns a single item:
+# [wall_time: 1686081291.2548301
+#  file_version: "brain.Event:2"
+#  source_metadata {
+#    writer: "tensorboard.summary.writer.event_file_writer"
+#  },
+#  wall_time: 1686081291.255583
+#  step: 1
+#  summary {
+#    value {
+#      tag: "loss"
+#      simple_value: 1.0
+#    }
+#  }]
+```

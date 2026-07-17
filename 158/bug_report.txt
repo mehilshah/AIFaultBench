@@ -1,0 +1,85 @@
+Title: Phi4MultimodalConfig incorrectly initializes default vision/audio configs when passed as None
+Date: 2026-01-26T01:26:15+00:00
+URL: https://github.com/huggingface/transformers/issues/43479
+
+Description:
+### System Info
+
+> Note: This bug report has been refined by AI, I have review the report and taken the full responsibility for this issue. 
+
+## 🐛 Bug description
+
+In `Phi4MultimodalConfig.__init__`, there are two issues related to default initialization of multimodal sub-configs:
+
+1. When `vision_config` is `None`, a default `Phi4MultimodalVisionConfig()` is instantiated, but **not assigned back** to the `vision_config` variable.
+2. When checking whether to initialize `audio_config`, the code mistakenly checks `vision_config is None` instead of `audio_config is None`.
+
+As a result, when users construct `Phi4MultimodalConfig` without explicitly passing `vision_config` or `audio_config`, the resulting config may contain `None` instead of valid default sub-configs.
+
+## 🔬 Affected code
+
+Current implementation (simplified):
+
+```python
+if isinstance(vision_config, dict):
+    vision_config = Phi4MultimodalVisionConfig(**vision_config)
+elif vision_config is None:
+    Phi4MultimodalVisionConfig()
+self.vision_config = vision_config
+
+if isinstance(audio_config, dict):
+    audio_config = Phi4MultimodalAudioConfig(**audio_config)
+elif vision_config is None:
+    audio_config = Phi4MultimodalAudioConfig()
+self.audio_config = audio_config
+```
+
+# 🧩 Proposed fix
+
+I have prepared a PR #43480 that:
+
+- Correctly assigns default config objects when inputs are `None`
+    
+- Fixes the incorrect conditional check for `audio_config`
+    
+
+Happy to submit it if this behavior is confirmed as intended.
+
+## 📦 Environment
+
+- transformers version: `5.0.0`
+    
+- model: Phi-4 Multimodal
+    
+- Python: `3.13 Linux amd64`
+
+### Who can help?
+
+@Cyrilvallez 
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+1. Initialize `Phi4MultimodalConfig` with no parameters.
+```python
+>>> config = Phi4MultimodalConfig()
+```
+2. Check the vision config
+```python
+>>> print(config.vision_config)
+None
+```
+
+
+### Expected behavior
+
+The vision_config in` Phi4MultimodalConfig` when initialized with no parameters should have default values in `Phi4MultimodalVisionConfig` initialized. 

@@ -1,0 +1,14 @@
+tensorflow_version=2.20.0
+keras_version=3.15.0
+raw_boxes_shape=(1, 5376, 64)
+raw_classes_shape=(1, 5376, 20)
+saved_model_dir=163/yolo8_export_gsijgipj
+    outputs['boxes'] tensor_info:
+        dtype: DT_FLOAT
+        shape: (-1, -1, 64)
+        name: StatefulPartitionedCall:0
+    outputs['classes'] tensor_info:
+        dtype: DT_FLOAT
+        shape: (-1, -1, 20)
+        name: StatefulPartitionedCall:1
+  Method name is: tensorflow/serving/predict

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "416/repro.py", line 54, in <module>
+    main()
+  File "416/repro.py", line 48, in main
+    raise AssertionError(
+AssertionError: bug reproduced: expected shape (3,), got (0,)

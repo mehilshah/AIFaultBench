@@ -1,0 +1,166 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/47050
+
+TITLE
+CanineModel fp16 ONNX export fails with dtype mismatch in attention (expected scalar type Float but found Half)
+
+BODY
+### System Info
+
+- `transformers` version: 5.12.1
+- Platform: Linux-6.18.18-trim-x86_64-with-glibc2.41
+- Python version: 3.12.13
+- Huggingface_hub version: 1.22.0
+- Safetensors version: 0.8.0
+- Accelerate version: 1.14.0
+- Accelerate config:    not found
+- DeepSpeed version: not installed
+- PyTorch version (accelerator?): 2.9.0+cu129 (CUDA)
+- Tensorflow version (GPU?): not installed (NA)
+- Flax version (CPU?/GPU?/TPU?): not installed (NA)
+- Jax version: not installed
+- JaxLib version: not installed
+- Using distributed or parallel set-up in script?: no
+- Using GPU in script?: no
+- GPU type: NVIDIA GeForce RTX 5060
+
+### Who can help?
+
+@NielsRogge @sgugger 
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+versions:
+
++ onnx: 1.22.0
++ onnxscript: 0.5.7
+
+use following script for reproduction.
+
+<details>
+<summary>script code</summary>
+
+```python
+import tempfile
+from pathlib import Path
+
+import onnx
+import onnxruntime as ort
+import torch
+from transformers import CanineModel
+import transformers
+
+
+class CanineWrapper(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.model = CanineModel.from_pretrained("google/canine-s")
+
+    def forward(self, input_ids, attention_mask):
+        return self.model(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            return_dict=True,
+        ).last_hidden_state
+
+
+def main():
+    print("torch:", torch.__version__)
+    print("transformers:", transformers.__version__)
+    print("onnxruntime:", ort.__version__)
+
+    model = CanineWrapper().eval()
+    model.half()
+
+    input_ids = torch.randint(
+        low=0,
+        high=256,
+        size=(1, 128),
+        dtype=torch.long,
+        device=device,
+    )
+    attention_mask = torch.ones(
+        1,
+        128,
+        dtype=torch.long,
+        device=device,
+    )
+
+    output_path = Path(tempfile.gettempdir()) / "canine_fp16_repro.onnx"
+    print("exporting to:", output_path)
+
+    torch.onnx.export(
+        model,
+        (input_ids, attention_mask),
+        str(output_path),
+        input_names=["input_ids", "attention_mask"],
+        output_names=["last_hidden_state"],
+        opset_version=18,
+        do_constant_folding=True,
+        dynamo=False,
+    )
+
+    print("onnx export succeeded")
+
+    onnx_model = onnx.load(str(output_path))
+    onnx.checker.check_model(onnx_model)
+    print("onnx checker succeeded")
+
+    session = ort.InferenceSession(
+        str(output_path),
+        providers=["CUDAExecutionProvider", "CPUExecutionProvider"],
+    )
+    print("onnxruntime session created")
+
+    session.run(
+        ["last_hidden_state"],
+        {
+            "input_ids": input_ids.cpu().numpy(),
+            "attention_mask": attention_mask.cpu().numpy(),
+        },
+    )
+    print("onnxruntime inference succeeded")
+
+
+if __name__ == "__main__":
+    main()
+```
+</details>
+
+**Actual behavior:**
+
+The export fails during `torch.onnx.export(...)`:
+
+```
+torch: 2.9.0+cu129
+transformers: 5.12.1
+onnxruntime: 1.23.2
+exporting to: /tmp/canine_fp16_repro.onnx
+
+RuntimeError: expected scalar type Float but found Half
+```
+
+Relevant traceback:
+
+```
+File ".../transformers/models/canine/modeling_canine.py", line 353, in forward
+    context_layer = torch.matmul(attention_probs, value_layer)
+RuntimeError: expected scalar type Float but found Half
+```
+
+### Expected behavior
+
+`CanineModel` should be exportable to ONNX in fp16 after calling `model.half()`, or at least the forward pass used by ONNX tracing should keep attention tensors in consistent dtypes.
+
+Specifically, `attention_probs` and `value_layer` should have compatible dtypes before `torch.matmul(...)`.
+
+If fp16 export for CANINE is not supported, the failure should ideally be documented or surfaced with a clearer error message. 

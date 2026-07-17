@@ -1,0 +1,15 @@
+Title: google/deepvariant:1.6.1 docker says version 1.6.0
+Date: 2024-06-13T12:34:16+00:00
+URL: https://github.com/google/deepvariant/issues/830
+
+Description:
+**Have you checked the FAQ? https://github.com/google/deepvariant/blob/r1.6.1/docs/FAQ.md**:
+
+**Describe the issue:**
+When I check the version of google/deepvariant:1.6.1 it says 1.6.0, and the docker image has `ENV VERSION=1.6.0`
+```
+docker run google/deepvariant:1.6.1 /opt/deepvariant/bin/run_deepvariant --version
+2024-06-13 12:25:30.001574: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F AVX512_VNNI FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+DeepVariant version 1.6.0
+```

@@ -1,0 +1,5 @@
+trainable params: 1600 || all params: 31232 || trainable%: 5.122950819672131
+accelerator.device=cuda
+input_ids.device=cuda:0
+attention_mask.device=cuda:0
+forward_failed

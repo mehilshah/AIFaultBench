@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "In this checkout, `DayZSynthesizer.create_parameters` does not fall back to defaults for the reported edge cases. The reported empty-table snippet raises `AttributeError: 'float' object has no attribute 'item'`. An all-null numerical column with explicit metadata raises the same `AttributeError`. An all-null datetime column with explicit metadata raises `ValueError: NaTType does not support strftime`.",
+  "steps": [
+    "Create and activate the local Python virtualenv with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` to exercise the reported empty-table case and the two all-null column cases.",
+    "Observe that each call to `DayZSynthesizer.create_parameters` raises instead of returning valid default parameters.",
+    "Confirm the failure messages in `repro_stdout.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

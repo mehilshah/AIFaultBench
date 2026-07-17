@@ -1,0 +1,13 @@
+{
+  "bug_id": "018",
+  "bug_dir": "018",
+  "issue_url": "https://github.com/tensorflow/models/issues/11035",
+  "commit_hash": "efe006c024494e6c513281251213df9af9c62a55",
+  "library_name": "tensorflow/models",
+  "library_version": "pip 26.1.2 in the local environment",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/research/object_detection/g3doc/tf2.md",
+  "codebase_present": true,
+  "standardized_dir": "../018",
+  "reproduction_command": "bash run_repro.sh"
+}

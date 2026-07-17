@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "importing the installed delf package fails with the expected ModuleNotFoundError",
+  "steps": [
+    "Install the DELF source tree from codebase/research/delf without extra dependencies.",
+    "Import delf from the installed package using a stubbed runtime for TensorFlow and other unrelated libraries.",
+    "Observe that delf/__init__.py eventually imports delf.python.datasets and fails because that package is not present in the built distribution."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,12 @@
+{
+  "bug_id": "618",
+  "bug_dir": "618",
+  "issue_url": "https://github.com/sdv-dev/SDV/issues/2702",
+  "commit_hash": "049106473fd32f00d2b551ef61864801792acc2c",
+  "library_name": "sdv",
+  "library_version": "1.27.1.dev0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "sdv-dev/SDV@049106473fd32f00d2b551ef61864801792acc2c",
+  "codebase_present": "true",
+  "standardized_dir": "../618"
+}

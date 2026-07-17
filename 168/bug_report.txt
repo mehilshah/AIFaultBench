@@ -1,0 +1,182 @@
+Title: Bug Report: VideoSequential same_on_batch=False and same_on_frame=True not working correctly
+Date: 2025-07-23T09:14:48+00:00
+URL: https://github.com/kornia/kornia/issues/3194
+
+Description:
+# Bug Report: VideoSequential `same_on_batch=False` and `same_on_frame=True` not working correctly
+
+## Describe the bug
+
+When using `VideoSequential` with `same_on_batch=False` and `same_on_frame=True`, the parameters are not respected correctly:
+
+1. **`RandomCrop`**: Ignores both `same_on_batch=False` and `same_on_frame=True`
+2. **`RandomHorizontalFlip`**: Ignores `same_on_batch=False` (but respects `same_on_frame=True`)
+
+## Reproduction steps
+
+```python
+import kornia.augmentation as K
+import numpy as np
+import torch
+
+# Create test data: 2 videos, 1 channel, 20 frames each, 100x100 pixels
+# Each video contains identical frames
+np.random.seed(42)
+frame_data = np.random.rand(100, 100).astype(np.float32)
+video = torch.from_numpy(frame_data)[None, None, None, :, :].repeat(2, 1, 20, 1, 1)
+
+print("Original video shape:", video.shape)  # Should be [2, 1, 20, 100, 100]
+
+# Test 1: RandomCrop with same_on_batch=False, same_on_frame=True
+print("\n=== Test 1: RandomCrop ===")
+crop_aug = K.VideoSequential(
+    K.RandomCrop(size=(50, 50), same_on_batch=False),
+    data_format="BCTHW",
+    same_on_frame=True,
+)
+
+cropped = crop_aug(video)
+
+# Check if frames within each video are identical (should be True)
+for i in range(cropped.shape[0]):
+    frames_identical = torch.all(cropped[i] == cropped[i][:, 0:1, :, :])
+    print(f"Video {i} - All frames identical: {frames_identical.item()}")
+
+# Check if videos are different from each other (should be True) 
+videos_different = not torch.all(cropped[0] == cropped[1]).item()
+print(f"Videos are different: {videos_different}")
+
+# Test 2: RandomHorizontalFlip with same_on_batch=False, same_on_frame=True
+print("\n=== Test 2: RandomHorizontalFlip ===")
+flip_aug = K.VideoSequential(
+    K.RandomHorizontalFlip(p=1.0, same_on_batch=False),  # p=1.0 to ensure flipping happens
+    data_format="BCTHW",
+    same_on_frame=True,
+)
+
+flipped = flip_aug(video)
+
+# Check if frames within each video are identical (should be True)
+for i in range(flipped.shape[0]):
+    frames_identical = torch.all(flipped[i] == flipped[i][:, 0:1, :, :])
+    print(f"Video {i} - All frames identical: {frames_identical.item()}")
+
+# Check if videos are different from each other (should be True)
+videos_different = not torch.all(flipped[0] == flipped[1]).item()
+print(f"Videos are different: {videos_different}")
+
+# Test 3: Combined augmentations
+print("\n=== Test 3: Combined RandomCrop + RandomHorizontalFlip ===")
+combined_aug = K.VideoSequential(
+    K.RandomCrop(size=(50, 50), same_on_batch=False),
+    K.RandomHorizontalFlip(p=1.0, same_on_batch=False),
+    data_format="BCTHW",
+    same_on_frame=True,
+)
+
+combined = combined_aug(video)
+
+# Check if frames within each video are identical (should be True)
+for i in range(combined.shape[0]):
+    frames_identical = torch.all(combined[i] == combined[i][:, 0:1, :, :])
+    print(f"Video {i} - All frames identical: {frames_identical.item()}")
+
+# Check if videos are different from each other (should be True)
+videos_different = not torch.all(combined[0] == combined[1]).item()
+print(f"Videos are different: {videos_different}")
+```
+
+## Expected behavior
+
+- **`same_on_frame=True`**: All frames within a video should be identical after augmentation
+- **`same_on_batch=False`**: Different videos in the batch should receive different augmentations
+
+## Environment
+
+- **PyTorch Version**: 2.6.0+cu124
+- **OS**: Ubuntu 22.04.5 LTS (x86_64)
+- **Python version**: 3.10.16
+- **GPU models and configuration**: 4x NVIDIA RTX A5000
+- **Kornia version**: 0.8.1
+
+## Expected vs Actual Output
+
+### Expected Output
+```
+Original video shape: torch.Size([2, 1, 20, 100, 100])
+
+=== Test 1: RandomCrop ===
+Video 0 - All frames identical: True
+Video 1 - All frames identical: True
+Videos are different: True
+
+=== Test 2: RandomHorizontalFlip ===
+Video 0 - All frames identical: True
+Video 1 - All frames identical: True
+Videos are different: True
+
+=== Test 3: Combined RandomCrop + RandomHorizontalFlip ===
+Video 0 - All frames identical: True
+Video 1 - All frames identical: True
+Videos are different: True
+```
+
+### Actual Output
+```
+Original video shape: torch.Size([2, 1, 20, 100, 100])
+
+=== Test 1: RandomCrop ===
+Video 0 - All frames identical: False
+Video 1 - All frames identical: False
+Videos are different: False
+
+=== Test 2: RandomHorizontalFlip ===
+Video 0 - All frames identical: True
+Video 1 - All frames identical: True
+Videos are different: False
+
+=== Test 3: Combined RandomCrop + RandomHorizontalFlip ===
+Video 0 - All frames identical: False
+Video 1 - All frames identical: False
+Videos are different: False
+```
+
+## Analysis of Issues
+
+1. **RandomCrop**: Both `same_on_frame=True` and `same_on_batch=False` are completely broken
+   -  Frames within videos are NOT identical (should be True)
+   -  Videos are NOT different (should be True)
+
+2. **RandomHorizontalFlip**: `same_on_frame=True` works correctly, but `same_on_batch=False` is broken
+   -  Frames within videos ARE identical 
+   -  Videos are NOT different (should be True)
+
+3. **Combined**: RandomCrop's bugs dominate the behavior
+   -  Frames within videos are NOT identical (RandomCrop breaks this)
+   -  Videos are NOT different (both augmentations fail at this)
+
+## Additional Context
+
+This issue affects video augmentation pipelines where users need:
+- Consistent augmentations across all frames in a video sequence (`same_on_frame=True`)
+- Different augmentations for different videos in a batch (`same_on_batch=False`)
+
+This is a common requirement for video processing tasks where temporal consistency within videos is important, but diversity across the batch is desired for training.
+
+## Workaround
+
+Currently, the only reliable workaround is to apply augmentations with `same_on_batch=True` to each video in the batch separately:
+
+```python
+# Apply to each video separately
+aug = K.VideoSequential(
+    K.RandomCrop(size=(50, 50), same_on_batch=True),
+    data_format="BCTHW", 
+    same_on_frame=True,
+)
+
+augmented_videos = []
+for i in range(video.shape[0]):
+    augmented_videos.append(aug(video[i:i+1]))
+final_result = torch.cat(augmented_videos, dim=0)
+```

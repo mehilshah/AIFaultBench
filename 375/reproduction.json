@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the repro under jax==0.10.1 and jaxlib==0.10.1 on CPU prints actual=[[inf, inf, inf], [inf, 4.76837158203125e-07, 13.815508842468262]] while the expected value for the smallest positive float32 subnormal is 103.2789306640625; the script raises AssertionError because the subnormal input is returned as inf.",
+  "steps": [
+    "Create and activate a local virtual environment.",
+    "Install the pinned repro dependencies from requirements.txt.",
+    "Run repro.py through run_repro.sh on the CPU backend."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

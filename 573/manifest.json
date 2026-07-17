@@ -1,0 +1,28 @@
+{
+  "bug_id": "573",
+  "bug_dir": "573",
+  "issue_url": "https://github.com/deepspeedai/DeepSpeed/issues/7728",
+  "commit_hash": "d568375e5bd50e4e5fd5e4c011e7be5982ecd528",
+  "library_name": "DeepSpeed",
+  "library_version": "local source checkout",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "microsoft/DeepSpeed@d568375e5bd50e4e5fd5e4c011e7be5982ecd528",
+  "codebase_present": "true",
+  "standardized_dir": "../573",
+  "runtime_dependencies": [
+    "torch==2.5.1+cpu",
+    "transformers==4.51.3",
+    "peft==0.19.1",
+    "accelerate",
+    "einops",
+    "hjson",
+    "msgpack",
+    "ninja",
+    "numpy",
+    "packaging>=20.0",
+    "psutil",
+    "py-cpuinfo",
+    "pydantic>=2.0.0",
+    "tqdm"
+  ]
+}

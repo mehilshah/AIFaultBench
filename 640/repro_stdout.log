@@ -1,0 +1,26 @@
+{
+  "crop_detected": true,
+  "feature_removed_from_left_edge": true,
+  "input_size": [
+    500,
+    224
+  ],
+  "reference_size": [
+    224,
+    224
+  ],
+  "reference_stats": {
+    "left_dark_pixels": 1842,
+    "right_dark_pixels": 0,
+    "total_dark_pixels": 1842
+  },
+  "reproduced_size": [
+    224,
+    224
+  ],
+  "reproduced_stats": {
+    "left_dark_pixels": 0,
+    "right_dark_pixels": 0,
+    "total_dark_pixels": 0
+  }
+}

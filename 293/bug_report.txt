@@ -1,0 +1,39 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/2174
+
+TITLE
+JAX 0.10.0 breaks NumPyro
+
+BODY
+### Bug Description
+
+Just caught this in my package's github CI workflow
+```
+    import numpyro
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/numpyro/__init__.py", line 13, in <module>
+    from numpyro import compat, diagnostics, distributions, handlers, infer, ops, optim
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/numpyro/infer/__init__.py", line 6, in <module>
+    from numpyro.infer.elbo import (
+    ...<6 lines>...
+    )
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/numpyro/infer/elbo.py", line 35, in <module>
+    from numpyro.ops.provenance import eval_provenance
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/numpyro/ops/provenance.py", line 7, in <module>
+    from jax.extend.core.primitives import call_p, closed_call_p, jit_p, xla_pmap_p
+ImportError: cannot import name 'xla_pmap_p' from 'jax.extend.core.primitives' (/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/jax/extend/core/primitives.py)
+```
+
+Pip shows these packages were installed
+```
+Successfully installed absl-py-2.4.0 automcmc-0.1.0 coverage-7.13.5 jax-0.10.0 jaxlib-0.10.0 ml_dtypes-0.5.4 multipledispatch-1.0.0 numpy-2.4.4 numpyro-0.20.1 opt_einsum-3.4.0 optax-0.2.8 scipy-1.17.1 tqdm-4.67.3
+```
+
+### Steps to Reproduce
+
+Upgrade to latest jax and run
+```python
+import numpyro
+```
+
+### Expected Behavior
+Importing the package works.
+

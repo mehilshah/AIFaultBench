@@ -1,0 +1,42 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3172
+
+TITLE
+Metaclass conflict while importing AutoGuideList with PyTorch nightly
+
+BODY
+### Issue Description
+Due to a change ([commit](https://github.com/pytorch/pytorch/commit/d0bfd79f3d1bbf8885b00acb6d72db0bc16f1995)) in the inheritance of `torch.nn.ModuleList`, attempting to import pretty much anything from Pyro leads to the following error:
+
+```
+    import pyro.distributions as base_distributions
+/opt/hostedtoolcache/Python/3.8.15/x64/lib/python3.8/site-packages/pyro/__init__.py:8: in <module>
+    from pyro.primitives import (
+/opt/hostedtoolcache/Python/3.8.15/x64/lib/python3.8/site-packages/pyro/primitives.py:13: in <module>
+    import pyro.infer as infer
+/opt/hostedtoolcache/Python/3.8.15/x64/lib/python3.8/site-packages/pyro/infer/__init__.py:11: in <module>
+    from pyro.infer.mcmc.api import MCMC
+/opt/hostedtoolcache/Python/3.8.15/x64/lib/python3.8/site-packages/pyro/infer/mcmc/__init__.py:5: in <module>
+    from pyro.infer.mcmc.api import MCMC, StreamingMCMC
+/opt/hostedtoolcache/Python/3.8.15/x64/lib/python3.8/site-packages/pyro/infer/mcmc/api.py:28: in <module>
+    from pyro.infer.mcmc.hmc import HMC
+/opt/hostedtoolcache/Python/3.8.15/x64/lib/python3.8/site-packages/pyro/infer/mcmc/hmc.py:13: in <module>
+    from pyro.infer.autoguide import init_to_uniform
+/opt/hostedtoolcache/Python/3.8.15/x64/lib/python3.8/site-packages/pyro/infer/autoguide/__init__.py:10: in <module>
+    from pyro.infer.autoguide.gaussian import AutoGaussian
+/opt/hostedtoolcache/Python/3.8.15/x64/lib/python3.8/site-packages/pyro/infer/autoguide/gaussian.py:24: in <module>
+    from .guides import AutoGuide
+/opt/hostedtoolcache/Python/3.8.15/x64/lib/python3.8/site-packages/pyro/infer/autoguide/guides.py:183: in <module>
+    class AutoGuideList(AutoGuide, nn.ModuleList):
+E   TypeError: metaclass conflict: the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases
+```
+
+More failures in BoTorch [nightly cron](https://github.com/pytorch/botorch/actions/runs/3901421516/jobs/6669973406).
+
+### Environment
+
+Pyro 1.8.4
+torch-2.0.0.dev20230112+cp (nightly) -- works fine on stable torch
+
+### Code Snippet
+`import pyro.distributions` with pytorch nightly.
+

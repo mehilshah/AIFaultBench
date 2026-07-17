@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "Running ./run_repro.sh with the local venv (torch 2.13.0+cu130, pytorch_lightning 1.7.7, torchmetrics 0.9.3) raises pytorch_lightning.utilities.exceptions.MisconfigurationException in _validate_scheduler_api for CosineAnnealingWarmRestarts.",
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh > repro_stdout.log 2> repro_stderr.log"
+}

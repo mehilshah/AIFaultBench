@@ -1,0 +1,6 @@
+torch==2.7.1
+tensordict==0.11.0
+numpy
+packaging
+cloudpickle
+pyvers

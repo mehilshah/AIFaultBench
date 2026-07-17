@@ -1,0 +1,65 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21454
+
+TITLE
+DistributedSamplerWrapper does not pass on the `.set_epoch` call to the underlying sampler
+
+BODY
+### Bug description
+
+By default the Trainer calls `.set_epoch` of any simple sampler [in the fit_loop](https://github.com/Lightning-AI/pytorch-lightning/blob/027455bcd9433f201b1136f68d54b1a07588abe3/src/lightning/pytorch/loops/fit_loop.py#L441).
+However when a sampler is wrapped by [DistributedSamplerWrapper](https://github.com/Lightning-AI/pytorch-lightning/blob/027455bcd9433f201b1136f68d54b1a07588abe3/src/lightning/fabric/utilities/distributed.py#L354) it ignores passing this call to the underlying sampler. I suggest the following fix for this purpose:
+
+```
+class DistributedSamplerWrapper(DistributedSampler):
+    # current implementation
+
+    @override
+    def set_epoch(self, epoch: int) -> None:
+        super().set_epoch(epoch)
+        self.dataset._sampler.set_epoch(epoch)
+```
+
+### What version are you seeing the problem on?
+
+v2.5
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+
+```
+
+### Error messages and logs
+
+```
+# Error messages and logs here please
+```
+
+
+### Environment
+
+<details>
+  <summary>Current environment</summary>
+
+```
+#- PyTorch Lightning Version (e.g., 2.5.0):
+#- PyTorch Version (e.g., 2.5):
+#- Python version (e.g., 3.12):
+#- OS (e.g., Linux):
+#- CUDA/cuDNN version:
+#- GPU models and configuration:
+#- How you installed Lightning(`conda`, `pip`, source):
+```
+
+</details>
+
+
+### More info
+
+_No response_
+
+cc @ethanwharris @justusschock

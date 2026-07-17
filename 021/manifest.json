@@ -1,0 +1,13 @@
+{
+  "bug_id": "021",
+  "bug_dir": "021",
+  "issue_url": "https://github.com/tensorflow/models/issues/10947",
+  "commit_hash": "ec549fd122da7c1987ba01246b7d26b7f8787e6a",
+  "library_name": "tensorflow/models",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": "true",
+  "standardized_dir": "../021",
+  "reproduction_entrypoint": "run_repro.sh"
+}

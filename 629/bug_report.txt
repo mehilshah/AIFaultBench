@@ -1,0 +1,17 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/1999
+
+TITLE
+Running svi with mutable states causes tracer leak
+
+BODY
+### Bug Description
+This is a sub-issue of https://github.com/pyro-ppl/numpyro/issues/1981. Running the following test raises error/xfail.
+
+### Steps to Reproduce
+```
+JAX_CHECK_TRACER_LEAKS=1 pytest -vs test/infer/test_svi.py::test_mutable_state
+```
+
+### Expected Behavior
+No error happens.
+

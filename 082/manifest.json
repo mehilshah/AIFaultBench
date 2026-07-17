@@ -1,0 +1,16 @@
+{
+  "bug_report": "bug_report.txt",
+  "codebase": "codebase/",
+  "title": "Dimension issues in Masked Patch Prediction",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh",
+  "primary_script": "repro.py",
+  "dependencies": [
+    "torch",
+    "einops"
+  ],
+  "notes": [
+    "Loads vit.py and mpp.py directly to avoid unrelated optional imports from vit_pytorch.__init__.",
+    "The failure occurs when MPP applies transformer.to_patch_embedding[-1] to raw flattened patches."
+  ]
+}

@@ -1,0 +1,4 @@
+{"cuda_available": false, "cuda_device_count": 0, "event": "runtime_info", "platform": "Linux-6.17.0-1024-oem-x86_64-with-glibc2.39", "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]", "torch_cuda": null, "torch_hip": null, "torch_version": "2.9.0+cpu"}
+{"device": "cpu", "event": "selected_device"}
+{"event": "blocking_reason", "reason": "ROCm is not available in this environment, so the reported HIP error cannot be exercised locally."}
+{"event": "results", "results": [{"case": {"attn_mask": true, "bias": true, "expand_first": true, "head_first": true}, "module": "Attention2d", "ok": true, "shape": [1, 128, 32, 48]}, {"case": {"attn_mask": false, "bias": false, "expand_first": false, "head_first": false}, "module": "Attention2d", "ok": true, "shape": [1, 128, 32, 48]}, {"case": {"key_dim": 32, "kv_stride": 1, "query_strides": 1, "value_dim": 32}, "module": "MultiQueryAttention2d", "ok": true, "shape": [1, 128, 32, 48]}]}

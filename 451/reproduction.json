@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "LightningArgumentParser rejected trainer.strategy.device_mesh=[1, 4] with the nested error 'Expected a tuple with 1 elements' for FSDPStrategy, matching the reported type-hint mismatch.",
+  "steps": [
+    "Checked out Lightning commit 283ce7733ec23786d41751f185093eac83c0ef8d.",
+    "Installed the Lightning CLI dependencies in an isolated virtual environment.",
+    "Parsed a trainer config containing FSDPStrategy with device_mesh set to [1, 4].",
+    "Observed SystemExit 2 with parser validation failure for tuple length 1 instead of 2."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

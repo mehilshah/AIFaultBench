@@ -1,0 +1,13 @@
+{
+  "title": "dispatch_model unties tied weights when one side is offloaded",
+  "repository": "huggingface/accelerate",
+  "issue_url": "https://github.com/huggingface/accelerate/issues/993",
+  "entrypoint": "run_repro.sh",
+  "reproduction_script": "repro.py",
+  "dependencies": [
+    "torch",
+    "packaging",
+    "psutil",
+    "pyyaml"
+  ]
+}

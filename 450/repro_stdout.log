@@ -1,0 +1,10 @@
+torch: 2.7.1+cu126
+device_type: cpu
+image_position_offset: 65536
+ref_equal_01: False
+ref_equal_02: False
+ac_equal_01: True
+ac_equal_02: True
+max_diff: 1.9335092306137085
+ref_sample: -0.7218347787857056 -0.7218347787857056 -0.7218347787857056
+ac_sample: -0.72265625 -0.72265625 -0.72265625

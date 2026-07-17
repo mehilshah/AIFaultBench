@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` in the local venv reproduces the reported failure: `TypeError: TextPairRegressor.__init__() got an unexpected keyword argument 'document_embeddings'`.",
+  "steps": [
+    "Created a local virtual environment and installed the repo's Python dependencies.",
+    "Built a minimal offline harness with `DocumentTFIDFEmbeddings` and `TextPairRegressor`.",
+    "Called `model._init_model_with_state_dict(model._get_state_dict())` and observed the `document_embeddings` keyword mismatch."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

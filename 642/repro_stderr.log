@@ -1,0 +1,57 @@
+WARNING:2026-07-17 12:18:58,647:jax._src.xla_bridge:969: An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+Traceback (most recent call last):
+  File "642/repro.py", line 38, in <module>
+    main()
+  File "642/repro.py", line 34, in main
+    decoder(data)
+  File "642/codebase/numpyro/contrib/funsor/discrete.py", line 159, in wrap_fn
+    samples = _sample_posterior(
+              ^^^^^^^^^^^^^^^^^^
+  File "642/codebase/numpyro/contrib/funsor/discrete.py", line 61, in _sample_posterior
+    log_prob, model_tr, log_measures = _enum_log_density(
+                                       ^^^^^^^^^^^^^^^^^^
+  File "642/codebase/numpyro/contrib/funsor/infer_util.py", line 201, in _enum_log_density
+    model_trace = packed_trace(model).get_trace(*model_args, **model_kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "642/codebase/numpyro/handlers.py", line 191, in get_trace
+    self(*args, **kwargs)
+  File "642/codebase/numpyro/primitives.py", line 121, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "642/codebase/numpyro/primitives.py", line 121, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "642/codebase/numpyro/primitives.py", line 121, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "642/repro.py", line 25, in hmm
+    _, (states, data) = scan(transition_fn, 0, data, length=2)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "642/codebase/numpyro/contrib/control_flow/scan.py", line 477, in scan
+    msg = apply_stack(initial_msg)
+          ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "642/codebase/numpyro/primitives.py", line 61, in apply_stack
+    default_process_message(msg)
+  File "642/codebase/numpyro/primitives.py", line 36, in default_process_message
+    msg["value"] = msg["fn"](*msg["args"], **msg["kwargs"])
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "642/codebase/numpyro/contrib/control_flow/scan.py", line 296, in scan_wrapper
+    return scan_enum(  # TODO: replay for enum
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "642/codebase/numpyro/contrib/control_flow/scan.py", line 233, in scan_enum
+    wrapped_carry, (pytree_trace, ys) = lax.scan(
+                                        ^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+^^^^^^^^^^^^^^^^^^
+Exception: Leaked trace DynamicJaxprTrace. Leaked tracer(s):
+
+Traced<ShapedArray(int32[10])>with<DynamicJaxprTrace>
+The error occurred while tracing the function body_fn at 642/codebase/numpyro/contrib/control_flow/scan.py:152 for scan. 
+<DynamicJaxprTracer 133572089162448> is referred to by <Tensor 133572087343264>.data
+<Tensor 133572087343264> is referred to by <dict 133572088304960>[Tensor(Traced<ShapedArray(int32[10])>with<DynamicJaxprTrace>, {'states': Bint[10]}, 10)]
+<dict 133572088304960> is referred to by <AdjointTape 133572300611008>._eager_to_lazy
+<AdjointTape 133572300611008> is referred to by <method 133572090059968>
+
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.

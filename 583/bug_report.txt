@@ -1,0 +1,75 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/13691
+
+TITLE
+[Security] Incomplete Fix for CVE-2026-44513: community Pipeline Branch Bypasses trust_remote_code Check
+
+BODY
+## 🔴 Security: Incomplete Fix for CVE-2026-44513 — community Pipeline Branch Bypasses `trust_remote_code` Check
+
+**Note:** This is a security vulnerability report related to the incomplete fix for CVE-2026-44513.
+
+### Summary
+
+The fix for CVE-2026-44513 in `get_cached_module_file()` (`src/diffusers/utils/dynamic_modules_utils.py`) is incomplete. The function has three code paths, but the **community pipeline branch** (line 329) downloads and executes Python code without checking `trust_remote_code`, while the other two branches correctly raise `ValueError`.
+
+### Vulnerable Code
+
+In `get_cached_module_file()`, the three branches:
+
+```python
+is_local_file = os.path.isfile(module_file_or_url)
+is_community_pipeline = not is_local_file and pretrained_model_name_or_path.count("/") == 0
+
+if is_local_file:
+    if not trust_remote_code: raise ValueError(...)    #  Protected
+
+elif is_community_pipeline:
+    # Downloads from diffusers/community-pipelines-mirror
+    hf_hub_download(...)                                 #  No trust_remote_code check
+
+else:
+    if not trust_remote_code: raise ValueError(...)    #  Protected
+```
+
+### Steps to Reproduce
+
+```python
+from diffusers import DiffusionPipeline
+
+# Should fail with ValueError, but succeeds:
+pipe = DiffusionPipeline.from_pretrained(
+    "google/ddpm-cifar10-32",
+    custom_pipeline="clip_guided_stable_diffusion",
+    trust_remote_code=False
+)
+# Code is downloaded and executed from diffusers/community-pipelines-mirror
+```
+
+### Mitigating Factors
+
+1. Code only loads from the fixed `diffusers/community-pipelines-mirror` dataset (not arbitrary repos)
+2. Non-existent pipeline names result in 404 errors
+3. Path traversal blocked by `count("/") == 0` check
+4. Users setting `trust_remote_code=False` are unlikely to also use `custom_pipeline`
+
+### Suggested Fix
+
+```python
+elif is_community_pipeline:
+    if not trust_remote_code:
+        raise ValueError(
+            f"Loading community pipeline '{pretrained_model_name_or_path}' requires executing code "
+            f"from the diffusers/community-pipelines-mirror dataset.\n"
+            f"Pass `trust_remote_code=True` to allow loading community pipeline code modules."
+        )
+    # ... existing logic ...
+```
+
+### CVSS: 6.8 (Medium)
+CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:U/C:H/I:H/A:H
+
+### Discoverer
+icysun (icysun@qq.com)
+
+Full report and PoC available upon request.
+

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` returns exit code 1 and the logs show `from adapters import LoRAConfig` fails with `RuntimeError: Failed to import adapters.configuration ... cannot import name 'url_to_filename' from 'huggingface_hub.file_download'`.",
+  "steps": [
+    "Create the isolated environment with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` from the standardized bug folder.",
+    "Observe that importing `LoRAConfig` fails while `huggingface-hub==0.26.0` is installed."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

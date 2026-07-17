@@ -1,0 +1,5 @@
+huggingface_hub==1.2.2
+PyYAML>=6.0
+torch>=2.2
+safetensors>=0.4.3
+tokenizers>=0.22.0,<=0.23.0

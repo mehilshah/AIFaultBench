@@ -1,0 +1,33 @@
+439/codebase/vllm/__init__.py:7: RuntimeWarning: Failed to read commit hash:
+No module named 'vllm._version'
+  from .version import __version__, __version_tuple__  # isort:skip
+Traceback (most recent call last):
+  File "439/repro.py", line 38, in <module>
+    main()
+    ~~~~^^
+  File "439/repro.py", line 27, in main
+    RequestState(
+    ~~~~~~~~~~~~^
+        max_num_reqs=1,
+        ^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        device=torch.device("cpu"),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "439/codebase/vllm/v1/worker/gpu/states.py", line 33, in __init__
+    self.all_token_ids = StagedWriteTensor(
+                         ~~~~~~~~~~~~~~~~~^
+        (self.max_num_reqs, self.max_model_len),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        uva_instead_of_gpu=True,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "439/codebase/vllm/v1/worker/gpu/buffer_utils.py", line 141, in __init__
+    self._uva_buf = UvaBuffer(size, dtype)
+                    ~~~~~~~~~^^^^^^^^^^^^^
+  File "439/codebase/vllm/v1/worker/gpu/buffer_utils.py", line 47, in __init__
+    raise RuntimeError("UVA is not available")
+RuntimeError: UVA is not available

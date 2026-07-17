@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "On this checkout, jitted_identity over a PRNG key on 2 CPU devices produced cache sizes 1, 1, 2 on the first run while trace_count stayed at 1. The same script also reproduced the no_tracing raise and the raw-key workaround staying at cache size 1.",
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh",
+    "Verified repro_stdout.log shows the third invocation creating a second C++ fastpath cache entry"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

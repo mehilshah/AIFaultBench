@@ -1,0 +1,15 @@
+AttributeError: module 'torch.distributions.constraints' has no attribute '_CorrCholesky'
+Traceback (most recent call last):
+  File "430/repro.py", line 42, in <module>
+    main()
+  File "430/repro.py", line 36, in main
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "430/codebase/pyro/distributions/torch_patch.py", line 74, in <module>
+    @patch_dependency("torch.distributions.constraints._CorrCholesky.check")
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "430/codebase/pyro/distributions/torch_patch.py", line 16, in patch_dependency
+    module = getattr(module, part)
+             ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'torch.distributions.constraints' has no attribute '_CorrCholesky'. Did you mean: '_LowerCholesky'?

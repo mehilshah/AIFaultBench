@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "316/repro.py", line 152, in <module>
+    main()
+  File "316/repro.py", line 148, in main
+    raise AssertionError("Tensor-likes are not close!")
+AssertionError: Tensor-likes are not close!

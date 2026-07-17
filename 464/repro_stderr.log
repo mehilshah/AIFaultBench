@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "464/repro.py", line 61, in <module>
+    main()
+  File "464/repro.py", line 57, in main
+    target.masked_scatter(mask, features)
+RuntimeError: masked_scatter: expected self and source to have same dtypes but gotBFloat16 and Byte

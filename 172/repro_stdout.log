@@ -1,0 +1,7 @@
+torch_version=2.13.0+cu130
+documented_shape=(*, 4, 4, 2)
+docstring_mentions_shape=True
+actual_shape=(1, 3, 4, 2)
+sample_tensor_shape=torch.Size([1, 3, 4, 2])
+matches_documented_shape=False
+result=runtime shape differs from documented shape

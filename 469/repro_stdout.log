@@ -1,0 +1,14 @@
+{
+  "final_prompt_preview": "JSON data:\n{\"005760de-a10e-4954-be21-d3adabe39940\": \"ea4feba2-dcfc-4d42-838b-c197c2af034b\", \"07f02748-2e68-4dec-9e18-780cdcebba4b\": \"79563fc8-949c-4aaa-8800-b519d67b5104\", \"097c7c17-ea33-4cbd-8226-7a611a4164e6\": \"eb9564b0-7048-46d0-9b1d-1cd",
+  "final_prompt_token_count": 144480,
+  "image_turns": [
+    "https://upload.wikimedia.org/wikipedia/commons/5/5f/Neotype_skeleton_of_Massospondylus_carinatus.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/f/f4/Massospondylus_type_material_seeley_1995.png",
+    "https://upload.wikimedia.org/wikipedia/commons/9/9c/Massospondylus_syntype_series.jpg"
+  ],
+  "model_id": "google/gemma-4-31B-it",
+  "selected_uuid_key": "097c7c17-ea33-4cbd-8226-7a611a4164e6",
+  "selected_uuid_value": "eb9564b0-7048-46d0-9b1d-1cd436bf72db",
+  "token_target": 144480,
+  "turns": 4
+}

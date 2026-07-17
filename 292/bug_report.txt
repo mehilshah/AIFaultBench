@@ -1,0 +1,59 @@
+# recovered-from-issue: https://github.com/pytorch/rl/issues/3881
+
+TITLE
+[BUG] OpenSpeil wrapper does not use batch_size
+
+BODY
+## Describe the bug
+
+The open-spiel wrapper advertises a batch size parameter, but this is not actually used -- only a single underlying game is ever created. 
+
+## To Reproduce
+
+```python
+from torchrl.envs import OpenSpielEnv
+env = OpenSpielEnv("chess", return_state=True, batch_size=(100,))
+td = env.reset()
+```
+
+```bash
+  File "/Users/abhisheks/dev/adhoc_rl/marl_engine/.venv/lib/python3.12/site-packages/torchrl/envs/common.py", line 1939, in done_spec
+    raise ValueError(
+ValueError: The value of spec.shape (torch.Size([1])) must match the env batch size (torch.Size([100])).
+```
+
+## Expected behavior
+
+Constructor doc clarifying the batch size limitation, and a value error check. 
+
+
+## Screenshots
+
+If applicable, add screenshots to help explain your problem.
+
+## System info
+
+Describe the characteristic of your environment:
+ * Describe how the library was installed (pip, source, ...)
+ * Python version
+ * Versions of any other relevant libraries
+
+```python
+import torchrl, numpy, sys
+print(torchrl.__version__, numpy.__version__, sys.version, sys.platform)
+```
+
+## Additional context
+
+Add any other context about the problem here.
+
+## Reason and Possible fixes
+
+If you know or suspect the reason for this bug, paste the code lines and suggest modifications.
+
+## Checklist
+
+- [x] I have checked that there is no similar issue in the repo (**required**)
+- [x] I have read the [documentation](https://github.com/pytorch/rl/tree/main/docs/) (**required**)
+- [x] I have provided a minimal working example to reproduce the bug (**required**)
+

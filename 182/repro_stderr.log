@@ -1,0 +1,18 @@
+Observed exception: AttributeError: 'Module' object has no attribute 'not_a_param'
+Traceback (most recent call last):
+  File "182/repro.py", line 37, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "182/repro.py", line 28, in main
+    Module(param=1e-3)
+  File "<string>", line 4, in __init__
+  File "182/repro.py", line 21, in __post_init__
+    self.save_hyperparameters()
+  File "182/codebase/src/lightning/pytorch/core/mixins/hparams_mixin.py", line 131, in save_hyperparameters
+    save_hyperparameters(self, *args, ignore=ignore, frame=frame, given_hparams=given_hparams)
+  File "182/codebase/src/lightning/pytorch/utilities/parsing.py", line 170, in save_hyperparameters
+    init_args = {f.name: getattr(obj, f.name) for f in fields(obj)}
+                         ^^^^^^^^^^^^^^^^^^^^
+  File "182/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1928, in __getattr__
+    raise AttributeError(
+AttributeError: 'Module' object has no attribute 'not_a_param'

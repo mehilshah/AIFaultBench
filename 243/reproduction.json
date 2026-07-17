@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With XLA forced to 4 CPU devices, the reproduced run matched the report's pattern: NUTS lag-1 autocorrelation was 0.449453, AIES was 0.940259, and ESS was 0.022275. ESS is the clear outlier and has much lower autocorrelation than both comparison samplers.",
+  "steps": [
+    "Create a 4-device CPU JAX runtime so the reported parallel/vectorized chain methods can execute.",
+    "Run the local NumPyro 0.18.0 checkout on the Poisson-with-Uniform-prior model from the bug report.",
+    "Compare lag-1 autocorrelation of flattened posterior draws for NUTS, AIES, and ESS."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

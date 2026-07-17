@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "timm version: 1.0.15 | model type: ResNet | conv1 kernel/stride/padding: (7, 7)/(2, 2)/(3, 3) | maxpool present: MaxPool2d | classifier out_features: 100 | forward output shape: (2, 100)",
+  "steps": [
+    "Install the local CPU-only PyTorch/torchvision environment.",
+    "Import the local `codebase/` copy of timm and instantiate `resnet34` with `num_classes=100`.",
+    "Run a random 32x32 forward pass to confirm the model path works."
+  ],
+  "blocking_reason": "The reported symptom is an end-to-end CIFAR-100 accuracy gap after 200 epochs, which is not deterministically reproducible from the repository alone here. The local smoke test shows `timm.create_model('resnet34')` builds and runs, and the source documents `resnet34` as the standard torchvision-style 7x7-stem ResNet, not a CIFAR-specific variant.",
+  "reproduction_command": "bash run_repro.sh"
+}

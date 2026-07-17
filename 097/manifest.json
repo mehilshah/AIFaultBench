@@ -1,0 +1,12 @@
+{
+  "bug_id": "097",
+  "bug_dir": "097",
+  "issue_url": "https://github.com/lucidrains/denoising-diffusion-pytorch/issues/262",
+  "commit_hash": "7558d3f59962a9287bd524c464b2edef0e6fae76",
+  "library_name": "denoising-diffusion-pytorch",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": "true",
+  "standardized_dir": "../097"
+}

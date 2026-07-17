@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` in a clean venv produced `feature_dtype=torch.uint8` from `Gemma4UnifiedMultimodalEmbedder.forward()` and then failed with `RuntimeError: masked_scatter: expected self and source to have same dtypes but gotBFloat16 and Byte`.",
+  "steps": [
+    "Create the isolated venv with `bash setup_env.sh`.",
+    "Run the reduced Gemma4 multimodal repro with `bash run_repro.sh`.",
+    "Observe the byte-typed multimodal features and the `masked_scatter` dtype mismatch."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

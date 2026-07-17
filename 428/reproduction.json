@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the repro script constructs a PolygonMasks instance from polygon coordinates and then crashes when accessing PolygonMasks.device with AttributeError: 'PolygonMasks' object has no attribute 'tensor'.",
+  "steps": [
+    "Load codebase/detectron2/structures/masks.py with minimal runtime stubs for unrelated dependencies.",
+    "Instantiate PolygonMasks with a simple polygon list.",
+    "Access PolygonMasks.device."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

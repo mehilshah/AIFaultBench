@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "request.parallel_tool_calls=None was accepted by the request-side model.",
+    "ResponsesResponse.model_validate({'parallel_tool_calls': None}) raised a Pydantic ValidationError: Input should be a valid boolean [type=bool_type, input_value=None, input_type=NoneType].",
+    "The captured output matches the bug report's crash mode for parallel_tool_calls=null."
+  ],
+  "steps": [
+    "Created a minimal Pydantic reproducer mirroring the request/response field mismatch from codebase/vllm/entrypoints/openai/responses/protocol.py.",
+    "Installed pydantic into a local virtual environment with ./setup_env.sh.",
+    "Ran ./run_repro.sh and captured stdout/stderr in repro_stdout.log and repro_stderr.log.",
+    "Observed the expected ValidationError when None was passed into the response model."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

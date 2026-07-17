@@ -1,0 +1,24 @@
+303/fp_quantizer_warning_repro.cu(12): warning #68-D: integer conversion resulted in a change of sign
+          detected during instantiation of "void apply_quantization_warning<T,unroll,_mantisa_bits,_exponent_bits,total_q_bits,q_mantisa_bits,stochastic_rounding>() [with T=__half, unroll=5, _mantisa_bits=23, _exponent_bits=8, total_q_bits=4, q_mantisa_bits=1, stochastic_rounding=1]" 
+(30): here
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+          detected during instantiation of "void apply_quantization_warning<T,unroll,_mantisa_bits,_exponent_bits,total_q_bits,q_mantisa_bits,stochastic_rounding>() [with T=__half, unroll=5, _mantisa_bits=23, _exponent_bits=8, total_q_bits=4, q_mantisa_bits=1, stochastic_rounding=1]" 
+303/fp_quantizer_warning_repro.cu(30): here
+
+303/fp_quantizer_warning_repro.cu(25): warning #62-D: shift count is negative
+          detected during instantiation of "void apply_selective_dequantization_warning<T,q_mantisa_bits,total_q_bits,_mantisa_bits,_exponent_bits>() [with T=__half, q_mantisa_bits=10, total_q_bits=16, _mantisa_bits=3, _exponent_bits=4]" 
+(31): here
+
+303/fp_quantizer_warning_repro.cu(12): warning #68-D: integer conversion resulted in a change of sign
+          detected during instantiation of "void apply_quantization_warning<T,unroll,_mantisa_bits,_exponent_bits,total_q_bits,q_mantisa_bits,stochastic_rounding>() [with T=__half, unroll=5, _mantisa_bits=23, _exponent_bits=8, total_q_bits=4, q_mantisa_bits=1, stochastic_rounding=1]" 
+(30): here
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+          detected during instantiation of "void apply_quantization_warning<T,unroll,_mantisa_bits,_exponent_bits,total_q_bits,q_mantisa_bits,stochastic_rounding>() [with T=__half, unroll=5, _mantisa_bits=23, _exponent_bits=8, total_q_bits=4, q_mantisa_bits=1, stochastic_rounding=1]" 
+303/fp_quantizer_warning_repro.cu(30): here
+
+303/fp_quantizer_warning_repro.cu(25): warning #62-D: shift count is negative
+          detected during instantiation of "void apply_selective_dequantization_warning<T,q_mantisa_bits,total_q_bits,_mantisa_bits,_exponent_bits>() [with T=__half, q_mantisa_bits=10, total_q_bits=16, _mantisa_bits=3, _exponent_bits=4]" 
+(31): here
+

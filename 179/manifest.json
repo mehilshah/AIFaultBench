@@ -1,0 +1,12 @@
+{
+  "bug_report": "bug_report.txt",
+  "package": "lark-parser",
+  "version": "0.11.1",
+  "language": "python",
+  "reproducible": true,
+  "reproduction_script": "repro.py",
+  "run_command": "./run_repro.sh",
+  "dependencies": [
+    "-e ./codebase"
+  ]
+}

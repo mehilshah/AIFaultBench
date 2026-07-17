@@ -1,0 +1,12 @@
+{
+  "bug_id": "117",
+  "bug_dir": "117",
+  "issue_url": "https://github.com/clearml/clearml/issues/1268",
+  "commit_hash": "",
+  "library_name": "clearml",
+  "library_version": "1.16.0rc0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../117"
+}

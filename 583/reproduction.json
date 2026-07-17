@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Control case raised ValueError for a normal remote repo, but the community pipeline case returned diffusers_modules/git/clip_guided_stable_diffusion.py with trust_remote_code=False.",
+  "steps": [
+    "Load diffusers/utils/dynamic_modules_utils.py directly with a minimal stub package.",
+    "Call get_cached_module_file() for hf-internal-testing/diffusers-dummy-pipeline with trust_remote_code=False and observe ValueError.",
+    "Call get_cached_module_file() for clip_guided_stable_diffusion with trust_remote_code=False and observe it returns a cached module path instead of raising."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

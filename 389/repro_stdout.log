@@ -1,0 +1,9 @@
+jax_version: 0.10.1
+jaxlib_version: 0.10.1
+backend: cpu
+jax: [[nan, nan, nan], [0.35449573397636414, 0.04463260620832443, 1.1511584574463996e-07]]
+expected: [[nan, nan, -inf], [0.35449573397636414, 0.04463260620832443, 1.1511584574463996e-07]]
+third_element_is_negative_inf: False
+third_element_is_nan: True
+matches_expected: False
+BUG: -inf * positive subnormal returned nan

@@ -1,0 +1,17 @@
+Loading model from_pretrained('nvidia/canary-1b-v2')
+[NeMo I 2026-07-17 03:03:23 mixins:184] Tokenizer CanaryBPETokenizer initialized with 16384 tokens
+[NeMo I 2026-07-17 03:03:27 save_restore_connector:145] Restoration will occur within pre-extracted directory : `/tmp/tmp4f1xfgy7`.
+[NeMo I 2026-07-17 03:03:29 mixins:184] Tokenizer SentencePieceTokenizer initialized with 16384 tokens
+[NeMo I 2026-07-17 03:03:36 save_restore_connector:285] Model EncDecCTCModelBPE was successfully restored from /tmp/tmp4f1xfgy7.
+[NeMo I 2026-07-17 03:03:38 save_restore_connector:285] Model EncDecMultiTaskModel was successfully restored from /users/grad/mehil/.cache/huggingface/hub/models--nvidia--canary-1b-v2/snapshots/87bc52657add533cd0156b3fc1aef027280754bf/canary-1b-v2.nemo.
+Model loaded in 17.91s
+timestamps_asr_model is None: False
+Loaded timestamp.wav: 12000 samples @ 16000 Hz
+Transcription finished in 0.34s
+[
+  {
+    "word": [],
+    "segment": []
+  }
+]
+Reproduced: timestamp['word'] and timestamp['segment'] are both empty.

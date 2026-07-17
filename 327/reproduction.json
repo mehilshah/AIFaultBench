@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Using sdv 1.35.1.dev0, the repro sampled datetime2 values outside the real data range (real: 2020-01-01 only; synthetic: 2019-07-04 09:28:36.084043560 to 2019-12-31 00:17:55.517074492) and run_diagnostic returned 0.75 with Data Validity 0.5.",
+  "steps": [
+    "Create the local virtual environment and install dependencies with bash setup_env.sh.",
+    "Run the repro with bash run_repro.sh.",
+    "Inspect repro_stdout.log and repro_stderr.log for the diagnostic score and generated datetime ranges."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

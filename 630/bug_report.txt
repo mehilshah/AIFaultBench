@@ -1,0 +1,22 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/2815
+
+TITLE
+intro SVI example has bug
+
+BODY
+The [1d Gaussian example in the intro](https://pyro.ai/examples/intro_part_ii.html) does not run as is,
+and gives the error
+```
+Error while computing log_prob at site 'measurement':
+The value argument to log_prob must be a Tensor
+```
+The reason is that the observation that is conditioned on  needs to be a tensor, not a python float.
+Change
+```
+conditioned_scale = pyro.condition(scale, data={"measurement": 9.5})
+```
+to
+```
+conditioned_scale = pyro.condition(scale, data={"measurement": torch.tensor(9.5)})
+```
+

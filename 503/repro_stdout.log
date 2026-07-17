@@ -1,0 +1,4 @@
+timm_file=503/codebase/timm/__init__.py
+matches=['fasternet_l', 'fasternet_m', 'fasternet_s', 'fasternet_t0', 'fasternet_t1', 'fasternet_t2']
+contains_fasternet_l=True
+create_model=OK FasterNet

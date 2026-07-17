@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "474/repro.py", line 36, in main
+    import pyro.distributions as base_distributions  # noqa: F401
+  File "474/.venv/lib/python3.10/site-packages/pyro/__init__.py", line 5, in <module>
+    from pyro.infer.inspect import render_model
+  File "474/.venv/lib/python3.10/site-packages/pyro/infer/__init__.py", line 11, in <module>
+    from pyro.infer.mcmc.api import MCMC
+  File "474/.venv/lib/python3.10/site-packages/pyro/infer/mcmc/__init__.py", line 5, in <module>
+    from pyro.infer.mcmc.api import MCMC, StreamingMCMC
+  File "474/.venv/lib/python3.10/site-packages/pyro/infer/mcmc/api.py", line 28, in <module>
+    from pyro.infer.mcmc.hmc import HMC
+  File "474/.venv/lib/python3.10/site-packages/pyro/infer/mcmc/hmc.py", line 13, in <module>
+    from pyro.infer.autoguide import init_to_uniform
+  File "474/.venv/lib/python3.10/site-packages/pyro/infer/autoguide/__init__.py", line 10, in <module>
+    from pyro.infer.autoguide.gaussian import AutoGaussian
+  File "474/.venv/lib/python3.10/site-packages/pyro/infer/autoguide/gaussian.py", line 24, in <module>
+    from .guides import AutoGuide
+  File "474/.venv/lib/python3.10/site-packages/pyro/infer/autoguide/guides.py", line 183, in <module>
+    class AutoGuideList(AutoGuide, nn.ModuleList):
+TypeError: metaclass conflict: the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases

@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "200/codebase/cibuildwheel/oci_container.py", line 123, in _check_engine_version
+    server_api_version = FlexibleVersion(version_info["Server"]["ApiVersion"])
+                                         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'ApiVersion'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "200/repro.py", line 84, in main
+    _check_engine_version(engine)
+  File "200/codebase/cibuildwheel/oci_container.py", line 162, in _check_engine_version
+    raise OCIEngineTooOldError(msg) from e
+cibuildwheel.errors.OCIEngineTooOldError: Build failed because docker is too old or is not working properly.

@@ -1,0 +1,1 @@
+blocking_reason: this repro requires a ROCm build of PyTorch on gfx1201; the local environment is not ROCm.

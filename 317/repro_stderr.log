@@ -1,0 +1,20 @@
+317/codebase/src/lightning/pytorch/utilities/parsing.py:213: Attribute 'coder' is an instance of `nn.Module` and is already saved during checkpointing. It is recommended to ignore them using `self.save_hyperparameters(ignore=['coder'])`.
+317/codebase/src/lightning/pytorch/utilities/parsing.py:213: Attribute 'loss' is an instance of `nn.Module` and is already saved during checkpointing. It is recommended to ignore them using `self.save_hyperparameters(ignore=['loss'])`.
+GPU available: False, used: False
+TPU available: False, using: 0 TPU cores
+💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+`Trainer(limit_train_batches=1)` was configured so 1 batch per epoch will be used.
+317/codebase/src/lightning/pytorch/trainer/connectors/data_connector.py:434: The 'train_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=47` in the `DataLoader` to improve performance.
+`Trainer.fit` stopped: `max_epochs=1` reached.
+`weights_only` was not set, defaulting to `False`.
+GPU available: False, used: False
+TPU available: False, using: 0 TPU cores
+💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+`Trainer(limit_train_batches=1)` was configured so 1 batch per epoch will be used.
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+`weights_only` was not set, defaulting to `False`.
+
+Finding best initial lr:   0%|          | 0/1 [00:00<?, ?it/s]`Trainer.fit` stopped: `max_steps=1` reached.
+
+Finding best initial lr: 100%|██████████| 1/1 [00:00<00:00, 248.58it/s]
+Restoring states from the checkpoint path at /tmp/lrfinder_bug_nh2ele_8/lr_find/.lr_find_6dcec22b-4d74-4273-8881-018de091d7f2.ckpt

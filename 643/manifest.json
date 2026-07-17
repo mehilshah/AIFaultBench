@@ -1,0 +1,11 @@
+{
+  "bug_id": "643",
+  "issue_url": "https://github.com/pyro-ppl/pyro/issues/2724",
+  "library_name": "pyro",
+  "library_version": "snapshot from standardized bug folder",
+  "reproduction_entrypoint": "run_repro.sh",
+  "source_inputs": [
+    "bug_report.txt",
+    "codebase/"
+  ]
+}

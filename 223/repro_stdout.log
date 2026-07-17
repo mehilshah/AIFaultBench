@@ -1,0 +1,3 @@
+triton_version=3.7.1
+launching kernel with grid callable that returns int
+fake compile reached

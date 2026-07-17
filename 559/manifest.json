@@ -1,0 +1,9 @@
+{
+  "bug_id": "559",
+  "issue_url": "https://github.com/huggingface/accelerate/issues/1112",
+  "library_name": "accelerate",
+  "library_version": "0.17.0.dev0",
+  "codebase_source": "huggingface/accelerate@f054799e7fb74554591a6085ca3b920e0b10f923",
+  "bug_report_source": "bug_report.txt",
+  "reproduction_command": "bash run_repro.sh"
+}

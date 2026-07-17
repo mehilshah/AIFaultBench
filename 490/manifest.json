@@ -1,0 +1,13 @@
+{
+  "bug_id": "490",
+  "bug_dir": "490",
+  "issue_url": "https://github.com/facebookresearch/detectron2/issues/56",
+  "commit_hash": "0c28c3d9f1141ad5d6ac4ba6efe306d38048981e",
+  "library_name": "detectron2",
+  "library_version": "0.1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "facebookresearch/detectron2@0c28c3d9f1141ad5d6ac4ba6efe306d38048981e",
+  "codebase_present": true,
+  "standardized_dir": "../490",
+  "reproduction_command": "bash run_repro.sh"
+}

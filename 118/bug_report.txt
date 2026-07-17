@@ -1,0 +1,15 @@
+Title: clearml-agent (1.9.3) incompatible with latest clearml version (2.0.0) #233
+Date: 2025-07-08T09:33:14+00:00
+URL: https://github.com/clearml/clearml/issues/1440
+
+Description:
+## Describe the bug
+`clearml` and `clearml-agent` pin different versions of requests.
+
+```
+Because no versions of clearml match >2.0.0,<3.0.0
+ and clearml (2.0.0) depends on requests (>=2.32.0), clearml (>=2.0.0,<3.0.0) requires requests (>=2.32.0).
+And because clearml-agent (1.9.3) depends on requests (>=2.20.0,<=2.31.0)
+ and no versions of clearml-agent match >1.9.3,<2.0.0, clearml (>=2.0.0,<3.0.0) is incompatible with clearml-agent (>=1.9.3,<2.0.0).
+So, because vision depends on both clearml (^2.0.0) and clearml-agent (^1.9.3), version solving failed.
+```

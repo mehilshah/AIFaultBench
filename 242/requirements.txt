@@ -1,0 +1,7 @@
+jax==0.5.1
+jaxlib==0.5.1
+flax==0.10.4
+numpy>=1.26
+scipy>=1.13
+multipledispatch
+tqdm

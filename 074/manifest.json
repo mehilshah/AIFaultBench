@@ -1,0 +1,21 @@
+{
+  "title": "DeepSpeed-Chat actor loss mask offset around EOS reward",
+  "source_issue": "https://github.com/deepspeedai/DeepSpeedExamples/issues/888",
+  "package_root": ".",
+  "entrypoint": "run_repro.sh",
+  "reproduction_command": "bash run_repro.sh",
+  "runtime": {
+    "language": "python",
+    "dependencies": []
+  },
+  "files": [
+    "bug_report.txt",
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md"
+  ]
+}

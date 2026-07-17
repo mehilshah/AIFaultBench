@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "On JAX 0.8.2 and Equinox 0.13.2, calling the jitted function first with a non-error input and then with an error input produced second_call_exception=ValueError instead of EquinoxRuntimeError.",
+  "steps": [
+    "Create a local virtual environment with python3 -m venv .venv",
+    "Install the bundle dependencies with ./setup_env.sh",
+    "Run ./run_repro.sh and observe the second call raising ValueError"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

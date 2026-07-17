@@ -1,0 +1,20 @@
+{
+  "bug_id": "047",
+  "bug_dir": "047",
+  "issue_url": "https://github.com/facebookresearch/fairseq/issues/5152",
+  "commit_hash": "25c20e6a5e781e4ef05e23642f21c091ba64872e",
+  "library_name": "fairseq",
+  "library_version": "unknown",
+  "bug_report_source": "./bug_report.txt",
+  "codebase_source": "./codebase",
+  "codebase_present": true,
+  "standardized_dir": "../047",
+  "repro_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "fixtures/"
+  ]
+}

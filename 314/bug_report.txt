@@ -1,0 +1,72 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/39108
+
+TITLE
+jax.scipy.special.gammaincc returns NaN for a=inf where one is expected
+
+BODY
+### Description
+
+`jax.scipy.special.gammaincc` appears to return `NaN` when the shape parameter `a` is positive infinity.
+
+For the regularized upper incomplete gamma function, with finite `x = 2.0` and `a = inf`, the result should tend to `1.0`. However, JAX returns `NaN`.
+
+This is also the complementary case of `gammainc(a, x)`: for the same inputs, `gammainc(inf, 2.0)` should tend to `0.0`, so `gammaincc(inf, 2.0)` should tend to `1.0`.
+
+### Minimal reproducible example
+
+```
+#!/usr/bin/env python3
+import os
+import sys
+import warnings
+
+warnings.filterwarnings("ignore")
+os.environ.setdefault("JAX_PLATFORMS", "cpu")
+
+try:
+    import numpy as np
+    import jax.numpy as jnp
+    import jax.scipy.special as jsp
+except ImportError as e:
+    print(f"missing dep: {e}")
+    sys.exit(2)
+
+a = np.array([np.inf], dtype=np.float32)
+x = np.array([2.0], dtype=np.float32)
+
+expected = np.array([1.0], dtype=np.float32)
+out = np.asarray(jsp.gammaincc(jnp.asarray(a), jnp.asarray(x)))
+
+print("jax:", out.tolist())
+print("expected:", expected.tolist())
+
+if not np.array_equal(out, expected, equal_nan=True):
+    sys.exit(0)
+sys.exit(1)
+```
+
+### Actual result
+
+```
+jax: [nan]
+expected: [1.0]
+```
+
+### Expected result
+
+```
+[1.0]
+```
+
+For finite `x = 2.0`, as `a` tends to positive infinity, the regularized upper incomplete gamma value should tend to `1.0`, not `NaN`.
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+jax: 0.10.1
+jaxlib: 0.10.1
+numpy: 2.4.6
+python: 3.13.13
+platform: Ubuntu 24.04.3 LTS, Linux x86_64
+accelerator: CPU backend
+
+Note: GPU is present, but CUDA-enabled jaxlib is not installed, so JAX falls back to CPU.

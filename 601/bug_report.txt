@@ -1,0 +1,30 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2447
+
+TITLE
+[BUG] KeyError when using models from huggingface
+
+BODY
+**Describe the bug**  
+I attempted to use the **original version of MobileNetV2 from Hugging Face** (https://huggingface.co/google/mobilenet_v2_1.0_224) with **timm** for **ImageNet classification**, but encountered a `KeyError: 'architecture'` at `timm/models/_hub.py:172` in the function `load_model_config_from_hf(model_id, cache_dir)`. Am I misunderstanding how to use models from Hugging Face with **timm**?  
+
+The error occurs in the following code:  
+https://github.com/huggingface/pytorch-image-models/blob/e44f14d7d2f557b9f3add82ee4f1ed2beefbb30d/timm/models/_hub.py#L172  
+
+**To Reproduce**  
+Steps to reproduce the issue:  
+1. Run the following code:  
+```python
+from timm import create_model
+
+model = create_model("hf-hub:google/mobilenet_v2_1.0_224", pretrained=True)
+```
+
+**Expected behavior**  
+The model should load successfully.  
+
+**Desktop (please complete the following information):**  
+- OS: Ubuntu  
+- **timm** repository version: 1.0.15  
+- PyTorch version (with CUDA/cuDNN): 2.3.1 py3.11_cuda12.1_cudnn8.9.2_0  
+
+**Additional context**

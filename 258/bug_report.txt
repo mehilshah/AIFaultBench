@@ -1,0 +1,58 @@
+Title: GaussianCopula `get_learned_distributions` crashes if nothing was learned
+Date: 2024-11-15T16:27:48+00:00
+URL: https://github.com/sdv-dev/SDV/issues/2297
+
+Description:
+### Environment Details
+* SDV version: 1.17.2.dev0 (but also reproducible on latest SDV version)
+
+### Error Description
+In some instances, I may have a dataset with columns where nothing gets modeled. For eg, I may just have ID columns, or I may have PII columns that don't get modeled (they are using AnonymizedFaker).
+
+In these instances, fitting and sampling work just fine. But `get_learned_distributions` causes a crash. 
+
+### Steps to reproduce
+```python
+import pandas as pd
+from sdv.metadata import Metadata
+from sdv.single_table import  GaussianCopulaSynthesizer
+import numpy as np
+
+metadata = Metadata().load_from_dict({
+    'tables': {
+        'table1': {
+            'columns': {
+                'col_1': {'sdtype': 'id'},
+                'col_2': { 'sdtype': 'credit_card_number'}
+            },
+        }
+    }
+})
+data = pd.DataFrame({
+    'col_1': range(100),
+    'col_2': range(100)
+})
+
+synthesizer = GaussianCopulaSynthesizer(metadata, default_distribution='beta')
+synthesizer.fit(data)
+synthesizer.get_learned_distributions()
+```
+```
+[/usr/local/lib/python3.10/dist-packages/sdv/single_table/copulas.py](https://localhost:8080/#) in get_learned_distributions(self)
+    219             )
+    220 
+--> 221         parameters = self._model.to_dict()
+    222         columns = parameters['columns']
+    223         univariates = deepcopy(parameters['univariates'])
+
+AttributeError: 'NoneType' object has no attribute 'to_dict'
+```
+
+### Expected Behavior
+If nothing was learned, then `get_learned_distributions` should just return an empty dict.
+```python
+synthesizer.get_learned_distributions()
+```
+```
+{}
+```

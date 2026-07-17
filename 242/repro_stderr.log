@@ -1,0 +1,35 @@
+WARNING:2026-07-17 03:30:13,970:jax._src.xla_bridge:966: An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+Traceback (most recent call last):
+  File "242/repro.py", line 52, in <module>
+    main()
+  File "242/repro.py", line 48, in main
+    numpyro.infer.util.log_likelihood(model, samples, x=x, y=y)
+  File "242/.venv/lib/python3.12/site-packages/numpyro/infer/util.py", line 1147, in log_likelihood
+    return soft_vmap(single_loglik, posterior_samples, len(batch_shape), chunk_size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "242/.venv/lib/python3.12/site-packages/numpyro/util.py", line 453, in soft_vmap
+    ys = lax.map(fn, xs) if num_chunks > 1 else fn(xs)
+         ^^^^^^^^^^^^^^^
+  File "242/.venv/lib/python3.12/site-packages/numpyro/infer/util.py", line 1122, in single_loglik
+    model_trace = trace(substituted_model).get_trace(*args, **kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "242/.venv/lib/python3.12/site-packages/numpyro/handlers.py", line 191, in get_trace
+    self(*args, **kwargs)
+  File "242/.venv/lib/python3.12/site-packages/numpyro/primitives.py", line 121, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "242/.venv/lib/python3.12/site-packages/numpyro/primitives.py", line 121, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "242/repro.py", line 31, in model
+    mlp = random_flax_module(
+          ^^^^^^^^^^^^^^^^^^^
+  File "242/.venv/lib/python3.12/site-packages/numpyro/contrib/module.py", line 371, in random_flax_module
+    nn = flax_module(
+         ^^^^^^^^^^^^
+  File "242/.venv/lib/python3.12/site-packages/numpyro/contrib/module.py", line 97, in flax_module
+    nn_vars = flax.core.unfreeze(nn_module.init(rngs, *args, **kwargs))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: First argument passed to an init function should be a ``jax.PRNGKey`` or a dictionary mapping strings to ``jax.PRNGKey``.
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.

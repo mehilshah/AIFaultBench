@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "In a Python 3.9 virtualenv with torch 1.9.0+cpu and the local Pyro 1.6.0 checkout, running the report's sequential-enumeration snippet prints the model shapes and then fails with RuntimeError: unsupported input to tensordot, got dims=0.",
+  "steps": [
+    "Create a Python 3.9 virtualenv.",
+    "Install the pinned dependencies from requirements.txt.",
+    "Run PYTHONPATH=codebase .venv/bin/python repro.py."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "With NumPy 1.26.4 and SciPy 1.11.4, the local POT 0.7.0 codebase reproduces the reported behavior: ot.emd returns a feasible transport plan P with exact row/column sums, but P has cost 354.43787279000003 while the manual plan Q from the report has cost 57.54321038317501.",
+  "steps": [
+    "Created an isolated virtual environment and installed the bug-specific dependencies from requirements.txt.",
+    "Installed the local codebase in editable mode with build isolation disabled so the bundled Cython extension could compile.",
+    "Ran the exact issue matrix through ot.emd after adding a NumPy legacy alias for np.int required by POT 0.7.0 on modern NumPy.",
+    "Verified that the returned plan is feasible but has much higher cost than the manual reference plan Q."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

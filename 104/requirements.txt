@@ -1,0 +1,3 @@
+torch
+einops>=0.8.0
+einx>=0.3.0

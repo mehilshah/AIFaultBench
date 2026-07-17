@@ -1,0 +1,401 @@
+# recovered-from-issue: https://github.com/vllm-project/vllm/issues/48592
+
+TITLE
+[Bug]: v0.25.0 torchcodec not compatible with cu129 wheel
+
+BODY
+### Your current environment
+
+<details>
+<summary>The output of <code>python collect_env.py</code></summary>
+
+```text
+Collecting environment information...
+uv is set
+==============================
+        System Info
+==============================
+OS                           : Rocky Linux 9.6 (Blue Onyx) (x86_64)
+GCC version                  : (GCC) 11.5.0 20240719 (Red Hat 11.5.0-5)
+Clang version                : Could not collect
+CMake version                : version 3.26.5
+Libc version                 : glibc-2.34
+
+==============================
+       PyTorch Info
+==============================
+PyTorch version              : 2.11.0+cu129
+Is debug build               : False
+CUDA used to build PyTorch   : 12.9
+ROCM used to build PyTorch   : N/A
+XPU used to build PyTorch    : N/A
+
+==============================
+      Python Environment
+==============================
+Python version               : 3.13.12 (main, Mar  3 2026, 15:01:51) [Clang 21.1.4 ] (64-bit runtime)
+Python platform              : Linux-5.14.0-570.26.1.el9_6.x86_64-x86_64-with-glibc2.34
+    
+==============================
+       CUDA / GPU Info
+==============================
+Is CUDA available            : True
+CUDA runtime version         : 12.6.20
+CUDA_MODULE_LOADING set to   : 
+GPU models and configuration : GPU 0: NVIDIA A40
+Nvidia driver version        : 575.57.08
+cuDNN version                : Could not collect
+HIP runtime version          : N/A
+MIOpen runtime version       : N/A
+Is XNNPACK available         : True
+
+==============================
+          CPU Info
+==============================
+Architecture:                         x86_64
+CPU op-mode(s):                       32-bit, 64-bit
+Address sizes:                        46 bits physical, 48 bits virtual
+Byte Order:                           Little Endian
+CPU(s):                               24
+On-line CPU(s) list:                  0-23
+Vendor ID:                            GenuineIntel
+Model name:                           Intel(R) Xeon(R) Gold 6126 CPU @ 2.60GHz
+CPU family:                           6
+Model:                                85
+Thread(s) per core:                   1
+Core(s) per socket:                   12
+Socket(s):                            2
+Stepping:                             4
+CPU(s) scaling MHz:                   82%
+CPU max MHz:                          3700.0000
+CPU min MHz:                          1000.0000
+BogoMIPS:                             5200.00
+Flags:                                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 pti intel_ppin ssbd mba ibrs ibpb stibp tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts vnmi pku ospke md_clear flush_l1d arch_capabilities
+Virtualization:                       VT-x
+L1d cache:                            768 KiB (24 instances)
+L1i cache:                            768 KiB (24 instances)
+L2 cache:                             24 MiB (24 instances)
+L3 cache:                             38.5 MiB (2 instances)
+NUMA node(s):                         4
+NUMA node0 CPU(s):                    0,4,8,12,16,20
+NUMA node1 CPU(s):                    1,5,9,13,17,21
+NUMA node2 CPU(s):                    2,6,10,14,18,22
+NUMA node3 CPU(s):                    3,7,11,15,19,23
+Vulnerability Gather data sampling:   Mitigation; Microcode
+Vulnerability Itlb multihit:          KVM: Mitigation: Split huge pages
+Vulnerability L1tf:                   Mitigation; PTE Inversion; VMX conditional cache flushes, SMT disabled
+Vulnerability Mds:                    Mitigation; Clear CPU buffers; SMT disabled
+Vulnerability Meltdown:               Mitigation; PTI
+Vulnerability Mmio stale data:        Mitigation; Clear CPU buffers; SMT disabled
+Vulnerability Reg file data sampling: Not affected
+Vulnerability Retbleed:               Mitigation; IBRS
+Vulnerability Spec rstack overflow:   Not affected
+Vulnerability Spec store bypass:      Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:             Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:             Mitigation; IBRS; IBPB conditional; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected
+Vulnerability Srbds:                  Not affected
+Vulnerability Tsx async abort:        Mitigation; Clear CPU buffers; SMT disabled
+
+==============================
+Versions of relevant libraries
+==============================
+[pip3] flashinfer-python==0.6.12
+[pip3] numpy==2.4.6
+[pip3] nvidia-cublas-cu12==12.9.1.4
+[pip3] nvidia-cuda-cccl-cu12==12.9.27
+[pip3] nvidia-cuda-crt==13.3.73
+[pip3] nvidia-cuda-cupti-cu12==12.9.79
+[pip3] nvidia-cuda-nvcc==13.2.78
+[pip3] nvidia-cuda-nvcc-cu12==12.9.86
+[pip3] nvidia-cuda-nvrtc-cu12==12.9.86
+[pip3] nvidia-cuda-runtime==13.3.29
+[pip3] nvidia-cuda-runtime-cu12==12.9.79
+[pip3] nvidia-cuda-tileiras==13.2.78
+[pip3] nvidia-cudnn-cu12==9.17.1.4
+[pip3] nvidia-cudnn-frontend==1.26.0
+[pip3] nvidia-cufft-cu12==11.4.1.4
+[pip3] nvidia-cufile-cu12==1.14.1.1
+[pip3] nvidia-curand-cu12==10.3.10.19
+[pip3] nvidia-cusolver-cu12==11.7.5.82
+[pip3] nvidia-cusparse-cu12==12.5.10.65
+[pip3] nvidia-cusparselt-cu12==0.7.1
+[pip3] nvidia-cutlass-dsl==4.5.2
+[pip3] nvidia-cutlass-dsl-libs-base==4.5.2
+[pip3] nvidia-ml-py==13.610.43
+[pip3] nvidia-nccl-cu12==2.28.9
+[pip3] nvidia-nvjitlink-cu12==12.9.86
+[pip3] nvidia-nvshmem-cu12==3.4.5
+[pip3] nvidia-nvtx-cu12==12.9.79
+[pip3] nvidia-nvvm==13.2.78
+[pip3] pyzmq==27.1.0
+[pip3] tokenspeed-triton==3.8.10.post20260709
+[pip3] torch==2.11.0+cu129
+[pip3] torch-c-dlpack-ext==0.1.5
+[pip3] torchaudio==2.11.0+cu129
+[pip3] torchcodec==0.14.0+cu126
+[pip3] torchvision==0.26.0+cu129
+[pip3] transformers==5.13.1
+[pip3] triton==3.6.0
+[conda] Could not collect
+
+==============================
+         vLLM Info
+==============================
+ROCM Version                 : Could not collect
+vLLM Version                 : 0.24.0
+vLLM Build Flags:
+  CUDA Archs: Not Set; ROCm: Disabled; XPU: Disabled
+GPU Topology:
+        GPU0    NIC0    CPU Affinity    NUMA Affinity   GPU NUMA ID
+GPU0     X      SYS     0,4,8,12,16     0               N/A
+NIC0    SYS      X 
+
+Legend:
+
+  X    = Self
+  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)
+  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node
+  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)
+  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)
+  PIX  = Connection traversing at most a single PCIe bridge
+  NV#  = Connection traversing a bonded set of # NVLinks
+
+NIC Legend:
+
+  NIC0: mlx5_0
+
+==============================
+     Environment Variables
+==============================
+CUDA=//cuda/12.6
+CUDA_HOME=//cuda/12.6
+CUDA_HOME=//cuda/12.6
+CUDA_INCLUDE_PATH=//cuda/12.6/include
+CUDA_ROOT=//cuda/12.6
+CUDA_VISIBLE_DEVICES=0
+CUDA_VISIBLE_DEVICES=0
+I_MPI_HYDRA_BOOTSTRAP=slurm
+I_MPI_HYDRA_BOOTSTRAP_EXEC_EXTRA_ARGS=--external-launcher
+LD_LIBRARY_PATH=//cuda/12.6/extras/CUPTI/lib64://cuda/12.6/lib64://cuda/12.6/lib:/usr/lib64/nvidia://openmpi/5.0.5-gcc-11.4.1-svmliy7/lib
+TORCHINDUCTOR_CACHE_DIR=//torchinductor
+ZE_AFFINITY_MASK=0
+PYTORCH_NVML_BASED_CUDA_CHECK=1
+TORCHINDUCTOR_COMPILE_THREADS=1
+```
+
+</details>
+
+
+### 🐛 Describe the bug
+
+It seems that torchcodec is not compatible with the new v25 release because they don't have cu129 wheels, only cu126. Likely related to #48395 . It probably works on cu13 because torchcodec >= 0.14 has cu13 wheels, but 
+
+```bash
+uv run vllm serve google/gemma-4-12B-it
+```
+
+```bash
+Traceback (most recent call last):
+vllm", line 10, in <module>
+    sys.exit(main())
+             ^^^^^^
+vllm/vllm/entrypoints/cli/main.py", line 18, in main
+    import vllm.entrypoints.cli.benchmark.main
+vllm/vllm/entrypoints/cli/benchmark/main.py", line 10, in <module>
+    from vllm.entrypoints.serve.utils.api_utils import VLLM_SUBCMD_PARSER_EPILOG
+vllm/vllm/entrypoints/serve/utils/api_utils.py", line 20, in <module>
+    from vllm.engine.arg_utils import EngineArgs
+vllm/vllm/engine/arg_utils.py", line 119, in <module>
+    from vllm.v1.sample.logits_processor import LogitsProcessor
+vllm/vllm/v1/sample/logits_processor/__init__.py", line 15, in <module>
+    from vllm.sampling_params import SamplingParams
+vllm/vllm/sampling_params.py", line 23, in <module>
+    from vllm.v1.serial_utils import PydanticMsgspecMixin
+vllm/vllm/v1/serial_utils.py", line 25, in <module>
+    from vllm.multimodal.inputs import (
+vllm/vllm/multimodal/__init__.py", line 3, in <module>
+    from .hasher import MultiModalHasher
+vllm/vllm/multimodal/hasher.py", line 17, in <module>
+    from .media import MediaWithBytes
+vllm/vllm/multimodal/media/__init__.py", line 5, in <module>
+    from .connector import MEDIA_CONNECTOR_REGISTRY, MediaConnector
+vllm/vllm/multimodal/media/connector.py", line 28, in <module>
+    from vllm.multimodal.video import get_video_loader_backend_for_processor
+vllm/vllm/multimodal/video.py", line 36, in <module>
+    from torchcodec.decoders import VideoDecoder
+vllm/.venv/lib/python3.12/site-packages/torchcodec/__init__.py", line 12, in <module>
+    from . import decoders, encoders, samplers, transforms  # noqa
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+vllm/.venv/lib/python3.12/site-packages/torchcodec/decoders/__init__.py", line 7, in <module>
+    from .._core import AudioStreamMetadata, VideoStreamMetadata
+vllm/.venv/lib/python3.12/site-packages/torchcodec/_core/__init__.py", line 8, in <module>
+    from ._metadata import (
+vllm/.venv/lib/python3.12/site-packages/torchcodec/_core/_metadata.py", line 15, in <module>
+    from torchcodec._core.ops import (
+vllm/.venv/lib/python3.12/site-packages/torchcodec/_core/ops.py", line 38, in <module>
+    load_torchcodec_shared_libraries()
+vllm/.venv/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 111, in load_torchcodec_shared_libraries
+    raise RuntimeError(
+RuntimeError: Could not load libtorchcodec. Likely causes:
+          1. FFmpeg is not properly installed in your environment. We support
+             versions 4, 5, 6, 7, and 8, and we attempt to load libtorchcodec
+             for each of those versions. Errors for versions not installed on
+             your system are expected; only the error for your installed FFmpeg
+             version is relevant. On Windows, ensure you've installed the
+             "full-shared" version which ships DLLs.
+          2. The PyTorch version (2.11.0+cu129) is not compatible with
+             this version of TorchCodec. Refer to the version compatibility
+             table:
+             https://github.com/pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec.
+          3. Another runtime dependency; see exceptions below.
+
+        The following exceptions were raised as we tried to load libtorchcodec:
+        
+[start of libtorchcodec loading traceback]
+FFmpeg version 8:
+Traceback (most recent call last):
+vllm/.venv/lib/python3.12/site-packages/torch/_ops.py", line 1503, in load_library
+    ctypes.CDLL(path)
+  File ".local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libnvrtc.so.13: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+vllm/.venv/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+vllm/.venv/lib/python3.12/site-packages/torch/_ops.py", line 1505, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: vllm/.venv/lib/python3.12/site-packages/torchcodec/libtorchcodec_core8.so
+
+FFmpeg version 7:
+Traceback (most recent call last):
+vllm/.venv/lib/python3.12/site-packages/torch/_ops.py", line 1503, in load_library
+    ctypes.CDLL(path)
+  File ".local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libnvrtc.so.13: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+vllm/.venv/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+vllm/.venv/lib/python3.12/site-packages/torch/_ops.py", line 1505, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: vllm/.venv/lib/python3.12/site-packages/torchcodec/libtorchcodec_core7.so
+
+FFmpeg version 6:
+Traceback (most recent call last):
+vllm/.venv/lib/python3.12/site-packages/torch/_ops.py", line 1503, in load_library
+    ctypes.CDLL(path)
+  File ".local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libnvrtc.so.13: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+vllm/.venv/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+vllm/.venv/lib/python3.12/site-packages/torch/_ops.py", line 1505, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: vllm/.venv/lib/python3.12/site-packages/torchcodec/libtorchcodec_core6.so
+
+FFmpeg version 5:
+Traceback (most recent call last):
+vllm/.venv/lib/python3.12/site-packages/torch/_ops.py", line 1503, in load_library
+    ctypes.CDLL(path)
+  File ".local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libnvrtc.so.13: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+vllm/.venv/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+vllm/.venv/lib/python3.12/site-packages/torch/_ops.py", line 1505, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: vllm/.venv/lib/python3.12/site-packages/torchcodec/libtorchcodec_core5.so
+
+FFmpeg version 4:
+Traceback (most recent call last):
+vllm/.venv/lib/python3.12/site-packages/torch/_ops.py", line 1503, in load_library
+    ctypes.CDLL(path)
+  File ".local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libnvrtc.so.13: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+vllm/.venv/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+vllm/.venv/lib/python3.12/site-packages/torch/_ops.py", line 1505, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: vllm/.venv/lib/python3.12/site-packages/torchcodec/libtorchcodec_core4.so
+[end of libtorchcodec loading traceback].
+```
+
+```toml
+[project]
+name = "vllmtest"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "vllm==0.24.0",
+    "torch",
+    "torchvision",
+    "torchaudio",
+    "torchcodec>=0.14",
+    "transformers>=5.5.*",
+]
+
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu129" },
+]
+torchaudio = [
+    { index = "pytorch-cu129" },
+]
+torchcodec = [
+    { index = "pytorch-cu126" },
+]
+torchvision = [
+    { index = "pytorch-cu129" },
+]
+vllm = [
+    { index = "vllm-cu129" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu129"
+url = "https://download.pytorch.org/whl/cu129"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
+
+[[tool.uv.index]]
+name = "vllm-cu129"
+url = "https://wheels.vllm.ai/0.24.0/cu129"
+explicit = true
+```
+
+Note that torchcodec doesn't have a cu129 wheel. If I leave it unspecified, it falls back to the cpu wheel and the same error occurs
+
+### Before submitting a new issue...
+
+- [x] Make sure you already searched for relevant issues, and asked the chatbot living at the bottom right corner of the [documentation page](https://docs.vllm.ai/en/latest/), which can answer lots of frequently asked questions.

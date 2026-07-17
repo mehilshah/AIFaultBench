@@ -1,0 +1,296 @@
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+opencv-python-headless 5.0.0.93 requires numpy>=2; python_version >= "3.9", but you have numpy 1.26.4 which is incompatible.
+An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+Traceback (most recent call last):
+  File "241/repro.py", line 41, in main
+    mcmc.run(jax.random.PRNGKey(1), mu, sigma)
+  File "241/codebase/numpyro/infer/mcmc.py", line 693, in run
+    states, last_state = partial_map_fn(map_args)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/codebase/numpyro/infer/mcmc.py", line 467, in _single_chain_mcmc
+    collect_vals = fori_collect(
+                   ^^^^^^^^^^^^^
+  File "241/codebase/numpyro/util.py", line 366, in fori_collect
+    last_val, collection, _, _ = maybe_jit(loop_fn, donate_argnums=0)(collection)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/traceback_util.py", line 179, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 248, in cache_miss
+    outs, out_flat, out_tree, args_flat, jaxpr, attrs_tracked = _python_pjit_helper(
+                                                                ^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 136, in _python_pjit_helper
+    infer_params_fn(*args, **kwargs)
+  File "241/.deps/jax/_src/api.py", line 325, in infer_params
+    return pjit.common_infer_params(pjit_info_args, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 495, in common_infer_params
+    jaxpr, consts, out_shardings, out_layouts_flat, attrs_tracked = _pjit_jaxpr(
+                                                                    ^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 1150, in _pjit_jaxpr
+    jaxpr, final_consts, out_type, attrs_tracked = _create_pjit_jaxpr(
+                                                   ^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/linear_util.py", line 350, in memoized_fun
+    ans = call(fun, *args)
+          ^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 1089, in _create_pjit_jaxpr
+    jaxpr, global_out_avals, consts, attrs_tracked = pe.trace_to_jaxpr_dynamic(
+                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/profiler.py", line 336, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/interpreters/partial_eval.py", line 2314, in trace_to_jaxpr_dynamic
+    jaxpr, out_avals, consts, attrs_tracked = trace_to_subjaxpr_dynamic(
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/interpreters/partial_eval.py", line 2336, in trace_to_subjaxpr_dynamic
+    ans = fun.call_wrapped(*in_tracers_)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/linear_util.py", line 192, in call_wrapped
+    ans = self.f(*args, **dict(self.params, **kwargs))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/codebase/numpyro/util.py", line 359, in loop_fn
+    return fori_loop(
+           ^^^^^^^^^^
+  File "241/codebase/numpyro/util.py", line 148, in fori_loop
+    return lax.fori_loop(lower, upper, body_fun, init_val)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/traceback_util.py", line 179, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/lax/control_flow/loops.py", line 1995, in fori_loop
+    (_, result), _ = scan(
+                     ^^^^^
+  File "241/.deps/jax/_src/traceback_util.py", line 179, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/lax/control_flow/loops.py", line 260, in scan
+    init_flat, carry_avals, carry_avals_out, init_tree, *rest = _create_jaxpr(init)
+                                                                ^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/lax/control_flow/loops.py", line 245, in _create_jaxpr
+    jaxpr, consts, out_tree, attrs_tracked = _initial_style_jaxpr_attrs(
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/lax/control_flow/common.py", line 74, in _initial_style_jaxpr_attrs
+    jaxpr, consts, out_tree, attrs_tracked = _initial_style_open_jaxpr(
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/lax/control_flow/common.py", line 60, in _initial_style_open_jaxpr
+    jaxpr, _, consts, attrs_tracked = pe.trace_to_jaxpr_dynamic(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/profiler.py", line 336, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/interpreters/partial_eval.py", line 2314, in trace_to_jaxpr_dynamic
+    jaxpr, out_avals, consts, attrs_tracked = trace_to_subjaxpr_dynamic(
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/interpreters/partial_eval.py", line 2336, in trace_to_subjaxpr_dynamic
+    ans = fun.call_wrapped(*in_tracers_)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/linear_util.py", line 192, in call_wrapped
+    ans = self.f(*args, **dict(self.params, **kwargs))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/lax/control_flow/loops.py", line 1885, in scanned_fun
+    return (i + 1, body_fun()(i, x)), None
+                   ^^^^^^^^^^^^^^^^
+  File "241/codebase/numpyro/util.py", line 362, in <lambda>
+    lambda i, vals: _body_fn(i, *vals),
+                    ^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/traceback_util.py", line 179, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 248, in cache_miss
+    outs, out_flat, out_tree, args_flat, jaxpr, attrs_tracked = _python_pjit_helper(
+                                                                ^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 136, in _python_pjit_helper
+    infer_params_fn(*args, **kwargs)
+  File "241/.deps/jax/_src/api.py", line 325, in infer_params
+    return pjit.common_infer_params(pjit_info_args, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 495, in common_infer_params
+    jaxpr, consts, out_shardings, out_layouts_flat, attrs_tracked = _pjit_jaxpr(
+                                                                    ^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 1150, in _pjit_jaxpr
+    jaxpr, final_consts, out_type, attrs_tracked = _create_pjit_jaxpr(
+                                                   ^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/linear_util.py", line 350, in memoized_fun
+    ans = call(fun, *args)
+          ^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 1089, in _create_pjit_jaxpr
+    jaxpr, global_out_avals, consts, attrs_tracked = pe.trace_to_jaxpr_dynamic(
+                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/profiler.py", line 336, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/interpreters/partial_eval.py", line 2314, in trace_to_jaxpr_dynamic
+    jaxpr, out_avals, consts, attrs_tracked = trace_to_subjaxpr_dynamic(
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/interpreters/partial_eval.py", line 2336, in trace_to_subjaxpr_dynamic
+    ans = fun.call_wrapped(*in_tracers_)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/linear_util.py", line 192, in call_wrapped
+    ans = self.f(*args, **dict(self.params, **kwargs))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/codebase/numpyro/util.py", line 332, in _body_fn
+    val = body_fun(val)
+          ^^^^^^^^^^^^^
+  File "241/codebase/numpyro/infer/mcmc.py", line 188, in _sample_fn_nojit_args
+    return (sampler.sample(state[0], args, kwargs),)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/codebase/numpyro/infer/ensemble.py", line 192, in sample
+    rng_key, _ = random.split(rng_key)
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/random.py", line 294, in split
+    typed_key, wrapped = _check_prng_key("split", key, error_on_batched=True)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/random.py", line 107, in _check_prng_key
+    raise ValueError(msg)
+ValueError: split accepts a single key, but was given a key array of shape (100, 2) != (). Use jax.vmap for batching.
+Traceback (most recent call last):
+  File "241/repro.py", line 52, in <module>
+    main()
+  File "241/repro.py", line 41, in main
+    mcmc.run(jax.random.PRNGKey(1), mu, sigma)
+  File "241/codebase/numpyro/infer/mcmc.py", line 693, in run
+    states, last_state = partial_map_fn(map_args)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/codebase/numpyro/infer/mcmc.py", line 467, in _single_chain_mcmc
+    collect_vals = fori_collect(
+                   ^^^^^^^^^^^^^
+  File "241/codebase/numpyro/util.py", line 366, in fori_collect
+    last_val, collection, _, _ = maybe_jit(loop_fn, donate_argnums=0)(collection)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/traceback_util.py", line 179, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 248, in cache_miss
+    outs, out_flat, out_tree, args_flat, jaxpr, attrs_tracked = _python_pjit_helper(
+                                                                ^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 136, in _python_pjit_helper
+    infer_params_fn(*args, **kwargs)
+  File "241/.deps/jax/_src/api.py", line 325, in infer_params
+    return pjit.common_infer_params(pjit_info_args, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 495, in common_infer_params
+    jaxpr, consts, out_shardings, out_layouts_flat, attrs_tracked = _pjit_jaxpr(
+                                                                    ^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 1150, in _pjit_jaxpr
+    jaxpr, final_consts, out_type, attrs_tracked = _create_pjit_jaxpr(
+                                                   ^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/linear_util.py", line 350, in memoized_fun
+    ans = call(fun, *args)
+          ^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 1089, in _create_pjit_jaxpr
+    jaxpr, global_out_avals, consts, attrs_tracked = pe.trace_to_jaxpr_dynamic(
+                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/profiler.py", line 336, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/interpreters/partial_eval.py", line 2314, in trace_to_jaxpr_dynamic
+    jaxpr, out_avals, consts, attrs_tracked = trace_to_subjaxpr_dynamic(
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/interpreters/partial_eval.py", line 2336, in trace_to_subjaxpr_dynamic
+    ans = fun.call_wrapped(*in_tracers_)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/linear_util.py", line 192, in call_wrapped
+    ans = self.f(*args, **dict(self.params, **kwargs))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/codebase/numpyro/util.py", line 359, in loop_fn
+    return fori_loop(
+           ^^^^^^^^^^
+  File "241/codebase/numpyro/util.py", line 148, in fori_loop
+    return lax.fori_loop(lower, upper, body_fun, init_val)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/traceback_util.py", line 179, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/lax/control_flow/loops.py", line 1995, in fori_loop
+    (_, result), _ = scan(
+                     ^^^^^
+  File "241/.deps/jax/_src/traceback_util.py", line 179, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/lax/control_flow/loops.py", line 260, in scan
+    init_flat, carry_avals, carry_avals_out, init_tree, *rest = _create_jaxpr(init)
+                                                                ^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/lax/control_flow/loops.py", line 245, in _create_jaxpr
+    jaxpr, consts, out_tree, attrs_tracked = _initial_style_jaxpr_attrs(
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/lax/control_flow/common.py", line 74, in _initial_style_jaxpr_attrs
+    jaxpr, consts, out_tree, attrs_tracked = _initial_style_open_jaxpr(
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/lax/control_flow/common.py", line 60, in _initial_style_open_jaxpr
+    jaxpr, _, consts, attrs_tracked = pe.trace_to_jaxpr_dynamic(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/profiler.py", line 336, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/interpreters/partial_eval.py", line 2314, in trace_to_jaxpr_dynamic
+    jaxpr, out_avals, consts, attrs_tracked = trace_to_subjaxpr_dynamic(
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/interpreters/partial_eval.py", line 2336, in trace_to_subjaxpr_dynamic
+    ans = fun.call_wrapped(*in_tracers_)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/linear_util.py", line 192, in call_wrapped
+    ans = self.f(*args, **dict(self.params, **kwargs))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/lax/control_flow/loops.py", line 1885, in scanned_fun
+    return (i + 1, body_fun()(i, x)), None
+                   ^^^^^^^^^^^^^^^^
+  File "241/codebase/numpyro/util.py", line 362, in <lambda>
+    lambda i, vals: _body_fn(i, *vals),
+                    ^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/traceback_util.py", line 179, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 248, in cache_miss
+    outs, out_flat, out_tree, args_flat, jaxpr, attrs_tracked = _python_pjit_helper(
+                                                                ^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 136, in _python_pjit_helper
+    infer_params_fn(*args, **kwargs)
+  File "241/.deps/jax/_src/api.py", line 325, in infer_params
+    return pjit.common_infer_params(pjit_info_args, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 495, in common_infer_params
+    jaxpr, consts, out_shardings, out_layouts_flat, attrs_tracked = _pjit_jaxpr(
+                                                                    ^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 1150, in _pjit_jaxpr
+    jaxpr, final_consts, out_type, attrs_tracked = _create_pjit_jaxpr(
+                                                   ^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/linear_util.py", line 350, in memoized_fun
+    ans = call(fun, *args)
+          ^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/pjit.py", line 1089, in _create_pjit_jaxpr
+    jaxpr, global_out_avals, consts, attrs_tracked = pe.trace_to_jaxpr_dynamic(
+                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/profiler.py", line 336, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/interpreters/partial_eval.py", line 2314, in trace_to_jaxpr_dynamic
+    jaxpr, out_avals, consts, attrs_tracked = trace_to_subjaxpr_dynamic(
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/interpreters/partial_eval.py", line 2336, in trace_to_subjaxpr_dynamic
+    ans = fun.call_wrapped(*in_tracers_)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/linear_util.py", line 192, in call_wrapped
+    ans = self.f(*args, **dict(self.params, **kwargs))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/codebase/numpyro/util.py", line 332, in _body_fn
+    val = body_fun(val)
+          ^^^^^^^^^^^^^
+  File "241/codebase/numpyro/infer/mcmc.py", line 188, in _sample_fn_nojit_args
+    return (sampler.sample(state[0], args, kwargs),)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/codebase/numpyro/infer/ensemble.py", line 192, in sample
+    rng_key, _ = random.split(rng_key)
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/random.py", line 294, in split
+    typed_key, wrapped = _check_prng_key("split", key, error_on_batched=True)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "241/.deps/jax/_src/random.py", line 107, in _check_prng_key
+    raise ValueError(msg)
+ValueError: split accepts a single key, but was given a key array of shape (100, 2) != (). Use jax.vmap for batching.

@@ -1,0 +1,6 @@
+reproducible: True
+jax version: 0.10.2.dev20260717
+jaxlib version: 0.10.1
+numpy version: 2.5.1
+float32: numpy=np.float32(nan), eager=Array(-1., dtype=float32), jit=Array(-1., dtype=float32)
+float64: numpy=np.float64(nan), eager=Array(-1., dtype=float64), jit=Array(-1., dtype=float64)

@@ -1,0 +1,11 @@
+294/codebase/pyro/ops/stats.py:514: SyntaxWarning: invalid escape sequence '\g'
+  """
+Traceback (most recent call last):
+  File "294/repro.py", line 43, in main
+    pyro.render_model(model)
+  File "294/codebase/pyro/infer/inspect.py", line 630, in render_model
+    get_model_relations(
+  File "294/codebase/pyro/infer/inspect.py", line 316, in get_model_relations
+    param_constraint[name] = str(site["kwargs"]["constraint"])
+                                 ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'constraint'

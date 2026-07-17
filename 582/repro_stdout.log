@@ -1,0 +1,4 @@
+conversation=[]
+calling apply_chat_template(tokenize=False)
+exception_type=IndexError
+exception_message=list index out of range

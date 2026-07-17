@@ -1,0 +1,74 @@
+{"numpy": "1.26.4", "gymnasium": "0.28.1"}
+=== DummyVectorEnv ===
+reset_type=ndarray
+reset_obs=[[[0],
+  [0],
+  [0]],
+
+ [[0],
+  [0],
+  [0]]]
+step_0_type=ndarray
+step_0_obs=[[[0],
+  [0],
+  [1]],
+
+ [[0],
+  [0],
+  [1]]]
+step_0_rew=[0.0, 1.0] done=[False, False] info=[{'timestep': 1, 'env_id': 0}, {'timestep': 1, 'env_id': 1}]
+step_1_type=ndarray
+step_1_obs=[[[0],
+  [1],
+  [2]],
+
+ [[0],
+  [1],
+  [2]]]
+step_1_rew=[0.0, 1.0] done=[False, False] info=[{'timestep': 2, 'env_id': 0}, {'timestep': 2, 'env_id': 1}]
+step_2_type=ndarray
+step_2_obs=[[[1],
+  [2],
+  [3]],
+
+ [[1],
+  [2],
+  [3]]]
+step_2_rew=[0.0, 1.0] done=[False, False] info=[{'timestep': 3, 'env_id': 0}, {'timestep': 3, 'env_id': 1}]
+=== ShmemVectorEnv ===
+reset_type=ndarray
+reset_obs=[[[0],
+  [0],
+  [0]],
+
+ [[0],
+  [0],
+  [0]]]
+step_0_type=ndarray
+step_0_obs=[[[0],
+  [0],
+  [0]],
+
+ [[0],
+  [0],
+  [0]]]
+step_0_rew=[0.0, 1.0] done=[False, False] info=[{'timestep': 1, 'env_id': 0}, {'timestep': 1, 'env_id': 1}]
+step_1_type=ndarray
+step_1_obs=[[[0],
+  [0],
+  [0]],
+
+ [[0],
+  [0],
+  [0]]]
+step_1_rew=[0.0, 1.0] done=[False, False] info=[{'timestep': 2, 'env_id': 0}, {'timestep': 2, 'env_id': 1}]
+step_2_type=ndarray
+step_2_obs=[[[0],
+  [0],
+  [0]],
+
+ [[0],
+  [0],
+  [0]]]
+step_2_rew=[0.0, 1.0] done=[False, False] info=[{'timestep': 3, 'env_id': 0}, {'timestep': 3, 'env_id': 1}]
+BUG_REPRODUCED: ShmemVectorEnv keeps returning the reset frame stack after step()

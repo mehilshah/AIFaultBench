@@ -1,0 +1,7 @@
+# recovered-from-issue: https://github.com/lucidrains/rotary-embedding-torch/issues/24
+
+TITLE
+nan loss when training in fp8 with transformer engine
+
+BODY
+When using this in transformer architecture and training with fp8 precision using [transformer engine library](https://github.com/NVIDIA/TransformerEngine/), loss is nan.

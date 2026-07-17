@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "Running `bash run_repro.sh` against `sdv==1.33.1` printed `same_order=True` for every table in the `financial` demo dataset and ended with `BUG_NOT_REPRODUCED`.",
+  "steps": [
+    "Create a Python 3.12 virtual environment and install `sdv==1.33.1` from `requirements.txt`.",
+    "Download `download_demo(modality='multi_table', dataset_name='financial')`.",
+    "Compare each table's dataframe column order against `metadata.to_dict()['tables'][table]['columns'].keys()`."
+  ],
+  "blocking_reason": "The `financial` demo metadata currently matches the actual table column order for every table checked, so the mismatch described in the issue is not present in this environment.",
+  "reproduction_command": "bash run_repro.sh"
+}

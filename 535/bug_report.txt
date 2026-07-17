@@ -1,0 +1,78 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7741
+
+TITLE
+[BUG] DecoupledCheckpointEngine hangs indefinitely due to missing timeouts and process health checks
+
+BODY
+## Describe the bug
+
+The `DecoupledCheckpointEngine` has multiple critical issues that can cause training jobs to hang indefinitely:
+
+1. **No timeout on process join**: `cleanup()` calls `self.ckpt_process.join()` with no timeout - if the checkpoint process crashes or hangs, the training script hangs forever.
+
+2. **No timeout on event wait**: `commit()` calls `self.save_event.wait()` with no timeout - if the checkpoint process dies before setting the event, training hangs forever.
+
+3. **Assertion used for runtime validation**: Line 119 uses `assert info == self.commit_info` which is disabled with `python -O`, allowing silent data corruption in production.
+
+4. **`__del__` calls blocking cleanup**: The destructor calls `cleanup()`, so any exception during training can cause the program to hang on exit.
+
+5. **No process health checks**: No verification that `ckpt_process` is still alive before waiting on events or queues.
+
+## To Reproduce
+
+1. Enable decoupled checkpointing in DeepSpeed config
+2. Start a training job that saves checkpoints
+3. Kill or crash the checkpoint subprocess (e.g., OOM, signal, or disk full)
+4. Observe that the main training process hangs indefinitely on `save_event.wait()` or `ckpt_process.join()`
+
+Alternatively:
+
+1. Run training with `python -O` (optimized mode)
+2. Trigger a checkpoint with mismatched `commit_info`
+3. The assert is skipped, potentially corrupting checkpoint state
+
+## Expected behavior
+
+- Checkpoint operations should have timeouts and fail gracefully with clear error messages
+- Process health should be checked before blocking waits
+- Runtime validation should use proper `if` statements, not assertions
+- Training should be able to recover or exit cleanly if checkpointing fails
+
+## Affected Code
+
+**File**: `deepspeed/runtime/checkpoint_engine/decoupled_checkpoint_engine.py`
+
+| Line | Issue | Severity |
+|------|-------|----------|
+| 119 | `assert info == self.commit_info` - disabled with `-O` | Critical |
+| 123 | `self.save_event.wait()` - no timeout | Critical |
+| 155 | `self.ckpt_process.join()` - no timeout | Critical |
+| 99-100 | `__del__` calls `cleanup()` - can hang on destruction | High |
+
+## System info
+
+- **Affects**: All systems using `DecoupledCheckpointEngine`
+- **OS**: Any
+- **GPU**: Any
+- **Python**: Any version
+
+## Proposed Fix
+
+```python
+# Replace assert with proper validation
+if info != self.commit_info:
+    raise ValueError(f"Checkpoint commit info mismatch: expected {self.commit_info}, got {info}")
+
+# Add timeout to event wait with process health check
+TIMEOUT_SECONDS = 300  # 5 minutes
+while not self.save_event.wait(timeout=10):
+    if not self.ckpt_process.is_alive():
+        raise RuntimeError("Checkpoint process died unexpectedly")
+
+# Add timeout to process join
+self.ckpt_process.join(timeout=TIMEOUT_SECONDS)
+if self.ckpt_process.is_alive():
+    self.ckpt_process.terminate()
+    raise RuntimeError("Checkpoint process failed to exit within timeout")
+```
+

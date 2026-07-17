@@ -1,0 +1,22 @@
+{
+  "bug_id": "115",
+  "bug_dir": "115",
+  "issue_url": "https://github.com/axolotl-ai-cloud/axolotl/issues/3079",
+  "commit_hash": "",
+  "library_name": "axolotl",
+  "library_version": "0.13.0.dev",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../115",
+  "repro_artifacts": [
+    "repro.py",
+    "base_config.yml",
+    "sweep.yml",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ]
+}

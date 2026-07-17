@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running `bash run_repro.sh` printed `=> creating model 'resnet18'` and then failed with `AttributeError: module 'torch.backends' has no attribute 'mps'`.",
+    "The traceback points to `codebase/imagenet/main.py:171` at `elif torch.backends.mps.is_available():`."
+  ],
+  "steps": [
+    "Created an isolated Python environment and installed `torch==2.5.1` and `torchvision==0.20.1`.",
+    "Ran `python repro.py` via `bash run_repro.sh` with `--dummy` against `codebase/imagenet/main.py`.",
+    "Removed `torch.backends.mps` at runtime to emulate the unsupported backend path described in the bug report, then observed the same AttributeError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

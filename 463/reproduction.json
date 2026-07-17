@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the probe on Python 3.12.3 with jax 0.10.2.dev20260608+5073cd4d8 and jaxlib 0.10.2 prints `JitTracer(~int32[]) True False`, so `isinstance(x, ArrayLike)` is false for a traced value.",
+  "steps": [
+    "Clone the JAX checkout at commit 5073cd4d871bd39a04a75aef1db21e065b903f1a into `codebase/`.",
+    "Create a Python 3.12 virtualenv and install the pinned requirements from `requirements.txt`.",
+    "Run `bash run_repro.sh` to execute the JAX `jit` probe."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

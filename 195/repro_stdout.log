@@ -1,0 +1,5 @@
+Running direct @beartype repro for jaxtyping symbolic return axis handling.
+Input array: [1, 2]
+Reproduced jaxtyping.AnnotationError.
+Message: Cannot process symbolic axis 'dim+1' as some axis names have not been processed. In practice you should usually only use symbolic axes in annotations for return types, referring only to axes annotated for arguments.
+Observed the misleading symbolic-axis error message from the report.

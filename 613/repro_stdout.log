@@ -1,0 +1,10 @@
+{
+  "source_evidence": {
+    "gemma4_has_expert_weights_assignment": false,
+    "gemma4_proxy_source_hint": true,
+    "gemma4_unified_accesses_expert_weights": true
+  }
+}
+Observed failure:
+
+Exception text: 'Gemma4ForCausalLM' object has no attribute 'expert_weights'

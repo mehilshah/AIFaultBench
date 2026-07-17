@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "source_file=codebase/examples/vision/pointnet.py | fit_line=263 | test_dataset_line=148 | ast_validation_arg='test_dataset' | finding=validation_data is bound to test_dataset, which is constructed from the test split | ast_fit_lineno=263",
+  "steps": [
+    "Read examples/vision/pointnet.py from the local codebase.",
+    "Verify that test_dataset is created from test_points and test_labels.",
+    "Verify that model.fit passes validation_data=test_dataset."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

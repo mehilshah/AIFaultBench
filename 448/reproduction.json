@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Verified locally with jax==0.10.1 and jaxlib==0.10.1 on CPU.",
+    "Running the minimal pallas_call repro on shape (1, 512) with grid (1, 4) and block size 128 produced nan_count=256.",
+    "Observed block pattern was ok, nan, nan, ok, matching the issue report."
+  ],
+  "steps": [
+    "Create a Python 3.12 virtual environment.",
+    "Install pinned dependencies from requirements.txt.",
+    "Run repro.py with JAX forced to CPU.",
+    "Observe that the middle two blocks are NaN while the first and last blocks are written correctly."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

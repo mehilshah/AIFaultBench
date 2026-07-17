@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "441/repro.py", line 28, in <module>
+    main()
+  File "441/repro.py", line 24, in main
+    assert expected_fragment in observed, observed
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ResizeKeepRatio(size=(224, 224), interpolation=bilinear, longest=0.000, random_scale_prob=0.000, random_scale_range=(0.500, 1.100), random_aspect_prob=0.000, random_aspect_range=(0.900, 1.100))

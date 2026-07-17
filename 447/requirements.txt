@@ -1,0 +1,11 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.4.1
+aiohttp
+fsspec
+jinja2
+numpy
+psutil>=5.8.0
+pyparsing
+requests
+tqdm
+xxhash

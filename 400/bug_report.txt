@@ -1,0 +1,17 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/2093
+
+TITLE
+Continuous uniform density gives density >0 outside of support
+
+BODY
+### Bug Description
+The uniform probability density function (`numpyro.distributions.Uniform`) gives a non-zero probability density for events outside of its support. That is, if we define the density  $p(x) = U(x \mid a,b)$, with $a$ and $b$ its lower and upper bounds, then $p(x)$ should be zero for $x\not\in [a,b]$.
+
+### Steps to Reproduce
+```
+import numpyro.distributions as dist
+assert jnp.exp(dist.Uniform(0.0, 5.0).log_prob(7.0)) == 0.0
+```
+### Expected Behavior
+For values of $x$ outside of the support, `uniform.log_prob()` should return `-inf`.
+

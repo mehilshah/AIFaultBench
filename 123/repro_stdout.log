@@ -1,0 +1,31 @@
+Collecting gymnasium==1.1.1 (from -r 123/requirements.txt (line 1))
+  Downloading gymnasium-1.1.1-py3-none-any.whl.metadata (9.4 kB)
+Collecting numpy==2.5.1 (from -r 123/requirements.txt (line 2))
+  Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting cloudpickle==3.1.2 (from -r 123/requirements.txt (line 3))
+  Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+Collecting pandas==3.0.3 (from -r 123/requirements.txt (line 4))
+  Downloading pandas-3.0.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+Collecting typing-extensions>=4.3.0 (from gymnasium==1.1.1->-r 123/requirements.txt (line 1))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting farama-notifications>=0.0.1 (from gymnasium==1.1.1->-r 123/requirements.txt (line 1))
+  Downloading farama_notifications-0.0.6-py3-none-any.whl.metadata (729 bytes)
+Collecting python-dateutil>=2.8.2 (from pandas==3.0.3->-r 123/requirements.txt (line 4))
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas==3.0.3->-r 123/requirements.txt (line 4))
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Downloading gymnasium-1.1.1-py3-none-any.whl (965 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 965.4/965.4 kB 24.1 MB/s  0:00:00
+Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 44.4 MB/s  0:00:00
+Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+Downloading pandas-3.0.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (10.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.9/10.9 MB 40.0 MB/s  0:00:00
+Downloading farama_notifications-0.0.6-py3-none-any.whl (2.9 kB)
+Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Installing collected packages: farama-notifications, typing-extensions, six, numpy, cloudpickle, python-dateutil, gymnasium, pandas
+
+Successfully installed cloudpickle-3.1.2 farama-notifications-0.0.6 gymnasium-1.1.1 numpy-2.5.1 pandas-3.0.3 python-dateutil-2.9.0.post0 six-1.17.0 typing-extensions-4.16.0
+Box(-inf, inf, (2,), float32)

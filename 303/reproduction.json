@@ -1,0 +1,13 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "fp_quantizer_warning_repro.cu(12): warning #68-D: integer conversion resulted in a change of sign",
+    "fp_quantizer_warning_repro.cu(25): warning #62-D: shift count is negative"
+  ],
+  "steps": [
+    "Compiled fp_quantizer_warning_repro.cu with nvcc -std=c++17 -arch=sm_80 -c.",
+    "Observed CUDA compiler warnings matching the bug report: warning #68-D and warning #62-D."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,54 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.1.2)
+Looking in indexes: https://download.pytorch.org/whl/cu128, https://pypi.org/simple
+Requirement already satisfied: torch==2.7.0+cu128 in ./.venv/lib/python3.12/site-packages (from -r 139/requirements.txt (line 4)) (2.7.0+cu128)
+Requirement already satisfied: torchvision==0.22.0+cu128 in ./.venv/lib/python3.12/site-packages (from -r 139/requirements.txt (line 5)) (0.22.0+cu128)
+Requirement already satisfied: numpy<2.0 in ./.venv/lib/python3.12/site-packages (from -r 139/requirements.txt (line 6)) (1.26.4)
+Requirement already satisfied: pyyaml in ./.venv/lib/python3.12/site-packages (from -r 139/requirements.txt (line 7)) (6.0.3)
+Requirement already satisfied: huggingface_hub in ./.venv/lib/python3.12/site-packages (from -r 139/requirements.txt (line 8)) (1.23.0)
+Requirement already satisfied: safetensors in ./.venv/lib/python3.12/site-packages (from -r 139/requirements.txt (line 9)) (0.8.0)
+Requirement already satisfied: filelock in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (3.29.0)
+Requirement already satisfied: typing-extensions>=4.10.0 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (4.15.0)
+Requirement already satisfied: setuptools in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (78.1.0)
+Requirement already satisfied: sympy>=1.13.3 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (1.14.0)
+Requirement already satisfied: networkx in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (3.1.6)
+Requirement already satisfied: fsspec in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (2026.4.0)
+Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.8.61 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (12.8.61)
+Requirement already satisfied: nvidia-cuda-runtime-cu12==12.8.57 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (12.8.57)
+Requirement already satisfied: nvidia-cuda-cupti-cu12==12.8.57 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (12.8.57)
+Requirement already satisfied: nvidia-cudnn-cu12==9.7.1.26 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (9.7.1.26)
+Requirement already satisfied: nvidia-cublas-cu12==12.8.3.14 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (12.8.3.14)
+Requirement already satisfied: nvidia-cufft-cu12==11.3.3.41 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (11.3.3.41)
+Requirement already satisfied: nvidia-curand-cu12==10.3.9.55 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (10.3.9.55)
+Requirement already satisfied: nvidia-cusolver-cu12==11.7.2.55 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (11.7.2.55)
+Requirement already satisfied: nvidia-cusparse-cu12==12.5.7.53 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (12.5.7.53)
+Requirement already satisfied: nvidia-cusparselt-cu12==0.6.3 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (0.6.3)
+Requirement already satisfied: nvidia-nccl-cu12==2.26.2 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (2.26.2)
+Requirement already satisfied: nvidia-nvtx-cu12==12.8.55 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (12.8.55)
+Requirement already satisfied: nvidia-nvjitlink-cu12==12.8.61 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (12.8.61)
+Requirement already satisfied: nvidia-cufile-cu12==1.13.0.11 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (1.13.0.11)
+Requirement already satisfied: triton==3.3.0 in ./.venv/lib/python3.12/site-packages (from torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (3.3.0)
+Requirement already satisfied: pillow!=8.3.*,>=5.3.0 in ./.venv/lib/python3.12/site-packages (from torchvision==0.22.0+cu128->-r 139/requirements.txt (line 5)) (12.2.0)
+Requirement already satisfied: click<9.0.0,>=8.4.2 in ./.venv/lib/python3.12/site-packages (from huggingface_hub->-r 139/requirements.txt (line 8)) (8.4.2)
+Requirement already satisfied: hf-xet<2.0.0,>=1.5.1 in ./.venv/lib/python3.12/site-packages (from huggingface_hub->-r 139/requirements.txt (line 8)) (1.5.2)
+Requirement already satisfied: httpx<1,>=0.23.0 in ./.venv/lib/python3.12/site-packages (from huggingface_hub->-r 139/requirements.txt (line 8)) (0.28.1)
+Requirement already satisfied: packaging>=20.9 in ./.venv/lib/python3.12/site-packages (from huggingface_hub->-r 139/requirements.txt (line 8)) (26.2)
+Requirement already satisfied: tqdm>=4.42.1 in ./.venv/lib/python3.12/site-packages (from huggingface_hub->-r 139/requirements.txt (line 8)) (4.68.4)
+Requirement already satisfied: anyio in ./.venv/lib/python3.12/site-packages (from httpx<1,>=0.23.0->huggingface_hub->-r 139/requirements.txt (line 8)) (4.14.2)
+Requirement already satisfied: certifi in ./.venv/lib/python3.12/site-packages (from httpx<1,>=0.23.0->huggingface_hub->-r 139/requirements.txt (line 8)) (2026.6.17)
+Requirement already satisfied: httpcore==1.* in ./.venv/lib/python3.12/site-packages (from httpx<1,>=0.23.0->huggingface_hub->-r 139/requirements.txt (line 8)) (1.0.9)
+Requirement already satisfied: idna in ./.venv/lib/python3.12/site-packages (from httpx<1,>=0.23.0->huggingface_hub->-r 139/requirements.txt (line 8)) (3.18)
+Requirement already satisfied: h11>=0.16 in ./.venv/lib/python3.12/site-packages (from httpcore==1.*->httpx<1,>=0.23.0->huggingface_hub->-r 139/requirements.txt (line 8)) (0.16.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy>=1.13.3->torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch==2.7.0+cu128->-r 139/requirements.txt (line 4)) (3.0.3)
+python=3.12.3
+platform=Linux-6.17.0-1024-oem-x86_64-with-glibc2.39
+torch=2.7.0+cu128
+cuda_available=True
+device=NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition
+capability=(12, 0)
+inputs_equal=True
+double_rows_equal=True
+single_vs_double_equal=False
+max_abs_diff=0.0004730224609375
+BUG_REPRODUCED=True

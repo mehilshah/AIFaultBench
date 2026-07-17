@@ -1,0 +1,4 @@
+torch==2.7.1
+tensordict==0.10.0
+numpy
+packaging

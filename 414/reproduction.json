@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "The pinned checkout is b6326f7726429241a66c888c4d70d588049f77a9, whose commit message is '[Bugfix] Add MPS float64->float32 downcast (#3548)'.",
+    "The local host is Linux, not macOS, so Apple MPS cannot be exercised here.",
+    "The repro script is guarded to short-circuit with a blocking reason on non-Darwin systems."
+  ],
+  "steps": [
+    "Clone the pinned pytorch/rl checkout into ./codebase.",
+    "Inspect the repo and confirm the MPS float64 downcast fix is already present in this snapshot.",
+    "Run the repro entrypoint on this Linux host."
+  ],
+  "blocking_reason": "This environment is Linux, while the issue is specific to macOS MPS; the exact failing device backend is unavailable here.",
+  "reproduction_command": "bash run_repro.sh"
+}

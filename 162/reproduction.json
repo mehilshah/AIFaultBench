@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "docker pull quay.io/jupyter/scipy-notebook:hub-4.1.6 failed with exit code 1 and stderr reported `quay.io/jupyter/scipy-notebook:hub-4.1.6: not found`.",
+  "steps": [
+    "Run `bash run_repro.sh` in the bug folder.",
+    "The script invokes `docker pull quay.io/jupyter/scipy-notebook:hub-4.1.6`.",
+    "Docker returns `not found` for the requested tag."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

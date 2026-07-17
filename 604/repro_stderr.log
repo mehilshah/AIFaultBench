@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "604/repro.py", line 35, in <module>
+    main()
+  File "604/repro.py", line 30, in main
+    guide.quantiles([0.05, 0.5, 0.95])
+  File "604/.venv/lib/python3.10/site-packages/torch/autograd/grad_mode.py", line 27, in decorate_context
+    return func(*args, **kwargs)
+  File "604/codebase/pyro/infer/autoguide/guides.py", line 577, in quantiles
+    site_quantiles_values = dist.Normal(site_loc, site_scale).icdf(site_quantiles)
+  File "604/.venv/lib/python3.10/site-packages/torch/distributions/normal.py", line 91, in icdf
+    return self.loc + self.scale * torch.erfinv(2 * value - 1) * math.sqrt(2)
+RuntimeError: The size of tensor a (85) must match the size of tensor b (3) at non-singleton dimension 0

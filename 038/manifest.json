@@ -1,0 +1,9 @@
+{
+  "bug_id": "038",
+  "issue_url": "https://github.com/labmlai/annotated_deep_learning_paper_implementations/issues/244",
+  "library_name": "labml-nn",
+  "library_version": "unknown",
+  "source_folder": "../038",
+  "reproduction_entrypoint": "run_repro.sh",
+  "reported_failure": "RuntimeError: The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 3"
+}

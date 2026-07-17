@@ -1,0 +1,176 @@
+# recovered-from-issue: https://github.com/vllm-project/vllm/issues/48097
+
+TITLE
+[Bug]: parallel_tool_calls=null causes 500 crash in Responses API (/v1/responses)
+
+BODY
+### Your current environment
+
+<details>
+<summary>The output of <code>python collect_env.py</code></summary>
+
+```text
+Collecting environment information...
+==============================
+        System Info
+==============================
+OS                           : Ubuntu 24.04.3 LTS (x86_64)
+GCC version                  : (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Clang version                : Could not collect
+CMake version                : Could not collect
+Libc version                 : glibc-2.39
+
+==============================
+       PyTorch Info
+==============================
+PyTorch version              : 2.12.1+cpu
+Is debug build               : False
+CUDA used to build PyTorch   : None
+ROCM used to build PyTorch   : N/A
+XPU used to build PyTorch    : N/A
+
+==============================
+      Python Environment
+==============================
+Python version               : 3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0] (64-bit runtime)
+Python platform              : Linux-6.17.0-35-generic-x86_64-with-glibc2.39
+    
+
+==============================
+          CPU Info
+==============================
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           39 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  8
+On-line CPU(s) list:                     0-7
+Vendor ID:                               GenuineIntel
+Model name:                              11th Gen Intel(R) Core(TM) i5-1145G7 @ 2.60GHz
+CPU family:                              6
+Model:                                   140
+Thread(s) per core:                      2
+Core(s) per socket:                      4
+Socket(s):                               1
+Stepping:                                1
+CPU(s) scaling MHz:                      41%
+CPU max MHz:                             4400.0000
+CPU min MHz:                             400.0000
+BogoMIPS:                                2995.20
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l2 cdp_l2 ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves split_lock_detect user_shstk dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid movdiri movdir64b fsrm avx512_vp2intersect md_clear ibt flush_l1d arch_capabilities
+Virtualization:                          VT-x
+L1d cache:                               192 KiB (4 instances)
+L1i cache:                               128 KiB (4 instances)
+L2 cache:                                5 MiB (4 instances)
+L3 cache:                                8 MiB (1 instance)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-7
+Vulnerability Gather data sampling:      Vulnerable
+Vulnerability Ghostwrite:                Not affected
+Vulnerability Indirect target selection: Mitigation; Aligned branch/return thunks
+Vulnerability Itlb multihit:             Not affected
+Vulnerability L1tf:                      Not affected
+Vulnerability Mds:                       Not affected
+Vulnerability Meltdown:                  Not affected
+Vulnerability Mmio stale data:           Not affected
+Vulnerability Old microcode:             Not affected
+Vulnerability Reg file data sampling:    Not affected
+Vulnerability Retbleed:                  Not affected
+Vulnerability Spec rstack overflow:      Not affected
+Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; PBRSB-eIBRS SW sequence; BHI SW loop, KVM SW loop
+Vulnerability Srbds:                     Not affected
+Vulnerability Tsa:                       Not affected
+Vulnerability Tsx async abort:           Not affected
+Vulnerability Vmscape:                   Not affected
+
+==============================
+Versions of relevant libraries
+==============================
+[pip3] numpy==2.3.5
+[pip3] pyzmq==27.1.0
+[pip3] torch==2.12.1+cpu
+[pip3] transformers==5.12.1
+[pip3] triton==3.7.1
+[conda] Could not collect
+
+==============================
+         vLLM Info
+==============================
+ROCM Version                 : Could not collect
+vLLM Version                 : 0.23.1rc1.dev878+g47513b91a (git sha: 47513b91a)
+vLLM Build Flags:
+  CUDA Archs: Not Set; ROCm: Disabled; XPU: Disabled
+GPU Topology:
+  Could not collect
+
+==============================
+     Environment Variables
+==============================
+PYTORCH_NVML_BASED_CUDA_CHECK=1
+TORCHINDUCTOR_COMPILE_THREADS=1
+TORCHINDUCTOR_CACHE_DIR=/tmp/torchinductor_mahad
+```
+
+</details>
+
+
+### 🐛 Describe the bug
+
+## Bug
+Sending `"parallel_tool_calls": null` to the Responses API (`/v1/responses`)
+causes an unhandled `ValidationError` inside `from_request()`, returning a
+500 Internal Server Error instead of a clean 422.
+
+## Root Cause
+`ResponsesRequest` accepts `null` (field is `bool | None = True`), but
+`from_request()` passes the value directly to `ResponsesResponse` which
+declares `parallel_tool_calls: bool` — non-optional, no default. Pydantic
+v2 does not coerce `None → bool`, so it crashes.
+
+## Reproduction (no server needed — pure Pydantic)
+
+```python
+import sys; sys.path.insert(0, '.')
+from pydantic import ValidationError
+from vllm.entrypoints.openai.responses.protocol import ResponsesResponse
+
+try:
+    ResponsesResponse.model_validate({
+        'id': 'resp_test',
+        'model': 'test-model',
+        'parallel_tool_calls': None,
+        'output': [],
+        'status': 'completed',
+    })
+    print('no error')
+except ValidationError as e:
+    print('CRASH:', e)
+
+# Output:
+# CRASH: 1 validation error for ResponsesResponse
+# parallel_tool_calls
+#   Input should be a valid boolean [type=bool_type, input_value=None]
+```
+
+## Expected Behavior
+`null` should resolve to the documented default (`true`), consistent with
+how PR #44955 fixed the same issue in the ChatCompletion path.
+
+## Note: distinct from PR #44955
+PR #44955 fixed `parallel_tool_calls: null` behavior in `tool_calls_utils.py`
+(ChatCompletion path only). The Responses API never calls that function —
+confirmed via grep across all of `vllm/entrypoints/openai/responses/`.
+This crash is in `from_request()` in `responses/protocol.py`, a completely
+separate code path.
+
+## Related
+- #44948 — same class of bug reported for ChatCompletion (closed)
+- PR #44955 — fixed ChatCompletion path only, Responses API not covered
+
+Me and @muhammadfawaz1 are working on the fix.
+
+### Before submitting a new issue...
+
+- [x] Make sure you already searched for relevant issues, and asked the chatbot living at the bottom right corner of the [documentation page](https://docs.vllm.ai/en/latest/), which can answer lots of frequently asked questions.

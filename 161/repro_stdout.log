@@ -1,0 +1,18 @@
+lmdeploy setup evidence:
+  161/codebase/setup.py:45: f'nvidia-cublas-cu{CUDAVER}',
+  161/codebase/lmdeploy/version.py:4: __version__ = '0.10.2'
+
+$ /usr/bin/python3 -m venv /tmp/lmdeploy-repro-qmq4vbeo/venv
+$ /tmp/lmdeploy-repro-qmq4vbeo/venv/bin/python -m pip install nvidia-cublas-cu13==0.0.1
+Collecting nvidia-cublas-cu13==0.0.1
+  Downloading nvidia_cublas_cu13-0.0.1.tar.gz (1.4 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: nvidia-cublas-cu13
+  Building wheel for nvidia-cublas-cu13 (pyproject.toml): started
+  Building wheel for nvidia-cublas-cu13 (pyproject.toml): finished with status 'error'
+Failed to build nvidia-cublas-cu13

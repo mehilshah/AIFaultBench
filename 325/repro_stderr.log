@@ -1,0 +1,9 @@
+An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+325/.venv/lib/python3.12/site-packages/ml_dtypes/_finfo.py:710: DeprecationWarning: Implicit conversion of an array to a dtype is deprecated; rather than dtype=arr use dtype=arr.dtype. In the future this will result in an error.
+  key = np.dtype(dtype)
+325/.venv/lib/python3.12/site-packages/ml_dtypes/_finfo.py:710: DeprecationWarning: Implicit conversion of an array to a dtype is deprecated; rather than dtype=arr use dtype=arr.dtype. In the future this will result in an error.
+  key = np.dtype(dtype)
+325/.venv/lib/python3.12/site-packages/ml_dtypes/_finfo.py:710: DeprecationWarning: Implicit conversion of an array to a dtype is deprecated; rather than dtype=arr use dtype=arr.dtype. In the future this will result in an error.
+  key = np.dtype(dtype)
+325/.venv/lib/python3.12/site-packages/ml_dtypes/_finfo.py:710: DeprecationWarning: Implicit conversion of an array to a dtype is deprecated; rather than dtype=arr use dtype=arr.dtype. In the future this will result in an error.
+  key = np.dtype(dtype)

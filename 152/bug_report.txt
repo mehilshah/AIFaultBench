@@ -1,0 +1,79 @@
+Title: `decoder_start_token_id` or `bos_token_id` has to be defined for encoder-decoder generation.
+Date: 2025-12-11T06:22:58+00:00
+URL: https://github.com/huggingface/transformers/issues/42794
+
+Description:
+### System Info
+
+latest transformers
+
+### Who can help?
+
+@zucchini-nlp 
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+```python
+import torch
+from transformers import pipeline
+
+pipe = pipeline(
+    "document-question-answering",
+    model="naver-clova-ix/donut-base-finetuned-docvqa",
+    dtype=torch.float16,
+)
+
+image = "https://huggingface.co/spaces/impira/docquery/resolve/2359223c1837a7587402bda0f2643382a6eefeab/invoice.png"
+question = "What is the invoice number?"
+
+result = pipe(image=image, question=question)
+print(result)
+```
+
+error:
+```
+Traceback (most recent call last):
+  File "/home/jiqingfe/transformers/test_dqa.py", line 13, in <module>
+    result = pipe(image=image, question=question)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jiqingfe/transformers/src/transformers/pipelines/document_question_answering.py", line 310, in __call__
+    return super().__call__(inputs, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jiqingfe/transformers/src/transformers/pipelines/base.py", line 1278, in __call__
+    return next(
+           ^^^^^
+  File "/home/jiqingfe/transformers/src/transformers/pipelines/pt_utils.py", line 126, in __next__
+    item = next(self.iterator)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/jiqingfe/transformers/src/transformers/pipelines/pt_utils.py", line 271, in __next__
+    processed = self.infer(next(self.iterator), **self.params)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jiqingfe/transformers/src/transformers/pipelines/base.py", line 1185, in forward
+    model_outputs = self._forward(model_inputs, **forward_params)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jiqingfe/transformers/src/transformers/pipelines/document_question_answering.py", line 468, in _forward
+    model_outputs = self.model.generate(**model_inputs, **generate_kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/miniforge3/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jiqingfe/transformers/src/transformers/generation/utils.py", line 2551, in generate
+    self._prepare_special_tokens(generation_config, kwargs_has_attention_mask, device=device)
+  File "/home/jiqingfe/transformers/src/transformers/generation/utils.py", line 2145, in _prepare_special_tokens
+    raise ValueError(
+ValueError: `decoder_start_token_id` or `bos_token_id` has to be defined for encoder-decoder generation.
+```
+
+### Expected behavior
+
+Cannot locate which PR caused this regression because too many errors recently. The transformers 4.57.3 works well on the script.

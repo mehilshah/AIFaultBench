@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` in the isolated venv reproduces `TypeError: len() of a 0-d tensor` from `codebase/detectron2/structures/instances.py:71` when `Instances.__getitem__` calls `ret.set(k, v[item])` with integer indexing.",
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

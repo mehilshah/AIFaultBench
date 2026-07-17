@@ -1,0 +1,391 @@
+# recovered-from-issue: https://github.com/vllm-project/vllm/issues/48324
+
+TITLE
+[Bug]: FlashInfer fused allreduce + residual RMSNorm + quant produces corrupted output with FP32 norm weights
+
+BODY
+### Your current environment
+
+<details>
+<summary>The output of <code>python collect_env.py</code></summary>
+
+```text
+==============================
+        System Info
+==============================
+OS                           : Red Hat Enterprise Linux 9.2 (Plow) (x86_64)
+GCC version                  : (GCC) 11.3.1 20221121 (Red Hat 11.3.1-4)
+Clang version                : Could not collect
+CMake version                : Could not collect
+Libc version                 : glibc-2.34
+
+==============================
+       PyTorch Info
+==============================
+PyTorch version              : 2.11.0+cu130
+Is debug build               : False
+CUDA used to build PyTorch   : 13.0
+ROCM used to build PyTorch   : N/A
+XPU used to build PyTorch    : N/A
+
+==============================
+      Python Environment
+==============================
+Python version               : 3.12.13 (main, Apr  7 2026, 20:45:25) [Clang 22.1.1 ] (64-bit runtime)
+Python platform              : Linux-5.14.0-284.30.1.el9_2.x86_64-x86_64-with-glibc2.34
+    
+==============================
+       CUDA / GPU Info
+==============================
+Is CUDA available            : True
+CUDA runtime version         : 13.0.48
+CUDA_MODULE_LOADING set to   : 
+GPU models and configuration : 
+GPU 0: NVIDIA H100
+GPU 1: NVIDIA H100
+GPU 2: NVIDIA H100
+GPU 3: NVIDIA H100
+
+Nvidia driver version        : 535.309.01
+cuDNN version                : Could not collect
+HIP runtime version          : N/A
+MIOpen runtime version       : N/A
+Is XNNPACK available         : True
+
+==============================
+          CPU Info
+==============================
+Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Address sizes:                   52 bits physical, 57 bits virtual
+Byte Order:                      Little Endian
+CPU(s):                          160
+On-line CPU(s) list:             0-159
+Vendor ID:                       GenuineIntel
+Model name:                      Intel(R) Xeon(R) Platinum 8460Y+
+CPU family:                      6
+Model:                           143
+Thread(s) per core:              2
+Core(s) per socket:              40
+Socket(s):                       2
+Stepping:                        8
+CPU max MHz:                     3700.0000
+CPU min MHz:                     800.0000
+BogoMIPS:                        4000.00
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cat_l2 cdp_l3 invpcid_single intel_ppin cdp_l2 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local split_lock_detect avx_vnni avx512_bf16 wbnoinvd dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req hfi avx512vbmi umip pku ospke waitpkg avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg tme avx512_vpopcntdq la57 rdpid bus_lock_detect cldemote movdiri movdir64b enqcmd fsrm md_clear serialize tsxldtrk pconfig arch_lbr ibt amx_bf16 avx512_fp16 amx_tile amx_int8 flush_l1d arch_capabilities
+Virtualization:                  VT-x
+L1d cache:                       3.8 MiB (80 instances)
+L1i cache:                       2.5 MiB (80 instances)
+L2 cache:                        160 MiB (80 instances)
+L3 cache:                        210 MiB (2 instances)
+NUMA node(s):                    2
+NUMA node0 CPU(s):               0-39,80-119
+NUMA node1 CPU(s):               40-79,120-159
+Vulnerability Itlb multihit:     Not affected
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Mmio stale data:   Not affected
+Vulnerability Retbleed:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling, PBRSB-eIBRS SW sequence
+Vulnerability Srbds:             Not affected
+Vulnerability Tsx async abort:   Not affected
+
+==============================
+Versions of relevant libraries
+==============================
+[pip3] flashinfer-python==0.6.13
+[pip3] mypy_extensions==1.1.0
+[pip3] numpy==2.3.5
+[pip3] nvidia-cublas==13.1.0.3
+[pip3] nvidia-cuda-cccl==13.3.3.4.1
+[pip3] nvidia-cuda-crt==13.3.73
+[pip3] nvidia-cuda-cupti==13.0.85
+[pip3] nvidia-cuda-nvcc==13.2.78
+[pip3] nvidia-cuda-nvrtc==13.0.88
+[pip3] nvidia-cuda-runtime==13.0.96
+[pip3] nvidia-cuda-tileiras==13.2.78
+[pip3] nvidia-cudnn-cu13==9.19.0.56
+[pip3] nvidia-cudnn-frontend==1.26.0
+[pip3] nvidia-cufft==12.0.0.61
+[pip3] nvidia-cufile==1.15.1.6
+[pip3] nvidia-curand==10.4.0.35
+[pip3] nvidia-cusolver==12.0.4.66
+[pip3] nvidia-cusparse==12.6.3.3
+[pip3] nvidia-cusparselt-cu13==0.8.0
+[pip3] nvidia-cutlass-dsl==4.5.2
+[pip3] nvidia-cutlass-dsl-libs-base==4.5.2
+[pip3] nvidia-cutlass-dsl-libs-cu13==4.5.2
+[pip3] nvidia-ml-py==13.610.43
+[pip3] nvidia-nccl-cu13==2.28.9
+[pip3] nvidia-nvjitlink==13.0.88
+[pip3] nvidia-nvshmem-cu13==3.4.5
+[pip3] nvidia-nvtx==13.0.85
+[pip3] nvidia-nvvm==13.2.78
+[pip3] open_clip_torch==2.32.0
+[pip3] pyzmq==27.1.0
+[pip3] segmentation_models_pytorch==0.5.0
+[pip3] sentence-transformers==5.6.0
+[pip3] tokenspeed-triton==3.8.10.post20260709
+[pip3] torch==2.11.0+cu130
+[pip3] torch_c_dlpack_ext==0.1.5
+[pip3] torchaudio==2.11.0
+[pip3] torchcodec==0.14.0
+[pip3] torchvision==0.26.0
+[pip3] transformers==5.10.4
+[pip3] transformers-stream-generator==0.0.5
+[pip3] triton==3.6.0
+[pip3] tritonclient==2.70.0
+[pip3] vector-quantize-pytorch==1.30.1
+[conda] Could not collect
+
+==============================
+         vLLM Info
+==============================
+ROCM Version                 : Could not collect
+vLLM Version                 : 0.23.1rc1.dev1001+ge5588e49b (git sha: e5588e49b)
+vLLM Build Flags:
+  CUDA Archs: Not Set; ROCm: Disabled; XPU: Disabled
+GPU Topology:
+        GPU0    GPU1    GPU2    GPU3    NIC0    NIC1    NIC2    NIC3    NIC4    NIC5    CPU Affinity    NUMA Affinity   GPU NUMA ID
+GPU0     X      NV6     NV6     NV6     PIX     NODE    NODE    SYS     SYS     SYS     0-39,80-119     0               N/A
+GPU1    NV6      X      NV6     NV6     NODE    PIX     PIX     SYS     SYS     SYS     0-39,80-119     0               N/A
+GPU2    NV6     NV6      X      NV6     SYS     SYS     SYS     PIX     NODE    NODE    40-79,120-159   1               N/A
+GPU3    NV6     NV6     NV6      X      SYS     SYS     SYS     NODE    PIX     PIX     40-79,120-159   1               N/A
+NIC0    PIX     NODE    SYS     SYS      X      NODE    NODE    SYS     SYS     SYS
+NIC1    NODE    PIX     SYS     SYS     NODE     X      PIX     SYS     SYS     SYS
+NIC2    NODE    PIX     SYS     SYS     NODE    PIX      X      SYS     SYS     SYS
+NIC3    SYS     SYS     PIX     NODE    SYS     SYS     SYS      X      NODE    NODE
+NIC4    SYS     SYS     NODE    PIX     SYS     SYS     SYS     NODE     X      PIX
+NIC5    SYS     SYS     NODE    PIX     SYS     SYS     SYS     NODE    PIX      X 
+
+Legend:
+
+  X    = Self
+  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)
+  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node
+  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)
+  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)
+  PIX  = Connection traversing at most a single PCIe bridge
+  NV#  = Connection traversing a bonded set of # NVLinks
+
+NIC Legend:
+
+  NIC0: mlx5_0
+  NIC1: mlx5_1
+  NIC2: mlx5_2
+  NIC3: mlx5_3
+  NIC4: mlx5_4
+  NIC5: mlx5_5
+
+==============================
+     Environment Variables
+==============================
+CUDA_HOME=<cuda-toolkit>/cuda-130
+LD_LIBRARY_PATH=<cuda-toolkit>/cuda-130/compat:<cuda-toolkit>cuda-130/targets/x86_64-linux/lib
+PYTORCH_NVML_BASED_CUDA_CHECK=1
+TORCHINDUCTOR_COMPILE_THREADS=1
+
+```
+
+</details>
+
+
+### 🐛 Describe the bug
+
+The FlashInfer fused allreduce + residual RMSNorm + static quantization
+patterns can match graphs where the allreduce/RMSNorm input is BF16 but the
+RMSNorm weight is FP32.
+
+This causes silently corrupted generation with
+`nvidia/Qwen3.6-27B-NVFP4` at tensor parallel size 4 on H100 GPUs. A
+deterministic prompt produces repeated exclamation marks instead of `OK`.
+
+The affected patterns are:
+
+- `AllReduceFusedAddRMSNormStaticQuantFP8Pattern`
+- `AllReduceFusedAddRMSNormStaticQuantNVFP4Pattern`
+
+These residual quantized patterns do not apply
+`_norm_input_weight_dtype_match`, although the corresponding non-residual
+quantized patterns and ordinary residual RMSNorm patterns perform this
+compatibility check.
+
+Qwen/Gemma-style RMSNorm is relevant because its effective weight is computed
+using an expression such as:
+
+```python
+weight.float() + 1.0
+```
+
+The residual stream and allreduce input are BF16, while the effective RMSNorm
+weight passed by the matched graph is FP32. The fused quantized FlashInfer
+operation is therefore selected with incompatible input and norm-weight
+dtypes.
+
+This is a silent correctness failure: the server starts normally and returns
+successful HTTP responses containing corrupted tokens.
+
+## Reproduction
+
+Hardware:
+
+- 4× NVIDIA H100
+- Tensor parallel size 4
+- No NVSwitch; FlashInfer TRT-LLM allreduce backend
+
+Software configurations in which the failure was reproduced:
+
+- vLLM 0.24.0
+- PyTorch 2.11.0+cu130
+- FlashInfer 0.6.12
+- vLLM main at `e5588e49b`
+- FlashInfer 0.6.13
+- CUDA 13.0
+
+Start the server:
+
+```bash
+export VLLM_LOGGING_LEVEL=DEBUG
+export VLLM_FLASHINFER_ALLREDUCE_BACKEND=trtllm
+
+vllm serve nvidia/Qwen3.6-27B-NVFP4 \
+  --port 8002 \
+  --tensor-parallel-size 4
+```
+
+Then send a deterministic correctness request:
+
+```bash
+curl -sS --max-time 60 \
+  http://127.0.0.1:8002/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "nvidia/Qwen3.6-27B-NVFP4",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Reply with exactly: OK"
+      }
+    ],
+    "max_tokens": 16,
+    "temperature": 0,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    }
+  }'
+```
+
+Observed response content:
+
+```json
+"content": "!!!!!!!!!!!!!!!!"
+```
+
+Expected response content:
+
+```json
+"content": "OK"
+```
+
+## Isolation
+
+| Configuration | Result |
+|---|---|
+| TP=1 | Correct |
+| TP=4 with the default allreduce/RMSNorm fusion | Corrupted |
+| TP=4 with `--enforce-eager` | Correct |
+| TP=4 with `-cc.pass_config.fuse_allreduce_rms=False` | Correct |
+| TP=4 with only the quantized allreduce/RMSNorm fusion patterns disabled | Correct |
+| TP=4 with CUDA graphs disabled but the fusion retained | Corrupted |
+| TP=4 with PDL disabled but the fusion retained | Corrupted |
+| TP=4 with two-shot allreduce used for prefill | Corrupted |
+
+This indicates that the failure is not caused by CUDA graph replay, PDL
+ordering, or the one-shot prefill path.
+
+Disabling only the quantized allreduce/RMSNorm patterns restores correct
+generation while leaving the ordinary allreduce + RMSNorm fusion enabled.
+
+Compiled FX graph inspection shows the residual static-FP8 fusion pattern
+matching with:
+
+- BF16 allreduce/RMSNorm input
+- FP32 Qwen/Gemma RMSNorm weight
+
+## Proposed fix
+
+Apply the existing compatibility check to both residual quantized pattern
+registrations:
+
+```python
+extra_check=_norm_input_weight_dtype_match
+```
+
+Specifically:
+
+```text
+AllReduceFusedAddRMSNormStaticQuantFP8Pattern
+AllReduceFusedAddRMSNormStaticQuantNVFP4Pattern
+```
+
+With these guards, mixed-dtype Qwen/Gemma graphs no longer select the unsafe
+allreduce + RMSNorm + quant fusion. They can still select the specialized
+allreduce + Gemma RMSNorm fusion using `weight_bias=1.0`, followed by separate
+quantization.
+
+Models whose RMSNorm input and weight have compatible dtypes retain the fully
+fused quantized path.
+
+## Validation
+
+After adding the two guards:
+
+- The full Qwen server returns exactly `"OK"`.
+- Normal CUDA graph operation remains enabled.
+- PDL remains enabled.
+- The ordinary optimized allreduce + Gemma RMSNorm fusion remains active.
+- Focused distributed regression tests pass for both RMS custom-op modes.
+
+Test result:
+
+```text
+2 passed, 32 deselected
+```
+
+Test command:
+
+```bash
+.venv/bin/python -m pytest \
+  tests/compile/passes/distributed/test_fusion_all_reduce.py \
+  -k "GemmaRMSNormStaticQuantFP8 and trtllm" \
+  -v -s
+```
+
+The regression test uses:
+
+- TP=4
+- BF16 activations
+- FP32 Gemma RMSNorm weight
+- Static FP8 quantization
+- FlashInfer TRT-LLM allreduce backend
+
+## Additional context
+
+The quantized fusion patterns were introduced in
+https://github.com/vllm-project/vllm/pull/21069.
+
+I found related reports with repeated-token output, but none that identify this
+specific mixed-dtype allreduce/RMSNorm/quant fusion problem:
+
+- https://github.com/vllm-project/vllm/issues/27364 uses TP=1, so it cannot
+  involve this allreduce fusion.
+- https://huggingface.co/nvidia/Qwen3.6-27B-NVFP4/discussions/4 reports a
+  similar visible symptom on Blackwell, but its hardware and version behavior
+  differ from this H100 TP=4 reproducer.
+
+### Before submitting a new issue...
+
+- [x] Make sure you already searched for relevant issues, and asked the chatbot living at the bottom right corner of the [documentation page](https://docs.vllm.ai/en/latest/), which can answer lots of frequently asked questions.

@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` produced 5 trials total. The enqueued parameters {\"c0\": \"0\", \"c1\": \"0\"} appeared twice: once as trial 0 and again as trial 3. The repro script reported `target_occurrences=2` and `BUG REPRODUCED`.",
+  "steps": [
+    "Create a GridSampler study over the 2x2 categorical search space from the bug report.",
+    "Enqueue the first grid point with `study.enqueue_trial({\"c0\": \"0\", \"c1\": \"0\"})`.",
+    "Run `study.optimize(...)` and inspect the resulting trials.",
+    "Observe that the enqueued point is evaluated twice instead of being consumed once."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

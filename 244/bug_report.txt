@@ -1,0 +1,37 @@
+Title: Master depends on `typing_extensions` but doesn't state it
+Date: 2025-07-23T15:25:23+00:00
+URL: https://github.com/pyro-ppl/numpyro/issues/2053
+
+Description:
+### Bug Description
+Master depends on `typing_extensions` but does not install it. I think the dependency was introduced in #2028.
+
+CI didn't catch this because the test extra has `mypy`.
+
+### Steps to Reproduce
+```console
+$ uv venv --python 3.9 
+$ source .venv/bin/activate
+$ uv pip install numpyro@https://github.com/pyro-ppl/numpyro.git
+$ python -c 'import numpyro'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/Users/tarmo.aijo/numpyro_issue_type_extensions/.venv/lib/python3.9/site-packages/numpyro/__init__.py", line 13, in <module>
+    from numpyro import compat, diagnostics, distributions, handlers, infer, ops, optim
+  File "/Users/tarmo.aijo/numpyro_issue_type_extensions/.venv/lib/python3.9/site-packages/numpyro/distributions/__init__.py", line 4, in <module>
+    from numpyro.distributions.conjugate import (
+  File "/Users/tarmo.aijo/numpyro_issue_type_extensions/.venv/lib/python3.9/site-packages/numpyro/distributions/conjugate.py", line 13, in <module>
+    from numpyro._typing import ConstraintT
+  File "/Users/tarmo.aijo/numpyro_issue_type_extensions/.venv/lib/python3.9/site-packages/numpyro/_typing.py", line 9, in <module>
+    from typing_extensions import ParamSpec, TypeAlias
+ModuleNotFoundError: No module named 'typing_extensions'
+```
+
+### Expected Behavior
+We shouldn't get `ModuleNotFoundError` when we import numpyro
+```console
+$ uv venv --python 3.9 
+$ source .venv/bin/activate
+$ uv pip install numpyro@https://github.com/pyro-ppl/numpyro.git typing_extensions
+$ python -c 'import numpyro'
+```

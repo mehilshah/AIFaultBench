@@ -1,0 +1,74 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2813
+
+TITLE
+Metadata `remove_column` removes unexpected relationships
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+* SDV version: 1.33.1
+* Python version: 3.12
+* Operating System: Linux (Colab Notebook)
+
+### Error Description
+I'm trying to use the metadata [remove column](https://docs.sdv.dev/sdv/concepts/metadata/metadata-api#remove_column) function to remove a single column from my database. Since the column I want to remove is a foreign key column, I expect that it would also remove the primary/foreign key relationship that the column is a part of.
+
+Instead, it seems like multiple relationships are removed, not just the one associated with the column.
+
+### Steps to reproduce
+Create the following metadata. It is a 3-table metadata with one parent table and 2 children.
+```python
+test_metadata = Metadata.load_from_dict({
+    'tables': {
+        'table1': {
+            'primary_key': 'id',
+            'columns': {
+                'id': { 'sdtype': 'id' },
+                'A': { 'sdtype': 'numerical' },
+                'B': { 'sdtype': 'categorical'}
+            }
+        },
+        'table2': {
+            'primary_key': 'id',
+            'columns': {
+                'id': { 'sdtype': 'id' },
+                'fk_1': { 'sdtype': 'id' },
+                'A': { 'sdtype': 'numerical' },
+                'B': { 'sdtype': 'categorical'}           
+            }
+        },
+        'table3': {
+            'primary_key': 'id',
+            'columns': {
+                'id': { 'sdtype': 'id' },
+                'fk_1': { 'sdtype': 'id' },
+                'A': { 'sdtype': 'numerical' },
+                'B': { 'sdtype': 'categorical'}           
+            } 
+        }
+    },
+    'relationships': [{
+        'parent_table_name': 'table1',
+        'parent_primary_key': 'id',
+        'child_table_name': 'table2',
+        'child_foreign_key': 'fk_1'
+    },{
+        'parent_table_name': 'table1',
+        'parent_primary_key': 'id',
+        'child_table_name': 'table3',
+        'child_foreign_key': 'fk_1'
+    }]
+})
+```
+
+<img width="1023" height="398" alt="Image" src="https://github.com/user-attachments/assets/b1033665-7ce2-4d7a-92b5-aac7c5b31be6" />
+
+Now I want to remove the column `table2.fk_1`. Since this is a foreign key, I expect that the relationship between `table1` and `table2` will be removed (and _just_ this relationship). But in practice, I also see that the relationship between `table1` and `table3` is removed too -- even though it has nothing to do with the column I asked to remove!
+
+```python
+test_metadata.remove_column(table_name='table2', column_name='fk_1')
+test_metadata.visualize()
+```
+
+<img width="938" height="184" alt="Image" src="https://github.com/user-attachments/assets/8dc5f519-48c8-4edd-a1a5-b16e38d8e0b6" />

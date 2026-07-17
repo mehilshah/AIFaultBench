@@ -1,0 +1,12 @@
+{
+  "bug_id": "005",
+  "bug_dir": "005",
+  "issue_url": "https://github.com/tensorflow/models/issues/11206",
+  "commit_hash": "5445446014c80f23841afddbadf551d8c2adc200",
+  "library_name": "tensorflow/models",
+  "library_version": "2.16.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": "true",
+  "standardized_dir": "../005"
+}

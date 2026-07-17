@@ -1,0 +1,190 @@
+Title: [Bug]: putting `Sequence` space inside `Dict`, `Tuple`, or `OneOf` space will fail the env checker
+Date: 2025-08-29T20:13:33+00:00
+URL: https://github.com/DLR-RM/stable-baselines3/issues/2172
+
+Description:
+### 🐛 Bug
+
+`Sequence` space is not properly handled when putting inside a composite space (`Dict`, `Tuple`, or `OneOf`), causing the `stable_baselines3.common.env_checker.check_env` to fail.
+
+### Code example
+
+```python
+import traceback
+from itertools import product
+from typing import Optional
+
+import gymnasium as gym
+import numpy as np
+from gymnasium import spaces
+from stable_baselines3.common.env_checker import check_env
+
+
+class DummyDictEnv(gym.Env):
+    metadata = {"render_modes": ["human"]}
+
+    def __init__(self, stack: bool, inside: str):
+        self.observation_space = spaces.Sequence(
+            spaces.Box(low=-100, high=100, shape=(1,), dtype=np.float32),
+            stack=stack,
+        )
+        if inside == "dict":
+            self.observation_space = spaces.Dict({"seq": self.observation_space})
+        elif inside == "tuple":
+            self.observation_space = spaces.Tuple((self.observation_space,))
+        elif inside == "oneof":
+            self.observation_space = spaces.OneOf((self.observation_space, spaces.Discrete(3)))
+        self.action_space = spaces.Discrete(2)
+
+    def seed(self, seed=None):
+        if seed is not None:
+            self.observation_space.seed(seed)
+
+    def step(self, action):
+        reward = 0.0
+        terminated = truncated = False
+        return self.observation_space.sample(), reward, terminated, truncated, {}
+
+    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+        if seed is not None:
+            self.observation_space.seed(seed)
+        return self.observation_space.sample(), {}
+
+    def render(self):
+        pass
+
+
+for inside, stack in product(("none", "dict", "tuple", "oneof"), (False, True)):
+    print(f"{inside=} {stack=}:")
+    try:
+        check_env(DummyDictEnv(stack=stack, inside=inside))
+        print("PASSED")
+    except Exception:
+        traceback.print_exc()
+    print("=" * 80)
+```
+
+### Relevant log output / Error message
+
+```shell
+inside='none' stack=False:
+c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py:122: UserWarning: Sequence observation space is not supported by Stable-Baselines3. You can pad your observation to have a fixed size instead.
+Note: The checks for returned values are skipped.
+  warnings.warn(
+PASSED
+================================================================================
+inside='none' stack=True:
+PASSED
+================================================================================
+inside='dict' stack=False:
+Traceback (most recent call last):
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 305, in _check_returned_values
+    _check_obs(obs[key], observation_space.spaces[key], "reset")
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 208, in _check_obs
+    assert not isinstance(
+AssertionError: The observation returned by the `reset()` method should be a single value, not a tuple
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\fredbill1\workspace\stable-baselines3\seq_in_dict.py", line 48, in <module>
+    check_env(DummyDictEnv(stack=stack, inside=inside))
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 482, in check_env
+    _check_returned_values(env, observation_space, action_space)
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 307, in _check_returned_values
+    raise AssertionError(f"Error while checking key={key}: " + str(e)) from e
+AssertionError: Error while checking key=seq: The observation returned by the `reset()` method should be a single value, not a tuple
+================================================================================
+inside='dict' stack=True:
+Traceback (most recent call last):
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 305, in _check_returned_values
+    _check_obs(obs[key], observation_space.spaces[key], "reset")
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 223, in _check_obs
+    assert observation_space.shape == obs.shape, (
+AssertionError: The observation returned by the `reset()` method does not match the shape of the given observation space Sequence(Box(-100.0, 100.0, (1,), float32), stack=True). Expected: None, actual shape: (2, 1)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\fredbill1\workspace\stable-baselines3\seq_in_dict.py", line 48, in <module>
+    check_env(DummyDictEnv(stack=stack, inside=inside))
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 482, in check_env
+    _check_returned_values(env, observation_space, action_space)
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 307, in _check_returned_values
+    raise AssertionError(f"Error while checking key={key}: " + str(e)) from e
+AssertionError: Error while checking key=seq: The observation returned by the `reset()` method does not match the shape of the given observation space Sequence(Box(-100.0, 100.0, (1,), float32), stack=True). Expected: None, actual shape: (2, 1)
+================================================================================
+inside='tuple' stack=False:
+c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py:111: UserWarning: The observation space is a Tuple, this is currently not supported by Stable Baselines3. However, you can convert it to a Dict observation space (cf. https://gymnasium.farama.org/api/spaces/composite/#dict). which is supported by SB3.
+  warnings.warn(
+Traceback (most recent call last):
+  File "c:\Users\fredbill1\workspace\stable-baselines3\seq_in_dict.py", line 48, in <module>
+    check_env(DummyDictEnv(stack=stack, inside=inside))
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 492, in check_env
+    _check_nan(env)
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 140, in _check_nan
+    vec_env = VecCheckNan(DummyVecEnv([lambda: env]))
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\vec_env\dummy_vec_env.py", line 47, in __init__
+    self.buf_obs = OrderedDict([(k, np.zeros((self.num_envs, *tuple(shapes[k])), dtype=dtypes[k])) for k in self.keys])
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\vec_env\dummy_vec_env.py", line 47, in <listcomp>
+    self.buf_obs = OrderedDict([(k, np.zeros((self.num_envs, *tuple(shapes[k])), dtype=dtypes[k])) for k in self.keys])
+TypeError: 'NoneType' object is not iterable
+================================================================================
+inside='tuple' stack=True:
+Traceback (most recent call last):
+  File "c:\Users\fredbill1\workspace\stable-baselines3\seq_in_dict.py", line 48, in <module>
+    check_env(DummyDictEnv(stack=stack, inside=inside))
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 492, in check_env
+    _check_nan(env)
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 140, in _check_nan
+    vec_env = VecCheckNan(DummyVecEnv([lambda: env]))
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\vec_env\dummy_vec_env.py", line 47, in __init__
+    self.buf_obs = OrderedDict([(k, np.zeros((self.num_envs, *tuple(shapes[k])), dtype=dtypes[k])) for k in self.keys])
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\vec_env\dummy_vec_env.py", line 47, in <listcomp>
+    self.buf_obs = OrderedDict([(k, np.zeros((self.num_envs, *tuple(shapes[k])), dtype=dtypes[k])) for k in self.keys])
+TypeError: 'NoneType' object is not iterable
+================================================================================
+inside='oneof' stack=False:
+Traceback (most recent call last):
+  File "c:\Users\fredbill1\workspace\stable-baselines3\seq_in_dict.py", line 48, in <module>
+    check_env(DummyDictEnv(stack=stack, inside=inside))
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 482, in check_env
+    _check_returned_values(env, observation_space, action_space)
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 309, in _check_returned_values
+    _check_obs(obs, observation_space, "reset")
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 208, in _check_obs
+    assert not isinstance(
+AssertionError: The observation returned by the `reset()` method should be a single value, not a tuple
+================================================================================
+inside='oneof' stack=True:
+Traceback (most recent call last):
+  File "c:\Users\fredbill1\workspace\stable-baselines3\seq_in_dict.py", line 48, in <module>
+    check_env(DummyDictEnv(stack=stack, inside=inside))
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 482, in check_env
+    _check_returned_values(env, observation_space, action_space)
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 309, in _check_returned_values
+    _check_obs(obs, observation_space, "reset")
+  File "c:\Users\fredbill1\workspace\stable-baselines3\stable_baselines3\common\env_checker.py", line 208, in _check_obs
+    assert not isinstance(
+AssertionError: The observation returned by the `reset()` method should be a single value, not a tuple
+```
+
+### System Info
+
+- OS: Windows-10-10.0.22631-SP0 10.0.22631
+- Python: 3.9.21
+- Stable-Baselines3: 2.7.1a0
+- PyTorch: 2.7.1+cpu
+- GPU Enabled: False
+- Numpy: 1.23.5
+- Cloudpickle: 3.1.1
+- Gymnasium: 1.0.0
+- OpenAI Gym: 0.26.2
+
+### Checklist
+
+- [x] I have checked that there is no similar [issue](https://github.com/DLR-RM/stable-baselines3/issues) in the repo
+- [x] I have read the [documentation](https://stable-baselines3.readthedocs.io/en/master/)
+- [x] I have provided a [minimal and working](https://github.com/DLR-RM/stable-baselines3/issues/982#issuecomment-1197044014) example to reproduce the bug
+- [x] I have checked my env using the env checker
+- [x] I've used the [markdown code blocks](https://help.github.com/en/articles/creating-and-highlighting-code-blocks) for both code and stack traces.

@@ -1,0 +1,4 @@
+reduction=none output: tensor(2.)
+output.shape: ()
+output.ndim: 0
+expected shape for unreduced loss: (batch_tokens,)

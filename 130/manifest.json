@@ -1,0 +1,9 @@
+{
+  "title": "BlockDiagonalCausalMask.to() returns BlockDiagonalMask",
+  "description": "Repro for xformers issue 1185: calling .to() on BlockDiagonalCausalMask returns the base class and changes the materialized mask.",
+  "reproduction_command": "bash run_repro.sh",
+  "dependencies": [
+    "torch"
+  ],
+  "entrypoint": "repro.py"
+}

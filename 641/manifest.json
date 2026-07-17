@@ -1,0 +1,14 @@
+{
+  "bug_id": "641",
+  "bug_dir": "641",
+  "issue_url": "https://github.com/pytorch/rl/issues/3238",
+  "commit_hash": "8570c25a745da54ca647b8a70231112f063d1421",
+  "library_name": "torchrl",
+  "library_version": "local checkout",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": true,
+  "standardized_dir": "../641",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh"
+}

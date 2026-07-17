@@ -1,0 +1,6 @@
+baseline checkpoint written to 283/qwen3vl_offload_repro_zz5rbu7d/base
+loaded hf_device_map: {'model.visual.patch_embed': 'cpu', 'model.visual.pos_embed': 'cpu', 'model.visual.rotary_pos_emb': 'cpu', 'model.visual.blocks.0': 'disk', 'model.visual.merger': 'disk', 'model.visual.deepstack_merger_list': 'disk', 'model.language_model': 'disk', 'lm_head': 'disk'}
+param devices: ['cpu', 'meta']
+meta params present: True
+saved offloaded checkpoint to 283/qwen3vl_offload_repro_zz5rbu7d/saved
+saved files: ['config.json', 'generation_config.json', 'model.safetensors']

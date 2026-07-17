@@ -1,0 +1,11 @@
+{
+  "bug_id": "087",
+  "title": "Custom alibi position fails for flash attention",
+  "issue_url": "https://github.com/lucidrains/x-transformers/issues/298",
+  "library_name": "x-transformers",
+  "library_version": "1.42.19",
+  "codebase_commit": "57efd7770f2f5df0ff7b4ffcbd623750b584e850",
+  "codebase_present": true,
+  "reproducible": true,
+  "standardized_dir": "../087"
+}

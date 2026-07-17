@@ -1,0 +1,13 @@
+{
+  "bug_id": "531",
+  "bug_dir": "531",
+  "issue_url": "https://github.com/huggingface/transformers/issues/46832",
+  "commit_hash": "4d47b06102805e02662d5d9865994bed8aa6d7fb",
+  "library_name": "transformers",
+  "library_version": "5.13.0.dev0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "local codebase/",
+  "codebase_present": true,
+  "standardized_dir": "../531",
+  "repro_command": "./run_repro.sh"
+}

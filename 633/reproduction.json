@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "In the local source tree, jnp.searchsorted returns int32 for the sample inputs in both jax_enable_x64=False and jax_enable_x64=True, while numpy.searchsorted returns int64. The captured output in repro_stdout.log shows identical values with the wrong JAX dtype.",
+  "steps": [
+    "Created a local venv and installed jaxlib 0.10.1 plus numpy/scipy/ml_dtypes/opt_einsum.",
+    "Ran repro.py with PYTHONPATH pointing at the local codebase.",
+    "Observed that numpy.searchsorted returned int64 and jnp.searchsorted returned int32 in both x32 and x64 modes."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

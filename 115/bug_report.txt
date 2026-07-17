@@ -1,0 +1,147 @@
+Title: Sweep runs overwrite each other because output_dir from base config is reused
+Date: 2025-08-19T06:21:36+00:00
+URL: https://github.com/axolotl-ai-cloud/axolotl/issues/3079
+
+Description:
+### Please check that this issue hasn't been reported before.
+
+- [x] I searched previous [Bug Reports](https://github.com/axolotl-ai-cloud/axolotl/labels/bug) didn't find any similar reports.
+
+### Expected Behavior
+
+Each sweep permutation should automatically generate a unique output_dir (for example by appending the sweep parameters or a timestamp), so that results are not overwritten.
+
+### Current behaviour
+
+When running training with the `--sweep` option, all generated runs share the same output_dir defined in the base `config.yml`. As a result, multiple sweep permutations overwrite each other’s checkpoints and logs.
+
+>  There are multiple sweep permutations <img width="987" height="364" alt="Image" src="https://github.com/user-attachments/assets/ca4ab535-8caf-472b-b6e8-ce1a6a632ce5" />
+
+> But there is only one out_dir(./outputs/sweep-test in this case) and it is overwritten. (final output file only contains last permutation result)
+
+<img width="611" height="177" alt="Image" src="https://github.com/user-attachments/assets/f579c5b4-6afe-4435-b348-c19568b9e669" />
+
+
+### Steps to reproduce
+
+1. Create a base `config.yml` with output_dir, for example:
+```yaml
+base_model: NousResearch/Llama-3.2-1B
+
+# only use 1% of the training split for quick smoke test
+datasets:
+  - path: teknium/GPT4-LLM-Cleaned
+    type: alpaca
+    split: train
+    split_percent: 1
+
+output_dir: ./outputs/sweep-test
+
+adapter: lora
+lora_model_dir:
+
+sequence_len: 512
+
+lora_r: 8
+lora_alpha: 16
+lora_target_modules:
+  - q_proj
+  - v_proj
+
+gradient_accumulation_steps: 1
+micro_batch_size: 1
+# stop after 20 steps (quick test)
+max_steps: 20
+
+special_tokens:
+  pad_token: "<|end_of_text|>"
+```
+
+2. Define a `sweep.yaml` with multiple values, for example:
+```yaml
+_:
+  # This section is for dependent variables we need to fix
+  - load_in_8bit: false
+    load_in_4bit: false
+    adapter: lora
+  - load_in_8bit: true
+    load_in_4bit: false
+    adapter: lora
+
+# These are independent variables
+learning_rate: [0.0003, 0.0006]
+lora_r:
+  - 16
+  - 32
+lora_alpha:
+  - 16
+  - 32
+  - 64
+```
+4. Run:
+```bash
+axolotl train config.yml --sweep sweep.yaml
+```
+
+### Config yaml
+
+```yaml
+base_model: NousResearch/Llama-3.2-1B
+
+# only use 1% of the training split for quick smoke test
+datasets:
+  - path: teknium/GPT4-LLM-Cleaned
+    type: alpaca
+    split: train
+    split_percent: 1
+
+output_dir: ./outputs/sweep-test
+
+adapter: lora
+lora_model_dir:
+
+sequence_len: 512
+
+lora_r: 8
+lora_alpha: 16
+lora_target_modules:
+  - q_proj
+  - v_proj
+
+gradient_accumulation_steps: 1
+micro_batch_size: 1
+# stop after 20 steps (quick test)
+max_steps: 20
+
+special_tokens:
+  pad_token: "<|end_of_text|>"
+```
+
+### Possible solution
+
+- Create a **dedicated subdirectory** for each permutation under the base `output_dir`  
+  - e.g., `output_dir/sweep001/`, `output_dir/sweep002/`, ...  
+  - Prevents overwriting between permutations  
+  - Each subdirectory contains a `README.md` describing the hyperparameters used for that run
+
+
+### Which Operating Systems are you using?
+
+- [x] Linux
+- [ ] macOS
+- [ ] Windows
+
+### Python Version
+
+Python 3.11.13
+
+### axolotl branch-commit
+
+main/48b7ae1
+
+### Acknowledgements
+
+- [x] My issue title is concise, descriptive, and in title casing.
+- [x] I have searched the existing issues to make sure this bug has not been reported yet.
+- [x] I am using the latest version of axolotl.
+- [x] I have provided enough information for the maintainers to reproduce and diagnose the issue.

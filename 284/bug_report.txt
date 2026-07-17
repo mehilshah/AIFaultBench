@@ -1,0 +1,86 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/14146
+
+TITLE
+`Krea2Pipeline` produces incorrect results on ROCm/gfx1201
+
+BODY
+### Describe the bug
+
+I used a gfx1201 GPU (Radeon RX 9070) to produce an image with Krea2, using torch 2.13.0, diffusers at commit 208704a27a6f362b67cd1a04fa1db0b98036d26f (recent `main`). It produces a garbled image. Every other pipeline tested works well.
+
+<img width="1024" height="1024" alt="Image" src="https://github.com/user-attachments/assets/622c69d2-b870-40b5-aecb-28166f36660d" />
+
+[reproducer.zip](https://github.com/user-attachments/files/29830039/reproducer.zip)
+
+### Reproduction
+<details><summary>Repro Code</summary>
+
+```python
+import torch
+from diffusers import Krea2Pipeline
+
+torch._dynamo.config.recompile_limit = 8192
+torch.set_float32_matmul_precision('high')
+
+# from modules.sdnq import SDNQConfig, sdnq_post_load_quant
+# from modules.sdnq.common import use_torch_compile as triton_is_available
+
+max_memory = {0: "13GB"}
+
+# Load from a local directory produced by the Krea 2 conversion (no hub repo yet).
+pipe = Krea2Pipeline.from_pretrained(
+    "krea/Krea-2-Turbo",
+    torch_dtype=torch.bfloat16,
+    max_memory=max_memory,
+)
+pipe.enable_sequential_cpu_offload()
+pipe.transformer.compile()
+
+prompt = "a photograph of a potato"
+image = pipe(
+    prompt,
+    height=1024,
+    width=1024,
+    num_inference_steps=8,
+    guidance_scale=0,
+    generator=torch.Generator("cuda").manual_seed(0),
+).images[0]
+image.save("krea2.png")
+```
+
+</details> 
+
+
+
+### Logs
+
+```shell
+Loading checkpoint shards: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00<00:00,  3.78it/s]
+Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 713/713 [00:00<00:00, 31697.23it/s]
+Loading pipeline components...: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:02<00:00,  2.12it/s]
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 8/8 [01:29<00:00, 11.15s/it]
+```
+
+### System Info
+
+- 🤗 Diffusers version: 0.40.0.dev0 (commit 208704a27a6f362b67cd1a04fa1db0b98036d26f)
+- Platform: Linux-7.1.3-200.fc44.x86_64-x86_64-with-glibc2.43
+- Running on Google Colab?: No
+- Python version: 3.13.14
+- PyTorch version (GPU?): 2.13.0+rocm7.2 (True)
+- Flax version (CPU?/GPU?/TPU?): not installed (NA)
+- Jax version: not installed
+- JaxLib version: not installed
+- Huggingface_hub version: 1.22.0
+- Transformers version: 5.13.0
+- Accelerate version: 1.14.0
+- PEFT version: 0.19.1
+- Safetensors version: 0.8.0
+- xFormers version: not installed
+- Accelerator: NA
+- Using GPU in script?: Yes, RX 9070/gfx1201
+- Using distributed or parallel set-up in script?: Only CPU offloading
+
+### Who can help?
+
+@DN6 @asomoza 

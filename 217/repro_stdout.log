@@ -1,0 +1,2 @@
+stanza version: 1.8.0
+building Pipeline('en', package='mimic', processors={'ner': 'i2b2'})

@@ -1,0 +1,16 @@
+{
+  "bug_id": "288",
+  "bug_dir": "288",
+  "issue_url": "https://github.com/vllm-project/vllm/issues/48592",
+  "library_name": "vllm",
+  "library_version": "0.25.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": true,
+  "reproducible": false,
+  "blocking_reason": "The checked-in codebase already guards the torchcodec import in vllm/multimodal/video.py, and importing vllm from this environment fails earlier because the installed torch build (2.13.0+cu130) is incompatible with the repo's env_override patching path.",
+  "notes": [
+    "torchcodec itself still fails to import with a libtorchcodec runtime error in this environment.",
+    "The exact vllm serve crash from the issue report is therefore not reproducible here."
+  ]
+}

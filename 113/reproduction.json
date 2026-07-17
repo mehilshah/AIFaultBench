@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "Running the repro in a local venv against the checked-out codebase shows the reported diagonal-style patterns are rejected. Examples from the captured output: `rearrange('ii->i')` raises `EinopsError` with `Identifiers only on one side of expression (should be on both): {'ii', 'i'}`; `reduce('ii->i', 'sum')` raises `EinopsError` with `Unexpected identifiers on the right side of reduce sum: {'i'}`. The repro script ends with `All reported diagonal patterns fail with EinopsError.`",
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

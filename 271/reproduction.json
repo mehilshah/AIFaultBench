@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running ./run_repro.sh exits 1. repro_stdout.log shows the bf16 base parameter and fp32 LoRA parameter, then reports: \"output tensor must have the same type as input tensor\".",
+  "steps": [
+    "Created a minimal repro that mirrors deepspeed/runtime/zero/partition_parameters.py using a bf16 base tensor followed by a fp32 adapter tensor.",
+    "Installed the runtime into a local venv with setup_env.sh.",
+    "Ran ./run_repro.sh and observed the TypeError from the mixed-dtype all-gather path."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "The local Accelerate CLI parser in this revision does not expose `--rdzv_backend`.",
+    "The simulated multi-node launch path resolves to `rdzv_backend=static` and `rdzv_endpoint=10.13.23.78:7010`.",
+    "Loading the YAML workaround round-trips `rdzv_backend=c10d`, matching the issue report's workaround."
+  ],
+  "steps": [
+    "Run `bash setup_env.sh` to create the local venv and install a working CPU Torch wheel.",
+    "Run `bash run_repro.sh` to execute `repro.py` against `codebase/src`.",
+    "Inspect `repro_stdout.log` for the captured launch/config summary."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

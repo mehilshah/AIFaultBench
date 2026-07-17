@@ -1,0 +1,18 @@
+070/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition with CUDA capability sm_120 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_50 sm_60 sm_70 sm_75 sm_80 sm_86 sm_90.
+If you want to use the NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "070/repro.py", line 42, in <module>
+[rank0]:     main()
+[rank0]:   File "070/repro.py", line 38, in main
+[rank0]:     deepspeed.comm.all_reduce(torch.tensor([1.0]))
+[rank0]:   File "070/.venv/lib/python3.12/site-packages/deepspeed/comm/comm.py", line 117, in log_wrapper
+[rank0]:     return func(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "070/.venv/lib/python3.12/site-packages/deepspeed/comm/comm.py", line 496, in all_reduce
+[rank0]:     return cdb.all_reduce(tensor, op, group, async_op)
+[rank0]:            ^^^^^^^^^^^^^^
+[rank0]: AttributeError: 'NoneType' object has no attribute 'all_reduce'

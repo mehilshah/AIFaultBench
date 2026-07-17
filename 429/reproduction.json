@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "The bundle's repro harness exits immediately on this host with `BLOCKED: the reported crash requires macOS with Apple MPS; current host is Linux.` The original issue is explicitly MPS-specific, so the collector path cannot be exercised here.",
+  "steps": [
+    "Checked out the referenced upstream snapshot with `setup_codebase.sh`.",
+    "Added a minimal repro harness that imports the local `torchrl` source and attempts the exact `GymEnv(\"HalfCheetah-v4\")` + `SyncDataCollector(..., device=\"mps\", env_device=\"mps\")` path from the report.",
+    "Ran `./run_repro.sh`; it exited with a Linux/MPS blocking message before the collector could be constructed."
+  ],
+  "blocking_reason": "This environment is Linux and does not provide Apple MPS, but the reported crash requires macOS with an available MPS backend.",
+  "reproduction_command": "./run_repro.sh"
+}

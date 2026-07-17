@@ -1,0 +1,16 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "The save phase wrote configuration_hf_nomic_bert.py and modeling_hf_nomic_bert.py into the saved SentenceTransformer directory.",
+    "A fresh offline Python process loaded the saved directory successfully with local_files_only=True.",
+    "The captured logs end with status \"not_reproduced\" rather than the issue's missing-file error."
+  ],
+  "steps": [
+    "Create the local virtualenv and install the repro dependencies.",
+    "Load the bundled nomic-ai/nomic-embed-text-v1 snapshot with trust_remote_code=True.",
+    "Save the model to a temporary directory and inspect the saved files.",
+    "Start a new offline Python process and reload the saved directory with local_files_only=True."
+  ],
+  "blocking_reason": "The checked-in sentence-transformers/transformers stack already persists the remote Nomic code files during save, so the offline reload failure from the bug report does not reproduce here.",
+  "reproduction_command": "./run_repro.sh"
+}

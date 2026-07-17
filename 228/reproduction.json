@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "In a clean Python 3.11 virtualenv with numpy==1.26.4 and scipy==1.13.1, the local source tree returned [[0.32205361, 0.1184769], [0.1184769, 0.32205361]] for the exact 2x2 example in bug_report.txt. That matches the POT 0.9.5 value from the report and differs from the POT 0.9.4 control value [[0.51122814, 0.18807032], [0.18807032, 0.51122814]].",
+  "steps": [
+    "Created an isolated Python 3.11 virtual environment and installed numpy==1.26.4 and scipy==1.13.1.",
+    "Loaded the local POT source files from codebase/ without importing the package root.",
+    "Ran the exact sinkhorn_knopp_unbalanced example from bug_report.txt and observed the 0.9.5 matrix."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

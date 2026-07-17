@@ -1,0 +1,12 @@
+{
+  "issue_url": "https://github.com/facebookresearch/fairseq/issues/5123",
+  "title": "MMS forced alignment array shapes problem",
+  "entrypoint": "repro.py",
+  "reproduction_command": "bash run_repro.sh",
+  "language": "python",
+  "dependencies": [],
+  "notes": [
+    "Self-contained reproduction of the sliding-window emission concatenation failure in examples/mms/data_prep/align_and_segment.py.",
+    "This bundle does not depend on the MMS model download or torchaudio."
+  ]
+}

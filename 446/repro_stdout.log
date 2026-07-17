@@ -1,0 +1,25 @@
+account: data_columns=['account_id', 'district_id', 'frequency', 'date']
+account: metadata_columns=['account_id', 'district_id', 'frequency', 'date']
+account: same_order=True
+card: data_columns=['card_id', 'disp_id', 'type', 'issued']
+card: metadata_columns=['card_id', 'disp_id', 'type', 'issued']
+card: same_order=True
+client: data_columns=['client_id', 'gender', 'birth_date', 'district_id']
+client: metadata_columns=['client_id', 'gender', 'birth_date', 'district_id']
+client: same_order=True
+disp: data_columns=['disp_id', 'client_id', 'account_id', 'type']
+disp: metadata_columns=['disp_id', 'client_id', 'account_id', 'type']
+disp: same_order=True
+district: data_columns=['district_id', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'A10', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16']
+district: metadata_columns=['district_id', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'A10', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16']
+district: same_order=True
+loan: data_columns=['loan_id', 'account_id', 'date', 'amount', 'duration', 'payments', 'status']
+loan: metadata_columns=['loan_id', 'account_id', 'date', 'amount', 'duration', 'payments', 'status']
+loan: same_order=True
+order: data_columns=['order_id', 'account_id', 'bank_to', 'account_to', 'amount', 'k_symbol']
+order: metadata_columns=['order_id', 'account_id', 'bank_to', 'account_to', 'amount', 'k_symbol']
+order: same_order=True
+trans: data_columns=['trans_id', 'account_id', 'date', 'type', 'operation', 'amount', 'balance', 'k_symbol', 'bank', 'account']
+trans: metadata_columns=['trans_id', 'account_id', 'date', 'type', 'operation', 'amount', 'balance', 'k_symbol', 'bank', 'account']
+trans: same_order=True
+BUG_NOT_REPRODUCED

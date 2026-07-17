@@ -1,0 +1,6 @@
+-e ./codebase
+jax==0.8.2
+jaxlib==0.8.2
+jaxtyping>=0.2.20
+typing_extensions>=4.5.0
+wadler_lindig>=0.1.0

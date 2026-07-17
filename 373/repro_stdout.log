@@ -1,0 +1,9 @@
+digraph Metadata {
+	node [fillcolor="#B7E9FF" shape=Mrecord style=filled]
+	parent [label="{parent|pk : id\lother : categorical\l|Primary key: pk\l}"]
+	child [label="{child|fk : id\l|Primary key: None\lForeign key (parent): fk\l}"]
+	parent -> child [label="  fk → pk" arrowhead=oinv]
+}
+
+contains_fk_to_other: False
+contains_fk_to_pk: True

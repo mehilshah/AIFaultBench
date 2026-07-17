@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+python3 -m pip install --user --break-system-packages -r requirements.txt

@@ -1,0 +1,38 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.10/site-packages (26.1.2)
+Looking in indexes: https://pypi.org/simple, https://download.pytorch.org/whl/cpu
+Requirement already satisfied: numpy<2 in ./.venv/lib/python3.10/site-packages (from -r 604/requirements.txt (line 2)) (1.26.4)
+Requirement already satisfied: torch==1.13.1+cpu in ./.venv/lib/python3.10/site-packages (from -r 604/requirements.txt (line 3)) (1.13.1+cpu)
+Requirement already satisfied: opt_einsum in ./.venv/lib/python3.10/site-packages (from -r 604/requirements.txt (line 4)) (3.4.0)
+Requirement already satisfied: pyro-api in ./.venv/lib/python3.10/site-packages (from -r 604/requirements.txt (line 5)) (0.1.2)
+Requirement already satisfied: tqdm in ./.venv/lib/python3.10/site-packages (from -r 604/requirements.txt (line 6)) (4.68.4)
+Requirement already satisfied: typing-extensions in ./.venv/lib/python3.10/site-packages (from torch==1.13.1+cpu->-r 604/requirements.txt (line 3)) (4.16.0)
+Obtaining file://604/codebase
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy>=1.7 in ./.venv/lib/python3.10/site-packages (from pyro-ppl==1.6.0) (1.26.4)
+Requirement already satisfied: opt_einsum>=2.3.2 in ./.venv/lib/python3.10/site-packages (from pyro-ppl==1.6.0) (3.4.0)
+Requirement already satisfied: pyro-api>=0.1.1 in ./.venv/lib/python3.10/site-packages (from pyro-ppl==1.6.0) (0.1.2)
+Requirement already satisfied: torch>=1.8.0 in ./.venv/lib/python3.10/site-packages (from pyro-ppl==1.6.0) (1.13.1+cpu)
+Requirement already satisfied: tqdm>=4.36 in ./.venv/lib/python3.10/site-packages (from pyro-ppl==1.6.0) (4.68.4)
+Requirement already satisfied: typing-extensions in ./.venv/lib/python3.10/site-packages (from torch>=1.8.0->pyro-ppl==1.6.0) (4.16.0)
+Building wheels for collected packages: pyro-ppl
+  Building editable for pyro-ppl (pyproject.toml): started
+  Building editable for pyro-ppl (pyproject.toml): finished with status 'done'
+  Created wheel for pyro-ppl: filename=pyro_ppl-1.6.0-0.editable-py3-none-any.whl size=9386 sha256=85d0c0f8ecc1073cf992285c66cec3c10e384ad17b618053344d31d1a921b7cb
+  Stored in directory: /tmp/pip-ephem-wheel-cache-ew2u9um3/wheels/68/c5/05/282d8f9a0fe41918211e083b0c7e7027f5a0e4f2d6e47d33f6
+Successfully built pyro-ppl
+Installing collected packages: pyro-ppl
+  Attempting uninstall: pyro-ppl
+    Found existing installation: pyro-ppl 1.6.0
+    Uninstalling pyro-ppl-1.6.0:
+      Successfully uninstalled pyro-ppl-1.6.0
+Successfully installed pyro-ppl-1.6.0
+pyro=1.6.0 torch=1.13.1+cpu
+calling AutoNormal.quantiles([0.05, 0.5, 0.95])
+repro_exit_code=1

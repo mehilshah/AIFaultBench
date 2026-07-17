@@ -1,0 +1,4 @@
+TensorDict batch_size: torch.Size([1, 2048, 1])
+Calling replay_buffer.extend(td)...
+[92m2026-07-17 05:13:54,230 [torchrl][INFO][0m    Initialized LazyTensorStorage with torch.Size([5, 2048, 1]) shape[92m [END][0m
+REPRODUCED: RuntimeError: batch dimension mismatch, got self.batch_size=torch.Size([1, 2048, 1]) and value.shape=torch.Size([1, 2048, 3]).

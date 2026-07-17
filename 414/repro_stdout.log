@@ -1,0 +1,6 @@
+{
+  "platform": "Linux-6.17.0-1024-oem-x86_64-with-glibc2.39",
+  "system": "Linux",
+  "python": "3.12.3"
+}
+BLOCKED: the reported bug is MPS-specific and requires macOS; this host is Linux.

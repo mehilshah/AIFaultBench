@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With numpyro 0.13.2, jax 0.4.23, jaxlib 0.4.23, numpy 1.26.4, scipy 1.12.0, and funsor 0.4.7, `AutoNormal` completes but `AutoDiagonalNormal` under `TraceEnum_ELBO` raises `KeyError: 'components'` from `numpyro/contrib/funsor/enum_messenger.py:429` when entering the `components` plate.",
+  "steps": [
+    "Create and activate the local virtual environment with `bash setup_env.sh`.",
+    "Run the repro with `bash run_repro.sh`.",
+    "Observe that `AutoNormal` finishes and `AutoDiagonalNormal` fails with the reported `KeyError`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

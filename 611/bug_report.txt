@@ -1,0 +1,18 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/960
+
+TITLE
+`gather_for_metrics` and `GradientState` don't work with arbitrary evaluation intervals
+
+BODY
+I try to run evaluation on the evaluation_dataloader (entire eval epoch) every given steps (instead of running after an entire train epoch). After evaluation,  the `GradientState` used by `gather_for_metrics` seems to stuck as-is in the last epoch of evaluation, which is
+```
+Sync Gradients: True                                                                                  
+At end of current dataloader: True                                                                     
+Extra samples added: 20
+```
+and it cause `gather_for_metrics` drop samples on train_loader for the following training until it reaches the end of the train epoch.
+
+I noticed that the `gradient_state` in `Accelerator` main instance and both `DataLoaderShard` are synced, in a way I can't find in the accelerate source code.
+
+Can someone elaborate what the design philosophy of `GradientState` and how it syncs between the accelerator and dataloaders. Additionally, if it is possible to do evaluation in the middle of the train epoch like I mentioned above. Thanks!
+

@@ -1,0 +1,33 @@
+GPU available: True (cuda), used: False
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+030/.venv/lib/python3.12/site-packages/pytorch_lightning/trainer/trainer.py:1764: PossibleUserWarning: GPU available but not used. Set `accelerator` and `devices` using `Trainer(accelerator='gpu', devices=1)`.
+  rank_zero_warn(
+Traceback (most recent call last):
+  File "030/repro.py", line 58, in <module>
+    main()
+  File "030/repro.py", line 54, in main
+    trainer.fit(SchedulerBugModule())
+  File "030/.venv/lib/python3.12/site-packages/pytorch_lightning/trainer/trainer.py", line 696, in fit
+    self._call_and_handle_interrupt(
+  File "030/.venv/lib/python3.12/site-packages/pytorch_lightning/trainer/trainer.py", line 650, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "030/.venv/lib/python3.12/site-packages/pytorch_lightning/trainer/trainer.py", line 735, in _fit_impl
+    results = self._run(model, ckpt_path=self.ckpt_path)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "030/.venv/lib/python3.12/site-packages/pytorch_lightning/trainer/trainer.py", line 1147, in _run
+    self.strategy.setup(self)
+  File "030/.venv/lib/python3.12/site-packages/pytorch_lightning/strategies/single_device.py", line 74, in setup
+    super().setup(trainer)
+  File "030/.venv/lib/python3.12/site-packages/pytorch_lightning/strategies/strategy.py", line 153, in setup
+    self.setup_optimizers(trainer)
+  File "030/.venv/lib/python3.12/site-packages/pytorch_lightning/strategies/strategy.py", line 141, in setup_optimizers
+    self.optimizers, self.lr_scheduler_configs, self.optimizer_frequencies = _init_optimizers_and_lr_schedulers(
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "030/.venv/lib/python3.12/site-packages/pytorch_lightning/core/optimizer.py", line 194, in _init_optimizers_and_lr_schedulers
+    _validate_scheduler_api(lr_scheduler_configs, model)
+  File "030/.venv/lib/python3.12/site-packages/pytorch_lightning/core/optimizer.py", line 351, in _validate_scheduler_api
+    raise MisconfigurationException(
+pytorch_lightning.utilities.exceptions.MisconfigurationException: The provided lr scheduler `CosineAnnealingWarmRestarts` doesn't follow PyTorch's LRScheduler API. You should override the `LightningModule.lr_scheduler_step` hook with your own logic if you are using a custom LR scheduler.

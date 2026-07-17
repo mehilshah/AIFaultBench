@@ -1,0 +1,23 @@
+{
+  "bug_id": "132",
+  "bug_dir": "132",
+  "issue_url": "https://github.com/flairNLP/flair/issues/3536",
+  "library_name": "flair",
+  "library_version": "0.14.0",
+  "reproducible": true,
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "flair 0.14.0 snapshot in codebase/",
+  "codebase_present": true,
+  "standardized_dir": "../132",
+  "reproduction_command": "bash run_repro.sh",
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md",
+    "reproduction.json"
+  ]
+}

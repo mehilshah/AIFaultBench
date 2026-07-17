@@ -1,0 +1,12 @@
+{
+  "bug_id": "161",
+  "bug_dir": "161",
+  "issue_url": "https://github.com/InternLM/lmdeploy/issues/4116",
+  "commit_hash": "",
+  "library_name": "lmdeploy",
+  "library_version": "0.10.2",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../161"
+}

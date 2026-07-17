@@ -1,0 +1,3 @@
+pandas version: 3.0.3
+Data columns: ['Date Time', 'p (mbar)', 'T (degC)']
+Calling data.corr() from show_heatmap(...)

@@ -1,0 +1,4 @@
+python_version=3.8.20 (default, Sep 27 2024, 06:05:23) 
+[GCC 12.2.0]
+source_file=/workspace/codebase/official/core/base_trainer.py
+source_line_442=    return passthrough_logs | logs

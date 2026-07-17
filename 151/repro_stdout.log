@@ -1,0 +1,4 @@
+model.generation_config.temperature=1e-06
+custom_config.temperature=1.0
+prepared_config.temperature=1e-06
+BUG REPRODUCED: explicit temperature=1.0 was overwritten by the model default.

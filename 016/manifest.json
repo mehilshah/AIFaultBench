@@ -1,0 +1,12 @@
+{
+  "bug_id": "016",
+  "issue_url": "https://github.com/tensorflow/models/issues/11042",
+  "library_name": "tensorflow/models",
+  "library_version": "commit-abb7ed6a4628118042876c17ba48c559e0fb5025",
+  "repro_type": "static-analysis",
+  "notes": [
+    "Issue report describes a 2-node GPU throughput comparison.",
+    "The standardized folder does not contain a multi-node GPU cluster.",
+    "The checked-in resnet gpu.yaml is single-worker mirrored."
+  ]
+}

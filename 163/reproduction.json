@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "A forward pass from YOLOV8Detector produced raw boxes with shape (1, 5376, 64).",
+    "The exported SavedModel signature reported outputs['boxes'] tensor_info with shape (-1, -1, 64).",
+    "The same export reported outputs['classes'] tensor_info with shape (-1, -1, 20)."
+  ],
+  "steps": [
+    "Create YOLOV8Detector with YOLOV8Backbone.from_preset('yolo_v8_xs_backbone').",
+    "Run the model on a 512x512 ones image.",
+    "Export the model with tf.saved_model.save and inspect the SavedModel using tensorflow.python.tools.saved_model_cli."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

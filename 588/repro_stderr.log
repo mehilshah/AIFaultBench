@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "588/repro.py", line 20, in main
+    timm.create_model(
+  File "588/codebase/timm/models/_factory.py", line 126, in create_model
+    model = create_fn(
+            ^^^^^^^^^^
+  File "588/codebase/timm/models/mobilenetv3.py", line 1312, in mobilenetv4_conv_medium
+    model = _gen_mobilenet_v4('mobilenetv4_conv_medium', 1.0, pretrained=pretrained, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "588/codebase/timm/models/mobilenetv3.py", line 898, in _gen_mobilenet_v4
+    model = _create_mnv3(variant, pretrained, **model_kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "588/codebase/timm/models/mobilenetv3.py", line 400, in _create_mnv3
+    model = build_model_with_cfg(
+            ^^^^^^^^^^^^^^^^^^^^^
+  File "588/codebase/timm/models/_builder.py", line 404, in build_model_with_cfg
+    pretrained_cfg = resolve_pretrained_cfg(
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+  File "588/codebase/timm/models/_builder.py", line 358, in resolve_pretrained_cfg
+    pretrained_cfg = dataclasses.replace(pretrained_cfg, **pretrained_cfg_overlay)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: dataclasses.replace() argument after ** must be a mapping, not str

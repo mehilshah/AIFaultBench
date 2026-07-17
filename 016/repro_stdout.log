@@ -1,0 +1,47 @@
+{
+  "bug_report_mentions_multi_worker": true,
+  "checked_in_gpu_yaml_distribution_strategy": "mirrored",
+  "dataset_builder_shards_multi_input_pipelines": true,
+  "dataset_builder_uses_distribute_datasets_from_function": true,
+  "issue_title": "Tensorflow2 Multi worker mirrored strategy is not scaling for GPUS",
+  "trainer_configures_cluster": true,
+  "trainer_uses_multi_worker_strategy": true
+}
+
+Evidence: classifier_trainer.py cluster setup
+291:   logging.info('Running train and eval.')
+292: 
+293:   distribute_utils.configure_cluster(params.runtime.worker_hosts,
+294:                                      params.runtime.task_index)
+295: 
+
+Evidence: distribute_utils.py multi-worker strategy selection
+150:     # When tpu_address is an empty string, we communicate with local TPUs.
+151:     cluster_resolver = tpu_initialize(tpu_address)
+152:     return tf.distribute.TPUStrategy(cluster_resolver)
+153: 
+154:   if distribution_strategy == "multi_worker_mirrored":
+155:     return tf.distribute.experimental.MultiWorkerMirroredStrategy(
+156:         communication=_collective_communication(all_reduce_alg))
+157: 
+158:   if distribution_strategy == "one_device":
+
+Evidence: dataset_factory.py input pipeline sharding
+400:       A TensorFlow dataset outputting batched images and labels.
+401:     """
+402:     if (self.config.builder != 'tfds' and self.input_context and
+403:         self.input_context.num_input_pipelines > 1):
+404:       dataset = dataset.shard(self.input_context.num_input_pipelines,
+405:                               self.input_context.input_pipeline_id)
+406:       logging.info(
+407:           'Sharding the dataset: input_pipeline_id=%d '
+408:           'num_input_pipelines=%d', self.input_context.num_input_pipelines,
+
+Evidence: checked-in gpu.yaml
+3: # Note: This configuration uses a scaled per-replica batch size based on the number of devices.
+4: runtime:
+5:   distribution_strategy: 'mirrored'
+6:   num_gpus: 1
+7:   batchnorm_spatial_persistent: true
+
+Verdict: not reproducible here. The report is about multi-node GPU throughput, but this workspace has no GPU cluster to benchmark, and the checked-in resnet gpu.yaml is single-worker mirrored rather than the multi_worker_mirrored configuration described in the report.

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Static reproduction succeeded: in codebase/vllm/compilation/passes/fusion/allreduce_rms_fusion.py, AllReduceFusedAddRMSNormStaticQuantFP8Pattern and AllReduceFusedAddRMSNormStaticQuantNVFP4Pattern register without extra_check, while the neighboring non-residual quant patterns register with _rms_input_weight_dtype_match. This matches the bug report's mixed BF16-input / FP32-weight unsafe fusion path.",
+  "steps": [
+    "Read bug_report.txt to identify the affected FlashInfer residual quant fusion patterns and the reported mixed-dtype trigger.",
+    "Inspected codebase/vllm/compilation/passes/fusion/allreduce_rms_fusion.py to compare the residual and non-residual register_replacement calls.",
+    "Ran bash setup_env.sh and bash run_repro.sh; the script confirmed the missing dtype guard in the residual quant registrations."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

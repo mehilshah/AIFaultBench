@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running ./run_repro.sh prints get_num_hops: 1 and actual hops: 2 for a deterministic ChebConv(K=3) example on the line graph from the bug report.",
+    "The repro exits with a bug marker after showing that get_num_hops reports one MessagePassing layer while the model's receptive field reaches two hops."
+  ],
+  "steps": [
+    "Created an isolated virtualenv with setup_env.sh.",
+    "Installed torch and the PyG Python runtime dependencies from requirements.txt.",
+    "Ran repro.py through run_repro.sh against the local codebase checkout.",
+    "Observed the hop-count mismatch: get_num_hops returned 1 while the output activated 2 hops away."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

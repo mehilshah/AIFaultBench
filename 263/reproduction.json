@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "The repro prints that DummyVectorEnv advances the stacked frames, but ShmemVectorEnv stays at [[[0], [0], [0]]] for step_0 through step_2. The script finishes with: BUG_REPRODUCED: ShmemVectorEnv keeps returning the reset frame stack after step().",
+  "steps": [
+    "Create a DummyEnv with a 1D int32 observation and wrap it in gymnasium.wrappers.FrameStack(3).",
+    "Run the wrapped envs through tianshou.env.DummyVectorEnv and tianshou.env.ShmemVectorEnv with the same actions.",
+    "Compare the first post-step observation: DummyVectorEnv updates the frame stack, while ShmemVectorEnv remains frozen at the reset value."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

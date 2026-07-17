@@ -1,0 +1,36 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3032
+
+TITLE
+[CI] `torch.meshgrid` having new default indexing in 1.10.0 (CI server currently installs 1.9.0)
+
+BODY
+I was making a PR #3027 
+
+The CI run failed: https://github.com/pyro-ppl/pyro/runs/5388569737?check_suite_focus=true
+
+<img width="1620" alt="Screenshot 2022-03-02 at 4 00 56 PM" src="https://user-images.githubusercontent.com/60985/156344729-b7f66c26-d964-425f-a07b-2d7833590621.png">
+
+I realised this was because I was using 
+
+```python
+xx, yy = torch.meshgrid(xs, ys, indexing="xy")
+```
+
+But, the [version 1.9.0](https://pytorch.org/docs/1.9.0/generated/torch.meshgrid.html?highlight=meshgrid#torch.meshgrid) installed on CI does not have the indexing argument, but [1.10.0 has](https://pytorch.org/docs/stable/generated/torch.meshgrid.html) and also says that `indexing='xy'` will become default in the future.
+
+To get my PR pass the tests for now, I edited my meshgrid code as
+
+```python
+# In newer version we should uncomment the following line to replace the next 3 lines
+# xx, yy = torch.meshgrid(xs, ys, indexing="xy")
+
+xx, yy = torch.meshgrid(xs, ys)
+xx = xx.t()
+yy = yy.t()
+```
+
+With this change my CI examples tests passed. 
+
+I just wanted to open this issue as an FYI to track `torch.meshgrid` going forward and when more recent version of PyTorch is installed on CI servers. 
+
+

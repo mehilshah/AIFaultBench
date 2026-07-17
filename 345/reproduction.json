@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With argparse imported from .venv/lib/python3.12/site-packages/argparse.py, running codebase/build/build.py --help fails at parser.add_subparsers(dest=\"command\", required=True) with TypeError: _SubParsersAction.__init__() got an unexpected keyword argument 'required'",
+  "steps": [
+    "Created a venv and installed argparse==1.4.0.",
+    "Forced the venv site-packages ahead of stdlib with PYTHONPATH.",
+    "Ran codebase/build/build.py --help and observed the TypeError from parser.add_subparsers(dest='command', required=True)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

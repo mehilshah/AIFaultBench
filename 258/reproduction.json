@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "run_repro.sh exited with status 1. stdout shows `after_fit _fitted=True _model=None` and `processed_columns=[]`. stderr shows `AttributeError: 'NoneType' object has no attribute 'to_dict'` from `sdv/single_table/copulas.py:221` when calling `get_learned_distributions()`.",
+  "steps": [
+    "Created metadata with only `id` and `credit_card_number` columns, matching the bug report.",
+    "Fit `GaussianCopulaSynthesizer` on a DataFrame with those columns and verified that fitting completed with `_model=None` and no processed columns.",
+    "Called `get_learned_distributions()` and observed the `AttributeError` crash."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

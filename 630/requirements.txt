@@ -1,0 +1,6 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==1.13.1+cpu
+numpy<2
+opt_einsum>=2.3.2
+pyro-api>=0.1.1
+tqdm>=4.36

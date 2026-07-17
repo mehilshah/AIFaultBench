@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "224/repro.py", line 31, in <module>
+    main()
+  File "224/repro.py", line 22, in main
+    torchvision_version = list(
+                          ^^^^^
+ValueError: invalid literal for int() with base 10: '1a0'

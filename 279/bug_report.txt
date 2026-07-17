@@ -1,0 +1,46 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2915
+
+TITLE
+Unable to call `get_constraints` when using a `ColumnFormula` constraint
+
+BODY
+### Environment Details
+* SDV-Enterprise version: 0.47.4 (latest)
+* Python version: 3.12
+* Operating System: Linux (Google Colab)
+
+### Error Description
+According to the documentation, I should be able to use the `get_constraints` function to retrieve the list of constraint objects attached to a synthesizer as well as produce a JSON file with the constraint information. However, it seems that if I have added a `ColumnFormula` constraint (currently in sandbox mode), this method crashes.
+
+### Expected Behavior
+I would expect the `get_constraints` function to work. In the JSON, I expect the listed parameters to correspond with the parameters I used to create the constraint.
+
+```python
+_ = synthesizer.get_constraints(filepath="constraints.json")
+```
+
+JSON file:
+```json
+[{
+  "class_name": "ColumnFormula",
+  "parameters": {
+    "table_name": "guests",
+    "input_columns": ["room_rate", "amenities_fee"],
+    "output_column": "total_rate",
+    "formula_function_name": "calculate_sum",
+    "module_name": "my_formulas"
+  }
+}]
+```
+
+In the future, I should also be able to load constraints from this file. This would expect the module/function to be accessible for the constraint. _Note that this function should first try importing the classes from the `sdv.cag` namespace; if not found, it should then fallback to the `sdv.cag.sandbox` namespace._
+
+```python
+from sdv.utils import load_constraints
+
+constraints = load_constraints(filepath='constraints.json')
+synthesizer.add_constraints(constraints)
+```
+
+If the module/function is not accessible, then the `load_constraints` function should perform a try/catch and ignore this constraint. I should expect to see a warning.
+

@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "On the local checkout with CUDA available, the exact STSB EmbeddingSimilarityEvaluator path completed successfully on the full validation split. The run printed pearson_cosine=0.8806072235811941 and spearman_cosine=0.8810194487011652 instead of raising the reported TypeError.",
+  "steps": [
+    "Installed the reported-era dependency set into the local user site.",
+    "Ran the issue's evaluation flow against sentence-transformers/all-mpnet-base-v2 on CUDA using the local codebase.",
+    "Confirmed the full sentence-transformers/stsb validation split completes successfully."
+  ],
+  "blocking_reason": "The bug is not reproducible in this folder: the current checkout's encode/evaluator path executes successfully on CUDA, so there is no failing traceback to capture.",
+  "reproduction_command": "bash run_repro.sh"
+}

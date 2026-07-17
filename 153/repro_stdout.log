@@ -1,0 +1,6 @@
+transformers=5.0.0.dev0
+tokenizers=0.22.2
+tokenizer_class=TokenizersBackend
+decoded='<|begin_of_text|>a ,b'
+expected='<|begin_of_text|>a,b'
+mismatch=observed output differs from the expected v4 behavior

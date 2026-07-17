@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running `bash run_repro.sh` prints `torch=2.13.0+cpu` and confirms the MAE source slice line is present.",
+    "The run fails in `codebase/vit_pytorch/mae.py:49` with `RuntimeError: The size of tensor a (3072) must match the size of tensor b (1024) at non-singleton dimension 2`."
+  ],
+  "steps": [
+    "Create the local venv with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` from the standardized folder.",
+    "Observe the MAE forward pass fail at the positional-embedding addition in `MAE.forward`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

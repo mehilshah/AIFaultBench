@@ -1,0 +1,80 @@
+WARNING:2026-07-17 03:23:26,557:jax._src.xla_bridge:969: An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+Traceback (most recent call last):
+  File "240/repro.py", line 47, in <module>
+    main()
+  File "240/repro.py", line 41, in main
+    failing_state = jax.vmap(failing_svi.init)(keys)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/codebase/numpyro/infer/svi.py", line 185, in init
+    guide_trace = trace(guide_init).get_trace(*args, **kwargs, **self.static_kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/codebase/numpyro/handlers.py", line 171, in get_trace
+    self(*args, **kwargs)
+  File "240/codebase/numpyro/primitives.py", line 105, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/codebase/numpyro/primitives.py", line 105, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/codebase/numpyro/infer/autoguide.py", line 540, in __call__
+    self._setup_prototype(*args, **kwargs)
+  File "240/codebase/numpyro/infer/autoguide.py", line 518, in _setup_prototype
+    for k, v in self._postprocess_fn(self._init_locs).items()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/codebase/numpyro/primitives.py", line 105, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/codebase/numpyro/infer/util.py", line 193, in constrain_fn
+    model_trace = trace(substituted_model).get_trace(*model_args, **model_kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/codebase/numpyro/handlers.py", line 171, in get_trace
+    self(*args, **kwargs)
+  File "240/codebase/numpyro/primitives.py", line 105, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/codebase/numpyro/primitives.py", line 105, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/codebase/numpyro/primitives.py", line 105, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 2 more times]
+  File "240/repro.py", line 17, in model_w_deterministic
+    a = numpyro.sample("a", dist.Normal(0, 1))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/codebase/numpyro/primitives.py", line 222, in sample
+    msg = apply_stack(initial_msg)
+          ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/codebase/numpyro/primitives.py", line 47, in apply_stack
+    handler.process_message(msg)
+  File "240/codebase/numpyro/handlers.py", line 745, in process_message
+    self.rng_key, rng_key_sample = random.split(self.rng_key)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/.venv/lib/python3.12/site-packages/jax/_src/random.py", line 290, in split
+    typed_key, wrapped = _check_prng_key("split", key)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/.venv/lib/python3.12/site-packages/jax/_src/random.py", line 77, in _check_prng_key
+    wrapped_key = prng.random_wrap(key, impl=default_prng_impl())
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "240/.venv/lib/python3.12/site-packages/jax/_src/prng.py", line 702, in random_wrap
+    return random_wrap_p.bind(base_arr, impl=impl)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jax.errors.UnexpectedTracerError: Encountered an unexpected tracer. A function transformed by JAX had a side effect, allowing for a reference to an intermediate value with type uint32[2] wrapped in a DynamicJaxprTracer to escape the scope of the transformation.
+JAX transformations require that functions explicitly return their outputs, and disallow saving intermediate values to global state.
+The function being traced when the value leaked was body_fn at 240/codebase/numpyro/infer/util.py:358 traced for while_loop.
+------------------------------
+The leaked intermediate value was created on line 240/codebase/numpyro/handlers.py:745:8 (seed.process_message). 
+------------------------------
+When the value was created, the final 5 stack frames (most recent last) excluding JAX-internal frames were:
+------------------------------
+240/codebase/numpyro/primitives.py:105:19 (Messenger.__call__)
+240/repro.py:18:4 (model_w_deterministic)
+240/codebase/numpyro/primitives.py:222:10 (sample)
+240/codebase/numpyro/primitives.py:47:8 (apply_stack)
+240/codebase/numpyro/handlers.py:745:8 (seed.process_message)
+------------------------------
+
+To catch the leak earlier, try setting the environment variable JAX_CHECK_TRACER_LEAKS or using the `jax.checking_leaks` context manager.
+See https://jax.readthedocs.io/en/latest/errors.html#jax.errors.UnexpectedTracerError
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.

@@ -1,0 +1,12 @@
+{
+  "bug_id": "112",
+  "bug_dir": "112",
+  "issue_url": "https://github.com/albumentations-team/albumentations/issues/2527",
+  "commit_hash": "218d663bf",
+  "library_name": "albumentations",
+  "library_version": "2.0.7",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": true,
+  "standardized_dir": "../112"
+}

@@ -1,0 +1,12 @@
+{
+  "bug_id": "489",
+  "bug_dir": "489",
+  "issue_url": "https://github.com/huggingface/pytorch-image-models/issues/2546",
+  "commit_hash": "b2034bb6c57fa6b41fda7398140bf21405361df7",
+  "library_name": "pytorch-image-models",
+  "library_version": "1.0.18.dev0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "local codebase/",
+  "codebase_present": true,
+  "standardized_dir": "../489"
+}

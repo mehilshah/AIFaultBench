@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running the minimal loader in repro.py triggers AttributeError: 'NoneType' object has no attribute 'to' from codebase/torch_geometric/nn/models/glem.py:147, matching the train_without_ext_pred path where ext_pseudo_labels is None.",
+  "steps": [
+    "Load the real glem.py module from the local codebase with minimal stdlib-based stubs for unavailable runtime modules.",
+    "Instantiate GLEM without running its heavy __init__ and set the small set of attributes needed by train().",
+    "Call GLEM.train('gnn', ..., pseudo_labels=None, ...) to mirror the train_without_ext_pred=True pretraining path.",
+    "Observe the AttributeError raised by pseudo_labels.to(self.device)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

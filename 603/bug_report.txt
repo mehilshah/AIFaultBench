@@ -1,0 +1,221 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/2008
+
+TITLE
+potential mach ports leakage
+
+BODY
+### Bug Description
+
+While running a hierarchical model on macOS, I observe **excessive Mach port usage** that climbs into hundreds of thousands of ports. Eventually, the kernel logs a message that the Python process allocated too many Mach ports and forcibly kills it. Specifically, I have a loop over multiple classrooms inside my model code, and each iteration of SVI calls a function (`solve_classroom_equilibrium`) for each classroom. 
+
+- **Question**: Is this “expected behavior” due to repeated shape references and recompilation, or could it be a bug in how NumPyro (or JAX) handles repeated calls? 
+- It’s surprising that Mach ports accumulate so heavily, eventually causing the OS to kill the process.
+
+### Steps to Reproduce
+
+1. **Setup**: macOS (Seqoiua 15.3.1), Python 3.13.1, NumPyro 0.16.1
+2. **Run** the attached script, which:
+   - Loads a dataset of many classrooms.
+   - Defines a model that loops over each classroom to compute a best-response function.
+   - Invokes SVI for multiple iterations.
+
+### Script
+
+```python
+# %%
+import pandas as pd
+import numpy as np
+import jax
+import jax.numpy as jnp
+import numpyro
+import numpyro.distributions as dist
+from numpyro.distributions import constraints
+from numpyro.infer.autoguide import AutoDiagonalNormal
+from numpyro.infer import SVI, Trace_ELBO
+from numpyro.optim import Adam  # or other auto-guides
+from pathlib import Path
+from functools import partial
+import typer
+import datetime
+import os, psutil
+
+
+# TODO: IMPORTANT CHANGE THE SUPERMODULAR GAME TO BE CORRECT - IS NOT NOW! (CLASSROOM EQ)
+app = typer.Typer()
+
+numpyro.enable_validation(True)
+
+DATA_PATH = Path(__file__).parent.parent.parent / "data"
+# Read data
+
+
+# Get the current datetime
+def log_time() -> str:
+    now = datetime.datetime.now()
+    time_str = now.strftime("%H:%M:%S")
+    return time_str
+
+def load_data(max_n_schools=None):
+    data = pd.read_parquet(
+        DATA_PATH / "bayesian_estim_data.parquet"
+    )  # Adjust path as needed
+    # data should have columns: x1, x2, x3, s (school), c (class), y, etc.
+
+    if max_n_schools is not None:
+        data = data[data["s"] < max_n_schools]    
+
+    # Group by classroom c
+    class_groups = data.groupby("c")
+
+    # We'll store each classroom's data as a small dictionary.
+    classroom_list = []
+    for c_id, dfc in class_groups:
+        # Convert relevant columns to jnp arrays
+        # shape [n_students, 3]
+        x_c = jnp.array(dfc[["x1", "x2", "x3"]].values)
+        # each student's school index
+        s_c = jnp.array(dfc["s"].values, dtype=int)
+        y_c = jnp.array(dfc["y"].values, dtype=int)  # 0/1 outcomes
+        # We'll also store the # of students, classroom id, etc.
+        classroom_list.append((c_id, x_c, s_c, y_c))
+
+
+    # Find total number of schools from data
+    n_schools = data["s"].nunique()
+    return classroom_list, n_schools
+
+
+def solve_classroom_equilibrium(x_c, alpha_c, beta, gamma, max_iter=20):
+    """
+    Unroll best-response updates for a single classroom.
+    x_c:     shape [n_students, 3]
+    alpha_c: shape [n_students, ]   (already includes any offset, e.g. -2.0 if desired)
+    beta:    shape [3, ]           (global effects for x1,x2,x3)
+    gamma:   scalar (peer-effect strength)
+
+    Returns p (shape [n_students,]) after 20 steps
+    """
+    n_stud = x_c.shape[0]
+    p = jnp.full((n_stud,), 0.5)  # start at 0.5
+
+    def body_fn(_, p_curr):
+        pbar = p_curr.mean()
+        # logits = alpha_c + beta·x_i + gamma·pbar
+        logits = alpha_c + jnp.dot(x_c, beta) + gamma * pbar
+        p_next = jax.nn.sigmoid(logits)
+        return p_next
+
+    # We use lax.fori_loop for a fixed unrolled iteration in JAX
+    p_final = jax.lax.fori_loop(0, max_iter, body_fn, p)
+    return p_final
+
+
+def structural_model(classroom_list, n_schools):
+    """
+    Hierarchical supermodular model:
+      y_i ~ Bernoulli( p_i ),  where  p_i is solved from best-response iteration:
+         p_i = sigma(beta·x_i + gamma * mean_j p_j ).
+    """
+    # Priors
+    beta = numpyro.sample("beta", dist.Normal(0.0, 1.0).expand([3]))
+    gamma = numpyro.sample("gamma", dist.Normal(0.0, 1.0))
+
+    # Optionally sample a global offset if that was part of your data-generating process:
+    fe_offset = numpyro.sample("fe_offset", dist.Normal(-2.0, 1.0))
+
+    # Now accumulate log-likelihood over classrooms
+    total_loglike = 0.0
+
+    for c_id, x_c, s_c, y_c in classroom_list:
+        # Each student i in classroom c has alpha_s[s_c[i]]
+        p_c = solve_classroom_equilibrium(x_c, fe_offset, beta, gamma, max_iter=20)
+
+        # log p(y_c | p_c)
+        # shape [n_students,]
+        logprob_c = dist.Bernoulli(probs=p_c).log_prob(y_c)
+        total_loglike += jnp.sum(logprob_c)
+
+    # Register the total log-likelihood with numpyro.factor
+    numpyro.factor("likelihood", total_loglike)
+
+
+def structural_guide(classroom_list, n_schools):
+    # =========== 1) Full-covariance block for (beta,gamma)  ===========
+    dim_bg = 5  # 3 for beta, 1 for gamma, 1 for fe_offset
+
+    # Mean parameter for the 4-dim block
+    loc_bg = numpyro.param("loc_bg", jnp.zeros(dim_bg))
+    L_init = jnp.eye(dim_bg) * 0.1  # small initial covariance
+
+    # Unconstrained lower-triangular factor for the covariance
+    L_unconstrained = numpyro.param(
+        "L_bg_unconstrained", L_init, constraint=constraints.lower_cholesky
+    )
+    # Make a proper lower Cholesky factor
+    L_bg = jnp.tril(L_unconstrained)
+
+    # Sample a single 4-dim vector capturing correlated beta+gamma
+    z_bg = numpyro.sample(
+        "_beta_gamma",  # an internal name
+        dist.MultivariateNormal(loc=loc_bg, scale_tril=L_bg),
+        infer={"is_auxiliary": True},
+    )
+    # Now z_bg[:3] will correspond to beta, z_bg[3] to gamma
+
+    # We feed them back to the model's "beta" and "gamma" sites using Delta
+    # so the model sees "beta" and "gamma" as random draws, but they come
+    # from a single correlated distribution:
+    beta_guide = z_bg[:3]
+    gamma_guide = z_bg[3]
+    fe_offset_guide = z_bg[4]
+
+    numpyro.sample("beta", dist.Delta(beta_guide))  # .to_event(1))
+    numpyro.sample("gamma", dist.Delta(gamma_guide))
+    numpyro.sample("fe_offset", dist.Delta(fe_offset_guide))
+
+
+@app.command()
+def structural_run():
+    classroom_list, n_schools = load_data(max_n_schools=20)
+
+    model_fn = partial(
+        structural_model, classroom_list=classroom_list, n_schools=n_schools
+    )
+    guide_fn = partial(
+        structural_guide, classroom_list=classroom_list, n_schools=n_schools
+    )
+
+    # Create the SVI object
+    optimizer = Adam(1e-2)  # you can tune the learning rate
+    svi = SVI(model=model_fn, guide=guide_fn, optim=optimizer, loss=Trace_ELBO())
+
+    # Initialize with a PRNG seed
+    rng_key = jax.random.PRNGKey(0)
+
+    # Number of iterations
+    n_iters = 3000
+
+    # Run SVI
+    init_state = svi.init(rng_key)
+    state = init_state
+
+    for i in range(n_iters):
+        try:
+            state, loss = svi.update(state)
+        except Exception as e:
+            print(f"Error at iteration {i}: {e}")
+            raise
+
+        if i % 1 == 0:
+            current_params = svi.get_params(state)
+            print(f"Iteration {i} ({log_time()}), ELBO = {loss:.2f}")
+            print(f"The current beta, gamma, fe_offset: {
+                  current_params['loc_bg']}")
+
+            process = psutil.Process(os.getpid())
+            mem_mb = process.memory_info().rss / 1024**2
+            print(f"  Memory usage: {mem_mb:.2f} MB")
+
+    params = svi.get_params(state)
+```
+

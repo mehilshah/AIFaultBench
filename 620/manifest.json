@@ -1,0 +1,20 @@
+{
+  "bug_id": "620",
+  "issue_url": "https://github.com/jax-ml/jax/issues/37991",
+  "library_name": "jax",
+  "library_version": "0.10.1.dev20260717",
+  "reproducible": true,
+  "root_cause": "jax.numpy.reductions.cumsum checks dtype == np.bool_ before canonicalizing user dtypes, so a Python bool dtype bypasses the boolean pre-cast path and produces incorrect cumulative values for integer inputs.",
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

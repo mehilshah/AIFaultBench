@@ -1,0 +1,5 @@
+jax[cpu]==0.4.38
+jaxlib==0.4.38
+funsor>=0.4.1
+scipy>=1.10
+tqdm>=4.66

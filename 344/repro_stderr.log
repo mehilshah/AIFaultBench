@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "344/repro.py", line 45, in <module>
+    main()
+  File "344/repro.py", line 41, in main
+    print(obj, flush=True)
+  File "344/codebase/torch_geometric/data/data.py", line 604, in __repr__
+    has_dict = any([isinstance(v, Mapping) for v in self._store.values()])
+  File "344/codebase/torch_geometric/data/data.py", line 557, in __getattr__
+    raise RuntimeError(
+RuntimeError: The 'data' object was created by an older version of PyG. If this error occurred while loading an already existing dataset, remove the 'processed/' directory in the dataset's root folder and try again.

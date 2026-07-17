@@ -1,0 +1,14 @@
+{
+  "bug_id": "296",
+  "bug_dir": "296",
+  "issue_url": "https://github.com/PythonOT/POT/issues/117",
+  "commit_hash": "a9bbc2cfdffd22ceee3256102e470df6c25338f3",
+  "library_name": "POT",
+  "library_version": "0.6.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "PythonOT/POT@a9bbc2cfdffd22ceee3256102e470df6c25338f3",
+  "codebase_present": "true",
+  "standardized_dir": "../296",
+  "reproducible": true,
+  "repro_command": "./run_repro.sh"
+}

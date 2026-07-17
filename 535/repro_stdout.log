@@ -1,0 +1,6 @@
+[DecoupledCheckpointEngine]: Create checkpoint process self.global_rank=0  self.ckpt_process.pid=2745201 self.dp_writer_config=DummyWriterConfig(local_rank=0)
+checkpoint child started: pid=2745201
+checkpoint child alive after terminate: False
+commit() is still blocked after 2s
+evidence: save_event.wait() does not time out and there is no process-health check
+result: reproducible

@@ -1,0 +1,12 @@
+230/repro.py:17: ExperimentalWarning: BruteForceSampler is experimental (supported from v3.1.0). The interface can change in the future.
+  sampler = optuna.samplers.BruteForceSampler(seed=42)
+[I 2026-07-17 03:17:22,964] A new study created in memory with name: no-name-a44970c8-25f9-4bfb-8e30-01e458bb9517
+[I 2026-07-17 03:17:22,967] Trial 0 finished with value: 1.0 and parameters: {'x': 0, 'y': 1}. Best is trial 0 with value: 1.0.
+[I 2026-07-17 03:17:22,969] Trial 2 finished with value: 0.0 and parameters: {'x': 0, 'y': 0}. Best is trial 2 with value: 0.0.
+[I 2026-07-17 03:17:23,968] Trial 1 finished with value: 1.0 and parameters: {'x': 1, 'y': 0}. Best is trial 2 with value: 0.0.
+Traceback (most recent call last):
+  File "230/repro.py", line 49, in <module>
+    main()
+  File "230/repro.py", line 45, in main
+    raise AssertionError(f"Incomplete brute-force coverage: missing={missing}")
+AssertionError: Incomplete brute-force coverage: missing=[{'y': 1, 'x': 1}]

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running ./run_repro.sh prints '(2,)\\n(2,)\\n()\\n()'. The batched Uniform mixture produces theta.shape == (2,) twice, while the list-of-Uniform mixture produces theta.shape == () twice.",
+  "steps": [
+    "Created a Python 3.12 virtualenv and installed jax 0.8.2, jaxlib 0.8.2, graphviz, multipledispatch, and tqdm.",
+    "Installed the local codebase in editable mode from ./codebase.",
+    "Ran the reported model-rendering repro and observed the batched Uniform mixture print (2,) twice, while the list-of-Uniform mixture printed () twice."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

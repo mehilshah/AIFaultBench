@@ -1,0 +1,4 @@
+tensorboard_dir=/tmp/sb3_tb_bug_lig3sdmm
+histograms=['torch']
+compressed_histograms=['torch']
+observed_histograms=['torch']

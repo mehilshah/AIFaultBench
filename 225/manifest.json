@@ -1,0 +1,13 @@
+{
+  "bug_id": "225",
+  "bug_dir": "225",
+  "issue_url": "https://github.com/unclecode/crawl4ai/issues/1442",
+  "commit_hash": "",
+  "library_name": "Crawl4AI",
+  "library_version": "0.7.4",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": true,
+  "standardized_dir": "../225",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,26 @@
+{
+  "bug_id": "574",
+  "bug_dir": "574",
+  "issue_url": "https://github.com/vllm-project/vllm/issues/47037",
+  "commit_hash": "59575da46df964e6161fb0e1a77fa76ea9ce3106",
+  "library_name": "vllm",
+  "library_version": "0.23.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "vllm-project/vllm@59575da46df964e6161fb0e1a77fa76ea9ce3106",
+  "codebase_present": true,
+  "standardized_dir": "../574",
+  "reproducible": false,
+  "reproduction_command": "bash run_repro.sh",
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

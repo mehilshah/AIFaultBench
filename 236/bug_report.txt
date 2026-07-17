@@ -1,0 +1,67 @@
+Title: An array-like defined with `eqx.Module` does not support `jnp.asarray` with the `__array__` method
+Date: 2024-11-21T10:38:36+00:00
+URL: https://github.com/patrick-kidger/equinox/issues/898
+
+Description:
+I am running into the following bug (which may come from JAX) when using `eqx.Module`. I want to define an array-like object on which I can call `jnp.asarray`. I achieve this by defining the numpy `.__array__` method, which, as per the documentation of `jnp.asarray` should be working. 
+
+When doing this with a regular class, it works as intended. However, when subclassing `eqx.Module`, I run into `TypeError: Unexpected input type for array: <class '__main__.MyEqxArray'>`.
+
+MWE:
+```python
+import jax
+import jax.numpy as jnp
+import numpy as np
+import equinox as eqx
+
+class MyArray:
+    def __init__(self, x):
+        self.x = x
+
+    def __array__(self, dtype=None, copy=None) -> np.ndarray:
+        return np.asarray(self.x, dtype=dtype)
+
+class MyEqxArray(eqx.Module):
+    x: jax.Array
+
+    def __array__(self, dtype=None, copy=None) -> np.ndarray:
+        return np.asarray(self.x, dtype=dtype)
+
+x = MyArray(jnp.array([1, 2, 3]))
+jnp.asarray(x)
+# works as expected
+
+y = MyEqxArray(jnp.array([1, 2, 3]))
+jnp.asarray(y)
+# TypeError: Unexpected input type for array: <class '__main__.MyEqxArray'>
+```
+
+Stack trace:
+```python
+TypeError                                 Traceback (most recent call last)
+<ipython-input-31-4d23b83b2dea> in ?()
+     20 x = MyArray(jnp.array([1, 2, 3]))
+     21 jnp.asarray(x)
+     22 
+     23 y = MyEqxArray(jnp.array([1, 2, 3]))
+---> 24 jnp.asarray(y)
+
+~/miniconda3/lib/python3.11/site-packages/jax/_src/numpy/lax_numpy.py in ?(a, dtype, order, copy, device)
+   4248                       "Consider using copy=None or copy=True instead.")
+   4249   dtypes.check_user_dtype_supported(dtype, "asarray")
+   4250   if dtype is not None:
+   4251     dtype = dtypes.canonicalize_dtype(dtype, allow_extended_dtype=True)  # type: ignore[assignment]
+-> 4252   return array(a, dtype=dtype, copy=bool(copy), order=order, device=device)
+
+~/miniconda3/lib/python3.11/site-packages/jax/_src/numpy/lax_numpy.py in ?(object, dtype, copy, order, ndmin, device)
+   4081     object = memoryview(object)
+   4082     # TODO(jakevdp): update this once we support NumPy 2.0 semantics for the copy arg.
+   4083     out = np.array(object) if copy else np.asarray(object)
+   4084   else:
+-> 4085     raise TypeError(f"Unexpected input type for array: {type(object)}")
+   4086   out_array: Array = lax_internal._convert_element_type(
+   4087       out, dtype, weak_type=weak_type, sharding=sharding)
+   4088   if ndmin > ndim(out_array):
+
+TypeError: Unexpected input type for array: <class '__main__.MyEqxArray'>
+```

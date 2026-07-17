@@ -1,0 +1,12 @@
+{
+  "reproducible": false,
+  "evidence": "In a clean virtualenv with torch==2.5.1 and torch-geometric==2.6.1, `from torch_geometric.data.data import BaseData` succeeds and prints `IMPORT_OK BaseData`. The local checked-in codebase also defines `BaseData` in `torch_geometric/data/data.py`.",
+  "steps": [
+    "Created a fresh virtualenv in /tmp/pyg593.",
+    "Installed torch==2.5.1 and torch-geometric==2.6.1.",
+    "Ran an import probe for `from torch_geometric.data.data import BaseData`.",
+    "Observed a successful import instead of the reported ImportError."
+  ],
+  "blocking_reason": "The reported ImportError does not reproduce on this Linux/Python 3.12 host. The bug appears environment-specific or transient rather than a stable code defect in the checked-in source.",
+  "reproduction_command": "bash run_repro.sh"
+}

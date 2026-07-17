@@ -1,0 +1,4 @@
+torch==2.13.0
+einops>=0.8.0
+beartype>=0.22.0
+numpy>=1.26

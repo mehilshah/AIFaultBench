@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "525/repro.py", line 46, in main
+    ds = create_dataset("torch/imagenet", root=str(root))
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "525/codebase/timm/data/dataset_factory.py", line 150, in create_dataset
+    ds = ImageNet(split=split, **torch_kwargs)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "525/.venv/lib/python3.12/site-packages/torchvision/datasets/imagenet.py", line 56, in __init__
+    super().__init__(self.split_folder, **kwargs)
+TypeError: ImageFolder.__init__() got an unexpected keyword argument 'download'

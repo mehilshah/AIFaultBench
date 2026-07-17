@@ -1,0 +1,10 @@
+{
+  "title": "GAE formula bug",
+  "source": "bug_report.txt",
+  "entrypoint": "bash run_repro.sh",
+  "bug_path": "codebase/labml_nn/rl/ppo/gae.py",
+  "kind": "documentation",
+  "dependencies": [
+    "numpy>=1.19"
+  ]
+}

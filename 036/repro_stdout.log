@@ -1,0 +1,24 @@
+Inspecting codebase/labml_nn/rl/ppo/gae.py
+
+Relevant source excerpt:
+029:         \begin{align}
+030:         \hat{A_t^{(1)}} &= r_t + \gamma V(s_{t+1}) - V(s)
+031:         \\
+032:         \hat{A_t^{(2)}} &= r_t + \gamma r_{t+1} +\gamma^2 V(s_{t+2}) - V(s)
+033:         \\
+034:         ...
+035:         \\
+036:         \hat{A_t^{(\infty)}} &= r_t + \gamma r_{t+1} +\gamma^2 r_{t+1} + ... - V(s)
+037:         \end{align}
+038: 
+039:         $\hat{A_t^{(1)}}$ is high bias, low variance, whilst
+040:         $\hat{A_t^{(\infty)}}$ is unbiased, high variance.
+041: 
+042:         We take a weighted average of $\hat{A_t^{(k)}}$ to balance bias and variance.
+043:         This is called Generalized Advantage Estimation.
+044:         $$\hat{A_t} = \hat{A_t^{GAE}} = \sum_k w_k \hat{A_t^{(k)}}$$
+045:         We set $w_k = \lambda^{k-1}$, this gives clean calculation for
+
+Reproduced: the docstring still contains both reported formula bugs.
+Expected correction for the infinite-horizon term: \hat{A_t^{(\infty)}} &= r_t + \gamma r_{t+1} +\gamma^2 r_{t+2} + ... - V(s)
+Expected correction for the weights: We set $w_k = (1-\lambda) \lambda^{k-1}$

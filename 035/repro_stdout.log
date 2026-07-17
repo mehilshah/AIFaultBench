@@ -1,0 +1,4 @@
+input_shape=(3, 1, 1, 4)
+rotary_d=3
+calling_forward
+exit_code=1

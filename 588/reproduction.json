@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running the report-shaped call to timm.create_model('mobilenetv4_conv_medium', pretrained=True, pretrained_cfg_overlay='file=./pytorch_model.bin') raised TypeError: dataclasses.replace() argument after ** must be a mapping, not str.",
+    "A control call with pretrained_cfg_overlay={'file': './pytorch_model.bin'} succeeded, and a backbone built from model.conv_stem, model.bn1, and model.blocks[:3] produced output shape (1, 160, 14, 14)."
+  ],
+  "steps": [
+    "Created a clean local virtualenv and installed the repro dependencies.",
+    "Ran repro.py through run_repro.sh.",
+    "Observed the TypeError on the bad pretrained_cfg_overlay value.",
+    "Verified the backbone extraction path works with a valid overlay mapping."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

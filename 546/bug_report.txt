@@ -1,0 +1,65 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/1116
+
+TITLE
+Multi-node doesn't work if you provide a list of gpus
+
+BODY
+### System Info
+
+```Shell
+- `Accelerate` version: 0.15.0
+- Platform: Linux-4.15.0-180-generic-x86_64-with-glibc2.27
+- Python version: 3.9.12
+- Numpy version: 1.23.5
+- PyTorch version (GPU?): 1.12.1 (False)
+
+command_file: null
+commands: null
+compute_environment: LOCAL_MACHINE
+deepspeed_config: {}
+distributed_type: MULTI_GPU
+downcast_bf16: 'no'
+dynamo_backend: 'NO'
+fsdp_config: {}
+gpu_ids: '0'
+machine_rank: 0
+main_process_ip: example
+main_process_port: 8888
+main_training_function: main
+megatron_lm_config: {}
+mixed_precision: 'no'
+num_machines: 2
+num_processes: 2
+rdzv_backend: static
+same_network: true
+tpu_name: null
+tpu_zone: null
+use_cpu: false
+```
+
+
+### Information
+
+- [ ] The official example scripts
+- [X] My own modified scripts
+
+### Tasks
+
+- [ ] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [X] My own task or dataset (give details below)
+
+### Reproduction
+
+Let's say I want to do multi-node with 2 nodes, 1 gpu on each node
+In `accelerate config` you are asked the following:
+> How many GPU(s) should be used for distributed training? [1]: 2
+> What GPU(s) (by id) should be used for training on this machine as a comma-seperated list? [all]: 0
+
+You would assume that this is correct. The GPU id on each node is indeed 0 and the total number of GPUs is 2. So this should work, but it doesn't. What happens then if you launch your script is that it completely ignores the multi-node part and just starts your script as if you are doing single-node. You can print the accelerator.state to see that it is indeed not doing multi-node. Now if you change `gpus` in the config from `gpus='0'` to `gpus='all'`, then it works. Very confusing behaviour.
+
+### Expected behavior
+
+```Shell
+See above.
+```
+

@@ -1,0 +1,40 @@
+Title: Portuguese model mistakenly splits URLs into their own sentences
+Date: 2024-09-20T13:40:08+00:00
+URL: https://github.com/stanfordnlp/stanza/issues/1423
+
+Description:
+**Describe the bug**
+When a Pipeline is instantiated with a text containing some URLs (e.g. example.com) in Portuguese, the URLs are broken into their own sentences, as the dots are seemingly treated as full stops.
+
+**To Reproduce**
+
+```
+import stanza
+nlp = stanza.Pipeline(lang="pt", processores="tokenize", verbose=False)
+text = "Olá, não deixe de visitar nossos sites em exemplo1.com, exemplo2.com e exemplo3.com.br"
+doc = nlp(text)
+print([s.text for s in doc.sentences])
+```
+Output:
+```
+['Olá, não deixe de visitar nossos sites em exemplo1.', 'com, exemplo2.', 'com e exemplo3.', 'com.br']
+```
+
+**Expected behavior**
+As per the example above, a single sentence:
+
+```
+['Olá, não deixe de visitar nossos sites em exemplo1.com, exemplo2.com e exemplo3.com.br']
+```
+
+**Environment (please complete the following information):**
+ - OS: Ubuntu
+ - Python version: 3.10.12
+ - Stanza version: 1.9.2
+
+**Additional context**
+This does not happen when the URLs start with `www`:
+
+```
+['Olá, não deixe de visitar nossos sites em www.exemplo1.com, www.exemplo2.com e www.exemplo3.com.br']
+```

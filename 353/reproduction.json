@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Captured runtime info in repro_stdout.log shows torch 2.9.0+cpu, cuda_available=false, and torch_hip=null.",
+    "The same log shows Attention2d and MultiQueryAttention2d forward passes completed successfully on CPU with output shape [1, 128, 32, 48]."
+  ],
+  "steps": [
+    "Created an isolated virtualenv and installed a CPU-only torch/torchvision stack plus the minimal repo dependencies.",
+    "Ran run_repro.sh, which executed repro.py against the local codebase.",
+    "Observed that ROCm is not available in this environment, so the HIP invalid-argument failure from the issue cannot be exercised here."
+  ],
+  "blocking_reason": "The reported bug requires an AMD ROCm runtime/GPU. This folder only has a CPU-only torch build and no ROCm device, so the HIP error cannot be reproduced locally.",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

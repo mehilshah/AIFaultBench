@@ -1,0 +1,9 @@
++ [[ ! -x 194/.venv/bin/python ]]
++ 194/.venv/bin/python 194/repro.py
+An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+Traceback (most recent call last):
+  File "194/repro.py", line 27, in <module>
+    main()
+  File "194/repro.py", line 21, in main
+    raise AssertionError(
+AssertionError: wrong out_axes arrangement: expected (3, 4, 2), got (4, 3, 2)

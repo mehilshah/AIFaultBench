@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "625/repro.py", line 50, in <module>
+    main()
+  File "625/repro.py", line 46, in main
+    hook(None)
+  File "625/codebase/deepspeed/runtime/utils.py", line 1271, in backward_hook
+    grad = self.preprocess_per_tensor_fn(grad)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "625/repro.py", line 31, in _backward_prologue_per_tensor
+    return DeepSpeedEngine._backward_prologue_per_tensor(self, grad)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "625/codebase/deepspeed/runtime/engine.py", line 2335, in _backward_prologue_per_tensor
+    return grad / self.gradient_accumulation_steps()
+           ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for /: 'NoneType' and 'int'

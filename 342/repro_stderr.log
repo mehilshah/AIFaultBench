@@ -1,0 +1,3 @@
+342/codebase/pyro/ops/stats.py:514: SyntaxWarning: invalid escape sequence '\g'
+  """
+unexpected: issue did not reproduce

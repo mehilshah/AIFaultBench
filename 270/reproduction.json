@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "The exact TRL SFT path from the issue report ran successfully under DeepSpeed ZeRO-2, but the two comparable settings stayed aligned: batch_size=2 with gradient_accumulation_steps=4 produced train_loss=11.920878887176514, and batch_size=8 with gradient_accumulation_steps=1 produced train_loss=11.920918822288513. The absolute train loss delta was 3.993511199951172e-05 and the maximum per-step loss delta was 0.00014019012451171875, which is within floating-point noise for this short run.",
+  "steps": [
+    "Created a local venv and installed the CUDA 12.8 PyTorch stack plus accelerate, deepspeed, transformers, datasets, and trl.",
+    "Ran the reported TRL SFT training path twice under DeepSpeed ZeRO-2: once with batch_size=2 and gradient_accumulation_steps=4, and once with batch_size=8 and gradient_accumulation_steps=1.",
+    "Compared the resulting loss histories and found no meaningful divergence in this environment."
+  ],
+  "blocking_reason": "The reported zero-2-only loss divergence is not reproducible on this machine with the tested stack; both comparable SFT runs matched to within 1e-4 over 8 optimizer steps.",
+  "reproduction_command": "bash run_repro.sh"
+}

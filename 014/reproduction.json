@@ -1,0 +1,11 @@
+{
+  "blocking_reason": "",
+  "evidence": "'google._upb._message.RepeatedCompositeContainer' object has no attribute 'max_number_of_boxes'",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Generate Python protobuf modules from codebase/research/object_detection/protos/*.proto.",
+    "Create an empty TrainEvalPipelineConfig and merge a minimal pipeline config string.",
+    "Attempt to assign max_number_of_boxes on pipeline_config.eval_input_reader, which is a repeated container."
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `./run_repro.sh` on the local source tree with `torch 2.9.1+cpu` and `workers=4` exits non-zero. stderr shows Lightning tearing down prediction through `CombinedLoader.reset()` -> `_shutdown_workers_and_reset_iterator()` -> `dataloader._iterator._shutdown_workers()`, which raises `RuntimeError: DataLoader worker ... is killed by signal: Aborted`, followed by the secondary `RuntimeError: Please call `iter(combined_loader)` first.`",
+  "steps": [
+    "Created a clean venv with the CPU torch wheel and Lightning's minimal runtime dependencies.",
+    "Ran `repro.py` from a real file so `multiprocessing_context='spawn'` works.",
+    "Observed `Trainer.predict()` fail during teardown in `CombinedLoader.reset()` after the first batch."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./setup_env.sh && ./run_repro.sh"
+}

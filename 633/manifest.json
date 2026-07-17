@@ -1,0 +1,22 @@
+{
+  "bug_id": "633",
+  "bug_dir": "633",
+  "issue_url": "https://github.com/jax-ml/jax/issues/37921",
+  "commit_hash": "f4f5503bfa0db535cb505c2653b9f087a2dabc9d",
+  "library_name": "jax",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "jax-ml/jax@f4f5503bfa0db535cb505c2653b9f087a2dabc9d",
+  "codebase_present": true,
+  "standardized_dir": "../633",
+  "repro_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the bundled JAX repro on this snapshot prints x=89 jit: [1.] eager: [nan] and x=88 jit: [1.] eager: [0.], matching the bug report's gradient mismatch.",
+  "steps": [
+    "Created a local venv and installed the runtime dependencies from requirements.txt.",
+    "Ran repro.py against the local codebase snapshot with JAX constrained to CPU execution.",
+    "Observed the reported mismatch between jitted and eager gradients for log(exp(x)) at x=89.0 and x=88.0."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "./run_repro.sh"
+}

@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Plain backward on a tiny PaLM instance reported plain_backward_missing=[] and produced nonzero gradients for layers.0.fn.norm.gamma (grad_sum=0.05676254257559776), layers.1.fn.norm.gamma (grad_sum=0.03758058324456215), and norm.gamma (grad_sum=0.03201062232255936).",
+    "CPU DistributedDataParallel with world_size=1 reported ddp_backward_missing=[] and completed backward without error.",
+    "The direct missing-parameter check in the local checkout returned an empty list."
+  ],
+  "steps": [
+    "Create a virtual environment and install the repro dependencies from requirements.txt.",
+    "Run bash run_repro.sh against the local codebase checkout.",
+    "Inspect the printed gradient lists for missing norm.gamma parameters."
+  ],
+  "blocking_reason": "The local checkout does not exhibit the reported unused-parameter behavior; norm.gamma receives gradients in both plain and DDP-backed backward passes.",
+  "reproduction_command": "bash run_repro.sh"
+}

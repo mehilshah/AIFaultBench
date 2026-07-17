@@ -1,0 +1,8 @@
+WARNING:2026-07-17 04:42:02,739:jax._src.xla_bridge:969: An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+Traceback (most recent call last):
+  File "415/repro.py", line 22, in <module>
+    main()
+  File "415/repro.py", line 17, in main
+    assert not jnp.isnan(value), "Beta(1.0, 8.0).log_prob(0.0) returned nan"
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: Beta(1.0, 8.0).log_prob(0.0) returned nan

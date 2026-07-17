@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running render_model(..., render_params=True) on the deterministic example prints a graph with only the deterministic node and no parameter node. The probabilistic control prints a graph that includes `param` and a `param -> probabilistic` edge.",
+  "steps": [
+    "Created a local virtual environment and installed the minimal Pyro/Torch/graphviz dependencies.",
+    "Ran the issue's deterministic model and a probabilistic control through pyro.render_model(render_params=True).",
+    "Observed that the deterministic graph source omits the parameter node while the probabilistic control includes it."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

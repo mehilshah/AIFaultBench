@@ -1,0 +1,15 @@
+An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+Traceback (most recent call last):
+  File "564/repro.py", line 69, in <module>
+    model()
+  File "564/repro.py", line 61, in model
+    nn = random_nnx_module("nn", module, prior)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "564/codebase/numpyro/contrib/module.py", line 566, in random_nnx_module
+    _update_params(params, new_params, prior)
+  File "564/codebase/numpyro/contrib/module.py", line 238, in _update_params
+    _update_params(item, new_item, prior, prefix=flatten_name)
+  File "564/codebase/numpyro/contrib/module.py", line 234, in _update_params
+    flatten_name = ".".join([prefix, name]) if prefix else name
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: sequence item 1: expected str instance, int found

@@ -1,0 +1,67 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/996
+
+TITLE
+`accelerate launch` returns exit code `0` on error
+
+BODY
+### System Info
+
+```Shell
+- `Accelerate` version: 0.15.0
+- Platform: Linux-5.4.0-135-generic-x86_64-with-glibc2.31
+- Python version: 3.10.9
+- Numpy version: 1.24.1
+- PyTorch version (GPU?): 1.13.1+cu117 (True)
+- `Accelerate` default config:
+        - compute_environment: LOCAL_MACHINE
+        - distributed_type: MULTI_GPU
+        - mixed_precision: bf16
+        - use_cpu: False
+        - dynamo_backend: NO
+        - num_processes: 6
+        - machine_rank: 0
+        - num_machines: 1
+        - gpu_ids: all
+        - main_process_ip: None
+        - main_process_port: None
+        - rdzv_backend: static
+        - same_network: True
+        - main_training_function: main
+        - deepspeed_config: {}
+        - fsdp_config: {}
+        - megatron_lm_config: {}
+        - downcast_bf16: no
+        - tpu_name: None
+        - tpu_zone: None
+        - command_file: None
+        - commands: None
+```
+
+
+### Information
+
+- [X] The official example scripts
+
+### Tasks
+
+- [X] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+
+### Reproduction
+
+Intentionally configure a batch size that is too big for your GPU. E.g.
+
+```
+accelerate launch train_text_to_image.py --pretrained_model_name_or_path=CompVis/stable-diffusion-v1-4 --dataset_name=lambdalabs/sd-pokemon-diffusers --resolution=512 --train_batch_size=1024
+echo $?
+
+# `$?` will be '0'
+```
+
+
+
+### Expected behavior
+
+```Shell
+On error, CLI commands should return a nonzero exit code.
+```
+

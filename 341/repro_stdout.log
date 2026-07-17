@@ -1,0 +1,9 @@
+devices 1
+backend gpu
+jax 0.9.0
+numpyro 0.20.0
+warmup_s 13.662
+same_object_run_s 7.645
+fresh_object_run_s 8.426
+same_object_second_batch_s 3.770
+fresh_object_second_batch_s 3.217

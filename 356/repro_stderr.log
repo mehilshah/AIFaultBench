@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "356/codebase/numpyro/__init__.py", line 13, in <module>
+    from numpyro import compat, diagnostics, distributions, handlers, infer, ops, optim
+  File "356/codebase/numpyro/infer/__init__.py", line 6, in <module>
+    from numpyro.infer.elbo import (
+  File "356/codebase/numpyro/infer/elbo.py", line 35, in <module>
+    from numpyro.ops.provenance import eval_provenance
+  File "356/codebase/numpyro/ops/provenance.py", line 5, in <module>
+    from jax.api_util import debug_info, flatten_fun, shaped_abstractify
+ImportError: cannot import name 'debug_info' from 'jax.api_util' (356/.venv/lib/python3.12/site-packages/jax/api_util.py)

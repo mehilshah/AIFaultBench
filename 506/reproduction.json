@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "A local sharded AutoencoderTiny checkpoint was rewritten so diffusion_pytorch_model.safetensors.index.json mapped one shard to ../outside/secret.safetensors. _get_checkpoint_shard_files resolved that shard to an out-of-directory path, and AutoencoderTiny.from_pretrained loaded successfully from the outside copy after the in-tree shard was removed.",
+  "steps": [
+    "Created a local AutoencoderTiny checkpoint with sharded safetensors.",
+    "Moved one shard outside the model directory and rewrote the index weight_map entry to ../outside/secret.safetensors.",
+    "Confirmed _get_checkpoint_shard_files returned the escaped path and from_pretrained loaded the model successfully."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

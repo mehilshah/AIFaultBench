@@ -1,0 +1,13 @@
+{
+  "bug_id": "099",
+  "bug_report_source": "bug_report.txt",
+  "issue_url": "https://github.com/lucidrains/rotary-embedding-torch/issues/24",
+  "library_name": "rotary-embedding-torch",
+  "library_version": "0.6.2",
+  "reproduction_type": "runtime failure on fp8 input",
+  "reproduction_requires_gpu": true,
+  "notes": [
+    "The local code fails before any training step because float8 input reaches torch.arange in get_seq_pos().",
+    "The failure is still the same fp8 code path described in the issue report."
+  ]
+}

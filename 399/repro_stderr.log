@@ -1,0 +1,25 @@
+HEAD is now at 61e05b3d9 [BugFix, BE] Document and fix fps passing in recorder and loggers
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+tritonclient 2.52.0 requires numpy<2,>=1.19.1, but you have numpy 2.5.1 which is incompatible.
+datasets 4.0.0 requires fsspec[http]<=2025.3.0,>=2023.1.0, but you have fsspec 2026.6.0 which is incompatible.
+399/codebase/torchrl/_extension.py:30: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+399/codebase/torchrl/data/replay_buffers/samplers.py:37: UserWarning: Failed to import torchrl C++ binaries. Some modules (eg, prioritized replay buffers) may not work with your installation. You seem to be using the nightly version of TorchRL. If this is a local install, there might be an issue with the local installation. Here are some tips to debug this:
+ - make sure ninja and cmake were installed
+ - make sure you ran `python setup.py clean && python setup.py develop` and that no error was raised
+ - make sure the version of PyTorch you are using matches the one that was present in your virtual env during setup.
+  warnings.warn(EXTENSION_WARNING)
+Traceback (most recent call last):
+  File "399/repro.py", line 36, in <module>
+    main()
+  File "399/repro.py", line 31, in main
+    logger.log_video("repro", video, step=0)
+  File "399/codebase/torchrl/record/loggers/csv.py", line 200, in log_video
+    self.experiment.add_video(
+  File "399/codebase/torchrl/record/loggers/csv.py", line 102, in add_video
+    torchvision.io.write_video(filepath, vid_tensor, **kwargs)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'torchvision.io' has no attribute 'write_video'. Did you mean: 'write_file'?

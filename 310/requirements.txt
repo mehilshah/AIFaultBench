@@ -1,0 +1,4 @@
+numpy
+opt_einsum
+pyro-api
+tqdm

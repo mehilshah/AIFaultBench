@@ -1,0 +1,12 @@
+{
+  "bug_id": "396",
+  "bug_dir": "396",
+  "issue_url": "https://github.com/huggingface/peft/issues/730",
+  "commit_hash": "30fd5a4c88db369e87eab27ebf01c0b28bed02dc",
+  "library_name": "peft",
+  "library_version": "0.5.0.dev0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "huggingface/peft@30fd5a4c88db369e87eab27ebf01c0b28bed02dc",
+  "codebase_present": "true",
+  "standardized_dir": "../396"
+}

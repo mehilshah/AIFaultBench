@@ -1,0 +1,3 @@
+torch=2.3.0+cpu
+pytorch_lightning=2.4.0
+warning: Trying to infer the `batch_size` from an ambiguous collection. The batch size we found is 3161. To avoid any miscalculations, use `self.log(..., batch_size=batch_size)`.

@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "The repro reaches `setup done nan` and `call start`, then `_find_reasonable_step_size()` does not return before the 5s wrapper timeout. The captured stdout ends with `result=timeout` and `exit_status=124`.",
+  "steps": [
+    "Create an isolated virtualenv and install the pinned CPU PyTorch wheel plus Pyro's runtime dependencies.",
+    "Patch `torch.__version__` to a 1.x string before importing the bundled Pyro snapshot so the old `torch_patch.py` import guard is satisfied.",
+    "Instantiate `HMC` with a potential function that evaluates to NaN, run `setup(1)`, and call `_find_reasonable_step_size()` on a one-site latent dict.",
+    "Observe that the call hangs until the wrapper timeout kills it."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

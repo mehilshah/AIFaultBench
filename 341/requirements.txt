@@ -1,0 +1,4 @@
+jax[cuda13]==0.9.0
+scipy>=1.13
+multipledispatch>=1.0.0
+tqdm>=4.68.0

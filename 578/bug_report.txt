@@ -1,0 +1,22 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/2935
+
+TITLE
+pyro.param cannot be set to CPU correctly
+
+BODY
+
+### Issue Description
+
+Even if the parameters I pass in ```pyro.param()``` are on the gpu, the returned param are still on cpu.
+
+### Environment
+For any bugs, please provide the following:
+ - python 3.7, Ubuntu 18.04.5 LTS
+ - PyTorch version 1.9.0+cu102
+ - pyro 1.7.0
+ - 
+### Code Snippet
+```
+pyro.param("alpha_loc", torch.rand(3).cuda()).device
+```
+

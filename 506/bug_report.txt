@@ -1,0 +1,64 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/14175
+
+TITLE
+Path traversal / arbitrary out-of-directory file read via sharded-checkpoint `weight_map` in `_get_checkpoint_shard_files`
+
+BODY
+### Describe the bug
+
+reported on 9 June 2026 https://github.com/huggingface/diffusers/security/advisories/GHSA-9mfc-5mqx-wxhr - no response.
+
+
+## Summary
+
+`DiffusionPipeline.from_pretrained` / `ModelMixin.from_pretrained` resolve a sharded checkpoint's shard filenames from the model-supplied index JSON (`diffusion_pytorch_model.safetensors.index.json`) and join them to the model directory with no sanitization, so a malicious model directory can make loading open/read files outside it. (This is the diffusers analog of the transformers `get_checkpoint_shard_files` traversal; diffusers has its own loading stack and its own copy of the bug.)
+
+## Details
+
+`src/diffusers/utils/hub_utils.py`, `_get_checkpoint_shard_files` (~L394, L402):
+
+```python
+original_shard_filenames = sorted(set(index["weight_map"].values()))   # attacker-controlled
+...
+shard_filenames = [os.path.join(shards_path, f) for f in original_shard_filenames]  # no ../ / absolute check
+```
+
+The only validation is `os.path.exists(shard_file)`. `../` escapes the directory and an absolute value escapes entirely. Returned paths flow to `modeling_utils.py:1235` → `_load_shard_file` → `load_state_dict` (`model_loading_utils.py:359`) which opens them. Reachable from `ModelMixin.from_pretrained(dir)` (`modeling_utils.py:1200/1235`, sharded auto-detected) and `DiffusionPipeline.from_pretrained` (per component via `pipeline_loading_utils.load_sub_model`). No `trust_remote_code`.
+
+
+### Reproduction
+
+
+## PoC
+
+A malicious model dir whose `weight_map` value is `"../<outside>/SECRET.safetensors"` (or an absolute path):
+- `_get_checkpoint_shard_files` returns a path outside the model dir; reading it returns the out-of-dir content (`TOP-SECRET-CONTENTS`).
+- End-to-end `TinyModel.from_pretrained(dir)` opens `/tmp/.../id_rsa_SECRET` (outside the model dir); with a valid-safetensors target at an absolute path, `from_pretrained` silently loads tensors from outside the repo (`weights came from outside dir: True`).
+
+## Impact
+
+Malicious-model path traversal: arbitrary out-of-directory file open/read during model/pipeline loading (full read of safetensors-format targets; path-disclosure + unexpected-open/`OSError` for other files). The `.bin` index branch uses `torch.load(weights_only=True)`, so this is **not** a pickle-RCE vector (honest negative on that angle).
+
+## Net-new
+
+diffusers' published advisories (GHSA-98h9-4798-4q5v, GHSA-7wx4-6vff-v64p, GHSA-j7w6-vpvq-j3gm) are all `trust_remote_code`/`custom_pipeline` bypasses; none concern shard/`weight_map` traversal. No `..`/realpath guard exists in the diffusers shard-resolution chain.
+
+## Remediation
+
+Reject `weight_map` values that are absolute or contain `..` (require `os.path.basename(f) == f`, or verify `os.path.realpath(shard_file)` stays under `os.path.realpath(shards_path)`).
+
+### Logs
+
+```shell
+
+```
+
+### System Info
+
+
+Affected versions
+0.39.0.dev0
+
+### Who can help?
+
+_No response_

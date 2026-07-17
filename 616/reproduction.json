@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "With JAX 0.4.38 / jaxlib 0.4.38 and the local NumPyro 0.17.0 checkout, `JAX_CHECK_TRACER_LEAKS=1 python repro.py` fails in `test_chain_inside_jit` with `Exception: Leaked trace DynamicJaxprTrace`.",
+  "steps": [
+    "Created an isolated virtual environment in .venv",
+    "Installed pinned JAX CPU, SciPy, pytest, and the local NumPyro codebase",
+    "Ran the leak-checking MCMC test target from codebase/test/infer/test_mcmc.py",
+    "Observed a tracer leak while executing `test_chain_inside_jit`"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

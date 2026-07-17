@@ -1,0 +1,13 @@
+{
+  "bug_id": "406",
+  "bug_dir": "406",
+  "issue_url": "https://github.com/huggingface/diffusers/issues/13979",
+  "commit_hash": "3467efa65a27e4b4c3caa6e01ebb9ca035e14674",
+  "library_name": "diffusers",
+  "library_version": "3467efa65a27e4b4c3caa6e01ebb9ca035e14674",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "huggingface/diffusers@3467efa65a27e4b4c3caa6e01ebb9ca035e14674",
+  "codebase_present": "true",
+  "standardized_dir": "../406",
+  "repro_strategy": "AST-based source inspection of the vendored codebase"
+}

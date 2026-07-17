@@ -1,0 +1,134 @@
+# recovered-from-issue: https://github.com/facebookresearch/detectron2/issues/4915
+
+TITLE
+export maskRCNN to torchscript 
+
+BODY
+**## Instructions To Reproduce the Issue:**
+
+Hey guys.Recently I had a problem exporting the mask to torchscript.I used `export.py` and changed default `config-file`/` sample-image `with absolute path.I set `export-method `to scripting and `format` to torchscript.First of all, I'd like to apologize. Since it is the first time to write a issue, it is a little messy. Please bear with me.Sry to bother you.
+
+**1. full changes you made**
+    ```
+parser.add_argument(
+        "--format",
+        choices=["caffe2", "onnx", "torchscript"],
+        help="output format",
+        default="torchscript",
+    )
+    parser.add_argument(
+        "--export-method",
+        choices=["caffe2_tracing", "tracing", "scripting"],
+        help="Method to export models",
+        default="scripting",
+    )
+    # parser.add_argument("--config-file", default="", metavar="FILE", help="path to config file")
+    parser.add_argument("--config-file",
+                        default="D:\Install\detectron2-main\configs\COCO-InstanceSegmentation\mask_rcnn_R_50_FPN_3x.yaml",
+                        metavar="FILE", help="path to config file")
+    parser.add_argument("--sample-image", default="D:\Install\detectron2-main\image.jpg", type=str,
+                        help="sample image for input")
+    # parser.add_argument("--sample-image", default="D:\Install\detectron2-main\image.jpg", type=str,
+    #                     help="sample image for input")
+    parser.add_argument("--run-eval", action="store_true")
+    parser.add_argument("--output", default="D:\Install\detectron2-main\output",
+                        help="output directory for the converted model")
+
+```
+
+**2. __Full logs__ or other relevant observations:**
+```
+<put logs here>
+D:\Anaconda3\envs\detectron2\python.exe D:/Install/detectron2-main/tools/deploy/export_model.py
+D:\Anaconda3\envs\detectron2\lib\site-packages\caffe2\__init__.py:5: UserWarning: Caffe2 support is not fully enabled in this PyTorch build. Please enable Caffe2 by building PyTorch from source with `BUILD_CAFFE2=1` flag.
+  warnings.warn("Caffe2 support is not fully enabled in this PyTorch build. "
+D:\Anaconda3\envs\detectron2\lib\site-packages\caffe2\proto\__init__.py:17: UserWarning: Caffe2 support is not enabled in this PyTorch build. Please enable Caffe2 by building PyTorch from source with `BUILD_CAFFE2=1` flag.
+  warnings.warn('Caffe2 support is not enabled in this PyTorch build. '
+[W C:\actions-runner\_work\pytorch\pytorch\builder\windows\pytorch\torch\csrc\jit\python\init.cpp:756] Warning: Use _jit_set_fusion_strategy, bailout depth is deprecated. Setting to (STATIC, 1) (function operator ())
+[04/17 17:27:15 detectron2]: Command line arguments: Namespace(config_file='D:\\Install\\detectron2-main\\configs\\COCO-InstanceSegmentation\\mask_rcnn_R_50_FPN_3x.yaml', export_method='scripting', format='torchscript', opts=[], output='D:\\Install\\detectron2-main\\output', run_eval=False, sample_image='D:\\Install\\detectron2-main\\image.jpg')
+[04/17 17:27:16 d2.checkpoint.detection_checkpoint]: [DetectionCheckpointer] Loading from D:\Install\detectron2-main\model.pkl ...
+Traceback (most recent call last):
+  File "D:/Install/detectron2-main/tools/deploy/export_model.py", line 239, in <module>
+    exported_model = export_scripting(torch_model)
+  File "D:/Install/detectron2-main/tools/deploy/export_model.py", line 104, in export_scripting
+    torch.jit.save(ts_model, f)
+  File "D:\Anaconda3\envs\detectron2\lib\site-packages\torch\jit\_serialization.py", line 85, in save
+    ret = m.save_to_buffer(_extra_files=_extra_files)
+  File "D:\Anaconda3\envs\detectron2\lib\site-packages\torch\jit\_script.py", line 734, in save_to_buffer
+    return self._c.save_to_buffer(*args, **kwargs)
+RuntimeError: 
+Could not export Python function call 'is_fx_tracing'. Remove calls to Python functions before export. Did you forget to add @script or @script_method annotation? If this is a nn.ModuleList, add it to __constants__:
+  File "D:\Install\detectron2-main\detectron2\modeling\poolers.py", line 224
+        num_level_assignments = len(self.level_poolers)
+    
+        if not is_fx_tracing():
+               ~~~~~~~~~~~~~ <--- HERE
+            # @torch.jit.script_method
+
+**3.how to fix the error above**
+https://github.com/facebookresearch/detectron2/blob/1f84ebbf5af96eae71e2c0476d49e9cbdc5b190f/tools/deploy/export_model.py#L101
+I changed this line to `torch.jit.save(ts_model.__module__, f)`,and this time another error I cant deal with raised.See full logs below.
+
+**4.Another logs:**
+```
+D:\Anaconda3\envs\detectron2\python.exe D:/Install/detectron2-main/tools/deploy/export_model.py
+D:\Anaconda3\envs\detectron2\lib\site-packages\caffe2\__init__.py:5: UserWarning: Caffe2 support is not fully enabled in this PyTorch build. Please enable Caffe2 by building PyTorch from source with `BUILD_CAFFE2=1` flag.
+  warnings.warn("Caffe2 support is not fully enabled in this PyTorch build. "
+D:\Anaconda3\envs\detectron2\lib\site-packages\caffe2\proto\__init__.py:17: UserWarning: Caffe2 support is not enabled in this PyTorch build. Please enable Caffe2 by building PyTorch from source with `BUILD_CAFFE2=1` flag.
+  warnings.warn('Caffe2 support is not enabled in this PyTorch build. '
+[W C:\actions-runner\_work\pytorch\pytorch\builder\windows\pytorch\torch\csrc\jit\python\init.cpp:756] Warning: Use _jit_set_fusion_strategy, bailout depth is deprecated. Setting to (STATIC, 1) (function operator ())
+[04/17 17:37:07 detectron2]: Command line arguments: Namespace(config_file='D:\\Install\\detectron2-main\\configs\\COCO-InstanceSegmentation\\mask_rcnn_R_50_FPN_3x.yaml', export_method='scripting', format='torchscript', opts=[], output='D:\\Install\\detectron2-main\\output', run_eval=False, sample_image='D:\\Install\\detectron2-main\\image.jpg')
+[04/17 17:37:08 d2.checkpoint.detection_checkpoint]: [DetectionCheckpointer] Loading from D:\Install\detectron2-main\model.pkl ...
+Traceback (most recent call last):
+  File "D:/Install/detectron2-main/tools/deploy/export_model.py", line 239, in <module>
+    exported_model = export_scripting(torch_model)
+  File "D:/Install/detectron2-main/tools/deploy/export_model.py", line 102, in export_scripting
+    torch.jit.save(ts_model.__module__, f)
+  File "D:\Anaconda3\envs\detectron2\lib\site-packages\torch\jit\_serialization.py", line 85, in save
+    ret = m.save_to_buffer(_extra_files=_extra_files)
+AttributeError: 'str' object has no attribute 'save_to_buffer'
+```
+
+## Expected behavior:
+I expected to export maskRCNN to torchscript corretly.Assume output is model.pt,I hope it can work in the next two commands.
+
+`model=torch.load("model.pt")`
+`model.eval()`
+
+
+
+## Environment:
+sys.platform                     win32
+Python                           3.8.8 (default, Apr 13 2021, 15:08:03) [MSC v.1916 64 bit (AMD64)]
+numpy                            1.24.2
+detectron2                       0.6 @D:\Install\detectron2-main\detectron2
+detectron2._C                    not built correctly: No module named 'detectron2._C'
+DETECTRON2_ENV_MODULE            <not set>
+PyTorch                          1.12.0+cu116 @D:\Anaconda3\envs\detectron2\lib\site-packages\torch
+PyTorch debug build              False
+torch._C._GLIBCXX_USE_CXX11_ABI  False
+GPU available                    Yes
+GPU 0                            NVIDIA GeForce RTX 3070 (arch=8.6)
+Driver version                   531.41
+CUDA_HOME                        C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.6
+Pillow                           9.4.0
+torchvision                      0.13.0+cu116 @D:\Anaconda3\envs\detectron2\lib\site-packages\torchvision
+torchvision arch flags           D:\Anaconda3\envs\detectron2\lib\site-packages\torchvision\_C.pyd; cannot find cuobjdump
+fvcore                           0.1.5.post20220512
+iopath                           0.1.9
+cv2                              4.6.0
+-------------------------------  ----------------------------------------------------------------------------------------
+PyTorch built with:
+  - C++ Version: 199711
+  - MSVC 192829337
+  - Intel(R) Math Kernel Library Version 2020.0.2 Product Build 20200624 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v2.6.0 (Git Hash 52b5f107dd9cf10910aaa19cb47f3abf9b349815)
+  - OpenMP 2019
+  - LAPACK is enabled (usually provided by MKL)
+  - CPU capability usage: AVX2
+  - CUDA Runtime 11.6
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_37,code=compute_37
+  - CuDNN 8.3.2  (built against CUDA 11.5)
+  - Magma 2.5.4
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=11.6, CUDNN_VERSION=8.3.2, CXX_COMPILER=C:/actions-runner/_work/pytorch/pytorch/builder/windows/tmp_bin/sccache-cl.exe, CXX_FLAGS=/DWIN32 /D_WINDOWS /GR /EHsc /w /bigobj -DUSE_PTHREADPOOL -openmp:experimental -IC:/actions-runner/_work/pytorch/pytorch/builder/windows/mkl/include -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOCUPTI -DUSE_FBGEMM -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -DEDGE_PROFILER_USE_KINETO, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=1.12.0, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=OFF, USE_MPI=OFF, USE_NCCL=OFF, USE_NNPACK=OFF, USE_OPENMP=ON, USE_ROCM=OFF, 
+

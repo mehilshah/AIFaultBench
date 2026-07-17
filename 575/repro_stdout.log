@@ -1,0 +1,7 @@
+{
+  "reason": "Local train.py already defines --validation-batch-size, so the reported Namespace AttributeError is fixed in this tree.",
+  "reproducible": false,
+  "train_py": "575/codebase/train.py",
+  "validation_batch_size_access_line": 762,
+  "validation_batch_size_flag_line": 143
+}

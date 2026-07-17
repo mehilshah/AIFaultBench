@@ -1,0 +1,6 @@
+PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Traceback (most recent call last):
+  File "155/./repro.py", line 15, in main
+    from transformers.configuration_utils import ALLOWED_LAYER_TYPES  # noqa: F401
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ImportError: cannot import name 'ALLOWED_LAYER_TYPES' from 'transformers.configuration_utils' (155/codebase/src/transformers/configuration_utils.py)

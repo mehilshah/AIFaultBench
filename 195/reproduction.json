@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running the minimal repro against the local codebase raises jaxtyping.AnnotationError.",
+    "The error message is exactly: \"Cannot process symbolic axis 'dim+1' as some axis names have not been processed. In practice you should usually only use symbolic axes in annotations for return types, referring only to axes annotated for arguments.\"",
+    "The traceback shows the exception originates from codebase/jaxtyping/_array_types.py while checking the decorated function's return annotation."
+  ],
+  "steps": [
+    "Create a local virtual environment with bash setup_env.sh.",
+    "Run bash run_repro.sh to execute repro.py against the checked-out codebase.",
+    "Observe that the direct @beartype decorator on append_one(np.array([1, 2])) triggers jaxtyping.AnnotationError for the symbolic return axis dim+1."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

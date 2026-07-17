@@ -1,0 +1,162 @@
++ 239/.venv/bin/python -m pip install -v .
+Using pip 26.1.2 from 239/.venv/lib/python3.12/site-packages/pip (python 3.12)
+Processing ./.
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: mylib
+  Building wheel for mylib (pyproject.toml): started
+  Building wheel for mylib (pyproject.toml): finished with status 'done'
+  Created wheel for mylib: filename=mylib-0.0.1-cp312-cp312-linux_x86_64.whl size=90528 sha256=1dd32ded33470da9cb8675bf66d96d1400aca59de2b25f684579b5adf85c8450
+  Stored in directory: /tmp/pip-ephem-wheel-cache-v61g5ycs/wheels/37/67/0f/15c0b6853c83531dbf31c861ae2b4bc58ae8b5ee1c0c6a0719
+Successfully built mylib
+Installing collected packages: mylib
+  Attempting uninstall: mylib
+    Found existing installation: mylib 0.0.1
+    Uninstalling mylib-0.0.1:
+      Removing file or directory 239/.venv/lib/python3.12/site-packages/mylib-0.0.1.dist-info/
+      Removing file or directory 239/.venv/lib/python3.12/site-packages/mylib/
+      Successfully uninstalled mylib-0.0.1
+Successfully installed mylib-0.0.1
++ 239/.venv/bin/python -c import mylib; mylib.create_context()
+sizeof(std::string) = 32
++ docker pull quay.io/pypa/manylinux2014_x86_64:2024-01-08-eb135ed
+2024-01-08-eb135ed: Pulling from pypa/manylinux2014_x86_64
+Digest: sha256:460f6d2125c112e8b1a5fa413673e2e58322f05ff996255cada0ec9bd8347111
+Status: Image is up to date for quay.io/pypa/manylinux2014_x86_64:2024-01-08-eb135ed
+quay.io/pypa/manylinux2014_x86_64:2024-01-08-eb135ed
++ 239/.venv/bin/python -m cibuildwheel project --platform linux --output-dir 239/_repro_work/wheelhouse
+
+     _ _       _ _   _       _           _
+ ___|_| |_ _ _|_| |_| |_ _ _| |_ ___ ___| |
+|  _| | . | | | | | . | | | |   | -_| -_| |
+|___|_|___|___|_|_|___|_____|_|_|___|___|_|
+
+cibuildwheel version 2.16.2
+
+Build options:
+  platform: linux
+  architectures: i686, x86_64
+  build_selector: 
+    build_config: cp310-*
+    skip_config: *i686 *musllinux*
+    requires_python: >=3.6
+    prerelease_pythons: False
+  container_engine: docker
+  output_dir: 239/_repro_work/wheelhouse
+  package_dir: 239/_repro_work/project
+  test_selector: 
+    skip_config:
+  before_all: 
+  before_build: 
+  before_test: 
+  build_frontend: None
+  build_verbosity: 1
+  config_settings: 
+  dependency_constraints: pinned
+  environment: 
+  manylinux_images: 
+    x86_64: quay.io/pypa/manylinux2014_x86_64:2024-01-08-eb135ed
+    i686: quay.io/pypa/manylinux2014_i686:2023-10-03-72cdc42
+    pypy_x86_64: quay.io/pypa/manylinux2014_x86_64:2023-10-03-72cdc42
+    aarch64: quay.io/pypa/manylinux2014_aarch64:2023-10-03-72cdc42
+    ppc64le: quay.io/pypa/manylinux2014_ppc64le:2023-10-03-72cdc42
+    s390x: quay.io/pypa/manylinux2014_s390x:2023-10-03-72cdc42
+    pypy_aarch64: quay.io/pypa/manylinux2014_aarch64:2023-10-03-72cdc42
+    pypy_i686: quay.io/pypa/manylinux2014_i686:2023-10-03-72cdc42
+  musllinux_images: 
+    x86_64: quay.io/pypa/musllinux_1_1_x86_64:2023-10-03-72cdc42
+    i686: quay.io/pypa/musllinux_1_1_i686:2023-10-03-72cdc42
+    aarch64: quay.io/pypa/musllinux_1_1_aarch64:2023-10-03-72cdc42
+    ppc64le: quay.io/pypa/musllinux_1_1_ppc64le:2023-10-03-72cdc42
+    s390x: quay.io/pypa/musllinux_1_1_s390x:2023-10-03-72cdc42
+  repair_command: auditwheel repair -w {dest_dir} {wheel}
+  test_command: 
+  test_extras: 
+  test_requires: 
+
+Cache folder: /users/grad/mehil/.cache/cibuildwheel
+
+Here we go!
+
+Starting container image quay.io/pypa/manylinux2014_x86_64:2024-01-08-eb135ed...
+
+info: This container will host the build for cp310-manylinux_x86_64...
+224dc1f7fb6cf156ca32c2140138c790ed8bbaa4076f61ed86b1d2fc1c891f98
+    + /bin/true
+    + mkdir -p /project
+    + manylinux-interpreters --help
+    + manylinux-interpreters ensure cp310-cp310
+'cp310-cp310' already installed at '/opt/python/cp310-cp310'
+    + test -x /opt/python/cp310-cp310/bin/python
+
+                                                                       ✓ 6.36s
+Copying project into container...
+
+    + mkdir -p /project
+
+                                                                       ✓ 0.08s
+
+Building cp310-manylinux_x86_64 wheel
+CPython 3.10 manylinux x86_64
+
+Setting up build environment...
+
+    + /opt/python/cp38-cp38/bin/python -c 'import sys, json, os; json.dump(os.environ.copy(), sys.stdout)'
+    + which python
+    + which pip
+
+                                                                       ✓ 0.22s
+Building wheel...
+
+    + rm -rf /tmp/cibuildwheel/built_wheel
+    + mkdir -p /tmp/cibuildwheel/built_wheel
+    + python -m pip wheel /project/project --wheel-dir=/tmp/cibuildwheel/built_wheel --no-deps -v
+Processing ./project
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: mylib
+  Building wheel for mylib (pyproject.toml): started
+  Building wheel for mylib (pyproject.toml): finished with status 'done'
+  Created wheel for mylib: filename=mylib-0.0.1-cp310-cp310-linux_x86_64.whl size=106067 sha256=8dfc205e34fe178a524ec2afffb80dc142564214cea9953396e33d1c060534e4
+  Stored in directory: /tmp/pip-ephem-wheel-cache-_fkeu651/wheels/14/28/7c/93ace9459c0ad4da93fb0cf8c46654257f2753fc45343b210d
+Successfully built mylib
+    + /opt/python/cp38-cp38/bin/python -c 'import sys, json, glob; json.dump(glob.glob('"'"'/tmp/cibuildwheel/built_wheel/*.whl'"'"'), sys.stdout)'
+    + rm -rf /tmp/cibuildwheel/repaired_wheel
+    + mkdir -p /tmp/cibuildwheel/repaired_wheel
+
+                                                                      ✓ 14.92s
+Repairing wheel...
+
+    + sh -c 'auditwheel repair -w /tmp/cibuildwheel/repaired_wheel /tmp/cibuildwheel/built_wheel/mylib-0.0.1-cp310-cp310-linux_x86_64.whl'
+    + /opt/python/cp38-cp38/bin/python -c 'import sys, json, glob; json.dump(glob.glob('"'"'/tmp/cibuildwheel/repaired_wheel/*.whl'"'"'), sys.stdout)'
+    + mkdir -p /output
+    + mv /tmp/cibuildwheel/repaired_wheel/mylib-0.0.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl /output
+
+                                                                       ✓ 1.39s
+
+✓ cp310-manylinux_x86_64 finished in 16.61s
+Copying wheels back to host...
+
+
+                                                                       ✓ 0.08s
+
+1 wheels produced in 0 minutes:
+  mylib-0.0.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl   104 kB
++ docker run --rm -v 239/_repro_work:/work -w /work quay.io/pypa/manylinux2014_x86_64:2024-01-08-eb135ed bash -lc /opt/python/cp310-cp310/bin/python -m pip install /work/wheelhouse/mylib-0.0.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl >/tmp/install.log 2>&1 && /opt/python/cp310-cp310/bin/python - <<'PY'
+import mylib
+mylib.create_context()
+PY
+sizeof(std::string) = 8
+
+=== SUMMARY ===
+reproducible: True
+The manylinux wheel segfaulted on import inside the cp310 container.
+result written to 239/reproduction.json

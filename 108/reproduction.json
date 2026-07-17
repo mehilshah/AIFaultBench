@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running DataCollatorWithFlattening on features whose labels are torch.Tensor objects raises TypeError('can only concatenate list (not \"Tensor\") to list').",
+    "The same collator succeeds when labels are provided as Python lists, producing flattened input_ids, labels, and position_ids."
+  ],
+  "steps": [
+    "Created an isolated Python venv and installed the minimal runtime dependencies listed in requirements.txt.",
+    "Executed repro.py with PYTHONPATH pointed at codebase/src.",
+    "Observed the tensor-label failure and the successful list-label case in the same run."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

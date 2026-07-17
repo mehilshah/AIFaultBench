@@ -1,0 +1,18 @@
+{
+  "title": "Detectron2 TTA negative-stride image repro",
+  "source_issue": "https://github.com/facebookresearch/detectron2/issues/2236",
+  "entrypoint": "./run_repro.sh",
+  "runtime": {
+    "python": "3.12",
+    "platform": "linux"
+  },
+  "dependencies": [
+    "numpy",
+    "Pillow",
+    "torch"
+  ],
+  "notes": [
+    "The failing conversion mirrors detectron2/modeling/test_time_augmentation.py::_maybe_read_image.",
+    "The repro intentionally mirrors detectron2.data.detection_utils.convert_PIL_to_numpy(..., 'BGR') so the NumPy array has a negative stride."
+  ]
+}

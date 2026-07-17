@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "codebase/deepspeed/runtime/bf16_optimizer.py:105-111 unconditionally indexes self.bf16_groups[i] during destroy().",
+    "run_repro.sh produced repro_stdout.log showing \"constructed=BF16_Optimizer bf16_groups=0\" followed by \"BUG REPRODUCED: IndexError: list index out of range\".",
+    "run_repro.sh exited with status 1, and repro_exit_code.txt contains 1."
+  ],
+  "steps": [
+    "Install the local codebase in a clean virtual environment with torch 2.7.1+cpu.",
+    "Run ./run_repro.sh from the standardized folder.",
+    "Observe BF16_Optimizer.destroy() raising IndexError when DummyOptim leaves bf16_groups empty."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

@@ -1,0 +1,4 @@
+{"source_file": "457/codebase/projects/DensePose/densepose/evaluation/densepose_coco_evaluation.py", "hardcoded_cuda_line_found": true}
+pixel_embeddings = embedding[:, py, px].t().to(device="cuda")
+current_impl failed RuntimeError CUDA requested from a CPU-only tensor
+cpu_safe_reference passed [-1, 11]

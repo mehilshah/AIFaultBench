@@ -1,0 +1,68 @@
+Title: PARSynthesizer crashes during sample if there was an all-null column in the input data
+Date: 2025-04-18T14:25:12+00:00
+URL: https://github.com/sdv-dev/SDV/issues/2473
+
+Description:
+### Environment Details
+* SDV version: 1.20.0
+* Python version: 3.11
+* Operating System: Linux (Colab Notebook)
+
+### Error Description
+If my input data (training data) has a column that is all-null, then the PARSynthesizer crashes during `sample` with a `KeyError`. This happens whenever the sdtype of this column indicates that it should be statistically modeled -- for eg. `numerical` or `categorical`.
+
+### Steps to reproduce
+
+
+```python
+import numpy as np
+import pandas as pd
+
+from sdv.sequential import PARSynthesizer
+from sdv.metadata import Metadata
+
+data = pd.DataFrame(data={
+    'sequence_key': ['sequence-' + str(int(i/5)) for i in range(100)],
+    'numerical_col': np.random.randint(low=0, high=100, size=100),
+    'categorical_col': np.random.choice(['A', 'B', 'C'], size=100),
+    'all_null_col': [np.nan]*100
+})
+
+metadata = Metadata.load_from_dict({
+    'tables': {
+        'table': {
+            'columns': {
+                'sequence_key': { 'sdtype': 'id' },
+                'numerical_col': { 'sdtype': 'numerical' },
+                'categorical_col': { 'sdtype': 'categorical' },
+                'all_null_col': { 'sdtype': 'numerical' }
+            },
+            'sequence_key': 'sequence_key'
+        }
+    }
+})
+
+synthesizer = PARSynthesizer(metadata, epochs=1)
+synthesizer.fit(data)
+synthesizer.sample(num_sequences=2)
+```
+```
+KeyError: "['all_null_col'] not in index"
+```
+Stack trace provided below.
+
+[stack_trace.txt](https://github.com/user-attachments/files/19813258/stack_trace.txt)
+
+### Expected Behavior
+I expect that -- no matter what the sdtype of the original column -- PARSynthesizer should be able to understand that the column is all-null and therefore produce synthetic data where the column is all-null.
+
+This is the behavior for all our other single-table and multi-table synthesizers.
+
+### Workaround
+Until we fix this bug, the recommended workaround is to replace the missing values in the column with a static, numerical value such as `0`.
+ 
+```python
+data['all_null_col'] = data['all_null_col'].fillna(0)
+```
+
+Now PARSynthesizer will no longer crash. The synthetic data column will contain a static value (`0`) that you can change back to null if you'd like.

@@ -1,0 +1,22 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38529
+
+TITLE
+Saving ShapeDtypeStruct
+
+BODY
+### Description
+
+Saving arrays with `jnp.load` works well. Saving ShapeDtypeStruct requires 
+
+```python
+x = jax.ShapeDtypeStruct((10, 10), jnp.float16)
+y = jnp.load("test.npy", allow_pickle=True)
+```
+
+where y is `array(ShapeDtypeStruct(shape=(10, 10), dtype=float16), dtype=object)` and `y.item()` yields the actual ShapeDtypeStruct. This seems less elegant. Is this the intended way to save the Struct or is there a better way? 
+
+This is in the context of model serialization btw (so saving a model where some of the parameters/member variables are just structs)
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+jax '0.9.0.1'

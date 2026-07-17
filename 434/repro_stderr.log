@@ -1,0 +1,1 @@
+BUG REPRODUCED: float activations are silently truncated when cast to an integer weight dtype.

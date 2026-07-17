@@ -1,0 +1,3 @@
+RESULT ['item-0', 'item-1', 'item-2']
+EVENTS ['yield:0', 'yield:1', 'yield:2', 'preprocess:item-0', 'forward:item-0', 'postprocess:item-0', 'preprocess:item-1', 'forward:item-1', 'postprocess:item-1', 'preprocess:item-2', 'forward:item-2', 'postprocess:item-2']
+BUG_REPRODUCED=True

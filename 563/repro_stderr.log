@@ -1,0 +1,13 @@
+563/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+Traceback (most recent call last):
+  File "563/repro.py", line 171, in <module>
+    main()
+  File "563/repro.py", line 167, in main
+    check_env_specs(env, break_when_any_done=False)
+  File "563/codebase/torchrl/envs/utils.py", line 791, in check_env_specs
+    raise AssertionError(
+AssertionError: The keys of the specs and data do not match:
+- List of keys present in real but not in fake: keys_in_real_not_in_fake={('next', 'randomStates'), ('next', 'agents', 'actions'), ('next', 'reward')},
+- List of keys present in fake but not in real: keys_in_fake_not_in_real=set().
+

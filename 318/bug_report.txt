@@ -1,0 +1,48 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/3486
+
+TITLE
+Minimal FSDP2 w Accelerate + SFTTrainer doesn't properly set DeviceMesh
+
+BODY
+### System Info
+
+```Shell
+- `transformers` version: 4.51.0.dev0                          
+- Platform: Linux-6.8.0-52-generic-x86_64-with-glibc2.35                                                                                                                                                                                                     
+- Python version: 3.11.11                                                                                                                                                                                                                                    
+- Huggingface_hub version: 0.30.1                                                                                                                                                                                                                            
+- Safetensors version: 0.5.3                                                                                                                                                                                                                                 
+- Accelerate version: 1.6.0                                                                                                                                                                                                                                  
+- Accelerate config:    not found                                                                                             
+- DeepSpeed version: 0.15.4                                                                                                                                                                                                                                  
+- PyTorch version (GPU?): 2.6.0+cu124 (True)                                                                                                                                                                                                                 
+- Tensorflow version (GPU?): not installed (NA)                                                                               
+- Flax version (CPU?/GPU?/TPU?): not installed (NA)                                                                                                                                                                                                          
+- Jax version: not installed                                                                                                  
+- JaxLib version: not installed                                                                                                                                                                                                                              
+- Using distributed or parallel set-up in script?: <fill in>                                                                                                                                                                                                 
+- Using GPU in script?: <fill in>                                                                                                                                                                                                                            
+- GPU type: NVIDIA A40
+```
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+See full repro scripts @ https://gist.github.com/winglian/e9c12073bbaf8aec0236fd1746a0098f
+
+using this command
+
+`NCCL_P2P_LEVEL=LOC accelerate launch --config_file fsdp2.yaml sft.py`
+
+### Expected behavior
+
+training to start

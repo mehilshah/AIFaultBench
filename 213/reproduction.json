@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `GaussianCopulaSynthesizer(metadata).sample_from_conditions(...)` on the unfitted demo model raises `sdv.data_processing.errors.NotFittedError` with the wrapped message `Error: Sampling terminated. No results were saved due to unspecified \"output_file_path\".` The traceback shows the original `NotFittedError` comes from `DataProcessor.transform()` and is then re-raised by `handle_sampling_error()`.",
+  "steps": [
+    "Create a local venv with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` from the bug folder.",
+    "Observe that `sample_from_conditions()` on an unfitted `GaussianCopulaSynthesizer` raises `sdv.data_processing.errors.NotFittedError` instead of a proactive fitting-first `SamplingError`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh > repro_stdout.log 2> repro_stderr.log"
+}

@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "420/repro.py", line 70, in <module>
+    main()
+  File "420/repro.py", line 59, in main
+    assert isinstance(attention_mask, dict), (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Bug reproduced: create_masks_for_generate returned a bare mask instead of a dict for Qwen3 layer_types=['full_attention']

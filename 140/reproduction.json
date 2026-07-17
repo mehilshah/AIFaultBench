@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "save_file succeeded and the failure happens at safe_open(...).get_slice('test')[0, :].",
+    "Observed exception: TypeError: argument 'slices': failed to extract enum Slice ('Slice | Slices')\n- variant Slice (Slice): TypeError: failed to extract field Slice::Slice.0, caused by TypeError: 'tuple' object cannot be converted to 'PySlice'\n- variant Slices (Slices): TypeError: failed to extract field Slice::Slices.0, caused by TypeError: 'int' object cannot be converted to 'PySlice'",
+    "The traceback matches the reported failure: argument 'slices' cannot extract an int as PySlice."
+  ],
+  "steps": [
+    "Create a 10x10 tensor and save it with safetensors.torch.save_file.",
+    "Open the file with safe_open(..., framework='pt', device='cpu').",
+    "Call get_slice('test')[0, :] to exercise integer indexing on the lazy slice object."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "104/repro.py", line 36, in <module>
+    main()
+  File "104/repro.py", line 29, in main
+    raise AssertionError(
+AssertionError: ResidualVQ initialized MLP modules even though implicit_neural_codebook=False

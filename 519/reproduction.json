@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "run_repro.sh prints `raised=ModuleNotFoundError` and `message=No module named 'torch_geometric.graphgym.imports'`.",
+    "The isolated sandbox built by repro.py omits `torch_geometric/graphgym/imports.py` and triggers the same missing-module exception reported in the bug.",
+    "repro_stdout.log contains the reproduced ModuleNotFoundError; repro_stderr.log is empty."
+  ],
+  "steps": [
+    "Run `bash setup_env.sh` to create the isolated Python environment.",
+    "Run `bash run_repro.sh` to build the sandbox package tree and import `torch_geometric.graphgym.imports`.",
+    "Observe the ModuleNotFoundError for `torch_geometric.graphgym.imports` in the output logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

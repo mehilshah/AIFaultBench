@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` prints `iou1: 0.600224` and `iou2: 1.000000`, then fails with `AssertionError: Expected both IoUs to be 1.0`.",
+  "steps": [
+    "Create a Python virtual environment and install the runtime dependencies listed in `requirements.txt`.",
+    "Install the local detectron2 source tree in editable mode with `FORCE_CUDA=0 python -m pip install -e codebase --no-deps --no-build-isolation`.",
+    "Run `bash run_repro.sh` to execute the rotated-IoU snippet from the bug report."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

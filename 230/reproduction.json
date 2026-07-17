@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the BruteForceSampler MRE with n_jobs=2 produced only 3 trials and missed the parameter combination {'x': 1, 'y': 1}; the repro script raised AssertionError: Incomplete brute-force coverage.",
+  "steps": [
+    "Created a local venv and installed the minimal runtime dependencies from requirements.txt.",
+    "Ran `bash run_repro.sh` with PYTHONPATH pointing at the local codebase.",
+    "Observed three completed trials instead of the full 2x2 grid; stdout and stderr were saved to repro_stdout.log and repro_stderr.log."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

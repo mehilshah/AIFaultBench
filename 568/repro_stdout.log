@@ -1,0 +1,11 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.1.2)
+Requirement already satisfied: jaxlib==0.10.1 in ./.venv/lib/python3.12/site-packages (from -r 568/requirements.txt (line 1)) (0.10.1)
+Requirement already satisfied: numpy==2.5.1 in ./.venv/lib/python3.12/site-packages (from -r 568/requirements.txt (line 2)) (2.5.1)
+Requirement already satisfied: scipy==1.18.0 in ./.venv/lib/python3.12/site-packages (from -r 568/requirements.txt (line 3)) (1.18.0)
+Requirement already satisfied: ml_dtypes==0.5.4 in ./.venv/lib/python3.12/site-packages (from -r 568/requirements.txt (line 4)) (0.5.4)
+Requirement already satisfied: opt_einsum==3.4.0 in ./.venv/lib/python3.12/site-packages (from -r 568/requirements.txt (line 5)) (3.4.0)
+jax=0.10.2.dev20260717
+jaxlib=0.10.1
+numpy=2.5.1
+x=89 jit: [1.] eager: [nan]
+x=88 jit: [1.] eager: [0.]

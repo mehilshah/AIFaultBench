@@ -1,0 +1,28 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/2026
+
+TITLE
+Is the documentation of MatrixNormal wrong that it expects lower cholesky of correlation matrix?
+
+BODY
+The docstring says
+
+```
+    :param array_like scale_tril_row: Lower cholesky of rows correlation matrix.
+    :param array_like scale_tril_column: Lower cholesky of columns correlation matrix.
+```
+
+but looking at the sampling code
+
+```python
+    def sample(self, key, sample_shape=()):
+        eps = random.normal(
+            key, shape=sample_shape + self.batch_shape + self.event_shape
+        )
+        samples = self.loc + self.scale_tril_row @ eps @ jnp.swapaxes(
+            self.scale_tril_column, -2, -1
+        )
+
+        return samples
+```
+
+This seems to assume `scale_tril_{row,column}` are lower cholesky of the covariance matrix according to [wikipedia](https://en.wikipedia.org/wiki/Matrix_normal_distribution#Drawing_values_from_the_distribution). 

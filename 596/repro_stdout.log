@@ -1,0 +1,6 @@
+torch=2.8.0+cu128
+cuda_device=NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition
+timesteps=[999, 857, 600]
+running_step=1, timestep=999
+step_1_device=cuda:0
+running_step=2, timestep=857

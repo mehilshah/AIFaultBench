@@ -1,0 +1,83 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (24.0)
+Collecting pip
+  Downloading pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
+Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 21.8 MB/s eta 0:00:00
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed pip-26.1.2
+Collecting numpy>=1.26 (from -r requirements.txt (line 1))
+  Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting opencv-python-headless>=5.0.0 (from -r requirements.txt (line 2))
+  Downloading opencv_python_headless-5.0.0.93-cp37-abi3-manylinux_2_28_x86_64.whl.metadata (19 kB)
+Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 45.3 MB/s  0:00:00
+Downloading opencv_python_headless-5.0.0.93-cp37-abi3-manylinux_2_28_x86_64.whl (61.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.2/61.2 MB 49.0 MB/s  0:00:01
+Installing collected packages: numpy, opencv-python-headless
+
+Successfully installed numpy-2.5.1 opencv-python-headless-5.0.0.93
+{
+  "actual_fps": 25.0,
+  "actual_total_frames": 250,
+  "expected_sample_indices": [
+    0,
+    8,
+    16,
+    24,
+    32
+  ],
+  "reported_metadata": {
+    "do_sample_frames": false,
+    "duration": 10.0,
+    "fps": 0.3125,
+    "frames_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31
+    ],
+    "total_num_frames": 32,
+    "video_backend": "opencv"
+  },
+  "reported_timestamps_first_5": [
+    "00:00",
+    "00:03",
+    "00:06",
+    "00:09",
+    "00:12"
+  ],
+  "sampled_frames": 32,
+  "video_path": "/tmp/gemma4_video_repro_gb02zbqz/sample.avi"
+}

@@ -1,0 +1,25 @@
+{
+  "bug_id": "165",
+  "issue_url": "https://github.com/kornia/kornia/issues/2121",
+  "library_name": "kornia",
+  "library_version": "0.6.10.dev0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": true,
+  "setup_command": "bash setup_env.sh",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh",
+  "runtime": {
+    "python": "3.12",
+    "torch": "2.13.0+cu130"
+  },
+  "source_files": [
+    "bug_report.txt",
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md"
+  ]
+}

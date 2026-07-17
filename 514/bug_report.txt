@@ -1,0 +1,42 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7770
+
+TITLE
+[BUG][Deepcompile] OOM during DeepCompile pre-pass eager node-by-node profiling (FX Interpreter) due to decomposed cross_entropy materializing huge intermediates
+
+BODY
+**Describe the bug**
+When using DeepCompile, an OOM occurs during the pre-optimization eager, node-by-node profiling stage (FX Interpreter). The same model/input runs successfully in eager and torch.compile modes, but DeepCompile fails before optimization passes run. This effectively limits DeepCompile to training only much smaller models under the same fixed GPU memory.
+
+**Expected behavior**
+DeepCompile profiling should not introduce significantly higher peak memory than the actual training execution (eager / compiled), or it should provide a way to avoid profiling paths that materialize unrealistic intermediates.
+
+**Actual behavior**
+During profiling, the FX graph executes a decomposed sequence for nn.functional.cross_entropy that materializes a large [tokens, vocab] tensor via aten.full + aten.scatter, followed by multiple same-shaped ops. This causes extremely large temporary allocations and OOMs.
+
+Example trace snippet (shapes from the FX node printout):
+
+<img width="1136" height="366" alt="Image" src="https://github.com/user-attachments/assets/4423363f-e8ca-41f1-8f55-6def1300ef39" />
+
+<img width="1736" height="235" alt="Image" src="https://github.com/user-attachments/assets/db8579fd-1859-4000-b540-180e7da7da4e" />
+
+```
+         # File: /home/bingxing2/home/scx7euw/.conda/envs/py310/lib/python3.10/site-packages/transformers/loss/loss_utils.py:36 in fixed_cross_entropy, code: loss = nn.functional.cross_entropy(source, target, ignore_index=ignore_index, reduction=reduction)
+        div_1: "f32[][]" = torch.ops.aten.div.Tensor(tangents_1, convert_element_type_330);  tangents_1 = convert_element_type_330 = None
+        full_default_36: "f32[10240, 128256][128256, 1]" = torch.ops.aten.full.default([10240, 128256], 0, dtype = torch.float32, layout = torch.strided, device = device(type='cuda', index=0), pin_memory = False)
+        scatter: "f32[10240, 128256][128256, 1]" = torch.ops.aten.scatter.value(full_default_36, 1, where_18, -1.0);  full_default_36 = where_18 = None
+        where_19: "f32[10240, 1][1, 1]" = torch.ops.aten.where.self(ne_3, div_1, full_default_34);  ne_3 = div_1 = None
+        mul_164: "f32[10240, 128256][128256, 1]" = torch.ops.aten.mul.Tensor(scatter, where_19);  scatter = where_19 = None
+        sum_4: "f32[10240, 1][1, 1]" = torch.ops.aten.sum.dim_IntList(mul_164, [1], True)
+        mul_165: "f32[10240, 128256][128256, 1]" = torch.ops.aten.mul.Tensor(exp_1, sum_4);  exp_1 = sum_4 = None
+        sub_2: "f32[10240, 128256][128256, 1]" = torch.ops.aten.sub.Tensor(mul_164, mul_165);  mul_164 = mul_165 = None
+```
+For float32, 10240 * 128256 ≈ 1.31e9 elements → ~5.25 GB for just the full() tensor. Multiple same-sized intermediates exist in this chain, so peak memory during node-by-node eager execution can easily exceed GPU capacity.
+
+This allocation pattern does not happen (or is significantly reduced) in real training runs, since eager/compiled typically use fused/specialized implementations for cross entropy (e.g., log_softmax + NLLLoss / fused kernels).
+
+**Impact**
+DeepCompile cannot be used to train medium/large models under the same fixed GPU memory, because the profiling stage OOMs before optimization passes, even though the actual training execution is feasible.
+
+**Questions**
+Is it expected that DeepCompile performs eager node-by-node profiling on decomposed graphs that may materialize extremely large intermediates?
+

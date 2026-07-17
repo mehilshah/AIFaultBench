@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` loads `codebase/PyTorch/LanguageModeling/BERT/modeling.py` and fails at `return torch.nn.functional.gelu(x, approximate=True)` with `TypeError: gelu(): argument 'approximate' must be str, not bool`.",
+  "steps": [
+    "Create a local virtual environment and install the bundled Python dependency list.",
+    "Run `bash run_repro.sh` from the bug folder.",
+    "Observe the TypeError emitted from `codebase/PyTorch/LanguageModeling/BERT/modeling.py:122`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

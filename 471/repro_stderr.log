@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "471/repro.py", line 65, in main
+    print(str(crop))
+          ^^^^^^^^^
+  File "471/codebase/detectron2/data/transforms/transform_gen.py", line 91, in __repr__
+    argspec = inspect.getargspec(self.__init__)
+              ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'inspect' has no attribute 'getargspec'. Did you mean: 'getargs'?

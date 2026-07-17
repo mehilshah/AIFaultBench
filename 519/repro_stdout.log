@@ -1,0 +1,4 @@
+sandbox=/tmp/graphgym_repro_sebjxko6
+expecting: ModuleNotFoundError: No module named 'torch_geometric.graphgym.imports'
+raised=ModuleNotFoundError
+message=No module named 'torch_geometric.graphgym.imports'

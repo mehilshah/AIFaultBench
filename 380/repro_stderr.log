@@ -1,0 +1,26 @@
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+opencv-python-headless 5.0.0.93 requires numpy>=2; python_version >= "3.9", but you have numpy 1.26.4 which is incompatible.
+scipy 1.18.0 requires numpy<2.8,>=2.0.0, but you have numpy 1.26.4 which is incompatible.
+torchvision 0.28.0 requires torch==2.13.0, but you have torch 2.5.1 which is incompatible.
+datasets 4.0.0 requires fsspec[http]<=2025.3.0,>=2023.1.0, but you have fsspec 2026.6.0 which is incompatible.
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Target directory 380/.deps/bin already exists. Specify --upgrade to force replacement.
+/users/grad/mehil/.local/lib/python3.12/site-packages/sklearn/utils/_param_validation.py:14: UserWarning: A NumPy version >=2.0.0 and <2.8.0 is required for this version of SciPy (detected version 1.26.4)
+  from scipy.sparse import csr_array, issparse
+/users/grad/mehil/.local/lib/python3.12/site-packages/scipy/sparse/_sputils.py:17: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.
+  np.uintc, np.long, np.ulong, np.longlong, np.ulonglong,
+/users/grad/mehil/.local/lib/python3.12/site-packages/scipy/sparse/_sputils.py:17: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.
+  np.uintc, np.long, np.ulong, np.longlong, np.ulonglong,
+No CUDA runtime is found, using CUDA_HOME='/usr'
+WARNING: Ignoring invalid distribution ~orch (/users/grad/mehil/.local/lib/python3.12/site-packages)
+WARNING: Target directory 380/.deps/bin already exists. Specify --upgrade to force replacement.
+/users/grad/mehil/.local/lib/python3.12/site-packages/sklearn/utils/_param_validation.py:14: UserWarning: A NumPy version >=2.0.0 and <2.8.0 is required for this version of SciPy (detected version 1.26.4)
+  from scipy.sparse import csr_array, issparse
+/users/grad/mehil/.local/lib/python3.12/site-packages/scipy/sparse/_sputils.py:17: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.
+  np.uintc, np.long, np.ulong, np.longlong, np.ulonglong,
+/users/grad/mehil/.local/lib/python3.12/site-packages/scipy/sparse/_sputils.py:17: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.
+  np.uintc, np.long, np.ulong, np.longlong, np.ulonglong,
+No CUDA runtime is found, using CUDA_HOME='/usr'

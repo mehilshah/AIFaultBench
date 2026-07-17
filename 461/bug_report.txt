@@ -1,0 +1,67 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2799
+
+TITLE
+Metadata auto-detection does not detect semantic sdtype as foreign key (`column_name_match` algorithm)
+
+BODY
+### Environment Details
+* SDV version: 1.33.0
+* Python version: 3.13
+* Operating System: macOS
+
+### Error Description
+
+For multi-table datasets, the metadata auto-detection is done using the [detect_from_dataframes method](https://docs.sdv.dev/sdv/multi-table-data/data-preparation/creating-metadata#detect_from_dataframes).
+
+This method infers the sdtypes, primary keys, and foreign keys. The foreign key columns are determined by matching up the foreign and primary key columns that have the same names. This is the only algorithm available in SDV Community. 
+
+Currently, the foreign key detection only works if the foreign key is an `id` sdtype (the PK needs to be `id` sdtype as well). This is not the expected behavior. The foreign key detection should also work for semantic sdtypes (`email`, `address`, `phone_number`, etc).
+
+### Steps to reproduce
+```python
+from sdv.metadata import Metadata
+import pandas as pd
+
+data = {
+    'parent': pd.DataFrame({
+        'email': ['sdv@sdv.dev', 'info@datacebo.com', 'info@gmail.com']
+     }),
+    'child': pd.DataFrame({
+        'child_id': [1, 2],
+        'email': ['sdv@sdv.dev', 'sdv@sdv.dev']
+     }),
+}
+assert set(data['child']['email']).issubset(set(data['parent']['email']))
+metadata = Metadata().detect_from_dataframes(data, 
+                                             foreign_key_inference_algorithm='column_name_match')
+metadata
+```
+
+```python
+{
+    "tables": {
+        "parent": {
+            "columns": {
+                "email": {
+                    "pii": true,
+                    "sdtype": "email"
+                }
+            },
+            "primary_key": "email"
+        },
+        "child": {
+            "columns": {
+                "child_id": {
+                    "sdtype": "id"
+                },
+                "email": {
+                    "sdtype": "email"
+                }
+            },
+            "primary_key": "child_id"
+        }
+    },
+    "relationships": [],
+    "METADATA_SPEC_VERSION": "V1"
+}
+```

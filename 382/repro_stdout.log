@@ -1,0 +1,4 @@
+original adapter-on == original disabled: True
+loaded adapter-on == original adapter-on: True
+loaded disabled == original disabled: False
+max abs diff: 0.781838

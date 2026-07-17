@@ -1,0 +1,13 @@
+{
+  "reproducible": true,
+  "evidence": "After terminating the checkpoint subprocess, `commit()` remained blocked for at least 2 seconds. The saved stdout log shows: `checkpoint child alive after terminate: False` followed by `commit() is still blocked after 2s` and `evidence: save_event.wait() does not time out and there is no process-health check`.",
+  "steps": [
+    "Launch `DecoupledCheckpointEngine` with a local stub writer config.",
+    "Terminate the spawned checkpoint subprocess before calling `commit()`.",
+    "Start `commit()` on a daemon thread and wait 2 seconds.",
+    "Observe that the thread is still blocked on `save_event.wait()`.",
+    "Capture stdout/stderr in `repro_stdout.log` and `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

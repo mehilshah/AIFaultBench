@@ -1,0 +1,26 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2763
+
+TITLE
+Fix failing style checks
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version: 1.31.1.dev0
+* Python version: 3.13
+* Operating System: macOS
+
+### Error Description
+
+After recent updates to `ruff` or its dependencies, the style checks are not passing.
+
+### Steps to reproduce
+
+```
+invoke unit
+...
+3 files would be reformatted, 203 files already formatted
+```
+

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running Accelerator(cpu=True).prepare(optimizer) raises AssertionError in accelerate/src/accelerate/state.py:544 when AcceleratorState() inside AcceleratedOptimizer.__init__ reinitializes PartialState with cpu=False. stderr tail: AssertionError: The current device and desired device are not the same. If the `PartialState` was generated before the `Accelerator` has been instantiated, ensure the `cpu` flag is the same for both. In this case, the `PartialState` has True and the desired device is False. Please use `cpu=True`.",
+  "steps": [
+    "Create a torch.nn.Linear model and SGD optimizer.",
+    "Instantiate accelerate.Accelerator(cpu=True).",
+    "Call accelerator.prepare(optimizer)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

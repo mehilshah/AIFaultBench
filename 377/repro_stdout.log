@@ -1,0 +1,136 @@
+[run_repro] setting up environment
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (24.0)
+Collecting pip
+  Downloading pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
+Collecting setuptools
+  Downloading setuptools-83.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting wheel
+  Downloading wheel-0.47.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting packaging>=24.0 (from wheel)
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 15.7 MB/s eta 0:00:00
+
+Downloading setuptools-83.0.0-py3-none-any.whl (1.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 18.9 MB/s eta 0:00:00
+
+Downloading wheel-0.47.0-py3-none-any.whl (32 kB)
+Downloading packaging-26.2-py3-none-any.whl (100 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.2/100.2 kB 28.9 MB/s eta 0:00:00
+
+Installing collected packages: setuptools, pip, packaging, wheel
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed packaging-26.2 pip-26.1.2 setuptools-83.0.0 wheel-0.47.0
+Looking in indexes: https://download.pytorch.org/whl/cpu
+Collecting torch==2.6.0
+  Downloading torch-2.6.0%2Bcpu-cp312-cp312-linux_x86_64.whl.metadata (26 kB)
+Collecting filelock (from torch==2.6.0)
+  Downloading filelock-3.29.0-py3-none-any.whl.metadata (2.0 kB)
+Collecting typing-extensions>=4.10.0 (from torch==2.6.0)
+  Downloading typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting networkx (from torch==2.6.0)
+  Downloading networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+Collecting jinja2 (from torch==2.6.0)
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting fsspec (from torch==2.6.0)
+  Downloading fsspec-2026.4.0-py3-none-any.whl.metadata (10 kB)
+Requirement already satisfied: setuptools in ./.venv/lib/python3.12/site-packages (from torch==2.6.0) (83.0.0)
+Collecting sympy==1.13.1 (from torch==2.6.0)
+  Downloading sympy-1.13.1-py3-none-any.whl.metadata (12 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy==1.13.1->torch==2.6.0)
+  Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Collecting MarkupSafe>=2.0 (from jinja2->torch==2.6.0)
+  Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Downloading torch-2.6.0%2Bcpu-cp312-cp312-linux_x86_64.whl (178.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 178.6/178.6 MB 105.4 MB/s  0:00:01
+
+Downloading sympy-1.13.1-py3-none-any.whl (6.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.2/6.2 MB 58.2 MB/s  0:00:00
+
+Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 107.2 MB/s  0:00:00
+
+Downloading typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Downloading filelock-3.29.0-py3-none-any.whl (39 kB)
+Downloading fsspec-2026.4.0-py3-none-any.whl (203 kB)
+Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Downloading networkx-3.6.1-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 81.7 MB/s  0:00:00
+
+Installing collected packages: mpmath, typing-extensions, sympy, networkx, MarkupSafe, fsspec, filelock, jinja2, torch
+
+
+Successfully installed MarkupSafe-3.0.3 filelock-3.29.0 fsspec-2026.4.0 jinja2-3.1.6 mpmath-1.3.0 networkx-3.6.1 sympy-1.13.1 torch-2.6.0+cpu typing-extensions-4.15.0
+Requirement already satisfied: torch==2.6.0 in ./.venv/lib/python3.12/site-packages (from -r 377/requirements.txt (line 1)) (2.6.0+cpu)
+Collecting huggingface_hub<1.0,>=0.34.0 (from -r 377/requirements.txt (line 2))
+  Downloading huggingface_hub-0.36.2-py3-none-any.whl.metadata (15 kB)
+Requirement already satisfied: packaging>=24.0 in ./.venv/lib/python3.12/site-packages (from -r 377/requirements.txt (line 3)) (26.2)
+Collecting numpy>=1.26 (from -r 377/requirements.txt (line 4))
+  Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting Pillow>=10.0 (from -r 377/requirements.txt (line 5))
+  Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)
+Collecting requests>=2.31 (from -r 377/requirements.txt (line 6))
+  Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+Collecting safetensors>=0.8.0 (from -r 377/requirements.txt (line 7))
+  Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.2 kB)
+Requirement already satisfied: filelock>=3.13 in ./.venv/lib/python3.12/site-packages (from -r 377/requirements.txt (line 8)) (3.29.0)
+Requirement already satisfied: typing-extensions>=4.10.0 in ./.venv/lib/python3.12/site-packages (from torch==2.6.0->-r 377/requirements.txt (line 1)) (4.15.0)
+Requirement already satisfied: networkx in ./.venv/lib/python3.12/site-packages (from torch==2.6.0->-r 377/requirements.txt (line 1)) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch==2.6.0->-r 377/requirements.txt (line 1)) (3.1.6)
+Requirement already satisfied: fsspec in ./.venv/lib/python3.12/site-packages (from torch==2.6.0->-r 377/requirements.txt (line 1)) (2026.4.0)
+Requirement already satisfied: setuptools in ./.venv/lib/python3.12/site-packages (from torch==2.6.0->-r 377/requirements.txt (line 1)) (83.0.0)
+Requirement already satisfied: sympy==1.13.1 in ./.venv/lib/python3.12/site-packages (from torch==2.6.0->-r 377/requirements.txt (line 1)) (1.13.1)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy==1.13.1->torch==2.6.0->-r 377/requirements.txt (line 1)) (1.3.0)
+Collecting hf-xet<2.0.0,>=1.1.3 (from huggingface_hub<1.0,>=0.34.0->-r 377/requirements.txt (line 2))
+  Downloading hf_xet-1.5.2-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+Collecting pyyaml>=5.1 (from huggingface_hub<1.0,>=0.34.0->-r 377/requirements.txt (line 2))
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting tqdm>=4.42.1 (from huggingface_hub<1.0,>=0.34.0->-r 377/requirements.txt (line 2))
+  Downloading tqdm-4.68.4-py3-none-any.whl.metadata (57 kB)
+Collecting charset_normalizer<4,>=2 (from requests>=2.31->-r 377/requirements.txt (line 6))
+  Downloading charset_normalizer-3.4.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (41 kB)
+Collecting idna<4,>=2.5 (from requests>=2.31->-r 377/requirements.txt (line 6))
+  Downloading idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+Collecting urllib3<3,>=1.26 (from requests>=2.31->-r 377/requirements.txt (line 6))
+  Downloading urllib3-2.7.0-py3-none-any.whl.metadata (6.9 kB)
+Collecting certifi>=2023.5.7 (from requests>=2.31->-r 377/requirements.txt (line 6))
+  Downloading certifi-2026.6.17-py3-none-any.whl.metadata (2.5 kB)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch==2.6.0->-r 377/requirements.txt (line 1)) (3.0.3)
+Downloading huggingface_hub-0.36.2-py3-none-any.whl (566 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 17.5 MB/s  0:00:00
+
+Downloading hf_xet-1.5.2-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.4/4.4 MB 40.4 MB/s  0:00:00
+
+Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 35.1 MB/s  0:00:00
+
+Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.9/6.9 MB 31.5 MB/s  0:00:00
+
+Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+Downloading charset_normalizer-3.4.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (224 kB)
+Downloading idna-3.18-py3-none-any.whl (65 kB)
+Downloading urllib3-2.7.0-py3-none-any.whl (131 kB)
+Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (516 kB)
+Downloading certifi-2026.6.17-py3-none-any.whl (133 kB)
+Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 31.2 MB/s  0:00:00
+
+Downloading tqdm-4.68.4-py3-none-any.whl (676 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 676.6/676.6 kB 31.0 MB/s  0:00:00
+
+Installing collected packages: urllib3, tqdm, safetensors, pyyaml, Pillow, numpy, idna, hf-xet, charset_normalizer, certifi, requests, huggingface_hub
+
+
+Successfully installed Pillow-12.3.0 certifi-2026.6.17 charset_normalizer-3.4.9 hf-xet-1.5.2 huggingface_hub-0.36.2 idna-3.18 numpy-2.5.1 pyyaml-6.0.3 requests-2.34.2 safetensors-0.8.0 tqdm-4.68.4 urllib3-2.7.0
+[run_repro] running repro
+mode: mock tensor-returning FA3 varlen function
+expected shape: (2, 4, 2, 64)
+actual shape:   (2, 1, 64)
+actual tensor equals expected: False
+BUG REPRODUCED: tensor return was destructured as if it were a tuple.

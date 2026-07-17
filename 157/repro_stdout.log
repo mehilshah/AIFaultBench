@@ -1,0 +1,12 @@
+{
+  "embed_tokens_device": "cpu",
+  "embed_tokens_dtype": "torch.float16",
+  "embed_tokens_is_meta": false,
+  "lm_head_device": "cpu",
+  "lm_head_dtype": "torch.float16",
+  "lm_head_is_meta": false,
+  "model_id": "facebook/opt-125m",
+  "shared_storage": true,
+  "torch_version": "2.13.0+cu130",
+  "transformers_version": "5.0.0.dev0"
+}

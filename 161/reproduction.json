@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "lmdeploy 0.10.2 hardcodes `nvidia-cublas-cu{CUDAVER}` in setup.py, and installing `nvidia-cublas-cu13==0.0.1` fails with the package's deprecation error.",
+  "steps": [
+    "Verified `codebase/setup.py` resolves CUDA 13 to `nvidia-cublas-cu13`.",
+    "Created an isolated Python virtual environment.",
+    "Ran `pip install nvidia-cublas-cu13==0.0.1` inside that environment.",
+    "Captured the deprecation failure emitted by the package build backend."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

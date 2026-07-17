@@ -1,0 +1,10 @@
+{
+  "blocking_reason": "This machine has no CUDA device, so the reported torch.rand(3).cuda() input cannot be created here.",
+  "evidence": "pyro=1.7.0; torch=1.13.1+cpu; cuda_available=False",
+  "reproducible": false,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Imported the standardized Pyro 1.7.0 codebase under Torch 1.13.1+cpu.",
+    "Checked whether CUDA is available before running the reported snippet."
+  ]
+}

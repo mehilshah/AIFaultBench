@@ -1,0 +1,12 @@
+{
+  "bug_id": "301",
+  "bug_dir": "301",
+  "issue_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21778",
+  "commit_hash": "fe6b1cc4e80ae0396e2e404c16e6b6968ad5437e",
+  "library_name": "pytorch-lightning",
+  "library_version": "2.6.2",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "Lightning-AI/pytorch-lightning@fe6b1cc4e80ae0396e2e404c16e6b6968ad5437e",
+  "codebase_present": true,
+  "standardized_dir": "../301"
+}

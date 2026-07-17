@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "ChildModel(arg1=1, arg2=2) produced hparams={'arg1': 1, 'arg2': 2}; arg2 remained after save_hyperparameters(ignore='arg2').",
+  "steps": [
+    "Create a clean Python 3.12 virtual environment and install the pinned runtime dependencies.",
+    "Run repro.py against codebase/src so Lightning is imported from the local snapshot.",
+    "Observe that the child call to save_hyperparameters(ignore='arg2') does not remove arg2 from model.hparams."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

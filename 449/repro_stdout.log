@@ -1,0 +1,4 @@
+phase_1_missing_model: NameError: name 'model' is not defined
+phase_2_missing_torch_device: NameError: name 'torch_device' is not defined
+phase_3_invalid_device_map_kwarg: TypeError: to() got an unexpected keyword argument 'device_map'
+reproduction confirmed: the documentation example is broken in three distinct ways

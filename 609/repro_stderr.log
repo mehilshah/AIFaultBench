@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "609/repro.py", line 66, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "609/repro.py", line 60, in main
+    _convert_non_diffusers_flux2_lora_to_diffusers(state_dict)
+  File "609/codebase/src/diffusers/loaders/lora_conversion_utils.py", line 2438, in _convert_non_diffusers_flux2_lora_to_diffusers
+    raise ValueError(f"`original_state_dict` should be empty at this point but has {original_state_dict.keys()=}.")
+ValueError: `original_state_dict` should be empty at this point but has original_state_dict.keys()=dict_keys(['guidance_in.in_layer.lora_A.weight', 'guidance_in.out_layer.lora_A.weight', 'guidance_in.in_layer.lora_B.weight', 'guidance_in.out_layer.lora_B.weight']).

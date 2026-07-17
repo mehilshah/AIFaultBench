@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` on the local codebase prints POT 0.7.0, returns a feasible plan with exact marginals, and shows `P cost: 354.43787279000003` versus the manual reference `Q cost: 57.54321038317501`. The script then fails with `AssertionError: BUG REPRODUCED: ot.emd returned a feasible but suboptimal plan`.",
+  "steps": [
+    "Patched NumPy/SciPy runtime compatibility in the repro harness so the legacy POT code imports on the host Python 3.12 environment.",
+    "Ran `ot.emd` on the issue's 5x5 cost matrix and verified the returned transport plan satisfies the marginals.",
+    "Compared the returned cost against the manual plan from the bug report and confirmed the returned plan is much worse, reproducing the bug."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

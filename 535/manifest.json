@@ -1,0 +1,12 @@
+{
+  "bug_id": "535",
+  "bug_dir": "535",
+  "issue_url": "https://github.com/deepspeedai/DeepSpeed/issues/7741",
+  "commit_hash": "20cfce004a79e026e7ba01d2f103b05e2637c6e0",
+  "library_name": "DeepSpeed",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "microsoft/DeepSpeed@20cfce004a79e026e7ba01d2f103b05e2637c6e0",
+  "codebase_present": "true",
+  "standardized_dir": "../535"
+}

@@ -1,0 +1,42 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3018
+
+TITLE
+[Support for Python 3.10] MCMC example in documentation does not work: `AttributeError: __enter__`
+
+BODY
+I am following the MCMC example in the documentation: <https://docs.pyro.ai/en/stable/mcmc.html#nuts>
+
+```python
+import pyro
+import pyro.distributions as dist
+from pyro.infer import MCMC, NUTS
+import torch
+
+true_coefs = torch.tensor([1., 2., 3.])
+data = torch.randn(2000, 3)
+dim = 3
+labels = dist.Bernoulli(logits=(true_coefs * data).sum(-1)).sample()
+
+def model(data):
+    coefs_mean = torch.zeros(dim)
+    coefs = pyro.sample('beta', dist.Normal(coefs_mean, torch.ones(3)))
+    y = pyro.sample('y', dist.Bernoulli(logits=(coefs * data).sum(-1)), obs=labels)
+    return y
+
+nuts_kernel = NUTS(model, adapt_step_size=True)
+mcmc = MCMC(nuts_kernel, num_samples=500, warmup_steps=300)
+mcmc.run(data)
+```
+
+But it raises an error:
+
+```
+Traceback (most recent call last):
+  File "/home/ayaka/Projects/test/main.py", line 19, in <module>
+    mcmc.run(data)
+  File "/home/ayaka/venv/lib/python3.10/site-packages/pyro/poutine/messenger.py", line 11, in _context_wrap
+    with context:
+AttributeError: __enter__
+```
+
+Pyro version: 1.8.0

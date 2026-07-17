@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` exits with code 1 and `repro_stderr.log` shows `NameError: name 'ttention' is not defined. Did you mean: 'Attention'?` from `codebase/vit_pytorch/cross_vit.py:118` while instantiating `CrossViT`.",
+  "steps": [
+    "Create the local virtualenv with `bash setup_env.sh`.",
+    "Run the repro with `bash run_repro.sh`.",
+    "Observe the `NameError` in `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "buggy_diff=0.7813611030578613; workaround_diff=0.0; buggy_proj_type=Linear; workaround_proj_type=Identity",
+  "steps": [
+    "Create an isolated virtualenv and install the bundle requirements.",
+    "Run repro.py, which compares two pretrained resnet50_clip.openai feature-extraction instantiations.",
+    "Compare the same model after reset_classifier(0, '') as the documented workaround."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

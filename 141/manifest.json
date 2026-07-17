@@ -1,0 +1,10 @@
+{
+  "title": "safetensors.torch.load(bytes) fails on empty tensors",
+  "description": "Repro for issue 442: a safetensors file containing a zero-length tensor loads via load_file() but raises ValueError in load(bytes).",
+  "reproduction_command": "bash run_repro.sh",
+  "dependencies": [
+    "numpy",
+    "torch"
+  ],
+  "entrypoint": "repro.py"
+}

@@ -1,0 +1,43 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21429
+
+TITLE
+TypeError: 'numpy.float64' object cannot be interpreted as an integer
+
+BODY
+
+
+When running the code below, return an Error:
+'''python
+from torch import optim
+from pytorch_lightning import Trainer
+from asteroid.models import DPRNNTasNet
+from asteroid.losses import pairwise_neg_sisdr, PITLossWrapper
+from asteroid.data import LibriMix
+from asteroid.engine import System
+import warnings
+warnings.filterwarnings('ignore')
+train_loader, val_loader = LibriMix.loaders_from_mini(task="sep_clean", batch_size=16)
+model = DPRNNTasNet(n_src=2)
+loss = PITLossWrapper(pairwise_neg_sisdr, pit_from="pw_mtx")
+optimizer = optim.Adam(model.parameters(), lr=1e-3)
+system = System(model, optimizer, loss, train_loader, val_loader)
+trainer = Trainer(max_epochs=1, accelerator='mps')
+trainer.fit(system)
+'''
+
+it returns
+`File /opt/anaconda3/envs/speech/lib/python3.12/random.py:312, in Random.randrange(self, start, stop, step)
+    309     raise ValueError("empty range for randrange()")
+    311 # Stop argument supplied.
+--> 312 istop = _index(stop)
+    313 width = istop - istart
+    314 istep = _index(step)`
+My related packages version are shown below:
+**NumPy version: 1.26.4
+PyTorch version: 2.4.0
+PyTorch Lightning version: 2.6.0
+Asteroid version: 0.7.0**
+
+
+
+cc @ethanwharris

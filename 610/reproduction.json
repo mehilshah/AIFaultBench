@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Local snapshot reports lightning_version=2.6.0.",
+    "repro.py prints scaler_is_none=True and optimizer_type=AdamW with step_supports_amp_scaling=True.",
+    "The run ends with RuntimeError: The current optimizer, AdamW, does not allow for gradient clipping because it performs unscaling of gradients internally. HINT: Are you using a 'fused' optimizer?"
+  ],
+  "steps": [
+    "Created an isolated venv and installed the runtime dependencies from requirements.txt.",
+    "Imported the local codebase from codebase/src and instantiated MixedPrecision(precision='bf16-mixed', device='cpu').",
+    "Created torch.optim.AdamW(..., fused=True) and called precision.clip_gradients(optimizer, clip_val=1.0).",
+    "Observed the reported RuntimeError in the local snapshot."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

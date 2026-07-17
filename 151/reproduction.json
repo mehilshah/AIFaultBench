@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "The repro script prints `custom_config.temperature=1.0` and then `prepared_config.temperature=1e-06`, and stderr includes the warning that generation_config defaults were modified to model-specific defaults.",
+  "steps": [
+    "Create a local virtualenv and install the missing Python packages with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` with `PYTHONPATH` pointing at `codebase/src`.",
+    "Observe that `_prepare_generation_config()` rewrites explicit `temperature=1.0` to the model default `1e-06`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

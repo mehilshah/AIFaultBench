@@ -1,0 +1,7 @@
+platform: Linux-6.17.0-1024-oem-x86_64-with-glibc2.39
+python: 3.11.15 (main, May 10 2026, 19:28:18) [Clang 22.1.3 ]
+executable: /users/grad/mehil/.local/bin/python3.11
+numpy import failed:
+torch import failed:
+note: the reported WinError 1114 is Windows-specific; this host is not Windows.
+sdv import failed:

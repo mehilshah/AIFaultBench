@@ -1,0 +1,5 @@
+equinox
+graphviz
+jax==0.4.38
+jaxlib==0.4.38
+-e ./codebase

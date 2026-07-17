@@ -1,0 +1,10 @@
+--extra-index-url https://download.pytorch.org/whl/cu128
+torch==2.8.0
+numpy
+scipy
+huggingface_hub
+filelock
+requests
+Pillow
+safetensors
+packaging

@@ -1,0 +1,2 @@
+original_valid_relationships_attr= True
+original_relationships= [{'type': 'address', 'column_names': ['street', 'city', 'state', 'zip']}]

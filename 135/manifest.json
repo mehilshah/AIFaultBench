@@ -1,0 +1,9 @@
+{
+  "bug_id": "135",
+  "issue_url": "https://github.com/google/deepvariant/issues/830",
+  "reproduction_target": "google/deepvariant:1.6.1",
+  "expected_version": "1.6.1",
+  "observed_version": "1.6.0",
+  "repro_method": "Docker registry metadata inspection",
+  "reproduced_by": "manual"
+}

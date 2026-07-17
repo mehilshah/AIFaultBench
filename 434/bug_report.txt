@@ -1,0 +1,65 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46932
+
+TITLE
+[Gemma4] Fix dtype casting for quantized vision/audio embedders (same as #46904)
+
+BODY
+### System Info
+
+- `transformers` version: 4.52.0.dev0 (main branch)
+- - Platform: Linux
+- - - Python version: 3.10
+- - - - PyTorch version: 2.x with bitsandbytes
+
+### Who can help?
+
+@zucchini-nlp @SunMarc
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+aPR #46904 fixed the unsafe `tensor.to(weight.dtype)` pattern in `gemma4_unified` but the same bug exists in `gemma4` (non-unified).
+
+**Buggy code in `src/transformers/models/gemma4/modular_gemma4.py`:**
+
+### 1. `Gemma4VisionPatchEmbedder.forward()` (line 587)
+```python
+hidden_states = self.input_proj(pixel_values.to(self.input_proj.weight.dtype))
+```
+
+### 2. `Gemma4AudioSubSampleConvProjectionLayer.forward()` (line 346)
+```python
+hidden_states = self.conv(hidden_states.to(self.conv.weight.dtype))
+```
+
+When loaded with quantization (e.g. `BitsAndBytesConfig(load_in_4bit=True)`), `self.input_proj.weight.dtype` returns `torch.uint8`/`torch.int8` instead of a float type. Casting `pixel_values` (float) to int silently destroys the image/audio data — values like `0.73` become `0`.
+
+The model then produces garbage outputs with no error or warning.
+
+**Reproduction:**
+```python
+from transformers import AutoModelForMultimodalLM, AutoProcessor, BitsAndBytesConfig
+import torch
+
+bnb_config = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16)
+model = AutoModelForMultimodalLM.from_pretrained("google/gemma-4-12b-it", quantization_config=bnb_config)
+# Vision/audio inputs will be silently cast to int, producing wrong outputs
+```
+
+**Fix (same pattern as #46904):**```pythonif (target_dtype := self.input_proj.weight.dtype).is_floating_point:
+    pixel_values = pixel_values.to(target_dtype)
+hidden_states = self.input_proj(pixel_values)
+```
+
+### Expected behavior
+
+The model should only cast inputs to the weight dtype when the weight dtype is a floating-point type. When quantized (int8/int4), the dtype cast should be skipped, preserving the original float values. This is the behavior already implemented in `gemma4_unified` via PR #46904.

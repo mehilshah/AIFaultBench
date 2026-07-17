@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the local NumPyro checkout with a model containing only `numpyro.deterministic` sites produces `samples = {}` and `mcmc.print_summary()` raises `ValueError: max() iterable argument is empty` in `numpyro/diagnostics.py:311`.",
+  "steps": [
+    "Create a virtual environment and install the repro dependencies from `requirements.txt`.",
+    "Run `bash run_repro.sh` from the standardized bug folder.",
+    "Observe that `mcmc.get_samples()` prints `{}` and the summary call crashes with the reported `ValueError`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

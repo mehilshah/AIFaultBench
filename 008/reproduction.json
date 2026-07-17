@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "stdout showed the Faster R-CNN TF2 config being loaded and identified as model type faster_rcnn.",
+    "stderr ended with ValueError: Only ssd or center_net models are supported in tflite. Found faster_rcnn in config."
+  ],
+  "steps": [
+    "Loaded codebase/research/object_detection/configs/tf2/faster_rcnn_resnet50_v1_640x640_coco17_tpu-8.config.",
+    "Executed ./run_repro.sh.",
+    "Observed the expected ValueError from the TF2 TFLite export guard."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

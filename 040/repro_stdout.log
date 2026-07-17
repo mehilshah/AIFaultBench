@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "040/codebase/labml_nn/diffusion/ddpm/unet.py:188 uses attn.softmax(dim=1) after einsum('bihd,bjhd->bijh', ...).",
+    "Buggy attention sum over query axis max deviation: 1.192e-07.",
+    "Buggy attention sum over key axis max deviation: 3.868e+00.",
+    "Correct attention sum over key axis max deviation: 1.192e-07.",
+    "Max absolute difference between buggy and corrected attention weights: 6.674e-01."
+  ],
+  "steps": [
+    "Load the actual DDPM AttentionBlock implementation from the bundled codebase.",
+    "Construct deterministic q, k, v tensors from the module's projection layer.",
+    "Compare softmax(dim=1) against the expected softmax(dim=2) normalization axis."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

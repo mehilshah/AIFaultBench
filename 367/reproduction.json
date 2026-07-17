@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "save_pretrained failed with TypeError: 'NoneType' object is not subscriptable",
+    "meta parameters stayed present after merge (12 meta tensors)"
+  ],
+  "steps": [
+    "Load sshleifer/tiny-gpt2.",
+    "Dispatch one transformer block to disk so the model contains meta tensors.",
+    "Attach a LoRA adapter and call merge_and_unload().",
+    "Call save_pretrained() on the merged model."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "./run_repro.sh"
+}

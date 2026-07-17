@@ -1,0 +1,11 @@
+
+== Environment ==
+python: /usr/bin/python3
+cwd: 574
+
+== Blocked ==
+BLOCKED: torch import failed: ImportError: /users/grad/mehil/.local/lib/python3.12/site-packages/torch/lib/libtorch_cuda.so: undefined symbol: ncclCommResume
+
+Expected reproduction command:
+uv run --no-project --python 3.12 --with vllm==0.23.0 vllm serve poolside/Laguna-XS.2-FP8 --served-model-name poolside/Laguna-XS.2-FP8 --tensor-parallel-size 1 --trust-remote-code --kv-cache-dtype fp8 --max-model-len 4096 --gpu-memory-utilization 0.85 --attention-backend FLASHINFER
+uv run --no-project --python 3.12 --with 'lm-eval[api]' lm_eval --model local-completions --model_args model=poolside/Laguna-XS.2-FP8,base_url=http://127.0.0.1:8000/v1/completions,num_concurrent=128 --tasks gsm8k --batch_size auto

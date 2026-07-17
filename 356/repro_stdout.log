@@ -1,0 +1,3 @@
+module=numpyro.distributions
+InverseWishart_present=True
+InverseWishart_obj=<class 'numpyro.distributions.continuous.InverseWishart'>

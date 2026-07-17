@@ -1,0 +1,2 @@
+# No external Python dependencies are required for this repro.
+# The bug is exercised with local stubs to avoid the broken system PyTorch install.

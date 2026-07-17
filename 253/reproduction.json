@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running the local TorchRL source with torch==2.7.1 and tensordict==0.10.0 reproduces the bug for Categorical actions shaped as (batch, 1). The failing case prints: RuntimeError: Losses shape mismatch: torch.Size([2, 2]) and torch.Size([2]). The workaround case with action shape (batch,) completes successfully.",
+  "steps": [
+    "Created an isolated virtual environment and installed torch==2.7.1, tensordict==0.10.0, numpy, and packaging.",
+    "Ran the local codebase via PYTHONPATH=codebase against the issue script.",
+    "Observed IQLLoss fail when the categorical action spec uses shape torch.Size((1,)).",
+    "Verified that the same setup succeeds when the categorical action spec uses shape torch.Size(())."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,12 @@
+{
+  "blocking_reason": "The reported failure depends on the Android/Termux aarch64 build stack with clang++ and libc++ headers; this folder is running on Linux x86_64 without that toolchain.",
+  "evidence": "Local installation succeeded and tokenizers was resolved through the normal Linux wheel path; the reported `pthread_cond_clockwait` / `esaxx-rs` Android build failure did not occur.",
+  "reproducible": false,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Installed local Transformers tree without dependencies.",
+    "tokenizers==0.23.0 was unavailable on this package index, so the Linux wheel fallback was tried instead.",
+    "Installed tokenizers==0.23.1 from the Linux wheel path.",
+    "Verified installed package metadata without importing the library."
+  ]
+}

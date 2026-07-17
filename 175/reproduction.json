@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` exits with code 1. stdout shows `result_type=Token`, `result_repr=Token('NUMBER', '1.0')`, and `result_str=1.0`, while stderr ends with `AssertionError: Transformer callback was not applied`.",
+  "steps": [
+    "Created a local venv with `bash setup_env.sh` and installed the editable local `codebase/` checkout.",
+    "Ran `bash run_repro.sh`, which executes `repro.py` against the local Lark checkout.",
+    "Observed that `Lark(..., transformer=MyTransformer())` returned `Token('NUMBER', '1.0')` instead of `ACOS called with argument: 1.0`."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

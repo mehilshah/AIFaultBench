@@ -1,0 +1,4 @@
+source_file: codebase/tutorials/sphinx-tutorials/coding_ppo.py
+repro: executing the visible tutorial snippet without the hidden multiprocessing import
+source_evidence: hidden import block is wrapped in sphinx_gallery_start_ignore at lines 108-119
+source_evidence: visible failure point is `is_fork = multiprocessing.get_start_method() == "fork"` at line 160

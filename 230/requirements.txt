@@ -1,0 +1,6 @@
+alembic
+colorlog
+numpy
+packaging
+sqlalchemy
+tqdm

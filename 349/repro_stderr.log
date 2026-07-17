@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "349/repro.py", line 52, in <module>
+    main()
+  File "349/repro.py", line 47, in main
+    accelerator.save_state(str(output_dir))
+  File "349/codebase/src/accelerate/accelerator.py", line 3039, in save_state
+    model.save_checkpoint(output_dir, ckpt_id, **save_model_func_kwargs)
+  File "349/repro.py", line 28, in save_checkpoint
+    self.checkpoint_engine.makedirs(save_dir, exist_ok=True)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'makedirs'

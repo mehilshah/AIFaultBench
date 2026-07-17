@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Using Python 3.10.13 with tensorflow==2.15.0 and transformers==4.38.2, TFBertModel.from_pretrained('bert-base-uncased', config=BertConfig(max_position_embeddings=2048)) fails. TensorFlow first raises InvalidArgumentError for a reshape mismatch, then transformers re-raises it as TypeError: InvalidArgumentError.__init__() missing 2 required positional arguments: 'op' and 'message'.",
+  "steps": [
+    "Created a Python 3.10.13 environment with uv.",
+    "Installed tensorflow==2.15.0 and transformers==4.38.2.",
+    "Ran the reproduction snippet from the bug report with BertConfig(max_position_embeddings=2048)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

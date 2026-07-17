@@ -1,0 +1,132 @@
+# recovered-from-issue: https://github.com/huggingface/peft/issues/499
+
+TITLE
+[p_tuning][FSDP] Fine tuning with p_tuning config thows Runtime error when CPU offloading is enabled
+
+BODY
+I get following error while trying to fine tuning with p_tuning using FSDP with CPU offload and accelerate - 
+
+```
+return forward_call(*args, **kwargs)
+  File "/home/datascience/conda/pytorch_2_v1/lib/python3.9/site-packages/peft/peft_model.py", line 520, in forward
+    attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cpu and cuda:0! (when checking argument for argument tensors in method wrapper_CUDA_cat)
+Exception raised from common_device_check_failure at ../aten/src/ATen/core/adaption.cpp:7 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x57 (0x7fce721154d7 in /home/datascience/conda/pytorch_2_v1/lib
+```
+
+I can reproduce this issue with code example provided here - https://github.com/huggingface/peft/blob/main/examples/sequence_classification/peft_no_lora_accelerate.py
+To run the test - 
+
+```
+accelerate launch \
+  --fsdp_transformer_layer_cls_to_wrap=BloomBlock \
+  --fsdp_offload_params=true \
+  peft_no_lora_accelerate.py \
+  --model_name_or_path=bigscience/bloomz-560m \
+  --peft_type=p_tuning \
+  --output_dir=./outputs/readme_example_test
+```
+
+FSDP config - 
+```
+fsdp_config:
+  fsdp_auto_wrap_policy: TRANSFORMER_BASED_WRAP
+  fsdp_state_dict_type: LOCAL_STATE_DICT
+  fsdp_backward_prefetch_policy: BACKWARD_POST
+```
+The environment that I am using is - 
+
+- torch: 2.0.1
+- python: 3.9
+- accelerate: 0.19.0
+- peft: 0.3.0
+- transformers: 4.29.2
+
+GPU Info - 
+- 2 A10 cards
+- torch.version.cuda = 11.7
+
+ conda list | grep cuda - 
+
+```
+cudatoolkit               11.7.0              hd8887f6_10    conda-forge
+nvidia-cuda-cupti-cu11    11.7.101                 pypi_0    pypi
+nvidia-cuda-nvrtc-cu11    11.7.99                  pypi_0    pypi
+nvidia-cuda-runtime-cu11  11.7.99                  pypi_0    pypi
+```
+
+
+
+I added few print statements to understand where the tensors are mapped - 
+
+```
+device is: cpu for - 
+
+PeftModelForSequenceClassification(
+  (base_model): GPTNeoXForSequenceClassification(
+    (gpt_neox): GPTNeoXModel(
+      (embed_in): Embedding(50688, 4096)
+      (layers): ModuleList(
+        (0-15): 16 x FullyShardedDataParallel(
+          (_fsdp_wrapped_module): GPTNeoXLayer(
+            (input_layernorm): LayerNorm((4096,), eps=1e-05, elementwise_affine=True)
+            (post_attention_layernorm): LayerNorm((4096,), eps=1e-05, elementwise_affine=True)
+            (attention): GPTNeoXAttention(
+              (rotary_emb): RotaryEmbedding()
+              (query_key_value): Linear(in_features=4096, out_features=12288, bias=True)
+              (dense): Linear(in_features=4096, out_features=4096, bias=True)
+            )
+            (mlp): GPTNeoXMLP(
+              (dense_h_to_4h): Linear(in_features=4096, out_features=16384, bias=True)
+              (dense_4h_to_h): Linear(in_features=16384, out_features=4096, bias=True)
+              (act): GELUActivation()
+            )
+          )
+        )
+      )
+      (final_layer_norm): LayerNorm((4096,), eps=1e-05, elementwise_affine=True)
+    )
+    (score): ModulesToSaveWrapper(
+      (original_module): FullyShardedDataParallel(
+        (_fsdp_wrapped_module): Linear(in_features=4096, out_features=2, bias=False)
+      )
+      (modules_to_save): ModuleDict(
+        (default): FullyShardedDataParallel(
+          (_fsdp_wrapped_module): Linear(in_features=4096, out_features=2, bias=False)
+        )
+      )
+    )
+  )
+  (prompt_encoder): ModuleDict(
+    (default): FullyShardedDataParallel(
+      (_fsdp_wrapped_module): PromptEncoder(
+        (embedding): FullyShardedDataParallel(
+          (_fsdp_wrapped_module): Embedding(20, 4096)
+        )
+        (mlp_head): Sequential(
+          (0): FullyShardedDataParallel(
+            (_fsdp_wrapped_module): Linear(in_features=4096, out_features=768, bias=True)
+          )
+          (1): ReLU()
+          (2): FullyShardedDataParallel(
+            (_fsdp_wrapped_module): Linear(in_features=768, out_features=768, bias=True)
+          )
+          (3): ReLU()
+          (4): FullyShardedDataParallel(
+            (_fsdp_wrapped_module): Linear(in_features=768, out_features=4096, bias=True)
+          )
+        )
+      )
+    )
+  )
+  (word_embeddings): Embedding(50688, 4096)
+) 
+
+```
+```
+The prefix_attention_mask device is: cpu
+The attention_mask device is: cuda:0
+```
+
+

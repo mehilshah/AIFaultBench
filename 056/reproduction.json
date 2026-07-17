@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` with `keras==3.0.0` and `tensorflow-cpu==2.16.1` prints `resized_dtype=<dtype: 'int32'>` and then fails in `Patches.call()` with `InvalidArgumentError: cannot compute Conv2D as input #1(zero-based) was expected to be a int32 tensor but is a float tensor [Op:Conv2D]`.",
+  "steps": [
+    "Create a uint8 image tensor and resize it with `ops.image.resize(ops.convert_to_tensor([image]), size=(72, 72))`.",
+    "Pass the resized tensor into the Vision Transformer `Patches` layer from the example.",
+    "Observe the Conv2D dtype mismatch traceback from `keras.ops.image.extract_patches`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

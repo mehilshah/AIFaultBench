@@ -1,0 +1,95 @@
+Title: Bug: DataloaderStopIteration inheriting from StopIteration causes RuntimeError due to PEP 479
+Date: 2025-08-24T08:36:39+00:00
+URL: https://github.com/pytorch/torchtitan/issues/1626
+
+Description:
+### Bug description
+
+The custom exception `torchtitan.components.dataloader.DataloaderStopIteration` currently inherits from `StopIteration`. This leads to an uncatchable `RuntimeError` when the dataloader is exhausted, due to the rules established in Python's **PEP 479**.
+
+This bug prevents the training loop from shutting down gracefully when it runs out of data.
+
+#### Evidence from TorchTitan's Source Code:
+
+1.  **The Exception is Raised Inside a Generator:**
+    In what appears to be the internal data fetching logic (similar to the snippet found around `train.py:382`), a `StopIteration` is caught and `DataloaderStopIteration` is re-raised. This happens inside a generator function.
+
+    ```python
+    # Location: Likely in an internal batch generator (e.g., similar to train.py around line 382)
+    try:
+        batch = next(data_iterator)
+    except StopIteration as ex:
+        # This re-raise from within a generator is the source of the problem.
+        raise DataloaderStopIteration() from ex
+    ```
+
+2.  **The Exception is Expected to be Caught by the Main Loop:**
+    The main training loop in `torchtitan/train.py` (around line 580) explicitly tries to catch `DataloaderStopIteration` to handle the end of a dataset.
+
+    ```python
+    # Location: torchtitan/train.py (around line 580)
+    try:
+        self.train_step(data_iterator)
+    except DataloaderStopIteration:
+        logger.warning("Ran out of data; last step was canceled.")
+        break
+    ```
+
+#### The Core Problem:
+
+According to **PEP 479**, when the code in step (1) raises `DataloaderStopIteration` (a subclass of `StopIteration`), the Python interpreter converts it into a `RuntimeError`. Consequently, the `except` block in step (2) is **never reached**, and the program crashes with an unhandled `RuntimeError`.
+
+### Versions
+
+**Other relevant information, e.g. runnable code snippet, if you modify torchtitan or work on a fork.**
+
+Here is a Minimal Reproducible Example that perfectly isolates and demonstrates the bug:
+
+```python
+import logging
+
+# --- Simulating the core problem in TorchTitan's code ---
+class DataloaderStopIteration(StopIteration):  # The problematic definition
+    """Custom exception to signal the end of data."""
+    pass
+
+def batch_generator(data_iterable):
+    """A generator that mimics the framework's dataloader wrapper."""
+    data_iterator = iter(data_iterable)
+    while True:
+        try:
+            batch = next(data_iterator)
+        except StopIteration as ex:
+            # Raising a subclass of StopIteration from within a generator
+            raise DataloaderStopIteration("Dataloader is empty") from ex
+        yield batch
+
+# --- User code that fails ---
+if __name__ == "__main__":
+    empty_dataloader = []
+    dataiter = batch_generator(empty_dataloader)
+    
+    print("Starting data consumption loop...")
+    try:
+        next(dataiter)
+        print("This line should not be reached.")
+    except DataloaderStopIteration:
+        # EXPECTED BEHAVIOR: This block should be executed.
+        print("Gracefully handled the end of data.")
+    except Exception as e:
+        # ACTUAL BEHAVIOR: This block is executed instead.
+        print(f"Caught unexpected exception: {type(e).__name__}: {e}")
+
+```
+
+**Actual Output of MRE:**
+```
+Starting data consumption loop...
+Caught unexpected exception: RuntimeError: generator raised StopIteration
+```
+
+**Expected Output of MRE:**
+```
+Starting data consumption loop...
+Gracefully handled the end of data.
+```

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `from flair.datasets import WIKINER_FRENCH` against the local `codebase/` raises `ImportError: cannot import name 'WIKINER_FRENCH' from 'flair.datasets'`.",
+  "steps": [
+    "Create a Python 3.12 virtual environment and install the repro requirements.",
+    "Run `bash run_repro.sh` from the standardized bug folder.",
+    "Observe the expected ImportError for `flair.datasets.WIKINER_FRENCH` in the captured logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

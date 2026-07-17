@@ -1,0 +1,33 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2521
+
+TITLE
+[BUG] Huggingface Rate Limit
+
+BODY
+**Describe the bug**
+I'm experimenting with a model from huggingface and because of that I'm constantly running a script that loads the model but I got rate limited by huggingface hub. This may be related to huggingface but I'm not sure
+
+**To Reproduce**
+This is my model loading code
+
+```py
+os.environ["HF_TOKEN"] = "hf_token_example"
+
+    model: VisionTransformer = timm.create_model(
+        "hf-hub:MahmoodLab/uni",
+        pretrained=True,
+        init_values=1e-5,
+        dynamic_img_size=True,
+        num_classes=0,
+    )
+```
+
+**Expected behavior**
+After downloading the model for the first time it shouldn't try to send request to hf hub and load the model from the cache.
+
+timm==1.0.15
+huggingface-hub==0.32.0
+
+
+
+

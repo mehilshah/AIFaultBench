@@ -1,0 +1,16 @@
+# recovered-from-issue: https://github.com/lucidrains/x-transformers/issues/282
+
+TITLE
+qk_norm and kv_heads conflict
+
+BODY
+Hi @lucidrains , hope all is good.
+
+I believe there is a conflict when using both qk_norm and kv_heads != heads that should be solved changing:
+
+https://github.com/lucidrains/x-transformers/blob/eeed50391855f8d552edc866701952f38015e415/x_transformers/x_transformers.py#L1022
+
+to:
+`self.qk_norm_k_scale = nn.Parameter(torch.ones(kv_heads, 1, dim_head))`
+
+Thanks!

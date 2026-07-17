@@ -1,0 +1,25 @@
+attempts: 40
+unique_trees: 4
+tree_1_count: 17
+start
+  printable_char	a
+  printable_char	.
+  printable_char	?
+tree_2_count: 4
+start
+  printable_char	a
+  factor
+    .
+    quantifier
+tree_3_count: 13
+start
+  printable_char	a
+  .
+  printable_char	?
+tree_4_count: 6
+start
+  printable_char	a
+  factor
+    printable_char	.
+    quantifier
+result: reproduced

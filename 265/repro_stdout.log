@@ -1,0 +1,4 @@
+Loaded AirPassengers series from local CSV.
+Target length after slicing: 120
+Attempting to instantiate LinearRegressionModel with mixed lag types.
+Reproduced failure: KeyError: 'future'

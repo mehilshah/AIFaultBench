@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` in the standardized folder printed `input_shape=(1, 3, 224, 224)` and then failed with `RuntimeError: Given normalized_shape=[64], expected input with shape [*, 64], but got input of size[1, 64, 112, 112]`. The traceback corresponds to `nn.LayerNorm(init_dim)` in `codebase/vit_pytorch/regionvit.py:215`.",
+  "steps": [
+    "Created a virtual environment and installed the repro dependencies from requirements.txt.",
+    "Ran repro.py through the standard entry point, run_repro.sh.",
+    "Observed the LayerNorm shape mismatch when RegionViT was instantiated with tokenize_local_3_conv=True."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

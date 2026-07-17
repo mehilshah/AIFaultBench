@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "codebase/README.md and codebase/README_zh-CN.md both link the license badge to LICENCE (see lines 23 and 25).",
+    "The repository root contains LICENSE but no LICENCE file.",
+    "Running ./run_repro.sh exits with status 1 and prints BUG REPRODUCED."
+  ],
+  "steps": [
+    "Open codebase/README.md and codebase/README_zh-CN.md.",
+    "Inspect the license badge link targets at the badge lines.",
+    "Verify that codebase/LICENSE exists and codebase/LICENCE does not exist.",
+    "Run ./run_repro.sh to confirm the missing target is detected."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

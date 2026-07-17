@@ -1,0 +1,14 @@
+{
+  "bug_id": "586",
+  "bug_dir": "586",
+  "issue_url": "https://github.com/deepspeedai/DeepSpeed/issues/7718",
+  "commit_hash": "e0a6bb510bf77f5f5b3907da2a76786abe74eef1",
+  "library_name": "DeepSpeed",
+  "library_version": "0.18.3+unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "microsoft/DeepSpeed@e0a6bb510bf77f5f5b3907da2a76786abe74eef1",
+  "codebase_present": "true",
+  "standardized_dir": "../586",
+  "repro_script": "repro.py",
+  "result_file": "reproduction.json"
+}

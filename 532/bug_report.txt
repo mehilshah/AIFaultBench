@@ -1,0 +1,39 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/13722
+
+TITLE
+ErnieImageTransformer2DModel does not implement from_single_file
+
+BODY
+### Describe the bug
+
+
+  ErnieImageTransformer2DModel does not implement from_single_file, unlike other transformer models such as FluxTransformer2DModel, ChromaTransformer2DModel, and ZImageTransformer2DModel.
+
+
+
+### Reproduction
+
+  from diffusers import ErnieImageTransformer2DModel
+
+  transformer = ErnieImageTransformer2DModel.from_single_file(
+      "path/to/transformer.safetensors",
+      config="path/to/base_model",
+      subfolder="transformer",
+  )
+
+ 
+
+### Logs
+
+```shell
+Error:
+  AttributeError: type object 'ErnieImageTransformer2DModel' has no attribute 'from_single_file'
+```
+
+### System Info
+
+tested with 0f1abc4 but it appears it was not added after this commit
+
+### Who can help?
+
+Questions on single file checkpoints: @DN6

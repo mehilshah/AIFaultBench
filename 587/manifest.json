@@ -1,0 +1,12 @@
+{
+  "bug_id": "587",
+  "bug_dir": "587",
+  "issue_url": "https://github.com/vllm-project/vllm/issues/47027",
+  "commit_hash": "3483240b7ea3d4372b6c79369ea36617f8b1fbb2",
+  "library_name": "vllm",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "vllm-project/vllm@3483240b7ea3d4372b6c79369ea36617f8b1fbb2",
+  "codebase_present": "true",
+  "standardized_dir": "../587"
+}

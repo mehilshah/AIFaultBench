@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "247/repro.py", line 41, in <module>
+    main()
+  File "247/repro.py", line 36, in main
+    equal_std_model = pyro.poutine.equalize(model, ["dogs_std", "cats_std"])
+                      ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'pyro.poutine' has no attribute 'equalize'

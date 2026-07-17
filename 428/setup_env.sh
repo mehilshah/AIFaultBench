@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+python3 -m venv .venv
+.venv/bin/python -m pip install --disable-pip-version-check -q -r requirements.txt

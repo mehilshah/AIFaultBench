@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "180/repro.py", line 39, in <module>
+    main()
+  File "180/repro.py", line 29, in main
+    Trainer(
+  File "180/codebase/src/lightning/pytorch/utilities/argparse.py", line 70, in insert_env_defaults
+    return fn(self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "180/codebase/src/lightning/pytorch/trainer/trainer.py", line 426, in __init__
+    self._callback_connector.on_trainer_init(
+  File "180/codebase/src/lightning/pytorch/trainer/connectors/callback_connector.py", line 80, in on_trainer_init
+    _validate_callbacks_list(self.trainer.callbacks)
+  File "180/codebase/src/lightning/pytorch/trainer/connectors/callback_connector.py", line 228, in _validate_callbacks_list
+    stateful_callbacks = [cb for cb in callbacks if is_overridden("state_dict", instance=cb)]
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "180/codebase/src/lightning/pytorch/utilities/model_helpers.py", line 42, in is_overridden
+    raise ValueError("Expected a parent")
+ValueError: Expected a parent

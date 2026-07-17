@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "The notebook-style training metric lags the end-of-epoch validation metric. On the synthetic reproduction, validation stayed above training while a clean train-set pass reached 1.0, showing the gap comes from the measurement setup rather than a failure in the ViT forward pass.",
+  "steps": [
+    "Built synthetic left/right classification images and applied the same train/val transform split as the notebook.",
+    "Trained the local vit_for_small_dataset ViT for three epochs with the notebook-style metric accounting.",
+    "Observed validation accuracy higher than the averaged training accuracy, while a clean train evaluation confirmed the model learned the task."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

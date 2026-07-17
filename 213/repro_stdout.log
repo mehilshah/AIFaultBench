@@ -1,0 +1,5 @@
+demo_shape=(500, 9)
+exception_type=NotFittedError
+exception_message=Error: Sampling terminated. No results were saved due to unspecified "output_file_path".
+cause_type=NotFittedError
+cause_message=

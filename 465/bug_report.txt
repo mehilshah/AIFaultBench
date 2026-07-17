@@ -1,0 +1,27 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/13877
+
+TITLE
+docs: fix typos in scheduling_euler_discrete.py
+
+BODY
+### Describe the bug
+
+"I found a minor typo in the docstrings of scheduling_euler_discrete.py. I have prepared a pull request (#13876) to correct these spelling errors and improve the overall clarity of the documentation. I am ready to merge this as soon as it is triaged."
+
+### Reproduction
+
+"N/A: This is a documentation-only improvement."
+
+### Logs
+
+```shell
+"N/A"
+```
+
+### System Info
+
+Run the command diffusers-cli env in your terminal as requested by the form, copy the output, and paste it here.
+
+### Who can help?
+
+@stevhliu 

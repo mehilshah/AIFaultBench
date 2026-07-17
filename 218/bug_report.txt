@@ -1,0 +1,29 @@
+Title: If a word does not have a POS (specifically xpos) value what should I do?
+Date: 2024-03-13T00:58:17.000Z
+URL: https://github.com/stanfordnlp/stanza/issues/1366
+
+Description:
+(I apologize if this has already been asked I tried for a long time to find an existing answer).
+I running into an error where I need the XPOS value for a word but it doesn't have any POS value.
+I have provided an extremely simplified version of my code below.
+
+```
+stanza.download('en')
+nlp = stanza.Pipeline('en', processors = 'tokenize,mwt,pos,lemma,depparse')
+text = "My favorite actress is Joanna Lumley."
+doc = nlp(text)
+for word in doc.sentences[i].to_dict():
+   print(word)
+   xpos = word['xpos']
+```
+These are the word values for the last two words:
+```
+{'id': 4, 'text': 'actress', 'lemma': 'actress', 'upos': 'NOUN', 'xpos': 'NN', 'feats': 'Number=Sing', 'head': 8, 'deprel': 'nsubj', 'start_char': 14, 'end_char': 21}
+{'id': (5, 6), 'text': 'joanna', 'start_char': 22, 'end_char': 28}
+
+print(word['xpos'])
+KeyError: 'xpos'
+```
+I am using the XPOS value of each word in the text. The string "joanna" does not have any POS data. Is the reason for this that the word doesn't exist in the vocabulary where the POS data is sourced? It is a name so it makes sense that every name wouldn't be added to a vocabulary. Should I manually state in my code that the XPOS is PROPN? I am working with a large amount of text that has many potential instances of unique names. Is there a better way to handle such instances, like an existing library of uncommon names?
+
+Thank you for your help, I'm sorry if there  is an obvious solution to this I am a complete stanza novice.

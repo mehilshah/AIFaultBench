@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "On Python 3.11.15 with datasets==2.16.1, huggingface-hub==0.20.3, pyarrow==14.0.2, and numpy==1.26.4, the repro script loaded wikitext with token='dummy-token' successfully.",
+    "The same script also loaded a local parquet file with token='dummy-token' successfully, and no ParquetConfig.__init__ TypeError was raised."
+  ],
+  "steps": [
+    "Created a local virtual environment and installed the pinned reproduction dependencies from requirements.txt.",
+    "Ran ./repro.py through ./run_repro.sh.",
+    "Observed the terminal output BUG_NOT_REPRODUCED instead of the reported ParquetConfig token failure."
+  ],
+  "blocking_reason": "The reported ParquetConfig.__init__() unexpected keyword argument 'token' error does not reproduce with the closest compatible package set available in this folder; both the wikitext and parquet token-loading paths succeed.",
+  "reproduction_command": "./run_repro.sh"
+}

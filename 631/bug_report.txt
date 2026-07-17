@@ -1,0 +1,27 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2701
+
+TITLE
+[DayZ Parameters] DayZ parameter validation does not validate DAYZ_SPEC_VERSION
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:
+* Python version:
+* Operating System:
+
+### Error Description
+
+Currently, parameter validation is not validating that the `'DAYZ_SPEC_VERISON'` matches the current spec version. We should add a validation check that verifies that the spec version provided is the expected version, and error if it is not.  
+
+### Steps to reproduce
+
+```python
+dayz_parameters = SingleTableDayZSynthesizer.create_parameters(data, metadata)
+dayz_parameters['DAYZ_SPEC_VERSION'] = 'V1000'
+
+SingleTableDayZSynthesizer.validate_parameters(metadata, dayz_parameters)
+```
+

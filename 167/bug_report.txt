@@ -1,0 +1,38 @@
+Title: depth_to_3d_v2 batching Bug
+Date: 2024-07-28T21:23:56+00:00
+URL: https://github.com/kornia/kornia/issues/2970
+
+Description:
+### Describe the bug
+
+The function [`depth_to_3d_v2`](https://github.com/kornia/kornia/blob/4bd1bd172d27ae0ffb5a811b7338150b65f404dc/kornia/geometry/depth.py#L73) accepts a camera matrix of the shape `(*, 3, 3)`. However, `depth_to_3d_v2` internally uses the [`unproject_meshgrid`](https://github.com/kornia/kornia/blob/4bd1bd172d27ae0ffb5a811b7338150b65f404dc/kornia/geometry/depth.py#L32) fuction that only supports a camera matrix of the shape `(3, 3)`. When feeding a camera matrix of the shape `(B, 3, 3)` into `depth_to_3d_v2`, a runtime error occurs.
+
+### Reproduction steps
+
+```bash
+import torch
+from kornia.geometry import depth_to_3d_v2
+
+B, H, W = 4, 512, 512
+
+disparity = torch.rand(B, H, W)
+intrinsics = torch.tensor([[2262.52, 0.0, 1096.98], [0.0, 2265.3017905988554, 513.137], [0.0, 0.0, 1.0]])[None].repeat(B, 1, 1)
+
+points_3d = depth_to_3d_v2(disparity, intrinsics)
+```
+
+
+### Expected behavior
+
+To fix this bug, either `depth_to_3d_v2` should be restricted to a shape of `(3, 3)` or `unproject_meshgrid` should be extended to `(*, 3, 3)`.
+
+### Environment
+
+```shell
+The latest Kornia version was used. The bug is independent of the platform.
+```
+
+
+### Additional context
+
+_No response_

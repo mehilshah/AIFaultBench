@@ -1,0 +1,15 @@
+Runtime probe stderr:
+587/codebase/vllm/__init__.py:7: RuntimeWarning: Failed to read commit hash:
+No module named 'vllm._version'
+  from .version import __version__, __version_tuple__  # isort:skip
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+  File "587/codebase/vllm/__init__.py", line 14, in <module>
+    import vllm.env_override  # noqa: F401
+    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "587/codebase/vllm/env_override.py", line 87, in <module>
+    import torch
+  File "/users/grad/mehil/.local/lib/python3.12/site-packages/torch/__init__.py", line 445, in <module>
+    from torch._C import *  # noqa: F403
+    ^^^^^^^^^^^^^^^^^^^^^^
+ImportError: /users/grad/mehil/.local/lib/python3.12/site-packages/torch/lib/libtorch_cuda.so: undefined symbol: ncclCommResume

@@ -1,0 +1,12 @@
+{
+  "bug_id": "006",
+  "bug_dir": "006",
+  "issue_url": "https://github.com/tensorflow/models/issues/11134",
+  "commit_hash": "e923b8aa3b066c02432ffdb7d5fd93d465b6eaa5",
+  "library_name": "models",
+  "library_version": "tensorflow-cpu==2.16.1, tf-keras==2.16.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "tensorflow/models@e923b8aa3b066c02432ffdb7d5fd93d465b6eaa5",
+  "codebase_present": "true",
+  "standardized_dir": "../006"
+}

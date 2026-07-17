@@ -1,0 +1,92 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21822
+
+TITLE
+Arbitrary code execution via the `_instantiator` hyperparameter in `LightningModule.load_from_checkpoint` — defeats `torch.load(weights_only=True)`
+
+BODY
+### Bug description
+
+reported via email on 9 June 2026:
+
+## Summary
+
+`LightningModule.load_from_checkpoint` reads a string field `_instantiator` from the checkpoint's `hyper_parameters` and performs `__import__(module_path)` + `getattr(...)` + call on it. The checkpoint can contain only plain `dict`/`str` values, so it **passes `torch.load(weights_only=True)`** (now the torch default) cleanly — yet Lightning's own application-level code then imports and calls an attacker-named module. This is a distinct vulnerability from the previously-disclosed "torch.load/pickle is unsafe" checkpoint issues, because it **survives the recommended `weights_only=True` mitigation**.
+
+## Details
+
+`src/lightning/pytorch/core/saving.py`, `_load_state` (lines ~156-167):
+
+```python
+instantiator_path = _cls_kwargs.pop("_instantiator", None)
+if instantiator_path is not None:
+    module_path, name = instantiator_path.rsplit(".", 1)
+    instantiator = getattr(__import__(module_path, fromlist=[name]), name)
+...
+obj = instantiator(cls, _cls_kwargs) if instantiator else cls(**_cls_kwargs)
+```
+
+`_instantiator` is read from `checkpoint["hyper_parameters"]` (`CHECKPOINT_HYPER_PARAMS_KEY`), fully attacker-controlled. `__import__(module_path)` executes the named module's top-level code; `getattr(...)(cls, dict)` then calls the attacker-named attribute. `_instantiator` is popped (line 157) before the init-arg filtering (line 163), so it fires for any LightningModule subclass — even one whose `__init__` takes no kwargs.
+
+Reachability: `LightningModule.load_from_checkpoint(path)` → `_load_from_checkpoint` (`saving.py:65`, `pl_load(..., weights_only=None)`) → `_load_state`. Default args; no `weights_only` override needed.
+
+## PoC 
+
+```python
+import torch
+from pytorch_lightning.core.module import LightningModule   # or lightning.pytorch...
+class Victim(LightningModule):
+    def __init__(self): super().__init__()
+ckpt = {"state_dict": {}, "hyper_parameters": {"_instantiator": "this.x"},
+        "pytorch-lightning_version": "2.0.0"}
+torch.save(ckpt, "evil.ckpt")
+Victim.load_from_checkpoint("evil.ckpt")     # default args
+```
+Observed: the Zen of Python is printed — proving `__import__("this")` executed from the attacker-controlled `_instantiator` string during load (under default `weights_only`), followed by the expected `AttributeError: module 'this' has no attribute 'x'`. With a planted package whose import has side effects (ubiquitous in ML envs) this is arbitrary code execution; the subsequent `instantiator(cls, dict)` is an additional attacker-controlled call.
+
+## Impact
+
+Loading an untrusted `.ckpt` (a model artifact routinely shared/downloaded) executes attacker code, **even when the user follows the documented `weights_only=True` guidance** issued for the prior checkpoint-RCE advisories.
+
+## Net-new
+
+Distinct from the 2025 checkpoint-RCE disclosures (CERT/CC VU#252619 / HiddenLayer — `_lazy_load`/`PickleSerializer`/`cloud_io`, all "torch.load is unsafe", mitigated by `weights_only=True`). Those writeups do not mention `_instantiator`/`_load_state`. This bug specifically defeats that mitigation. No GHSA covers it.
+
+## Remediation
+
+Do not resolve/import `_instantiator` from checkpoint hyperparameters. If a configurable instantiator is needed, restrict it to an allowlist of known framework instantiators (e.g. the Hydra/`lightning` internals that legitimately set it), and never derive an `__import__` target from untrusted checkpoint content.
+
+## Secondary (lower, reported for completeness)
+
+`load_hparams_from_yaml` (`saving.py:309`) uses `yaml.full_load` (not `safe_load`); on current PyYAML the classic `python/object/new` RCE is patched, so this is only an object-instantiation primitive (not validated as RCE) — noted, not claimed.
+
+
+### What version are you seeing the problem on?
+
+v2.6
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+
+```
+
+### Error messages and logs
+
+```
+# Error messages and logs here please
+```
+
+
+### Environment
+
+_No response_
+
+### More info
+
+_No response_
+
+cc @ethanwharris @lantiga

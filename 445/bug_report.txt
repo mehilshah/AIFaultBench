@@ -1,0 +1,48 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3200
+
+TITLE
+[bug] Pyro is not wrapping LR schedulers for pytorch 2.0
+
+BODY
+### Issue Description
+
+With pytorch 2.0, the `pyro.optim` `PyroLRScheduler` wrappers no longer seem to be wrapping the pytorch learning rate schedulers and including them in the `pyro.optim` namespace.
+
+```python
+from pyro import optim
+optim.ExponentialLR
+```
+
+```pytb
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: module 'pyro.optim' has no attribute 'ExponentialLR'
+```
+
+same for
+
+```python
+import pyro.optim
+pyro.optim.ExponentialLR
+```
+
+```pytb
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: module 'pyro.optim' has no attribute 'ExponentialLR'
+```
+
+### Environment
+
+ - OS: Mac Monterey 12.6.3
+ - PyTorch version: 2.0.0
+ - Pyro version: 1.8.4
+ - Python 3.8 and 3.9 (did not try higher)
+
+### Code Snippet
+
+```python
+import pyro.optim
+pyro.optim.ExponentialLR
+```
+

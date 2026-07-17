@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "428/repro.py", line 99, in <module>
+    main()
+  File "428/repro.py", line 95, in main
+    print(polygon_masks.device)
+          ^^^^^^^^^^^^^^^^^^^^
+  File "428/codebase/detectron2/structures/masks.py", line 279, in device
+    return self.tensor.device
+           ^^^^^^^^^^^
+AttributeError: 'PolygonMasks' object has no attribute 'tensor'

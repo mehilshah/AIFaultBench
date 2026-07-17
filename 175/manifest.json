@@ -1,0 +1,12 @@
+{
+  "bug_id": "175",
+  "bug_dir": "175",
+  "issue_url": "https://github.com/lark-parser/lark/issues/1416",
+  "commit_hash": "",
+  "library_name": "lark",
+  "library_version": "1.1.9",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": true,
+  "standardized_dir": "../175"
+}

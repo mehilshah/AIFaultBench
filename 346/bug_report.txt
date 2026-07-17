@@ -1,0 +1,50 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/47116
+
+TITLE
+Streaming Pipeline Regression in Transformers v5
+
+BODY
+### System Info
+
+Transformers 5+
+
+### Who can help?
+
+@Rocketknight1 @ArthurZucker 
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+Since Transformers v5 there has been a regression with pipelines and generators. There is code that forces the generator to a list. When the generator is a large streaming dataset, it will force an OOM condition.
+
+Simply excluding generators is a workaround but I'm not sure what the intent of this code was.
+
+```diff
+--- a/transformers/pipelines/base.py
++++ b/transformers/pipelines/base.py
+@@ -1206,7 +1206,7 @@ class Pipeline(_ScikitCompat, PushToHubMixin):
+             logger.warning(f"Ignoring args : {args}")
+ 
+         # Detect if inputs are a chat-style input(s) and cast as `Chat` or list of `Chat`
+-        container_types = (list, tuple, types.GeneratorType)
++        container_types = (list, tuple)#, types.GeneratorType)
+         if is_torch_available():
+             container_types = (*container_types, KeyDataset)
+         if isinstance(inputs, container_types):
+              if isinstance(inputs, types.GeneratorType):
+                  # --> THE FOLLOWING LINE CAUSES THE ISSUE
+                  inputs = list(inputs)
+```
+
+### Expected behavior
+
+Pipeline iterates over generator incrementally and doesn't run out of memory.

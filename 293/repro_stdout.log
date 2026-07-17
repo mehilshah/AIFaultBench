@@ -1,0 +1,2 @@
+jax_version=0.10.0
+has_xla_pmap_p=False

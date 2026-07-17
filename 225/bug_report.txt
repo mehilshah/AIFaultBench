@@ -1,0 +1,81 @@
+Title: [Bug]: Docker - JWT authentication not enforced when enabled - requests without tokens are incorrectly allowed
+Date: 2025-08-27T04:42:58+00:00
+URL: https://github.com/unclecode/crawl4ai/issues/1442
+
+Description:
+### crawl4ai version
+
+0.7.4
+
+### Expected Behavior
+
+When jwt_enabled: true is set in config.yml:
+  - Requests WITHOUT an Authorization header should receive a 401 Unauthorized error
+  - Requests with an INVALID token should receive a 401 Unauthorized error
+  - ONLY requests with a valid JWT Bearer token should be allowed through
+
+### Current Behavior
+
+When jwt_enabled: true is configured:
+  - Requests WITHOUT any Authorization header are incorrectly allowed and processed successfully
+  - Requests with INVALID tokens correctly receive 401 errors
+  - Requests with VALID tokens work as expected
+
+  Root cause: In deploy/docker/auth.py line 34-35, when credentials is None (no Authorization header), the function returns None instead of raising an HTTPException, effectively bypassing JWT protection
+  entirely.
+
+Sourse Discord message:
+<img width="1090" height="201" alt="Image" src="https://github.com/user-attachments/assets/66e7deb2-1ee7-4aee-9690-c0df622d8a1d" />
+
+### Is this reproducible?
+
+Yes
+
+### Inputs Causing the Bug
+
+```bash
+
+```
+
+### Steps to Reproduce
+
+```bash
+1. Enable JWT in deploy/docker/config.yml:
+  security:
+    enabled: true
+    jwt_enabled: true
+  2. Build and run the Docker container:
+  docker build -t crawl4ai-local:latest .
+  docker run -p 11235:11235 crawl4ai-local:latest
+  3. Make a request WITHOUT any token:
+  curl -X POST http://localhost:11235/crawl \
+    -H "Content-Type: application/json" \
+    -d '{"urls": ["https://example.com"]}'
+  4. Bug: Request succeeds when it should return 401
+```
+
+### Code snippets
+
+```python
+
+```
+
+### OS
+
+macOS
+
+### Python version
+
+3.12
+
+### Browser
+
+_No response_
+
+### Browser version
+
+_No response_
+
+### Error logs & Screenshots (if applicable)
+
+_No response_

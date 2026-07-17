@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "In the isolated venv (Python 3.12.3, torch 2.7.1+cpu, torch_geometric 2.6.1), the repro started at 298.22 MB RSS and then fluctuated between 346.07 MB and 426.02 MB over 30 epochs. The curve was noisy and bounded, not the steady per-epoch climb described in the report.",
+  "steps": [
+    "Created a clean venv with torch 2.7.1+cpu, torch_geometric 2.6.1, psutil, and numpy.",
+    "Ran `bash run_repro.sh --epochs 30` against the reported on-disk graph loading pattern.",
+    "Checked `repro_stdout.log`; RSS rose during warmup but then oscillated in a bounded range instead of monotonically increasing each epoch."
+  ],
+  "blocking_reason": "The bug was not reproducible in this container under the reported package versions; the observed RSS pattern did not match the runaway memory growth from the issue report.",
+  "reproduction_command": "bash run_repro.sh --epochs 30"
+}

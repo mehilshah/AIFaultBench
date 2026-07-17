@@ -1,0 +1,13 @@
+{
+  "reproducible": true,
+  "evidence": "With a dummy Triton kernel that writes per-token losses into the loss buffer, LigerFusedLinearCrossEntropyLoss(reduction='none') still returns a scalar tensor with shape torch.Size([]).",
+  "steps": [
+    "Created a clean Python 3.12 virtualenv and installed CPU PyTorch, Triton, and packaging.",
+    "Loaded the local fused linear cross entropy implementation directly from codebase/src.",
+    "Monkeypatched the Triton kernel with a CPU stub that writes a distinct value per token into the loss buffer.",
+    "Called LigerFusedLinearCrossEntropyLoss(reduction='none') on a small CPU tensor input.",
+    "Observed that the returned loss was scalar instead of a 1D tensor of unreduced losses."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

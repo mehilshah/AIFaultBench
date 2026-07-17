@@ -1,0 +1,22 @@
+{
+  "bug_id": "192",
+  "bug_dir": "192",
+  "issue_url": "https://github.com/open-edge-platform/anomalib/issues/2929",
+  "commit_hash": "",
+  "library_name": "anomalib",
+  "library_version": "2.2.0dev",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../192",
+  "repro_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

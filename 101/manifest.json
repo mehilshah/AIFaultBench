@@ -1,0 +1,12 @@
+{
+  "bug_id": "101",
+  "bug_dir": "101",
+  "issue_url": "https://github.com/lucidrains/rotary-embedding-torch/issues/8",
+  "commit_hash": "22cac59a55ae25cd06b4522d891278aedd929184",
+  "library_name": "rotary-embedding-torch",
+  "library_version": "0.2.2",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": true,
+  "standardized_dir": "../101"
+}

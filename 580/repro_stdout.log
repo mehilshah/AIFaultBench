@@ -1,0 +1,4 @@
+Loading real GLEM implementation from: 580/codebase/torch_geometric/nn/models/glem.py
+Reproducing the `train_without_ext_pred=True` failure path.
+This mirrors `examples/llm/glem.py` passing ext_pseudo_labels=None
+into `GLEM.train()` during GNN pretraining.

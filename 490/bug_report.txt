@@ -1,0 +1,13 @@
+# recovered-from-issue: https://github.com/facebookresearch/detectron2/issues/56
+
+TITLE
+how to use dockerfile
+
+BODY
+there has some problems when i use dockerfile to run it 
+
+**AssertionError:
+    Found no NVIDIA driver on your system. Please check that you
+    have an NVIDIA GPU and installed a driver from**
+
+but i have installed a driver,and the version is 430.26

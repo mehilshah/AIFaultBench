@@ -1,0 +1,1 @@
+# Stdlib-only repro. The bug is in the docs example itself.

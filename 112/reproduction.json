@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running the report's MotionBlur snippet against the local albumentations code produces the same 5x5 kernel for direction_range values -1, 0, and 1. The saved stdout shows `kernels_all_equal: True` after printing the three identical kernels.",
+  "steps": [
+    "Created a virtual environment and installed the repo-era dependency set from requirements.txt.",
+    "Imported albumentations from the local codebase with the standardized bug folder on sys.path.",
+    "Ran the exact MotionBlur reproduction from the bug report with blur_limit=(5, 5), allow_shifted=False, angle_range=(0, 0), and direction_range fixed to -1, 0, and 1.",
+    "Observed identical kernels for all three direction_range values and confirmed the equality check printed `kernels_all_equal: True`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

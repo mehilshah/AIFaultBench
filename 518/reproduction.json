@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Control case: adding both Inequality constraints in one add_constraints() call fit successfully. Bug case: adding the same constraints in two separate add_constraints() calls crashed during fit() with InvalidDataError because the parent table metadata expected the first constraint's generated columns while the raw data still contained the original l1/h1 columns.",
+  "steps": [
+    "Create a tiny two-table dataset and matching multi-table Metadata.",
+    "Fit an HMASynthesizer after adding both parent-table Inequality constraints in one call; this succeeds.",
+    "Add the same constraints in two separate add_constraints() calls on a fresh HMASynthesizer.",
+    "Call fit() and observe InvalidDataError from the single-table validation path inside preprocess()."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

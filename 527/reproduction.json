@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` reproduces the import-time crash in `codebase/pyro/distributions/torch_patch.py`: `AttributeError: module 'torch.distributions.constraints' has no attribute '_CorrCholesky'` at the `@patch_dependency(\"torch.distributions.constraints._CorrCholesky.check\")` decorator.",
+  "steps": [
+    "Install no extra dependencies; the repro uses a stubbed in-memory `torch` module.",
+    "Run `bash run_repro.sh` from the standardized bug folder.",
+    "Observe the traceback in `repro_stderr.log` and the missing `_CorrCholesky` marker in `repro_stdout.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

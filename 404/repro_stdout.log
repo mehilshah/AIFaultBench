@@ -1,0 +1,128 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (24.0)
+Collecting pip
+  Downloading pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
+Collecting setuptools
+  Downloading setuptools-83.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting wheel
+  Downloading wheel-0.47.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting packaging>=24.0 (from wheel)
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 23.8 MB/s eta 0:00:00
+
+Downloading setuptools-83.0.0-py3-none-any.whl (1.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 53.6 MB/s eta 0:00:00
+
+Downloading wheel-0.47.0-py3-none-any.whl (32 kB)
+Downloading packaging-26.2-py3-none-any.whl (100 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.2/100.2 kB 555.6 MB/s eta 0:00:00
+
+Installing collected packages: setuptools, pip, packaging, wheel
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed packaging-26.2 pip-26.1.2 setuptools-83.0.0 wheel-0.47.0
+Obtaining file://404/codebase (from -r 404/requirements.txt (line 1))
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting jaxlib<=0.11.0,>=0.10.2 (from jax==0.11.0.dev20260620+4250605d1->-r 404/requirements.txt (line 1))
+  Downloading jaxlib-0.11.0-cp312-cp312-manylinux_2_27_x86_64.whl.metadata (1.3 kB)
+Collecting ml_dtypes>=0.5.0 (from jax==0.11.0.dev20260620+4250605d1->-r 404/requirements.txt (line 1))
+  Downloading ml_dtypes-0.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (8.9 kB)
+Collecting numpy>=2.1 (from jax==0.11.0.dev20260620+4250605d1->-r 404/requirements.txt (line 1))
+  Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting opt_einsum (from jax==0.11.0.dev20260620+4250605d1->-r 404/requirements.txt (line 1))
+  Downloading opt_einsum-3.4.0-py3-none-any.whl.metadata (6.3 kB)
+Collecting scipy>=1.15 (from jax==0.11.0.dev20260620+4250605d1->-r 404/requirements.txt (line 1))
+  Downloading scipy-1.18.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Downloading jaxlib-0.11.0-cp312-cp312-manylinux_2_27_x86_64.whl (87.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 87.3/87.3 MB 96.7 MB/s  0:00:00
+
+Downloading ml_dtypes-0.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (5.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.0/5.0 MB 79.9 MB/s  0:00:00
+
+Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 74.9 MB/s  0:00:00
+
+Downloading scipy-1.18.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.3/35.3 MB 77.3 MB/s  0:00:00
+
+Downloading opt_einsum-3.4.0-py3-none-any.whl (71 kB)
+Building wheels for collected packages: jax
+  Building editable for jax (pyproject.toml): started
+  Building editable for jax (pyproject.toml): finished with status 'done'
+  Created wheel for jax: filename=jax-0.11.0.dev20260620+4250605d1-0.editable-py3-none-any.whl size=12198 sha256=1e4c70e6e9d2f076edf25de85f5825795a8a71c8db50fd66700ecefb221d7c99
+  Stored in directory: /tmp/pip-ephem-wheel-cache-6awq5tal/wheels/b0/36/d4/678f8f9cbb2d64816f4dd3285582ed92fb28210173449b7c05
+Successfully built jax
+Installing collected packages: opt_einsum, numpy, scipy, ml_dtypes, jaxlib, jax
+
+
+Successfully installed jax-0.11.0.dev20260620+4250605d1 jaxlib-0.11.0 ml_dtypes-0.5.4 numpy-2.5.1 opt_einsum-3.4.0 scipy-1.18.0
+k=np.float32(inf), mu=np.float32(0.0), loc=np.float32(0.0)
+  scipy: 1.0
+  jax:   1.0
+  jit:   1.0
+
+k=np.float32(inf), mu=np.float32(1.0), loc=np.float32(0.0)
+  scipy: 1.0
+  jax:   nan
+  jit:   nan
+
+k=np.float32(inf), mu=np.float32(2.0), loc=np.float32(0.0)
+  scipy: 1.0
+  jax:   nan
+  jit:   nan
+
+k=np.float32(inf), mu=np.float32(1.0), loc=np.float32(1.0)
+  scipy: 1.0
+  jax:   nan
+  jit:   nan
+
+k=np.float32(-inf), mu=np.float32(1.0), loc=np.float32(0.0)
+  scipy: 0.0
+  jax:   0.0
+  jit:   0.0
+
+k=np.float32(nan), mu=np.float32(1.0), loc=np.float32(0.0)
+  scipy: nan
+  jax:   nan
+  jit:   nan
+
+k=np.float32(-1.0), mu=np.float32(1.0), loc=np.float32(0.0)
+  scipy: 0.0
+  jax:   0.0
+  jit:   0.0
+
+k=np.float32(0.0), mu=np.float32(0.0), loc=np.float32(0.0)
+  scipy: 1.0
+  jax:   1.0
+  jit:   1.0
+
+k=np.float32(0.0), mu=np.float32(1.0), loc=np.float32(0.0)
+  scipy: 0.3678794503211975
+  jax:   0.3678792715072632
+  jit:   0.3678792715072632
+
+k=np.float32(1.0), mu=np.float32(1.0), loc=np.float32(0.0)
+  scipy: 0.735758900642395
+  jax:   0.735758900642395
+  jit:   0.735758900642395
+
+k=np.float32(2.0), mu=np.float32(1.0), loc=np.float32(0.0)
+  scipy: 0.9196985960006714
+  jax:   0.9196986556053162
+  jit:   0.9196986556053162
+
+k=np.float32(0.5), mu=np.float32(1.0), loc=np.float32(0.0)
+  scipy: 0.3678794503211975
+  jax:   0.3678792715072632
+  jit:   0.3678792715072632
+
+BUG REPRODUCED: jax.scipy.stats.poisson.cdf(k=+inf, mu>0) returns nan

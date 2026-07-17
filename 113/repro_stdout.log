@@ -1,0 +1,20 @@
+Requirement already satisfied: numpy<3,>=1.26 in ./.venv/lib/python3.12/site-packages (from -r 113/requirements.txt (line 1)) (2.5.1)
+onal info: {}.
+ Identifiers only on one side of expression (should be on both): {'ii', 'i'}
+rearrange('iii->i'): EinopsError
+ Error while processing rearrange-reduction pattern "iii->i".
+ Input tensor shape: (3, 3, 3). Additional info: {}.
+ Identifiers only on one side of expression (should be on both): {'iii', 'i'}
+rearrange('i->ii'): EinopsError
+ Error while processing rearrange-reduction pattern "i->ii".
+ Input tensor shape: (3,). Additional info: {}.
+ Identifiers only on one side of expression (should be on both): {'ii', 'i'}
+reduce('ii->i', 'sum'): EinopsError
+ Error while processing sum-reduction pattern "ii->i".
+ Input tensor shape: (3, 3). Additional info: {}.
+ Unexpected identifiers on the right side of reduce sum: {'i'}
+reduce('ii->i', 'max'): EinopsError
+ Error while processing max-reduction pattern "ii->i".
+ Input tensor shape: (3, 3). Additional info: {}.
+ Unexpected identifiers on the right side of reduce max: {'i'}
+All reported diagonal patterns fail with EinopsError.

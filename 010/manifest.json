@@ -1,0 +1,19 @@
+{
+  "bug_id": "010",
+  "issue_url": "https://github.com/tensorflow/models/issues/11117",
+  "library_name": "tensorflow/models",
+  "library_version": "unknown",
+  "codebase_source": "local codebase/ snapshot",
+  "bug_report_source": "bug_report.txt",
+  "generated_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

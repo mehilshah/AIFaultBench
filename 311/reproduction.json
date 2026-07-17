@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "The repro completed successfully and the multi-table diagnostic score was 0.9047619047619048, with the Actions table's Data Structure / TableStructure score at 0.42857142857142855.",
+  "steps": [
+    "Create a tiny multi-table dataset with a one-hot constrained Actions table.",
+    "Fit HMASynthesizer with OneHotEncoding(column_names=['Starts', 'SubstituteOn'], table_name='Actions').",
+    "Sample synthetic data, validate it, and run the multi-table diagnostic report.",
+    "Observe that the overall diagnostic score is below 1.0 and the Actions table TableStructure metric is 0.42857142857142855."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

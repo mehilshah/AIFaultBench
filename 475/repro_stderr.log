@@ -1,0 +1,21 @@
+475/codebase/sdv/multi_table/base.py:112: UserWarning: We strongly recommend saving the metadata using 'save_to_json' for replicability in future SDV versions.
+  warnings.warn(
+475/codebase/sdv/metadata/single_table.py:998: UserWarning: The metadata contains a column relationship of type 'address' which requires the address add-on. This relationship will be ignored. For higher quality data in this relationship, please inquire about the SDV Enterprise tier.
+  warnings.warn(
+475/codebase/sdv/metadata/single_table.py:998: UserWarning: The metadata contains a column relationship of type 'address' which requires the address add-on. This relationship will be ignored. For higher quality data in this relationship, please inquire about the SDV Enterprise tier.
+  warnings.warn(
+Traceback (most recent call last):
+  File "475/repro.py", line 52, in main
+    synthesizer.add_constraints(constraints=[constraint])
+  File "475/codebase/sdv/multi_table/base.py", line 241, in add_constraints
+    self._table_synthesizers[table_name].add_constraints([constraint])
+  File "475/codebase/sdv/single_table/base.py", line 477, in add_constraints
+    self._data_processor = DataProcessor(
+                           ^^^^^^^^^^^^^^
+  File "475/codebase/sdv/data_processing/data_processor.py", line 130, in __init__
+    self.grouped_columns_to_transformers = self._detect_multi_column_transformers()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "475/codebase/sdv/data_processing/data_processor.py", line 89, in _detect_multi_column_transformers
+    for relationship in self.metadata._valid_column_relationships:
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'SingleTableMetadata' object has no attribute '_valid_column_relationships'. Did you mean: '_validate_column_relationship'?

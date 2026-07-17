@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "095/repro.py", line 31, in <module>
+    main()
+  File "095/repro.py", line 27, in main
+    LearnedGaussianDiffusion().ddim_sample((1, 1, 1, 1))
+  File "095/repro.py", line 12, in ddim_sample
+    return self.model_predictions(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: LearnedGaussianDiffusion.model_predictions() got multiple values for argument 'clip_x_start'

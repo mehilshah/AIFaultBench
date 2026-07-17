@@ -1,0 +1,86 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/1004
+
+TITLE
+Hanging when using accelerate/deepspeed with multiple GPUs at inference time
+
+BODY
+### System Info
+
+```Shell
+- `Accelerate` version: 0.15.0
+- Platform: Linux-5.19.0-76051900-generic-x86_64-with-glibc2.10
+- Python version: 3.8.0
+- Numpy version: 1.23.3
+- PyTorch version (GPU?): 1.12.1 (True)
+- `Accelerate` default config:
+        - compute_environment: LOCAL_MACHINE
+        - distributed_type: DEEPSPEED
+        - mixed_precision: bf16
+        - use_cpu: False
+        - dynamo_backend: NO
+        - num_processes: 3
+        - machine_rank: 0
+        - num_machines: 1
+        - gpu_ids: None
+        - main_process_ip: None
+        - main_process_port: None
+        - rdzv_backend: static
+        - same_network: True
+        - main_training_function: main
+        - deepspeed_config: {'gradient_accumulation_steps': 1, 'offload_optimizer_device': 'cpu', 'offload_param_device': 'cpu', 'zero3_init_flag': True, 'zero3_save_16bit_model': False, 'zero_stage': 3}
+        - fsdp_config: {}
+        - megatron_lm_config: {}
+        - downcast_bf16: no
+        - tpu_name: None
+        - tpu_zone: None
+        - command_file: None
+        - commands: None
+```
+
+
+### Information
+
+- [ ] The official example scripts
+- [X] My own modified scripts
+
+### Tasks
+
+- [ ] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [X] My own task or dataset (give details below)
+
+### Reproduction
+
+I am trying to use deepspeed for inference. The code hangs at the line `model.generate(data, max_new_tokens = 5)` in the below code. This hanging never occurs on the first batch. This only occurs when using multiple processes with deepspeed. If I do not use deepspeed or I only use a single GPU, the code runs correctly. I've tried adding `accelerator.pad_across_processes(outputs)`, but that did not fix the issue. 
+
+```
+
+input_ids = tokenizer([prompt] * len(notes['Report_Text']), notes['Report_Text'].tolist(), 
+        return_tensors="pt", truncation="only_second", padding='max_length', return_overflowing_tokens=True,
+       stride=128, return_offsets_mapping=True)  
+chunk_to_note_map = input_ids.pop("overflow_to_sample_mapping")
+input_ids = input_ids.input_ids
+
+dataloader = DataLoader(
+        input_ids, shuffle=False, batch_size=batch_size 
+    )
+    
+chunk_dataloader = DataLoader(
+        chunk_to_note_map, shuffle=False, batch_size=batch_size 
+    )
+
+
+model, dataloader, chunk_dataloader = accelerator.prepare(model, dataloader, chunk_dataloader)
+
+for data, note_idx in tqdm(zip(dataloader, chunk_dataloader), disable=not accelerator.is_local_main_process):
+        outputs = model.generate(data, max_new_tokens = 5) 
+        outputs = accelerator.gather(outputs)
+        note_idx = accelerator.gather(note_idx)
+        preds = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+```
+
+### Expected behavior
+
+```Shell
+The code hangs at the line `outputs = model.generate(data, max_new_tokens = 5)`, but this should not happen.
+```
+

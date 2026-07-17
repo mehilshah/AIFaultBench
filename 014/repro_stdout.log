@@ -1,0 +1,7 @@
+Parsed TrainEvalPipelineConfig; eval_input_reader type: RepeatedCompositeContainer
+Observed expected AttributeError:
+Correct assignment works on a repeated element: 100
+{
+  "reproducible": true,
+  "evidence": "'google._upb._message.RepeatedCompositeContainer' object has no attribute 'max_number_of_boxes'"
+}

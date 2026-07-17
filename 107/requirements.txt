@@ -1,0 +1,5 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+transformers==4.43.4
+huggingface-hub==0.26.0
+torch==2.4.1
+safetensors==0.4.5

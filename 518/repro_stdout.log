@@ -1,0 +1,6 @@
+control: add both constraints in one call
+
+Learning relationships:
+
+control: fit succeeded
+bug: add the same constraints in two calls

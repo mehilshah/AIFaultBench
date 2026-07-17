@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "The source still contains `level += tf.random.normal([], dtype=tf.float32)` inside `_parse_policy_info`, so `level_std` is never used as the Gaussian scale. With the same seed, sampling with `level_std=0.25` and `level_std=2.5` produced identical outputs (5000 / 5000 values equal), with pstdev=1.026028 for both runs.",
+  "steps": [
+    "Inspect official/vision/ops/augment.py::_parse_policy_info in the local codebase.",
+    "Run deterministic sampling with two different level_std values using the buggy logic.",
+    "Observe that the output sequences are identical and the measured standard deviation does not change."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

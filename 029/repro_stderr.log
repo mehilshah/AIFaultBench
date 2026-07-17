@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "029/repro.py", line 38, in <module>
+    main()
+  File "029/repro.py", line 34, in main
+    runpy.run_path(str(MAIN), run_name="__main__")
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "029/codebase/imagenet/main.py", line 511, in <module>
+    main()
+  File "029/codebase/imagenet/main.py", line 120, in main
+    main_worker(args.gpu, ngpus_per_node, args)
+  File "029/codebase/imagenet/main.py", line 171, in main_worker
+    elif torch.backends.mps.is_available():
+         ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'torch.backends' has no attribute 'mps'

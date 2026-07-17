@@ -1,0 +1,9 @@
+Local source context:
+  434/codebase/src/transformers/models/gemma4/modeling_gemma4.py:372: hidden_states = self.conv(hidden_states.to(self.conv.weight.dtype))
+  434/codebase/src/transformers/models/gemma4/modeling_gemma4.py:613: hidden_states = self.input_proj(pixel_values.to(self.input_proj.weight.dtype))
+
+Input activations:        [ 0.73  1.25 -0.4 ] float32
+Quantized weight dtype:   int8
+Buggy cast result:        [0 1 0] int8
+Fixed-path result:        [ 0.73  1.25 -0.4 ] float32
+

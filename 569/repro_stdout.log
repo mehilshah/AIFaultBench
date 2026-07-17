@@ -1,0 +1,56 @@
+{
+  "current_block_scores": [
+    [
+      [
+        10.0,
+        10.0
+      ]
+    ]
+  ],
+  "current_top1": [
+    [
+      [
+        0
+      ]
+    ]
+  ],
+  "head0_ranking": 0,
+  "head1_ranking": 1,
+  "reference_block_scores": [
+    [
+      [
+        [
+          10.0,
+          1.0
+        ]
+      ],
+      [
+        [
+          1.0,
+          10.0
+        ]
+      ]
+    ]
+  ],
+  "reference_top1": [
+    [
+      [
+        [
+          0
+        ]
+      ],
+      [
+        [
+          1
+        ]
+      ]
+    ]
+  ],
+  "scores_shape": [
+    1,
+    2,
+    1,
+    4
+  ],
+  "shared_ranking": 0
+}

@@ -1,0 +1,17 @@
+{
+  "bug_report": "bug_report.txt",
+  "title": "guide.quantiles() shape issue",
+  "reproduction_command": "./run_repro.sh",
+  "environment": {
+    "python": "3.10",
+    "torch": "1.13.1+cpu"
+  },
+  "dependencies": [
+    "numpy<2",
+    "torch==1.13.1+cpu",
+    "opt_einsum",
+    "pyro-api",
+    "tqdm"
+  ],
+  "expected_failure": "RuntimeError: The size of tensor a (85) must match the size of tensor b (3) at non-singleton dimension 0"
+}

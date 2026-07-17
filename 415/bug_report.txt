@@ -1,0 +1,24 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/2088
+
+TITLE
+Beta with concentration1=1 gives nan log_prob at value=0
+
+BODY
+### Bug Description
+
+Title.
+
+### Steps to Reproduce
+
+```python
+import numpyro.distributions as dist
+
+assert jnp.isnan(dist.Beta(1.0, 8.0).log_prob(0.))
+```
+
+### Expected Behavior
+
+```python
+assert jnp.isclose(dist.Beta(1.0, 8.0).log_prob(0.), 2.079)
+```
+The `log_prob` implementation should handle the cases with any concentration parameter equal to 1. See for example the [Julia implementation](https://github.com/JuliaStats/StatsFuns.jl/blob/814aa479e7916f35654198fdb36a387b87bac6d1/src/distrs/beta.jl#L25).

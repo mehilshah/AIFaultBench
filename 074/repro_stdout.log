@@ -1,0 +1,96 @@
+{
+  "action_mask": [
+    [
+      1,
+      1,
+      1,
+      1,
+      1,
+      0
+    ]
+  ],
+  "attention_mask": [
+    [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0
+    ]
+  ],
+  "bug_summary": "The reward model reward is written to the padded position instead of the EOS action, so the terminal reward is masked out by actor_loss_fn's action_mask[:, start:] slice.",
+  "current_actor_loss": -0.9032916666666666,
+  "current_advantages": [
+    [
+      0.8573749999999999,
+      0.9025,
+      0.95,
+      1.0
+    ]
+  ],
+  "current_end_index": 6,
+  "current_returns": [
+    [
+      0.8573749999999999,
+      0.9025,
+      0.95,
+      1.0
+    ]
+  ],
+  "current_reward_target_index": 5,
+  "current_reward_target_mask_value": 0,
+  "current_rewards": [
+    [
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      1.0
+    ]
+  ],
+  "eos_index_in_rewards": 4,
+  "eos_mask_value": 1,
+  "fixed_actor_loss": -0.9508333333333333,
+  "fixed_advantages": [
+    [
+      0.9025,
+      0.95,
+      1.0,
+      0.0
+    ]
+  ],
+  "fixed_returns": [
+    [
+      0.9025,
+      0.95,
+      1.0,
+      0.0
+    ]
+  ],
+  "fixed_rewards": [
+    [
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      1.0,
+      -0.0
+    ]
+  ],
+  "loss_delta": 0.047541666666666704,
+  "seq": [
+    [
+      101,
+      102,
+      103,
+      201,
+      202,
+      2,
+      0
+    ]
+  ],
+  "start": 2
+}

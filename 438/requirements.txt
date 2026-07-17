@@ -1,0 +1,13 @@
+--index-url https://download.pytorch.org/whl/cpu
+--extra-index-url https://pypi.org/simple
+torch==2.6.0+cpu
+einops
+hjson
+msgpack
+ninja
+numpy
+packaging>=20.0
+psutil
+py-cpuinfo
+pydantic>=2.0.0
+tqdm

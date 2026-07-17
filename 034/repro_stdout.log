@@ -1,0 +1,2 @@
+Calling codebase/PyTorch/LanguageModeling/BERT/modeling.py:122 gelu()
+Input tensor: tensor([0.2500])

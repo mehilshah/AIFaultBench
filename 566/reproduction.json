@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "The reported sample-time KeyError ('KeyError: 58.0') was not reproduced. With the issue report's column order, fit() fails earlier with a TypeError from deepecho's context type inference. With an aligned control ordering, fit() and sample() both succeed.",
+  "steps": [
+    "Created a Python 3.11 venv and installed the SDV runtime dependencies.",
+    "Ran the issue's reported PARSynthesizer configuration against synthetic data shaped like the bug report.",
+    "Ran a control configuration with aligned column ordering to confirm the model still fits and samples."
+  ],
+  "blocking_reason": "The exact reported KeyError is not reachable from the reproduced inputs here; the reported context ordering fails earlier in fit(), and the aligned control case does not error.",
+  "reproduction_command": "bash run_repro.sh"
+}

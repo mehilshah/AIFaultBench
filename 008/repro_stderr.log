@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "008/repro.py", line 46, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "008/repro.py", line 37, in main
+    raise ValueError(
+ValueError: Only ssd or center_net models are supported in tflite. Found faster_rcnn in config

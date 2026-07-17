@@ -1,0 +1,12 @@
+{
+  "title": "DiceMetric mean_batch and mean_channel reduction swap",
+  "bug_report": "bug_report.txt",
+  "reproduction_command": "bash run_repro.sh",
+  "reproducible": true,
+  "dependencies": [
+    "torch==2.6.0",
+    "numpy>=1.24,<3.0",
+    "packaging",
+    "parameterized"
+  ]
+}

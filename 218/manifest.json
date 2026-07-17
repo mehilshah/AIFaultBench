@@ -1,0 +1,12 @@
+{
+  "bug_id": "218",
+  "bug_dir": "218",
+  "issue_url": "https://github.com/stanfordnlp/stanza/issues/1366",
+  "commit_hash": "",
+  "library_name": "stanza",
+  "library_version": "1.8.1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../218"
+}

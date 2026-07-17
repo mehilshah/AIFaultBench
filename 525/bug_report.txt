@@ -1,0 +1,44 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2485
+
+TITLE
+[BUG] Potential issue with torchvision ImageNet in `create_dataset`?
+
+BODY
+**Describe the bug**
+When trying to use the torchvision `ImageNet` class via `create_dataset`, a [`download` argument is created internally](https://github.com/huggingface/pytorch-image-models/blob/main/timm/data/dataset_factory.py#L116) and [passed to the class constructor](https://github.com/huggingface/pytorch-image-models/blob/main/timm/data/dataset_factory.py#L150) even though it's not expecting an argument with that name (see [1](https://github.com/pytorch/vision/blob/main/torchvision/datasets/imagenet.py#L52), [2](https://github.com/pytorch/vision/blob/main/torchvision/datasets/folder.py#L319)).
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. run `dataset_train = create_dataset('torch/imagenet', root=PATH_TO_YOUR_IMAGENET_ROOT)`
+
+**Expected behavior**
+A working dataset class to be created
+
+**Screenshots**
+If applicable, add screenshots to help explain your problem.
+
+<img width="966" alt="Image" src="https://github.com/user-attachments/assets/a6488e42-7df6-4bcd-9b70-804d86fe6635" />
+
+In text form:
+
+```
+>>> dataset_train = create_dataset('torch/imagenet', root='/home1/ryanramos/torch_imagenet_root')
+Traceback (most recent call last):
+  File "<python-input-3>", line 1, in <module>
+    dataset_train = create_dataset('torch/imagenet', root='/home1/ryanramos/torch_imagenet_root')
+  File "/home1/ryanramos/playground/.venv/lib/python3.13/site-packages/timm/data/dataset_factory.py", line 150, in create_dataset
+    ds = ImageNet(split=split, **torch_kwargs)
+  File "/home1/ryanramos/playground/.venv/lib/python3.13/site-packages/torchvision/datasets/imagenet.py", line 58, in __init__
+    super().__init__(self.split_folder, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: ImageFolder.__init__() got an unexpected keyword argument 'download'
+```
+
+**Desktop (please complete the following information):**
+ - OS: Ubuntu 20.04.5 LTS
+ - This repository version: 1.0.15
+ - PyTorch version w/ CUDA/cuDNN : 2.7.0+cu126
+
+**Additional context**
+None
+

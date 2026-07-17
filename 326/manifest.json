@@ -1,0 +1,12 @@
+{
+  "bug_id": "326",
+  "bug_dir": "326",
+  "issue_url": "https://github.com/pyro-ppl/pyro/issues/3314",
+  "commit_hash": "1a11185ce54a2391348bec5919f3330d957d2f98",
+  "library_name": "pyro",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pyro-ppl/pyro@1a11185ce54a2391348bec5919f3330d957d2f98",
+  "codebase_present": "true",
+  "standardized_dir": "../326"
+}

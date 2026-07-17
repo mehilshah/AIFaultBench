@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the bundle repro on a CPU-only venv reaches the exact DeepSpeed failure: `RuntimeError: narrow() cannot be applied to a 0-dim tensor`. The traceback points to `codebase/deepspeed/ops/adam/zenflow_torch_adam.py:427` in `ZenFlowSelectiveAdamW_stage3.group_step()`, and the repro prints `param.ds_shape=(3072, 1024)` with `param.ds_tensor.shape=()`. See `repro_stderr.log`.",
+  "steps": [
+    "Create a local venv with `./setup_env.sh`.",
+    "Run `./run_repro.sh` to execute `repro.py` against the local DeepSpeed source snapshot.",
+    "Observe the crash in `ZenFlowSelectiveAdamW_stage3.group_step()` when `narrow()` is called on a scalar `ds_tensor`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

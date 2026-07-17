@@ -1,0 +1,21 @@
+{
+  "bug_id": "196",
+  "bug_dir": "196",
+  "issue_url": "https://github.com/patrick-kidger/jaxtyping/issues/290",
+  "commit_hash": "",
+  "library_name": "jaxtyping",
+  "library_version": "0.2.37",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../196",
+  "reproduction_command": "bash run_repro.sh",
+  "dependencies": [
+    "jax[cpu]",
+    "beartype",
+    "chex",
+    "equinox",
+    "typeguard<3",
+    "numpy<2"
+  ]
+}

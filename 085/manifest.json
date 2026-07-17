@@ -1,0 +1,10 @@
+{
+  "bug_report": "bug_report.txt",
+  "source_dir": "codebase",
+  "reproduction_command": "bash run_repro.sh",
+  "python": "3.12",
+  "dependencies": [
+    "torch",
+    "einops"
+  ]
+}

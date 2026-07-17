@@ -1,0 +1,4 @@
+implicit_neural_codebook=False
+num_quantizers=4
+initialized_mlps=3
+expected_initialized_mlps=0

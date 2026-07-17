@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "462/repro.py", line 16, in <module>
+    tmp = Tmp(123, 123)
+          ^^^^^^^^^^^^^
+  File "462/repro.py", line 7, in __init__
+    super().__init__(aggr='add')
+  File "462/codebase/torch_geometric/nn/conv/message_passing.py", line 140, in __init__
+    self.inspector.inspect_signature(self.message)
+  File "462/codebase/torch_geometric/inspector.py", line 118, in inspect_signature
+    type_repr=self.type_repr(param_type),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "462/codebase/torch_geometric/inspector.py", line 67, in type_repr
+    return type_repr(obj, self._globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "462/codebase/torch_geometric/inspector.py", line 481, in type_repr
+    return _get_name(obj.__qualname__, obj.__module__)
+                     ^^^^^^^^^^^^^^^^
+AttributeError: 'types.UnionType' object has no attribute '__qualname__'

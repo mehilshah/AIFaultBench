@@ -1,0 +1,8 @@
+559/codebase/src/accelerate/utils/torch_xla.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Traceback (most recent call last):
+  File "559/repro.py", line 61, in <module>
+    main()
+  File "559/repro.py", line 53, in main
+    raise AssertionError("BUG: reduction='mean' returned the same tensor as reduction='sum'")
+AssertionError: BUG: reduction='mean' returned the same tensor as reduction='sum'

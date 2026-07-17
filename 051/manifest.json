@@ -1,0 +1,16 @@
+{
+  "title": "KerasNLP GreedySampler rejects end_token_id in the translation decoding path",
+  "source": "bug_report.txt",
+  "repro_script": "repro.py",
+  "run_command": "bash run_repro.sh",
+  "repro_dependency_stack": [
+    "keras==3.2.1",
+    "tensorflow==2.20.0",
+    "tensorflow-text==2.20.1",
+    "keras-nlp==0.14.4"
+  ],
+  "notes": [
+    "The current repo copy already uses stop_token_ids in the translation example.",
+    "The reported failure is reproduced by invoking GreedySampler with end_token_id, matching the traceback in bug_report.txt."
+  ]
+}

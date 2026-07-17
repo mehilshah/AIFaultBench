@@ -1,0 +1,14 @@
+{
+  "bug_id": 635,
+  "issue_url": "https://github.com/huggingface/diffusers/issues/13462",
+  "title": "Decorating bound methods in profiling utils breaks instance isolation",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh",
+  "entrypoint": "run_repro.sh",
+  "dependencies": [],
+  "notes": [
+    "The repro uses the local buggy annotate_pipeline() implementation.",
+    "A local torch compatibility shim is included so the repro does not depend on the host PyTorch build.",
+    "No model weights or GPU are required."
+  ]
+}

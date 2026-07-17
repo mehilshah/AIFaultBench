@@ -1,0 +1,10 @@
+{
+  "copied_config": {
+    "repr": "LoraConfig(peft_type=None, base_model_name_or_path=None, task_type=None, inference_mode=False, r=8, target_modules=None, lora_alpha=None, lora_dropout=None, fan_in_fan_out=False, bias='none', modules_to_save=None, init_lora_weights=True)",
+    "type": "LoraConfig"
+  },
+  "copied_r": 8,
+  "expected": "deepcopy should preserve the configured LoRA rank",
+  "original_r": 87,
+  "reproducible": true
+}

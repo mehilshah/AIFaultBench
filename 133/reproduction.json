@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "The packaged repro prints `Sentence[8]: \"I am a student named John\\nSmith.\" -> [\"John Smith\"/PER]` and then fails `assert example[entity.start_position:entity.end_position] == entity.text` because the source slice is `John\\nSmith` while `entity.text` is `John Smith`.",
+  "steps": [
+    "Create a Sentence from `I am a student named John\\nSmith.` using the local Flair source files.",
+    "Build the span covering `John` and `Smith`, attach an `ner` label, and retrieve it through `sentence.get_spans('ner')`.",
+    "Compare `entity.text` with the original source slice at `entity.start_position:entity.end_position`; the newline is rendered as a space, so the assertion fails."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "REPRO_PYTHON=/tmp/bug133cpu/bin/python bash ./run_repro.sh"
+}

@@ -1,0 +1,86 @@
+Title: MotionBlur direction_range parameter has no effect
+Date: 2025-05-24T22:00:24+00:00
+URL: https://github.com/albumentations-team/albumentations/issues/2527
+
+Description:
+## Describe the bug
+
+The `direction_range` parameter in the `MotionBlur` class appears to have no effect. We get the same transformation kernel regardless of the value of `direction_range`.
+
+### To Reproduce
+
+```
+import albumentations as A
+
+for d in [-1, 0, 1]:
+    transform = A.MotionBlur(
+        blur_limit=(5, 5),
+        allow_shifted=False,
+        angle_range=(0, 0),
+        direction_range=(d, d),
+        p=1.0
+    )
+
+    params = transform.get_params()
+    print(f"direction_range: {d}")
+    print(params["kernel"])
+    print()
+```
+
+This is with `albumentations` 2.0.7 (actually commit `218d663bf` from `main`).
+
+### Expected behavior
+
+I would have expected the convolution kernels to differ based on the value of `direction_range`. I probably would have expected the following output
+
+```
+direction_range: -1
+[[0.  0.  0.  0.  0. ]
+ [0.  0.  0.  0.  0. ]
+ [0.3 0.3 0.3 0.  0.]
+ [0.  0.  0.  0.  0. ]
+ [0.  0.  0.  0.  0. ]]
+
+direction_range: 0
+[[0.  0.  0.  0.  0. ]
+ [0.  0.  0.  0.  0. ]
+ [0.2 0.2 0.2 0.2 0.2]
+ [0.  0.  0.  0.  0. ]
+ [0.  0.  0.  0.  0. ]]
+
+direction_range: 1
+[[0.  0.  0.  0.  0. ]
+ [0.  0.  0.  0.  0. ]
+ [0.  0. 0.3 0.3 0.3]
+ [0.  0.  0.  0.  0. ]
+ [0.  0.  0.  0.  0. ]]
+```
+
+### Actual behavior
+
+The output of the above sample code is
+
+```
+direction_range: -1
+[[0.  0.  0.  0.  0. ]
+ [0.  0.  0.  0.  0. ]
+ [0.2 0.2 0.2 0.2 0.2]
+ [0.  0.  0.  0.  0. ]
+ [0.  0.  0.  0.  0. ]]
+
+direction_range: 0
+[[0.  0.  0.  0.  0. ]
+ [0.  0.  0.  0.  0. ]
+ [0.2 0.2 0.2 0.2 0.2]
+ [0.  0.  0.  0.  0. ]
+ [0.  0.  0.  0.  0. ]]
+
+direction_range: 1
+[[0.  0.  0.  0.  0. ]
+ [0.  0.  0.  0.  0. ]
+ [0.2 0.2 0.2 0.2 0.2]
+ [0.  0.  0.  0.  0. ]
+ [0.  0.  0.  0.  0. ]]
+```
+
+I hope I haven't misunderstood the meaning of `direction_range`.

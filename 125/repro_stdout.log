@@ -1,0 +1,6 @@
+stable_baselines3_version=2.7.1a2
+num_envs=1
+n_steps=2
+total_timesteps=1
+final_num_timesteps=2
+BUG_REPRODUCED: learn() overshot total_timesteps

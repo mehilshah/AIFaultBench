@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "In a clean CPU-only virtualenv, `timm.create_model('swinv2_cr_tiny_224', pretrained=False, features_only=True)` successfully runs on a 224x224 tensor, then raises `AssertionError: Input image height (512) doesn't match model (224).` on a 512x512 tensor.",
+  "steps": [
+    "Create a fresh virtualenv with the CPU PyTorch wheels and the local editable `codebase/` install.",
+    "Run `bash run_repro.sh`.",
+    "Observe that the 224x224 forward pass succeeds and the 512x512 forward pass fails with the input-height assertion."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

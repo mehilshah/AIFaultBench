@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "In the scripted repro, the default UNet1DModel config produced identical outputs for timestep 0 vs 10 (max abs diff 0.0), while the no-skip/time-aware config from the report produced different outputs (max abs diff 0.45627978444099426).",
+  "steps": [
+    "Created an isolated Python 3.12 virtualenv and installed the minimal runtime dependencies for the local diffusers checkout.",
+    "Ran the default UNet1DModel configuration from the report and compared the same input at two different timesteps.",
+    "Ran the no-skip configuration from the report and confirmed the output changes with timestep."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

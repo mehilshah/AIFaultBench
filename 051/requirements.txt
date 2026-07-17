@@ -1,0 +1,13 @@
+keras==3.2.1
+tensorflow==2.20.0
+tensorflow-text==2.20.1
+keras-nlp==0.14.4
+absl-py
+dm-tree
+h5py
+kagglehub
+ml-dtypes
+namex
+optree
+regex
+rich

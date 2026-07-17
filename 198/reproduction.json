@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "modelscan.cli exited with code 2 and printed 'Exception: the JSON object must be str, bytes or bytearray, not dict' while scanning a valid HDF5 file with no model_config attribute.",
+  "steps": [
+    "Create a minimal HDF5 file without a model_config attribute.",
+    "Run modelscan CLI against the file with PYTHONPATH pointing at codebase/.",
+    "Observe the TypeError surfaced as 'Exception: the JSON object must be str, bytes or bytearray, not dict'."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running repro.py with torch inputs shaped (3, 1, 1, 4) and RotaryPositionalEmbeddings(3) raises RuntimeError: The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 3.",
+  "steps": [
+    "Create the virtual environment and install dependencies with bash setup_env.sh.",
+    "Run bash run_repro.sh from the bug folder.",
+    "Observe the RoPE forward pass fail with a dimension-3 mismatch in codebase/labml_nn/transformers/rope/__init__.py."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

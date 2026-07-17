@@ -1,0 +1,41 @@
+Title: JAX pxla is deprecated from 0.8.2 onwards
+Date: 2026-01-07T10:42:57+00:00
+URL: https://github.com/pyro-ppl/numpyro/issues/2117
+
+Description:
+### Bug Description
+[JAX v0.8.2 deprecated](https://github.com/jax-ml/jax/releases/tag/jax-v0.8.2) `jax.interpreters.pxla` which is directly in the `numpyro` import path. 
+
+### Steps to Reproduce
+
+1. Create a fresh virtual environment and install the packages:
+
+```bash
+uv venv
+uv pip install numpyro jax==0.8.2
+```
+
+2. Try to import numpyro:
+
+`import numpyro`
+
+3. Observe the deprecation warning/error.
+
+```bash
+     import numpyro
+.venv/lib/python3.13/site-packages/numpyro/__init__.py:13: in <module>
+    from numpyro import compat, diagnostics, distributions, handlers, infer, ops, optim
+.venv/lib/python3.13/site-packages/numpyro/infer/__init__.py:6: in <module>
+    from numpyro.infer.elbo import (
+.venv/lib/python3.13/site-packages/numpyro/infer/elbo.py:40: in <module>
+    from numpyro.ops.provenance import eval_provenance
+.venv/lib/python3.13/site-packages/numpyro/ops/provenance.py:32: in <module>
+    from jax.interpreters.pxla import xla_pmap_p
+.venv/lib/python3.13/site-packages/jax/_src/deprecations.py:55: in getattr
+    warnings.warn(message, DeprecationWarning, stacklevel=2)
+E   DeprecationWarning: jax.interpreters.pxla.xla_pmap_p is deprecated as of JAX v0.8.2.
+```
+
+### Expected Behavior
+
+No `DeprecationWarning`.

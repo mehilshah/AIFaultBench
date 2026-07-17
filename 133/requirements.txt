@@ -1,0 +1,5 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+numpy>=2.5.0,<3
+torch==2.5.1+cpu
+deprecated>=1.3.1
+segtok>=1.5.11

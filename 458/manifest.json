@@ -1,0 +1,12 @@
+{
+  "bug_id": "458",
+  "bug_dir": "458",
+  "issue_url": "https://github.com/pytorch/rl/issues/3508",
+  "commit_hash": "05212b82d764d1c4ca06e36b3220ce9c401882da",
+  "library_name": "torchrl",
+  "library_version": "0.11.1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pytorch/rl@05212b82d764d1c4ca06e36b3220ce9c401882da",
+  "codebase_present": "true",
+  "standardized_dir": "../458"
+}

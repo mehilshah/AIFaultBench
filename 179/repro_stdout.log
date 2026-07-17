@@ -1,0 +1,19 @@
+Obtaining file://179/codebase (from -r 179/requirements.txt (line 1))
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: lark-parser
+  Building editable for lark-parser (pyproject.toml): started
+  Building editable for lark-parser (pyproject.toml): finished with status 'done'
+  Created wheel for lark-parser: filename=lark_parser-0.11.1-0.editable-py2.py3-none-any.whl size=4702 sha256=5f5414fc47141ff22c068776b459fac81a6d9cb239016b5ad4b8012e86997bad
+  Stored in directory: /tmp/pip-ephem-wheel-cache-d7i9656e/wheels/75/67/5c/85564b0bd2e6e314583b3def84ca2719f003d4a1ed6bf942c9
+Successfully built lark-parser
+Installing collected packages: lark-parser
+Successfully installed lark-parser-0.11.1
+post_transform: Tree('start', [32])
+embedded_parse_start

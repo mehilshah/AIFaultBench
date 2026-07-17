@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "pyrefly reported: \"Object of class `Array` has no attribute `platform` [missing-attribute]\" at `snippet:4:1` for the snippet that imports `jax.numpy` and calls `jnp.zeros(3).platform()`.",
+  "steps": [
+    "Cloned jax-ml/jax at commit 47ce5df4c625a6861d7adff7229b0a40b9230d83 into codebase/.",
+    "Confirmed jax/_src/basearray.pyi defines devices() but not platform().",
+    "Ran pyrefly snippet mode against a minimal repro that imports jax.numpy and calls jnp.zeros(3).platform().",
+    "Observed the missing-attribute diagnostic from pyrefly."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

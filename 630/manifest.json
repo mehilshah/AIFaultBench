@@ -1,0 +1,14 @@
+{
+  "bug_id": "630",
+  "bug_dir": "630",
+  "issue_url": "https://github.com/pyro-ppl/pyro/issues/2815",
+  "commit_hash": "74742df3da89e5aeb3965ebcb512b96432f29d79",
+  "library_name": "pyro",
+  "library_version": "1.6.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pyro-ppl/pyro@74742df3da89e5aeb3965ebcb512b96432f29d79",
+  "codebase_present": "true",
+  "standardized_dir": "../630",
+  "runtime_python": "3.11",
+  "runtime_torch": "1.13.1+cpu"
+}

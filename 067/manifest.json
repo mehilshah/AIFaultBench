@@ -1,0 +1,12 @@
+{
+  "bug_id": "067",
+  "bug_dir": "067",
+  "issue_url": "https://github.com/keras-team/keras-io/issues/1147",
+  "commit_hash": "54392950c4142c96ccc0f8dfd4a9a586edbe5cf2",
+  "library_name": "keras-io",
+  "library_version": "2.10.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": "true",
+  "standardized_dir": "../067"
+}

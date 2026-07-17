@@ -1,0 +1,14 @@
+pandas==2.3.3
+numpy==2.5.1
+rdt==1.21.1
+copulas==0.14.1
+scipy==1.18.0
+scikit-learn==1.9.0
+cloudpickle==3.1.2
+graphviz==0.21
+Faker==40.31.0
+sdmetrics==0.28.1
+tqdm==4.68.4
+platformdirs==4.10.0
+pyyaml==6.0.3
+plotly==6.9.0

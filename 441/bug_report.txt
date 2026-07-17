@@ -1,0 +1,26 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2577
+
+TITLE
+[BUG] Fix ResizeKeepRatio.repr
+
+BODY
+**Describe the bug**
+In `ResizeKeepRatio.repr` the second value displayed for random_scale_range incorrectly uses `self.random_aspect_range[1]` instead of `self.random_scale_range[1]`, causing a misleading string representation.
+https://github.com/huggingface/pytorch-image-models/blob/818663b8b699d8a47026ac952a3adcbdd6350a67/timm/data/transforms.py#L560C68-L560C87
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Code:
+```python
+from timm.data.transforms import ResizeKeepRatio
+t = ResizeKeepRatio(size=224, random_scale_range=(0.50, 1.20), random_aspect_range=(0.90, 1.10))
+print(t)
+```
+2. Observe that random_scale_range is shown with the second value 1.10 (from random_aspect_range) instead of 1.20.
+
+**Expected behavior**
+`repr` should output random_scale_range with its true configured upper bound (e.g. (0.500, 1.200)).
+
+**Screenshots**
+N/A (string output mismatch).
+

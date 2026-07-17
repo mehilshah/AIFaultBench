@@ -1,0 +1,74 @@
+# recovered-from-issue: https://github.com/pytorch/rl/issues/3315
+
+TITLE
+MultiAgentNetBase duplicates the agent dimensions when in centralized mode
+
+BODY
+Edit: NVM not a bug
+
+## Describe the bug
+
+when a multiagent net was defined using the MultiAgentNetBase with the argument centralized=True, the agent dimension of the output data will be duplicated no matter what the actual output was.
+
+## To Reproduce
+use any regular old pytorch neural net for the single net, and run data as you normally would but with centralized as True, edit the arguments for the single net as needed.
+```
+class MultiAgentPolicyNet(MultiAgentNetBase):
+    def __init__(
+        self,
+        single_net,
+        obs_dim,
+        sequence_length,
+        action_dim,
+        n_agents,
+        share_params=True,
+        centralized = False,
+        device=None,
+    ):
+        self.obs_dim = obs_dim
+        self.action_dim = action_dim
+        self.single_net = single_net
+        self.seq_len = sequence_length
+        super().__init__(
+            n_agents=n_agents,
+            centralized=centralized,
+            share_params=share_params,
+            agent_dim=-2,  # (..., agents, features)
+            device=device,
+        )
+
+    def _build_single_net(self, *, device, **kwargs):
+        # Output 2 * action_dim: loc + scale
+        net = self.single_net(self.obs_dim, 
+                              self.obs_dim, 
+                              self.action_dim, 
+                              self.seq_len)
+        return net.to(device) if device is not None else net
+
+    def _pre_forward_check(self, inputs):
+        # inputs: (B, A, obs_dim)
+        return inputs
+```
+
+## Expected behavior
+
+the expected behaviour is input shape (Batch, Agents, Dim), output shape (Batch, Agents, Dim),
+what I got was (Batch, Agents, Dim) -> (Batch, Agents, Agents, Dim).
+for example when I was testing with the code from above with a simple mlp as single net
+```
+td_out["agents","action"].shape
+Out  [1]: torch.Size([4, 3, 2])
+
+crit_out["agents","state_value"].shape
+Out  [2]: torch.Size([4, 3, 3, 4])
+```
+## System info
+
+Python version 3.11.11 with torchrl installed from pip two weeks ago
+
+## Checklist
+
+- [* ] I have checked that there is no similar issue in the repo (**required**)
+- [* ] I have read the [documentation](https://github.com/pytorch/rl/tree/main/docs/) (**required**)
+- [* ] I have provided a minimal working example to reproduce the bug (**required**)
+

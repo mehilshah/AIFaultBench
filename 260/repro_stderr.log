@@ -1,0 +1,21 @@
+260/codebase/sdv/multi_table/base.py:102: UserWarning: We strongly recommend saving the metadata using 'save_to_json' for replicability in future SDV versions.
+  warnings.warn(
+Traceback (most recent call last):
+  File "260/repro.py", line 42, in <module>
+    main()
+  File "260/repro.py", line 37, in main
+    synthesizer.add_constraints([constraint1, constraint2])
+  File "260/codebase/sdv/multi_table/base.py", line 229, in add_constraints
+    self.metadata = constraint.get_updated_metadata(self.metadata)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "260/codebase/sdv/cag/base.py", line 101, in get_updated_metadata
+    self.validate(metadata=metadata)
+  File "260/codebase/sdv/cag/base.py", line 85, in validate
+    self._validate_constraint_with_metadata(metadata)
+  File "260/codebase/sdv/cag/inequality.py", line 93, in _validate_constraint_with_metadata
+    _validate_table_and_column_names(self.table_name, columns, metadata)
+  File "260/codebase/sdv/cag/_utils.py", line 58, in _validate_table_and_column_names
+    _validate_columns_in_metadata(table_name, columns, metadata)
+  File "260/codebase/sdv/cag/_utils.py", line 28, in _validate_columns_in_metadata
+    raise ConstraintNotMetError(f"Table '{table_name}' is missing columns '{missing_columns}'.")
+sdv.cag._errors.ConstraintNotMetError: Table 'parent' is missing columns 'colB'.

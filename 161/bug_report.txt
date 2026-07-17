@@ -1,0 +1,63 @@
+Title: [Bug] 'nvidia-cublas-cu13' is deprecated causes the installation of lmdeploy from source using uv to fail.
+Date: 2025-11-11T03:34:58+00:00
+URL: https://github.com/InternLM/lmdeploy/issues/4116
+
+Description:
+### Checklist
+
+- [x] 1. I have searched related issues but cannot get the expected help.
+- [x] 2. The bug has not been fixed in the latest version.
+- [x] 3. Please note that if the bug-related issue you submitted lacks corresponding environment info and a minimal reproducible demo, it will be challenging for us to reproduce and resolve the issue, reducing the likelihood of receiving feedback.
+
+### Describe the bug
+
+Since the Qwen3-VL support in the main branch has not been released yet, I attempted to install lmdeploy from source using uv, and the console reported the following error:
+
+>      [stderr]
+>      ⚠️ THIS PROJECT 'nvidia-cublas-cu13' IS DEPRECATED.
+>      Please use 'nvidia-cublas' instead.
+
+
+### Reproduction
+
+```bash
+(lmdeploy) root@ubuntu:~/lmdeploy# uv pip install -U git+https://github.com/InternLM/lmdeploy.git
+Resolved 104 packages in 2.51s
+  × Failed to build `nvidia-cublas-cu13==0.0.1`
+  ├─▶ The build backend returned an error
+  ╰─▶ Call to `setuptools.build_meta.build_wheel` failed (exit status: 1)
+
+      [stderr]
+      ⚠️ THIS PROJECT 'nvidia-cublas-cu13' IS DEPRECATED.
+      Please use 'nvidia-cublas' instead.
+
+      To install the correct package, use:
+
+          pip install nvidia-cublas
+
+      For more information, visit: https://pypi.org/project/nvidia-cublas/
+
+
+
+      hint: This usually indicates a problem with the package or the build environment.
+  help: `nvidia-cublas-cu13` (v0.0.1) was included because `lmdeploy` (v0.10.2) depends on `nvidia-cublas-cu13`
+```
+
+### Environment
+
+```Shell
+(lmdeploy) root@ubuntu:~/lmdeploy# python -V
+Python 3.12.11
+(lmdeploy) root@ubuntu:~/lmdeploy# nvcc -V
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2025 NVIDIA Corporation
+Built on Wed_Aug_20_01:58:59_PM_PDT_2025
+Cuda compilation tools, release 13.0, V13.0.88
+Build cuda_13.0.r13.0/compiler.36424714_0
+```
+
+### Error traceback
+
+```Shell
+
+```

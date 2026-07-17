@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running bash ./run_repro.sh exits with status 1.",
+    "repro_stdout.log shows set_list_to_stack(False): ok and set_list_to_stack(True): KeyError: tensor(10).",
+    "repro_stderr.log shows the exception originates in torchtune/dev/rl/datatypes/request_output.py inside RequestOutput.__post_init__."
+  ],
+  "steps": [
+    "Create a clean virtual environment and install torch 2.7.1+cpu plus tensordict 0.13.0.",
+    "Load torchtune/dev/rl/datatypes/request_output.py through a fake vLLM dataclass stub.",
+    "Call RequestOutput.from_request_output() once with set_list_to_stack(False) and once with set_list_to_stack(True).",
+    "Observe the baseline succeeds and the list-to-stack case raises KeyError: tensor(10)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash ./run_repro.sh"
+}

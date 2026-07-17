@@ -1,0 +1,6 @@
+launching
+launching
+rank=1 world_size=2 device=cpu
+rank=0 world_size=2 device=cpu
+saving=fsdp_cpu_full_rank0.ckpt
+saving=fsdp_cpu_full_rank1.ckpt

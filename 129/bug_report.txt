@@ -1,0 +1,76 @@
+Title: [Bug]: The sample code on ax homepage doesn't run
+Date: 2025-07-30T08:05:25+00:00
+URL: https://github.com/facebook/Ax/issues/4076
+
+Description:
+### What happened?
+
+The sample code on https://ax.dev/ doesn't run. It complains ParameterType is not imported. After importing it, it still doesn't run. Eventually I replaced ParameterType.FLOAT with "float" and it worked. Maybe the sample code need to be updated.
+
+For clarity, the sample code is attached below:
+
+>>> from ax import Client, RangeParameterConfig
+
+>>> client = Client()
+>>> client.configure_experiment(
+      parameters=[
+          RangeParameterConfig(
+              name="x1",
+              bounds=(-10.0, 10.0),
+              parameter_type=ParameterType.FLOAT,
+          ),
+          RangeParameterConfig(
+              name="x2",
+              bounds=(-10.0, 10.0),
+              parameter_type=ParameterType.FLOAT,
+          ),
+      ],
+)
+>>> client.configure_optimization(objective="-1 * booth")
+
+>>> for _ in range(20):
+>>>     for trial_index, parameters in client.get_next_trials(max_trials=1).items():
+>>>         client.complete_trial(
+>>>             trial_index=trial_index,
+>>>             raw_data={
+>>>                 "booth": (parameters["x1"] + 2 * parameters["x2"] - 7) ** 2
+>>>                 + (2 * parameters["x1"] + parameters["x2"] - 5) ** 2
+>>>             },
+>>>         )
+
+>>> client.get_best_parameterization()
+{'x1': 1.02, 'x2': 2.97}  # true min is (1, 3)
+
+### Please provide a minimal, reproducible example of the unexpected behavior.
+
+Refer to the sample code above 
+
+### Please paste any relevant traceback/logs produced by the example provided.
+
+```shell
+
+```
+
+### Ax Version
+
+1.0.0
+
+### Python Version
+
+3.13.5
+
+### Operating System
+
+Windows
+
+### (Optional) Describe any potential fixes you've considered to the issue outlined above.
+
+_No response_
+
+### Pull Request
+
+None
+
+### Code of Conduct
+
+- [x] I agree to follow Ax's Code of Conduct

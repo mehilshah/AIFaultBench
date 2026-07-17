@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "stderr contains the ClearML Fire patch failure: PatchFire.__CallAndUpdateTrace() missing 1 required positional argument: 'target'",
+  "steps": [
+    "Install the local ClearML source from codebase/ into a virtualenv.",
+    "Run `python repro.py multiply --x 2 --y 10 --verbose`.",
+    "Observe the TypeError raised from clearml/binding/frameworks/__init__.py while Fire is resolving the command."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

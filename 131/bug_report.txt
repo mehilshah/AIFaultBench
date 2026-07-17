@@ -1,0 +1,115 @@
+Title: [Bug]: TextRegressor breaks due to unrelated labels
+Date: 2024-07-03T23:34:03+00:00
+URL: https://github.com/flairNLP/flair/issues/3489
+
+Description:
+### Describe the bug
+
+`TextRegressor._labels_to_tensor` iterates over every label on the sentence; not just the regression label specified by `self.label_name`. This leads to unexpected behavior. 
+
+For example, TextRegressor cannot be used as part of a multitask model. `_labels_to_tensor` will attempt to convert the `multitask_id` into a float, which throws an error. More generally, the TextRegressor will encounter an error any time there is more than one label on a sentence.
+
+### To Reproduce
+
+```python
+from flair.models import TextRegressor
+from flair.data import Sentence, Corpus
+from flair.embeddings import TransformerEmbeddings
+from flair.trainers import ModelTrainer
+
+sentences = [Sentence("This is a sentence") for _ in range(100)]
+for sentence in sentences:
+    sentence.add_label("regression_label", 4.5)
+    sentence.add_label("foo", "bar") # Unrelated label breaks the TextRegressor
+
+corpus = Corpus(sentences)
+regressor = TextRegressor(TransformerEmbeddings('bert-base-uncased'), label_name="regression_label")
+trainer = ModelTrainer(regressor, corpus)
+trainer.train('regression_model/')
+```
+
+
+### Expected behavior
+
+When I set the `label_name` parameter on a TextRegressor, I expect the model to train on said label, and ignore the rest. I also expect TextRegressor to work with multitask training.
+
+### Logs and Stack traces
+
+```stacktrace
+ValueError                                Traceback (most recent call last)
+Cell In[200], line 14
+     12 regressor = TextRegressor(TransformerEmbeddings('bert-base-uncased'), label_name="regression_label")
+     13 trainer = ModelTrainer(regressor, corpus)
+---> 14 trainer.train('regression_model/')
+
+File /pyzr/active_venv/lib/python3.10/site-packages/flair/trainers/trainer.py:200, in ModelTrainer.train(self, base_path, anneal_factor, patience, min_learning_rate, initial_extra_patience, anneal_with_restarts, learning_rate, decoder_learning_rate, mini_batch_size, eval_batch_size, mini_batch_chunk_size, max_epochs, optimizer, train_with_dev, train_with_test, reduce_transformer_vocab, main_evaluation_metric, monitor_test, monitor_train_sample, use_final_model_for_eval, gold_label_dictionary_for_eval, exclude_labels, sampler, shuffle, shuffle_first_epoch, embeddings_storage_mode, epoch, save_final_model, save_optimizer_state, save_model_each_k_epochs, create_file_logs, create_loss_file, write_weights, plugins, attach_default_scheduler, **kwargs)
+    189 for var in [
+    190     "self",
+    191     "anneal_factor",
+   (...)
+    197     "kwargs",
+    198 ]:
+    199     local_variables.pop(var)
+--> 200 return self.train_custom(**local_variables, **kwargs)
+
+File /pyzr/active_venv/lib/python3.10/site-packages/flair/trainers/trainer.py:601, in ModelTrainer.train_custom(self, base_path, learning_rate, decoder_learning_rate, mini_batch_size, eval_batch_size, mini_batch_chunk_size, max_epochs, optimizer, train_with_dev, train_with_test, max_grad_norm, reduce_transformer_vocab, main_evaluation_metric, monitor_test, monitor_train_sample, use_final_model_for_eval, gold_label_dictionary_for_eval, exclude_labels, sampler, shuffle, shuffle_first_epoch, embeddings_storage_mode, epoch, save_final_model, save_optimizer_state, save_model_each_k_epochs, create_file_logs, create_loss_file, write_weights, use_amp, plugins, **kwargs)
+    598 for batch_step in batch_steps:
+    599     # forward pass
+    600     with torch.autocast(device_type=flair.device.type, enabled=use_amp):
+--> 601         loss, datapoint_count = self.model.forward_loss(batch_step)
+    603     batch_train_samples += datapoint_count
+    604     batch_train_loss += loss.item()
+
+File /pyzr/active_venv/lib/python3.10/site-packages/flair/models/text_regression_model.py:59, in TextRegressor.forward_loss(self, sentences)
+     58 def forward_loss(self, sentences: List[Sentence]) -> Tuple[torch.Tensor, int]:
+---> 59     labels = self._labels_to_tensor(sentences)
+     60     text_embedding_tensor = self._prepare_tensors(sentences)
+     61     scores = self.forward(*text_embedding_tensor)
+
+Cell In[194], line 7, in _labels_to_tensor(self, sentences)
+      6 def _labels_to_tensor(self, sentences: List[Sentence]):
+----> 7         indices = [
+      8             torch.tensor([float(label.value) for label in sentence.labels], dtype=torch.float) for sentence in sentences
+      9         ]
+     11         vec = torch.cat(indices, 0).to(flair.device)
+     13         return vec
+
+Cell In[194], line 8, in <listcomp>(.0)
+      6 def _labels_to_tensor(self, sentences: List[Sentence]):
+      7         indices = [
+----> 8             torch.tensor([float(label.value) for label in sentence.labels], dtype=torch.float) for sentence in sentences
+      9         ]
+     11         vec = torch.cat(indices, 0).to(flair.device)
+     13         return vec
+
+Cell In[194], line 8, in <listcomp>(.0)
+      6 def _labels_to_tensor(self, sentences: List[Sentence]):
+      7         indices = [
+----> 8             torch.tensor([float(label.value) for label in sentence.labels], dtype=torch.float) for sentence in sentences
+      9         ]
+     11         vec = torch.cat(indices, 0).to(flair.device)
+     13         return vec
+
+ValueError: could not convert string to float: 'bar'
+```
+
+
+### Screenshots
+
+_No response_
+
+### Additional Context
+
+_No response_
+
+### Environment
+
+#### Versions:
+##### Flair
+0.13.1
+##### Pytorch
+2.0.0+cu117
+##### Transformers
+4.31.0
+#### GPU
+True

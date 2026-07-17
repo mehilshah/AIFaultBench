@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running the report's donut document-question-answering pipeline on this checkout loads successfully, then fails in `codebase/src/transformers/generation/utils.py:2145` with `ValueError: `decoder_start_token_id` or `bos_token_id` has to be defined for encoder-decoder generation.`",
+    "The model config printed by the repro has `decoder_start_token_id=None` and `bos_token_id=None` before generation."
+  ],
+  "steps": [
+    "Create a local virtualenv and install the repo runtime dependencies from `requirements.txt`.",
+    "Run `repro.py` with `PYTHONPATH=codebase/src` so the local transformers checkout is used.",
+    "Load `naver-clova-ix/donut-base-finetuned-docvqa` through `pipeline('document-question-answering', ...)` and call it with the invoice image URL and question from the report."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

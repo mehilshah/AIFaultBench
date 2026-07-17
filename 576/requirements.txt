@@ -1,0 +1,5 @@
+cloudpickle
+numpy
+packaging
+pyvers
+tensordict==0.10.0

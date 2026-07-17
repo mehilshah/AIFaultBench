@@ -1,0 +1,44 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/1200
+
+TITLE
+`prepare` returns `AcceleratedScheduler` only if python version != 3.8 in `torch==2.0`
+
+BODY
+Not sure if related to the new release of `acclerate` + `torch==2.0`, but `prepare` returns an `AcceleratedScheduler` only if python version is different than 3.8 and if one uses pytorch 2.0
+
+### Information
+
+- [ ] The official example scripts
+- [X] My own modified scripts
+
+### Tasks
+
+- [ ] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [X] My own task or dataset (give details below)
+
+### Reproduction
+
+```python 
+import torch
+import torch.nn as nn
+from torch.optim.lr_scheduler import LinearLR
+
+from accelerate import Accelerator
+
+accelerator = Accelerator()
+
+dummy_model = nn.Linear(1, 1)
+dummy_optimizer = torch.optim.Adam(dummy_model.parameters(), 1.41e-5)
+
+scheduler = LinearLR(dummy_optimizer, 1.41e-5)
+
+dummy_model, dummy_optimizer, scheduler = accelerator.prepare(dummy_model, dummy_optimizer, scheduler)
+print(hasattr(scheduler, "scheduler"))
+```
+
+### Expected behavior
+
+this should aways print `True` regardless python version but prints `False` for python=3.8
+
+cc @muellerzr @sgugger 
+

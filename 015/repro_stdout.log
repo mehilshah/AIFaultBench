@@ -1,0 +1,12 @@
+{
+  "blocking_reason": "",
+  "evidence": "The notebook helper defines `show_batch(raw_records, num_of_examples)` but never references `num_of_examples`; when called with three records and `num_of_examples=1`, it still renders three subplots.",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Load the `show_batch` cell from `codebase/docs/vision/instance_segmentation.ipynb`.",
+    "Inspect the function body and confirm `num_of_examples` is never read.",
+    "Execute `show_batch` with three records and `num_of_examples=1` in a stubbed environment.",
+    "Observe that the function still processes all three records."
+  ]
+}

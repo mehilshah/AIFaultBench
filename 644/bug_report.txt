@@ -1,0 +1,26 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2700
+
+TITLE
+[DayZParameters] `KeyError` when creating parameters with empty data and metadata
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:
+* Python version:
+* Operating System:
+
+### Error Description
+Running `DayZSynthesizer.create_parameters` on empty data and metadata results in an unexpected `KeyError`. We should update create parameters to gracefully handle this case.
+
+### Steps to reproduce
+
+```python
+data = pd.DataFrame()
+metadata = Metadata()
+
+dayz_parameters = SingleTableDayZSynthesizer.create_parameters(data, metadata)
+```
+

@@ -1,0 +1,5 @@
+torch 1.9.0+cpu
+pyro 1.6.0
+model x.shape = torch.Size([3])
+model y.shape = torch.Size([3, 1])
+model z.shape = torch.Size([3, 1, 1])

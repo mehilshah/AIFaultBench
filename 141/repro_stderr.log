@@ -1,0 +1,12 @@
+load_bytes_error=ValueError: both buffer length (0) and count (-1) must not be 0
+Traceback (most recent call last):
+  File "141/repro.py", line 35, in main
+    loaded_from_bytes = load(raw)
+                        ^^^^^^^^^
+  File "141/codebase/bindings/python/py_src/safetensors/torch.py", line 338, in load
+    return _view2torch(flat)
+           ^^^^^^^^^^^^^^^^^
+  File "141/codebase/bindings/python/py_src/safetensors/torch.py", line 386, in _view2torch
+    arr = torch.frombuffer(v["data"], dtype=dtype).reshape(v["shape"])
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: both buffer length (0) and count (-1) must not be 0

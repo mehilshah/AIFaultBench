@@ -1,0 +1,19 @@
+{
+  "bug_id": "091",
+  "issue_url": "https://github.com/lucidrains/x-transformers/issues/271",
+  "library_name": "x-transformers",
+  "library_version": "1.35.0",
+  "reproduction_command": "bash run_repro.sh",
+  "setup_command": "bash setup_env.sh",
+  "runtime": {
+    "python": "3.12",
+    "torch": "2.3.1+cpu"
+  },
+  "source_files": [
+    "bug_report.txt",
+    "repro.py",
+    "codebase/x_transformers/x_transformers.py",
+    "codebase/x_transformers/autoregressive_wrapper.py",
+    "codebase/x_transformers/attend.py"
+  ]
+}

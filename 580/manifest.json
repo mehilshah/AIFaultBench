@@ -1,0 +1,14 @@
+{
+  "bug_id": "580",
+  "bug_dir": "580",
+  "issue_url": "https://github.com/pyg-team/pytorch_geometric/issues/9899",
+  "commit_hash": "ab2b458f0c0f72d3cb573350b324db563066a7ee",
+  "library_name": "pytorch_geometric",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pyg-team/pytorch_geometric@ab2b458f0c0f72d3cb573350b324db563066a7ee",
+  "codebase_present": true,
+  "standardized_dir": "../580",
+  "reproduction_style": "minimal_stub_loader",
+  "target_error": "AttributeError: 'NoneType' object has no attribute 'to'"
+}

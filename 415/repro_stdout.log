@@ -1,0 +1,58 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.1.2)
+Collecting setuptools
+  Downloading setuptools-83.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting wheel
+  Downloading wheel-0.47.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting packaging>=24.0 (from wheel)
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Downloading setuptools-83.0.0-py3-none-any.whl (1.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 27.5 MB/s  0:00:00
+
+Downloading wheel-0.47.0-py3-none-any.whl (32 kB)
+Downloading packaging-26.2-py3-none-any.whl (100 kB)
+Installing collected packages: setuptools, packaging, wheel
+
+
+Successfully installed packaging-26.2 setuptools-83.0.0 wheel-0.47.0
+Collecting jax==0.4.38 (from -r 415/requirements.txt (line 1))
+  Downloading jax-0.4.38-py3-none-any.whl.metadata (22 kB)
+Collecting jaxlib==0.4.38 (from -r 415/requirements.txt (line 2))
+  Downloading jaxlib-0.4.38-cp312-cp312-manylinux2014_x86_64.whl.metadata (1.0 kB)
+Requirement already satisfied: ml_dtypes==0.5.4 in ./.venv/lib/python3.12/site-packages (from -r 415/requirements.txt (line 3)) (0.5.4)
+Requirement already satisfied: multipledispatch==1.0.0 in ./.venv/lib/python3.12/site-packages (from -r 415/requirements.txt (line 4)) (1.0.0)
+Collecting numpy==2.5.1 (from -r 415/requirements.txt (line 5))
+  Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Requirement already satisfied: numpyro==0.19.0 in ./.venv/lib/python3.12/site-packages (from -r 415/requirements.txt (line 6)) (0.19.0)
+Requirement already satisfied: opt_einsum==3.4.0 in ./.venv/lib/python3.12/site-packages (from -r 415/requirements.txt (line 7)) (3.4.0)
+Requirement already satisfied: scipy==1.18.0 in ./.venv/lib/python3.12/site-packages (from -r 415/requirements.txt (line 8)) (1.18.0)
+Requirement already satisfied: tqdm==4.68.4 in ./.venv/lib/python3.12/site-packages (from -r 415/requirements.txt (line 9)) (4.68.4)
+Downloading jax-0.4.38-py3-none-any.whl (2.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.2/2.2 MB 37.7 MB/s  0:00:00
+
+Downloading jaxlib-0.4.38-cp312-cp312-manylinux2014_x86_64.whl (101.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 101.8/101.8 MB 49.7 MB/s  0:00:02
+
+Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 53.8 MB/s  0:00:00
+
+Installing collected packages: numpy, jaxlib, jax
+  Attempting uninstall: numpy
+    Found existing installation: numpy 1.26.4
+    Uninstalling numpy-1.26.4:
+      Successfully uninstalled numpy-1.26.4
+  Attempting uninstall: jaxlib
+    Found existing installation: jaxlib 0.4.25
+    Uninstalling jaxlib-0.4.25:
+      Successfully uninstalled jaxlib-0.4.25
+  Attempting uninstall: jax
+    Found existing installation: jax 0.4.25
+    Uninstalling jax-0.4.25:
+      Successfully uninstalled jax-0.4.25
+
+
+Successfully installed jax-0.4.38 jaxlib-0.4.38 numpy-2.5.1
+numpyro=0.19.0
+jax=0.4.38
+log_prob=nan
+expected=2.079441547393799
+isnan=True

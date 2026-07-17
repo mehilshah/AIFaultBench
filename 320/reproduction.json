@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "non-streaming=(None, 'This is a direct final answer without channel markers.'); streaming_chunks=[{'reasoning': 'This is a'}, {'reasoning': ' direct final answer'}, {'reasoning': ' without channel markers.'}]; finished=None",
+  "steps": [
+    "Load the real vLLM Gemma4 parser module through a stubbed package shell.",
+    "Call non-streaming extract_reasoning() on plain text without channel markers.",
+    "Stream the same text in chunks after a prompt ending with <|turn> and observe all chunks labeled as reasoning."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

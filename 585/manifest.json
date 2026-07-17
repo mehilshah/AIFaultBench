@@ -1,0 +1,12 @@
+{
+  "bug_id": "585",
+  "bug_dir": "585",
+  "issue_url": "https://github.com/huggingface/accelerate/issues/996",
+  "commit_hash": "b22f088ff662de748cf3f97c7ad8bf5a6dd6a7b9",
+  "library_name": "accelerate",
+  "library_version": "0.15.0.dev0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "huggingface/accelerate@b22f088ff662de748cf3f97c7ad8bf5a6dd6a7b9",
+  "codebase_present": "true",
+  "standardized_dir": "../585"
+}

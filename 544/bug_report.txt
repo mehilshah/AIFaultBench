@@ -1,0 +1,37 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/13717
+
+TITLE
+checkpoint. Make sure all LoRA param names contain `'lora'` substring.
+
+BODY
+### Describe the bug
+
+```
+File "....python11\Lib\site-packages\diffusers\loaders\lora_pipeline.py", line 645, in load_lora_weights
+    raise ValueError("Invalid LoRA checkpoint. Make sure all LoRA param names contain `'lora'` substring.")
+ValueError: Invalid LoRA checkpoint. Make sure all LoRA param names contain `'lora'` substring.
+``` 
+arrise from 
+
+### Reproduction
+
+pipe.load_lora_weights("D:/santa/lora/add-detail-xl.safetensors",adapter_name='lora-add-detail-xl')
+pipe.load_lora_weights("D:/santa/lora/detailed_notrigger.safetensors",adapter_name='lora-detailed_notrigger')
+pipe.set_adapters(['lora-add-detail-xl','lora-detailed_notrigger'], [0.5,0.5])
+
+error orginate from detailed_notrigger
+
+
+### Logs
+
+```shell
+
+```
+
+### System Info
+
+python 3.11 diffuser 0.37.1
+
+### Who can help?
+
+_No response_

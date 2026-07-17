@@ -1,0 +1,28 @@
+259/codebase/sdv/single_table/base.py:105: UserWarning: We strongly recommend saving the metadata using 'save_to_json' for replicability in future SDV versions.
+  warnings.warn(
+259/.venv/lib/python3.12/site-packages/deepecho/models/par.py:132: RuntimeWarning: Mean of empty slice
+  'mu': np.nanmean(x[i]),
+259/.venv/lib/python3.12/site-packages/numpy/lib/_nanfunctions_impl.py:2035: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+Traceback (most recent call last):
+  File "259/repro.py", line 50, in <module>
+    main()
+  File "259/repro.py", line 46, in main
+    synthesizer.sample(num_sequences=2)
+  File "259/codebase/sdv/sequential/par.py", line 543, in sample
+    return self._sample(context_columns, sequence_length)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "259/codebase/sdv/sequential/par.py", line 514, in _sample
+    sampled = self._sample_from_par(context_columns, sequence_length)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "259/codebase/sdv/sequential/par.py", line 509, in _sample_from_par
+    output = output[self._output_columns].reset_index(drop=True)
+             ~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "259/.venv/lib/python3.12/site-packages/pandas/core/frame.py", line 4108, in __getitem__
+    indexer = self.columns._get_indexer_strict(key, "columns")[1]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "259/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py", line 6200, in _get_indexer_strict
+    self._raise_if_missing(keyarr, indexer, axis_name)
+  File "259/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py", line 6252, in _raise_if_missing
+    raise KeyError(f"{not_found} not in index")
+KeyError: "['all_null_col'] not in index"

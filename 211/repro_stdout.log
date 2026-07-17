@@ -1,0 +1,14 @@
+data_rows=25784
+sampled_shape=(430, 9)
+sampled_category_dtype=float64
+sampled_category_head=[64.85389173030853, 71.42177522182465, 61.533692479133606, 97.94027954339981, 60.29196083545685, 92.66919791698456, 89.54814523458481, 108.13143253326416, 62.34666854143143, 78.24561484158039, 65.90303927659988, 49.22410249710083, 102.17747688293457, 52.59186327457428, 106.65581524372101, 77.0847748965025, 61.1665204167366, 75.0, 58.29847306013107, 127.50643491744995]
+diagnostic_score=0.9285714285714286
+category_adherence_score=0.0
+   Column            Metric  Score
+     Open BoundaryAdherence    1.0
+    Close BoundaryAdherence    1.0
+   Volume BoundaryAdherence    1.0
+MarketCap BoundaryAdherence    1.0
+   Sector CategoryAdherence    1.0
+ Industry CategoryAdherence    1.0
+ category CategoryAdherence    0.0

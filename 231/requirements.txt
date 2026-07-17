@@ -1,0 +1,7 @@
+-e ./codebase
+alembic>=1.5.0
+colorlog
+numpy
+packaging>=20.0
+sqlalchemy>=1.4.2
+tqdm

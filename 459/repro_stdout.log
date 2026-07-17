@@ -1,0 +1,2 @@
+jax=0.4.38 numpyro=0.19.0
+REPRODUCED: TypeError: Value <function guide.<locals>.<lambda> at 0x735a1b78b740> with type <class 'function'> is not a valid JAX type

@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Source-derived packed layout uses block_stride=16384 bytes for a page size of 8192 bytes.",
+    "That is exactly the 2x-page stride mismatch described in the issue report.",
+    "Local CUDA device: NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition (12.0), which is not the reported H100 Hopper setup."
+  ],
+  "steps": [
+    "Inspect the source-tree packing logic in vllm/v1/core/kv_cache_utils.py.",
+    "Compute the cross-layer packed KV cache layout for the reported HMA group structure.",
+    "Compare the resulting block stride against the single-layer page size."
+  ],
+  "blocking_reason": "The exact issue report is not reproduced here: the local GPU is NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition, not the Hopper H100 reported in the bug, and the full vllm serve + lm_eval workload was not executed.",
+  "reproduction_command": "MODEL=\"openai/gpt-oss-120b\"\nTP_SIZE=2\nCPU_BYTES=26843545600\n\nKV_TRANSFER_CONFIG=$(cat <<EOF\n{\n  \"kv_connector\": \"OffloadingConnector\",\n  \"kv_role\": \"kv_both\",\n  \"kv_connector_extra_config\": {\n    \"enable_cross_layers_blocks\": \"True\",\n    \"spec_name\": \"CPUOffloadingSpec\",\n    \"cpu_bytes_to_use\": ${CPU_BYTES},\n    \"eviction_policy\": \"lru\"\n  }\n}\nEOF\n)\n\nvllm serve \"${MODEL}\"       --tensor-parallel-size=\"${TP_SIZE}\"       --kv-transfer-config \"${KV_TRANSFER_CONFIG}\"       --enable-prefix-caching       --no-disable-hybrid-kv-cache-manager\n\nlm_eval   --model local-completions   --model_args \"base_url=http://127.0.0.1:8000/v1/completions,model=${MODEL},tokenized_requests=False,num_concurrent=1000,trust_remote_code=True\"   --tasks gsm8k   --seed 42   --num_fewshot 5   --gen_kwargs temperature=0.0"
+}

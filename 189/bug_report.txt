@@ -1,0 +1,63 @@
+Title: Cannot train again on pretrained checkpoint due to change in default `weights_only=True` 
+Date: 2024-11-20T09:49:29+00:00
+URL: https://github.com/mlfoundations/open_clip/issues/998
+
+Description:
+I am getting an `pickle.UnpicklingError` when trying to train again on a previously trained checkpoint with open_clip `v2.27.0+`.
+
+This is similar to https://github.com/mlfoundations/open_clip/issues/966 - but the problem persists even in the latest `v2.29.0`
+
+Minimal repro: in v2.26.1, the following used to work:
+```
+python -m open_clip_train.main \
+  --dataset-type synthetic \
+  --train-num-samples 16 \
+  --warmup 1 \
+  --batch-size 4 \
+  --epochs 1 \
+  --model ViT-B-32 \
+  --name train1 \
+  --pretrained laion400m_e31
+
+
+# train again, but this time using a checkpoint from the previous training:
+python -m open_clip_train.main \
+  --dataset-type synthetic \
+  --train-num-samples 16 \
+  --warmup 1 \
+  --batch-size 4 \
+  --epochs 1 \
+  --model ViT-B-32 \
+  --name train2 \
+  --pretrained ./logs/train1/checkpoints/epoch_1.pt
+```
+
+... but from v2.27.0 onwards it fails:
+```
+2024-11-20,09:28:39 | INFO | Loading pretrained ViT-B-32 weights (./logs/train1/checkpoints/epoch_1.pt).
+Traceback (most recent call last):
+  File "/home/ec2-user/.pyenv/versions/3.8.20/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/ec2-user/.pyenv/versions/3.8.20/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/home/ec2-user/.venv/lib/python3.8/site-packages/open_clip_train/main.py", line 508, in <module>
+    main(sys.argv[1:])
+  File "/home/ec2-user/.venv/lib/python3.8/site-packages/open_clip_train/main.py", line 223, in main
+    model, preprocess_train, preprocess_val = create_model_and_transforms(
+  File "/home/ec2-user/.venv/lib/python3.8/site-packages/open_clip/factory.py", line 414, in create_model_and_transforms
+    model = create_model(
+  File "/home/ec2-user/.venv/lib/python3.8/site-packages/open_clip/factory.py", line 320, in create_model
+    load_checkpoint(model, checkpoint_path)
+  File "/home/ec2-user/.venv/lib/python3.8/site-packages/open_clip/factory.py", line 169, in load_checkpoint
+    state_dict = load_state_dict(checkpoint_path, device=device, weights_only=weights_only)
+  File "/home/ec2-user/.venv/lib/python3.8/site-packages/open_clip/factory.py", line 139, in load_state_dict
+    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=weights_only)
+  File "/home/ec2-user/.venv/lib/python3.8/site-packages/torch/serialization.py", line 1096, in load
+    raise pickle.UnpicklingError(_get_wo_message(str(e))) from None
+_pickle.UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options
+	(1) Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+	(2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
+	WeightsUnpickler error: Unsupported global: GLOBAL numpy.core.multiarray.scalar was not an allowed global by default. Please use `torch.serialization.add_safe_globals([scalar])` to allowlist this global if you trust this class/function.
+
+Check the documentation of torch.load to learn more about types accepted by default with weights_only https://pytorch.org/docs/stable/generated/torch.load.html.
+```

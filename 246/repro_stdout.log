@@ -1,0 +1,20 @@
+deterministic graph:
+digraph {
+	subgraph cluster_plate {
+		label=plate labeljust=r labelloc=b
+		deterministic [label=deterministic fillcolor=gray shape=ellipse style="filled,dashed"]
+	}
+}
+
+probabilistic graph:
+digraph {
+	param [label=param fillcolor=white shape=plain style=filled]
+	subgraph cluster_plate {
+		label=plate labeljust=r labelloc=b
+		probabilistic [label=probabilistic fillcolor=gray shape=ellipse style=filled]
+	}
+	param -> probabilistic
+}
+
+deterministic contains param: False
+probabilistic contains param: True

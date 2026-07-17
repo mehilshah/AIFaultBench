@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "577/repro.py", line 13, in main
+    import haiku as hk
+  File "577/.venv/lib/python3.12/site-packages/haiku/__init__.py", line 20, in <module>
+    from haiku import experimental
+  File "577/.venv/lib/python3.12/site-packages/haiku/experimental/__init__.py", line 55, in <module>
+    from haiku.experimental import jaxpr_info
+  File "577/.venv/lib/python3.12/site-packages/haiku/experimental/jaxpr_info.py", line 18, in <module>
+    from haiku._src.jaxpr_info import as_html
+  File "577/.venv/lib/python3.12/site-packages/haiku/_src/jaxpr_info.py", line 101, in <module>
+    ComputeFlopsFn = Callable[[jax.core.JaxprEqn, Expression], int]
+                               ^^^^^^^^^^^^^^^^^
+  File "577/.venv/lib/python3.12/site-packages/jax/_src/deprecations.py", line 54, in getattr
+    raise AttributeError(message)
+AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.
+Traceback (most recent call last):
+  File "577/repro.py", line 23, in <module>
+    main()
+  File "577/repro.py", line 13, in main
+    import haiku as hk
+  File "577/.venv/lib/python3.12/site-packages/haiku/__init__.py", line 20, in <module>
+    from haiku import experimental
+  File "577/.venv/lib/python3.12/site-packages/haiku/experimental/__init__.py", line 55, in <module>
+    from haiku.experimental import jaxpr_info
+  File "577/.venv/lib/python3.12/site-packages/haiku/experimental/jaxpr_info.py", line 18, in <module>
+    from haiku._src.jaxpr_info import as_html
+  File "577/.venv/lib/python3.12/site-packages/haiku/_src/jaxpr_info.py", line 101, in <module>
+    ComputeFlopsFn = Callable[[jax.core.JaxprEqn, Expression], int]
+                               ^^^^^^^^^^^^^^^^^
+  File "577/.venv/lib/python3.12/site-packages/jax/_src/deprecations.py", line 54, in getattr
+    raise AttributeError(message)
+AttributeError: jax.core.JaxprEqn was removed in JAX v0.6.0. Use jax.extend.core.JaxprEqn instead, and see https://docs.jax.dev/en/latest/jax.extend.html for details.

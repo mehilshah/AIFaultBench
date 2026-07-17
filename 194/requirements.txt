@@ -1,0 +1,5 @@
+jax[cpu]==0.4.28
+jaxtyping
+beartype
+typing_extensions
+hatchling

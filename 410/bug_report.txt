@@ -1,0 +1,244 @@
+# recovered-from-issue: https://github.com/vllm-project/vllm/issues/47421
+
+TITLE
+[Bug]: Streaming output segmentation （Qwen3-ASR）
+
+BODY
+### Your current environment
+
+<details>
+
+```text
+Collecting environment information...
+==============================
+        System Info
+==============================
+OS                           : Ubuntu 22.04.5 LTS (x86_64)
+GCC version                  : (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0
+Clang version                : Could not collect
+CMake version                : version 3.22.1
+Libc version                 : glibc-2.35
+
+==============================
+       PyTorch Info
+==============================
+PyTorch version              : 2.11.0+cu130
+Is debug build               : False
+CUDA used to build PyTorch   : 13.0
+ROCM used to build PyTorch   : N/A
+XPU used to build PyTorch    : N/A
+
+==============================
+      Python Environment
+==============================
+Python version               : 3.12.13 (main, May  1 2026, 00:09:53) [GCC 11.4.0] (64-bit runtime)
+Python platform              : Linux-5.15.0-151-generic-x86_64-with-glibc2.35
+    
+==============================
+       CUDA / GPU Info
+==============================
+Is CUDA available            : True
+CUDA runtime version         : 13.0.88
+CUDA_MODULE_LOADING set to   : 
+GPU models and configuration : GPU 0: NVIDIA H20Z
+Nvidia driver version        : 595.71.05
+cuDNN version                : Probably one of the following:
+/usr/lib/x86_64-linux-gnu/libcudnn.so.9.14.0
+/usr/lib/x86_64-linux-gnu/libcudnn_adv.so.9.14.0
+/usr/lib/x86_64-linux-gnu/libcudnn_cnn.so.9.14.0
+/usr/lib/x86_64-linux-gnu/libcudnn_engines_precompiled.so.9.14.0
+/usr/lib/x86_64-linux-gnu/libcudnn_engines_runtime_compiled.so.9.14.0
+/usr/lib/x86_64-linux-gnu/libcudnn_graph.so.9.14.0
+/usr/lib/x86_64-linux-gnu/libcudnn_heuristic.so.9.14.0
+/usr/lib/x86_64-linux-gnu/libcudnn_ops.so.9.14.0
+HIP runtime version          : N/A
+MIOpen runtime version       : N/A
+Is XNNPACK available         : True
+
+==============================
+          CPU Info
+==============================
+架构：                                   x86_64
+CPU 运行模式：                           32-bit, 64-bit
+Address sizes:                           46 bits physical, 57 bits virtual
+字节序：                                 Little Endian
+CPU:                                     180
+在线 CPU 列表：                          0-179
+厂商 ID：                                GenuineIntel
+型号名称：                               INTEL(R) XEON(R) PLATINUM 8558
+CPU 系列：                               6
+型号：                                   207
+每个核的线程数：                         2
+每个座的核数：                           45
+座：                                     2
+步进：                                   2
+BogoMIPS：                               4200.00
+标记：                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq monitor ssse3 fma cx16 pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch cpuid_fault invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves avx_vnni avx512_bf16 wbnoinvd arat avx512vbmi umip pku ospke waitpkg avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq la57 rdpid bus_lock_detect cldemote movdiri movdir64b fsrm md_clear serialize tsxldtrk amx_bf16 avx512_fp16 amx_tile amx_int8 arch_capabilities
+超管理器厂商：                           KVM
+虚拟化类型：                             完全
+L1d 缓存：                               4.2 MiB (90 instances)
+L1i 缓存：                               2.8 MiB (90 instances)
+L2 缓存：                                180 MiB (90 instances)
+L3 缓存：                                520 MiB (2 instances)
+NUMA 节点：                              2
+NUMA 节点0 CPU：                         0-89
+NUMA 节点1 CPU：                         90-179
+Vulnerability Gather data sampling:      Not affected
+Vulnerability Indirect target selection: Vulnerable
+Vulnerability Itlb multihit:             Not affected
+Vulnerability L1tf:                      Not affected
+Vulnerability Mds:                       Not affected
+Vulnerability Meltdown:                  Not affected
+Vulnerability Mmio stale data:           Not affected
+Vulnerability Reg file data sampling:    Not affected
+Vulnerability Retbleed:                  Not affected
+Vulnerability Spec rstack overflow:      Not affected
+Vulnerability Spec store bypass:         Vulnerable
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Vulnerable; IBPB: disabled; STIBP: disabled; PBRSB-eIBRS: Vulnerable; BHI: Vulnerable
+Vulnerability Srbds:                     Not affected
+Vulnerability Tsx async abort:           Not affected
+
+==============================
+Versions of relevant libraries
+==============================
+[pip3] flashinfer-python==0.6.8.post1
+[pip3] numpy==1.26.4
+[pip3] nvidia-cublas==13.1.0.3
+[pip3] nvidia-cuda-cupti==13.0.85
+[pip3] nvidia-cuda-nvrtc==13.0.88
+[pip3] nvidia-cuda-runtime==13.0.96
+[pip3] nvidia-cudnn-cu13==9.19.0.56
+[pip3] nvidia-cudnn-frontend==1.18.0
+[pip3] nvidia-cufft==12.0.0.61
+[pip3] nvidia-cufile==1.15.1.6
+[pip3] nvidia-curand==10.4.0.35
+[pip3] nvidia-cusolver==12.0.4.66
+[pip3] nvidia-cusparse==12.6.3.3
+[pip3] nvidia-cusparselt-cu13==0.8.0
+[pip3] nvidia-cutlass-dsl==4.5.0
+[pip3] nvidia-cutlass-dsl-libs-base==4.5.0
+[pip3] nvidia-cutlass-dsl-libs-cu13==4.5.0
+[pip3] nvidia-ml-py==13.590.48
+[pip3] nvidia-nccl-cu13==2.28.9
+[pip3] nvidia-nvjitlink==13.0.88
+[pip3] nvidia-nvshmem-cu13==3.4.5
+[pip3] nvidia-nvtx==13.0.85
+[pip3] onnx==1.21.0
+[pip3] onnx-ir==0.2.1
+[pip3] onnxscript==0.7.0
+[pip3] pytorch-lightning==2.6.5
+[pip3] pytorch-wpe==0.0.1
+[pip3] pyzmq==27.1.0
+[pip3] sentence-transformers==5.4.1
+[pip3] torch==2.11.0+cu130
+[pip3] torch_c_dlpack_ext==0.1.5
+[pip3] torch-complex==0.4.4
+[pip3] torchaudio==2.11.0+cu130
+[pip3] torchmetrics==1.9.0
+[pip3] torchvision==0.26.0+cu130
+[pip3] transformers==4.57.6
+[pip3] transformers-stream-generator==0.0.5
+[pip3] triton==3.6.0
+[conda] Could not collect
+
+==============================
+         vLLM Info
+==============================
+ROCM Version                 : Could not collect
+vLLM Version                 : 0.20.1
+vLLM Build Flags:
+  CUDA Archs: Not Set; ROCm: Disabled; XPU: Disabled
+GPU Topology:
+  	[4mGPU0	NIC0	NIC1	NIC2	NIC3	NIC4	NIC5	NIC6	NIC7	NIC8	CPU Affinity	NUMA Affinity	GPU NUMA ID[0m
+GPU0	 X 	NODE	PHB	PHB	PIX	PHB	NODE	NODE	NODE	NODE	2-21	0		N/A
+NIC0	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC1	PHB	NODE	 X 	PHB	PHB	PHB	NODE	NODE	NODE	NODE				
+NIC2	PHB	NODE	PHB	 X 	PHB	PHB	NODE	NODE	NODE	NODE				
+NIC3	PIX	NODE	PHB	PHB	 X 	PHB	NODE	NODE	NODE	NODE				
+NIC4	PHB	NODE	PHB	PHB	PHB	 X 	NODE	NODE	NODE	NODE				
+NIC5	NODE	NODE	NODE	NODE	NODE	NODE	 X 	PHB	PHB	PHB				
+NIC6	NODE	NODE	NODE	NODE	NODE	NODE	PHB	 X 	PHB	PHB				
+NIC7	NODE	NODE	NODE	NODE	NODE	NODE	PHB	PHB	 X 	PHB				
+NIC8	NODE	NODE	NODE	NODE	NODE	NODE	PHB	PHB	PHB	 X 				
+
+Legend:
+
+  X    = Self
+  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)
+  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node
+  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)
+  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)
+  PIX  = Connection traversing at most a single PCIe bridge
+  NV#  = Connection traversing a bonded set of # NVLinks
+
+NIC Legend:
+
+  NIC0: mlx5_0
+  NIC1: mlx5_1
+  NIC2: mlx5_2
+  NIC3: mlx5_3
+  NIC4: mlx5_4
+  NIC5: mlx5_5
+  NIC6: mlx5_6
+  NIC7: mlx5_7
+  NIC8: mlx5_8
+
+==============================
+     Environment Variables
+==============================
+NCCL_VERSION=2.28.3-1
+NVIDIA_PRODUCT_NAME=CUDA
+VLLM_HTTP_TIMEOUT_KEEP_ALIVE=70
+LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64
+NCCL_IB_DISABLE=0
+NVIDIA_VISIBLE_DEVICES=GPU-196bca97-798a-1255-b462-71b1a32a0124
+NCCL_SOCKET_IFNAME=eth0
+NCCL_IB_HCA=mlx5_1,mlx5_2,mlx5_3,mlx5_4,mlx5_5,mlx5_6,mlx5_7,mlx5_8
+VLLM_USE_MODELSCOPE=True
+NVIDIA_DRIVER_CAPABILITIES=compute,utility
+CUDA_VERSION=13.0.3
+NCCL_IB_TC=160
+NVIDIA_REQUIRE_CUDA=cuda>=13.0 brand=unknown,driver>=535,driver<536 brand=grid,driver>=535,driver<536 brand=tesla,driver>=535,driver<536 brand=nvidia,driver>=535,driver<536 brand=quadro,driver>=535,driver<536 brand=quadrortx,driver>=535,driver<536 brand=nvidiartx,driver>=535,driver<536 brand=vapps,driver>=535,driver<536 brand=vpc,driver>=535,driver<536 brand=vcs,driver>=535,driver<536 brand=vws,driver>=535,driver<536 brand=cloudgaming,driver>=535,driver<536 brand=unknown,driver>=550,driver<551 brand=grid,driver>=550,driver<551 brand=tesla,driver>=550,driver<551 brand=nvidia,driver>=550,driver<551 brand=quadro,driver>=550,driver<551 brand=quadrortx,driver>=550,driver<551 brand=nvidiartx,driver>=550,driver<551 brand=vapps,driver>=550,driver<551 brand=vpc,driver>=550,driver<551 brand=vcs,driver>=550,driver<551 brand=vws,driver>=550,driver<551 brand=cloudgaming,driver>=550,driver<551 brand=unknown,driver>=565,driver<566 brand=grid,driver>=565,driver<566 brand=tesla,driver>=565,driver<566 brand=nvidia,driver>=565,driver<566 brand=quadro,driver>=565,driver<566 brand=quadrortx,driver>=565,driver<566 brand=nvidiartx,driver>=565,driver<566 brand=vapps,driver>=565,driver<566 brand=vpc,driver>=565,driver<566 brand=vcs,driver>=565,driver<566 brand=vws,driver>=565,driver<566 brand=cloudgaming,driver>=565,driver<566 brand=unknown,driver>=570,driver<571 brand=grid,driver>=570,driver<571 brand=tesla,driver>=570,driver<571 brand=nvidia,driver>=570,driver<571 brand=quadro,driver>=570,driver<571 brand=quadrortx,driver>=570,driver<571 brand=nvidiartx,driver>=570,driver<571 brand=vapps,driver>=570,driver<571 brand=vpc,driver>=570,driver<571 brand=vcs,driver>=570,driver<571 brand=vws,driver>=570,driver<571 brand=cloudgaming,driver>=570,driver<571 brand=unknown,driver>=575,driver<576 brand=grid,driver>=575,driver<576 brand=tesla,driver>=575,driver<576 brand=nvidia,driver>=575,driver<576 brand=quadro,driver>=575,driver<576 brand=quadrortx,driver>=575,driver<576 brand=nvidiartx,driver>=575,driver<576 brand=vapps,driver>=575,driver<576 brand=vpc,driver>=575,driver<576 brand=vcs,driver>=575,driver<576 brand=vws,driver>=575,driver<576 brand=cloudgaming,driver>=575,driver<576
+PYTORCH_NVML_BASED_CUDA_CHECK=1
+TORCHINDUCTOR_COMPILE_THREADS=1
+TORCHINDUCTOR_CACHE_DIR=/tmp/torchinductor_root
+
+
+```
+
+</details>
+
+
+### 🐛 Describe the bug
+
+When deploying the Qwen3-ASR model using vLLM and running streaming inference, the streaming output appears to be segmented into chunks rather than being delivered smoothly. In contrast, non-streaming deployment with non-streaming inference works correctly without any issues.
+
+code:  
+vllm serve "$MODEL" \
+  --hf-overrides '{"architectures":["Qwen3ASRRealtimeGeneration"]}' \
+  --host [0.0.0.0](http://0.0.0.0/) \
+  --port "$PORT" \
+  --api-key dummy
+
+infer: 
+https://github.com/vllm-project/vllm/blob/main/examples/speech_to_text/realtime/openai_realtime_client.py
+
+wav: 
+
+[left_16000_02 (1).wav](https://github.com/user-attachments/files/29592374/left_16000_02.1.wav)
+
+asr result:
+Final transcription (raw): 
+language Chinese<asr_text>我不是不不是这样的，因为跟你们协商了，我十号他已经同。
+language Chinese<asr_text>同意我十号的呀。
+
+A single-sentence audio gets recognized as two segments.  How can I get it to be recognized as one single sentence?
+
+
+
+
+
+### Before submitting a new issue...
+
+- [x] Make sure you already searched for relevant issues, and asked the chatbot living at the bottom right corner of the [documentation page](https://docs.vllm.ai/en/latest/), which can answer lots of frequently asked questions.

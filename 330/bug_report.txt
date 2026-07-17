@@ -1,0 +1,252 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/39089
+
+TITLE
+`jit` C++ fastpath attaches the logical instead of the physical sharding to PRNG key outputs, causing a spurious cache miss when keys are fed back in
+
+BODY
+### Description
+
+Iterating a jitted function on a PRNG key committed to a multi-device `NamedSharding` creates a spurious second entry in the C++ fastpath cache, with a one-time slow dispatch when the extra entry is created. The cause (see Diagnosis below): the fastpath attaches the executable's logical output sharding (`spec=P()`) to the physical base array of a key output, while every other path gives key base arrays the physical sharding (`spec=P(None,)`); the two compare unequal in the cache signature, so the first key produced by the fastpath itself misses the cache. From a cold cache this is the third call (call 1 compiles, so only call 2's output is fastpath-produced); with a warm cache it's the second call.
+
+This issue showed up in my library as a visible 1-2 second pause, so I consider it a performance issue. With `jax.log_compiles(True)` nothing shows up when the spurious entry is created (and the trace counter in the MWE stays put), but I guess maybe a recompilation can be triggered on the C++ side without triggering `log_compiles` (see #31319).
+
+MWE:
+
+```python
+import jax
+
+jax.config.update('jax_num_cpu_devices', 2)
+
+import jax.numpy as jnp
+from jax import random
+from jax.sharding import Mesh, NamedSharding, PartitionSpec as P
+
+trace_count = 0
+
+
+@jax.jit
+def jitted_identity(x):
+    global trace_count
+    trace_count += 1
+    return x
+
+
+def sharded_key():
+    mesh = Mesh(jax.devices(), ('a',))
+    return jax.device_put(random.key(0), NamedSharding(mesh, P()))
+
+
+def unsharded_key():
+    return random.key(0)
+
+
+def single_device_key():
+    mesh = Mesh(jax.devices()[:1], ('a',))
+    return jax.device_put(random.key(0), NamedSharding(mesh, P()))
+
+
+def sharded_float():
+    mesh = Mesh(jax.devices(), ('a',))
+    return jax.device_put(jnp.zeros(()), NamedSharding(mesh, P()))
+
+
+def run(fresh_value, n_iters, feed_output_back=True):
+    global trace_count
+    trace_count = 0
+    x = fresh_value()
+    for i in range(n_iters):
+        out = jitted_identity(x)
+        if feed_output_back:
+            x = out
+        print(f'  i={i}: cpp cache size = {jitted_identity._cache_size()}, traces = {trace_count}')
+
+
+def demo(fresh_value, feed_output_back=True):
+    jitted_identity.clear_cache()
+    for call in range(2):
+        print(f'run {call + 1}:')
+        run(fresh_value, 3, feed_output_back)
+
+
+print('devices:', jax.devices())
+
+print()
+print('part 1: spurious second cache entry on the 3rd invocation')
+demo(sharded_key)  # expected cache sizes: all 1; actual: 1 1 2 / 2 2 2
+
+print()
+print('negative controls: no spurious entry, cache sizes all 1')
+for fresh_value in (unsharded_key, single_device_key, sharded_float):
+    print(f'\n{fresh_value.__name__}:')
+    demo(fresh_value)
+print('\nsharded_key, same fresh key every call (no feedback):')
+demo(sharded_key, feed_output_back=False)
+
+print()
+print('part 2: no_tracing catches the extra dispatch (2 invocations per run)')
+jitted_identity.clear_cache()
+run(sharded_key, 2)
+try:
+    with jax.no_tracing():
+        run(sharded_key, 2)
+except RuntimeError as e:
+    print('RAISED:', e)  # raises on the first fastpath-produced key
+else:
+    print('no raise')
+
+print()
+print('part 3: workaround: pass raw key data across the jit boundary')
+
+
+@jax.jit
+def jitted_identity_on_data(data):
+    key = random.wrap_key_data(data)  # the function body works with typed keys
+    return random.key_data(key)  # unwrap before returning
+
+
+def sharded_key_data():
+    mesh = Mesh(jax.devices(), ('a',))
+    return jax.device_put(random.key_data(random.key(0)), NamedSharding(mesh, P()))
+
+
+x = sharded_key_data()
+for i in range(4):
+    x = jitted_identity_on_data(x)
+    print(f'  i={i}: cpp cache size = {jitted_identity_on_data._cache_size()}')
+```
+
+Output:
+
+```text
+devices: [CpuDevice(id=0), CpuDevice(id=1)]
+
+part 1: spurious second cache entry on the 3rd invocation
+run 1:
+  i=0: cpp cache size = 1, traces = 1
+  i=1: cpp cache size = 1, traces = 1
+  i=2: cpp cache size = 2, traces = 1
+run 2:
+  i=0: cpp cache size = 2, traces = 0
+  i=1: cpp cache size = 2, traces = 0
+  i=2: cpp cache size = 2, traces = 0
+
+negative controls: no spurious entry, cache sizes all 1
+
+unsharded_key:
+run 1:
+  i=0: cpp cache size = 1, traces = 1
+  i=1: cpp cache size = 1, traces = 1
+  i=2: cpp cache size = 1, traces = 1
+run 2:
+  i=0: cpp cache size = 1, traces = 0
+  i=1: cpp cache size = 1, traces = 0
+  i=2: cpp cache size = 1, traces = 0
+
+single_device_key:
+run 1:
+  i=0: cpp cache size = 1, traces = 1
+  i=1: cpp cache size = 1, traces = 1
+  i=2: cpp cache size = 1, traces = 1
+run 2:
+  i=0: cpp cache size = 1, traces = 0
+  i=1: cpp cache size = 1, traces = 0
+  i=2: cpp cache size = 1, traces = 0
+
+sharded_float:
+run 1:
+  i=0: cpp cache size = 1, traces = 1
+  i=1: cpp cache size = 1, traces = 1
+  i=2: cpp cache size = 1, traces = 1
+run 2:
+  i=0: cpp cache size = 1, traces = 0
+  i=1: cpp cache size = 1, traces = 0
+  i=2: cpp cache size = 1, traces = 0
+
+sharded_key, same fresh key every call (no feedback):
+run 1:
+  i=0: cpp cache size = 1, traces = 1
+  i=1: cpp cache size = 1, traces = 1
+  i=2: cpp cache size = 1, traces = 1
+run 2:
+  i=0: cpp cache size = 1, traces = 0
+  i=1: cpp cache size = 1, traces = 0
+  i=2: cpp cache size = 1, traces = 0
+
+part 2: no_tracing catches the extra dispatch (2 invocations per run)
+  i=0: cpp cache size = 1, traces = 1
+  i=1: cpp cache size = 1, traces = 1
+  i=0: cpp cache size = 1, traces = 0
+RAISED: re-tracing function jitted_identity at mwe.py:12 for `jit`, but 'no_tracing' is set
+
+part 3: workaround: pass raw key data across the jit boundary
+  i=0: cpp cache size = 1
+  i=1: cpp cache size = 1
+  i=2: cpp cache size = 1
+  i=3: cpp cache size = 1
+```
+
+Details:
+
+- Call by call: call 1 (fresh key) takes the Python path and creates cache entry A; call 2 (key produced by the Python path) hits A; call 3 (key produced by the C++ fastpath) *misses* and creates entry B; steady state is 2 entries, everything hits from there on. The trace counter stays at 1 throughout (0 in warm-cache runs), so entry B is created without re-running the Python function.
+- Part 2 shows the extra dispatch can be caught with `jax.no_tracing`, and demonstrates the warm-cache variant: exactly 2 invocations per "restart" ensure the first run never feeds a fastpath-produced key back in (so the spurious entry is not created outside the guarded block), while the second run starts already compiled, so its call 2 is the first to consume a fastpath-produced key and `no_tracing` raises there. The error message says re-tracing while the Python tracing cache actually hits, but it is correctly flagging real extra dispatch work.
+- Part 3 shows a workaround: pass the raw key data across the jit boundary and convert with `wrap_key_data`/`key_data` inside the jitted function. Plain arrays don't have the physical/logical sharding distinction (see Diagnosis), so the cache stays at 1 entry.
+- Identical output on cpu with every jax release from 0.6.2 through 0.10.2 (latest), and on gpu (2x V100, cuda12) with 0.6.2, 0.7.2, 0.8.3, 0.9.2, 0.10.2.
+
+## Diagnosis
+
+The signature of a fastpath-produced key differs from every other key's: its base array carries the *logical* sharding (`spec=P()`) instead of the *physical* one (`spec=P(None,)`), and the two compare unequal.
+
+`jit` sees a key array through its physical base array: `PRNGKeyArray` is registered in the dispatch pytree registry as a node that flattens to its `uint32` base array:
+
+https://github.com/jax-ml/jax/blob/1dea371c3b7eb15979b18fb98e2faee402dc0800/jax/_src/random/prng.py#L360-L368
+
+The C++ fastpath signature records each flattened argument's sharding:
+
+https://github.com/jax-ml/jax/blob/1dea371c3b7eb15979b18fb98e2faee402dc0800/jaxlib/pjit.cc#L915-L924
+
+and compares `NamedSharding`s by mesh identity plus `PartitionSpec` equality, which is not rank-aware: `P() != P(None)`, even though for the rank-1 base array both mean fully replicated:
+
+https://github.com/jax-ml/jax/blob/1dea371c3b7eb15979b18fb98e2faee402dc0800/jaxlib/jax_jit.cc#L230-L239
+
+On the Python side, the base array of a committed key always carries the physical sharding, derived by `make_key_array_phys_sharding`, which appends one `None` per trailing key-data dim, turning `P()` into `P(None,)` when there is more than one device (the `num_devices == 1` short-circuit is why the single-device control does not reproduce):
+
+https://github.com/jax-ml/jax/blob/1dea371c3b7eb15979b18fb98e2faee402dc0800/jax/_src/sharding_impls.py#L764-L774
+
+This covers both the initial `device_put` key and the output of the slow path, whose result handler goes through `physical_sharding` too — which is why call 2, fed the slow path's output, hits the cache:
+
+https://github.com/jax-ml/jax/blob/1dea371c3b7eb15979b18fb98e2faee402dc0800/jax/_src/random/prng.py#L415-L423
+
+The C++ fastpath builds its outputs differently. `_get_fastpath_data` converts the executable's *input* shardings to physical for extended dtypes, but passes the *output* shardings (`executable._out_shardings`, the logical ones, `spec=P()`) through unconverted:
+
+https://github.com/jax-ml/jax/blob/1dea371c3b7eb15979b18fb98e2faee402dc0800/jax/_src/pjit.py#L213-L224
+
+and the fastpath attaches that sharding object as-is to the output base array:
+
+https://github.com/jax-ml/jax/blob/1dea371c3b7eb15979b18fb98e2faee402dc0800/jaxlib/pjit.cc#L862-L872
+
+So a fastpath-produced key's base array has `spec=P()` where every other path produces `spec=P(None,)`. On the next invocation its signature misses the cached entry and a second entry is created; from then on both signatures are present and every call hits. The traced avals carry the logical sharding, identical for both entries, which maybe explains why, running the MWE with `jax.log_compiles(True)`, `jitted_identity` logs exactly one compilation after each `clear_cache()` (on the first call), and nothing is logged when the spurious entry is created.
+
+Ordinary arrays are unaffected because they have no physical/logical sharding distinction, matching the `sharded_float` control.
+
+## Potentially related
+
+- #15782
+- #15796
+- #31319
+
+## Note
+
+Written by Claude Fable 5, edited & checked by a human.
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+```text
+jax:    0.10.2
+jaxlib: 0.10.2
+numpy:  2.5.0
+python: 3.13.9 (main, Nov 19 2025, 23:39:32) [Clang 21.1.4 ]
+device info: cpu-2, 2 local devices"
+process_count: 1
+platform: uname_result(system='Darwin', node='MacBook-Pro-2.local', release='25.4.0', version='Darwin Kernel Version 25.4.0: Thu Mar 19 19:30:44 PDT 2026; root:xnu-12377.101.15~1/RELEASE_ARM64_T6000', machine='arm64')
+```
+

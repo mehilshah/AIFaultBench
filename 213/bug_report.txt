@@ -1,0 +1,49 @@
+Title: Improve error message when trying to conditionally sample before fitting
+Date: 2025-02-11T20:52:55+00:00
+URL: https://github.com/sdv-dev/SDV/issues/2366
+
+Description:
+### Problem Description
+
+If a user tries to conditionally sample before fitting the model, the error message surface to the user isn't very helpful. 
+
+While we [improved the error message](https://github.com/sdv-dev/SDV/issues/1978) when a user does this with regular sampling, we didn't for when they try to conditionally sample. 
+
+Current error message:
+
+```
+# Scenario 1 (output_file_path not provided)
+NotFittedError: Error: Sampling terminated. No results were saved due to unspecified "output_file_path".
+
+# Scenario 2 (output_file_path provided)
+sdv.data_processing.errors.NotFittedError: Error: Sampling terminated. Partial results are stored in C:\User\GaussianCopulaSample.csv.
+```
+
+### Code to Reproduce
+
+```
+from sdv.datasets.demo import download_demo
+from sdv.single_table import GaussianCopulaSynthesizer
+from sdv.sampling import Condition
+
+data, metadata = download_demo(
+    modality='single_table',
+    dataset_name='fake_hotel_guests'
+)
+
+synthesizer = GaussianCopulaSynthesizer(metadata)
+condition0 = Condition(num_rows=454, column_values={"room_type":"BASIC"})
+condition1 = Condition(num_rows=455, column_values={"room_type": "DELUXE"})
+
+synthesizer.sample_from_conditions(max_tries_per_batch=100000, batch_size=1000, conditions=[condition0, condition1])
+```
+
+### Expected Behavior
+
+Instead of attempting to sample, the single table synthesizer should check first whether the synthesizer has been fitted. If it has not been fitted, we should proactively show a `SamplingError` explaining to the user what they must do.
+
+```
+SamplingError: This synthesizer has not been fitted. Please fit your synthesizer first before 
+conditionally sampling synthetic data.
+```
+

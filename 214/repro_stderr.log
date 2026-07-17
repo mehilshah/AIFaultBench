@@ -1,0 +1,34 @@
+Traceback (most recent call last):
+  File "214/repro.py", line 85, in main
+    synthesizer.fit(data)
+  File "214/codebase/sdv/single_table/base.py", line 523, in fit
+    processed_data = self.preprocess(data)
+                     ^^^^^^^^^^^^^^^^^^^^^
+  File "214/codebase/sdv/single_table/base.py", line 459, in preprocess
+    preprocess_data = self._preprocess(data)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "214/codebase/sdv/single_table/base.py", line 427, in _preprocess
+    self._data_processor.fit(data)
+  File "214/codebase/sdv/data_processing/data_processor.py", line 782, in fit
+    self._fit_hyper_transformer(constrained)
+  File "214/codebase/sdv/data_processing/data_processor.py", line 698, in _fit_hyper_transformer
+    self._hyper_transformer.fit(data)
+  File "214/.venv/lib/python3.12/site-packages/rdt/hyper_transformer.py", line 767, in fit
+    data = self._fit_field_transformer(data, field, self.field_transformers[field])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "214/.venv/lib/python3.12/site-packages/rdt/hyper_transformer.py", line 690, in _fit_field_transformer
+    transformer.fit(data, field)
+  File "214/.venv/lib/python3.12/site-packages/rdt/transformers/base.py", line 57, in wrapper
+    return function(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "214/.venv/lib/python3.12/site-packages/rdt/transformers/base.py", line 383, in fit
+    self._fit(columns_data)
+  File "214/.venv/lib/python3.12/site-packages/rdt/transformers/id.py", line 154, in _fit
+    self.reset_randomization()
+  File "214/.venv/lib/python3.12/site-packages/rdt/transformers/id.py", line 144, in reset_randomization
+    self.generator, self.generator_size = strings_from_regex(self.regex_format)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "214/.venv/lib/python3.12/site-packages/rdt/transformers/utils.py", line 167, in strings_from_regex
+    generator, size = _GENERATORS[option](args, max_repeat)
+                      ~~~~~~~~~~~^^^^^^^^
+KeyError: SUBPATTERN

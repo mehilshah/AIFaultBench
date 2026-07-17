@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "repro_stdout.log shows: Loaded config ..., ROI head name: CascadeROIHeads, Cascade stages: 3, then AttributeError: 'CascadeROIHeads' object has no attribute 'test_score_thresh'. repro_stderr.log confirms the exception is raised from codebase/detectron2/modeling/roi_heads/cascade_rcnn.py line 149.",
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

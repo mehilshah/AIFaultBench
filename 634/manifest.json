@@ -1,0 +1,13 @@
+{
+  "bug_id": "634",
+  "bug_dir": "634",
+  "issue_url": "https://github.com/huggingface/transformers/issues/46693",
+  "commit_hash": "0a4d1c8bac38208fb5b424a510b8a9cef149d1ee",
+  "library_name": "transformers",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "local codebase snapshot",
+  "codebase_present": true,
+  "standardized_dir": "../634",
+  "repro_harness": "CPU proxy benchmark plus source regression check"
+}

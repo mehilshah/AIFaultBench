@@ -1,0 +1,13 @@
+{
+  "bug_id": "394",
+  "bug_dir": "394",
+  "issue_url": "https://github.com/deepspeedai/DeepSpeed/issues/7837",
+  "commit_hash": "a44fb58f134afc5399b29c154a5502e14272774c",
+  "library_name": "DeepSpeed",
+  "library_version": "a44fb58f134afc5399b29c154a5502e14272774c",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "microsoft/DeepSpeed@a44fb58f134afc5399b29c154a5502e14272774c",
+  "codebase_present": "true",
+  "standardized_dir": "../394",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,52 @@
+Title: [BUG] Surprising `MLP` default behavior
+Date: 2024-07-29T07:20:19+00:00
+URL: https://github.com/pytorch/rl/issues/2328
+
+Description:
+## Describe the bug
+
+When `depth` and `num_cells` are both not specified, [`MLP`](https://pytorch.org/rl/stable/reference/generated/torchrl.modules.MLP.html) will by default create a fully-connected neural network with three hidden layers, each with 32 neurons.
+
+This is somewhat surprising, as I would imaging leaving `depth` and `num_cells` unspecified would lead to a neural network with no hidden layer at all. Not sure why use `depth=3` and `num_cells=32` as default here :)
+
+This is not really a bug report, just IMHO a weird design choice which is also not documented. Would appreciate if we can discuss and reconsider this.
+
+## To Reproduce
+
+```python
+>>> from torchrl.modules import MLP
+>>> MLP(in_features=1024, out_features=512)
+MLP(
+  (0): Linear(in_features=1024, out_features=32, bias=True)
+  (1): Tanh()
+  (2): Linear(in_features=32, out_features=32, bias=True)
+  (3): Tanh()
+  (4): Linear(in_features=32, out_features=32, bias=True)
+  (5): Tanh()
+  (6): Linear(in_features=32, out_features=512, bias=True)
+)
+```
+
+## Expected behavior
+
+```python
+>>> MLP(in_features=1024, out_features=512)
+MLP(
+  (0): Linear(in_features=1024, out_features=512, bias=True)
+)
+```
+
+## System info
+
+- Python 3.10.0
+- TorchRL 0.3.1
+
+## Reason and Possible fixes
+
+https://github.com/pytorch/rl/blob/0063741839a3e5e1a527947945494d54f91bc629/torchrl/modules/models/models.py#L182-L188
+
+## Checklist
+
+- [x] I have checked that there is no similar issue in the repo (**required**)
+- [x] I have read the [documentation](https://github.com/pytorch/rl/tree/main/docs/) (**required**)
+- [x] I have provided a minimal working example to reproduce the bug (**required**)

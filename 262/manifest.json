@@ -1,0 +1,13 @@
+{
+  "bug_id": "262",
+  "bug_dir": "262",
+  "issue_url": "https://github.com/tensorly/tensorly/issues/607",
+  "commit_hash": "",
+  "library_name": "tensorly",
+  "library_version": "0.9.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../262",
+  "reproduction_command": "bash run_repro.sh"
+}

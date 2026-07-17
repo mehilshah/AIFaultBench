@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "After the eval loop, `state_after_eval` was `Sync Gradients: True / At end of current dataloader: True / Extra samples added: 2`.",
+    "The next train batch gathered with `gather_for_metrics` had shape `(2,)` and values `[4, 5]` even though the expected gathered size was `4`.",
+    "The repro terminated with `AssertionError: gather_for_metrics truncated a non-final train batch after eval`."
+  ],
+  "steps": [
+    "Create an isolated venv and install the CPU torch wheel plus the local editable `accelerate` source.",
+    "Launch the repro under `accelerate.debug_launcher` with two CPU processes.",
+    "Run one train batch, then a full eval epoch, then resume training on the original train iterator.",
+    "Observe that `GradientState.end_of_dataloader` stays `True` after eval and `gather_for_metrics` truncates the following train batch."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

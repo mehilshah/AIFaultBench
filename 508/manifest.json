@@ -1,0 +1,11 @@
+{
+  "bug_id": "508",
+  "bug_dir": "508",
+  "issue_url": "https://github.com/pyro-ppl/numpyro/issues/2053",
+  "commit_hash": "0d4f40c5a25633591388f12372cdb31f9dff0f29",
+  "library_name": "numpyro",
+  "library_version": "0.18.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "standardized_dir": "../508"
+}

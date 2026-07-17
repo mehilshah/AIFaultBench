@@ -1,0 +1,25 @@
+# recovered-from-issue: https://github.com/pyro-ppl/numpyro/issues/2055
+
+TITLE
+Incompatibility with flax 0.11.0
+
+BODY
+### Bug Description
+When running the test suite with the latest flax (0.11.0), I observe the following failures:
+```
+=========================== short test summary info ============================
+FAILED test/contrib/test_module.py::test_nnx_state_dropout_smoke[no_batchnorm-dropout] - KeyError: "No RngStream named 'dropout' found in Rngs."
+FAILED test/contrib/test_module.py::test_nnx_state_dropout_smoke[batchnorm-dropout] - KeyError: "No RngStream named 'dropout' found in Rngs."
+================== 2 failed, 28 passed, 16 warnings in 13.22s ==================
+```
+
+### Steps to Reproduce
+- Update `flax` to 0.11.0
+- Run `pytest`
+
+### Expected Behavior
+All tests pass.
+
+
+Context: [bumping flax on nixpkgs](https://github.com/NixOS/nixpkgs/pull/429462).
+

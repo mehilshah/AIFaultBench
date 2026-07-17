@@ -1,0 +1,38 @@
+Title: MultivariateNormalScore is vulnerable to large input values
+Date: 2025-05-08T15:10:41+00:00
+URL: https://github.com/bayesflow-org/bayesflow/issues/468
+
+Description:
+Training with `MultivariateNormalScore` occasionally fail in the first step, when inputs (conditions) are high at initialization. Summary networks generally don't ensure that output variance at initialization is near 1. I stubled upon this with DeepSet, but don't expect it to be limited to just that.
+
+**To Reproduce**
+
+Initialize a PointInferenceNetwork with MultivariateNormalScore and try to invert covariance matrix right after building.
+
+```python
+import bayesflow as bf
+import keras
+import numpy as np
+
+# Initialize fresh network
+network = bf.networks.PointInferenceNetwork(
+    scores=dict(mvn=bf.scores.MultivariateNormalScore())
+)
+
+# Random input with high variance in conditions
+xz = keras.ops.convert_to_tensor(np.random.normal(0, 1, size=(64, 3)))
+conditions = keras.ops.convert_to_tensor(np.random.normal(0, 10, size=(64, 2)))
+
+# Attempt to invert the predicted covariance matrices
+covariance = network(xz=xz, conditions=conditions)["mvn"]["covariance"]
+keras.ops.inv(covariance)  # fails, not invertible
+
+```
+**Expected behavior**
+A lack of input normalization should not break training. (We nevertheless can expect performance degradation, which would be a separate issue to solve for any given summary net.)
+
+**Environment**
+- OS: Ubuntu
+- Python Version: 3.11
+- Backend: all
+- BayesFlow Version: 2.0.3

@@ -1,0 +1,154 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21693
+
+TITLE
+pyannote-audio==3.3.2 is uninstallable due to lightning` package quarantine on PyPI
+
+BODY
+### Bug description
+
+### Tested versions
+
+3.3.2
+
+### System information
+
+Windows 11, Python3.12
+
+### Issue description
+
+### Problem
+
+`pyannote-audio>=3.3.2,<4.0.0` declares a dependency on `lightning>=2.0.1`. However, the `lightning` package on PyPI has been **quarantined by PyPI admins** and is no longer installable by any client:
+
+> "This project has been quarantined. PyPI Admins need to review this project before it can be restored. While in quarantine, the project is not installable by clients."
+
+See: https://pypi.org/project/lightning/
+
+This makes `pyannote-audio==3.3.2` (and `3.4.0`) effectively uninstallable via pip/uv.
+
+### Error
+
+```
+ERROR: Could not find a version that satisfies the requirement lightning>=2.0.1 (from pyannote-audio)
+ERROR: No matching distribution found for lightning>=2.0.1
+```
+
+With `uv`:
+```
+Because there are no versions of lightning and pyannote-audio>=3.3.2,<=3.4.0 depends on lightning>=2.0.1,
+we can conclude that pyannote-audio>=3.3.2,<=3.4.0 cannot be used.
+```
+
+### Root Cause
+
+The `lightning` package is a meta-package that includes `pytorch-lightning`. The functional equivalent `pytorch-lightning>=2.0.1` is still available and installable on PyPI. The dependency in `pyannote-audio` should be updated to reference `pytorch-lightning` instead of (or in addition to) `lightning`.
+
+### Suggested Fix
+
+In `requirements.txt` / `setup.cfg` / `pyproject.toml`, replace:
+```
+lightning>=2.0.1
+```
+with:
+```
+pytorch-lightning>=2.0.1
+```
+
+Or declare both as alternatives if `lightning` is restored in the future.
+
+### Workaround (for users until this is fixed)
+
+```bash
+pip install pytorch-lightning>=2.0.1
+pip install pyannote-audio==3.3.2 --no-deps
+pip install asteroid-filterbanks>=0.4 einops>=0.6.0 omegaconf>=2.1 \
+    "pyannote.core>=5.0" "pyannote.database>=5.0" "pyannote.metrics>=3.2" \
+    "pyannote.pipeline>=3.0" rich semver "speechbrain>=1.0"
+```
+
+### Environment
+
+- Python 3.12
+- pip 25.x / uv
+- Platform: Linux (Docker) / Windows
+
+### References
+
+- https://pypi.org/help/#project_in_quarantine
+- https://pypi.org/project/lightning/
+
+
+In short, WhisperX uses Pyannote as a dependency, and Pyannote uses the "lightning" library in the background with every version. Therefore, changing the version doesn't solve the problem.
+
+### Minimal reproduction example (MRE)
+
+https://colab.research.google.com/drive/1xdCvtldenGimJkwWoAw7v2FReqaDHhFR?usp=sharing
+
+### What version are you seeing the problem on?
+
+master
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+!pip install whisperx==3.4.3
+```
+
+### Error messages and logs
+
+ERROR: Cannot install whisperx because these package versions have conflicting dependencies.
+                                                                                                                                                                                                                                    
+The conflict is caused by:
+    pyannote-audio 3.4.0 depends on lightning>=2.0.1
+    pyannote-audio 3.3.2 depends on lightning>=2.0.1
+
+### Environment
+
+fastapi==0.124.4
+azure-monitor-opentelemetry==1.8.3
+uvicorn[standard]==0.38.0
+pydantic[email]==2.12.5
+celery[redis]==5.6.0
+redis>=5.0.0
+opentelemetry-instrumentation-celery==0.60b0
+pyee==13.0.0
+pytest==9.0.2
+pydantic_settings==2.12.0
+loguru==0.7.3
+python-multipart==0.0.20
+azure-storage-blob==12.27.1
+aiofiles==25.1.0
+pydub==0.25.1
+langchain-core==1.2.1
+langchain-community==0.4.1
+langchain_openai==1.1.3
+pypdf==6.4.2
+pymongo[srv]==4.15.5
+whisperx==3.4.3
+pytest-asyncio==1.3.0
+agno==2.3.13
+chromadb==1.3.7
+psycopg2-binary==2.9.11
+anyio==4.12.0
+pytest-tornasync==0.6.0.post2
+pytest-trio==0.8.0
+pytest-twisted==1.14.3
+twisted==25.5.0
+pymilvus==2.6.5
+protobuf==6.33.2
+ollama==0.6.1
+aiohttp==3.12.3
+PyMuPDF==1.26.6
+huggingface-hub<1.0.0
+transformers>=4.48.0
+beautifulsoup4==4.13.4
+
+### More info
+
+_No response_
+
+cc @ethanwharris

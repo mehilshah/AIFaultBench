@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "The repro environment installed JAX 0.10.0, and the pre-import probe printed `jax_version=0.10.0`.",
+    "The same probe printed `has_xla_pmap_p=False`, matching the missing symbol reported in the bug.",
+    "Importing `numpyro` failed with `ImportError: cannot import name 'xla_pmap_p' from 'jax.extend.core.primitives'` while executing `numpyro/ops/provenance.py`."
+  ],
+  "steps": [
+    "Created a fresh virtual environment with Python 3.12 and installed the local NumPyro codebase editable together with `jax==0.10.0` and `jaxlib==0.10.0`.",
+    "Ran `repro.py`, which imports `jax` first to confirm the version and missing `xla_pmap_p` attribute.",
+    "Attempted to import `numpyro`, which immediately failed during module initialization in `numpyro.ops.provenance`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running the report's minimal example in this checkout raises `TypeError: can only concatenate str (not \"_Sentinel\") to str`.",
+    "The traceback enters `jax/_src/api.py` at `vmap`, on the line `docstr += fun.__doc__`.",
+    "The failure is triggered by `jax.lax.scan(scan_fn, critic, batch)` where `scan_fn` calls `jax.vmap(carry)(x)` on an `eqx.Module` with a static default field."
+  ],
+  "steps": [
+    "Create a virtual environment in the bug folder.",
+    "Install the local Equinox checkout and pinned runtime dependencies.",
+    "Run `repro.py` with `JAX_TRACEBACK_FILTERING=off`.",
+    "Observe the reported `TypeError`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

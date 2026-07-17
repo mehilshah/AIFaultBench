@@ -1,0 +1,9 @@
+get_learned_distributions raised AttributeError: 'NoneType' object has no attribute 'to_dict'
+Traceback (most recent call last):
+  File "258/repro.py", line 91, in main
+    result = synthesizer.get_learned_distributions()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "258/codebase/sdv/single_table/copulas.py", line 221, in get_learned_distributions
+    parameters = self._model.to_dict()
+                 ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'to_dict'

@@ -1,0 +1,19 @@
+{
+  "bug_id": "140",
+  "issue_url": "https://github.com/huggingface/safetensors/issues/439",
+  "library_name": "safetensors",
+  "library_version": "0.4.3-dev.0 local checkout",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "repro_script": "repro.py",
+  "setup_script": "setup_env.sh",
+  "run_script": "run_repro.sh",
+  "reproduction_command": "bash run_repro.sh",
+  "reproducible": true,
+  "generated_files": [
+    "requirements.txt",
+    "Dockerfile",
+    "README.md",
+    "reproduction.json"
+  ]
+}

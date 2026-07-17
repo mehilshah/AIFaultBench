@@ -1,0 +1,11 @@
+{
+  "blocking_reason": "The full DeepCompile/Qwen2Moe stack is not runnable in this machine; the bundled fallback only reproduces the embedding-shape failure mode.",
+  "evidence": "Flattening the embedding weight to 1-D reproduces the same low-level failure here: 'weight' must be 2-D",
+  "reproducible": false,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Created a tiny embedding model with weight shape (8, 4).",
+    "Flattened embed_tokens.weight to (32,) to simulate the bad DeepCompile shape.",
+    "Forward pass raised: RuntimeError: 'weight' must be 2-D"
+  ]
+}

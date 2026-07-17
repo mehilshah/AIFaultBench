@@ -1,0 +1,12 @@
+{
+  "bug_id": "232",
+  "bug_dir": "232",
+  "issue_url": "https://github.com/ourownstory/neural_prophet/issues/1567",
+  "commit_hash": "",
+  "library_name": "neuralprophet",
+  "library_version": "1.0.0rc10",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../232"
+}

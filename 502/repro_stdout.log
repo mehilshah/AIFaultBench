@@ -1,0 +1,7 @@
+Source checks:
+- modelopt.py contains W4A16 dispatch: True
+- regression tests mention W4A16 mixed-precision dispatch: True
+dispatch NVFP4: ModelOptNvFp4LinearMethod
+dispatch W4A16_NVFP4: ModelOptNvFp4W4A16LinearMethod
+Result: the dense mixed-precision down_proj path is already fixed in this checkout.
+The reported narrow() out-of-range failure is not reproducible here because W4A16_NVFP4 correctly dispatches to ModelOptNvFp4W4A16LinearMethod.

@@ -1,0 +1,128 @@
+# recovered-from-issue: https://github.com/facebookresearch/detectron2/issues/2236
+
+TITLE
+Error when reading images in class GeneralizedRCNNWithTTA
+
+BODY
+I tried to create a TTA model and it seemed that the model could not read the image properly.
+What would be the recommended way to prepare the inputs?
+
+## Instructions To Reproduce the Issue:
+1. Full runnable code or full changes you made:
+```python
+import urllib.request
+
+import numpy as np
+import cv2
+from matplotlib import pyplot as plt
+import torch
+from detectron2 import model_zoo
+from detectron2.config import get_cfg
+from detectron2.modeling import build_model, GeneralizedRCNNWithTTA
+from detectron2.checkpoint import DetectionCheckpointer
+from detectron2.utils.visualizer import Visualizer
+from detectron2.data import MetadataCatalog, DatasetCatalog
+
+
+DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+cfg = get_cfg()
+cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
+cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")
+cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
+
+net = build_model(cfg)
+DetectionCheckpointer(net).load(cfg.MODEL.WEIGHTS)
+net = GeneralizedRCNNWithTTA(cfg, net)
+
+net.to(DEVICE)
+net.eval()
+
+image_url = 'http://images.cocodataset.org/val2017/000000439715.jpg'
+with urllib.request.urlopen(image_url) as response, open('input.jpg', 'wb') as f:
+    f.write(response.read())
+
+inputs = [{'file_name': 'input.jpg'}]
+
+# It would work if reading image before feeding to the model
+# image = cv2.imread('input.jpg')
+# inputs = [{'image': torch.from_numpy(image).permute(2, 0, 1), 'height': 480, 'width': 640}]
+
+with torch.no_grad():
+    outputs = net(inputs)
+
+print(outputs[0]['instances'].pred_classes)
+print(outputs[0]['instances'].pred_boxes)
+```
+
+2. __Full logs__ you observed:
+```
+[W tensor_numpy.cpp:141] Warning: The given NumPy array is not writeable, and PyTorch does not support non-writeable tensors. This means you can write to the underlying (supposedly non-writeable) NumPy array using the tensor. You may want to copy the array to protect its data or make it writeable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (function operator())
+Traceback (most recent call last):
+  File "tta.py", line 40, in <module>
+    outputs = net(inputs)
+  File "/home/user/repos/detectron2/detectron2/modeling/test_time_augmentation.py", line 188, in __call__
+    return [self._inference_one_image(_maybe_read_image(x)) for x in batched_inputs]
+  File "/home/user/repos/detectron2/detectron2/modeling/test_time_augmentation.py", line 188, in <listcomp>
+    return [self._inference_one_image(_maybe_read_image(x)) for x in batched_inputs]
+  File "/home/user/repos/detectron2/detectron2/modeling/test_time_augmentation.py", line 181, in _maybe_read_image
+    image = torch.from_numpy(image).permute(2, 0, 1)  # CHW
+ValueError: At least one stride in the given numpy array is negative, and tensors with negative strides are not currently supported. (You can probably work around this by making a copy of your array  with array.copy().)
+```
+
+Not sure if this is the correct place, but adding this line can resolve the problem.
+```diff
+If making changes to the project itself, please use output of the following command:
+git rev-parse HEAD; git diff
+6df2375535c458ad10aec2c16f2c81e1c29dd8a3
+diff --git a/detectron2/modeling/test_time_augmentation.py b/detectron2/modeling/test_time_augmentation.py
+index 9236d0f..5b578dc 100644
+--- a/detectron2/modeling/test_time_augmentation.py
++++ b/detectron2/modeling/test_time_augmentation.py
+@@ -178,6 +178,7 @@ class GeneralizedRCNNWithTTA(nn.Module):
+             ret = copy.copy(dataset_dict)
+             if "image" not in ret:
+                 image = read_image(ret.pop("file_name"), self.tta_mapper.image_format)
++                image = image.copy()
+                 image = torch.from_numpy(image).permute(2, 0, 1)  # CHW
+                 ret["image"] = image
+             if "height" not in ret and "width" not in ret:
+```
+
+## Environment:
+```
+----------------------  ----------------------------------------------------------------------------------------------
+sys.platform            linux
+Python                  3.6.10 |Anaconda, Inc.| (default, Jan  7 2020, 21:14:29) [GCC 7.3.0]
+numpy                   1.18.1
+detectron2              0.2.1 @/home/user/repos/detectron2/detectron2
+Compiler                GCC 5.4
+CUDA compiler           CUDA 10.0
+detectron2 arch flags   6.1
+DETECTRON2_ENV_MODULE   <not set>
+PyTorch                 1.6.0+cu101 @/home/user/miniconda3/envs/detectron2/lib/python3.6/site-packages/torch
+PyTorch debug build     False
+GPU available           True
+GPU 0,1                 TITAN Xp (arch=6.1)
+CUDA_HOME               /usr/local/cuda-10.0
+Pillow                  8.0.1
+torchvision             0.7.0+cu101 @/home/user/miniconda3/envs/detectron2/lib/python3.6/site-packages/torchvision
+torchvision arch flags  3.5, 5.0, 6.0, 7.0, 7.5
+fvcore                  0.1.2.post20201030
+cv2                     4.4.0
+----------------------  ----------------------------------------------------------------------------------------------
+PyTorch built with:
+  - GCC 7.3
+  - C++ Version: 201402
+  - Intel(R) Math Kernel Library Version 2019.0.5 Product Build 20190808 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v1.5.0 (Git Hash e2ac1fac44c5078ca927cb9b90e1b3066a0b2ed0)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 10.1
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75
+  - CuDNN 7.6.3
+  - Magma 2.5.2
+  - Build settings: BLAS=MKL, BUILD_TYPE=Release, CXX_FLAGS= -Wno-deprecated -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -fopenmp -DNDEBUG -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DUSE_VULKAN_WRAPPER -O2 -fPIC -Wno-narrowing -Wall -Wextra -Werror=return-type -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wno-unused-result -Wno-unused-local-typedefs -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, USE_CUDA=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, USE_STATIC_DISPATCH=OFF,
+```
+

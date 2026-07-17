@@ -1,0 +1,5 @@
+torch_version=2.13.0+cu130
+loss=2.964330
+encoder.to_logits.weight.requires_grad=True
+encoder.to_logits.weight.grad_is_none=True
+REPRODUCED: encoder.to_logits.weight is unused in the forward pass

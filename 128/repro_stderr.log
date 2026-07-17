@@ -1,0 +1,4 @@
+[1minternal.codon:174 (36-49): [1;31merror:[0m[1m 'Ptr[float32]' object has no attribute '__to_py__'[0m
+├─ [1mndarray.codon:311 (1-37860): [1;31merror:[0m[1m during the realization of to_py(slf: ndarray[float32,1])[0m
+├─ [1mpython.codon:2053 (24-42): [1;31merror:[0m[1m during the realization of __to_py__(self: ndarray[float32,1])[0m
+╰─ [1m[1;31merror:[0m[1m during the realization of wrap_multiple(obj: Ptr[byte], args: Ptr[Ptr[byte]], nargs: int, _kwds: Ptr[byte], T: NoneType, F: 'example_method_ndarray.0:0', M: 0)[0m

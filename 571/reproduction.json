@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Perfect retrieval still reports AP=0.0 because the positive score is 0.0 and torchmetrics.retrieval_average_precision masks non-positive predictions.",
+  "steps": [
+    "Build a toy retrieval batch with exact sketch/gallery matches.",
+    "Run the user's on_validation_epoch_end metric block unchanged.",
+    "Observe mAP@200=0.0 and p@200=0.0."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

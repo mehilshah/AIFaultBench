@@ -1,0 +1,13 @@
+{
+  "title": "FastFileWriter leaks one fd per close",
+  "source": "bug_report.txt",
+  "entrypoint": "bash run_repro.sh",
+  "dependencies": [
+    "numpy",
+    "torch"
+  ],
+  "notes": [
+    "Repro loads deepspeed/io modules directly from codebase/ to avoid unrelated optional package imports.",
+    "The repro counts deleted file descriptors after each file is closed and unlinked."
+  ]
+}

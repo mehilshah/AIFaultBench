@@ -1,0 +1,8 @@
+distributed_type=DistributedType.FSDP
+device=cuda:0
+fsdp_version=2
+unwrapped_type=FSDPGPT2LMHeadModel
+has_module=False
+state_dict_sample_types={'transformer.wte.weight': 'DTensor', 'transformer.wpe.weight': 'DTensor', 'transformer.h.0.ln_1.weight': 'DTensor'}
+save_file_target=/tmp/fsdp2_dtensor_repro_0ex5zmi7/model.safetensors
+exit_status=1

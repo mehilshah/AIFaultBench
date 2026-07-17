@@ -1,0 +1,5 @@
+numpy==2.5.1
+scipy==1.18.0
+cython==3.2.8
+setuptools>=83
+wheel>=0.47

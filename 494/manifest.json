@@ -1,0 +1,10 @@
+{
+  "bug_report": "bug_report.txt",
+  "description": "Ruff format check fails on the standardized SDV checkout.",
+  "expected_result": "ruff format --check --diff reports files that would be reformatted.",
+  "reproduction_command": "./run_repro.sh",
+  "tooling": {
+    "formatter": "ruff",
+    "version": "0.15.22"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the exact StaticEmbedding.from_distillation example in this folder prints similarity tensor([[0.5375]]) instead of the docstring's tensor([[0.9177]]).",
+  "steps": [
+    "Run bash setup_env.sh to create the local virtual environment and install the pinned repro dependencies.",
+    "Run bash run_repro.sh from the bug folder.",
+    "Observe the printed similarity value tensor([[0.5375]])."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

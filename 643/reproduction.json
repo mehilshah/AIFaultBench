@@ -1,0 +1,12 @@
+{
+  "reproducible": false,
+  "evidence": "expected_loss=2.393253803253174, actual_loss=2.393253803253174, abs_err=0.0.",
+  "steps": [
+    "Set up a Python 3.12 venv with Torch 2.13 CPU, pyro-api, and Funsor 0.4.7.",
+    "Patched Torch version and two compatibility points in-process so the recovered Pyro snapshot can import.",
+    "Ran the issue's guide/model pair from tests/contrib/funsor/test_enum_funsor.py.",
+    "Compared TraceEnum_ELBO(max_plate_nesting=0) against TraceEnum_ELBO(max_plate_nesting=1)."
+  ],
+  "blocking_reason": "The standardized environment does not reproduce the mismatch; after minimal compatibility shims, the expected and actual losses are identical.",
+  "reproduction_command": "bash run_repro.sh"
+}

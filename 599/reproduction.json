@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "OpenMPIRunner raised OSError before mpirun launch: OSError: MPI environment variables are not set. Ensure you are running the script with an MPI-compatible launcher.",
+  "steps": [
+    "Load the real DeepSpeed launcher source from codebase/deepspeed/launcher/multinode_runner.py.",
+    "Construct an OpenMPIRunner with a two-host resource pool and no OMPI_* variables in the environment.",
+    "Observe the constructor raise OSError: MPI environment variables are not set."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

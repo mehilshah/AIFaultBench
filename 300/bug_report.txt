@@ -1,0 +1,40 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/14117
+
+TITLE
+`DiffusionPipeline.download()` breaks with huggingface_hub>=1.22.0 in offline mode (IncompleteSnapshotError)
+
+BODY
+## Summary
+
+`huggingface_hub` v1.22.0 introduced a breaking change: `snapshot_download(..., local_files_only=True)` now verifies that the cached snapshot is **complete** (it caches the `/tree` call, so even offline it can tell whether the cached folder is partial). Previously, in offline mode it returned whatever snapshot folder it found in the cache without checking for completeness.
+
+This breaks `DiffusionPipeline.download()` when a pipeline is loaded in offline mode after being downloaded (partially) once.
+
+## Mechanism
+
+In `DiffusionPipeline.download()`:
+
+1. The first (online) call downloads with `snapshot_download(..., allow_patterns=<computed patterns>)`, which deliberately skips files like `.gitattributes` and `README.md`.
+2. When later run in offline mode, `model_info()` raises `OfflineModeIsEnabled`, so `local_files_only=True` is set and the `if not local_files_only:` block that computes `allow_patterns` is **skipped** → `allow_patterns` stays `None`.
+3. It then calls `snapshot_download(..., allow_patterns=None, local_files_only=True)`. With `allow_patterns=None`, hfh assumes the full repo is wanted, sees the cached folder is incomplete (missing `.gitattributes` / `README.md`), and raises `IncompleteSnapshotError` → surfaced as `OSError: Cannot load model...`.
+
+- **hub 1.22.0:** completeness check fails → error.
+- **hub 1.21.0:** returned the cached snapshot without checking completeness → succeeded.
+
+This is independent of the diffusers version. It was first spotted in PEFT CI (their `hub_online_once` test helper flips to `HF_HUB_OFFLINE=1` on the second load of a model), but it is fundamentally a diffusers ↔ hfh interaction.
+
+## Suggested fix
+
+Always call `snapshot_download` with the **same** filters. Concretely, compute `allow_patterns` **before** the `model_info()` call in `download()` (or pass the same minimal `allow_patterns` in the offline fallback path), so hfh doesn't try to verify files diffusers never intended to download.
+
+A hacky alternative is passing `ignore_patterns='*'` in offline mode (not recommended). On the hfh side, adding an opt-in `ignore_incomplete_snapshot` flag was floated as a fallback, but there are still some design decisions to settle before going that route.
+
+## Repro
+
+Load a pipeline once online, then load it again with `HF_HUB_OFFLINE=1` and `huggingface_hub>=1.22.0`.
+
+cc @Wauplin @BenjaminBossan
+
+---
+Requested by Sayak Paul - [Slack thread](https://huggingface.slack.com/archives/C02V5EA0A95/p1783071444380129?thread_ts=1783071444.380129&cid=C02V5EA0A95) - [Agent trace](https://huggingface.co/buckets/huggingface/moon-bot-memory/tree/sessions/2026-07-03T14-58-08-450Z_cf195c16-ce56-4f45-bb9d-ca03bc3af66d.jsonl)
+

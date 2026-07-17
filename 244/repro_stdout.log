@@ -1,0 +1,5 @@
+python=3.12.3
+platform=Linux-6.17.0-1024-oem-x86_64-with-glibc2.39
+typing_extensions_installed=False
+jax_installed=True
+jaxlib_installed=True

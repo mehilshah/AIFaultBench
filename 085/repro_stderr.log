@@ -1,0 +1,19 @@
+085/.venv/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:368: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /__w/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:84.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+Traceback (most recent call last):
+  File "085/repro.py", line 69, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "085/repro.py", line 60, in main
+    loss = mae(images)
+           ^^^^^^^^^^^
+  File "085/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "085/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "085/codebase/vit_pytorch/mae.py", line 49, in forward
+    tokens = tokens + self.encoder.pos_embedding[:, 1:(num_patches + 1)]
+             ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RuntimeError: The size of tensor a (3072) must match the size of tensor b (1024) at non-singleton dimension 2

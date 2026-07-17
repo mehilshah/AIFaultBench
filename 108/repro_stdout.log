@@ -1,0 +1,41 @@
+transformers_version=5.0.0.dev0
+torch_version=2.13.0+cu130
+tensor_labels_case=
+tensor_labels_status=error
+tensor_labels_error=TypeError: can only concatenate list (not "Tensor") to list
+list_labels_case=
+{
+  "input_ids": [
+    [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ]
+  ],
+  "labels": [
+    [
+      -100,
+      11,
+      12,
+      13,
+      -100,
+      15,
+      16
+    ]
+  ],
+  "position_ids": [
+    [
+      0,
+      1,
+      2,
+      3,
+      0,
+      1,
+      2
+    ]
+  ]
+}

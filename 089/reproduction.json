@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running a minimal TransformerWrapper with attn_kv_heads=2, attn_qk_norm=True, and attn_qk_norm_dim_scale=True raises RuntimeError at codebase/x_transformers/x_transformers.py:1172: 'The size of tensor a (2) must match the size of tensor b (4) at non-singleton dimension 1'.",
+  "steps": [
+    "Created a minimal Decoder configuration using the current attn_* API surface.",
+    "Installed torch, einops, packaging, and numpy into an isolated venv.",
+    "Ran a forward pass on a 1-layer TransformerWrapper with heads=4 and attn_kv_heads=2.",
+    "Observed the tensor shape mismatch when qk_norm_dim_scale multiplies k by a scale tensor sized for heads instead of kv_heads."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,45 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3263
+
+TITLE
+Cannot run CEVAE model with GPU
+
+BODY
+### Issue Description
+Provide a brief description of the issue.
+Hi, I am trying to run the synthetic script under CEVAE tutorial, when I set cuda = True it fail with following error.
+```
+INFO     Training with 10 minibatches per epoch
+Traceback (most recent call last):
+  File "synthetic.py", line 108, in <module>
+    main(args)
+  File "synthetic.py", line 64, in main
+    cevae.fit(
+  File "/home/tstone10/anaconda3/envs/causal-ml/lib/python3.8/site-packages/pyro/contrib/cevae/__init__.py", line 590, in fit
+    for x, t, y in dataloader:
+  File "/home/tstone10/anaconda3/envs/causal-ml/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 633, in __next__
+    data = self._next_data()
+  File "/home/tstone10/anaconda3/envs/causal-ml/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 676, in _next_data
+    index = self._next_index()  # may raise StopIteration
+  File "/home/tstone10/anaconda3/envs/causal-ml/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 623, in _next_index
+    return next(self._sampler_iter)  # may raise StopIteration
+  File "/home/tstone10/anaconda3/envs/causal-ml/lib/python3.8/site-packages/torch/utils/data/sampler.py", line 254, in __iter__
+    for idx in self.sampler:
+  File "/home/tstone10/anaconda3/envs/causal-ml/lib/python3.8/site-packages/torch/utils/data/sampler.py", line 132, in __iter__
+    yield from torch.randperm(n, generator=generator).tolist()
+RuntimeError: Expected a 'cuda' device type for generator but found 'cpu'
+
+```
+So I cannot use GPU to train CEVAE. Can someone helps?
+
+### Environment
+For any bugs, please provide the following:
+ - OS and python version.
+ Linux  python==3.8
+ - PyTorch version, or if relevant, output of `pip freeze`.
+ 2.0.1
+ - Pyro version: output of `python -c 'import pyro; print pyro.__version__'`
+1.8.6
+
+### Code Snippet
+Provide any relevant code snippets and commands run to replicate the issue.
+

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `./run_repro.sh` in a fresh virtualenv consistently fails during `model.fit()` with `tensorflow.python.framework.errors_impl.NotFoundError: Graph execution error` and `codebase/images/definitely_missing.jpg; No such file or directory` at `ReadFile`/`IteratorGetNext`.",
+  "steps": [
+    "Created a local virtualenv with `./setup_env.sh` and installed `tensorflow-cpu==2.17.1`.",
+    "Executed `./run_repro.sh` against one real JPEG from `codebase/images/` and one deliberately missing path.",
+    "Observed the TensorFlow input pipeline abort with a `NotFoundError` when `tf.io.read_file()` reached the missing image path."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./setup_env.sh && ./run_repro.sh"
+}

@@ -1,0 +1,12 @@
+{
+  "bug_id": "195",
+  "bug_dir": "195",
+  "issue_url": "https://github.com/patrick-kidger/jaxtyping/issues/231",
+  "commit_hash": "",
+  "library_name": "jaxtyping",
+  "library_version": "0.2.33",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../195"
+}

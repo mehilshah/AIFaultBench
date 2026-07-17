@@ -1,0 +1,11 @@
+{
+  "blocking_reason": "",
+  "evidence": "AttributeError at codebase/src/accelerate/commands/launch.py:793: 'ClusterConfig' object has no attribute 'tpu_cluster'.",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Install the minimal dependency set.",
+    "Load the real launcher from codebase/src/accelerate/commands/launch.py with TPU config defaults.",
+    "Call _validate_launch_command; it dereferences defaults.tpu_cluster and raises AttributeError."
+  ]
+}

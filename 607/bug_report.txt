@@ -1,0 +1,38 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/37993
+
+TITLE
+`jnp.std` returns `inf` instead of `nan` for float32 arrays near overflow
+
+BODY
+### Description
+
+`jnp.std` returns `inf` for float32 arrays containing values near `float32.max`, while `np.std` correctly returns `nan`. This is a correctness issue: the true standard deviation of this array is finite, so both `inf` and `nan` reflect intermediate overflow — but `inf` silently propagates through downstream computations whereas `nan` would immediately surface the error.
+
+```python
+import jax, jax.numpy as jnp
+import numpy as np
+jax.config.update('jax_enable_x64', True)
+
+x = np.array([-3.4028235e+38, -3.4028235e+38,  3.4028235e+38,  1.0,
+               1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  3.4028235e+38,  1.0,
+               1.0,  1.0,  1.0,  1.0], dtype=np.float32)
+
+print(np.std(x))                      # nan  ← correct
+print(float(jnp.std(jnp.array(x))))  # inf  ← bug
+```
+
+**Why this matters:** code that checks `if result == np.inf` to detect overflow will fire incorrectly, while `nan`-aware checks (`np.isnan`, `jnp.where`) that guard against bad values will silently pass through the erroneous `inf`.
+
+The docstring states this is a "JAX implementation of `numpy.std`", implying compatible overflow behavior.
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+```
+jax:    0.10.1.dev20260513+64f6e229b
+jaxlib: 0.10.0
+numpy:  2.4.4
+python: 3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]
+device info: cpu-1, 1 local devices
+process_count: 1
+platform: uname_result(system='Linux', node='eb2-3228-lin08.csc.ncsu.edu', release='6.14.0-37-generic', version='#37~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Nov 20 10:25:38 UTC 2', machine='x86_64')
+```

@@ -1,0 +1,6 @@
+Bug 465 repro harness
+bug_report.txt present: True
+codebase/ present: False
+issue states reproduction is N/A: True
+No executable source tree is available in this standardized folder.
+This issue is documentation-only, so there is no runtime failure to trigger.

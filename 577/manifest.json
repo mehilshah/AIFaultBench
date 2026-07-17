@@ -1,0 +1,18 @@
+{
+  "bug_id": "577",
+  "bug_dir": "577",
+  "issue_url": "https://github.com/pyro-ppl/numpyro/issues/2019",
+  "commit_hash": "ff6f5675249d6192e1f8613f8b073f70c8898ba2",
+  "library_name": "numpyro",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pyro-ppl/numpyro@ff6f5675249d6192e1f8613f8b073f70c8898ba2",
+  "codebase_present": "true",
+  "standardized_dir": "../577",
+  "repro_dependency_focus": [
+    "jax==0.6.0",
+    "jaxlib==0.6.0",
+    "dm-haiku==0.0.13"
+  ],
+  "repro_mode": "direct_haiku_import"
+}

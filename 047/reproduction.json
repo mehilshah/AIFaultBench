@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` reproduces the ordering defect: 9 of 10 logged Input/Output pairings mismatch the expected transcripts, and the first audio file is paired with the transcript from the last item in the reported sequence.",
+  "steps": [
+    "Read `bug_report.txt` and the MMS wrapper in `codebase/examples/mms/asr/infer/mms_infer.py`.",
+    "Created fixtures from the reported audio list and misordered hypothesis sequence.",
+    "Ran `bash run_repro.sh` and verified the mismatched pairings in `repro_stdout.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

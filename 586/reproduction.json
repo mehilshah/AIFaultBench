@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "CPU/gloo probe on DeepSpeed 0.18.3+unknown produced the same global grad norm for DDP, ZeRO-2, and ZeRO-3: 2.2715824653.",
+    "The ZeRO-2 and ZeRO-3 runs matched the DDP baseline on the checked-out source, so the reported ZeRO-2-only regression was not observed here."
+  ],
+  "steps": [
+    "Create a CPU-only virtualenv with torch 2.7.1+cpu and install the local DeepSpeed source editable.",
+    "Run a two-rank `torchrun` probe that executes the same synthetic training step under DDP, ZeRO-2, and ZeRO-3.",
+    "Compare the final gradient norms from all three runs."
+  ],
+  "blocking_reason": "The issue did not reproduce in this CPU-only environment. The GPU/stream-overlap path described in the report was not exercised, and the local probe matched DDP and ZeRO-3.",
+  "reproduction_command": "bash run_repro.sh"
+}

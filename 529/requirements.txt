@@ -1,0 +1,9 @@
+torch==2.3.1
+numpy
+aiohttp
+fsspec
+jinja2
+psutil
+pyparsing
+requests
+tqdm

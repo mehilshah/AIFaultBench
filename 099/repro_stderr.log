@@ -1,0 +1,21 @@
+099/.venv_test/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:368: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /__w/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:84.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+099/codebase/rotary_embedding_torch/rotary_embedding_torch.py:35: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  @autocast(enabled = False)
+099/codebase/rotary_embedding_torch/rotary_embedding_torch.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  @autocast(enabled = False)
+Traceback (most recent call last):
+  File "099/repro.py", line 30, in <module>
+    main()
+  File "099/repro.py", line 26, in main
+    run_case(torch.float8_e4m3fn)
+  File "099/repro.py", line 16, in run_case
+    out = emb.rotate_queries_or_keys(q)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "099/codebase/rotary_embedding_torch/rotary_embedding_torch.py", line 161, in rotate_queries_or_keys
+    freqs = self.forward(self.get_seq_pos(seq_len, device = device, dtype = dtype, offset = offset), seq_len = seq_len, offset = offset)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "099/codebase/rotary_embedding_torch/rotary_embedding_torch.py", line 152, in get_seq_pos
+    return (torch.arange(seq_len, device = device, dtype = dtype) + offset) / self.interpolate_factor
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+NotImplementedError: "arange_cuda" not implemented for 'Float8_e4m3fn'

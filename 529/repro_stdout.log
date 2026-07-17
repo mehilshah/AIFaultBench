@@ -1,0 +1,8 @@
+torch=2.3.1+cu121
+cuda_available=True
+cuda_device_count=1
+world_size=1
+force_cpu=True
+starting distributed repro
+rank=0 loss=0.777390
+completed without segfault

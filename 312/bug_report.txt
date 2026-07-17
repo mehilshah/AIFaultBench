@@ -1,0 +1,26 @@
+# recovered-from-issue: https://github.com/PythonOT/POT/issues/82
+
+TITLE
+Gromov-Wasserstein fails when the cost matrices are slightly different 
+
+BODY
+**Describe the bug**
+The .gromov.gromov wasserstein method fails (TypeError) when the cost matrices are very similar but not the same
+
+**To Reproduce**
+The full code is available at
+https://colab.research.google.com/drive/1IhnOqeLV51gWE8FodnBsgR5cQC_w2EkL
+
+- How was POT installed [pip]
+
+Sys specifications
+```
+Linux-3.10.0-327.22.2.el7.x86_64-x86_64-with-centos-7.2.1511-Core
+Python 3.4.3 (default, Apr 28 2015, 11:29:27) 
+[GCC 4.9.2]
+NumPy 1.16.2
+SciPy 1.2.1
+POT 0.5.1
+```
+
+

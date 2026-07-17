@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "A minimal local repro using a tiny nn.Linear model shows that after loading a PiSSA adapter, re-activating the previously loaded non-PiSSA adapter changes its output. The captured run reports output_max_abs_diff=0.7282570600509644 and base_weight_max_abs_diff=0.333167165517807.",
+  "steps": [
+    "Create a clean Python virtual environment and install the pinned CPU torch and PEFT dependencies.",
+    "Install the local codebase in editable mode so the repro uses this folder's source snapshot.",
+    "Run repro.py through run_repro.sh with one standard LoRA adapter and one PiSSA adapter, then compare the non-PiSSA adapter output before and after loading PiSSA."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

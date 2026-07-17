@@ -1,0 +1,12 @@
+{
+  "bug_id": "468",
+  "bug_dir": "468",
+  "issue_url": "https://github.com/deepspeedai/DeepSpeed/issues/7807",
+  "commit_hash": "15ad92b459c6c39b7c5527efe1e42080eb4ab99f",
+  "library_name": "DeepSpeed",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "microsoft/DeepSpeed@15ad92b459c6c39b7c5527efe1e42080eb4ab99f",
+  "codebase_present": "true",
+  "standardized_dir": "../468"
+}

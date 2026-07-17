@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "repro_stdout.log shows torch.distributed initialized successfully while deepspeed.comm.cdb remained None.",
+    "repro_stderr.log ends with AttributeError: 'NoneType' object has no attribute 'all_reduce' from deepspeed.comm.all_reduce."
+  ],
+  "steps": [
+    "Run `bash run_repro.sh` from the bug folder.",
+    "The script creates a venv, installs `torch==2.5.1` and `deepspeed==0.16.0`, initializes `torch.distributed`, and then calls `deepspeed.comm.all_reduce(...)`.",
+    "The call fails with the same `NoneType.all_reduce` traceback reported in the issue."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

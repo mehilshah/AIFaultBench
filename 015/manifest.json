@@ -1,0 +1,12 @@
+{
+  "bug_id": "015",
+  "issue_url": "https://github.com/tensorflow/models/issues/11058",
+  "commit_hash": "9a2993d140841f37d73cded94c1295da4faab8b5",
+  "library_name": "tensorflow/models",
+  "library_version": "unknown",
+  "reproduction_command": "bash run_repro.sh",
+  "source_files": [
+    "bug_report.txt",
+    "codebase/docs/vision/instance_segmentation.ipynb"
+  ]
+}

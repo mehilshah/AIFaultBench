@@ -1,0 +1,5 @@
+-e ./codebase
+numpy
+packaging
+psutil
+pyyaml

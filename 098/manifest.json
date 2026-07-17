@@ -1,0 +1,12 @@
+{
+  "title": "SinusoidalPosEmb NameError",
+  "issue": "https://github.com/lucidrains/denoising-diffusion-pytorch/issues/249",
+  "package": "denoising-diffusion-pytorch",
+  "bug_report": "bug_report.txt",
+  "reproduction_command": "bash run_repro.sh",
+  "reproducible": true,
+  "notes": [
+    "Repro executes the exact buggy class body from codebase/denoising_diffusion_pytorch/denoising_diffusion_pytorch.py.",
+    "The failure occurs before torch operations, so no third-party dependencies are needed."
+  ]
+}

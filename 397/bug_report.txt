@@ -1,0 +1,273 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2600
+
+TITLE
+[BUG] A random number seed was set up, but the experimental results could not be reproduced.
+
+BODY
+**Describe the bug**
+I have set the random number seed and num_workers=0. This setting works in other models such as resnet, densenet, and vgg, allowing me to reproduce the experiment. When I was running ViT, I still used this setting, but I was surprised to find that the experimental results couldn't be reproduced. I couldn't figure out the reason.
+
+**To Reproduce**
+Environment：python 3.9,23 + PyTorch 2.7.1+ CUDA 11.8, RTX 4060Ti 8G
+
+set_seed:
+```python
+def set_seed(my_seed):
+    os.environ['PYTHONHASHSEED'] = str(my_seed)
+    random.seed(my_seed)
+    np.random.seed(my_seed)
+    torch.manual_seed(my_seed)
+    torch.cuda.manual_seed(my_seed)
+    torch.cuda.manual_seed_all(my_seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.enabled = False
+``` 
+DataLoader:
+```python
+train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=0)
+test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=0)
+``` 
+
+
+**Expected behavior**
+Some operations enable the experiment to be reproduced.
+
+
+**Desktop (please complete the following information):**
+ - OS: Windows10
+-Environment: python 3.9,23 + PyTorch 2.7.1+ CUDA 11.8 + NVIDIA RTX 4060Ti 8G + Intel 7
+
+**Additional context**
+All models of classic convolutional neural networks such as resnet, densenet, VGG and Inception can reproduce, but only ViT cannot. Could it be that the random number seeds set are not constrained by certain random quantities that are only available in the Transformer architecture?
+
+The complete code is as follows：
+```python
+import os, random, numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms, models
+from sklearn.model_selection import StratifiedKFold
+from dataset import CustomPathSpectrumDataset, flatten_pairs, ImageDataset
+from transformers import ViTForImageClassification
+from sklearn.metrics import confusion_matrix, roc_auc_score, matthews_corrcoef, f1_score
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("Using device:", device)
+
+# =====================================================
+# 训练单折模型
+# =====================================================
+def train_model(model, train_loader, criterion, optimizer, device,
+                max_epochs=50, patience=3, threshold=0.95):
+    class EarlyStoppingAcc:
+        def __init__(self, patience=3, threshold=0.95):
+            self.patience = patience
+            self.threshold = threshold
+            self.counter = 0
+            self.stop = False
+
+        def step(self, acc):
+            if acc >= self.threshold:
+                self.counter += 1
+                if self.counter >= self.patience:
+                    self.stop = True
+            else:
+                self.counter = 0
+            return self.stop
+
+    early_stopping = EarlyStoppingAcc(patience=patience, threshold=threshold)
+
+    for epoch in range(max_epochs):
+        model.train()
+        total, correct, loss_sum = 0, 0, 0.0
+        for imgs, targets in train_loader:
+            imgs, targets = imgs.to(device), targets.to(device)
+            optimizer.zero_grad()
+            outputs = model(imgs)
+            if hasattr(outputs, "logits"):  # ViT
+                outputs = outputs.logits
+            loss = criterion(outputs, targets)
+            loss.backward()
+            optimizer.step()
+            _, preds = torch.max(outputs, 1)
+            total += targets.size(0)
+            correct += (preds == targets).sum().item()
+            loss_sum += loss.item()
+
+        train_acc = correct / total
+        train_loss = loss_sum / len(train_loader)
+        print(f"Epoch {epoch+1}: Train Acc={train_acc:.4f}, Loss={train_loss:.4f}")
+        if early_stopping.step(train_acc):
+            print("触发早停！")
+            break
+
+    return model
+
+def test_model_with_filenames(model, test_loader, model_type, version, fold_id,):
+    model.eval()
+    test_preds, test_targets = [], []
+
+    with torch.no_grad():
+        for imgs, targets in test_loader:
+            imgs, targets = imgs.to(device), targets.to(device)
+            outputs = model(imgs)
+            if hasattr(outputs, "logits"):  # ViT
+                outputs = outputs.logits
+            _, preds = torch.max(outputs, 1)
+
+
+            test_preds.extend(preds.cpu().numpy())
+            test_targets.extend(targets.cpu().numpy())
+
+    test_preds = [1 if p >= 0.5 else 0 for p in test_preds]  # 先进行二值化，排除浮点数影响
+
+    """
+    计算混淆矩阵
+    """
+    tn, fp, fn, tp = confusion_matrix(test_targets, test_preds).ravel()
+    MCC = matthews_corrcoef(test_targets, test_preds)
+    F1 = f1_score(test_targets, test_preds)
+    AUROC = roc_auc_score(test_targets, test_preds)
+
+    """
+    输出结果
+    """
+    return tn, fp, fn, tp, MCC, F1, AUROC
+
+"""
+随机数种子
+"""
+def set_seed(my_seed):
+    os.environ['PYTHONHASHSEED'] = str(my_seed)
+    random.seed(my_seed)
+    np.random.seed(my_seed)
+    torch.manual_seed(my_seed)
+    torch.cuda.manual_seed(my_seed)
+    torch.cuda.manual_seed_all(my_seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.enabled = False
+
+"""
+主逻辑
+"""
+data_dir = r"dataset"
+save_dir = r"Matrix"
+model_type = f"vit"
+SEED = 42
+set_seed(SEED)
+transform_224 = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+])
+
+dataset = CustomPathSpectrumDataset(data_dir, transform=transform_224)
+labels = [lbl for _, _, lbl in dataset.pair_data]
+
+# 划分折
+skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=SEED)
+folds = []
+for train_idx, test_idx in skf.split(np.zeros(len(labels)), labels):
+    train_pairs = [dataset.pair_data[i] for i in train_idx]
+    test_pairs = [dataset.pair_data[i] for i in test_idx]
+    folds.append((train_pairs, test_pairs))
+
+batch_size = 16
+criterion = nn.CrossEntropyLoss()
+
+# 模型列表
+vit_versions = ["google/vit-base-patch16-224", "google/vit-large-patch16-224"]
+
+for model_type, versions in [
+    ("vit", vit_versions),
+]:
+    for version in versions:
+        print(f"\n========== Training {model_type}{version} ==========")
+        all_fold_metrics = []
+        all_fold_scores = []
+
+        transform = transform_224
+
+        for fold_id, (train_pairs, test_pairs) in enumerate(folds):
+            print(f"\n--- Fold {fold_id+1} ---")
+            train_imgs, train_labels = flatten_pairs(train_pairs)
+            test_imgs, test_labels = flatten_pairs(test_pairs)
+
+            train_set = ImageDataset(train_imgs, train_labels, transform)
+            test_set = ImageDataset(test_imgs, test_labels, transform)
+            train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=0)
+            test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=0)
+
+            # 创建模型
+            model = ViTForImageClassification.from_pretrained(
+                version,
+                ignore_mismatched_sizes=True,  # 忽略分类头尺寸不匹配
+            )
+            model.classifier = nn.Linear(model.classifier.in_features, 2)
+
+            model = model.to(device)
+            optimizer = optim.Adam(model.parameters(), lr=5e-5)
+
+            # 训练 & 测试
+            model = train_model(model, train_loader, criterion, optimizer, device)
+            tn, fp, fn, tp, MCC, F1, AUROC = test_model_with_filenames(
+                    model, test_loader, test_imgs,
+                    f"{model_type}{version}", fold_id,
+            )
+            """
+            总的混淆矩阵
+            """
+            all_fold_metrics.append([tn, fp, fn, tp])
+            all_fold_scores.append([MCC, F1, AUROC])
+
+        all_fold_metrics_array = np.array(all_fold_metrics)
+        all_fold_scores_array = np.array(all_fold_scores)
+        total_cm = all_fold_metrics_array.sum(axis=0)  # 按列相加
+        mean_scores = all_fold_scores_array.mean(axis=0)
+        mean_MCC, mean_F1, mean_AUROC = mean_scores
+        tn, fp, fn, tp = total_cm
+        """
+        计算各项指标
+        """
+        ACC = (tn+tp)/(tp+fp+tn+fn)
+        SEN = tp/(tp+fn) if (tp+fn)>0 else 0
+        SPF = tn/(tn+fp) if (tn+fp)>0 else 0
+        PPV = tp/(tp+fp) if (tp+fp)>0 else 0
+        NPV = tn/(tn+fn) if (tn+fn)>0 else 0
+        print("十折各项指标如下：")
+        print("ACC"+f"={ACC*100:.2f}%")
+        print("SEN"+f"={SEN*100:.2f}%")
+        print("SPF"+f"={SPF*100:.2f}%")
+        print(f"PPV"+f"={PPV*100:.2f}%")
+        print(f"NPV"+f"={NPV*100:.2f}%")
+        print(f"MCC"+f"={mean_MCC*100:.2f}%")
+        print(f"AUROC"+f"={mean_AUROC*100:.2f}%")
+        print(f"F1"+f"={mean_F1*100:.2f}%")
+
+
+        print("总的混淆矩阵")
+        cm_matrix = np.array([[tn, fp],
+                              [fn, tp]])
+
+        classes = ['Negative', 'Positive']
+        plt.figure(figsize=(6, 5))
+        sns.heatmap(cm_matrix, annot=True, fmt='d', cmap='Blues',
+                    xticklabels=classes, yticklabels=classes)
+        plt.xlabel('Predicted Label')
+        plt.ylabel('True Label')
+        plt.title(f'{model_type}{version} - Total Confusion Matrix')
+
+        # 保存图片
+        os.makedirs(save_dir, exist_ok=True)
+        save_path = os.path.join(save_dir, f'{model_type}{version}')
+        plt.savefig(save_path, bbox_inches='tight')
+        plt.show()
+        print(f"混淆矩阵已保存到: {save_path}")
+
+``` 
+

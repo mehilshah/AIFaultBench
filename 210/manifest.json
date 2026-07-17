@@ -1,0 +1,12 @@
+{
+  "bug_id": "210",
+  "bug_dir": "210",
+  "issue_url": "https://github.com/pytorch/rl/issues/2437",
+  "commit_hash": "",
+  "library_name": "torchrl",
+  "library_version": "0.5.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../210"
+}

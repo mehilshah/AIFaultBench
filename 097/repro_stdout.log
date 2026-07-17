@@ -1,0 +1,2 @@
+has_device_property=False
+EXPECTED_FAILURE: AttributeError: 'GaussianDiffusion' object has no attribute 'device'

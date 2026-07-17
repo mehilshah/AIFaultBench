@@ -1,0 +1,8 @@
+torch>=2.5,<2.7
+lightning-utilities>=0.10,<0.16
+torchmetrics>0.7,<1.9
+fsspec[http]>=2022.5.0,<2026.4.0
+PyYAML>5.4,<6.1
+tqdm>=4.57,<4.68
+packaging>=23,<=26
+typing-extensions>4.5,<4.16

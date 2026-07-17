@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "133/repro.py", line 77, in <module>
+    main()
+  File "133/repro.py", line 73, in main
+    assert example[entity.start_position : entity.end_position] == entity.text
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running ./run_repro.sh installs tensorflow==2.16.1, keras==3.0.5, and keras-cv==0.4.0, then loads .venv/lib/python3.11/site-packages/keras_cv/models/weights.py. The load fails with ImportError: cannot import name 'data_utils' from 'keras.utils' (.venv/lib/python3.11/site-packages/keras/utils/__init__.py).",
+  "steps": [
+    "Create a local virtualenv with ./setup_env.sh.",
+    "Run ./run_repro.sh to load keras_cv/models/weights.py directly.",
+    "Observe the ImportError raised from from keras.utils import data_utils."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

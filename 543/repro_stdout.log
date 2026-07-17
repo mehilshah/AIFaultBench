@@ -1,0 +1,4 @@
+hidden_states_type=<class 'torch.Tensor'>
+hidden_states_is_none=False
+hidden_states_is_tuple=False
+hidden_states_shape=(1, 512, 768)

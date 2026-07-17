@@ -1,0 +1,90 @@
+# recovered-from-issue: https://github.com/vllm-project/vllm/issues/47239
+
+TITLE
+[Bug][Model Runner V2]: [Bug] GLM-5.2 shows low aa_lcr accuracy and large TPOT fluctuations on B300
+
+BODY
+### Your current environment
+
+``` 
+nvidia-smi
+Wed Jul  1 02:50:57 2026
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 610.43.02              KMD Version: 610.43.02     CUDA UMD Version: 13.3     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA B300 SXM6 AC            Off |   00000000:1A:00.0 Off |                    0 |
+| N/A   44C    P0            237W / 1100W |  135984MiB / 275040MiB |      1%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA B300 SXM6 AC            Off |   00000000:5D:00.0 Off |                    0 |
+| N/A   35C    P0            231W / 1100W |  135984MiB / 275040MiB |      1%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA B300 SXM6 AC            Off |   00000000:76:00.0 Off |                    0 |
+| N/A   35C    P0            234W / 1100W |  135984MiB / 275040MiB |      2%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA B300 SXM6 AC            Off |   00000000:7D:00.0 Off |                    0 |
+| N/A   47C    P0            245W / 1100W |  135984MiB / 275040MiB |      2%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   4  NVIDIA B300 SXM6 AC            Off |   00000000:9A:00.0 Off |                    0 |
+| N/A   44C    P0            240W / 1100W |  135984MiB / 275040MiB |      1%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   5  NVIDIA B300 SXM6 AC            Off |   00000000:DA:00.0 Off |                    0 |
+| N/A   35C    P0            230W / 1100W |  135984MiB / 275040MiB |      3%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   6  NVIDIA B300 SXM6 AC            Off |   00000000:F3:00.0 Off |                    0 |
+| N/A   35C    P0            232W / 1100W |  135984MiB / 275040MiB |      2%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   7  NVIDIA B300 SXM6 AC            Off |   00000000:FA:00.0 Off |                    0 |
+| N/A   48C    P0            244W / 1100W |  135984MiB / 275040MiB |      2%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
+```
+
+### 🐛 Describe the bug
+
+```
+vllm serve /mnt/model/zai-org/GLM5.2-NVFP4 \
+                --port 8200 --host '::' \
+                --served-model-name public/glm-52 \
+                --trust-remote-code \
+                --chat-template-content-format=string \
+                --kv-transfer-config '{"kv_connector":"NixlConnector",
+                  "kv_role":"kv_both","kv_connector_extra_config": {"enforce_handshake_compat": false,"enable_speculative_padding":true}}' \
+                --tensor-parallel-size 1 \
+                --compilation-config '{"cudagraph_mode":"FULL_DECODE_ONLY"}' \
+                --max-num-batched-token 1024 \
+                -ep \
+                -dp 8 \
+                --tool-call-parser glm47 \
+                --enable-auto-tool-choice \
+                --reasoning-parser glm45 \
+                --gpu-memory-utilization 0.90 \
+                --enable-prompt-tokens-details \
+                --all2all-backend=flashinfer_nvlink_two_sided \
+                --speculative-config='{"method":"mtp","num_speculative_tokens":1}'
+```
+
+Recently, while testing GLM-5.2, we found that when VLLM_USE_V2_MODEL_RUNNER=1 is enabled, TPOT fluctuates significantly and there are also accuracy issues. The score on the aa_lcr dataset is very low.
+
+If VLLM_USE_V2_MODEL_RUNNER=0 is used instead, everything works normally, although the throughput is not as high as with V2. The tests were conducted on B300.
+
+<img width="464" height="402" alt="Image" src="https://github.com/user-attachments/assets/18da373f-f068-47c7-a143-66b196debc92" />
+
+<img width="495" height="481" alt="Image" src="https://github.com/user-attachments/assets/a8ae6d4c-e4f3-4b08-b436-9c40d3528a8b" />
+
+<img width="531" height="483" alt="Image" src="https://github.com/user-attachments/assets/49e0bfe0-4f83-4288-86da-084c1587335e" />
+
+### Before submitting a new issue...
+
+- [x] Make sure you already searched for relevant issues, and asked the chatbot living at the bottom right corner of the [documentation page](https://docs.vllm.ai/en/latest/), which can answer lots of frequently asked questions.

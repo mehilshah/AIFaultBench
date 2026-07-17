@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "repro_stdout.log contains caught_runtime_error=1 and the Lightning message: 'Lightning can't create new processes if CUDA is already initialized.'",
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh"
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

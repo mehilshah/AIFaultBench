@@ -1,0 +1,98 @@
+# recovered-from-issue: https://github.com/pytorch/rl/issues/3919
+
+TITLE
+[BUG] MinariExperienceReplay fails with remote datasets
+
+BODY
+## Describe the bug
+
+Minari.load_dataset line fails if the dataset is downloaded by TorchRL, thus saved in TorchRL's cache, instead of the default Minari path.
+
+Thus, MinariExperienceReplay fails:
+https://github.com/pytorch/rl/blob/74abd6c38c065a17aeaa4bd617167055e434fdad/torchrl/data/datasets/minari_data.py#L473
+
+## To Reproduce
+
+Simply launch:
+```python
+import torchrl
+
+ds = MinariExperienceReplay("D4RL/door/human-v2", batch_size=32)
+```
+
+```bash
+    def test_torch_minari_experience_replay():
+        """
+        Tests creation of the torchrl MinariExperienceReplay object.
+    
+        According to their documentation, torchrl uses the MinariExperienceReplay
+        object as a way to download datasets from the remote Farama server.
+        """
+    
+        batch_size = 32
+>       dataset = MinariExperienceReplay("D4RL/door/human-v2", batch_size=batch_size)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integrations/test_torch_rl.py:18: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/anaconda3/envs/minari/lib/python3.12/site-packages/torchrl/data/datasets/minari_data.py:212: in __init__
+    storage = self._download_and_preproc()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/anaconda3/envs/minari/lib/python3.12/site-packages/torchrl/data/datasets/minari_data.py:473: in _download_and_preproc
+    dataset = minari.load_dataset(self.dataset_id)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dataset_id = 'D4RL/door/human-v2', download = False
+
+    def load_dataset(dataset_id: str, download: bool = False):
+        """Retrieve Minari dataset from local database.
+    
+        Args:
+            dataset_id (str): name id of Minari dataset
+            download (bool): if `True` download the dataset if it is not found locally. Default to `False`.
+    
+        Returns:
+            MinariDataset
+        """
+        file_path = get_dataset_path(dataset_id)
+        data_path = os.path.join(file_path, "data")
+    
+        if not os.path.exists(data_path):
+            if not download:
+>               raise FileNotFoundError(
+                    f"Dataset {dataset_id} not found locally at {file_path}. Use download=True to download the dataset."
+                )
+E               FileNotFoundError: Dataset D4RL/door/human-v2 not found locally at /var/folders/cn/j52qkn917b9b_j65205xwcmr0000gn/T/tmpj16ck37_/D4RL/door/human-v2. Use download=True to download the dataset.
+
+minari/storage/local.py:51: FileNotFoundError
+```
+
+## Expected behavior
+
+Should load it from the cache, if this was a TorchRL's download.
+
+
+## System info
+
+```python
+import torchrl, numpy, sys
+print(torchrl.__version__, numpy.__version__, sys.version, sys.platform)
+```
+
+gives: 
+
+```
+0.13.2 1.26.4 3.12.12 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 20:07:49) [Clang 20.1.8 ] darwin
+```
+
+## Reason and Possible fixes
+
+Wrap it as it is done for minari.download in the same file
+
+## Checklist
+
+- [x] I have checked that there is no similar issue in the repo (**required**)
+- [x] I have read the [documentation](https://github.com/pytorch/rl/tree/main/docs/) (**required**)
+- [x] I have provided a minimal working example to reproduce the bug (**required**)
+

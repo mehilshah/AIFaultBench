@@ -1,0 +1,2 @@
+# No third-party dependencies.
+# The repro installs the local codebase package directly from ./codebase.

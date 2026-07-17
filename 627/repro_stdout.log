@@ -1,0 +1,7 @@
+workdir=/tmp/timm-checkpoint-probe-cd1b1nhh
+epoch=0 best_metric=0.0 best_epoch=0 files=['checkpoint-0.pth.tar', 'last.pth.tar', 'model_best.pth.tar']
+epoch=1 best_metric=1.0 best_epoch=1 files=['checkpoint-0.pth.tar', 'checkpoint-1.pth.tar', 'last.pth.tar', 'model_best.pth.tar']
+epoch=2 best_metric=2.0 best_epoch=2 files=['checkpoint-0.pth.tar', 'checkpoint-1.pth.tar', 'checkpoint-2.pth.tar', 'last.pth.tar', 'model_best.pth.tar']
+epoch=3 best_metric=3.0 best_epoch=3 files=['checkpoint-1.pth.tar', 'checkpoint-2.pth.tar', 'checkpoint-3.pth.tar', 'last.pth.tar', 'model_best.pth.tar']
+epoch=4 best_metric=4.0 best_epoch=4 files=['checkpoint-2.pth.tar', 'checkpoint-3.pth.tar', 'checkpoint-4.pth.tar', 'last.pth.tar', 'model_best.pth.tar']
+completed_without_error=true

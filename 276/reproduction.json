@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` reproduces the failure: the script downloads into a temporary Minari cache, restores `MINARI_DATASETS_PATH`, then `minari.load_dataset` looks in `/users/grad/mehil/.minari/datasets` and raises `FileNotFoundError` for `D4RL/door/human-v2`.",
+  "steps": [
+    "Launch `bash run_repro.sh` from the standardized bug folder.",
+    "Observe the script write a dataset into a temporary cache path.",
+    "Observe `minari.load_dataset` use the restored default cache path instead of the temporary download cache.",
+    "Observe the resulting `FileNotFoundError` in `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

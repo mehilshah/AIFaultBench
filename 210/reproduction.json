@@ -1,0 +1,13 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` on the local codebase with torch 2.4.0 and tensordict 0.5.0 produced `second_run_d = tensor([[1.],[1.],[1.],[1.],[1.],[0.]])` while the expected value was `tensor([[1.],[0.],[0.],[0.],[0.],[0.]])`. The script printed `BUG_REPRODUCED`.",
+  "steps": [
+    "Create a temporary scratch directory and initialize LazyMemmapStorage with that path.",
+    "Write a TensorDict containing keys `a` and `d`, then extend with a partial TensorDict containing only `a`.",
+    "Reinitialize LazyMemmapStorage with the same scratch directory.",
+    "Write a single-row TensorDict containing keys `a` and `d`, then extend with a partial TensorDict containing only `a`.",
+    "Read back `storage[\"d\"]` and observe that rows 1 through 4 keep stale non-zero data instead of being zero-initialized."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

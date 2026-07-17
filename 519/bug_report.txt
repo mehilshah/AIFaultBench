@@ -1,0 +1,24 @@
+# recovered-from-issue: https://github.com/pyg-team/pytorch_geometric/issues/10018
+
+TITLE
+ModuleNotFoundError: No module named 'torch_geometric.graphgym.imports'
+
+BODY
+### 🐛 Describe the bug
+
+conda create -n lgd python=3.9
+conda activate lgd
+
+conda install pytorch=1.10 torchvision torchaudio -c pytorch -c nvidia
+conda install pyg=2.0.4 -c pyg -c conda-forge
+
+ModuleNotFoundError: No module named 'torch_geometric.graphgym.imports'
+
+Any way I can solve this? The authors of the paper https://github.com/zhouc20/LatentGraphDiffusion/tree/main don't install graphgym explicitly, so I am guessing GraphGym is already in the PyG 2.0.4 backend? But it doesn't work with me
+
+
+### Versions
+
+python3 collect_env.py  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 24353  100 24353    0     0  64423      0 --:--:-- --:--:-- --:--:-- 64425

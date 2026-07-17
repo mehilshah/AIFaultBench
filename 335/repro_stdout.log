@@ -1,0 +1,177 @@
+Relevant source context:
+1) superoffload_stage3.py: `_create_fp16_sub_groups` returns early for a single subgroup.
+2) superoffload_stage3.py: `reduce_independent_p_g_buckets_and_remove_grads` immediately indexes `sub_group_to_param_num`.
+3) stage3.py: offload bookkeeping is based on the subgroup count, so a single subgroup keeps the mapping empty.
+
+--- superoffload excerpt ---
+    ):
+
+        self.sub_group_to_param_num = {}
+        self.params_in_ipg_bucket_buffer = deque()
+        self._cur_bucket_index = -1
+        self.async_cpuadam_num = 0
+        self.max_grad_numel = 0
+
+        super().__init__(module, init_optimizer, param_names, timers, ds_config, **kwargs)
+
+        optimizer_config = {
+            "lr": self.optimizer.param_groups[0]["lr"],
+            "betas": self.optimizer.param_groups[0]["betas"],
+            "eps": self.optimizer.param_groups[0]["eps"],
+            "weight_decay": self.optimizer.param_groups[0]["weight_decay"],
+            "amsgrad": self.optimizer.param_groups[0]["amsgrad"]
+        }
+        cpuadam_cores_perc = kwargs.get("cpuadam_cores_perc", 0.8)
+        self.superoffload_cpu_optimizer = SuperOffloadCPUOptimizer(optimizer_config=optimizer_config,
+                                                                   cpuadam_cores_perc=cpuadam_cores_perc,
+                                                                   max_grad_numel=self.max_grad_numel)
+
+    def _create_fp16_sub_groups(self, params_group):
+
+        params_group_numel = sum([param.partition_numel() for param in params_group])
+        sub_group_size = self.sub_group_size
+
+        if sub_group_size is None or sub_group_size >= params_group_numel:
+            return [params_group]
+
+        sub_groups = []
+        sub_group = []
+        local_sub_group_size = 0
+
+        for param in params_group:
+            sub_group.append(param)
+            local_sub_group_size += param.partition_numel()
+
+            if local_sub_group_size >= sub_group_size or id(param) == id(params_group[-1]):
+                self.max_grad_numel = max(self.max_grad_numel, local_sub_group_size)
+                sub_groups.append(sub_group)
+                self.sub_group_to_param_num[len(sub_groups) - 1] = len(sub_group)
+
+                sub_group = []
+                local_sub_group_size = 0
+
+        return sub_groups
+
+    def _optimizer_step(self, sub_group_id):
+        param_group_id = self.sub_group_to_group_id[sub_group_id]
+        fp32_param = self.fp32_partitioned_groups_flat[sub_group_id]
+
+        def step_with_gradscaler(optimizer):
+            if self.torch_autocast_gradscaler:
+                self.torch_autocast_gradscaler.step(optimizer)
+                self.torch_autocast_gradscaler.update()
+            else:
+                optimizer.step()
+
+        cur_device = self.subgroup_to_device[sub_group_id]
+        if cur_device != 'cpu':
+            self.backup_optimizer.param_groups[param_group_id]['params'] = [fp32_param]
+            step_with_gradscaler(self.backup_optimizer)
+            self.backup_optimizer.param_groups[param_group_id]['params'] = []
+
+    def reduce_independent_p_g_buckets_and_remove_grads(self, param):
+        comm_dtype = self.get_param_comm_dtype(param)
+        bucket = self.ipg_buckets[comm_dtype]
+        i, _, _ = self.grad_position[self.get_param_id(param)]
+
+        if len(bucket.params) == 0:
+            self._cur_bucket_index = i
+            if getattr(param, "ds_grad_is_ready", True):
+                self._DeepSpeedZeroOptimizer_Stage3__add_grad_to_ipg_bucket(param)
+
+            # If this is a single-parameter sub-group, reduce immediately
+            if self.sub_group_to_param_num[self._cur_bucket_index] == 1:
+                self._DeepSpeedZeroOptimizer_Stage3__reduce_and_partition_ipg_grads(comm_dtype)
+
+        elif i != self._cur_bucket_index:
+
+--- stage3 excerpt ---
+        # Assign portion of subgroup to cpu, the other to gpu.
+        if self.offload_optimizer:
+            self.subgroup_to_device = {}
+            sub_group_size = len(self.fp16_partitioned_groups_flat)
+            # print(f"Partial offload sub_group_size is {sub_group_size}, ratio is {self.partial_offload}\n")
+            for i in range(sub_group_size):
+                if i >= int((1 - self.partial_offload) * sub_group_size):
+                    self.subgroup_to_device[i] = 'cpu'
+                else:
+                    self.subgroup_to_device[i] = get_accelerator()._name
+
+        for i, tensor in enumerate(self.fp16_partitioned_groups_flat):
+            num_elements = self.fp16_partitioned_groups_flat_numel[i]
+            ds_id_begin = str(self.fp16_partitioned_groups_flat_id[i][0])
+            ds_id_end = str(self.fp16_partitioned_groups_flat_id[i][-1])
+            ds_id = ds_id_begin + '_' + ds_id_end
+
+            # a partition of the fp32 master weights that will be updated by this process
+            if self._swappable_optimizer_subgroup(i):
+                self.fp32_partitioned_groups_flat.append(torch.empty(0, dtype=self.master_weights_and_grads_dtype))
+                self.fp32_partitioned_groups_flat[i].ds_id = ds_id
+                nvme_memory_usage += (fp32_element_size * num_elements)
+                num_swappable_partitions += 1
+                if not (self.use_muon and self.sub_groups_using_muon[i]
+                        and not self.save_muon_momentum_buffer_in_memory):
+                    self._create_momentum_buffer(num_elements, i, ds_id)
+
+                if self.params_in_nvme_and_cpu and tensor is None:
+                    num_swap_from_nvme_partitions += 1
+                    swap_from_nvme_memory_usage += (fp32_element_size * num_elements)
+                    if self.offload_optimizer_fast_init:
+                        sub_group_partitions = self._get_sub_group_partitions(i)
+                        nvme_fp16_partitions_info.append(sub_group_partitions)
+                        nvme_fp16_num_elems.append(num_elements)
+                        nvme_fp32_dest_tensors.append(self.fp32_partitioned_groups_flat[i])
+                    else:
+                        unpinned_fp32_buffer = torch.empty(num_elements,
+                                                           device=self.device,
+                                                           dtype=self.master_weights_and_grads_dtype)
+                        self._swap_in_sub_group_to_flat_buffer(unpinned_fp32_buffer, i)
+                        self.optimizer_swapper.initialize_parameters(parameters=[self.fp32_partitioned_groups_flat[i]],
+                                                                     src_tensors=[unpinned_fp32_buffer])
+                else:
+                    num_swap_from_cpu_partitions += 1
+                    swap_from_cpu_memory_usage += (fp32_element_size * num_elements)
+                    swappable_fp32_tensors.append(self.fp32_partitioned_groups_flat[i])
+                    swappable_fp16_src_tensors.append(self.fp16_partitioned_groups_flat[i])
+            else:
+                cpu_memory_usage += (fp32_element_size * num_elements)
+                cpu_memory_sub_groups += 1
+
+                if self.params_in_nvme_and_cpu and tensor is None:
+                    unpinned_fp32_buffer = torch.empty(num_elements,
+                                                       device=self.device,
+                                                       dtype=self.master_weights_and_grads_dtype)
+                    self._swap_in_sub_group_to_flat_buffer(unpinned_fp32_buffer, i)
+                    self.fp32_partitioned_groups_flat.append(unpinned_fp32_buffer)
+                    self._create_momentum_buffer(num_elements, i, ds_id)
+                elif self.offload_optimizer:
+                    converted = self.fp16_partitioned_groups_flat[i].to(self.subgroup_to_device[i],
+                                                                        dtype=self.master_weights_and_grads_dtype)
+                    self.fp32_partitioned_groups_flat.append(converted.clone().detach())
+                    self._create_momentum_buffer(num_elements, i, ds_id)
+                elif self.fp16_partitioned_groups_flat[i].dtype == self.master_weights_and_grads_dtype and \
+                        self.fp16_partitioned_groups_flat[i].device == self.device:
+                    # When torch autocast is enabled, weights in the provided model (and thus groups in the so-called
+                    # "fp16" partitioned groups) are already in and updated using fp32. In such cases we don't need
+                    # another copy of the weights.
+                    self.fp32_partitioned_groups_flat.append(self.fp16_partitioned_groups_flat[i])
+                    self._create_momentum_buffer(num_elements, i, ds_id)
+                else:
+                    converted = self.fp16_partitioned_groups_flat[i].to(self.device,
+                                                                        dtype=self.master_weights_and_grads_dtype)
+                    self.fp32_partitioned_groups_flat.append(converted.clone().detach())
+                    self._create_momentum_buffer(num_elements, i, ds_id)
+                self.fp32_partitioned_groups_flat[i].ds_id = ds_id
+
+            self.fp32_partitioned_groups_flat[i].requires_grad = True  # keep this in case internal optimizer uses it
+{
+  "reproducible": true,
+  "evidence": "KeyError reproduced as expected: KeyError(0). After `_create_fp16_sub_groups`, sub_group_to_param_num={}; the first bucket reduction set _cur_bucket_index=0 and then indexed the empty map.",
+  "steps": [
+    "Create a single dummy parameter and split it with `_create_fp16_sub_groups`; it returns 1 subgroup(s).",
+    "Observe that `sub_group_to_param_num` stays empty: {}.",
+    "Call `reduce_independent_p_g_buckets_and_remove_grads` for that parameter and hit `KeyError: 0`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

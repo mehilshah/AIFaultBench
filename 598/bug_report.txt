@@ -1,0 +1,68 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/993
+
+TITLE
+`dispatch_model` seems to untie weights (typically the embedding matrix and the vocab projection `nn.Linear`)
+
+BODY
+### System Info
+
+```Shell
+- `Accelerate` version: 0.15.0.dev0
+- Platform: Linux-5.4.0-1098-gcp-x86_64-with-glibc2.17
+- Python version: 3.8.13
+- Numpy version: 1.23.3
+- PyTorch version (GPU?): 1.12.1+cu102 (True)
+```
+
+
+### Information
+
+- [ ] The official example scripts
+- [X] My own modified scripts
+
+### Tasks
+
+- [ ] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [X] My own task or dataset (give details below)
+
+### Reproduction
+
+The function `dispatch_model` seems to break the tie-ing of weights performed at initialization of a model:
+
+```
+from transformers import OPTForCausalLM
+from accelerate import dispatch_model, infer_auto_device_map
+from accelerate.utils import get_balanced_memory
+
+# This model has the embedding matrix and the vocab projection tied
+model = OPTForCausalLM.from_pretrained("facebook/opt-125m")
+
+# This should start with `model.decoder.embed_tokens.weight cpu, model.decoder.embed_positions.weight cpu, ...`
+# and should end with `model.decoder.layers.11.final_layer_norm.bias cpu`
+for n, p in model.named_parameters():
+    print(n, p.device)
+
+# Dispatching - for simplicity, i am using a single GPU V100 16gb
+max_memory = get_balanced_memory(model)
+device_map = infer_auto_device_map(
+    model, max_memory=max_memory
+)
+model = dispatch_model(model, device_map=device_map)
+
+# This starts with 
+# model.decoder.embed_tokens.weight cuda:0
+# model.decoder.embed_positions.weight cuda:0
+# but ends with an additional guest: `lm_head.weight cuda:0`
+for n, p in model.named_parameters():
+    print(n, p.device)
+
+# tie-ing the weights again solve it
+model.tie_weights()
+for n, p in model.named_parameters():
+    print(n, p.device)
+```
+
+### Expected behavior
+
+No `lm_head.weight` in the call to `named_parameters()`
+

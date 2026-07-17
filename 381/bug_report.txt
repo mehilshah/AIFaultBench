@@ -1,0 +1,346 @@
+# recovered-from-issue: https://github.com/vllm-project/vllm/issues/47935
+
+TITLE
+[Bug]: DP/EP with fp8 KV Cache Brokens for FlashMLA
+
+BODY
+### Your current environment
+
+launch manifest:
+
+```
+apiVersion: leaderworkerset.x-k8s.io/v1
+kind: LeaderWorkerSet
+metadata:
+  name: wide-ep-llm-d-prefill
+  labels:
+    llm-d.ai/inference-serving: "true"
+    llm-d.ai/guide: "wide-ep-lws"
+    llm-d.ai/accelerator-variant: "gpu"
+    llm-d.ai/accelerator-vendor: "nvidia"
+    llm-d.ai/role: prefill
+spec:
+  replicas: 1
+  leaderWorkerTemplate:
+    size: 1
+    workerTemplate:
+      metadata:
+        labels:
+          llm-d.ai/inference-serving: "true"
+          llm-d.ai/guide: "wide-ep-lws"
+          llm-d.ai/accelerator-variant: "gpu"
+          llm-d.ai/accelerator-vendor: "nvidia"
+          llm-d.ai/role: prefill
+      spec:
+        serviceAccountName: glm
+        volumes:
+          - name: dshm
+            emptyDir:
+              medium: Memory
+              sizeLimit: 2Gi  # roughly 32MB per local DP plus scratch space
+          - name: hf-cache
+            emptyDir: {}
+          - name: jit-cache
+            emptyDir: {}
+        containers:
+          - name: vllm
+            image: public.ecr.aws/q9t5s3a7/vllm-ci-test-repo:c1a4225326594a66a58b948ab8da7bccc4dbc214
+            securityContext:
+              capabilities:
+                add:
+                  - IPC_LOCK
+                  - SYS_RAWIO
+              runAsGroup: 0
+              runAsUser: 0
+            imagePullPolicy: Always
+            command:
+              - /bin/bash
+              - -c
+            args:
+              - |-
+                # Clear /dev/shm on start to prevent running out of space when crashes occur
+                # https://github.com/llm-d/llm-d/issues/352
+                find /dev/shm -type f -delete
+
+                #################
+                # RUN vLLM prefill workers via DP Supervisor
+                # The supervisor automatically assigns CUDA_VISIBLE_DEVICES and
+                # --data-parallel-rank to each child process based on local_rank.
+                #################
+                START_RANK=$(( ${LWS_WORKER_INDEX:-0} * DP_SIZE_LOCAL ))
+
+                uv pip install --system nixl==1.3.0 nixl-cu13==1.3.0 --no-deps
+
+                exec vllm serve \
+                  deepseek-ai/DeepSeek-R1 \
+                  --port 8000 \
+                  --gpu-memory-utilization 0.85 \
+                  --disable-access-log-for-endpoints=/health,/metrics \
+                  --data-parallel-multi-port-external-lb \
+                  --data-parallel-supervisor-port 8008 \
+                  --enable-expert-parallel \
+                  --tensor-parallel-size $TP_SIZE \
+                  --data-parallel-size $((LWS_GROUP_SIZE * DP_SIZE_LOCAL)) \
+                  --data-parallel-size-local $DP_SIZE_LOCAL \
+                  --data-parallel-address ${LWS_LEADER_ADDRESS} \
+                  --data-parallel-rpc-port 5555 \
+                  --data-parallel-start-rank $START_RANK \
+                  --kv_transfer_config '{"kv_connector":"NixlConnector",
+                                          "kv_role":"kv_both",
+                                          "kv_load_failure_policy":"fail"}' \
+                  --moe-backend deep_gemm \
+                  --all2all-backend deepep_high_throughput \
+                  --kv-cache-dtype fp8
+                
+                  # To enable tracing, add:
+                  # --otlp-traces-endpoint http://otel-collector:4317 \
+                  # --collect-detailed-traces all
+            env:
+              - name: HF_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: llm-d-hf-token
+                    key: HF_TOKEN
+              # To enable tracing, uncomment:
+              # - name: OTEL_SERVICE_NAME
+              #   value: "vllm-prefill"
+              # - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              #   value: "http://otel-collector:4317"
+              # - name: OTEL_TRACES_SAMPLER
+              #   value: "parentbased_traceidratio"
+              # - name: OTEL_TRACES_SAMPLER_ARG
+              #   value: "0.1"
+              - name: VLLM_DISABLE_COMPILE_CACHE
+                value: "1"
+              - name: VLLM_ENGINE_READY_TIMEOUT_S
+                value: "3000"
+              - name: VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS
+                value: "1"
+              - name: VLLM_RANDOMIZE_DP_DUMMY_INPUTS
+                value: "1"
+              - name: DP_SIZE_LOCAL
+                value: "8"
+              - name: TP_SIZE
+                value: "1"
+              - name: TRITON_LIBCUDA_PATH
+                value: /usr/lib64
+              - name: VLLM_SKIP_P2P_CHECK
+                value: "1"
+              - name: NVIDIA_GDRCOPY
+                value: enabled
+              - name: NVSHMEM_REMOTE_TRANSPORT
+                value: ibgda
+              - name: NVSHMEM_IB_ENABLE_IBGDA
+                value: "true"
+              - name: NVSHMEM_BOOTSTRAP_UID_SOCK_IFNAME
+                value: eth0
+              - name: GLOO_SOCKET_IFNAME
+                value: eth0
+              - name: NCCL_SOCKET_IFNAME
+                value: eth0
+              - name: VLLM_LOGGING_LEVEL
+                value: INFO
+              # Default keep-alive timeout of 5s is shorter than the sidecar's 90s idle conn timeout,
+              # causing TCP RSTs.
+              - name: VLLM_HTTP_TIMEOUT_KEEP_ALIVE
+                value: "120"
+              - name: VLLM_NIXL_SIDE_CHANNEL_HOST
+                valueFrom:
+                  fieldRef:
+                    fieldPath: status.podIP
+
+              # Use cache directories from the mounted volume under one easy to mount
+              # root directory.
+              - name: CUDA_CACHE_PATH
+                value: /var/cache/vllm/cuda
+              - name: CCACHE_DIR
+                value: /var/cache/vllm/ccache
+              - name: VLLM_CACHE_ROOT
+                value: /var/cache/vllm/vllm
+              - name: FLASHINFER_WORKSPACE_BASE
+                value: /var/cache/vllm/flashinfer
+              # HuggingFace is likely to be quite a bit larger, give it its own cache
+              - name: HF_HUB_CACHE
+                value: /var/cache/huggingface
+            ports:
+              - containerPort: 8000
+                name: rank0
+                protocol: TCP
+              - containerPort: 8001
+                name: rank1
+                protocol: TCP
+              - containerPort: 8002
+                name: rank2
+                protocol: TCP
+              - containerPort: 8003
+                name: rank3
+                protocol: TCP
+              - containerPort: 8004
+                name: rank4
+                protocol: TCP
+              - containerPort: 8005
+                name: rank5
+                protocol: TCP
+              - containerPort: 8006
+                name: rank6
+                protocol: TCP
+              - containerPort: 8007
+                name: rank7
+                protocol: TCP
+              - containerPort: 8008
+                name: supervisor
+                protocol: TCP
+            startupProbe:
+              httpGet:
+                path: /health
+                port: supervisor
+              initialDelaySeconds: 0
+              periodSeconds: 1
+              timeoutSeconds: 5
+              failureThreshold: 2700
+            livenessProbe:
+              httpGet:
+                path: /health
+                port: supervisor
+              periodSeconds: 30
+              timeoutSeconds: 5
+              failureThreshold: 3
+            readinessProbe:
+              httpGet:
+                path: /readyz
+                port: supervisor
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 3
+            resources:
+              limits:
+                ephemeral-storage: 1Ti
+                memory: 512Gi
+                nvidia.com/gpu: "8"
+              requests:
+                cpu: 32
+                ephemeral-storage: 1Ti
+                memory: 512Gi
+                nvidia.com/gpu: "8"
+            volumeMounts:
+              - name: dshm
+                mountPath: /dev/shm
+              - name: hf-cache
+                mountPath: /var/cache/huggingface
+              - name: jit-cache
+                mountPath: /var/cache/vllm
+
+```
+
+
+
+### 🐛 Describe the bug
+
+```
+Assertion failed (/workspace/.deps/flashmla-src/csrc/extension/sm90/dense_fp8/flash_fwd_mla_metadata.cu:64): now_idx == batch_size && now_block == 0 && now_n_split_idx == 0
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007] WorkerProc hit an exception.
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007] Traceback (most recent call last):
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/executor/multiproc_executor.py", line 999, in worker_busy_loop
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     output = func(*args, **kwargs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]              ^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/worker/worker_base.py", line 351, in execute_model
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return self.worker.execute_model(scheduler_output)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return func(*args, **kwargs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/worker/gpu_worker.py", line 1015, in execute_model
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     output = self.model_runner.execute_model(
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return func(*args, **kwargs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/worker/gpu_model_runner.py", line 4353, in execute_model
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     model_output = self._model_forward(
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]                    ^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/v1/worker/gpu_model_runner.py", line 3807, in _model_forward
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return self.model(
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return self._call_impl(*args, **kwargs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return forward_call(*args, **kwargs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/model_executor/models/deepseek_v2.py", line 1877, in forward
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     hidden_states = self.model(
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]                     ^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/compilation/decorators.py", line 581, in __call__
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return TorchCompileWithNoGuardsWrapper.__call__(self, *args, **kwargs)  # type: ignore[arg-type]
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/compilation/wrapper.py", line 188, in __call__
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return self._call_with_optional_nvtx_range(
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/compilation/wrapper.py", line 70, in _call_with_optional_nvtx_range
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return callable_fn(*args, **kwargs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/model_executor/models/deepseek_v2.py", line 1407, in forward
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     def forward(
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/_dynamo/eval_frame.py", line 1263, in _fn
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return fn(*args, **kwargs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/compilation/caching.py", line 217, in __call__
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return self.optimized_call(*args, **kwargs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "<string>", line 493, in execution_fn
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/compilation/piecewise_backend.py", line 380, in __call__
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return range_entry.runnable(*args)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/standalone_compile.py", line 122, in __call__
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return self._compiled_fn(*args)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/_dynamo/eval_frame.py", line 1263, in _fn
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return fn(*args, **kwargs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/_functorch/aot_autograd.py", line 1200, in forward
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return compiled_fn(full_args)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 580, in runtime_wrapper
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     all_outs = call_func_at_runtime_with_args(
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/_functorch/_aot_autograd/utils.py", line 138, in call_func_at_runtime_with_args
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     out = normalize_as_list(f(args))
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]                             ^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 2298, in __call__
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return self.compiled_fn(*args, **kwargs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 783, in wrapper
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return compiled_fn(runtime_args)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 1011, in inner_fn
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     outs = compiled_fn(args)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/output_code.py", line 656, in __call__
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return self.current_callable(inputs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/utils.py", line 3401, in run
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     out = model(new_inputs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]           ^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/tmp/torchinductor_root/ic/cicbcfvm6tbj6dz4dzcom44f3ok4iomwiipgiytz25uowbe5uz4e.py", line 937, in call
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     buf3 = torch.ops.vllm.dynamic_flashinfer_deepgemm_blockscale_gemm.default(buf2, arg4_1, arg5_1, 128, True)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/_ops.py", line 865, in __call__
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return self._op(*args, **kwargs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/model_executor/kernels/linear/scaled_mm/flashinfer.py", line 311, in _dynamic_flashinfer_deepgemm_blockscale_gemm_impl
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return torch.cond(
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/torch/_higher_order_ops/cond.py", line 188, in cond
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return false_fn(*operands)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/model_executor/kernels/linear/scaled_mm/flashinfer.py", line 293, in run_deepgemm
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     fp8_gemm_nt(
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]   File "/usr/local/lib/python3.12/dist-packages/vllm/utils/deep_gemm.py", line 453, in fp8_gemm_nt
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]     return _fp8_gemm_nt_impl(*args, disable_ue8m0_cast=not use_ue8m0, **kwargs)
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker_DP3_EP3 pid=7227) ERROR 07-08 00:22:37 [multiproc_executor.py:1007] RuntimeError: CUDA driver error (/workspace/.deps/deepgemm-src/csrc/apis/../jit_kernels/impls/../../jit/handle.hpp:154): 719 (CUDA_ERROR_LAUNCH_FAILED, unspecified launch failure)
+```
+
+### Before submitting a new issue...
+
+- [x] Make sure you already searched for relevant issues, and asked the chatbot living at the bottom right corner of the [documentation page](https://docs.vllm.ai/en/latest/), which can answer lots of frequently asked questions.

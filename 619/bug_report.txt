@@ -1,0 +1,125 @@
+# recovered-from-issue: https://github.com/pyg-team/pytorch_geometric/issues/9829
+
+TITLE
+Issue with inferring batch size when using PyTorch Lightning
+
+BODY
+### 🐛 Describe the bug
+
+I have been using PyTorch Lightning to accelerate some of the training and remove some boiler code. I have run into an issue.
+
+I have been using the LightningDataModule to encapsulate the logic of the dataset generation and the LightningModule to run my model. I have manually set the batch size, but Torch Lightning is inferring the batch size on its own and just using the node number which causes issues with logging metrics. Is there a solution for this problem, as it slows the entire process down?
+
+I am attaching the error message and the validation method where the error is observed as well as the error message.
+
+The code I am using;
+```
+def validation_step(self, batch, batch_idx):
+        y_pred = self(batch)
+
+        batch_size = batch.num_graphs
+
+        loss = F.mse_loss(y_pred, batch.y)
+
+        self.log('val_loss', loss)
+        mape = self.mape(y_pred, batch.y)
+        mse = self.mse(y_pred, batch.y)
+        mae = self.mae(y_pred, batch.y)
+
+        self.log('val_mae', mae, batch_size=batch_size, on_step=True, on_epoch=True, prog_bar=True)
+        self.log('val_mse', mse, batch_size=batch_size, on_step=True, on_epoch=True, prog_bar=True)
+        self.log('val_mape', mape, batch_size=batch_size, on_step=True, on_epoch=True, prog_bar=True)
+```
+
+The error message;
+`pytorch_lightning/utilities/data.py:78: Trying to infer the ``batch_size`` from an ambiguous collection. The batch size we found is 3161. To avoid any miscalculations, use ``self.log(..., batch_size=batch_size)``.`
+
+### Versions
+
+PyTorch version: 2.3.0+cu121
+Is debug build: False
+CUDA used to build PyTorch: 12.1
+ROCM used to build PyTorch: N/A
+
+OS: Ubuntu 22.04.4 LTS (x86_64)
+GCC version: (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+Clang version: Could not collect
+CMake version: Could not collect
+Libc version: glibc-2.35
+
+Python version: 3.10.12 (main, Sep 11 2024, 15:47:36) [GCC 11.4.0] (64-bit runtime)
+Python platform: Linux-5.15.146.1-microsoft-standard-WSL2-x86_64-with-glibc2.35
+Is CUDA available: True
+CUDA runtime version: 12.4.131
+CUDA_MODULE_LOADING set to: LAZY
+GPU models and configuration: GPU 0: NVIDIA GeForce RTX 4070 Laptop GPU
+Nvidia driver version: 566.14
+cuDNN version: Could not collect
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+Is XNNPACK available: True
+
+CPU:
+Architecture:                       x86_64
+CPU op-mode(s):                     32-bit, 64-bit
+Address sizes:                      46 bits physical, 48 bits virtual
+Byte Order:                         Little Endian
+CPU(s):                             20
+On-line CPU(s) list:                0-19
+Vendor ID:                          GenuineIntel
+Model name:                         13th Gen Intel(R) Core(TM) i9-13900H
+CPU family:                         6
+Model:                              186
+Thread(s) per core:                 2
+Core(s) per socket:                 10
+Socket(s):                          1
+Stepping:                           2
+BogoMIPS:                           5990.39
+Flags:                              fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology tsc_reliable nonstop_tsc cpuid pni pclmulqdq vmx ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt tsc_
+deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves avx_vnni umip waitpkg gfni vaes vpclmulqdq rdpid movdiri movdir64b fsrm md_clear serialize flush_l1d arch_capabilities
+Virtualization:                     VT-x
+Hypervisor vendor:                  Microsoft
+Virtualization type:                full
+L1d cache:                          480 KiB (10 instances)
+L1i cache:                          320 KiB (10 instances)
+L2 cache:                           12.5 MiB (10 instances)
+L3 cache:                           24 MiB (1 instance)
+Vulnerability Gather data sampling: Not affected
+Vulnerability Itlb multihit:        Not affected
+Vulnerability L1tf:                 Not affected
+Vulnerability Mds:                  Not affected
+Vulnerability Meltdown:             Not affected
+Vulnerability Mmio stale data:      Not affected
+Vulnerability Retbleed:             Mitigation; Enhanced IBRS
+Vulnerability Spec rstack overflow: Not affected
+Vulnerability Spec store bypass:    Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:           Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:           Mitigation; Enhanced IBRS, IBPB conditional, RSB filling, PBRSB-eIBRS SW sequence
+Vulnerability Srbds:                Not affected
+Vulnerability Tsx async abort:      Not affected
+
+Versions of relevant libraries:
+[pip3] numpy==1.26.4
+[pip3] nvidia-cublas-cu12==12.1.3.1
+[pip3] nvidia-cuda-cupti-cu12==12.1.105
+[pip3] nvidia-cuda-nvrtc-cu12==12.1.105
+[pip3] nvidia-cuda-runtime-cu12==12.1.105
+[pip3] nvidia-cudnn-cu12==8.9.2.26
+[pip3] nvidia-cufft-cu12==11.0.2.54
+[pip3] nvidia-curand-cu12==10.3.2.106
+[pip3] nvidia-cusolver-cu12==11.4.5.107
+[pip3] nvidia-cusparse-cu12==12.1.0.106
+[pip3] nvidia-nccl-cu12==2.20.5
+[pip3] nvidia-nvjitlink-cu12==12.4.127
+[pip3] nvidia-nvtx-cu12==12.1.105
+[pip3] optree==0.11.0
+[pip3] pytorch-lightning==2.4.0
+[pip3] torch==2.3.0
+[pip3] torch_geometric==2.5.3
+[pip3] torch-scatter==2.1.2
+[pip3] torch-sparse==0.6.18
+[pip3] torchaudio==2.3.0
+[pip3] torchmetrics==1.5.1
+[pip3] torchvision==0.18.0
+[pip3] triton==2.3.0
+[conda] Could not collect

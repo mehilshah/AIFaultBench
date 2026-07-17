@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "docker run --rm python:3.8-slim python --version reports Python 3.8.20.",
+    "codebase/official/core/base_trainer.py:442 contains `return passthrough_logs | logs`.",
+    "Running the bundled repro under Python 3.8 raises `TypeError: unsupported operand type(s) for |: 'dict' and 'dict'`."
+  ],
+  "steps": [
+    "Run `bash run_repro.sh` from the bug folder.",
+    "The script starts a Python 3.8 container, mounts the folder, and executes `repro.py`.",
+    "The script reads `codebase/official/core/base_trainer.py` and exercises the same `dict | dict` merge path reported in the bug.",
+    "Python 3.8 fails with the reported TypeError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

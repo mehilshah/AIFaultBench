@@ -1,0 +1,14 @@
+{
+  "bug_id": "119",
+  "bug_dir": "119",
+  "issue_url": "https://github.com/cornellius-gp/gpytorch/issues/2604",
+  "commit_hash": "",
+  "library_name": "gpytorch",
+  "library_version": "local checkout",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../119",
+  "reproduction_command": "bash run_repro.sh",
+  "reproducible": true
+}

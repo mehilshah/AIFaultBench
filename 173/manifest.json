@@ -1,0 +1,12 @@
+{
+  "bug_id": "173",
+  "bug_dir": "173",
+  "issue_url": "https://github.com/kubeflow/katib/issues/2346",
+  "commit_hash": "",
+  "library_name": "kubeflow-katib",
+  "library_version": "0.17.0rc0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../173"
+}

@@ -1,0 +1,15 @@
+{
+  "bug_id": "516",
+  "issue_url": "https://github.com/pytorch/rl/issues/3315",
+  "library_name": "torchrl",
+  "library_version": "unknown",
+  "codebase_source": "pytorch/rl@5e89e4e7c99a3d3122387548058d4ea20baca926",
+  "repro_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ]
+}

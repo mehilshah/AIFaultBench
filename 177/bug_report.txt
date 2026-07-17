@@ -1,0 +1,107 @@
+Title: v_args seems to be ignored for subclass of Visitor class
+Date: 2024-08-29T09:10:57+00:00
+URL: https://github.com/lark-parser/lark/issues/1457
+
+Description:
+**Describe the bug**
+
+I want to write a `Visitor` class that uses `inline=True`, but Lark seems to ignore it and I do not understand why.
+
+The documentation writes:
+
+> v_args can modify this behavior. When used on a transformer/visitor class definition, it applies to all the callback methods inside it.
+
+Furthermore, it writes:
+
+> inline (bool, optional) – Children are provided as *args instead of a list argument (not recommended for very long lists).
+
+With this, I would expect subclasses of the `Visitor` class to receive parsed tokens from the abstract syntax tree (AST) through its parameters. However, I am still receiving a single parameter with type `lark.Tree`.
+
+Maybe it's something else that is wrong and causes , if so, please enlighten me.
+
+**To Reproduce**
+
+I tried to create a relatively simple script that shows the problem I'm encountering. It is a script that creates both a `Transformer` and a `Visitor` class, both decorated with `v_args(inline=True)`, but the `Transformer` class actually receiving the words through its parameters, while the `Visitor` class still receives the `lark.Tree` class. According to the docs, it says that it should work for both classes, but the `Visitor` class seems to ignore it.
+
+```python
+from lark import Lark, Transformer, Tree, Visitor
+from lark.visitors import v_args
+
+LARK_GRAMMAR = r"""
+start: numbers
+numbers: NUMBER [WS_INLINE numbers]
+
+%import common.WS_INLINE
+%import common.NUMBER
+%import common.LETTER
+"""
+
+
+@v_args(inline=True)
+class TransformNumbers(Transformer):
+    def numbers(self, tree):
+        assert isinstance(tree, Tree)  # This fails, like I would expect it to.
+
+
+@v_args(inline=True)
+class VisitNumbers(Visitor):
+    def numbers(self, tree):
+        assert isinstance(tree, Tree)  # This should fail, because inline=True.
+
+
+number_text = "123 456"
+
+number_parser = Lark(LARK_GRAMMAR)
+
+tree = number_parser.parse(number_text)
+
+VisitNumbers().visit(tree)
+TransformNumbers().transform(tree)
+```
+
+Furthermore, I'm running the following:
+```bash
+$ pip list | grep lark
+lark                      1.2.2
+$ python --version
+Python 3.10.12
+```
+If I run the above script, I get an exception, but only for the `TransformNumbers`, not for `VisitNumbers`:
+
+```bash
+$ python lark-visitor.py 
+Traceback (most recent call last):
+  File "/home/user/.local/share/virtualenvs/test-visitor/lib/python3.10/site-packages/lark/visitors.py", line 122, in _call_userfunc
+    return f.visit_wrapper(f, tree.data, children, tree.meta)
+  File "/home/user/.local/share/virtualenvs/test-visitor/lib/python3.10/site-packages/lark/visitors.py", line 504, in _vargs_inline
+    return f(*children)
+  File "/home/user/.local/share/virtualenvs/test-visitor/lib/python3.10/site-packages/lark/visitors.py", line 482, in __call__
+    return self.base_func(*args, **kwargs)
+TypeError: TransformNumbers.numbers() takes 2 positional arguments but 4 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/user/Documents/lark-grammar/lark-visitor.py", line 33, in <module>
+    TransformNumbers().transform(tree)
+  File "/home/user/.local/share/virtualenvs/test-visitor/lib/python3.10/site-packages/lark/visitors.py", line 161, in transform
+    res = list(self._transform_children([tree]))
+  File "/home/user/.local/share/virtualenvs/test-visitor/lib/python3.10/site-packages/lark/visitors.py", line 146, in _transform_children
+    res = self._transform_tree(c)
+  File "/home/user/.local/share/virtualenvs/test-visitor/lib/python3.10/site-packages/lark/visitors.py", line 156, in _transform_tree
+    children = list(self._transform_children(tree.children))
+  File "/home/user/.local/share/virtualenvs/test-visitor/lib/python3.10/site-packages/lark/visitors.py", line 146, in _transform_children
+    res = self._transform_tree(c)
+  File "/home/user/.local/share/virtualenvs/test-visitor/lib/python3.10/site-packages/lark/visitors.py", line 156, in _transform_tree
+    children = list(self._transform_children(tree.children))
+  File "/home/user/.local/share/virtualenvs/test-visitor/lib/python3.10/site-packages/lark/visitors.py", line 146, in _transform_children
+    res = self._transform_tree(c)
+  File "/home/user/.local/share/virtualenvs/test-visitor/lib/python3.10/site-packages/lark/visitors.py", line 157, in _transform_tree
+    return self._call_userfunc(tree, children)
+  File "/home/user/.local/share/virtualenvs/test-visitor/lib/python3.10/site-packages/lark/visitors.py", line 128, in _call_userfunc
+    raise VisitError(tree.data, tree, e)
+lark.exceptions.VisitError: Error trying to process rule "numbers":
+
+TransformNumbers.numbers() takes 2 positional arguments but 4 were given
+
+```

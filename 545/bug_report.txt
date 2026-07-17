@@ -1,0 +1,96 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21488
+
+TITLE
+`save_hyperparameters(ignore=...)` is not persistent across inheritance; ignored params reappear when base class also calls `save_hyperparameters`
+
+BODY
+### Bug description
+
+When `save_hyperparameters()` is called in both a superclass and a subclass, using `ignore=...` in the subclass does **not reliably remove ignored parameters**.
+If the base class also calls `save_hyperparameters()`, ignored parameters can be re-added later and end up in  `model.hparams` and checkpoints
+
+This breaks expected inheritance semantics.
+
+This is a issue where there is a common Lightning base class for many models ( or data modules) and call `save_hyperparameters()` in the base class to avoid duplication. We then have multiple subclasses, and for some specific subclasses we need to ignore a certain of parameters and are not needed in checkpoint too.
+
+### What version are you seeing the problem on?
+
+master
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+class BaseModel(LightningModule):
+    def __init__(self, arg1, arg2):
+        super().__init__()
+        self.save_hyperparameters()
+
+class ChildModel(BaseModel):
+    def __init__(self, arg1, arg2):
+        super().__init__(arg1, arg2)
+        self.save_hyperparameters(ignore="arg2")
+
+model = ChildModel(arg1=1, arg2=2)
+
+assert "arg2" not in model.hparams
+```
+
+### Error messages and logs
+
+```
+# Error messages and logs here please
+```
+
+
+### Environment
+
+<details>
+  <summary>Current environment</summary>
+
+```
+#- PyTorch Lightning Version (e.g., 2.5.0):
+#- PyTorch Version (e.g., 2.5):
+#- Python version (e.g., 3.12):
+#- OS (e.g., Linux):
+#- CUDA/cuDNN version:
+#- GPU models and configuration:
+#- How you installed Lightning(`conda`, `pip`, source):
+```
+
+</details>
+
+
+### More info
+
+This happens because `ignore` only applies to a **single call** and later calls to `save_hyperparameters()` overwrite/merge without remembering ignored keys
+
+
+## **Potential Fix**
+
+Make `ignore` **persistent per instance**:
+
+1. Track ignored hyperparameters on the object (e.g. `self._ignore_hparams: set[str]`)
+2. Merge ignores across calls before called `save_hyperparameters` **internal function** in https://github.com/Lightning-AI/pytorch-lightning/blob/master/src/lightning/pytorch/core/mixins/hparams_mixin.py#L131
+
+```python
+if not hasattr(self, "_ignore_hparams"):
+    self._ignore_hparams = set()
+
+if ignore is not None:
+    self._ignore_hparams.update(ignore if isinstance(ignore, (list, tuple)) else [ignore])
+
+# Always pass the cumulative ignore set to save_hyperparameters
+ignore = list(self._ignore_hparams)
+
+...
+save_hyperparameters(self, *args, ignore=ignore, frame=frame, given_hparams=given_hparams)
+```
+
+
+### Happy to raise a PR to fix this if this is acknowledged as bug
+
+cc @ethanwharris @justusschock @lantiga

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "On CUDA, the minimal 3-step UniPCMultistepScheduler run fails on the second scheduler step with RuntimeError: Expected all tensors to be on the same device, but got tensors is on cuda:0, different from other tensors on cpu, raised from torch.stack(rks) in scheduling_unipc_multistep.py:907.",
+  "steps": [
+    "Created a fresh Python 3.12 virtual environment and installed the local diffusers source in editable mode.",
+    "Ran repro.py through run_repro.sh with a CUDA-capable PyTorch build.",
+    "Observed the failure on the second scheduler step when UniPCMultistepScheduler.multistep_uni_p_bh_update stacks mixed-device rks tensors."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

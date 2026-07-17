@@ -1,0 +1,96 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2392
+
+TITLE
+[BUG] disable all data augmentation results in unexpected cropping
+
+BODY
+**Describe the bug**
+When disable all data augmentation, it results in unexpected cropping on original image and lose the key feature of the image.
+
+**To Reproduce**
+
+I have disabled all data augmentation by setting the below parameters in `create_transform`, especially the `scale`, `ratio`, `crop_pct`
+
+```
+import matplotlib.pyplot as plt
+from PIL import Image
+from torchvision.transforms.functional import to_pil_image, resize
+
+image_path = 'input_image.jpg'
+img = Image.open(image_path).convert("L")
+
+# Define the data augmentation transform by closing all augmentation
+transform = create_transform(
+    input_size=224,       
+    hflip=0.0,            
+    vflip=0.0,            
+    is_training=False,    
+    auto_augment=None,    
+    interpolation='bilinear',  
+    mean=(0.5), 
+    std=(0.5),   
+    scale=[1.0, 1.0],  # Disable scaling
+    ratio=[1.0, 1.0],  # Disable aspect ratio changes
+    crop_pct=1       # Disable cropping
+)
+
+# Function to visualize the augmentations
+def visualize_augmentations(image, transform, n_samples=5):
+    plt.figure(figsize=(18, 5))
+    
+    # Plot the original image (original aspect ratio)
+    plt.subplot(1, n_samples + 2, 1)
+    plt.imshow(image, cmap='gray')  # Use 'gray' colormap for grayscale
+    plt.axis("off")
+    plt.title("Original Image (Original Aspect)")
+    
+    # Resize the original image to the input_size
+    resized_image = resize(image, (224, 224))
+    
+    # Plot the resized original image
+    plt.subplot(1, n_samples + 2, 2)
+    plt.imshow(resized_image, cmap='gray')  # Use 'gray' colormap for grayscale
+    plt.axis("off")
+    plt.title("Original Image (Resized)")
+    
+    # Plot the augmented images
+    for i in range(n_samples):
+        # Apply the transformation
+        augmented_image = transform(image)
+        
+        # Convert to PIL image for visualization
+        augmented_image = to_pil_image(augmented_image, mode='L')
+        
+        # Plot the image
+        plt.subplot(1, n_samples + 2, i + 3)
+        plt.imshow(augmented_image, cmap='gray')  # Use 'gray' colormap for grayscale
+        plt.axis("off")
+        plt.title(f"Augmented {i + 1}")
+    
+    plt.suptitle("Original and Augmented Images", fontsize=16)
+    plt.show()
+
+# Visualize the augmentations
+visualize_augmentations(img, transform)
+```
+
+**Expected behavior**
+The `Augmented 1-5` image should be same as `Original Image (Resized)`, especially should include "A", which is an important feature of the input image that should not being cropped off.
+
+**Screenshots**
+`input_image.jpg`
+![1](https://github.com/user-attachments/assets/0c7367e1-2970-4d56-ae34-1326f4da57c0)
+
+
+
+`output_image.jpg`
+![截屏2025-01-06 02 58 04](https://github.com/user-attachments/assets/da322bdc-b376-460c-bf38-a918852cc857)
+
+
+
+
+**Desktop (please complete the following information):**
+ - OS: MacOS Sonoma 14.1 
+ - This repository version: timm version 1.0.12
+ - PyTorch version: 2.5.1
+

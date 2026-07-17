@@ -1,0 +1,46 @@
+Requirement already satisfied: pip in ./.venv_repro/lib/python3.12/site-packages (24.0)
+Collecting pip
+  Downloading pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
+Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 2.7 MB/s eta 0:00:00
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed pip-26.1.2
+Obtaining file://202/codebase (from -r 202/requirements.txt (line 1))
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: jax==0.4.35 in ./.venv_repro/lib/python3.12/site-packages (from jax[cpu]==0.4.35->-r 202/requirements.txt (line 2)) (0.4.35)
+Requirement already satisfied: jaxlib==0.4.35 in ./.venv_repro/lib/python3.12/site-packages (from -r 202/requirements.txt (line 3)) (0.4.35)
+Requirement already satisfied: scipy==1.18.0 in ./.venv_repro/lib/python3.12/site-packages (from -r 202/requirements.txt (line 4)) (1.18.0)
+Requirement already satisfied: multipledispatch==1.0.0 in ./.venv_repro/lib/python3.12/site-packages (from -r 202/requirements.txt (line 5)) (1.0.0)
+Requirement already satisfied: tqdm==4.68.4 in ./.venv_repro/lib/python3.12/site-packages (from -r 202/requirements.txt (line 6)) (4.68.4)
+Requirement already satisfied: numpy in ./.venv_repro/lib/python3.12/site-packages (from numpyro==0.13.2->-r 202/requirements.txt (line 1)) (2.5.1)
+Requirement already satisfied: ml-dtypes>=0.4.0 in ./.venv_repro/lib/python3.12/site-packages (from jax==0.4.35->jax[cpu]==0.4.35->-r 202/requirements.txt (line 2)) (0.5.4)
+Requirement already satisfied: opt-einsum in ./.venv_repro/lib/python3.12/site-packages (from jax==0.4.35->jax[cpu]==0.4.35->-r 202/requirements.txt (line 2)) (3.4.0)
+Building wheels for collected packages: numpyro
+  Building editable for numpyro (pyproject.toml): started
+  Building editable for numpyro (pyproject.toml): finished with status 'done'
+  Created wheel for numpyro: filename=numpyro-0.13.2-0.editable-py3-none-any.whl size=18509 sha256=b887e50ad4753b513bb768e3f8b2a4d975125cac8e83c89a229151913a8013f1
+  Stored in directory: /tmp/pip-ephem-wheel-cache-wzyblzmv/wheels/d0/3f/70/1647823680bb9d94e7937943e60b10afa4cd006704c7abf747
+Successfully built numpyro
+Installing collected packages: numpyro
+  Attempting uninstall: numpyro
+    Found existing installation: numpyro 0.13.2
+    Uninstalling numpyro-0.13.2:
+      Successfully uninstalled numpyro-0.13.2
+Successfully installed numpyro-0.13.2
+sample_mean=0.739689
+expected_halfnormal_mean=0.797885
+mean_error=-0.058196
+sample_std=0.614824
+frac_positive=1.000000
+num_diverging=8522

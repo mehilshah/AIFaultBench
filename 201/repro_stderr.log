@@ -1,0 +1,71 @@
+An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+
+  0%|          | 0/1 [00:00<?, ?it/s]
+100%|██████████| 1/1 [00:00<00:00,  1.09it/s, init loss: 32.8462, avg. loss [1-1]: 32.8462]
+100%|██████████| 1/1 [00:00<00:00,  1.09it/s, init loss: 32.8462, avg. loss [1-1]: 32.8462]
+
+  0%|          | 0/1 [00:00<?, ?it/s]
+  0%|          | 0/1 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "201/repro.py", line 48, in <module>
+    main()
+  File "201/repro.py", line 44, in main
+    run_guide(autoguide.AutoDiagonalNormal, DATA, "AutoDiagonalNormal")
+  File "201/repro.py", line 30, in run_guide
+    svi.run(random.PRNGKey(0), 1, data)
+  File "201/codebase/numpyro/infer/svi.py", line 382, in run
+    svi_state, loss = jit(body_fn)(svi_state, None)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "201/codebase/numpyro/infer/svi.py", line 370, in body_fn
+    svi_state, loss = self.update(svi_state, *args, **kwargs)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "201/codebase/numpyro/infer/svi.py", line 283, in update
+    (loss_val, mutable_state), optim_state = self.optim.eval_and_update(
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "201/codebase/numpyro/optim.py", line 80, in eval_and_update
+    (out, aux), grads = value_and_grad(fn, has_aux=True)(params)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "201/codebase/numpyro/infer/svi.py", line 62, in loss_fn
+    elbo.loss(
+  File "201/codebase/numpyro/infer/elbo.py", line 1217, in loss
+    return -single_particle_elbo(rng_key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "201/codebase/numpyro/infer/elbo.py", line 1078, in single_particle_elbo
+    model_trace, guide_trace, sum_vars = get_importance_trace_enum(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "201/codebase/numpyro/infer/elbo.py", line 884, in get_importance_trace_enum
+    model_trace = _trace(model).get_trace(*args, **kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "201/codebase/numpyro/handlers.py", line 171, in get_trace
+    self(*args, **kwargs)
+  File "201/codebase/numpyro/primitives.py", line 105, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "201/codebase/numpyro/primitives.py", line 105, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "201/codebase/numpyro/primitives.py", line 105, in __call__
+    return self.fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  [Previous line repeated 1 more time]
+  File "201/repro.py", line 14, in model
+    with numpyro.plate("components", K):
+  File "201/codebase/numpyro/contrib/funsor/enum_messenger.py", line 505, in __enter__
+    indices = to_data(
+              ^^^^^^^^
+  File "201/codebase/numpyro/contrib/funsor/enum_messenger.py", line 714, in to_data
+    msg = apply_stack(initial_msg)
+          ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "201/codebase/numpyro/primitives.py", line 59, in apply_stack
+    handler.postprocess_message(msg)
+  File "201/codebase/numpyro/contrib/funsor/enum_messenger.py", line 533, in postprocess_message
+    return super().postprocess_message(msg)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "201/codebase/numpyro/contrib/funsor/enum_messenger.py", line 416, in postprocess_message
+    self._pyro_post_to_data(msg)
+  File "201/codebase/numpyro/contrib/funsor/enum_messenger.py", line 429, in _pyro_post_to_data
+    (name, _DIM_STACK.global_frame.name_to_dim[name]),
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+KeyError: 'components'
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.

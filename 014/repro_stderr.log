@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "014/repro.py", line 63, in reproduce
+    pipeline_config.eval_input_reader.max_number_of_boxes = 500
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'google._upb._message.RepeatedCompositeContainer' object has no attribute 'max_number_of_boxes'

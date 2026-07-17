@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Injected a RuntimeError into torch.distributed.run.run via sitecustomize; `accelerate launch --multi_gpu --num_processes 2` still printed an injected-failure marker and exited with code 0.",
+  "steps": [
+    "Create the venv with ./setup_env.sh.",
+    "Run ./run_repro.sh, which launches accelerate with a patched torch.distributed.run.run that raises RuntimeError.",
+    "Observe that the inner `accelerate launch` command reports return code 0 instead of propagating the failure."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

@@ -1,0 +1,52 @@
+Title: Summarising tensors during TypeCheckError rather than printing them in full
+Date: 2024-09-20T17:45:17+00:00
+URL: https://github.com/patrick-kidger/jaxtyping/issues/249
+
+Description:
+Hi,
+
+Thanks for this library, this looks quite interesting as a way for me to shoot myself in the foot less when writing Torch code.
+
+I've just started using this lib and have a feature request suggestion. I'm not sure if it's already been addressed somehow but essentially the `TypeCheckError`s can get quite verbose for modestly sized tensors. For instance, suppose I perform a tiny matmul:
+
+```python
+import torch
+import jaxtyping
+import typeguard
+from jaxtyping import Float, AbstractArray
+from jaxtyping import jaxtyped
+
+@jaxtyping.jaxtyped(typechecker=typeguard.typechecked)
+def my_matmul(x: Float[torch.Tensor, "n k"],
+              y: Float[torch.Tensor, "k p"]):
+    return torch.matmul(x,y)
+
+x = torch.randn((2, 16)).float()
+y = torch.randn((17, 8)).float()
+my_matmul(x,y).shape
+```
+
+We get an exception printout like so:
+
+```
+Called with parameters: { 'x': tensor([[-1.3917,  0.0917, -0.5218,  1.0554],
+        [ 1.1995, -0.6792, -1.0120,  0.8058]]),
+  'y': tensor([[ 0.9047,  0.5734, -0.3068,  0.2932,  0.0395,  0.0605, -0.4694, -0.7494],
+        [-1.2872, -1.6267,  0.4773, -0.3199, -0.6566, -0.2153, -0.3431,  1.2058],
+        [ 0.0372,  0.1272, -0.2802,  0.5664, -0.4393,  0.0820, -0.7039,  0.0283],
+        [-0.5646,  1.5588, -0.1214, -0.0408, -0.5538, -0.3428, -0.3482, -1.5383],
+        [ 0.7113, -0.7307,  0.2899, -1.6705,  1.5354,  0.4243, -0.5108, -0.4191]])}
+Parameter annotations: (x: Float[Tensor, 'n k'], y: Float[Tensor, 'k p']) -> Any.
+```
+
+One could imagine this output being overly large and verbose in the case of "real" models, which deal with extremely large tensor shapes. In this case it would be much better if we could have some kind of "pretty print preprocessor" method (maybe before [here](https://github.com/patrick-kidger/jaxtyping/blob/main/jaxtyping/_decorator.py#L433)?) which could take each tensor in the dict and summarise it with a concise string, e.g. 
+```python
+{'x': "shape=(2,4), dtype=torch.float32, device=cpu", 
+ 'y': "shape=(5,8), dtype=torch.float32, device=cpu"}
+```
+
+Perhaps it could also be customised by the user. I find the above format to be somewhat reasonable given that (IMHO) a majority of errors come from shape, dtype, or device mismatches.
+
+Happy to contribute a  PR for this if it doesn't yet exist.
+
+Thanks!

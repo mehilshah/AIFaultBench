@@ -1,0 +1,19 @@
+{
+  "bug_id": "613",
+  "bug_dir": "613",
+  "issue_url": "https://github.com/vllm-project/vllm/issues/46948",
+  "library_name": "vllm",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "vllm-project/vllm@6eb63a1da6996abad00323dc7e845dc868996524",
+  "codebase_present": "true",
+  "standardized_dir": "../613",
+  "generated_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ]
+}

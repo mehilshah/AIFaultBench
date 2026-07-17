@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "run_repro.sh prints a NumPy image with strides (6, 3, -1), then torch.from_numpy(image).permute(2, 0, 1) raises ValueError: At least one stride in the given numpy array is negative.",
+  "steps": [
+    "Create a tiny RGB test image.",
+    "Apply the same BGR channel reversal used by detectron2's image-loading path.",
+    "Convert the resulting NumPy view with torch.from_numpy(...).",
+    "Observe the negative-stride ValueError."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

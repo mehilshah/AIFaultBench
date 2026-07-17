@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "run_repro.sh created a clean venv, installed torch==2.5.1 and torch-geometric==2.6.1, and executed repro.py successfully up to the assertion.",
+    "repro.py printed: lin_key_bias_is_none=false, lin_query_bias_is_none=false, lin_value_bias_is_none=false, lin_skip_bias_is_none=true.",
+    "repro.py terminated with AssertionError: bias=False is not respected by TransformerConv: lin_key, lin_query, and lin_value still have bias parameters."
+  ],
+  "steps": [
+    "Inspected bug_report.txt and the pinned TransformerConv source snapshot under codebase/.",
+    "Set up an isolated Python environment with torch==2.5.1 and torch-geometric==2.6.1.",
+    "Ran the repro script and observed the expected assertion failure showing the bias mismatch."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,12 @@
+fp16_groups: [['g0.p0'], ['g0.p1'], ['g1.p0'], ['g1.p1']]
+sub_group_to_param_num: {0: 1, 1: 1}
+grad_position[target]: [2, 0, 1]
+selected target: g1.p0
+EXPECTED FAILURE
+KeyError: 2
+Traceback (most recent call last):
+  File "365/repro.py", line 96, in main
+    if sub_group_to_param_num[current_bucket_index] == 1:
+       ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 2
+

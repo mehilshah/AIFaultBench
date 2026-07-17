@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "289/repro.py", line 44, in main
+    get_peft_model(base_model, ptuning_config)
+  File "289/.venv/lib/python3.12/site-packages/peft/mapping_func.py", line 123, in get_peft_model
+    return MODEL_TYPE_TO_PEFT_MODEL_MAPPING[peft_config.task_type](
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "289/.venv/lib/python3.12/site-packages/peft/peft_model.py", line 1506, in __init__
+    _set_trainable(self, adapter_name, module_names=peft_config.modules_to_save)
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'PromptEncoderConfig' object has no attribute 'modules_to_save'
+

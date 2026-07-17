@@ -1,0 +1,7 @@
+torch=2.13.0+cu130
+timm=1.0.26.dev0
+buggy_proj_type=Linear
+buggy_diff=0.7813611030578613
+workaround_proj_type=Identity
+workaround_diff=0.0
+reproducible=True

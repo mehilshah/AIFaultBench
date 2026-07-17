@@ -1,0 +1,103 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21778
+
+TITLE
+FSDPStrategy  fails on CPU with  RuntimeError: FSDP needs a non-CPU accelerator device  when validation is bypassed
+
+BODY
+### Bug description                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                           
+While PyTorch Lightning currently blocks FSDP on CPU at the `Trainer`/`Fabric` level with a `ValueError` ("The strategy `fsdp` requires a GPU accelerator"), the underlying `FSDPStrategy` itself is broken on CPU when this check is bypassed (e.g.,  
+  during unit testing or when using custom strategy subclasses).                                                                                                                                                                                           
+                                                                                                                                                                                                                                                           When running `FSDPStrategy` on CPU, it attempts to initialize PyTorch's `FullyShardedDataParallel` with `device_id=self.root_device.index`. Since `root_device.index` is `None` for CPU, it passes `device_id=None`.                                   
+                                                                                                                                                                                                                                                           
+In PyTorch 2.5+, passing `device_id=None` on a CPU-only setup triggers a guard in PyTorch that expects a non-CPU accelerator, leading to a `RuntimeError`. To support FSDP on CPU (e.g., for testing), `FSDPStrategy` must explicitly pass the CPU     
+  device object (`torch.device('cpu')`) instead of `None`.                                                                                                                                                                                                 
+                                                                                                                                                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                           
+### What version are you seeing the problem on?                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                           
+    v2.5, v2.6                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                   
+                                                                                                                                                                                                                                                           
+### How to reproduce the bug                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                           
+    ```python                                                                                                                                                                                                                                              
+    import os                                                                                                                                                                                                                                              
+    import torch                                                                                                                                                                                                                                           
+    import torch.nn as nn                                                                                                                                                                                                                                  
+    import torch.distributed as dist                                                                                                                                                                                                                       
+    from lightning.pytorch.strategies import FSDPStrategy                                                                                                                                                                                                  
+                                                                                                                                                                                                                                                           
+    if __name__ == "__main__":                                                                                                                                                                                                                             
+        # Initialize a basic distributed environment (required by FSDP)                                                                                                                                                                                    
+        os.environ["MASTER_ADDR"] = "localhost"                                                                                                                                                                                                            
+        os.environ["MASTER_PORT"] = "29500"                                                                                                                                                                                                                
+        dist.init_process_group("gloo", rank=0, world_size=1)                                                                                                                                                                                              
+                                                                                                                                                                                                                                                           
+        strategy = FSDPStrategy()                                                                                                                                                                                                                          
+        strategy._parallel_devices = [torch.device("cpu")]                                                                                                                                                                                                 
+                                                                                                                                                                                                                                                           
+        # Mock LightningModule wrapper                                                                                                                                                                                                                     
+        class MockLightningModule(nn.Module):                                                                                                                                                                                                              
+            def __init__(self):                                                                                                                                                                                                                            
+                super().__init__()                                                                                                                                                                                                                         
+                self.layer = nn.Linear(2, 2)                                                                                                                                                                                                               
+                self.trainer = None                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                           
+        strategy._lightning_module = MockLightningModule()                                                                                                                                                                                                 
+                                                                                                                                                                                                                                                           
+        model = nn.Linear(2, 2)                                                                                                                                                                                                                            
+        
+        # This will trigger the PyTorch FSDP error
+        strategy._setup_model(model)
+  
+### Error messages and logs
+  
+    [Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+    Attempting to setup model with FSDP on CPU...
+    Traceback (most recent call last):
+      File "reproduce_issue.py", line 29, in <module>
+        strategy._setup_model(model)
+      File "/lightning/pytorch/strategies/fsdp.py", line 321, in _setup_model
+        model = FullyShardedDataParallel(
+            module=model,
+            cpu_offload=self.cpu_offload,
+            mixed_precision=self.mixed_precision_config,
+            sharding_strategy=self.sharding_strategy,
+            device_id=self.root_device.index,
+            **self.kwargs,
+        )
+      File "/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 428, in __init__
+        _init_device_handle(self, module, self._ignored_params, device_id)
+      File "/site-packages/torch/distributed/fsdp/_init_utils.py", line 388, in _init_device_handle
+        raise RuntimeError(
+            "FSDP needs a non-CPU accelerator device, but no accelerator device is detected."
+        )
+    RuntimeError: FSDP needs a non-CPU accelerator device, but no accelerator device is detected.
+  
+### Suggested Fix
+  
+In both Fabric and PyTorch FSDP strategies, conditionally set  device_id  based on the device type:
+  
+    device_id = self.root_device if self.root_device.type == "cpu" else self.root_device.index
+  
+This needs to be applied in:
+  
+  •  src/lightning/fabric/strategies/fsdp.py 
+  •  src/lightning/pytorch/strategies/fsdp.py 
+  
+### Environment
+  
+    - PyTorch Lightning Version (e.g., 2.6.0): 2.6.2
+    - PyTorch Version (e.g., 2.5): 2.9.1+cu128
+    - Python version (e.g., 3.12): 3.13.12
+    - OS (e.g., Linux): Linux
+    - CUDA/cuDNN version: N/A
+    - GPU models and configuration: N/A
+    - How you installed Lightning (`conda`, `pip`, source): source
+  
+### More info
+  
+No response
+  
+cc @ethanwharris 

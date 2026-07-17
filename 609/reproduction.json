@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the minimal Flux2 AI-toolkit LoRA repro in `repro.py` raises `ValueError: `original_state_dict` should be empty at this point but has original_state_dict.keys()=dict_keys(['guidance_in.in_layer.lora_A.weight', 'guidance_in.out_layer.lora_A.weight', 'guidance_in.in_layer.lora_B.weight', 'guidance_in.out_layer.lora_B.weight'])` from `diffusers/loaders/lora_conversion_utils.py:2438`.",
+  "steps": [
+    "Create a clean virtual environment with CPU PyTorch and the small repro dependency set.",
+    "Run `bash run_repro.sh` to execute the synthetic Flux2 non-diffusers LoRA conversion path.",
+    "Observe that the converter fails with the same leftover `guidance_in.*` keys reported in the issue."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

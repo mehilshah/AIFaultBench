@@ -1,0 +1,4 @@
+pyyaml
+huggingface_hub
+safetensors
+numpy

@@ -1,0 +1,7 @@
+[2026-07-17 01:44:04,294] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+torch=2.5.1+cu124
+deepspeed=0.16.0
+torch.distributed.is_initialized() before=False
+torch.distributed.is_initialized() after=True
+deepspeed.comm.cdb=None
+calling deepspeed.comm.all_reduce(...)

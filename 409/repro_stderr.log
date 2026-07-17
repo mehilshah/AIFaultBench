@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "409/repro.py", line 21, in <module>
+    main()
+  File "409/repro.py", line 11, in main
+    from deepspeed import DeepSpeedEngine  # noqa: F401
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "409/codebase/deepspeed/__init__.py", line 2, in <module>
+    from . import ops
+  File "409/codebase/deepspeed/ops/__init__.py", line 1, in <module>
+    from . import transformer
+  File "409/codebase/deepspeed/ops/transformer/__init__.py", line 1, in <module>
+    from .inference.moe_inference import DeepSpeedMoEInferenceConfig, DeepSpeedMoEInference
+  File "409/codebase/deepspeed/ops/transformer/inference/__init__.py", line 1, in <module>
+    from .moe_inference import DeepSpeedMoEInferenceConfig, DeepSpeedMoEInference
+  File "409/codebase/deepspeed/ops/transformer/inference/moe_inference.py", line 1, in <module>
+    from ....moe.sharded_moe import TopKGate
+  File "409/codebase/deepspeed/moe/__init__.py", line 1, in <module>
+    from .sharded_moe import TopKGate
+  File "409/codebase/deepspeed/moe/sharded_moe.py", line 4, in <module>
+    @torch.jit.script
+     ^^^^^^^^^^^^^^^^
+  File "409/.deps/torch/jit/_script.py", line 1480, in script
+    warnings.warn(
+DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.

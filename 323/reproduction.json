@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` creates a clean venv, installs `torch==2.13.0+cpu`, `numpy`, and `cloudpickle`, then fails when constructing `MapDataset([{\"x\": 1}], lambda x: x)`. The traceback points to `codebase/detectron2/data/common.py:77` and ends with `TypeError: object.__new__() takes exactly one argument (the type to instantiate)`.",
+  "steps": [
+    "Created an isolated virtual environment and installed the minimal runtime dependencies from `requirements.txt`.",
+    "Loaded `detectron2.data.common.MapDataset` from the local `codebase/` while bypassing `detectron2.__init__`.",
+    "Constructed `MapDataset` with a list-backed dataset and an identity map function.",
+    "Observed the `object.__new__()` `TypeError` from `MapDataset.__new__`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

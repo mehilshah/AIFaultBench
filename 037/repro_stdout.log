@@ -1,0 +1,90 @@
+Identity attention matrix:
+[
+  [
+    1.0,
+    0.0,
+    0.0
+  ],
+  [
+    0.0,
+    1.0,
+    0.0
+  ],
+  [
+    0.0,
+    0.0,
+    1.0
+  ]
+]
+
+Input values:
+[
+  [
+    1.0,
+    2.0,
+    3.0,
+    4.0
+  ],
+  [
+    5.0,
+    6.0,
+    7.0,
+    8.0
+  ],
+  [
+    9.0,
+    10.0,
+    11.0,
+    12.0
+  ]
+]
+
+Correct output (single value rotation):
+[
+  [
+    1.0,
+    2.0,
+    3.0,
+    4.0
+  ],
+  [
+    5.0,
+    6.0,
+    7.0,
+    8.0
+  ],
+  [
+    9.0,
+    10.0,
+    11.0,
+    12.0
+  ]
+]
+
+Buggy output (double value rotation):
+[
+  [
+    1.0,
+    2.0,
+    3.0,
+    4.0
+  ],
+  [
+    2.1303287,
+    -0.86391067,
+    8.33436858,
+    9.96261303
+  ],
+  [
+    -0.77095,
+    -10.82072256,
+    14.19174535,
+    11.26552099
+  ]
+]
+
+max_abs_diff(correct, input) = 1.7763568394e-15
+max_abs_diff(buggy, input) = 20.8207225627
+max_abs_diff(buggy, correct) = 20.8207225627
+
+Conclusion: the current implementation applies the value rotary embedding twice.

@@ -1,0 +1,225 @@
+Collecting numpy==1.26.4 (from -r 380/requirements.txt (line 1))
+  Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+Collecting einops>=0.8.0 (from -r 380/requirements.txt (line 2))
+  Downloading einops-0.8.2-py3-none-any.whl.metadata (13 kB)
+Collecting hjson>=3.1.0 (from -r 380/requirements.txt (line 3))
+  Downloading hjson-3.1.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting msgpack>=1.0.8 (from -r 380/requirements.txt (line 4))
+  Downloading msgpack-1.2.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (8.3 kB)
+Collecting ninja>=1.11.0 (from -r 380/requirements.txt (line 5))
+  Downloading ninja-1.13.0-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (5.1 kB)
+Collecting psutil>=5.9.0 (from -r 380/requirements.txt (line 6))
+  Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+Collecting py-cpuinfo>=9.0.0 (from -r 380/requirements.txt (line 7))
+  Downloading py_cpuinfo-9.0.0-py3-none-any.whl.metadata (794 bytes)
+Collecting pydantic>=2.0.0 (from -r 380/requirements.txt (line 8))
+  Downloading pydantic-2.13.4-py3-none-any.whl.metadata (109 kB)
+Collecting packaging>=24.0 (from -r 380/requirements.txt (line 9))
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting torch==2.5.1 (from -r 380/requirements.txt (line 10))
+  Downloading torch-2.5.1-cp312-cp312-manylinux1_x86_64.whl.metadata (28 kB)
+Collecting tqdm>=4.66.0 (from -r 380/requirements.txt (line 11))
+  Downloading tqdm-4.68.4-py3-none-any.whl.metadata (57 kB)
+Collecting filelock (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading filelock-3.30.2-py3-none-any.whl.metadata (2.0 kB)
+Collecting typing-extensions>=4.8.0 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting networkx (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+Collecting jinja2 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting fsspec (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading fsspec-2026.6.0-py3-none-any.whl.metadata (10 kB)
+Collecting nvidia-cuda-nvrtc-cu12==12.4.127 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading nvidia_cuda_nvrtc_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cuda-runtime-cu12==12.4.127 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading nvidia_cuda_runtime_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cuda-cupti-cu12==12.4.127 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading nvidia_cuda_cupti_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cudnn-cu12==9.1.0.70 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading nvidia_cudnn_cu12-9.1.0.70-py3-none-manylinux2014_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cublas-cu12==12.4.5.8 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading nvidia_cublas_cu12-12.4.5.8-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cufft-cu12==11.2.1.3 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading nvidia_cufft_cu12-11.2.1.3-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-curand-cu12==10.3.5.147 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading nvidia_curand_cu12-10.3.5.147-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cusolver-cu12==11.6.1.9 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading nvidia_cusolver_cu12-11.6.1.9-py3-none-manylinux2014_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cusparse-cu12==12.3.1.170 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading nvidia_cusparse_cu12-12.3.1.170-py3-none-manylinux2014_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-nccl-cu12==2.21.5 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading nvidia_nccl_cu12-2.21.5-py3-none-manylinux2014_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-nvtx-cu12==12.4.127 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading nvidia_nvtx_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-nvjitlink-cu12==12.4.127 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading nvidia_nvjitlink_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+Collecting triton==3.1.0 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading triton-3.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (1.3 kB)
+Collecting setuptools (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading setuptools-83.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting sympy==1.13.1 (from torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading sympy-1.13.1-py3-none-any.whl.metadata (12 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy==1.13.1->torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Collecting annotated-types>=0.6.0 (from pydantic>=2.0.0->-r 380/requirements.txt (line 8))
+  Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.46.4 (from pydantic>=2.0.0->-r 380/requirements.txt (line 8))
+  Downloading pydantic_core-2.46.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+Collecting typing-inspection>=0.4.2 (from pydantic>=2.0.0->-r 380/requirements.txt (line 8))
+  Downloading typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+Collecting MarkupSafe>=2.0 (from jinja2->torch==2.5.1->-r 380/requirements.txt (line 10))
+  Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.0/18.0 MB 37.7 MB/s  0:00:00
+
+Downloading torch-2.5.1-cp312-cp312-manylinux1_x86_64.whl (906.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 906.4/906.4 MB 25.5 MB/s  0:00:34
+
+Downloading nvidia_cublas_cu12-12.4.5.8-py3-none-manylinux2014_x86_64.whl (363.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 363.4/363.4 MB 30.7 MB/s  0:00:11
+
+Downloading nvidia_cuda_cupti_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl (13.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.8/13.8 MB 33.5 MB/s  0:00:00
+
+Downloading nvidia_cuda_nvrtc_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl (24.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 24.6/24.6 MB 37.2 MB/s  0:00:00
+
+Downloading nvidia_cuda_runtime_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl (883 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 883.7/883.7 kB 38.9 MB/s  0:00:00
+
+Downloading nvidia_cudnn_cu12-9.1.0.70-py3-none-manylinux2014_x86_64.whl (664.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 664.8/664.8 MB 20.8 MB/s  0:00:29
+
+Downloading nvidia_cufft_cu12-11.2.1.3-py3-none-manylinux2014_x86_64.whl (211.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 211.5/211.5 MB 24.6 MB/s  0:00:08
+
+Downloading nvidia_curand_cu12-10.3.5.147-py3-none-manylinux2014_x86_64.whl (56.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 56.3/56.3 MB 28.2 MB/s  0:00:01
+
+Downloading nvidia_cusolver_cu12-11.6.1.9-py3-none-manylinux2014_x86_64.whl (127.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 127.9/127.9 MB 29.2 MB/s  0:00:04
+
+Downloading nvidia_cusparse_cu12-12.3.1.170-py3-none-manylinux2014_x86_64.whl (207.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 207.5/207.5 MB 23.4 MB/s  0:00:08
+
+Downloading nvidia_nccl_cu12-2.21.5-py3-none-manylinux2014_x86_64.whl (188.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 188.7/188.7 MB 30.9 MB/s  0:00:06
+
+Downloading nvidia_nvjitlink_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl (21.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 21.1/21.1 MB 27.7 MB/s  0:00:00
+
+Downloading nvidia_nvtx_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl (99 kB)
+Downloading sympy-1.13.1-py3-none-any.whl (6.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.2/6.2 MB 26.2 MB/s  0:00:00
+
+Downloading triton-3.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (209.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 209.6/209.6 MB 24.0 MB/s  0:00:08
+
+Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 32.7 MB/s  0:00:00
+
+Downloading einops-0.8.2-py3-none-any.whl (65 kB)
+Downloading hjson-3.1.0-py3-none-any.whl (54 kB)
+Downloading msgpack-1.2.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (419 kB)
+Downloading ninja-1.13.0-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (180 kB)
+Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+Downloading py_cpuinfo-9.0.0-py3-none-any.whl (22 kB)
+Downloading pydantic-2.13.4-py3-none-any.whl (472 kB)
+Downloading pydantic_core-2.46.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 33.3 MB/s  0:00:00
+
+Downloading packaging-26.2-py3-none-any.whl (100 kB)
+Downloading tqdm-4.68.4-py3-none-any.whl (676 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 676.6/676.6 kB 29.4 MB/s  0:00:00
+
+Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+Downloading filelock-3.30.2-py3-none-any.whl (94 kB)
+Downloading fsspec-2026.6.0-py3-none-any.whl (203 kB)
+Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Downloading networkx-3.6.1-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 34.0 MB/s  0:00:00
+
+Downloading setuptools-83.0.0-py3-none-any.whl (1.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 33.3 MB/s  0:00:00
+
+Installing collected packages: py-cpuinfo, mpmath, hjson, typing-extensions, tqdm, sympy, setuptools, psutil, packaging, nvidia-nvtx-cu12, nvidia-nvjitlink-cu12, nvidia-nccl-cu12, nvidia-curand-cu12, nvidia-cufft-cu12, nvidia-cuda-runtime-cu12, nvidia-cuda-nvrtc-cu12, nvidia-cuda-cupti-cu12, nvidia-cublas-cu12, numpy, ninja, networkx, msgpack, MarkupSafe, fsspec, filelock, einops, annotated-types, typing-inspection, triton, pydantic-core, nvidia-cusparse-cu12, nvidia-cudnn-cu12, jinja2, pydantic, nvidia-cusolver-cu12, torch
+
+
+Successfully installed MarkupSafe-3.0.3 annotated-types-0.7.0 einops-0.8.2 filelock-3.30.2 fsspec-2026.6.0 hjson-3.1.0 jinja2-3.1.6 mpmath-1.3.0 msgpack-1.2.1 networkx-3.6.1 ninja-1.13.0 numpy-1.26.4 nvidia-cublas-cu12-12.4.5.8 nvidia-cuda-cupti-cu12-12.4.127 nvidia-cuda-nvrtc-cu12-12.4.127 nvidia-cuda-runtime-cu12-12.4.127 nvidia-cudnn-cu12-9.1.0.70 nvidia-cufft-cu12-11.2.1.3 nvidia-curand-cu12-10.3.5.147 nvidia-cusolver-cu12-11.6.1.9 nvidia-cusparse-cu12-12.3.1.170 nvidia-nccl-cu12-2.21.5 nvidia-nvjitlink-cu12-12.4.127 nvidia-nvtx-cu12-12.4.127 packaging-26.2 psutil-7.2.2 py-cpuinfo-9.0.0 pydantic-2.13.4 pydantic-core-2.46.4 setuptools-83.0.0 sympy-1.13.1 torch-2.5.1 tqdm-4.68.4 triton-3.1.0 typing-extensions-4.16.0 typing-inspection-0.4.2
+Dependency directory ready at 380/.deps
+Collecting deepspeed==0.18.4
+  Downloading deepspeed-0.18.4.tar.gz (1.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.6/1.6 MB 11.4 MB/s  0:00:00
+
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: deepspeed
+  Building wheel for deepspeed (pyproject.toml): started
+  Building wheel for deepspeed (pyproject.toml): finished with status 'done'
+  Created wheel for deepspeed: filename=deepspeed-0.18.4-py3-none-any.whl size=1772945 sha256=a787116fd9d59f574c614b3cdb3c4c04275d02724c810cf0f693db136f655c77
+  Stored in directory: /tmp/pip-ephem-wheel-cache-nhagqp5m/wheels/cc/92/85/b2a464b7d12a2d0e895296b3e4759d3a86f3a3dc959918d043
+Successfully built deepspeed
+Installing collected packages: deepspeed
+Successfully installed deepspeed-0.18.4
+[2026-07-17 04:39:32,456] [WARNING] [real_accelerator.py:209:get_accelerator] Setting accelerator to CPU. If you have GPU or other accelerator, we were unable to detect it.
+DeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully
+Before initializing optimizer states
+MA 0.54 GB         Max_MA 0.54 GB         CA 0.54 GB         Max_CA 1 GB 
+CPU Virtual Memory:  used = 18.8 GB, percent = 7.5%
+After initializing optimizer states
+MA 0.54 GB         Max_MA 0.54 GB         CA 0.54 GB         Max_CA 1 GB 
+CPU Virtual Memory:  used = 18.79 GB, percent = 7.5%
+After initializing ZeRO optimizer
+MA 0.54 GB         Max_MA 0.54 GB         CA 0.54 GB         Max_CA 1 GB 
+CPU Virtual Memory:  used = 18.79 GB, percent = 7.5%
+{"avg_step_seconds": 0.006119250785559416, "batch_size": 2, "deepspeed_version": "0.18.4", "hidden_dim": 64, "hook_count_calls": 6, "label": "0.18.4", "layers": 64, "measure_iters": 5, "median_step_seconds": 0.006280167959630489, "torch_version": "2.5.1+cu124", "warmup_iters": 1}
+Collecting deepspeed==0.18.5
+  Downloading deepspeed-0.18.5.tar.gz (1.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.6/1.6 MB 11.4 MB/s  0:00:00
+
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: deepspeed
+  Building wheel for deepspeed (pyproject.toml): started
+  Building wheel for deepspeed (pyproject.toml): finished with status 'done'
+  Created wheel for deepspeed: filename=deepspeed-0.18.5-py3-none-any.whl size=1779421 sha256=e3d25cab0ad32471a47211cc1b0f0027222d9587bef28194fc04023bcc32bc9b
+  Stored in directory: /tmp/pip-ephem-wheel-cache-tlfy_mzc/wheels/44/33/49/3e1af5a691f90c9acbec4ae97ff99d6b05f3cdf963fb12298f
+Successfully built deepspeed
+Installing collected packages: deepspeed
+Successfully installed deepspeed-0.18.5
+[2026-07-17 04:39:54,714] [WARNING] [real_accelerator.py:209:get_accelerator] Setting accelerator to CPU. If you have GPU or other accelerator, we were unable to detect it.
+DeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully
+Before initializing optimizer states
+MA 0.54 GB         Max_MA 0.54 GB         CA 0.54 GB         Max_CA 1 GB 
+CPU Virtual Memory:  used = 18.53 GB, percent = 7.4%
+After initializing optimizer states
+MA 0.54 GB         Max_MA 0.54 GB         CA 0.54 GB         Max_CA 1 GB 
+CPU Virtual Memory:  used = 18.52 GB, percent = 7.4%
+After initializing ZeRO optimizer
+MA 0.54 GB         Max_MA 0.54 GB         CA 0.54 GB         Max_CA 1 GB 
+CPU Virtual Memory:  used = 18.52 GB, percent = 7.4%
+{"avg_step_seconds": 0.01801324412226677, "batch_size": 2, "deepspeed_version": "0.18.5", "hidden_dim": 64, "hook_count_calls": 384, "label": "0.18.5", "layers": 64, "measure_iters": 5, "median_step_seconds": 0.017947125248610973, "torch_version": "2.5.1+cu124", "warmup_iters": 1}
+{
+  "reproducible": true,
+  "evidence": "DeepSpeed 0.18.4 made 6 hook-count calls and averaged 0.006119s/step, while DeepSpeed 0.18.5 made 384 hook-count calls and averaged 0.018013s/step on the same CPU ZeRO-2 workload (2.94x slower).",
+  "steps": [
+    "Create a dependency directory and install torch/numpy/packaging.",
+    "Install deepspeed==0.18.4 and run the CPU ZeRO-2 benchmark.",
+    "Install deepspeed==0.18.5 and rerun the same benchmark.",
+    "Compare hook-count calls and step time; 0.18.5 regresses from one count refresh per backward to one per hook."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

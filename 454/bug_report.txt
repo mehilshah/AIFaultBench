@@ -1,0 +1,78 @@
+# recovered-from-issue: https://github.com/vllm-project/vllm/issues/47303
+
+TITLE
+[Bug]: Triton block quantized (e.g. MXFP4) MoE kernels producing NaNs due to OOB reads on scale values
+
+BODY
+### Your current environment
+
+Tested on H100, B200 on vLLM v0.24.0 and on main: commit abc71548ef029132c3316b902207f254a246d5
+- torch: 2.11.0+cu130
+- triton: 3.6.0
+
+### 🐛 Describe the bug
+
+Unmasked load of scales values interpreting 0xff as a NaN leading to NaN outputs. Root cause is in vendored third-party triton kernels (currently pinned to triton v3.5.1)
+
+A potential fix in Triton v3.5.1: https://github.com/triton-lang/triton/blob/0add68262ab0a2e33b84524346cb27cbb2787356/python/triton_kernels/triton_kernels/matmul_ogs_details/_matmul_ogs.py#L326-L327 (`vllm/third_party/triton_kernels/matmul_ogs_details/_matmul_ogs.py` in vLLM)
+```
+327,336c327
+<                 if EVEN_K:
+<                     hopper_scale_mask = tl.full([PACKED_MX_BLOCK], True, dtype=tl.int1)
+<                 else:
+<                     # PATCH: mask out the swizzled K tail.
+<                     hopper_scale_mask = (offs_k_scale // 32) * MX_PACK_DIVISOR < k
+<                 w_scales = unswizzle_mxfp4_scale_hopper(
+<                     tl.load(WMxScalePtrs, mask=hopper_scale_mask[None, :], other=0),
+<                     mx_axis=1,
+<                     num_warps=num_warps,
+<                 )
+---
+>                 w_scales = unswizzle_mxfp4_scale_hopper(tl.load(WMxScalePtrs), mx_axis=1, num_warps=num_warps)
+```
+
+Kernel Repro:
+[repro_matmul_ogs.py](https://gist.github.com/yzong-rh/a42f1ef6161ed68c02c548b677cf31aa)
+```
+# FAILURE
+.venv/bin/python repro_matmul_ogs.py
+
+# NO FAILURE
+FILL_VALUE=0xfe .venv/bin/python repro_matmul_ogs.py
+FILL_VALUE=0x0 .venv/bin/python repro_matmul_ogs.py
+```
+
+### E2E Repro:
+
+Apply patch: https://gist.github.com/yzong-rh/d4091b4fb37b9563099d81f218405824
+- Allocates some memory and fill them with `0xff`. The memory is never used and should not change model output (but it does)
+
+[eval_offline_harmony.py](https://github.com/user-attachments/files/29557245/eval_offline_harmony.py)
+```
+# FAILURE: accuracy=0.0% (0/100), avg_output_len=256.0
+python eval_offline_harmony.py 
+
+# NO FAILURE: accuracy=100.0% (100/100), avg_output_len=29.0
+FILL_VALUE=0xfe python eval_offline_harmony.py
+FILL_VALUE=0 python eval_offline_harmony.py
+```
+
+Also breaks GSM8K and other benchmarks.
+
+### Real World Failure Case:
+
+`triton` is the default MXFP4 MoE backend for Hopper. Corrupted output can occur anytime some other operation allocates memory on GPU (allocating bitmasks for constrained decoding for example).
+
+Encountered this while working on https://github.com/vllm-project/vllm/pull/45560. GPT-OSS 20B intermittently generated non sense (0% accuracy on BFCL multiturn benchmarks) when constrained decoding is on (even when `AnyTokensFormat` is used, which should be equivalent to no constraints). Switching another MoE kernel fixed this issue.
+
+This issue is to mostly to raise awareness on the vLLM side. Proper fix needs to come from upstream Triton first: https://github.com/triton-lang/triton/issues/10772
+
+Then we'll have to update the vLLM side to install the new vendored kernels. Note the upgrade will require also require code change in vLLM since Triton v3.7.0 renamed and changed the matmul interface (unless the Triton team backports the fix)
+
+Keywords: MXFP4, MXFP8, Triton kernel, NaN
+
+### Before submitting a new issue...
+
+- [x] Make sure you already searched for relevant issues, and asked the chatbot living at the bottom right corner of the [documentation page](https://docs.vllm.ai/en/latest/), which can answer lots of frequently asked questions.
+
+cc @tlrmchlsmth @LucasWilkinson  @varun-sundar-rabindranath 

@@ -1,0 +1,39 @@
+Title: TypeError: 'int' object is not subscriptable when using prompts and output_value=None
+Date: 2025-04-15T03:45:09+00:00
+URL: https://github.com/huggingface/sentence-transformers/issues/3325
+
+Description:
+Hi, when using prompts, executing `model.encode(texts, output_value=None)` raises the following error:
+
+```
+TypeError: 'int' object is not subscriptable.
+```
+
+This occurs because `out_features['prompt_length']` is an `int`, but the code attempts to access it using `out_features[name][sent_idx]`, as if it were a subscriptable object like a list or dictionary.
+
+https://github.com/UKPLab/sentence-transformers/blob/03dff58425e0b9c2f52f6f29d51f430d0b60795a/sentence_transformers/SentenceTransformer.py#L633-L640
+
+https://github.com/UKPLab/sentence-transformers/blob/03dff58425e0b9c2f52f6f29d51f430d0b60795a/sentence_transformers/SentenceTransformer.py#L703-L704
+
+Here is minimal code to reproduce the error:
+
+```py
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("microsoft/mpnet-base", prompts={'query': 'query:'}, default_prompt_name='query')
+model.encode(['sentence1', 'sentence2'], output_value=None)
+```
+
+```
+Traceback (most recent call last):
+  File "sample.py", line 5, in <module>
+    model.encode(['sentence1', 'sentence2'], output_value=None)
+  File ".venv/lib/python3.10/site-packages/sentence_transformers/SentenceTransformer.py", line 579, in encode
+    row = {name: out_features[name][sent_idx] for name in out_features}
+  File ".venv/lib/python3.10/site-packages/sentence_transformers/SentenceTransformer.py", line 579, in <dictcomp>
+    row = {name: out_features[name][sent_idx] for name in out_features}
+TypeError: 'int' object is not subscriptable
+```
+
+I'm using `sentence_transformers-4.0.1`.
+Thank you.

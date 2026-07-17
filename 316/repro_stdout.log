@@ -1,0 +1,6 @@
+torch=2.7.1+cpu
+backend=_flash_3_varlen_hub
+contiguous: forward_max_abs_diff=0.000000
+contiguous: grad_max_abs_diff=0.000000
+non_contiguous: forward_max_abs_diff=8.000122
+non_contiguous: grad_max_abs_diff=24516.000000

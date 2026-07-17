@@ -1,0 +1,3 @@
+# Intentionally empty.
+# The bug is caused by a missing runtime dependency in Eel's package metadata,
+# so the repro must not pre-install typing_extensions here.

@@ -1,0 +1,104 @@
+Title: Cannot identify xpu on Intel Xe GPUs
+Date: 2025-05-21T08:42:45+00:00
+URL: https://github.com/Lightning-AI/pytorch-lightning/issues/20848
+
+Description:
+### Bug description
+
+The following code does not detect xpu when ran on an Intel Xe GPU and throws an error ValueError: You selected an invalid accelerator name: `accelerator='xpu'`. Available names are: auto, cpu, cuda, mps, tpu. Could you please tell if lightning is currently compatible with xpu (based on my understanding there was some work on xpu compatibility here https://github.com/Lightning-AI/pytorch-lightning/pull/19443)?
+
+If accelerator is set to "auto", it uses the cpu.
+
+Could you please suggest what needs to be fixed in the code below to utilize the GPUs?
+
+
+### What version are you seeing the problem on?
+
+v2.5
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+
+import torch
+import torch.nn.functional as F
+from torch.utils.data import DataLoader, TensorDataset
+from lightning import LightningModule, Trainer
+import intel_extension_for_pytorch as ipex
+
+class SimpleNet(LightningModule):
+    def __init__(self):
+        super().__init__()
+        self.l1 = torch.nn.Linear(28 * 28, 10)
+
+    def forward(self, x):
+        return torch.relu(self.l1(x.view(x.size(0), -1)))
+
+    def training_step(self, batch, batch_idx):
+        x, y = batch
+        logits = self(x)
+        loss = F.cross_entropy(logits, y)
+        self.log("train_loss", loss)
+        return loss
+
+    def configure_optimizers(self):
+        return torch.optim.Adam(self.parameters(), lr=0.02)
+
+def get_dataloader():
+    # 1000 samples of 28x28 images, 10 classes
+    X = torch.randn(1000, 1, 28, 28)
+    y = torch.randint(0, 10, (1000,))
+    dataset = TensorDataset(X, y)
+    return DataLoader(dataset, batch_size=64, shuffle=True)
+
+train_loader = get_dataloader()
+
+model = SimpleNet().to("xpu")
+
+optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+model, optimizer = ipex.optimize(model, optimizer=optimizer, dtype=torch.float32)
+
+trainer = Trainer(
+    accelerator="xpu",  # Lightning should detect "xpu" but throws an error "ValueError: You selected an invalid accelerator name: `accelerator='xpu'`. Available names are: auto, cpu, cuda, mps, tpu."
+    devices=1,
+    max_epochs=3000,
+    log_every_n_steps=10,
+)
+
+
+trainer.fit(model, train_dataloaders=train_loader)
+
+```
+
+### Error messages and logs
+
+```
+ValueError: You selected an invalid accelerator name: `accelerator='xpu'`. Available names are: auto, cpu, cuda, mps, tpu.
+```
+
+
+### Environment
+
+<details>
+  <summary>Current environment</summary>
+
+```
+#- PyTorch Lightning Version (e.g., 2.5.0):
+#- PyTorch Version (e.g., 2.5):
+#- Python version (e.g., 3.12):
+#- OS (e.g., Linux):
+#- CUDA/cuDNN version:
+#- GPU models and configuration:
+#- How you installed Lightning(`conda`, `pip`, source):
+```
+
+</details>
+
+
+### More info
+
+_No response_

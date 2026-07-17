@@ -1,0 +1,9 @@
+[92m2026-07-17 05:46:13,249 [torchrl][INFO][0m    Initialized LazyTensorStorage with torch.Size([2500, 4]) shape[92m [END][0m
+ok step=0 sample_len=1000
+ok step=300 sample_len=1000
+CORRUPTION step=375
+sample_idx=30
+storage_coord=(13, 2)
+expected=1475
+got_obs=1450.0
+got_traj=1450

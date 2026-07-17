@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "On CUDA capability (12, 0), the model-side TraceEnum_ELBO repro grew torch.cuda.memory_allocated() from 1536 bytes to 103424 bytes over 200 SVI steps (ups=199).",
+  "steps": [
+    "Set up the pinned CUDA PyTorch environment and install the local editable Pyro codebase.",
+    "Run `bash run_repro.sh` to execute the model-side enumeration repro on GPU.",
+    "Observe monotonic GPU memory growth in repro_stdout.log."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,13 @@
+torch: 2.13.0+cu130
+x[0]: Parameter containing:
+tensor([-0.0868,  0.3320,  0.9385, -0.0388], requires_grad=True)
+a[0]: Parameter containing:
+tensor([-0.9849, -0.0576, -0.1629,  0.0067], requires_grad=True)
+b   : Parameter containing:
+tensor([-0.9849, -0.0576, -0.1629,  0.0067], requires_grad=True)
+c[0]: Parameter containing:
+tensor([-0.9849, -0.1930,  0.4901, -0.0056], requires_grad=True)
+d[0]: Parameter containing:
+tensor([-0.9849, -0.0576, -0.1629,  0.0067], requires_grad=True)
+a[0] == b  : True
+c[0] == d[0]: False

@@ -1,0 +1,11 @@
+huggingface-hub==1.5.0
+numpy
+packaging
+filelock
+regex
+tqdm
+safetensors
+tokenizers==0.23.0rc0
+accelerate==1.1.0
+PyYAML
+Pillow

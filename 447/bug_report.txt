@@ -1,0 +1,65 @@
+# recovered-from-issue: https://github.com/pyg-team/pytorch_geometric/issues/10159
+
+TITLE
+nn.dense.Linear return different results
+
+BODY
+### 🐛 Describe the bug
+I get different results when apply torch_geometric.nn.dense.Linear
+I am running the same Linear layer in a loop with the same input. It seems like the first element is different, and all of the rest are the same.
+
+### Code to regenerate (not a consistent bug though)
+```
+from torch_geometric.nn import Linear
+import torch.nn.functional as F
+random_input = torch.rand((31, 384))
+linear_layer = Linear(384, 192)
+pyg_lin = [linear_layer(random_input) for _ in range(10000)]
+max([torch.max(torch.abs(pyg_lin[0] - pyg_lin[i])) for i in range(10000)])
+max([torch.max(torch.abs(pyg_lin[1] - pyg_lin[i])) for i in range(1, 10000)])
+```
+
+### Versions
+torch 2.4.1
+torch_geometric 2.6.1
+python 3.10 
+ubuntu 22.04
+ 
+### Further explanations
+
+
+To run the loop:
+```
+from torch_geometric.nn import Linear
+import torch.nn.functional as F
+random_input = torch.rand((31, 384))
+linear_layer = Linear(384, 192)
+pyg_lin = [linear_layer(random_input) for _ in range(10000)]
+```
+See not all outputs are the same, and see that when I am skipping the first one, all outputs are the same:
+```
+max([torch.max(torch.abs(pyg_lin[0] - pyg_lin[i])) for i in range(10000)])
+>>> tensor(0.8284, grad_fn=<MaxBackward1>)
+max([torch.max(torch.abs(pyg_lin[1] - pyg_lin[i])) for i in range(1, 10000)])
+>>> tensor(0., grad_fn=<MaxBackward1>)
+```
+From a look at the repo, the `Linear` layer is running this:
+```
+    import torch.nn.functional as F
+    def forward(self, x: Tensor) -> Tensor:
+        r"""
+        Args:
+            x (torch.Tensor): The input features.
+        """
+        return F.linear(x, self.weight, self.bias)
+```
+But the next test showed no problem with the torch original function:
+```
+f_lin = [F.linear(x, l.weight, l.bias) for _ in range(10000)]
+max([torch.max(torch.abs(f_lin[0] - f_lin[i])) for i in range(10000)])
+>>> tensor(0.)
+```
+I am very confused..
+Sometimes - I get 0 also for the geometric Linear. So this is not consistent, and very hard to reproduce.
+
+

@@ -1,0 +1,12 @@
+{
+  "bug_id": "111",
+  "bug_dir": "111",
+  "issue_url": "https://github.com/ahmedfgad/GeneticAlgorithmPython/issues/335",
+  "commit_hash": "",
+  "library_name": "pygad",
+  "library_version": "3.5.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../111"
+}

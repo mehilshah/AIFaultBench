@@ -1,0 +1,43 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2868
+
+TITLE
+Update tests to be compatible with new RDT release
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:
+* Python version:
+* Operating System:
+
+### Error Description
+
+The new version of RDT 1.21.0 causes some SDV tests to fail (see [workflow](https://github.com/sdv-dev/SDV/actions/runs/24243829073/job/70784822493)). Specially one test fails due to regex, it no longer raises the expected error
+
+```
+    def test_get_possible_chars_unsupported_regex():
+        """Test that an error is raised if the regex contains unsupported options."""
+        # Setup
+        regex = '(ab)*'
+    
+        # Run and assert
+        message = 'REGEX operation: SUBPATTERN is not supported by SDV.'
+>       with pytest.raises(ValueError, match=message):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/unit/test__utils.py:739: Failed
+```
+
+This is an expected behavior from the new release, this test can be updated.
+
+### Steps to reproduce
+
+Running the unit tests with rdt version 1.21.0 gives the above error
+
+```
+invoke unit
+```
+

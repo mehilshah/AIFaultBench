@@ -1,0 +1,12 @@
+build
+bashlex!=0.13
+bracex
+certifi
+cmake>=3.22
+filelock
+ninja
+pybind11>=2.9.2
+scikit-build>=0.14.1
+platformdirs
+setuptools>=42
+wheel

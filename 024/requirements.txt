@@ -1,0 +1,2 @@
+# No extra pip dependencies are required for the repro itself.
+# The script uses temporary import stubs to isolate the packaging bug.

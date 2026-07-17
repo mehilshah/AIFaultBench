@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "codebase/vllm/models/deepseek_v32/nvidia/attention.py:203-215 documents GLM-5.2 index_topk_freq=4 as keeping layers [0,1,2,6,10,...], but the current formula computes a different carry set.",
+    "Running `bash run_repro.sh` exits with status 1 and prints `documented carry layers (from comment): [0, 1, 2, 6, 10]` and `current formula carry layers: [0, 1, 5, 9]`."
+  ],
+  "steps": [
+    "Read the GLM-5.2 sparse-indexer logic in `codebase/vllm/models/deepseek_v32/nvidia/attention.py`.",
+    "Ran `bash setup_env.sh` and then `bash run_repro.sh`.",
+    "Observed the mismatch between the documented GLM-5.2 carry layers and the current formula output."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

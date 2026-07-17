@@ -1,0 +1,26 @@
+{
+  "bug_id": "199",
+  "bug_dir": "199",
+  "issue_url": "https://github.com/pyg-team/pytorch_geometric/issues/8711",
+  "commit_hash": "",
+  "library_name": "torch_geometric",
+  "library_version": "2.4.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../199",
+  "entrypoint": "run_repro.sh",
+  "dependencies": [
+    "torch",
+    "numpy",
+    "scipy",
+    "tqdm",
+    "fsspec",
+    "pyparsing",
+    "psutil",
+    "jinja2",
+    "requests",
+    "aiohttp",
+    "scikit-learn"
+  ]
+}

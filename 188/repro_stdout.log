@@ -1,0 +1,3 @@
+set_list_to_stack(False): ok
+set_list_to_stack(True): KeyError: tensor(10)
+BUG REPRODUCED

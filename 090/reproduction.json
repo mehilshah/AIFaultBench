@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "repro.py prints encoder.to_logits.weight.requires_grad=True and encoder.to_logits.weight.grad_is_none=True after a forward/backward pass.",
+    "repro_stdout.log contains: REPRODUCED: encoder.to_logits.weight is unused in the forward pass."
+  ],
+  "steps": [
+    "Created a minimal XTransformer with encoder and decoder stacks from the local codebase.",
+    "Ran one forward/backward pass on random src and tgt tensors.",
+    "Checked model.encoder.to_logits.weight.grad and confirmed it remained None."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

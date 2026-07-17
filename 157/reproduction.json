@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "With local codebase/src and a clean venv overlaying huggingface_hub==1.2.2, AutoModelForCausalLM.from_pretrained('facebook/opt-125m', torch_dtype=torch.float16, use_safetensors=True) completed successfully. The loaded tensors were on cpu, not meta: lm_head.weight.is_meta=false and model.decoder.embed_tokens.weight.is_meta=false, and the two weights shared storage.",
+  "steps": [
+    "Created a venv with system site packages and installed the hub dependency needed for the local transformers checkout to import cleanly.",
+    "Ran the exact OPT-125m safetensors load path from the bug report against codebase/src.",
+    "Inspected lm_head.weight and model.decoder.embed_tokens.weight after loading; both were materialized on cpu and shared storage."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

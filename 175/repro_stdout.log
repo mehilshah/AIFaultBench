@@ -1,0 +1,4 @@
+result_type=Token
+result_repr=Token('NUMBER', '1.0')
+result_str=1.0
+expected='ACOS called with argument: 1.0'

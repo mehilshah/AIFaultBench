@@ -1,0 +1,4 @@
+torch
+torchvision
+einops>=0.7.0
+Pillow

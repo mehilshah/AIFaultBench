@@ -1,0 +1,26 @@
+401/.venv/lib/python3.12/site-packages/torch/__init__.py:1240: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+INFO 	 Training with 1 minibatches per epoch
+Traceback (most recent call last):
+  File "401/repro.py", line 58, in <module>
+    main()
+  File "401/repro.py", line 47, in main
+    cevae.fit(
+  File "401/codebase/pyro/contrib/cevae/__init__.py", line 590, in fit
+    for x, t, y in dataloader:
+  File "401/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 733, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "401/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 788, in _next_data
+    index = self._next_index()  # may raise StopIteration
+            ^^^^^^^^^^^^^^^^^^
+  File "401/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 723, in _next_index
+    return next(self._sampler_iter)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "401/.venv/lib/python3.12/site-packages/torch/utils/data/sampler.py", line 335, in __iter__
+    batch = [*itertools.islice(sampler_iter, self.batch_size)]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "401/.venv/lib/python3.12/site-packages/torch/utils/data/sampler.py", line 189, in __iter__
+    yield from torch.randperm(n, generator=generator).tolist()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected a 'cuda' device type for generator but found 'cpu'

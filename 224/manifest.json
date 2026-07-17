@@ -1,0 +1,21 @@
+{
+  "bug_id": "224",
+  "bug_dir": "224",
+  "issue_url": "https://github.com/Trusted-AI/adversarial-robustness-toolbox/issues/2473",
+  "commit_hash": "",
+  "library_name": "adversarial-robustness-toolbox",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../224",
+  "reproduction_command": "bash run_repro.sh",
+  "reproduction_files": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ]
+}

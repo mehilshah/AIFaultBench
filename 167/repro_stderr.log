@@ -1,0 +1,31 @@
+167/codebase/kornia/feature/lightglue.py:44: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+Traceback (most recent call last):
+  File "167/repro.py", line 37, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "167/repro.py", line 31, in main
+    points_3d = depth_to_3d_v2(depth, intrinsics)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "167/codebase/kornia/geometry/depth.py", line 105, in depth_to_3d_v2
+    points_xyz: Tensor = xyz_grid or unproject_meshgrid(
+                                     ^^^^^^^^^^^^^^^^^^^
+  File "167/codebase/kornia/geometry/depth.py", line 55, in unproject_meshgrid
+    KORNIA_CHECK_SHAPE(camera_matrix, ["3", "3"])
+  File "167/codebase/kornia/core/check.py", line 67, in KORNIA_CHECK_SHAPE
+    raise TypeError(f"{x} shape must be [{shape}]. Got {x.shape}")
+TypeError: tensor([[[2.2625e+03, 0.0000e+00, 1.0970e+03],
+         [0.0000e+00, 2.2653e+03, 5.1314e+02],
+         [0.0000e+00, 0.0000e+00, 1.0000e+00]],
+
+        [[2.2625e+03, 0.0000e+00, 1.0970e+03],
+         [0.0000e+00, 2.2653e+03, 5.1314e+02],
+         [0.0000e+00, 0.0000e+00, 1.0000e+00]],
+
+        [[2.2625e+03, 0.0000e+00, 1.0970e+03],
+         [0.0000e+00, 2.2653e+03, 5.1314e+02],
+         [0.0000e+00, 0.0000e+00, 1.0000e+00]],
+
+        [[2.2625e+03, 0.0000e+00, 1.0970e+03],
+         [0.0000e+00, 2.2653e+03, 5.1314e+02],
+         [0.0000e+00, 0.0000e+00, 1.0000e+00]]]) shape must be [['3', '3']]. Got torch.Size([4, 3, 3])

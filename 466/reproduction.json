@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "Running `bash run_repro.sh` on Lightning commit c05cadbe5be3bfa8bacbd9d7e912fa2e456413ff found no local `@Blaizzy` or `Blaizzy` reference in the checked-out repo. The only nearby tag mentions are unrelated `@ethanwharris` entries in `.github/CODEOWNERS`, `.github/workflows/release-pkg.yml`, and `docs/source-pytorch/community/governance.rst`.",
+  "steps": [
+    "Checked out the referenced Lightning commit into `codebase/`.",
+    "Created a minimal repro checker in `repro.py` and wrappers in `run_repro.sh` and `setup_env.sh`.",
+    "Ran `bash run_repro.sh` and verified the script reported `reproducible=false` with no `@Blaizzy` match."
+  ],
+  "blocking_reason": "This report is a GitHub tagging/notification request rather than an executable product bug, and the local checkout does not contain the reported `@Blaizzy` mention.",
+  "reproduction_command": "bash run_repro.sh"
+}

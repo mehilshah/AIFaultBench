@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the bundle entrypoint reproduces the failure. `bash run_repro.sh` prints `input_shape=(3, 1, 1, 4)` and `rotary_d=3`, then fails with `RuntimeError: The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 3` from `labml_nn/transformers/rope/__init__.py:188`. A control run with `RotaryPositionalEmbeddings(4)` succeeds on the same tensor shape.",
+  "steps": [
+    "Create and activate the local virtual environment via `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` to execute `repro.py` against the local `codebase/` checkout.",
+    "Observe the PyTorch size-mismatch RuntimeError when the example uses `RotaryPositionalEmbeddings(3)` with a 4-feature input tensor."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

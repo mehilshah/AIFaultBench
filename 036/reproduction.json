@@ -1,0 +1,13 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "repro_stdout.log shows codebase/labml_nn/rl/ppo/gae.py lines 36 and 45 still contain the reported formula mistakes.",
+    "repro_stderr.log shows AssertionError: GAE docstring is still incorrect because the infinite-horizon term uses r_{t+1} instead of r_{t+2}, and the weights omit the (1-lambda) factor."
+  ],
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,8 @@
+torch==2.13.0+cpu
+pyro-api==0.1.2
+funsor==0.4.7
+numpy>=1.26
+opt_einsum>=3.4.0
+tqdm>=4.68
+pytest>=9.0
+scipy>=1.13

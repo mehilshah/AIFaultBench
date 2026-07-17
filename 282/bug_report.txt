@@ -1,0 +1,140 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/39145
+
+TITLE
+Change in the behavior of `XLA_PYTHON_CLIENT_ALLOCATOR=platform`
+
+BODY
+### Description
+
+Hi,
+
+For profiling purposes, I have been using the `XLA_PYTHON_CLIENT_ALLOCATOR=platform` flag to see how much memory is used. In a script where there are bunch of separate `jit `compiled function calls, this was working well to digest the memory usage. However, in the recent JAX versions > 0.10, I see that this behavior is changed. It looks like this flag doesn't deallocate memory anymore (which the documentation still says [here](https://docs.jax.dev/en/latest/gpu_memory_allocation.html)). For example, the following script should allocate and deallocate couple GBs of memory, but the base memory should stay relatively the same between operations, but in the new JAX versions, it increases up to a point where memory is fragmented.
+
+```python
+import gc
+import os
+import subprocess
+
+os.environ["XLA_PYTHON_CLIENT_ALLOCATOR"] = "platform"
+
+import jax
+import jax.numpy as jnp
+
+
+def report(tag):
+    """Print driver-side (nvidia-smi) vs jax-side (memory_stats) usage."""
+    mb = (
+        subprocess.check_output(
+            ["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"]
+        )
+        .decode()
+        .split()[0]
+    )
+    print(f"{tag:38s} nvidia-smi {mb:>5s} MB")
+
+
+print("jax", jax.__version__)
+report("baseline")
+
+# allocate and delete a 2GB array
+x = jnp.ones((16, 1024, 1024, 32))
+x.block_until_ready()
+report("2 GiB array allocated")
+del x
+gc.collect()
+report("after del + gc")
+
+
+@jax.jit
+def batched_gram_norm(A):
+    return jax.vmap(lambda a: a @ a.T)(A).sum()  # materializes (batch, n, n)
+
+
+# other operations that use memory but don't store a big array
+n, k = 1024, 8
+for batch in (384, 640, 512):  # 1.5, 2.5, 2 GiB of pure scratch
+    A = jnp.ones((batch, n, k))
+    batched_gram_norm(A).block_until_ready()
+    del A
+    gc.collect()
+    report(f"after vmap call ({batch * n * n * 4 / 2**30:.1f} GiB scratch)")
+
+report("final (nothing live)")
+```
+
+In JAX=0.7.2, this prints,
+```
+jax 0.7.2
+baseline                               nvidia-smi  1313 MB
+2 GiB array allocated                  nvidia-smi  3552 MB
+after del + gc                         nvidia-smi  1504 MB
+after vmap call (1.5 GiB scratch)      nvidia-smi  1514 MB
+after vmap call (2.5 GiB scratch)      nvidia-smi  1514 MB
+after vmap call (2.0 GiB scratch)      nvidia-smi  1509 MB
+final (nothing live)                   nvidia-smi  1495 MB
+```
+
+In JAX=0.10.2,
+```
+jax 0.10.2
+baseline                               nvidia-smi  1297 MB
+2 GiB array allocated                  nvidia-smi  3538 MB
+after del + gc                         nvidia-smi  3538 MB
+after vmap call (1.5 GiB scratch)      nvidia-smi  5596 MB
+E0714 12:03:46.170067   44116 cuda_executor.cc:1182] [0] Failed to allocate device memory of 4.00GiB (4294967296 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+E0714 12:03:46.261185   44116 cuda_executor.cc:1182] [0] Failed to allocate device memory of 4.39GiB (4713873408 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+E0714 12:03:46.265025   44116 cuda_executor.cc:1182] [0] Failed to allocate device memory of 3.95GiB (4242486016 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+after vmap call (2.5 GiB scratch)      nvidia-smi  9370 MB
+after vmap call (2.0 GiB scratch)      nvidia-smi  9361 MB
+final (nothing live)                   nvidia-smi  9361 MB
+```
+
+In JAX=0.10.1,
+```
+jax 0.10.1
+baseline                               nvidia-smi   744 MB
+2 GiB array allocated                  nvidia-smi  2985 MB
+after del + gc                         nvidia-smi  2985 MB
+after vmap call (1.5 GiB scratch)      nvidia-smi  5043 MB
+after vmap call (2.5 GiB scratch)      nvidia-smi 11781 MB
+after vmap call (2.0 GiB scratch)      nvidia-smi 11781 MB
+final (nothing live)                   nvidia-smi 11781 MB
+```
+
+I know the `platform` flag is slower due to allocation/deallocation, but I was using it delibaretaly to profile my code, which is very hard otherwise. Is there a way to prevent this?
+
+Thanks!
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+```
+jax:    0.10.1
+jaxlib: 0.10.1
+numpy:  2.4.6
+python: 3.13.14 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:36:31) [GCC 14.3.0]
+device info: NVIDIA GeForce RTX 4080 Laptop GPU-1, 1 local devices"
+process_count: 1
+platform: uname_result(system='Linux', node='Yigit', release='6.18.33.2-microsoft-standard-WSL2', version='#1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026', machine='x86_64')
+
+$ nvidia-smi
+Tue Jul 14 12:23:50 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 565.77.01              Driver Version: 566.36         CUDA Version: 12.7     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 4080 ...    On  |   00000000:01:00.0  On |                  N/A |
+| N/A   46C    P0             25W /  161W |    1117MiB /  12282MiB |      8%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A     48975      C   /python3.13                                 N/A      |
++-----------------------------------------------------------------------------------------+
+```

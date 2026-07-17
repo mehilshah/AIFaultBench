@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "`bash run_repro.sh` prints `batch type: list` and then fails at `batch_size = real_images.shape[0]` with `AttributeError: 'list' object has no attribute 'shape'`.",
+  "steps": [
+    "Create a venv and install `keras==3.4.1`, `torch==2.3.1`, and `numpy==1.26.4` with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` to execute the GAN sample against a `torch.utils.data.DataLoader`.",
+    "Observe that `train_step()` receives a `list` batch and crashes when it accesses `real_images.shape`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

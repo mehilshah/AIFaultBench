@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "v.output.img[8,8] becomes [85, 85, 85] but v.output.get_image()[8,8] stays [255, 0, 0]. That means IMAGE_BW updates the buffer, but the rendered canvas still uses the original image.",
+  "steps": [
+    "Load detectron2/utils/visualizer.py with local stubs for unrelated imports",
+    "Call draw_instance_predictions with instance_mode=ColorMode.IMAGE_BW on a synthetic mask",
+    "Compare the updated image buffer to VisImage.get_image()"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

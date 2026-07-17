@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "with_optional rejected the float array",
+    "with_union rejected the float array",
+    "with_pipe accepted the float array, matching the reported bug"
+  ],
+  "steps": [
+    "Created an isolated .venv with Python 3.12.",
+    "Installed editable local codebase plus jax[cpu]>=0.4.31, numpy<2, and typeguard==2.13.3.",
+    "Ran ./run_repro.sh against repro.py."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

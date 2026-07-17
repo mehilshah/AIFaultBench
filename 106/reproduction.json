@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "On this machine, the repro fails the final equality assertion even on CPU. The identical-sample outputs within batch size 2 match each other, but batch size 1 vs batch size 2 differ with max abs diff 0.000244140625.",
+  "steps": [
+    "Created a local virtualenv and installed torch 2.4.1 CPU wheels.",
+    "Imported timm.layers.Mlp from the local codebase.",
+    "Ran the same input tensor through Mlp as batch size 1 and batch size 2.",
+    "Observed that the two batch-2 rows are equal, but batch-1 vs batch-2 row 0 is not equal."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

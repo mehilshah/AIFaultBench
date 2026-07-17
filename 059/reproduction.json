@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the minimal BoxCOCOMetrics repro under tensorflow==2.19.1, keras-cv==0.9.0, and pycocotools==2.0.11 raises InvalidArgumentError: ConcatOp : Dimension 1 in both shapes must be equal: shape[0] = [1,2,4] vs. shape[1] = [1,1,4]. The traceback points to keras_cv/src/metrics/object_detection/box_coco_metrics.py::_box_concat.",
+  "steps": [
+    "Create a BoxCOCOMetrics instance with bounding_box_format='xyxy'.",
+    "Call update_state twice with batches whose ground-truth boxes have different per-image counts.",
+    "Call result(force=True) and observe the concat failure."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

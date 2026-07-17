@@ -1,0 +1,30 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3068
+
+TITLE
+Memory leak using TraceEnum_ELBO
+
+BODY
+I noticed a major memory leak when training SVI using `TraceEnum_ELBO`.
+I initially noticed this in a custom model we are developing but then I found it seems a more general bug.
+
+For example, it affects even the Pyro tutorials GMM example [here](https://pyro.ai/examples/gmm.html). Where memory usage rapidly goes from a couple of hundred MBs to a many **GB**s very quickly!
+
+I have run this Macbook Pro 2019 running MacOS 10.15. To replicate the issue is enough running the notebook linked.
+
+I have tried to comment out the following lines and add a garbage collector call, that reduces the entity of the memory accumulation of one order of magnitude but does not solve the problem completely, which becomes particularly severe for large datasets.
+
+```python
+# Register hooks to monitor gradient norms.
+# gradient_norms = defaultdict(list)
+# for name, value in pyro.get_param_store().named_parameters():
+#     value.register_hook(lambda g, name=name: gradient_norms[name].append(g.norm().item()))
+
+import gc
+losses = []
+for i in range(200000):
+    loss = svi.step(data)
+    #losses.append(loss)
+    gc.collect()
+``` 
+
+(from [this forum post](https://forum.pyro.ai/t/memory-usage-grows-with-iterations-in-svi-step/4103))

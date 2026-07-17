@@ -1,0 +1,1 @@
++ /users/grad/mehil/.codon/bin/codon build --relocation-model=pic -pyext 128/repro.codon -o repro_out/ndarray_pyext_repro.o -module ndarray_pyext_repro

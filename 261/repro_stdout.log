@@ -1,0 +1,9 @@
+stanza_version=1.9.2
+fail_text= Olá, não deixe de visitar nossos sites em exemplo1.com, exemplo2.com e exemplo3.com.br
+fail_actual= ["Olá, não deixe de visitar nossos sites em exemplo1.", "com, exemplo2.", "com e exemplo3.", "com.br"]
+fail_expected= ["Olá, não deixe de visitar nossos sites em exemplo1.com, exemplo2.com e exemplo3.com.br"]
+control_text= Olá, não deixe de visitar nossos sites em www.exemplo1.com, www.exemplo2.com e www.exemplo3.com.br
+control_actual= ["Olá, não deixe de visitar nossos sites em www.exemplo1.com, www.exemplo2.com e www.exemplo3.com.br"]
+control_expected= ["Olá, não deixe de visitar nossos sites em www.exemplo1.com, www.exemplo2.com e www.exemplo3.com.br"]
+BUG_REPRODUCED: Portuguese URLs are split into separate sentences.
+exit_code=1

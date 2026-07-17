@@ -1,0 +1,12 @@
+{
+  "reproducible": false,
+  "evidence": "In a clean Python 3.9 venv with torch==1.13.1 and the local pyro commit 685c7ade, the issue snippet produced matching shapes: both TransformedDistribution instances had event_shape torch.Size([2]), and the equality assertion passed. See repro_stdout.log for the full run.",
+  "steps": [
+    "Created a clean Python 3.9 virtual environment from the bug folder.",
+    "Installed requirements from requirements.txt and the local codebase in editable mode.",
+    "Ran run_repro.sh, which executed the issue comparison from repro.py.",
+    "Observed that pyro_transformed.event_shape == torch_transformed.event_shape and no assertion failed."
+  ],
+  "blocking_reason": "The mismatch described in the issue report does not occur in this checkout; the exact comparison passes, so there is no failing reproduction to capture.",
+  "reproduction_command": "VENV_DIR=$PWD/.venv_repro bash run_repro.sh"
+}

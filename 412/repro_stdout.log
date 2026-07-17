@@ -1,0 +1,4 @@
+torch=2.8.0+cu128
+coremltools=9.0
+timm=412/codebase
+traced

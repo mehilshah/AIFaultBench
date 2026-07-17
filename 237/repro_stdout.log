@@ -1,0 +1,16 @@
+reproducible=True
+verbose_tensor_repr=True
+first_line: Type-check error whilst checking the parameters of __main__.my_matmul.
+evidence_excerpt:
+Type-check error whilst checking the parameters of __main__.my_matmul.
+The problem arose whilst typechecking parameter 'y'.
+Actual value: tensor([[-6.1358e-01,  3.1593e-02, -4.9268e-01,  2.4841e-01,  4.3970e-01,
+          1.1241e-01,  6.4079e-01,  4.4116e-01],
+        [-1.0231e-01,  7.9244e-01, -2.8967e-01,  5.2507e-02,  5.2286e-01,
+          2.3022e+00, -1.4689e+00, -1.5867e+00],
+        [-6.7309e-01,  8.7283e-01,  1.0554e+00,  1.7784e-01, -2.3034e-01,
+         -3.9175e-01,  5.4329e-01, -3.9516e-01],
+        [-4.4622e-01,  7.4402e-01,  1.5210e+00,  3.4105e+00, -1.5312e+00,
+         -1.2341e+00,  1.8197e+00, -5.5153e-01],
+        [-5.6925e-01,  9.1997e-01,  1.1108e+00,  1.2899e+00, -1.4782e+00,
+          2.5672e+00, -4.7312e-01,  3.3555e-01],

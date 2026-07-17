@@ -1,0 +1,125 @@
+# recovered-from-issue: https://github.com/huggingface/peft/issues/1999
+
+TITLE
+Lora initialisation with olora and pissa not working with quantisation.
+
+BODY
+### System Info
+
+    transformers version: 4.43.2
+	peft version: 0.12.0
+    Platform: Linux-5.15.0-117-generic-x86_64-with-glibc2.35
+    Python version: 3.12.4
+    Huggingface_hub version: 0.24.2
+    Safetensors version: 0.4.3
+    Accelerate version: 0.33.0
+    Accelerate config: not found
+    PyTorch version (GPU?): 2.4.0+cu121 (True)
+    Tensorflow version (GPU?): not installed (NA)
+    Flax version (CPU?/GPU?/TPU?): not installed (NA)
+    Jax version: not installed
+    JaxLib version: not installed
+    Using distributed or parallel set-up in script?: no
+    Using GPU in script?: yes
+    GPU type: NVIDIA H100 PCIe
+
+
+### Who can help?
+
+@BenjaminBossan @sayakpaul 
+
+### Information
+
+- [ ] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+Problem araises when using "olora" or "pissa" as adapter initialisation when loading model in 4bit.
+
+```python
+import torch
+from transformers import (
+    AutoTokenizer,
+    AutoModelForCausalLM,
+    BitsAndBytesConfig,
+)
+from peft import LoraConfig, TaskType, get_peft_model
+
+def main(quantize: bool, lora_init: str):
+    device = torch.device("cuda:0")
+    model_path = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+
+    tokenizer = AutoTokenizer.from_pretrained(model_path, legacy=False)
+    tokenizer.pad_token = tokenizer.eos_token
+
+    q4bit_conf = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.bfloat16,
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_quant_storage=torch.bfloat16,
+    )
+    model = AutoModelForCausalLM.from_pretrained(
+            model_path,
+            torch_dtype=torch.bfloat16,
+            attn_implementation="flash_attention_2",
+            quantization_config=q4bit_conf if quantize else None,
+            device_map=device
+        )
+
+    peft_config = LoraConfig(
+        task_type=TaskType.CAUSAL_LM,
+        target_modules="all-linear",
+        init_lora_weights=lora_init,
+    )
+    
+    model = get_peft_model(model, peft_config)
+
+    d = model.device
+    x = tokenizer("hello world", return_tensors="pt").to(d)["input_ids"]
+    model(x)  # * here comes the crash
+
+if __name__ == "__main__":
+    quantize = True
+    lora_init = "olora"
+    main(quantize, lora_init)
+```
+
+### Expected behavior
+
+`RuntimeError: mat1 and mat2 shapes cannot be multiplied (3x2048 and 1x1)`
+
+Traceback (not full traceback):
+```
+    File "/home/local/NTU/hator/miniconda3/envs/py12/lib/python3.12/site-packages/transformers/models/llama/modeling_llama.py", line 438, in forward
+      query_states = self.q_proj(hidden_states)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/home/local/NTU/hator/miniconda3/envs/py12/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+      return self._call_impl(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/home/local/NTU/hator/miniconda3/envs/py12/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+      return forward_call(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/home/local/NTU/hator/miniconda3/envs/py12/lib/python3.12/site-packages/peft/tuners/lora/bnb.py", line 489, in forward
+      output = lora_B(lora_A(dropout(x))) * scaling
+                      ^^^^^^^^^^^^^^^^^^
+    File "/home/local/NTU/hator/miniconda3/envs/py12/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+      return self._call_impl(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/home/local/NTU/hator/miniconda3/envs/py12/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+      return forward_call(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/home/local/NTU/hator/miniconda3/envs/py12/lib/python3.12/site-packages/torch/nn/modules/linear.py", line 117, in forward
+      return F.linear(input, self.weight, self.bias)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  RuntimeError: mat1 and mat2 shapes cannot be multiplied (64x2048 and 1x1)
+```
+
+While I have not read the code to make sure, I suspect the issue can be explained by this:
+The quantisation process happens before the application of lora-adapter. This flattens the original weight matrices. When initialising the lora-adapter with random entries, this flattening causes no problem as (I suspect) only the original shape is used to create it. However, olora and pissa initialisation computes the QR and SVD decomposition of the original matrix. It seems that the flattening is not respected, so the decomposition is calculated from the (N x 1)-tensor. The resulting lora_A-matrix is a (1x1) tensor, while the base-tensor is filled with `nan`. This causes no issues when initialising, and the code only crashes when an input is passed to the model. 

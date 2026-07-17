@@ -1,0 +1,10 @@
+{
+  "bug_id": "568",
+  "issue_url": "https://github.com/jax-ml/jax/issues/38097",
+  "library_name": "jax",
+  "library_version": "0.10.2.dev20260717",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "local codebase snapshot",
+  "codebase_present": true,
+  "standardized_dir": "../568"
+}

@@ -1,0 +1,94 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/13462
+
+TITLE
+Decorating bound methods in profiling utils breaks instance isolation
+
+BODY
+### Describe the bug
+
+Trying to profile the ltx2 pipeline encountered an error: 
+
+<img width="841" height="25" alt="Image" src="https://github.com/user-attachments/assets/d330c198-96c6-4aff-9975-d23fe5fac4c6" />
+
+
+### Root Cause: Interaction of Two Factors
+
+When wrapping pipeline component methods (e.g., scheduler.step) using a decorator (annotate), the method is retrieved as a **bound method**:
+https://github.com/huggingface/diffusers/blob/5063aa5566f068b68bba799b6604e9ac14eaf37c/examples/profiling/profiling_utils.py#L45-L48
+
+The decorator then wraps this bound method, capturing its `__self__`  (the original scheduler instance) inside the closure.
+
+As a result:
+
+* The wrapped step becomes a plain function, not a descriptor.
+* The original self is frozen inside the wrapper.
+
+Later, when duplicating the scheduler (a peculiarity of the ltx2 pipeline):
+https://github.com/huggingface/diffusers/blob/5063aa5566f068b68bba799b6604e9ac14eaf37c/src/diffusers/pipelines/ltx2/pipeline_ltx2.py#L1172
+the wrapped function is copied as-is, including the captured reference to the original scheduler.
+
+**As a result:** calling `audio_scheduler.step(...)`  actually executes `self.scheduler.step(...)`:
+https://github.com/huggingface/diffusers/blob/5063aa5566f068b68bba799b6604e9ac14eaf37c/src/diffusers/pipelines/ltx2/pipeline_ltx2.py#L1402-L1405
+
+This leads to:
+
+* Shared internal state (_step_index) between supposedly independent schedulers
+* Incorrect stepping behavior
+* Index out-of-bounds errors during inference
+
+The following shows debugger output from the first loop iteration, right **after** executing `audio_scheduler.step()`:
+
+<img width="590" height="71" alt="Image" src="https://github.com/user-attachments/assets/548766fa-a9be-413e-aafd-053973a36f12" />
+
+The object ID inside **both step calls** matches the ID of `self.scheduler`:
+
+<img width="574" height="133" alt="Image" src="https://github.com/user-attachments/assets/96525d72-5ee6-4dbb-80cd-f27be6ddc39a" />
+
+### Fix Proposal
+Decorate the **unbound function** and rebind it:
+```python
+    for component_name, method_name, label in annotations:
+        component = getattr(pipe, component_name, None)
+        if component is None:
+            continue
+        component_cls = type(component)
+        method = getattr(component_cls, method_name, None)
+        if method is None:
+            continue
+        setattr(component, method_name, annotate(method, label).__get__(component, component_cls))
+```
+_I can open a PR if this solution is suitable._
+
+### Reproduction
+
+Run ltx2 profiling for any number of steps: 
+`python examples/profiling/profiling_pipelines.py --pipeline ltx2 --mode eager --num_steps 2`
+
+### Logs
+
+```shell
+
+```
+
+### System Info
+
+Diffusers version: 0.38.0.dev0
+- Platform: Linux-6.8.0-84-generic-x86_64-with-glibc2.39
+- Running on Google Colab?: No
+- Python version: 3.12.3
+- PyTorch version (GPU?): 2.10.0+cu128 (True)
+- Flax version (CPU?/GPU?/TPU?): not installed (NA)
+- Jax version: not installed
+- JaxLib version: not installed
+- Huggingface_hub version: 1.9.2
+- Transformers version: 5.5.1
+- Accelerate version: 1.13.0
+- PEFT version: not installed
+- Bitsandbytes version: not installed
+- Safetensors version: 0.7.0
+- xFormers version: not installed
+- Accelerator: NVIDIA A100-SXM4-80GB, 81920 MiB
+
+### Who can help?
+
+@sayakpaul, @dg845

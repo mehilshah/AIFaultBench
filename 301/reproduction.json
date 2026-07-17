@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Ran `FSDPStrategy._setup_model()` on a CPU-only one-process `gloo` setup with `root_device.index == null`.",
+    "In this environment (`torch 2.13.0+cu130`), the call completed successfully and only emitted FSDP CPU-init warnings; no `RuntimeError` was raised."
+  ],
+  "steps": [
+    "Created a one-process distributed environment with `backend=gloo`.",
+    "Constructed `lightning.pytorch.strategies.FSDPStrategy()` and forced `parallel_devices=[torch.device('cpu')]`.",
+    "Called `strategy._setup_model(nn.Linear(2, 2))` on CPU."
+  ],
+  "blocking_reason": "This checkout is using `torch 2.13.0+cu130`, which does not reproduce the torch 2.5+/2.6 CPU guard described in the report. The reported `RuntimeError: FSDP needs a non-CPU accelerator device` does not occur here.",
+  "reproduction_command": "./run_repro.sh"
+}

@@ -1,0 +1,44 @@
+Title: Missing `hub-4.1.6` tag for JupyterLab images
+Date: 2024-08-27T14:11:55+00:00
+URL: https://github.com/jupyter/docker-stacks/issues/2138
+
+Description:
+### What docker image(s) are you using?
+
+scipy-notebook
+
+### Host OS system
+
+Ubuntu 22.04
+
+### Host architecture
+
+x86_64
+
+### What Docker command are you running?
+
+`docker pull quay.io/jupyter/scipy-notebook:hub-4.1.6`
+
+### How to Reproduce the problem?
+
+Run `docker pull quay.io/jupyter/scipy-notebook:hub-4.1.6`.
+
+### Command output
+
+_No response_
+
+### Expected behavior
+
+_No response_
+
+### Actual behavior
+
+The issue is that the tag `hub-4.1.6` appears to have been skipped on most (all?) JupyterLab images on quay.  `hub-4.1.5` and `hub-5.1.0` exist, but  `hub-4.1.6`  does not even though it is released: https://github.com/jupyterhub/jupyterhub/releases/tag/4.1.6
+
+### Anything else?
+
+_No response_
+
+### Latest Docker version
+
+- [X] I've updated my Docker version to the latest available, and the issue persists

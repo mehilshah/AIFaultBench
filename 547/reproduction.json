@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running run_repro.sh loads codebase/deepspeed/runtime/data_pipeline/data_sampling/variable_batch_size_and_lr.py and fails with TypeError: sqrt(): argument 'input' (position 1) must be Tensor, not float when calling scale_lr(2, 4, 1.0, 'sqrt').",
+  "steps": [
+    "Create a clean CPU-only venv and install requirements from requirements.txt.",
+    "Load codebase/deepspeed/runtime/data_pipeline/data_sampling/variable_batch_size_and_lr.py with minimal import stubs for unrelated DeepSpeed modules.",
+    "Call scale_lr(2, 4, 1.0, \"sqrt\") and observe the TypeError from torch.sqrt on a Python float."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,69 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/1112
+
+TITLE
+mean reduce of distributed training not working
+
+BODY
+### System Info
+
+```Shell
+- `Accelerate` version: 0.16.0
+- Platform: Linux-4.15.0-45-generic-x86_64-with-glibc2.23
+- Python version: 3.9.7
+- Numpy version: 1.21.5
+- PyTorch version (GPU?): 1.13.1 (True)
+- `Accelerate` default config:
+        - compute_environment: LOCAL_MACHINE
+        - distributed_type: MULTI_GPU
+        - mixed_precision: fp16
+        - use_cpu: False
+        - dynamo_backend: NO
+        - num_processes: 4
+        - machine_rank: 0
+        - num_machines: 1
+        - gpu_ids: all
+        - rdzv_backend: static
+        - same_network: True
+        - main_training_function: main
+        - deepspeed_config: {}
+        - fsdp_config: {}
+        - megatron_lm_config: {}
+        - downcast_bf16: no
+```
+
+
+### Information
+
+- [X] The official example scripts
+- [X] My own modified scripts
+
+### Tasks
+
+- [X] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [ ] My own task or dataset (give details below)
+
+### Reproduction
+
+```python
+import torch
+from accelerate import Accelerator
+
+accelerator = Accelerator()
+process_tensor = torch.arange(accelerator.num_processes) + 1 + (4 * accelerator.process_index)
+process_tensor = process_tensor.to(accelerator.device)
+
+sum_reduced_tensor = accelerator.reduce(process_tensor, reduction="sum")
+accelerator.print(sum_reduced_tensor)
+# print out: tensor([16, 20, 24, 28], device='cuda:0')
+
+mean_reduced_tensor = accelerator.reduce(process_tensor, reduction="mean")
+accelerator.print(mean_reduced_tensor)
+# print out the same values: tensor([16, 20, 24, 28], device='cuda:0')
+```
+
+### Expected behavior
+
+```Shell
+`sum_reduced_tensor` and `mean_reduced_tensor` are the same. weird. I intended to get a mean tensor `mean_reduced_tensor` that averages all tensors from each process but failed.
+```
+

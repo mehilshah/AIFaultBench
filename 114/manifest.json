@@ -1,0 +1,12 @@
+{
+  "bug_id": "114",
+  "bug_dir": "114",
+  "issue_url": "https://github.com/axolotl-ai-cloud/axolotl/issues/2387",
+  "commit_hash": "",
+  "library_name": "axolotl",
+  "library_version": "0.8.0.dev0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../114"
+}

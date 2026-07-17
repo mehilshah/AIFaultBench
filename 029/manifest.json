@@ -1,0 +1,12 @@
+{
+  "bug_id": "029",
+  "bug_dir": "029",
+  "issue_url": "https://github.com/pytorch/examples/issues/1134",
+  "commit_hash": "54f4572509891883a947411fd7239237dd2a39c3",
+  "library_name": "pytorch/examples",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pytorch/examples@54f4572509891883a947411fd7239237dd2a39c3",
+  "codebase_present": "true",
+  "standardized_dir": "../029"
+}

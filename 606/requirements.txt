@@ -1,0 +1,11 @@
+torch==2.7.0
+psutil
+aiohttp
+fsspec
+jinja2
+numpy
+pyparsing
+requests
+tqdm
+networkx
+sympy

@@ -1,0 +1,6 @@
+python 3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]
+torch 2.3.1+cu121
+running failing case: batch_sizes=[2, 0]
+EXPECTED_FAILURE: RuntimeError: Sizes of tensors must match except in dimension 2. Expected size 2 but got size 0 for tensor number 1 in the list.
+running control case: batch_sizes=[0, 2]
+CONTROL_SUCCESS: (2, 2)

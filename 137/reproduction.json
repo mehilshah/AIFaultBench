@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running evaluate.load on the local rouge metric with identical Nepali prediction/reference strings returns rouge1/rouge2/rougeL/rougeLsum of 0.0 by default, while passing tokenizer=str.split returns 1.0 for the same inputs.",
+  "steps": [
+    "Install the local evaluate package from codebase/ together with rouge_score, absl-py, and nltk.",
+    "Load the local rouge metric from codebase/metrics/rouge.",
+    "Compute scores for identical Nepali prediction/reference strings with the default tokenizer.",
+    "Observe all ROUGE scores are 0.0, then rerun with tokenizer=str.split and observe all scores become 1.0."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

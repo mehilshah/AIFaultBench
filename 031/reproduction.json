@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` after environment setup exits with code 1 and prints `EXPECTED_RUNTIME_ERROR` plus `Error(s) in loading state_dict for ResNet` with missing `layers.0.0.conv1.weight` and unexpected `layer1.0.conv1.weight` keys.",
+  "steps": [
+    "Created a local venv and installed `torch==2.5.1` from the PyTorch CPU wheel index.",
+    "Generated a synthetic checkpoint by renaming the current model's `layers.*` keys to the legacy `layer1.*` layout.",
+    "Called `resnet50(pretrained_from_file=...)` through the real loader in `codebase/PyTorch/Classification/ConvNets`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

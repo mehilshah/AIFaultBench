@@ -1,0 +1,6 @@
+Python 3.12.3
+Bug report: GitHub tag immutability / force-push complaint
+Local snapshot version: 2.6.2
+Git metadata present: False
+Git probe output: fatal: not a git repository (or any of the parent directories): .git
+Result: not reproducible locally because this folder is not a Git checkout, so the tag history that the report refers to cannot be inspected here.

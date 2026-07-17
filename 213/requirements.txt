@@ -1,0 +1,12 @@
+boto3
+cloudpickle
+copulas
+graphviz
+numpy
+pandas
+platformdirs
+pyyaml
+rdt
+scikit-learn
+scipy
+tqdm

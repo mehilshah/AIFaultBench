@@ -1,0 +1,29 @@
+641/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+641/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+641/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+Traceback (most recent call last):
+  File "641/repro.py", line 37, in <module>
+    main()
+  File "641/repro.py", line 26, in main
+    for i, data in enumerate(collector):
+  File "641/codebase/torchrl/collectors/collectors.py", line 521, in __iter__
+    yield from self.iterator()
+  File "641/codebase/torchrl/collectors/collectors.py", line 3950, in iterator
+    out = split_trajectories(self.out_buffer, prefix="collector")
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug641venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "641/codebase/torchrl/collectors/utils.py", line 241, in split_trajectories
+    out_splits = out_splits.split(splits, 0)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug641venv/lib/python3.12/site-packages/tensordict/_td.py", line 1780, in split
+    splits = {k: v.split(split_size, dim) for k, v in self.items()}
+                 ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug641venv/lib/python3.12/site-packages/torch/_tensor.py", line 1028, in split
+    return torch._VF.split_with_sizes(self, split_size, dim)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: split_with_sizes expects split_sizes to sum exactly to 200 (input tensor's size at dimension 0), but got split_sizes=[100, 50, 100, 50]

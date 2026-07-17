@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Running `bash setup_env.sh && bash run_repro.sh` in a clean venv reaches `codebase/torch_geometric/inspector.py:481` and raises `AttributeError: 'types.UnionType' object has no attribute '__qualname__'`.",
+    "The traceback starts from `tmp = Tmp(123, 123)` in `repro.py`, enters `MessagePassing.__init__`, and fails while formatting the `Tensor | None` annotation in `Inspector.type_repr`."
+  ],
+  "steps": [
+    "Created an isolated Python 3.12 venv and installed `torch==2.4.1+cpu` plus the local editable `torch_geometric` checkout at commit `afffee9f089ac0fe1eb8c1600c6e0b2e07ca6f80`.",
+    "Ran the minimal subclass from `repro.py`, which declares `message(self, x_j: Tensor, edge_attr: Tensor | None = None)`.",
+    "Observed the constructor crash inside `MessagePassing.__init__` when `Inspector.type_repr` tried to read `__qualname__` from a `types.UnionType` instance."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

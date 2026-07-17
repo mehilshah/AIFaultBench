@@ -1,0 +1,61 @@
+# recovered-from-issue: https://github.com/huggingface/diffusers/issues/13930
+
+TITLE
+LTX2 text connectors pass reversed prompt tokens and misplaced registers to the transformer (regression from #13564)
+
+BODY
+### Describe the bug
+
+`LTX2ConnectorTransformer1d.forward` (used by both the LTX 2.0 and LTX 2.3 pipelines) lays out its input sequence incorrectly before running the connector blocks: the prompt tokens reach the transformer **in reversed order**, and the learnable registers that fill the rest of the sequence are placed at the wrong positions.
+
+The reference implementation ([`ltx_core` `_replace_padded_with_learnable_registers`](https://github.com/Lightricks/LTX-2/blob/main/packages/ltx-core/src/ltx_core/text_encoders/gemma/embeddings_connector.py), matched by ComfyUI) front-aligns the valid tokens *preserving their order* and fills the tail with the tiled registers *indexed by absolute position*. The connector blocks apply RoPE, so the layout is part of what the model was trained on.
+
+Toy example — 8 slots, 3 valid tokens `t1 t2 t3` (left-padded), register tile `R0 R1 R2 R3`:
+
+```
+reference (ltx_core / ComfyUI):  [t1 t2 t3 | R3 R0 R1 R2 R3]
+diffusers main:                  [t3 t2 t1 | R0 R3 R2 R1 R0]
+```
+
+Even a full-length prompt (no padding at all) is reversed.
+
+### Where it was introduced
+
+#12915 originally ported this correctly (per-row boolean-mask gather). #13564 (`ebaa1871`, merged May 8) replaced that gather — which forces a GPU→CPU sync due to data-dependent indexing — with a vectorized masked-write followed by `torch.flip(hidden_states, dims=[1])`. The flip does move the embeddings to the front (as its comment intends), but it also reverses the token order and the register tile. The regression is on `main` only; v0.38.0 (May 1) predates it.
+
+### Impact
+
+Measured with the LTX-2.3 checkpoint (`diffusers/LTX-2.3-Diffusers` connectors) on real prompts: the post-connector text embeddings produced by `main` correlate with the reference layout's output at only **0.11–0.34 in the token region** (0.38–0.39 for the audio context). Short prompts — typically the *negative* prompt, whose 1024-slot context is mostly registers — are distorted the worst, so classifier-free guidance is hit hardest. After restoring the reference layout, the connector output matches ComfyUI's independent implementation of the same checkpoint at correlation 1.000.
+
+### Reproduction
+
+```python
+import torch
+
+S, L = 8, 3
+tokens = torch.arange(1, L + 1).float()
+regs = torch.arange(4).float()                # register tile R0..R3
+tiled = regs.repeat(S // 4)
+
+hs = torch.cat([torch.zeros(S - L), tokens])  # left-padded
+mask = torch.cat([torch.zeros(S - L), torch.ones(L)])
+
+# reference: gather valid tokens in order, registers by absolute position
+reference = torch.cat([tokens, tiled[L:]])
+
+# what main's connector layout produces (masked write + flip)
+current = torch.flip(mask * hs + (1 - mask) * tiled, dims=[0])
+
+print(reference.tolist())  # [1, 2, 3, 3, 0, 1, 2, 3]
+print(current.tolist())    # [3, 2, 1, 0, 3, 2, 1, 0]
+```
+
+A fix that keeps #13564's sync-free goal (stable argsort + gather, all fixed-shape device ops) is in #PENDING — opening it alongside this issue.
+
+### System Info
+
+diffusers `main` (0.39.0.dev0); any platform.
+
+### Who can help?
+
+@dg845 @sayakpaul

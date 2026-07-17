@@ -1,0 +1,10 @@
+import numpy as np
+
+
+def example_method_ndarray() -> np.ndarray[np.float32, 1]:
+    return np.array([1.0, 2.0, 3.0], dtype=np.float32)
+
+
+def example_arg_ndarray(a: np.ndarray[np.float32, 1]) -> float:
+    return a.sum()
+

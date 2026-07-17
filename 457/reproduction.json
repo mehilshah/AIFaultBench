@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "The DensePose evaluator hardcodes CUDA in `projects/DensePose/densepose/evaluation/densepose_coco_evaluation.py:1186`. The repro script confirmed the source line exists, then showed the current implementation fails on a CPU-only tensor with `RuntimeError CUDA requested from a CPU-only tensor`, while a CPU-safe reference path succeeds.",
+  "steps": [
+    "Inspect `projects/DensePose/densepose/evaluation/densepose_coco_evaluation.py` and locate `pixel_embeddings = embedding[:, py, px].t().to(device=\"cuda\")` in `findClosestVertsCse`.",
+    "Run `bash run_repro.sh` to execute the self-contained repro.",
+    "Observe `current_impl failed RuntimeError CUDA requested from a CPU-only tensor` and `cpu_safe_reference passed [-1, 11]` in `repro_stdout.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,7 @@
+numpy
+huggingface_hub
+requests
+httpx
+tqdm
+typing_extensions
+packaging

@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "617/repro.py", line 16, in main
+    dist.MultivariateNormal(mean, covariance)
+  File "617/codebase/pyro/distributions/distribution.py", line 18, in __call__
+    return super().__call__(*args, **kwargs)
+  File "617/.venv/lib/python3.9/site-packages/torch/distributions/multivariate_normal.py", line 146, in __init__
+    super(MultivariateNormal, self).__init__(batch_shape, event_shape, validate_args=validate_args)
+  File "617/.venv/lib/python3.9/site-packages/torch/distributions/distribution.py", line 52, in __init__
+    if not constraint.check(getattr(self, param)).all():
+  File "617/codebase/pyro/distributions/torch_patch.py", line 80, in _PositiveDefinite_check
+    flattened_value = value.reshape((-1,) + matrix_shape)
+RuntimeError: cannot reshape tensor of 0 elements into shape [-1, 0, 0] because the unspecified dimension size -1 can be any value and is ambiguous
+Traceback (most recent call last):
+  File "617/repro.py", line 24, in <module>
+    main()
+  File "617/repro.py", line 16, in main
+    dist.MultivariateNormal(mean, covariance)
+  File "617/codebase/pyro/distributions/distribution.py", line 18, in __call__
+    return super().__call__(*args, **kwargs)
+  File "617/.venv/lib/python3.9/site-packages/torch/distributions/multivariate_normal.py", line 146, in __init__
+    super(MultivariateNormal, self).__init__(batch_shape, event_shape, validate_args=validate_args)
+  File "617/.venv/lib/python3.9/site-packages/torch/distributions/distribution.py", line 52, in __init__
+    if not constraint.check(getattr(self, param)).all():
+  File "617/codebase/pyro/distributions/torch_patch.py", line 80, in _PositiveDefinite_check
+    flattened_value = value.reshape((-1,) + matrix_shape)
+RuntimeError: cannot reshape tensor of 0 elements into shape [-1, 0, 0] because the unspecified dimension size -1 can be any value and is ambiguous

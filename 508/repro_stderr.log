@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "508/repro.py", line 9, in main
+    import numpyro  # noqa: F401
+    ^^^^^^^^^^^^^^
+  File "508/codebase/numpyro/__init__.py", line 13, in <module>
+    from numpyro import compat, diagnostics, distributions, handlers, infer, ops, optim
+  File "508/codebase/numpyro/distributions/__init__.py", line 4, in <module>
+    from numpyro.distributions.conjugate import (
+  File "508/codebase/numpyro/distributions/conjugate.py", line 13, in <module>
+    from numpyro._typing import ConstraintT
+  File "508/codebase/numpyro/_typing.py", line 9, in <module>
+    from typing_extensions import ParamSpec, TypeAlias
+ModuleNotFoundError: No module named 'typing_extensions'

@@ -1,0 +1,49 @@
+# recovered-from-issue: https://github.com/pytorch/rl/issues/3599
+
+TITLE
+[BUG] `CSVLogger` video logging is incompatible with `torchvision>=0.26`
+
+BODY
+## Describe the bug
+
+`add_video()` calls `torchvision.io.write_video`, but that function was removed in `torchvision`.
+
+## To Reproduce
+
+Having `torchvision==0.26`
+
+```python
+logger = CSVLogger(
+    exp_name="repro",
+    log_dir="results/repros",
+    video_format="mp4",
+)
+video = torch.zeros((1, 2, 3, 4, 4), dtype=torchrl.torch.uint8)
+logger.log_video("repro", video, step=0)
+```
+
+```bash
+AttributeError: module 'torchvision.io' has no attribute 'write_video'. Did you mean: 'write_file'?
+```
+
+## Expected behavior
+
+Log a video without any issue.
+
+## System info
+
+- torchrl: 0.11.1
+- torchvision: 0.26.0
+- torch: 2.11.0
+- python: 3.12.3
+
+## Reason and Possible fixes
+
+Adding `torchvision<=0.25` can solve this issue.
+
+## Checklist
+
+- [ ] I have checked that there is no similar issue in the repo (**required**)
+- [ ] I have read the [documentation](https://github.com/pytorch/rl/tree/main/docs/) (**required**)
+- [ ] I have provided a minimal working example to reproduce the bug (**required**)
+

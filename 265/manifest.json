@@ -1,0 +1,13 @@
+{
+  "bug_id": "265",
+  "bug_dir": "265",
+  "issue_url": "https://github.com/unit8co/darts/issues/2652",
+  "commit_hash": "",
+  "library_name": "darts",
+  "library_version": "0.32.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../265",
+  "reproduction_command": "bash run_repro.sh"
+}

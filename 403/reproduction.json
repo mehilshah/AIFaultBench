@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "The reported script requires `lightning_fabric.Fabric(devices=[0, 1], strategy='ddp')`, but this host only exposes one CUDA device via `nvidia-smi -L`.",
+    "Running `bash run_repro.sh` here fails earlier during `import torch` with `ImportError: ... libtorch_cuda.so: undefined symbol: ncclCommResume`."
+  ],
+  "steps": [
+    "Cloned the referenced upstream snapshot into `codebase/` at commit `fed2253c4a807e85ba61887efd0bb10ee869d094`.",
+    "Vendored the issue's `GConvGRU` helper as `gconv_gru.py` and recreated the issue body as `repro.py`.",
+    "Validated the bundle syntax with `bash -n` and `python3 -m py_compile`.",
+    "Attempted the launcher locally and captured the environment failure in `repro_stdout.log` and `repro_stderr.log`."
+  ],
+  "blocking_reason": "The bug report depends on a multi-GPU DDP execution path, but this machine only exposes one GPU. The local Python environment also has a broken torch CUDA install, so the repro cannot be exercised end to end here.",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

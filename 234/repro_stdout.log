@@ -1,0 +1,55 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.1.2)
+Obtaining file://234/codebase (from -r requirements.txt (line 1))
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Installing backend dependencies: started
+  Installing backend dependencies: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: jax==0.8.2 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 2)) (0.8.2)
+Requirement already satisfied: jaxlib==0.8.2 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 3)) (0.8.2)
+Requirement already satisfied: jaxtyping>=0.2.20 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 4)) (0.3.11)
+Requirement already satisfied: typing_extensions>=4.5.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 5)) (4.16.0)
+Requirement already satisfied: wadler_lindig>=0.1.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 6)) (0.1.7)
+Requirement already satisfied: ml_dtypes>=0.5.0 in ./.venv/lib/python3.12/site-packages (from jax==0.8.2->-r requirements.txt (line 2)) (0.5.4)
+Requirement already satisfied: numpy>=2.0 in ./.venv/lib/python3.12/site-packages (from jax==0.8.2->-r requirements.txt (line 2)) (2.5.1)
+Requirement already satisfied: opt_einsum in ./.venv/lib/python3.12/site-packages (from jax==0.8.2->-r requirements.txt (line 2)) (3.4.0)
+Requirement already satisfied: scipy>=1.13 in ./.venv/lib/python3.12/site-packages (from jax==0.8.2->-r requirements.txt (line 2)) (1.18.0)
+Building wheels for collected packages: equinox
+  Building editable for equinox (pyproject.toml): started
+  Building editable for equinox (pyproject.toml): finished with status 'done'
+  Created wheel for equinox: filename=equinox-0.13.2-py3-none-any.whl size=11628 sha256=60085687b68e82fd8655c23a372d980a4909edd1b438fd442ec51e6c3287e500
+  Stored in directory: /tmp/pip-ephem-wheel-cache-8gkplvyk/wheels/10/24/2e/3f2589c15c3285e91bd3e22de46f4d918c9292554e16fbaa74
+Successfully built equinox
+Installing collected packages: equinox
+  Attempting uninstall: equinox
+    Found existing installation: equinox 0.13.2
+    Uninstalling equinox-0.13.2:
+      Successfully uninstalled equinox-0.13.2
+Successfully installed equinox-0.13.2
+equinox=0.13.2
+jax=0.8.2
+first_call=ok
+second_call_exception=ValueError
+second_call_message=INTERNAL: CpuCallback error calling callback: Traceback (most recent call last):
+  File "234/repro.py", line 35, in <module>
+  File "234/repro.py", line 20, in main
+  File "234/codebase/equinox/_jit.py", line 209, in __call__
+  File "234/codebase/equinox/_jit.py", line 263, in _call
+  File "234/.venv/lib/python3.12/site-packages/jax/_src/callback.py", line 805, in _wrapped_callback
+  File "234/.venv/lib/python3.12/site-packages/jax/_src/callback.py", line 223, in _callback
+  File "234/.venv/lib/python3.12/site-packages/jax/_src/callback.py", line 95, in pure_callback_impl
+  File "234/.venv/lib/python3.12/site-packages/jax/_src/callback.py", line 70, in __call__
+  File "234/codebase/equinox/_errors.py", line 88, in raises
+_EquinoxRuntimeError: my message
+
+
+--------------------
+An error occurred during the runtime of your JAX program! Unfortunately you do not appear to be using `equinox.filter_jit` (perhaps you are using `jax.jit` instead?) and so further information about the error cannot be displayed. (Probably you are seeing a very large but uninformative error message right now.) Please wrap your program with `equinox.filter_jit`.
+--------------------
+
+bug_reproduced=true

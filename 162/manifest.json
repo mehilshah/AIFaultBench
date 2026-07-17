@@ -1,0 +1,12 @@
+{
+  "bug_id": "162",
+  "bug_dir": "162",
+  "issue_url": "https://github.com/jupyter/docker-stacks/issues/2138",
+  "commit_hash": "",
+  "library_name": "unknown",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../162"
+}

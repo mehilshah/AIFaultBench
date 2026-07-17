@@ -1,0 +1,12 @@
+{
+  "bug_id": "223",
+  "bug_dir": "223",
+  "issue_url": "https://github.com/triton-inference-server/server/issues/7967",
+  "commit_hash": "",
+  "library_name": "triton",
+  "library_version": "3.7.1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../223"
+}

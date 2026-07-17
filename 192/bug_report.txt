@@ -1,0 +1,144 @@
+Title: Real-IAD dataset categories in Anomalib don’t match Hugging Face dataset
+Date: 2025-09-03T16:25:13+00:00
+URL: https://github.com/open-edge-platform/anomalib/issues/2929
+
+Description:
+### Describe the bug
+
+The `CATEGORIES` variable hard-coded in `anomalib.data.datasets.image.realiad` does not match the category list published in the official Real-IAD dataset on Hugging Face. This causes confusion when trying to load or evaluate the dataset, since the labels don’t align with the released data.
+
+
+### Dataset
+
+Other (please specify in the text field below)
+
+### Model
+
+N/A
+
+### Steps to reproduce the behavior
+
+1. Run:
+
+   ```python
+   from anomalib.data.datasets.image import realiad
+   print(realiad.CATEGORIES)
+   ```
+2. Compare the output to the Real-IAD dataset card on Hugging Face.
+
+**Observed:**
+
+```python
+CATEGORIES = (
+    "audiojack",
+    "button_battery",
+    "capacitor",
+    "connector",
+    "diode",
+    "end_cap",
+    "fuse",
+    "ic",
+    "inductor",
+    "led",
+    "pcb_finger",
+    "plastic_nut",
+    "potentiometer",
+    "relay",
+    "resistor",
+    "rivet",
+    "rubber_grommet",
+    "screw",
+    "spring",
+    "switch",
+    "terminal_block",
+    "through_hole",
+    "toggle_switch",
+    "toy_brick",
+    "transistor",
+    "washer",
+    "woodstick",
+    "zipper",
+    "toothbrush",
+    "usb_adaptor",
+)
+```
+
+**Expected (from HF Real-IAD):**
+
+```python
+CATEGORIES = (
+    "audiojack",
+    "bottle_cap",
+    "button_battery",
+    "end_cap",
+    "eraser",
+    "fire_hood",
+    "mint",
+    "mounts",
+    "pcb",
+    "phone_battery",
+    "plastic_nut",
+    "plastic_plug",
+    "porcelain_doll",
+    "regulator",
+    "rolled_strip_base",
+    "sim_card_set",
+    "switch",
+    "tape",
+    "terminalblock",
+    "toothbrush",
+    "toy",
+    "toy_brick",
+    "transistor1",
+    "u_block",
+    "usb",
+    "usb_adaptor",
+    "vcpill",
+    "wooden_beads",
+    "woodstick",
+    "zipper",
+)
+
+### OS information
+
+OS information:
+- OS: [e.g. Ubuntu 20.04]
+- Python version: [e.g. 3.10.0]
+- Anomalib version: [e.g. 0.3.6]
+- PyTorch version: [e.g. 1.9.0]
+- CUDA/cuDNN version: [e.g. 11.1]
+- GPU models and configuration: [e.g. 2x GeForce RTX 3090]
+- Any other relevant information: [e.g. I'm using a custom dataset]
+
+
+### Expected behavior
+
+`CATEGORIES` in Anomalib should match the official Real-IAD dataset categories on Hugging Face.
+
+### Screenshots
+
+_No response_
+
+### Pip/GitHub
+
+pip
+
+### What version/branch did you use?
+
+2.1.0
+
+### Configuration YAML
+
+```yaml
+N/A
+```
+
+### Logs
+
+```shell
+N/A
+```
+
+### Code of Conduct
+
+- [x] I agree to follow this project's Code of Conduct

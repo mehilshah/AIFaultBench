@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` reproduces the reported PyTorch failure and exits non-zero with `RuntimeError: Expected size for first two dimensions of batch2 tensor to be: [8910, 1] but got: [8910, 3].`",
+  "steps": [
+    "Created a local virtual environment and installed CPU-only PyTorch from the official wheel index.",
+    "Built a minimal harness that mirrors the `ConvSE3` self-interaction matmul in `se3_transformer/model/layers/convolution.py`.",
+    "Executed the harness with a degree-1 feature tensor shaped like the reported failing path, which triggers the exact RuntimeError."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

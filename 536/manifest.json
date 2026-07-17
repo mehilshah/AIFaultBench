@@ -1,0 +1,13 @@
+{
+  "bug_id": "536",
+  "bug_dir": "536",
+  "issue_url": "https://github.com/vllm-project/vllm/issues/47196",
+  "commit_hash": "248d1fbb711b210784ab880593403d665a4731bd",
+  "library_name": "vllm",
+  "library_version": "0.23.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "vllm-project/vllm@248d1fbb711b210784ab880593403d665a4731bd",
+  "codebase_present": "true",
+  "standardized_dir": "../536",
+  "reproduction_command": "bash run_repro.sh"
+}

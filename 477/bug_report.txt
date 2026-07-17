@@ -1,0 +1,52 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38188
+
+TITLE
+`jax.Array.platform()` is missing from the type stubs
+
+BODY
+### Description
+
+`Array.platform()` exists at runtime (defined on `ArrayImpl` in `jaxlib/py_array.cc`) but is not declared in `jax/_src/basearray.pyi`, so type checkers flag every call:
+
+https://github.com/jax-ml/jax/blob/37b63fb036c55d0d29b36d284aeede50d67df281/jaxlib/py_array.cc#L2364-L2376
+
+```python
+import jax.numpy as jnp
+
+jnp.zeros(3).platform()
+```
+
+```
+error[unresolved-attribute]: Object of type `Array` has no attribute `platform`  (ty)
+```
+
+This bites JAX itself: `jax/_src/array.py` carries three `# pyrefly: ignore[missing-attribute]` comments on its own `self.platform()` calls.
+
+https://github.com/jax-ml/jax/blob/37b63fb036c55d0d29b36d284aeede50d67df281/jax/_src/array.py#L442-L445
+
+The fix seems to be a one-liner in the "Methods defined on ArrayImpl, but not on Tracers" section of `basearray.pyi`, next to `devices()`:
+
+https://github.com/jax-ml/jax/blob/37b63fb036c55d0d29b36d284aeede50d67df281/jax/_src/basearray.pyi#L244-L252
+
+```python
+  def platform(self) -> str: ...
+```
+
+which would also allow removing the three ignores in `array.py`.
+
+Alternatively, if `platform()` is intentionally kept out of the stubs (it is undocumented, and normalizes both `cuda` and `rocm` to `"gpu"`), it would be useful to know the blessed replacement — `next(iter(x.devices())).platform`?
+
+(Note: issue written by Claude Opus 4.8, edited by a human.)
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+```
+jax:    0.10.1
+jaxlib: 0.10.1
+numpy:  2.4.6
+python: 3.14.0 (main, Oct 14 2025, 21:10:22) [Clang 20.1.4 ]
+device info: cpu-8, 8 local devices"
+process_count: 1
+platform: uname_result(system='Darwin', release='25.4.0', version='Darwin Kernel Version 25.4.0: Thu Mar 19 19:30:44 PDT 2026; root:xnu-12377.101.15~1/RELEASE_ARM64_T6000', machine='arm64')
+```
+

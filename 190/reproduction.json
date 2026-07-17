@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "On the reporter's `timestamp.wav`, `EncDecMultiTaskModel.from_pretrained('nvidia/canary-1b-v2')` restored successfully, but `model.transcribe(..., timestamps=True, batch_size=1, return_hypotheses=True)` returned `Hypothesis(timestamp={'word': [], 'segment': []})`.",
+  "steps": [
+    "Set up a local Python environment with CPU PyTorch and the NeMo ASR runtime dependencies.",
+    "Loaded the reporter-provided `timestamp.wav` from `timestamp.zip`.",
+    "Ran `EncDecMultiTaskModel.from_pretrained('nvidia/canary-1b-v2')` and transcribed the clip with `timestamps=True`.",
+    "Observed that the returned hypothesis had empty `timestamp['word']` and `timestamp['segment']` lists."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

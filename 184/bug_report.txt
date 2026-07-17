@@ -1,0 +1,84 @@
+Title: RunTimeError when running regression example with GBM model type
+Date: 2023-02-14T01:59:43+00:00
+URL: https://github.com/ludwig-ai/ludwig/issues/3092
+
+Description:
+**Describe the bug**
+When running on a machine with a GPU, I get the following error:
+(from hummingbird/ml/operator_converters/_tree_implementations.py:180):
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cpu and cuda:0! (when checking argument for argument mat2 in method wrapper_mm)
+
+**To Reproduce**
+Steps to reproduce the behavior:
+Code and sample data below:
+
+```
+from ludwig.api import LudwigModel
+import pandas as pd
+
+url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data'
+column_names = ['MPG', 'Cylinders', 'Displacement', 'Horsepower', 'Weight',
+                'Acceleration', 'Model Year', 'Origin']
+
+df = pd.read_csv(url, names=column_names,
+                          na_values='?', comment='\t',
+                          sep=' ', skipinitialspace=True)
+
+ludwig_config = {
+    "model_type": "gbm",
+    "input_features": [        
+        {
+            "name": "Cylinders",
+            "type": "number",
+        },
+        {
+            "name": "Displacement",
+            "type": "number",
+        },
+        {
+            "name": "Horsepower",
+            "type": "number",
+        },
+        {
+            "name": "Weight",
+            "type": "number",
+        },
+        {
+            "name": "Acceleration",
+            "type": "number",
+        },
+        {
+            "name": "Model Year",
+            "type": "number",
+        },
+        {
+            "name": "Origin",
+            "type": "category",
+        },
+    ],
+    "output_features": [
+        {
+            "name": "MPG",
+            "type": "number",
+            "optimizer": {"type": "mean_squared_error"}
+        }
+    ],
+}
+model = LudwigModel(config=ludwig_config)
+results = model.experiment(dataset=df)
+```
+
+**Expected behavior**
+Should run without any errors (switching to model_type='ecd' works fine, for example)
+
+**Screenshots**
+N/A
+
+**Environment (please complete the following information):**
+
+- OS: Linux
+- Version: 4.15.0-163-generic
+- Python version: 3.8.5
+- Ludwig version: 0.6.3 (from Dockerfile 'ludwigai/ludwig-ray-gpu:0.6.3')
+
+Thanks for the amazing library!

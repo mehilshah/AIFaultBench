@@ -1,0 +1,5 @@
+model_id=bigscience/bloomz-560m
+offload_budget=1600MB
+control hf_device_map=None original_module_has_grad=False modules_to_save_has_grad=True
+offload hf_device_map={'transformer.word_embeddings': 'cpu', 'transformer.word_embeddings_layernorm': 'cpu', 'transformer.h.0': 'cpu', 'transformer.h.1': 'cpu', 'transformer.h.2': 'cpu', 'transformer.h.3': 'cpu', 'transformer.h.4': 'cpu', 'transformer.h.5': 'cpu', 'transformer.h.6': 'cpu', 'transformer.h.7': 'cpu', 'transformer.h.8': 'cpu', 'transformer.h.9': 'cpu', 'transformer.h.10': 'disk', 'transformer.h.11': 'disk', 'transformer.h.12': 'disk', 'transformer.h.13': 'disk', 'transformer.h.14': 'disk', 'transformer.h.15': 'disk', 'transformer.h.16': 'disk', 'transformer.h.17': 'disk', 'transformer.h.18': 'disk', 'transformer.h.19': 'disk', 'transformer.h.20': 'disk', 'transformer.h.21': 'disk', 'transformer.h.22': 'disk', 'transformer.h.23': 'disk', 'transformer.ln_f': 'disk', 'score': 'disk'} head_device=meta wrapper_device=meta
+bug_reproduced=KeyError: 'score.weight'

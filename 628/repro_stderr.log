@@ -1,0 +1,84 @@
+628/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+628/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+628/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+628/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+628/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+628/codebase/torchrl/collectors/collectors.py:2652: FutureWarning: local_init_rb=False is deprecated and will be removed in v0.12. The new storage-level initialization provides better performance.
+  warnings.warn(
+628/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+628/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+628/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+628/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+628/codebase/torchrl/_extension.py:32: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+Process _ProcessNoWarn-5:2:
+Process _ProcessNoWarn-5:3:
+Process _ProcessNoWarn-5:4:
+Process _ProcessNoWarn-5:1:
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "628/codebase/torchrl/_utils.py", line 594, in run
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "628/codebase/torchrl/envs/batched_envs.py", line 2405, in _run_worker_pipe_shared_mem
+TimeoutError: Worker timed out after 10000.0s, increase timeout if needed through the BATCHED_PIPE_TIMEOUT environment variable.
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "628/codebase/torchrl/_utils.py", line 594, in run
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "628/codebase/torchrl/envs/batched_envs.py", line 2405, in _run_worker_pipe_shared_mem
+TimeoutError: Worker timed out after 10000.0s, increase timeout if needed through the BATCHED_PIPE_TIMEOUT environment variable.
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "628/codebase/torchrl/_utils.py", line 594, in run
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "628/codebase/torchrl/envs/batched_envs.py", line 2405, in _run_worker_pipe_shared_mem
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "628/codebase/torchrl/_utils.py", line 594, in run
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+TimeoutError: Worker timed out after 10000.0s, increase timeout if needed through the BATCHED_PIPE_TIMEOUT environment variable.
+  File "628/codebase/torchrl/envs/batched_envs.py", line 2405, in _run_worker_pipe_shared_mem
+TimeoutError: Worker timed out after 10000.0s, increase timeout if needed through the BATCHED_PIPE_TIMEOUT environment variable.
+Process _ProcessNoWarn-5:
+Traceback (most recent call last):
+  File "628/.venv/lib/python3.12/site-packages/tensordict/_td.py", line 899, in __setitem__
+  File "628/.venv/lib/python3.12/site-packages/tensordict/_td.py", line 2382, in batch_size
+  File "628/.venv/lib/python3.12/site-packages/tensordict/base.py", line 3260, in _batch_size_setter
+  File "628/.venv/lib/python3.12/site-packages/tensordict/base.py", line 11986, in _check_new_batch_size
+RuntimeError: the Tensor truncated has shape torch.Size([4, 16, 1]) which is incompatible with the batch-size torch.Size([4, 1]).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "628/codebase/torchrl/_utils.py", line 594, in run
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "628/codebase/torchrl/collectors/collectors.py", line 4791, in _main_async_collector
+  File "628/codebase/torchrl/data/replay_buffers/replay_buffers.py", line 87, in wrapper
+  File "628/codebase/torchrl/data/replay_buffers/replay_buffers.py", line 1619, in extend
+  File "628/codebase/torchrl/data/replay_buffers/replay_buffers.py", line 895, in _extend
+  File "628/codebase/torchrl/data/replay_buffers/writers.py", line 357, in extend
+  File "628/codebase/torchrl/data/replay_buffers/storages.py", line 905, in set
+  File "628/.venv/lib/python3.12/site-packages/tensordict/_td.py", line 901, in __setitem__
+RuntimeError: indexed destination TensorDict batch size is torch.Size([4, 1]) (batch_size = torch.Size([2000000, 1]), index=tensor([0, 1, 2, 3])), which differs from the source batch size torch.Size([4, 16])
+/usr/lib/python3.12/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 11 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

@@ -1,0 +1,48 @@
+Title: Primary key and sequential key cannot be the same
+Date: 2024-06-27T20:21:58+00:00
+URL: https://github.com/sdv-dev/SDV/issues/2096
+
+Description:
+### Environment Details
+* SDV version: 1.14.0 (latest)
+
+### Error Description
+For sequential data, it should not be possible for the primary key column (or alternate key column) to be the same as any sequential key column. Yet, the metadata object is accepting such a situation as valid.
+
+```python
+from sdv.metadata import SingleTableMetadata
+
+metadata = SingleTableMetadata.load_from_dict({
+    'columns': {
+        'A': { 'sdtype': 'id' },
+        'B': { 'sdtype': 'datetime', 'datetime_format': '%Y-%m-%d' },
+        'C': { 'sdtype': 'numerical' },
+        'D': { 'sdtype': 'categorical' }
+    },
+    'primary_key': 'A',
+    'sequence_key': 'A'
+})
+
+metadata.validate()
+```
+
+### Expected Behavior
+The code above should throw an error because the primary key cannot be the same as sequence key. (Same error should also be thrown if an alternate key is the same as a sequence key.)
+
+The same error should also be thrown when adding these keys programmatically. Eg. 
+
+```python
+from sdv.metadata import SingleTableMetadata
+
+metadata = SingleTableMetadata.load_from_dict({
+    'columns': {
+        'A': { 'sdtype': 'id' },
+        'B': { 'sdtype': 'datetime', 'datetime_format': '%Y-%m-%d' },
+        'C': { 'sdtype': 'numerical' },
+        'D': { 'sdtype': 'categorical' }
+    },
+})
+
+metadata.set_sequence_key('A')
+metadata.set_primary_key('A') # this should throw an error
+```

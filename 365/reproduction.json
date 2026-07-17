@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` prints `sub_group_to_param_num: {0: 1, 1: 1}` for four global subgroups and then fails at the third subgroup with `KeyError: 2`, matching the bug report's bad global-vs-local subgroup lookup.",
+  "steps": [
+    "Inspect `codebase/deepspeed/runtime/superoffload/superoffload_stage3.py` and `codebase/deepspeed/runtime/zero/stage3.py` to confirm the subgroup bookkeeping mismatch.",
+    "Run `bash run_repro.sh` to execute the standalone harness in `repro.py`.",
+    "Observe the logged `KeyError: 2` in `repro_stdout.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

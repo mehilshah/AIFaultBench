@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "The baseline `SVI.init` path under `jax.vmap` completes, then the model with `numpyro.deterministic(\"test\", a)` fails with `jax.errors.UnexpectedTracerError`. The traceback shows the tracer leak originates from `numpyro.handlers.seed.process_message` during `random.split(self.rng_key)`.",
+  "steps": [
+    "Create a local virtualenv and install `jax==0.4.38`, `jaxlib==0.4.38`, and the editable `codebase/` checkout.",
+    "Run `bash run_repro.sh` from the standardized bug folder.",
+    "Confirm `baseline_init_ok` in stdout and an `UnexpectedTracerError` traceback in stderr."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

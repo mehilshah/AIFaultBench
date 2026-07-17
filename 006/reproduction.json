@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` emitted `WARNING:absl:Gradients do not exist for variables [...] when minimizing the loss.` in `repro_stderr.log`, including EfficientNet-B1 layers such as `stack_6/block_1/...` and `top_bn/...`.",
+  "steps": [
+    "Created a local virtualenv and installed the repro dependencies.",
+    "Built an EfficientNet-B1 feature slice from the local TensorFlow Models codebase.",
+    "Minimized a dummy loss over the full backbone variable list and observed the missing-gradient warning."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

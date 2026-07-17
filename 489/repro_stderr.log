@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "489/repro.py", line 32, in main
+    timm.create_model("lsnet_t")
+  File "489/codebase/timm/models/_factory.py", line 134, in create_model
+    raise RuntimeError('Unknown model (%s)' % model_name)
+RuntimeError: Unknown model (lsnet_t)

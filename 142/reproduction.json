@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "SafetensorError pickles as module safetensors_rust, but that module is not importable in this environment. Running ForkingPickler.dumps(SafetensorError('boom')) raises PicklingError: Can't pickle <class 'safetensors_rust.SafetensorError'>: import of module 'safetensors_rust' failed.",
+  "steps": [
+    "Created a clean virtual environment and installed safetensors==0.4.3 from the bundled requirements.",
+    "Imported safetensors.SafetensorError and instantiated the exception.",
+    "Serialized the exception with multiprocessing.reduction.ForkingPickler.dumps to match the dataloader worker pickling path.",
+    "Observed a PicklingError instead of a pickleable exception object."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

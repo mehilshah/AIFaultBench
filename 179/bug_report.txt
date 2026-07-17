@@ -1,0 +1,29 @@
+Title: Terminals cannot be transformed in tree-less LALR?
+Date: 2021-01-25T21:54:21+00:00
+URL: https://github.com/lark-parser/lark/issues/818
+
+Description:
+**Describe the bug**
+
+I've written a transformer with the line `DECIMAL = float` (from `%import common.DECIMAL` in the grammar) and it seemed to work fine post-transforming an Earley-parsed tree – that is, the relevant locations in the transformed tree would be `48.0` rather than `Token('DECIMAL', '48.0')` and similar.
+
+I've written another transformer, this one for a grammar that I was able to make run in LALR. Therefore, I tried a tree-less parse. Now I get `ValueError: Callbacks must return a token (returned 48.0)`. To make the grammar work for a tree-less parse, I must wrap all my terminals in rules just to be able to transform them.
+
+This seems to me unnecessarily tedious, and expands the size of the grammar unhelpfully. Also, transformer callbacks for rules are more long-winded to write – you can't do `decimal = float`, at minimum you have to do `decimal = lambda self, n: return float(n[0])`
+
+**To Reproduce**
+```python
+from lark import Lark, Transformer
+grammar = """
+    start: NUM
+    NUM: /\d+/
+"""
+
+class T(Transformer):
+    NUM = int
+
+T().transform(Lark(grammar, parser="lalr").parse("32"))
+# returns Tree('start', [32])
+Lark(grammar, parser="lalr", transformer=T()).parse("32")
+# raises ValueError("Callbacks must return a token (returned 32)")
+```

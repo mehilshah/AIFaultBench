@@ -1,0 +1,91 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (24.0)
+Collecting pip
+  Downloading pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
+Collecting setuptools
+  Downloading setuptools-83.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting wheel
+  Downloading wheel-0.47.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting packaging>=24.0 (from wheel)
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 20.8 MB/s eta 0:00:00
+
+Downloading setuptools-83.0.0-py3-none-any.whl (1.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 68.9 MB/s eta 0:00:00
+
+Downloading wheel-0.47.0-py3-none-any.whl (32 kB)
+Downloading packaging-26.2-py3-none-any.whl (100 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.2/100.2 kB 443.4 MB/s eta 0:00:00
+
+Installing collected packages: setuptools, pip, packaging, wheel
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed packaging-26.2 pip-26.1.2 setuptools-83.0.0 wheel-0.47.0
+Obtaining file://481/codebase (from -r 481/requirements.txt (line 4))
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting jax==0.4.25 (from jax[cpu]==0.4.25->-r 481/requirements.txt (line 1))
+  Downloading jax-0.4.25-py3-none-any.whl.metadata (24 kB)
+Collecting numpy<2 (from -r 481/requirements.txt (line 2))
+  Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+Collecting typing_extensions (from -r 481/requirements.txt (line 3))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting jaxlib>=0.4.25 (from numpyro==0.18.0->-r 481/requirements.txt (line 4))
+  Downloading jaxlib-0.11.0-cp312-cp312-manylinux_2_27_x86_64.whl.metadata (1.3 kB)
+Collecting multipledispatch (from numpyro==0.18.0->-r 481/requirements.txt (line 4))
+  Downloading multipledispatch-1.0.0-py3-none-any.whl.metadata (3.8 kB)
+Collecting tqdm (from numpyro==0.18.0->-r 481/requirements.txt (line 4))
+  Downloading tqdm-4.68.4-py3-none-any.whl.metadata (57 kB)
+Collecting ml-dtypes>=0.2.0 (from jax==0.4.25->jax[cpu]==0.4.25->-r 481/requirements.txt (line 1))
+  Downloading ml_dtypes-0.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (8.9 kB)
+Collecting opt-einsum (from jax==0.4.25->jax[cpu]==0.4.25->-r 481/requirements.txt (line 1))
+  Downloading opt_einsum-3.4.0-py3-none-any.whl.metadata (6.3 kB)
+Collecting scipy>=1.9 (from jax==0.4.25->jax[cpu]==0.4.25->-r 481/requirements.txt (line 1))
+  Downloading scipy-1.18.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Collecting jaxlib>=0.4.25 (from numpyro==0.18.0->-r 481/requirements.txt (line 4))
+  Downloading jaxlib-0.4.25-cp312-cp312-manylinux2014_x86_64.whl.metadata (2.1 kB)
+INFO: pip is looking at multiple versions of scipy to determine which version is compatible with other requirements. This could take a while.
+Collecting scipy>=1.9 (from jax==0.4.25->jax[cpu]==0.4.25->-r 481/requirements.txt (line 1))
+  Downloading scipy-1.17.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Downloading jax-0.4.25-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 33.6 MB/s  0:00:00
+
+Downloading jaxlib-0.4.25-cp312-cp312-manylinux2014_x86_64.whl (79.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 79.2/79.2 MB 53.5 MB/s  0:00:01
+
+Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.0/18.0 MB 52.4 MB/s  0:00:00
+
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading ml_dtypes-0.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (5.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.0/5.0 MB 54.1 MB/s  0:00:00
+
+Downloading scipy-1.17.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.2/35.2 MB 57.0 MB/s  0:00:00
+
+Downloading multipledispatch-1.0.0-py3-none-any.whl (12 kB)
+Downloading opt_einsum-3.4.0-py3-none-any.whl (71 kB)
+Downloading tqdm-4.68.4-py3-none-any.whl (676 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 676.6/676.6 kB 45.6 MB/s  0:00:00
+
+Building wheels for collected packages: numpyro
+  Building editable for numpyro (pyproject.toml): started
+  Building editable for numpyro (pyproject.toml): finished with status 'done'
+  Created wheel for numpyro: filename=numpyro-0.18.0-0.editable-py3-none-any.whl size=18721 sha256=788ef11a3d7c2c0584ad45ed810e18dc2a891b205861a7a4a558176367011a11
+  Stored in directory: /tmp/pip-ephem-wheel-cache-ips7h5if/wheels/b0/ce/25/aeac728796ad12074edf23fd5c9b6910a545222fa3849ff270
+Successfully built numpyro
+Installing collected packages: multipledispatch, typing_extensions, tqdm, opt-einsum, numpy, scipy, ml-dtypes, jaxlib, jax, numpyro
+
+
+Successfully installed jax-0.4.25 jaxlib-0.4.25 ml-dtypes-0.5.4 multipledispatch-1.0.0 numpy-1.26.4 numpyro-0.18.0 opt-einsum-3.4.0 scipy-1.17.1 tqdm-4.68.4 typing_extensions-4.16.0
+EXPECTED_EXCEPTION
+TypeError
+Shapes must be 1D sequences of concrete values of integer type, got [4. 5.].

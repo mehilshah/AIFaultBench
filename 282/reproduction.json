@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "On jax 0.10.2 with XLA_PYTHON_CLIENT_ALLOCATOR=platform, the repro process used about 580 MiB at baseline, stayed at 1610 MiB after deleting a 1 GiB array and running gc.collect(), and climbed to 6652 MiB after the vmap scratch loop. That is consistent with the reported allocator retention/regression.",
+  "steps": [
+    "Created a virtual environment and installed the pinned GPU release from requirements.txt: jax[cuda12]==0.10.2.",
+    "Ran bash run_repro.sh, which sets XLA_PYTHON_CLIENT_ALLOCATOR=platform and executes repro.py.",
+    "Observed the process GPU usage remain elevated after del + gc and end at 6652 MiB instead of returning near the 580 MiB baseline."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

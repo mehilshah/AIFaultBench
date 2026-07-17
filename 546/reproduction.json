@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "gpu_ids=0 -> selected=simple_launcher multi_gpu=False num_machines=2 gpu_ids=0",
+    "gpu_ids=all -> selected=multi_gpu_launcher multi_gpu=True num_machines=2 gpu_ids=all"
+  ],
+  "steps": [
+    "Create a multi-GPU config with num_machines=2 and gpu_ids=0.",
+    "Run accelerate launch control flow with launcher functions monkeypatched to record the chosen branch.",
+    "Repeat with gpu_ids=all as a control."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

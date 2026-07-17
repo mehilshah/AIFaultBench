@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running bash run_repro.sh prints torch=2.5.1+cpu and prefetch_queue_length=0, then fails with AssertionError: Bug present: Expected prefetch queue to have 1 item, but got 0.",
+  "steps": [
+    "Created a local venv with torch 2.5.1+cpu, tensordict 0.13.0, and pyvers.",
+    "Imported the local codebase via PYTHONPATH and constructed ReplayBuffer(storage=ListStorage(max_size=100), batch_size=2, prefetch=1).",
+    "Extended the buffer with torch.arange(100), called sample(), and inspected len(rb._prefetch_queue).",
+    "Observed len(rb._prefetch_queue) == 0 instead of the expected 1, which triggers the assertion."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,37 @@
+`loss_type=None` was set in the config but it is unrecognized. Using the default loss: `ForCausalLMLoss`.
+/users/grad/mehil/.local/lib/python3.12/site-packages/safetensors/torch.py:22: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return tensor.storage().data_ptr()
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/users/grad/mehil/.local/lib/python3.12/site-packages/safetensors/torch.py", line 18, in storage_ptr
+[rank0]:     return tensor.untyped_storage().data_ptr()
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: RuntimeError: Attempted to access the data pointer on an invalid python storage.
+
+[rank0]: During handling of the above exception, another exception occurred:
+
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "302/repro.py", line 64, in <module>
+[rank0]:     main()
+[rank0]:   File "302/repro.py", line 60, in main
+[rank0]:     save_file(state_dict, str(output_path))
+[rank0]:   File "/users/grad/mehil/.local/lib/python3.12/site-packages/safetensors/torch.py", line 324, in save_file
+[rank0]:     _flatten_as_ptr(tensors, keep_references_alive), filename, metadata=metadata
+[rank0]:     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/users/grad/mehil/.local/lib/python3.12/site-packages/safetensors/torch.py", line 569, in _flatten_as_ptr
+[rank0]:     _evaluate_tensors_for_save(tensors)
+[rank0]:   File "/users/grad/mehil/.local/lib/python3.12/site-packages/safetensors/torch.py", line 550, in _evaluate_tensors_for_save
+[rank0]:     shared_pointers = _find_shared_tensors(tensors)
+[rank0]:                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/users/grad/mehil/.local/lib/python3.12/site-packages/safetensors/torch.py", line 81, in _find_shared_tensors
+[rank0]:     and storage_ptr(v) != 0
+[rank0]:         ^^^^^^^^^^^^^^
+[rank0]:   File "/users/grad/mehil/.local/lib/python3.12/site-packages/safetensors/torch.py", line 22, in storage_ptr
+[rank0]:     return tensor.storage().data_ptr()
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/users/grad/mehil/.local/lib/python3.12/site-packages/torch/storage.py", line 1254, in data_ptr
+[rank0]:     return self._data_ptr()
+[rank0]:            ^^^^^^^^^^^^^^^^
+[rank0]:   File "/users/grad/mehil/.local/lib/python3.12/site-packages/torch/storage.py", line 1258, in _data_ptr
+[rank0]:     return self._untyped_storage.data_ptr()
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: RuntimeError: Attempted to access the data pointer on an invalid python storage.

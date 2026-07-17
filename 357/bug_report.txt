@@ -1,0 +1,27 @@
+# recovered-from-issue: https://github.com/pyro-ppl/pyro/issues/3276
+
+TITLE
+[bug] mypy global python version too old
+
+BODY
+### Problem description
+
+I forked pyro from the dev branch at 01ccf3647c1c1031b8a188488f1330b16fb5fd31 and installed all dependencies with `make install` as in `CONTRIBUTING.md`. I also needed to manually install ruff and mypy to be able run `make format` and `make lint`.
+
+During `make lint` I encountered the following error
+```bash
+mypy --install-types --non-interactive pyro scripts
+/Users/xxx/.pyenv/versions/3.11.5/lib/python3.11/site-packages/numpy/_typing/_nested_sequence.py:60: error: Positional-only parameters are only supported in Python 3.8 and greater  [syntax]
+Found 1 error in 1 file (errors prevented further checking)
+make: *** [lint] Error 2
+```
+I saw that in [`setup.cfg`](https://github.com/pyro-ppl/pyro/blob/c00bcc3fb701327b07e94de88754da49b7f29ebe/setup.cfg#L38) it says that `python_version = 3.7` which seems to be the problem. As soon as I change this to `python_version = 3.8` all works as expected.
+
+I assume that pyro is still meant to be usable with Python 3.7 and that is why this line is there? However, linting will then always fail when performed with newer versions of Python.
+
+### Setup
+
+macOS 13.6
+Python 3.11.5
+mypy 1.5.1
+numpy 1.26.0

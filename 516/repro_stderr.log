@@ -1,0 +1,9 @@
+516/codebase/torchrl/_extension.py:42: UserWarning: torchrl C++ extension is not available.
+  warnings.warn("torchrl C++ extension is not available.")
+Traceback (most recent call last):
+  File "516/repro.py", line 81, in <module>
+    main()
+  File "516/repro.py", line 75, in main
+    assert tuple(y.shape) == expected_shape, (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected output shape (4, 3, 4), got (4, 3, 3, 4)

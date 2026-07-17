@@ -1,0 +1,27 @@
+gymnasium=1.0.0
+checking nested Sequence spaces inside Dict, Tuple, and OneOf
+case inside='none' stack=False
+PASSED
+================================================================================
+case inside='none' stack=True
+PASSED
+================================================================================
+case inside='dict' stack=False
+================================================================================
+case inside='dict' stack=True
+================================================================================
+case inside='tuple' stack=False
+================================================================================
+case inside='tuple' stack=True
+================================================================================
+case inside='oneof' stack=False
+================================================================================
+case inside='oneof' stack=True
+================================================================================
+FAILURES:
+inside='dict' stack=False -> AssertionError: Error while checking key=seq: The observation returned by the `reset()` method should be a single value, not a tuple
+inside='dict' stack=True -> AssertionError: Error while checking key=seq: The observation returned by the `reset()` method does not match the shape of the given observation space Sequence(Box(-100.0, 100.0, (1,), float32), stack=True). Expected: None, actual shape: (3, 1)
+inside='tuple' stack=False -> TypeError: 'NoneType' object is not iterable
+inside='tuple' stack=True -> TypeError: 'NoneType' object is not iterable
+inside='oneof' stack=False -> AssertionError: The observation returned by the `reset()` method should be a single value, not a tuple
+inside='oneof' stack=True -> AssertionError: The observation returned by the `reset()` method should be a single value, not a tuple

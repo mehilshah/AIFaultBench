@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "With jax==0.8.2 installed, importing numpyro from the local codebase fails under DeprecationWarning-as-error at codebase/numpyro/ops/provenance.py line 1: from jax.interpreters.pxla import xla_pmap_p. JAX raises DeprecationWarning: jax.interpreters.pxla.xla_pmap_p is deprecated as of JAX v0.8.2.",
+  "steps": [
+    "Create a fresh virtual environment in this folder.",
+    "Install jax==0.8.2 and jaxlib==0.8.2 into the virtual environment.",
+    "Run repro.py with PYTHONWARNINGS=error::DeprecationWarning and the local codebase on PYTHONPATH.",
+    "Observe the traceback from jax.interpreters.pxla.xla_pmap_p during import of numpyro."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

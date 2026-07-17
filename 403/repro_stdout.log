@@ -1,0 +1,3 @@
+GPU 0: NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition (UUID: GPU-fcb34eb2-5294-dc54-1fcd-56ba726a2152)
+python= 3.12.3
+ImportError: /users/grad/mehil/.local/lib/python3.12/site-packages/torch/lib/libtorch_cuda.so: undefined symbol: ncclCommResume

@@ -1,0 +1,5 @@
+step=0 loss=0.809201
+cached_freqs_exists=True
+cached_freqs_grad_fn=None
+step=1 loss=1.093213
+result=not_reproduced

@@ -1,0 +1,3 @@
+Repro start
+Using adapters source from: 107/codebase/src
+Import failed: RuntimeError("Failed to import adapters.configuration because of the following error (look up to see its traceback):\ncannot import name 'url_to_filename' from 'huggingface_hub.file_download' (107/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py)")

@@ -1,0 +1,37 @@
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.1.2)
+Obtaining file://243/codebase (from -r 243/requirements.txt (line 1))
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: jax==0.6.0 in ./.venv/lib/python3.12/site-packages (from jax[cpu]==0.6.0->-r 243/requirements.txt (line 2)) (0.6.0)
+Requirement already satisfied: jaxlib==0.6.0 in ./.venv/lib/python3.12/site-packages (from -r 243/requirements.txt (line 3)) (0.6.0)
+Requirement already satisfied: multipledispatch in ./.venv/lib/python3.12/site-packages (from numpyro==0.18.0->-r 243/requirements.txt (line 1)) (1.0.0)
+Requirement already satisfied: numpy in ./.venv/lib/python3.12/site-packages (from numpyro==0.18.0->-r 243/requirements.txt (line 1)) (2.5.1)
+Requirement already satisfied: tqdm in ./.venv/lib/python3.12/site-packages (from numpyro==0.18.0->-r 243/requirements.txt (line 1)) (4.68.4)
+Requirement already satisfied: ml_dtypes>=0.5.0 in ./.venv/lib/python3.12/site-packages (from jax==0.6.0->jax[cpu]==0.6.0->-r 243/requirements.txt (line 2)) (0.5.4)
+Requirement already satisfied: opt_einsum in ./.venv/lib/python3.12/site-packages (from jax==0.6.0->jax[cpu]==0.6.0->-r 243/requirements.txt (line 2)) (3.4.0)
+Requirement already satisfied: scipy>=1.11.1 in ./.venv/lib/python3.12/site-packages (from jax==0.6.0->jax[cpu]==0.6.0->-r 243/requirements.txt (line 2)) (1.18.0)
+Building wheels for collected packages: numpyro
+  Building editable for numpyro (pyproject.toml): started
+  Building editable for numpyro (pyproject.toml): finished with status 'done'
+  Created wheel for numpyro: filename=numpyro-0.18.0-0.editable-py3-none-any.whl size=18715 sha256=dbe344def4dd75ab0c48cda0f961499cc152fb8298eeda1e05f61bf8f4abb1db
+  Stored in directory: /tmp/pip-ephem-wheel-cache-apaqtm_k/wheels/22/35/5b/e6e93f133df7d49273c0a50a04281532bdcf62c18c7add3dd5
+Successfully built numpyro
+Installing collected packages: numpyro
+  Attempting uninstall: numpyro
+    Found existing installation: numpyro 0.18.0
+    Uninstalling numpyro-0.18.0:
+      Successfully uninstalled numpyro-0.18.0
+Successfully installed numpyro-0.18.0
+jax=0.6.0 numpyro=0.18.0
+device_count=4
+NUTS: lag1_autocorr=0.449453
+AIES: lag1_autocorr=0.940259
+ESS: lag1_autocorr=0.022275
+comparison: ESS<0.940259 AIES, ESS<0.449453 NUTS
+summary: NUTS=0.449453 AIES=0.940259 ESS=0.022275

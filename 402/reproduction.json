@@ -1,0 +1,10 @@
+{
+  "reproducible": false,
+  "evidence": "Running the reproduced setup against commit b895858c1e306b64f5debf7adc78bdb2b9c78131 fails immediately at Metadata.set_primary_key(['user_id', 'user_id'], table_name='accounts') with sdv.metadata.errors.InvalidMetadataError: 'primary_key' must be a string. The reported AttributeError: 'DataFrame' object has no attribute 'dtype' does not occur in this checkout.",
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh"
+  ],
+  "blocking_reason": "This source snapshot already validates primary_key as a string before the duplicate-column path can reach the buggy fit-time code, so the issue described in the report is not reachable here.",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

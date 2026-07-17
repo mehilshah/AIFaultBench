@@ -1,0 +1,26 @@
+632/codebase/torch_geometric/sampler/neighbor_sampler.py:55: UserWarning: The usage of the 'directed' argument in 'NeighborSampler' is deprecated. Use `subgraph_type='induced'` instead.
+  warnings.warn(f"The usage of the 'directed' argument in "
+Traceback (most recent call last):
+  File "632/repro.py", line 32, in main
+    next(iter(loader))
+  File "632/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 701, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "632/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 757, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "632/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "632/codebase/torch_geometric/loader/node_loader.py", line 147, in collate_fn
+    out = self.node_sampler.sample_from_nodes(input_data)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "632/codebase/torch_geometric/sampler/neighbor_sampler.py", line 322, in sample_from_nodes
+    out = node_sample(inputs, self._sample)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "632/codebase/torch_geometric/sampler/neighbor_sampler.py", line 542, in node_sample
+    out = sample_fn(seed, seed_time)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "632/codebase/torch_geometric/sampler/neighbor_sampler.py", line 508, in _sample
+    raise ImportError(f"'{self.__class__.__name__}' requires "
+ImportError: 'NeighborSampler' requires either 'pyg-lib' or 'torch-sparse'

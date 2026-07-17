@@ -1,0 +1,4 @@
+[2026-07-17 12:09:00,302] [WARNING] [real_accelerator.py:209:get_accelerator] Setting accelerator to CPU. If you have GPU or other accelerator, we were unable to detect it.
+[2026-07-17 12:09:00,329] [WARNING] [real_accelerator.py:209:get_accelerator] Setting accelerator to CPU. If you have GPU or other accelerator, we were unable to detect it.
+Triggering backward hook with grad=None
+pre-backward hook ran

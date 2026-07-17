@@ -1,0 +1,14 @@
+{"model_name": "sshleifer/tiny-gpt2", "sentence_transformers_path": "146/codebase"}
+text='test'
+tokenizer.input_ids=[9288]
+tokenizer.decoded='test'
+encode.shape=(2,)
+encode.head=[0.7071067690849304, -0.7071067690849304]
+
+text=' test'
+tokenizer.input_ids=[1332]
+tokenizer.decoded=' test'
+encode.shape=(2,)
+encode.head=[0.7071067690849304, -0.7071067690849304]
+
+{"model.tokenizer_equal": false, "encode_equal": true, "max_abs_diff": 0.0}

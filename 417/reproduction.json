@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": {
+    "expected": "InvalidMetadataError: The primary_keys [['col1', 'col2']] must have a column of type 'id' or another PII type.",
+    "observed": "InvalidMetadataError: 'primary_key' must be a string."
+  },
+  "steps": [
+    "Loaded SDV metadata from a dict with one table and two numerical columns.",
+    "Called Metadata.set_primary_key(['col1', 'col2']).",
+    "Observed InvalidMetadataError: 'primary_key' must be a string."
+  ],
+  "blocking_reason": "The checkout raises 'primary_key' must be a string instead of the nested-list message described in the report.",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

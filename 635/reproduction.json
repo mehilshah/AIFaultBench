@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` showed that the copied scheduler's wrapper captured the original scheduler id, `audio_scheduler.step('audio')` incremented `original_step_index` to 1 while `copied_step_index` stayed 0, and the wrapper reported `self_id` equal to the original scheduler.",
+  "steps": [
+    "Imported the real `annotate_pipeline()` helper from `codebase/examples/profiling/profiling_utils.py`.",
+    "Annotated a dummy scheduler method exactly as the profiling code does.",
+    "Deep-copied the scheduler to simulate the LTX2 audio scheduler duplication path.",
+    "Called `audio_scheduler.step('audio')` and observed that it mutated the original scheduler instance instead of the copy."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

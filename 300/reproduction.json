@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Online `DiffusionPipeline.download('google/ddpm-cifar10-32')` succeeded, but the second call in a fresh process with `HF_HUB_OFFLINE=1` failed with `OSError: Cannot load model google/ddpm-cifar10-32: model is not cached locally...` after `OfflineModeIsEnabled` was raised while fetching metadata from the Hub.",
+  "steps": [
+    "Create the isolated environment with `bash setup_env.sh`.",
+    "Warm the cache with a normal `bash run_repro.sh` first-phase download.",
+    "Run the offline second-phase download with `HF_HUB_OFFLINE=1` and observe the `OSError` failure."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

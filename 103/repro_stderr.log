@@ -1,0 +1,4 @@
+103/codebase/vector_quantize_pytorch/lookup_free_quantization.py:397: UserWarning: Using a target size (torch.Size([2, 1851, 1, 14])) that is different to the input size (torch.Size([3700, 14])). This will likely lead to incorrect results due to broadcasting. Please ensure they have the same size.
+  commit_loss = F.mse_loss(original_input, quantized.detach(), reduction = 'none')
+/usr/lib/python3.12/tempfile.py:1075: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/tmp/tmpbwmi0egn'>
+  _warnings.warn(warn_message, ResourceWarning)

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the bundle prints 'Starting Ax homepage sample repro' and then fails with NameError: name 'ParameterType' is not defined at `parameter_type=ParameterType.FLOAT`.",
+  "steps": [
+    "Run `bash setup_env.sh` to create the isolated Python environment and install dependencies.",
+    "Run `bash run_repro.sh` from the bug folder.",
+    "Observe the traceback in `repro_stderr.log` ending at `ParameterType.FLOAT`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

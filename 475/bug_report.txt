@@ -1,0 +1,61 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2768
+
+TITLE
+Combining column relationship with constraints not working
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version: 1.31.0
+* Python version: 3.10.19
+* Operating System: macos 14.6.1
+
+### Error Description
+
+If my metadata has column relationship, and I am trying to add the `FixedCombinations` constraint to my synthesizer, I get the following error:
+```
+AttributeError: 'SingleTableMetadata' object has no attribute '_valid_column_relationships'
+```
+
+I expect that I should be able to combine the column relationship with the constraint especially that no columns overlap between them.
+
+### Steps to reproduce
+
+```python3
+from sdv.metadata import Metadata
+from sdv.multi_table import HMASynthesizer
+from sdv.cag import FixedCombinations
+
+metadata_example = Metadata.load_from_dict({
+    'tables': {
+        'table': {
+            'columns': {
+                'id': {'sdtype': 'id'},
+                'street': {'sdtype': 'street_address'},
+                'city': {'sdtype': 'city'},
+                'state': {'sdtype': 'administrative_unit'},
+                'zip': {'sdtype': 'postcode'},
+                'code': {'sdtype': 'categorical'},
+                'description': {'sdtype': 'categorical'}
+            }
+        },
+        'table_two': {
+            'columns': {
+                'id': {'sdtype': 'id'},
+            }
+        }
+    }
+})
+
+metadata_example.add_column_relationship(
+    table_name='table', relationship_type='address',
+    column_names=['street', 'city', 'state', 'zip']
+)
+
+synthesizer = HMASynthesizer(metadata_example, locales=['en_US'])
+constraints = FixedCombinations(table_name='table', column_names=['code', 'description'])
+synthesizer.add_constraints(constraints=[constraints])
+```
+

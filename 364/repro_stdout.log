@@ -1,0 +1,5 @@
+torch=2.13.0+cpu
+accelerate=0.35.0.dev0
+modules={'linear1': Linear(in_features=2, out_features=2, bias=True), 'linear2': Linear(in_features=2, out_features=2, bias=True), 'broken': None}
+checkpoint=/tmp/tmpb0rwt91t/model.bin
+calling load_checkpoint_and_dispatch()

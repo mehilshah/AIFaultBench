@@ -1,0 +1,34 @@
+2026-07-17 01:34:11.540609: I tensorflow/core/util/port.cc:113] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-07-17 01:34:11.569040: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:9261] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2026-07-17 01:34:11.569071: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:607] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2026-07-17 01:34:11.569722: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1515] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2026-07-17 01:34:11.573916: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-07-17 01:34:12.052588: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2026-07-17 01:34:12.730824: W tensorflow/core/common_runtime/gpu/gpu_device.cc:2256] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
+Skipping registering GPU devices...
+WARNING:tensorflow:Mixed precision compatibility check (mixed_float16): WARNING
+The dtype policy mixed_float16 may run slowly because this machine does not have a GPU. Only Nvidia GPUs with compute capability of at least 7.0 run quickly with mixed_float16.
+If you will use compatible GPU(s) not attached to this host, e.g. by running a multi-worker model, you can ignore this warning. This message will only be logged once
+053/.venv/lib/python3.11/site-packages/keras_nlp/src/models/task.py:47: UserWarning: `Model.state_updates` will be removed in a future version. This property should not be used in TensorFlow 2.0, as `updates` are applied automatically.
+  return id(getattr(self, attr)) not in self._functional_layer_ids
+053/.venv/lib/python3.11/site-packages/keras_nlp/src/models/task.py:47: UserWarning: `layer.updates` will be removed in a future version. This property should not be used in TensorFlow 2.0, as `updates` are applied automatically.
+  return id(getattr(self, attr)) not in self._functional_layer_ids
+from_preset failed
+Traceback (most recent call last):
+  File "053/repro.py", line 18, in main
+    keras_nlp.models.BertClassifier.from_preset("bert_tiny_en_uncased_sst2")
+  File "053/.venv/lib/python3.11/site-packages/keras_nlp/src/models/task.py", line 236, in from_preset
+    return super(cls, calling_cls).from_preset(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "053/.venv/lib/python3.11/site-packages/keras_nlp/src/models/task.py", line 221, in from_preset
+    return load_from_preset(
+           ^^^^^^^^^^^^^^^^^
+  File "053/.venv/lib/python3.11/site-packages/keras_nlp/src/utils/preset_utils.py", line 184, in load_from_preset
+    layer.load_weights(weights_path)
+  File "053/.venv/lib/python3.11/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "053/.venv/lib/python3.11/site-packages/keras/src/optimizers/optimizer.py", line 820, in load_own_variables
+    f"Skipping variable loading for optimizer '{self.name}', "
+                                                ^^^^^^^^^
+AttributeError: 'LossScaleOptimizerV3' object has no attribute 'name'

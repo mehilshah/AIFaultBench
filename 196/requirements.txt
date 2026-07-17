@@ -1,0 +1,6 @@
+jax[cpu]
+beartype
+chex
+equinox
+typeguard<3
+numpy<2

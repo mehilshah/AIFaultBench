@@ -1,0 +1,2 @@
+allocating M 50000 x 50000
+calling ot.emd([], [], M)

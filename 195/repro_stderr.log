@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "195/codebase/jaxtyping/_array_types.py", line 142, in _check_dims
+    eval_size = eval(elem, single_memo.copy())
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 1, in <module>
+NameError: name 'dim' is not defined. Did you mean: 'dir'?
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "195/repro.py", line 23, in main
+    result = append_one(np.array([1, 2]))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<@beartype(__main__.append_one) at 0x7bbf881823e0>", line 39, in append_one
+  File "195/codebase/jaxtyping/_array_types.py", line 180, in __instancecheck__
+    return cls.__instancecheck_str__(obj) == ""
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "195/codebase/jaxtyping/_array_types.py", line 234, in __instancecheck_str__
+    check = cls._check_shape(obj, single_memo, variadic_memo, arg_memo)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "195/codebase/jaxtyping/_array_types.py", line 258, in _check_shape
+    return _check_dims(cls.dims, obj.shape, single_memo, arg_memo)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "195/codebase/jaxtyping/_array_types.py", line 144, in _check_dims
+    raise AnnotationError(
+jaxtyping.AnnotationError: Cannot process symbolic axis 'dim+1' as some axis names have not been processed. In practice you should usually only use symbolic axes in annotations for return types, referring only to axes annotated for arguments.

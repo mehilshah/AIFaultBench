@@ -1,0 +1,1 @@
+from .inference.moe_inference import DeepSpeedMoEInferenceConfig, DeepSpeedMoEInference

@@ -1,0 +1,13 @@
+huggingface_hub==1.5.0
+tokenizers==0.22.2
+httpx>=0.27
+tqdm>=4.66
+typing_extensions>=4.12
+filelock>=3.16
+packaging>=24.0
+requests>=2.32
+Pillow>=10.0.1
+PyYAML>=6.0
+numpy>=1.26
+safetensors>=0.8.0
+regex>=2025.10.22

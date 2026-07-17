@@ -1,0 +1,242 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2481
+
+TITLE
+[BUG] Trouble encountered when using timm.create_model()
+
+BODY
+**Describe the bug**
+When I used `model = timm.create_model()` to create a ResNet-34 model and trained it from scratch on CIFAR-100, the top-1 accuracy was significantly lower than that reported in the original paper, reaching only 59.78%. But when I used the original model from the paper and applied the same training strategy, It was able to achieve a top-1 accuracy of 77%.
+```bash
+# using timm ResNet-34 model train on 2x4090D
+[Training] Epoch 200/200: 100%|████████████| 196/196 [00:08<00:00, 22.81batch/s]
+[Testing]: 100%|████████████████████████████| 40/40 [00:00<00:00, 104.59batch/s]
+Accuracy=59.68% Loss_train=0.023 Loss_test=1.796 lr=0.0016 best_acc=59.78
+```
+
+```bash
+# using original ResNet-34 model train on 2x4090D
+[Training] Epoch 200/200: 100%|████████████| 196/196 [00:11<00:00, 17.21batch/s]
+[Testing]: 100%|█████████████████████████████| 40/40 [00:00<00:00, 82.13batch/s]
+Accuracy=75.88% Loss_train=0.009 Loss_test=0.991 lr=0.0016 best_acc=75.91
+```
+
+**Desktop (please complete the following information):**
+ - OS: Ubuntu 22.04
+ - This repository version: pip 1.0.15
+ - PyTorch version w/ CUDA/cuDNN:  from `conda list`, 2.7.0  py3.12 cuda12.6 cudnn 9.5.1.17
+
+**Additional context**
+my code :  `main.py`
+```python
+import os
+
+os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
+import argparse
+import torch
+import torch.nn as nn
+import torch.multiprocessing as mp
+from torch.multiprocessing import Process
+import torchvision
+import torchvision.transforms as transforms
+import timm
+from timm.utils import accuracy, AverageMeter
+from tqdm import tqdm
+from torch.amp import GradScaler, autocast
+import torch.distributed as dist
+import torchsummary
+mean = [0.5070751592371323, 0.48654887331495095, 0.4409178433670343]
+std = [0.2673342858792401, 0.2564384629170883, 0.27615047132568404]
+
+torch.set_float32_matmul_precision('high')
+
+torch.backends.cudnn.benchmark = True
+
+
+def get_data_loader (root, batch_size, num_workers, distributed, args , rank):
+    train_transform = torchvision.transforms.Compose([
+        transforms.RandomCrop (32, padding = 4),
+        transforms.RandomHorizontalFlip (),
+        transforms.RandomRotation (15),
+        transforms.ToTensor (),
+        transforms.Normalize (mean, std)
+    ])
+    test_transform = torchvision.transforms.Compose([
+        transforms.ToTensor (),
+        transforms.Normalize (mean, std)
+    ])
+    train_set = torchvision.datasets.CIFAR100 (root = root, train = True, download = True,
+                                               transform = train_transform)
+    test_set = torchvision.datasets.CIFAR100 (root = root, train = False, download = True,
+                                               transform = test_transform)
+
+    if  distributed:
+        train_sampler = torch.utils.data.distributed.DistributedSampler (train_set,
+                                                                        num_replicas=args.world_size,
+    	                                                                rank=rank)
+        test_sampler = torch.utils.data.distributed.DistributedSampler (test_set,
+                                                                        num_replicas = args.world_size,
+                                                                        shuffle = False,
+                                                                        rank = rank)
+        train_loader = torch.utils.data.DataLoader (dataset = train_set,
+                                  pin_memory = True,
+                                  shuffle = False,
+                                  batch_size = batch_size,
+                                  num_workers = num_workers,
+                                  sampler = train_sampler)
+        test_loader = torch.utils.data.DataLoader (dataset = test_set,
+                                  pin_memory = True,
+                                  shuffle = False,
+                                  batch_size = batch_size,
+                                  num_workers = num_workers,
+                                  sampler = test_sampler)
+
+    else:
+        train_loader = torch.utils.data.DataLoader (train_set, batch_size = batch_size, shuffle = True,
+                                                    num_workers = num_workers, pin_memory = True,
+                                                    pin_memory_device = 'cpu')
+        test_loader = torch.utils.data.DataLoader (test_set, batch_size = batch_size, shuffle = False,
+                                                    num_workers = num_workers, pin_memory = True,
+                                                    pin_memory_device = 'cpu')
+    return train_loader, test_loader
+
+def get_model(model_name, model_dir, num_classes, device, distributed, rank):
+    model = timm.create_model (model_name, pretrained = False,
+                               cache_dir = model_dir, num_classes = num_classes)
+
+    # from models import resnet
+    # model = resnet.resnet34()
+
+    model = model.to(device, memory_format = torch.channels_last)
+
+    if distributed:
+        model = torch.nn.SyncBatchNorm.convert_sync_batchnorm (model)
+        model = torch.nn.parallel.DistributedDataParallel (model, device_ids = [rank])
+    model = torch.compile (model, mode = 'default', disable = True)
+    for param in model.parameters ():
+        param.requires_grad = True
+    return model
+
+def train(epochs, train_loader, model, criterion, scaler, optimizer, device, data_loader_test, rank, lr_scheduler):
+    best_acc = 0.0
+    for epoch in range (1, epochs + 1):
+        loss_meter = AverageMeter()
+        model.train ()
+        train_loader.sampler.set_epoch (epoch)
+        for inputs, targets in tqdm (train_loader, desc = f'[Training] Epoch {epoch}/{epochs}',
+                                     unit = 'batch',disable = (rank != 0),):
+            inputs, targets = (inputs.to (device, non_blocking = True, memory_format = torch.channels_last),
+                               targets.to (device, non_blocking = True))
+            # with torch.autocast (device_type = "cuda", dtype = torch.float16):
+            #     outputs = model (inputs)
+            #     loss_value = criterion (outputs, targets)
+            outputs = model (inputs)
+            loss_value = criterion (outputs, targets)
+            loss = reduce_tensor (loss_value)
+
+            loss_meter.update (loss.item (), targets.size (0))
+            # scaler.scale (loss_value).backward ()
+            # scaler.step (optimizer)
+            # scaler.update ()
+            # optimizer.zero_grad ()
+            loss_value.backward ()
+            optimizer.step ()
+            optimizer.zero_grad ()
+        lr_scheduler.step()
+        acc1, loss = validate(data_loader_test, model, device, criterion)
+        if rank  == 0:
+            if acc1 > best_acc:
+                best_acc = acc1
+                # torch.save(model.state_dict(), 'best.pth')
+            print(f"Accuracy={acc1:.2f}% "
+                  f"Loss_train={loss_meter.avg:.3f} "
+                  f"Loss_test={loss:.3f} "
+                  f"lr={lr_scheduler.get_last_lr().pop():.4f} "
+                  f"best_acc={best_acc:.2f}")
+
+def reduce_tensor(tensor):
+    rt = tensor.clone()
+    dist.all_reduce(rt, op=dist.ReduceOp.SUM)
+    rt /= dist.get_world_size()
+    return rt
+
+@torch.inference_mode()
+def validate(data_loader, model, device, criterion):
+    model.eval()
+
+    loss_meter = AverageMeter()
+    acc1_meter = AverageMeter()
+
+    for images, targets in tqdm (data_loader, desc = f'[Testing]', unit = 'batch',disable = (rank != 0)):
+        images, targets = (images.to(device, non_blocking = True, memory_format = torch.channels_last),
+                           targets.to(device, non_blocking = True))
+
+        # compute output
+        # with torch.autocast (device_type = "cuda", dtype = torch.float16):
+        output = model(images)
+
+        # measure accuracy and record loss
+        loss = criterion(output, targets)
+        acc1, _ = accuracy(output, targets, topk=(1,5))
+        acc1 = reduce_tensor(acc1)
+        loss = reduce_tensor(loss)
+
+        loss_meter.update(loss.item(), targets.size(0))
+        acc1_meter.update(acc1.item(), targets.size(0))
+
+    return acc1_meter.avg, loss_meter.avg
+
+def main(gpu, args):
+    rank = args.nr * args.gpus + gpu
+    torch.distributed.init_process_group (backend = 'nccl',init_method='env://',
+                                          world_size = args.world_size, rank = rank )
+    device = torch.device(f'cuda:{rank}')
+
+    train_loader, data_loader_test = get_data_loader (args.data_dir, args.batch_size, 4,
+                                                      distributed = True, args = args, rank = rank)
+    model = get_model (args.model_name, args.model_dir,100, device =  device,
+                        distributed = True, rank = rank)
+    criterion = nn.CrossEntropyLoss().to(device)
+    optimizer = torch.optim.SGD (model.parameters (), lr = args.lr, momentum = 0.9, weight_decay = 5e-4)
+    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR (optimizer, [60, 120, 160], gamma = 0.2)
+    scaler = GradScaler ()
+    train (epochs =  args.epoch, train_loader = train_loader, model =  model, criterion =  criterion, scaler = scaler,
+           optimizer = optimizer, device = device, data_loader_test =  data_loader_test,
+           rank = rank, lr_scheduler = lr_scheduler)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser ()
+    parser.add_argument ('-n', '--nodes', default = 1,
+                         type = int, metavar = 'N')
+    parser.add_argument ('-g', '--gpus', default = 2, type = int,
+                         help = 'number of gpus per node')
+    parser.add_argument('-nr', '--nr', default=0, type=int,
+                        help='ranking within the nodes')
+    parser.add_argument ('--local_rank', default = -1, type = int,
+                         help = 'node rank for distributed training')
+    parser.add_argument('--data_dir', default = "/data1/qiren/workspace/torchdata", type = str)
+    parser.add_argument('--model_dir', default = "/data2/model_dir/", type = str)
+    parser.add_argument('--model_name', default = "", type = str)
+    parser.add_argument('--epoch', default = 200, type = int)
+    parser.add_argument('--lr', default = 0.2, type = float)
+    parser.add_argument('--batch_size', default = 128, type = int)
+    args = parser.parse_args()
+
+    args.world_size = args.gpus * args.nodes  #
+    os.environ['MASTER_ADDR'] = 'localhost'  #
+    os.environ['MASTER_PORT'] = '18889'  #
+    os.environ['CUDA_VISIBLE_DEVICES'] = '1,2'  #
+    processes = []
+    for rank in range(args.world_size):
+        p = Process(target=main, args=(rank, args))
+        p.start()
+        processes.append(p)
+    for p in processes:
+        p.join()
+    # mp.spawn (main, nprocs = args.gpus, args = (args,))
+```
+
+**To Reproduce**
+```bash
+python main.py --model_name resnet34 --gpus 2 --epoch 200 --batch_size 128 --lr 0.2
+```

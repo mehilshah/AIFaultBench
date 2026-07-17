@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "build_repro.<locals>.ToyModel.forward() got multiple values for argument 'data'",
+  "steps": [
+    "Create a Data object with x and edge_index.",
+    "Define a model whose forward signature is forward(self, data).",
+    "Wrap the model in Explainer and pass data=data alongside x and edge_index.",
+    "Call explainer(data.x, data.edge_index, data=data)."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

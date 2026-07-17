@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running repro.py produced aligned=[[0, 11, 12], [0, 0, 21]] while pad_id was 9, then raised AssertionError: align_right ignored pad_id.",
+  "steps": [
+    "Created a local virtualenv with setup_env.sh and installed torch, einops, einx, and packaging.",
+    "Ran repro.py through run_repro.sh.",
+    "Observed that align_right used 0 for left padding instead of the requested pad_id=9."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

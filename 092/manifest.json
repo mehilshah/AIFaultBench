@@ -1,0 +1,13 @@
+{
+  "bug_id": "092",
+  "bug_dir": "092",
+  "issue_url": "https://github.com/lucidrains/x-transformers/issues/263",
+  "commit_hash": "02b0190aa21ceb7688baa4bd40e6a4a3b9880446",
+  "library_name": "x-transformers",
+  "library_version": "1.31.14",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": true,
+  "standardized_dir": "../092",
+  "reproducible_here": false
+}

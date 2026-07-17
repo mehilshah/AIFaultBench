@@ -1,0 +1,108 @@
+Title: TypeError: object of type 'int' has no len()
+Date: 2025-01-26T12:43:05+00:00
+URL: https://github.com/triton-inference-server/server/issues/7967
+
+Description:
+**Description**
+file ```triton/runtime/jit.py``` got the error in here: 
+```
+ if not warmup:
+            # canonicalize grid
+            assert grid is not None
+            if callable(grid):
+                # Arguments are passed as a dict to `grid`, by contract.
+                # TODO(jlebar): In the new launch API, pass the compiler flags as a
+                # second parameter to `grid`.
+                grid = grid(bound_args)
+           grid_size = len(grid)  -------->  error are here found int has no len() 
+            grid_0 = grid[0]
+            grid_1 = grid[1] if grid_size > 1 else 1
+            grid_2 = grid[2] if grid_size > 2 else 1
+```
+
+**Triton Information**
+I am using ```3.1.0```  version
+
+Are you using the Triton container or did you build it yourself?
+
+**To Reproduce**
+```
+import torch
+import triton
+import triton.language as tl
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+size = 98432
+x = torch.rand(size).to(device)
+y = torch.rand(size).to(device)
+output = torch.empty_like(x)
+
+grid = lambda meta: triton.cdiv(n_element,
+                                    meta['block_size'])
+
+@triton.jit
+def add_kernel(x_ptr,
+               y_ptr,
+               output_ptr,
+               n_element,
+               BLOCK_SIZE: tl.constexpr
+               ):
+
+  pid = tl.program_id(axis=0)  
+
+  block_start = pid * BLOCK_SIZE 
+  offsets = block_start + tl.arange(0, BLOCK_SIZE)   
+
+  # create a mask to guard memory operations against out-of-bounds accesses.
+  mask = offsets < n_element  
+
+  # Load x and y from DRAM, masking out any extra elements in case the input is not a
+  # multiple of the block size.
+  x = tl.load(x_ptr + offsets, mask=mask)   
+  y = tl.load(y_ptr + offsets, mask=mask)
+
+  output = x + y
+
+  # write x + y back to DRAM.
+  tl.store(pointer=output_ptr + offsets,  
+           value=output,                
+           mask=mask)
+
+
+
+def add(x: torch.Tensor,
+        y: torch.Tensor):
+
+    output = torch.empty_like(x)
+
+
+    assert x.is_cuda and y.is_cuda and output.is_cuda, "cuda are not found."
+    n_element = output.numel()
+
+    # This is take a meta['block_size'] and convert to the n_element / meta['block_size']
+    grid = lambda meta: triton.cdiv(n_element,
+                                    meta['BLOCK_SIZE'])
+    # print(grid)
+
+    add_kernel[grid](x, y, output, n_element, BLOCK_SIZE=1024)
+
+
+    return output
+
+fun = add(x, y)
+fun
+
+```
+
+**Expected behavior**
+```
+i got this error:
+ [/usr/local/lib/python3.11/dist-packages/triton/runtime/jit.py](https://localhost:8080/#) in run(self, grid, warmup, *args, **kwargs)
+    682                 # second parameter to `grid`.
+    683                 grid = grid(bound_args)
+--> 684             grid_size = len(grid)
+    685             grid_0 = grid[0]
+    686             grid_1 = grid[1] if grid_size > 1 else 1
+
+TypeError: object of type 'int' has no len()
+```

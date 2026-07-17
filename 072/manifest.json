@@ -1,0 +1,22 @@
+{
+  "bug_id": "072",
+  "bug_dir": "072",
+  "issue_url": "https://github.com/deepspeedai/DeepSpeedExamples/issues/924",
+  "commit_hash": "957ae3141946daf9a6bc5731e261032a13a82f05",
+  "library_name": "DeepSpeedExamples",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "codebase_present": true,
+  "standardized_dir": "../072",
+  "generated_artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "reproduction.json",
+    "repro_stdout.log",
+    "repro_stderr.log"
+  ]
+}

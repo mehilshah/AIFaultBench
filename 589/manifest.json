@@ -1,0 +1,13 @@
+{
+  "bug_id": "589",
+  "bug_dir": "589",
+  "issue_url": "https://github.com/pytorch/rl/issues/3246",
+  "commit_hash": "7e0968aa621c0b67313b3f5db09d931baf8a1b3b",
+  "library_name": "torchrl",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pytorch/rl@7e0968aa621c0b67313b3f5db09d931baf8a1b3b",
+  "codebase_present": true,
+  "standardized_dir": "../589",
+  "reproduction_command": "bash run_repro.sh"
+}

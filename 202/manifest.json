@@ -1,0 +1,14 @@
+{
+  "bug_title": "Divergence checking does not maintain time-reversibility",
+  "source_report": "bug_report.txt",
+  "reproduction_command": "bash run_repro.sh",
+  "expected_observation": "NUTS samples for the jump model have a posterior mean below the half-normal mean, indicating bias.",
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ]
+}

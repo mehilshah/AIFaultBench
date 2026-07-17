@@ -1,0 +1,142 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/1400
+
+TITLE
+Issue when using a dataloader on MULTI_GPU
+
+BODY
+### System Info
+
+```Shell
+- `Accelerate` version: 0.18.0
+- Platform: Linux-5.15.0-1023-aws-x86_64-with-glibc2.31
+- Python version: 3.10.11
+- Numpy version: 1.24.3
+- PyTorch version (GPU?): 1.13.1 (False)
+- `Accelerate` default config:
+        - compute_environment: LOCAL_MACHINE
+        - distributed_type: MULTI_GPU
+        - mixed_precision: no
+        - use_cpu: False
+        - num_processes: 4
+        - machine_rank: 0
+        - num_machines: 1
+        - gpu_ids: 0, 1, 2, 3
+        - rdzv_backend: static
+        - same_network: True
+        - main_training_function: main
+        - downcast_bf16: no
+        - tpu_use_cluster: False
+        - tpu_use_sudo: False
+        - tpu_env: []
+```
+
+
+### Information
+
+- [X] The official example scripts
+- [ ] My own modified scripts
+
+### Tasks
+
+- [ ] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [X] My own task or dataset (give details below)
+
+### Reproduction
+
+I am using accelerate to speed up the inference on a set of prompts. I sequentially receive batches of prompts, that I turn into a torch IterableDataset.  From that dataset I build a dataloader that I prepare as well as the model I am using. I am trying to run the inference by going through the prepared dataloader. As a matter of fact, I expect accelerate to dispatch my prompts through all my GPUs but I end up having an issue.
+
+The problem arises in with the following code 
+
+```python
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from accelerate import Accelerator
+
+import tqdm
+import torch
+from torch.utils.data import IterableDataset
+from torch.utils.data.dataloader import DataLoader
+import os
+
+
+class TokenizedDataset(IterableDataset):
+    """Tokenize and preprocess the dataset, where the dataset is a list of instructions (str)
+    """
+    def __init__(self, tokenizer, dataset):
+        self.tokenizer = tokenizer
+        self.dataset = dataset
+        self.outputs = self.tokenizer(self.dataset, padding=True, return_tensors="pt")
+    def __iter__(self):
+        for i in range(len(self.dataset)):
+            yield {
+                "input_ids" : self.outputs.input_ids[i],
+                "attention_mask" : self.outputs.attention_mask[i],
+                "prompt" : self.dataset[i]
+            }
+
+
+
+if __name__ =="__main__" :
+    os.environ["TOKENIZERS_PARALLELISM"]="false"
+    model_ckpt = "bigcode/santacoder"
+
+    model = AutoModelForCausalLM.from_pretrained(model_ckpt, trust_remote_code=True, torch_dtype=torch.bfloat16)
+    tokenizer = AutoTokenizer.from_pretrained(model_ckpt)
+    tokenizer.pad_token=tokenizer.eos_token
+    accelerator = Accelerator()
+    prompts = [
+        "I am happy", 
+    ]
+    batch_size=1
+    tokenized_dataset = TokenizedDataset(tokenizer=tokenizer, dataset=prompts) 
+    dataloader = DataLoader(tokenized_dataset, batch_size=batch_size)
+
+    model, dataloader = accelerator.prepare(model, dataloader)
+    
+    print("prepared dataloader")
+    for step, batch in tqdm.tqdm(enumerate(dataloader)):
+        with torch.no_grad():
+            input_ids = batch["input_ids"]
+            attention_mask = batch["attention_mask"]
+            prompt = batch["prompt"]
+            if input_ids.shape[0] == 0 :
+                print("batch size = 0")
+            print("step = "+str(step))
+            print("input ids "+str(input_ids.shape))
+            print("attention mask "+str(attention_mask))
+            try :
+                print("decoding : "+str(tokenizer.decode(input_ids[0])))
+            except IndexError :
+                print("An error occured")
+```
+Here my dataset has just one sentence (`I am happy`), but I have 4 GPUs. Knowing how accelerate works, I expect each GPU to have a duplicate of the sentence on it. However it is not the case. This is what I have in terms of error logs
+
+```
+prepared dataloader
+step = 0
+input ids torch.Size([1, 3])
+attention mask tensor([[1, 1, 1]], device='cuda:0')
+decoding : I am happy
+prepared datalo 
+decoding : I am happy
+prepared dataloader
+batch size = 0
+step = 0
+input ids torch.Size([0, 3])
+attention mask tensor([], device='cuda:2', size=(0, 3), dtype=torch.int64)
+An error occured
+tensor([], device='cuda:2', size=(0, 3), dtype=torch.int64)
+prepared dataloader
+batch size = 0
+step = 0
+input ids torch.Size([0, 3])
+attention mask tensor([], device='cuda:3', size=(0, 3), dtype=torch.int64)
+An error occured
+tensor([], device='cuda:3', size=(0, 3), dtype=torch.int64)
+```
+As you would probably notice, `cuda:0` and `cuda:1` have the sentence, as expected (`input_ids` is a non empty tensor and its decoding leads to the original prompt `I am happy`.  However, `cuda:2` and `cuda:3` have empty tensors (you can notice `An error occured` which comes from the ```try except ``` which catch the error that comes from trying to decode an empty `input_ids` tensor.
+
+I think the problem may come from how the last batch is handled when we dispatch the content of the dataloader in accelerate.
+
+### Expected behavior
+
+I expected the tensors `input_ids` and `attention_mask` (corresponding to the sentence 'I am happy') to be duplicated across all my devices. Not just `cuda:0` and `cuda:1`, but also `cuda:2` and `cuda:3`. 

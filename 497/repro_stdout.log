@@ -1,0 +1,10 @@
+torch=2.10.0+cpu
+loading pretrained gpt2
+input_shape=(1, 2)
+first generate() call
+first_output_shape=(1, 3)
+first_output=[[15496, 995, 11]]
+second generate() call
+second_output_shape=(1, 3)
+second_output=[[15496, 995, 11]]
+repro_status=not_reproduced

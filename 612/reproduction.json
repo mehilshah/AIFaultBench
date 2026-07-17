@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "repro_stdout.log shows the offending DeepSpeed source line: self.average_tensor(bucket.buffer[bucket.index].narrow(0, 0, bucket.elements), comm_dtype)",
+    "repro_stderr.log ends with IndexError: list index out of range from Harness().reduce_ipg_grads()",
+    "codebase/deepspeed/runtime/zero/stage_1_and_2.py:1499 contains the same direct bucket.buffer[bucket.index] access"
+  ],
+  "steps": [
+    "Read bug_report.txt and located the failing ZeRO-2 gradient reduction path in codebase/deepspeed/runtime/zero/stage_1_and_2.py.",
+    "Created a minimal source-level harness in repro.py that reproduces the empty-bucket access.",
+    "Ran ./run_repro.sh and captured stdout/stderr in repro_stdout.log and repro_stderr.log."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

@@ -1,0 +1,20 @@
+  error: subprocess-exited-with-error
+  
+  × Building wheel for nvidia-cublas-cu13 (pyproject.toml) did not run successfully.
+  │ exit code: 1
+  ╰─> [10 lines of output]
+      ⚠️ THIS PROJECT 'nvidia-cublas-cu13' IS DEPRECATED.
+      Please use 'nvidia-cublas' instead.
+      
+      To install the correct package, use:
+      
+          pip install nvidia-cublas
+      
+      For more information, visit: https://pypi.org/project/nvidia-cublas/
+      
+      
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building wheel for nvidia-cublas-cu13
+ERROR: Could not build wheels for nvidia-cublas-cu13, which is required to install pyproject.toml-based projects

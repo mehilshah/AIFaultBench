@@ -1,0 +1,13 @@
+{
+  "bug_id": "172",
+  "bug_dir": "172",
+  "issue_url": "https://github.com/kornia/kornia/issues/997",
+  "commit_hash": "",
+  "library_name": "kornia",
+  "library_version": "0.5.2rc1",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../172"
+}
+

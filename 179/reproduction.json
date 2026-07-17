@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "The minimal script prints `post_transform: Tree('start', [32])` and then fails on the embedded parse with `lark.exceptions.LexError: Callbacks must return a token (returned 32)`.",
+  "steps": [
+    "./setup_env.sh",
+    "./run_repro.sh"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "./run_repro.sh"
+}

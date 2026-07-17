@@ -1,0 +1,47 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2856
+
+TITLE
+`OneHotEncoding` constraint diagnostic score not 1.0
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:
+* Python version:
+* Operating System:
+
+### Error Description
+The diagnostic report is currently not returning 1.0 in some cases with the `OneHotEncoding` constraint due to the `TableStructure` metric. This is because the constraint's columns are not being formatted correctly during reverse transform.
+
+For the constraints, we save formatters for all columns removed by the constraint. However, in `OneHotEncoding`, we do not rename the modified columns so the formatters are not saved for them.
+
+We should update `OneHotEncoding` to rename any columns it modifies, and verify that the diagnostic report passes.
+
+### Steps to reproduce
+
+```python
+from sdv.datasets.demo import download_demo
+from sdv.cag import OneHotEncoding
+from sdv.multi_table import HSASynthesizer
+
+data, metadata = download_demo('multi_table', 'PremierLeague')
+constraint = OneHotEncoding(column_names=['Starts', 'SubstituteOn'], table_name='Actions')
+
+synthesizer = HSASynthesizer(metadata)
+synthesizer.add_constraints([constraint])
+synthesizer.fit(data)
+synthetic_data = synthesizer.sample(len(data))
+
+metadata.validate_data(synthetic_data)
+synthesizer.validate(synthetic_data)
+
+diagnostic_report = run_diagnostic_multi(
+    real_data=data,
+    synthetic_data=synthetic_data,
+    metadata=metadata,
+    verbose=True,
+)
+```
+

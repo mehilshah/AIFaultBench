@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running the local repro against codebase/ produced different results for the same value: Poisson(2).log_prob(1.999999) = -2.000000238418579, while Poisson(2.0).log_prob(1.999999) = -1.3068537712097168.",
+  "steps": [
+    "Created a local virtual environment and installed numpy, scipy, jax[cpu], multipledispatch, and tqdm.",
+    "Imported the local NumPyro codebase from codebase/.",
+    "Evaluated Poisson(2).log_prob(1.999999) and Poisson(2.0).log_prob(1.999999).",
+    "Observed a 0.6931464672088623 absolute difference between the two log probabilities."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

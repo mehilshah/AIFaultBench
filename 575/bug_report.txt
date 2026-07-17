@@ -1,0 +1,30 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2457
+
+TITLE
+'Namespace' object has no attribute 'validation_batch_size'
+
+BODY
+**Describe the bug**
+A clear and concise description of what the bug is.
+The bug occurs when I use the official script for training:
+D:\USERS\PYTHONPROJECT\pytorch-image-models-main> python train.py --data-dir dataset/transfires --epochs 50  --batch-size 64 --input-size 3 224 224 --opt adamw --lr 1e-3
+ --num-classes 2 --model resnet50
+Training with a single process on 1 device (cuda).
+Model resnet50 created, param count:23512130
+Data processing configuration for current model + dataset:
+        input_size: (3, 224, 224)
+        interpolation: bicubic
+        mean: (0.485, 0.456, 0.406)
+        std: (0.229, 0.224, 0.225)
+        crop_pct: 0.95
+        crop_mode: center
+Created AdamW (adamw) optimizer: lr: 0.001, betas: (0.9, 0.999), eps: 1e-08, weight_decay: 2e-05, amsgrad: False, foreach: None, maximize: False, capturable: False, differentiable: Fal
+se, fused: None
+AMP not enabled. Training in torch.float32.
+Traceback (most recent call last):
+  File "D:\USERS\PYTHONPROJECT\pytorch-image-models-main\train.py", line 1235, in <module>
+    main()
+  File "D:\USERS\PYTHONPROJECT\pytorch-image-models-main\train.py", line 762, in main
+    batch_size=args.validation_batch_size or args.batch_size,
+AttributeError: 'Namespace' object has no attribute 'validation_batch_size'
+

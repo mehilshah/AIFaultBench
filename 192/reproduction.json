@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` prints the hard-coded Real-IAD categories from `codebase/src/anomalib/data/datasets/image/realiad.py` and shows they do not match the 30-category list quoted in `bug_report.txt`. The script exits with status 1 and the log reports 20 missing categories and 20 extra categories.",
+  "steps": [
+    "Read `bug_report.txt` and the Real-IAD source in `codebase/src/anomalib/data/datasets/image/realiad.py`.",
+    "Extracted the `CATEGORIES` tuple from the source file.",
+    "Compared it to the Real-IAD category list quoted in the report.",
+    "Observed a mismatch and a non-zero exit from `bash run_repro.sh`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,11 @@
+TypeError: gelu(): argument 'approximate' must be str, not bool
+Traceback (most recent call last):
+  File "034/repro.py", line 29, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "034/repro.py", line 22, in main
+    gelu(x)
+  File "034/codebase/PyTorch/LanguageModeling/BERT/modeling.py", line 122, in gelu
+    return torch.nn.functional.gelu(x, approximate=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: gelu(): argument 'approximate' must be str, not bool

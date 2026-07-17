@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running bash run_repro.sh against the local codebase reproduces the checker failures for nested Sequence spaces: Dict+Sequence(stack=False) raises AssertionError about a tuple observation, Dict+Sequence(stack=True) raises AssertionError about shape None vs (3, 1), Tuple+Sequence raises TypeError: 'NoneType' object is not iterable from DummyVecEnv, and OneOf+Sequence(stack=False/True) raises AssertionError that the reset observation is a tuple. The successful top-level Sequence cases pass.",
+  "steps": [
+    "Create a venv and install the bug-specific runtime dependencies from requirements.txt.",
+    "Run bash run_repro.sh, which loads stable_baselines3/common/env_checker.py from the local codebase without executing the package __init__ side effects.",
+    "Observe the nested Sequence cases fail in check_env while the top-level Sequence cases pass."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

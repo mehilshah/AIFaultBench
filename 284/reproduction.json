@@ -1,0 +1,11 @@
+{
+  "reproducible": false,
+  "evidence": "Running `python3 repro.py` on this host printed `{\"cuda_available\": true, \"cuda_version\": \"13.0\", \"hip_version\": null, \"torch_version\": \"2.13.0+cu130\"}` to stdout and exited with `blocking_reason: this repro requires a ROCm build of PyTorch on gfx1201; the local environment is not ROCm.` on stderr.",
+  "steps": [
+    "Read `bug_report.txt` and the local `codebase/` implementation of `Krea2Pipeline` and `Krea2Transformer2DModel`.",
+    "Created a repro harness that follows the report's exact pipeline call sequence when a ROCm backend is present.",
+    "Ran `python3 repro.py` in this environment; it stopped at the ROCm gate because the host has CUDA PyTorch but no ROCm build."
+  ],
+  "blocking_reason": "The reported failure is specific to ROCm/gfx1201, but this environment is not running a ROCm build of PyTorch, so the actual image-corruption behavior cannot be exercised here.",
+  "reproduction_command": "python3 repro.py"
+}

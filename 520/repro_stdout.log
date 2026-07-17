@@ -1,0 +1,2 @@
+jit(vmap(f))(x): [3.4028235e+38]
+    vmap(f)(x):  [inf]

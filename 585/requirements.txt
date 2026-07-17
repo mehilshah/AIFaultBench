@@ -1,0 +1,6 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+numpy
+packaging
+psutil
+pyyaml
+torch==2.4.1

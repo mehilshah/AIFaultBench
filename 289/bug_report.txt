@@ -1,0 +1,54 @@
+# recovered-from-issue: https://github.com/huggingface/peft/issues/2477
+
+TITLE
+Bug with 'PromptEncoderConfig' in Newer Versions of PEFT
+
+BODY
+### System Info
+
+peft==0.15.1
+transformers==4.50.2
+
+### Who can help?
+
+@benjaminbossan @sayakpaul
+
+
+When creating a `PromptEncoderConfig` with `task_type="SEQ_CLS"` on newer versions of **peft (>=0.15.0)**, the `get_peft_model` method fails with the error:
+`AttributeError: 'PromptEncoderConfig' object has no attribute 'modules_to_save'`
+
+When running the code on version **0.14.0**, no errors occur.
+
+
+
+### Information
+
+- [x] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+```python
+from peft import PromptEncoderConfig, get_peft_model
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+model_name = "google-bert/bert-base-uncased"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+base_model = AutoModelForSequenceClassification.from_pretrained(model_name)
+
+ptuning_config = PromptEncoderConfig(task_type="SEQ_CLS", num_virtual_tokens=20)
+
+model = get_peft_model(base_model, ptuning_config)
+```
+
+### Expected behavior
+
+When running the code on **peft >=0.15.0**, the `get_peft_model` method fails with the following error:
+`AttributeError: 'PromptEncoderConfig' object has no attribute 'modules_to_save'`
+
+In contrast, running the code on **peft 0.14.0** does not produce any errors.

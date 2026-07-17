@@ -1,0 +1,11 @@
+{
+  "blocking_reason": "",
+  "evidence": "The second load called the fake hf_hub_download again even though /tmp/timm_hf_cache_repro__euxyy48/cache/pytorch_model.bin already existed, and the call failed with: RuntimeError: Simulated Hugging Face rate limit: second hub call was made",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Load timm.models._hub from the local codebase with fake torch and safetensors stubs.",
+    "Call load_state_dict_from_hf('MahmoodLab/uni') once to populate the cache directory.",
+    "Call it again with the same cache directory and observe that hf_hub_download is invoked a second time."
+  ]
+}

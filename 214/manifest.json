@@ -1,0 +1,11 @@
+{
+  "bug_id": "214",
+  "issue_url": "https://github.com/sdv-dev/SDV/issues/2434",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase/",
+  "library_name": "sdv",
+  "library_version": "1.19.1.dev0",
+  "python_version": "3.12.3",
+  "reproducible": true,
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "In a fresh venv with torch-geometric==2.6.1, repro.py prints has_HashTensor=False and then fails with ImportError: cannot import name 'HashTensor' from 'torch_geometric'.",
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

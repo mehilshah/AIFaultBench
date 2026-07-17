@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` in a fresh local venv with `huggingface_hub==1.22.0`, `typer==0.26.8`, and `click==8.4.2` prints the expected version preamble and then fails with `AttributeError: 'HFCliTyperGroup' object has no attribute '_add_completion'` from `typer/testing.py` -> `typer/main.py::get_command` when `CliRunner.invoke(transformers_cli.app, [\"version\"], catch_exceptions=False)` is executed.",
+  "steps": [
+    "Create a local virtual environment with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` or `python3 repro.py` from the bug folder.",
+    "Observe the AttributeError stack trace in `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,3 @@
+Virtualenv ready at 275/.venv_repro
+Scripted module type: RecursiveScriptModule
+Attempting torch.jit.save -> /tmp/detectron2_torchscript_77yl2sae/model.ts

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the minimal CPU reproducer in the local checkout raises NotImplementedError: MLIR translation rule for primitive 'scaled_matmul' not found for platform cpu.",
+  "steps": [
+    "Create a Python 3.12 virtual environment and install the runtime dependencies from requirements.txt.",
+    "Run repro.py with PYTHONPATH pointing at the local codebase/ directory and JAX_PLATFORMS=cpu.",
+    "Observe the internal MLIR lowering NotImplementedError from jax.nn.scaled_matmul."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

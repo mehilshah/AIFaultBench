@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Epoch 1 logged acc=1.0000 and val_acc=1.0000; subsequent epochs stayed at val_acc=1.0000.",
+  "steps": [
+    "Created a local virtualenv and installed the CPU PyTorch stack plus einops.",
+    "Generated synthetic cats/dogs archives that match the notebook's train.zip/test.zip flow.",
+    "Ran the example's ViT + Linformer training loop against the generated data.",
+    "Observed 100% accuracy on the first epoch and on validation across the run."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

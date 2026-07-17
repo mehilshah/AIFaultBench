@@ -1,0 +1,5 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+--trusted-host download.pytorch.org
+numpy
+torch==2.13.0+cpu
+typeguard==2.13.3

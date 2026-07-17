@@ -1,0 +1,130 @@
+# recovered-from-issue: https://github.com/huggingface/accelerate/issues/1419
+
+TITLE
+accelerate with wandb tracker not logging 
+
+BODY
+### System Info
+
+```Shell
+accelerate version: 0.19.0
+numpy version: 1.23.5
+torch version: 1.12.1+cu102
+python version: 3.8.16
+OS: Ubuntu
+```
+
+
+### Information
+
+- [ ] The official example scripts
+- [X] My own modified scripts
+
+### Tasks
+
+- [ ] One of the scripts in the examples/ folder of Accelerate or an officially supported `no_trainer` script in the `examples` folder of the `transformers` repo (such as `run_no_trainer_glue.py`)
+- [X] My own task or dataset (give details below)
+
+### Reproduction
+
+During the training of my models, I would like to log both step-level and epoch-level loss and metrics. But only the first line is working but the other logging lines don't seem to work. Please find below the code 
+
+`for epoch in range(starting_epoch, num_epochs):
+        model.train()
+        total_loss = 0
+
+        for step, batch in enumerate(train_dataloader):
+            if resume_from_checkpoint and epoch == starting_epoch:
+                if resume_step is not None and step < resume_step:
+                    progress_bar.update(1)
+                    completed_steps += 1
+                    continue
+            
+            with accelerator.accumulate(model):
+                outputs = model(**batch)
+                loss = outputs.loss
+                # We keep track of the loss at each epoch
+                total_loss += loss.detach().float()
+                accelerator.backward(loss)
+            
+                optimizer.step()
+                lr_scheduler.step()
+                optimizer.zero_grad()
+                
+            if accelerator.sync_gradients:
+                progress_bar.update(1)
+                completed_steps += 1
+            
+            
+            
+            accelerator.log({"batch_train_loss": loss},step=completed_steps)
+
+            if isinstance(checkpointing_steps, int):
+                output_dir_step = f"step_{completed_steps}"
+                if completed_steps % checkpointing_steps == 0:
+                    if output_dir is not None:
+                        output_dir_step = os.path.join(output_dir, output_dir_step)
+                        if not os.path.exists(output_dir_step):
+                            os.makedirs(output_dir_step)
+                    accelerator.save_state(output_dir=output_dir_step)
+  
+        model.eval()
+        losses = []
+        for step, batch in enumerate(eval_dataloader):
+            with torch.no_grad():
+                outputs = model(**batch)
+            loss = outputs.loss
+            completed_eval_steps += 1
+            losses.append(accelerator.gather(loss.repeat(batch_size)))
+            
+            accelerator.log({"batch_eval_loss": loss},step=completed_eval_steps)
+        
+            
+
+        losses = torch.cat(losses)
+        try:
+            eval_loss = torch.mean(losses)
+            perplexity = math.exp(eval_loss)
+        except OverflowError:
+            perplexity = float("inf")
+
+        accelerator.print(f">>> Epoch {epoch}: Perplexity: {perplexity}")
+        
+        accelerator.log(
+                {
+                    "perplexity": perplexity,
+                    "eval_loss": eval_loss,
+                    "train_loss": total_loss.item() / len(train_dataloader),
+                    "epoch": epoch,
+                    "step": completed_steps,
+                },
+                step=completed_steps,
+            )
+
+        if checkpointing_steps == "epoch":
+            output_dir_epoch = f"epoch_{epoch}"
+            if output_dir is not None:
+                output_dir_epoch = os.path.join(output_dir, output_dir_epoch)
+                if not os.path.exists(output_dir_epoch):
+                    os.makedirs(output_dir_epoch)
+            accelerator.save_state(output_dir=output_dir_epoch)
+            
+        
+
+    accelerator.end_training()`
+
+
+![image](https://github.com/huggingface/accelerate/assets/122795608/e8e9feb7-87ae-42da-ac36-350f175a8e90)
+
+
+All I am getting post the training completion is in the image above. Kindly help with resolving this issue. 
+
+
+Best
+
+
+
+
+### Expected behavior
+
+I would like to visualise, train and eval loss at step and epoch level.

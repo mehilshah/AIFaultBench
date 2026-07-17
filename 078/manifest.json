@@ -1,0 +1,17 @@
+{
+  "bug_id": "078",
+  "issue_url": "https://github.com/lucidrains/vit-pytorch/issues/332",
+  "library_name": "vit-pytorch",
+  "library_version": "1.8.7",
+  "reproduction_command": "bash run_repro.sh",
+  "setup_command": "bash setup_env.sh",
+  "runtime": {
+    "python": "3.12",
+    "torch": "2.4.0"
+  },
+  "source_files": [
+    "bug_report.txt",
+    "codebase/vit_pytorch/na_vit_nested_tensor_3d.py",
+    "repro.py"
+  ]
+}

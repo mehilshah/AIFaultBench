@@ -1,0 +1,10 @@
+{
+  "reproducible": false,
+  "evidence": "`codebase/vllm/model_executor/layers/quantization/modelopt.py` already contains a dedicated `W4A16_NVFP4` branch in `ModelOptMixedPrecisionConfig.get_quant_method`, and `codebase/tests/quantization/test_modelopt.py` already includes regression coverage for mixed-precision W4A16 dispatch. The local harness in `repro_stdout.log` shows `dispatch W4A16_NVFP4: ModelOptNvFp4W4A16LinearMethod`, so the reported dense-loader crash is not reachable in this checkout.",
+  "steps": [
+    "bash setup_env.sh",
+    "bash run_repro.sh"
+  ],
+  "blocking_reason": "The current codebase already has the mixed-precision W4A16 dispatch fix and matching regression tests, so the historical `narrow()` out-of-range failure does not reproduce here.",
+  "reproduction_command": "bash run_repro.sh"
+}

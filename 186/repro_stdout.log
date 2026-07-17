@@ -1,0 +1,21 @@
+Prefixed path: /my/custom/path/lsp/pylsp
+HTTP/1.1 403 Forbidden
+HTTP/1.1 403 Forbidden
+Date: Fri, 17 Jul 2026 05:49:59 GMT
+Connection: close
+Content-Length: 0
+Content-Type: text/plain; charset=utf-8
+
+
+Root path: /lsp/pylsp
+HTTP/1.1 101 Switching Protocols
+HTTP/1.1 101 Switching Protocols
+Date: Fri, 17 Jul 2026 05:49:59 GMT
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: z6xwCYMxhBIPxOl7MVp0CRJLthk=
+date: Fri, 17 Jul 2026 05:49:59 GMT
+server: uvicorn
+
+�4�mocked upstream for ws://localhost:57887/lsp/pylsp
+Reproduced base-url mismatch for pylsp websocket routing.

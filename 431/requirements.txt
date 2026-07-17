@@ -1,0 +1,7 @@
+pandas==2.3.3
+numpy==2.5.1
+graphviz==0.21
+pyyaml==6.0.3
+platformdirs==4.3.8
+rdt==1.21.1
+copulas==0.14.1

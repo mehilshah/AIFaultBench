@@ -1,0 +1,5 @@
+DeepSpeed source checked: 487/codebase/deepspeed/runtime/zero/stage_1_and_2.py
+IPGBucket.clear() resets index to 0: True
+Observed buffer index sequence with pinned code: [1, 1, 1, 1]
+Expected ping-pong sequence after fix: [1, 0, 1, 0]
+BUG REPRODUCED: the buffer index never alternates, so ping-pong overlap is defeated.

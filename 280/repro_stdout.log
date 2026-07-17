@@ -1,0 +1,8 @@
+projections_equal_norm=0.000000000000
+cost_with_seed=21.887428414187593
+cost_with_custom_projections=9.788355557356775
+absolute_delta=12.099072856830817
+projection_count=10
+emd_sum=4790.595225861863582
+expected_using_10_projections=21.887428414187593
+expected_using_default_50=9.788355557356775

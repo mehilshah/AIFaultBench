@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "accelerate==0.14.0 in a Python 3.10 venv",
+    "Running `accelerate test --config_file sagemaker_default_config.yaml` fails in `accelerate/commands/launch.py`",
+    "Observed traceback: `AttributeError: 'Namespace' object has no attribute 'use_cpu'`"
+  ],
+  "steps": [
+    "Create the virtualenv and install dependencies with `bash setup_env.sh`.",
+    "Run the repro with `bash run_repro.sh`.",
+    "Inspect `repro_stderr.log` for the failing traceback."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

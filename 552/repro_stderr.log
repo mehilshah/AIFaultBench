@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "552/repro.py", line 48, in <module>
+    main()
+  File "552/repro.py", line 43, in main
+    mcmc.run(data)
+  File "552/codebase/pyro/poutine/messenger.py", line 11, in _context_wrap
+    with context:
+AttributeError: __enter__

@@ -1,0 +1,12 @@
+{
+  "bug_id": "137",
+  "bug_dir": "137",
+  "issue_url": "https://github.com/huggingface/evaluate/issues/564",
+  "commit_hash": "",
+  "library_name": "evaluate",
+  "library_version": "0.4.2.dev0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../137"
+}

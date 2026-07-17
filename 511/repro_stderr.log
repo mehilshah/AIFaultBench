@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "511/repro.py", line 76, in main
+    out = node_sample(inputs, sampler._sample)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "511/codebase/torch_geometric/sampler/neighbor_sampler.py", line 542, in node_sample
+    out = sample_fn(seed, seed_time)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "511/codebase/torch_geometric/sampler/neighbor_sampler.py", line 478, in _sample
+    out = torch.ops.pyg.neighbor_sample(*args)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "511/.venv/lib/python3.11/site-packages/torch/_ops.py", line 1116, in __call__
+    return self._op(*args, **(kwargs or {}))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Found invalid non-sorted temporal neighborhood

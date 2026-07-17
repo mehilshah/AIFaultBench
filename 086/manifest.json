@@ -1,0 +1,17 @@
+{
+  "bug_id": "086",
+  "issue_url": "https://github.com/lucidrains/x-transformers/issues/305",
+  "library_name": "x-transformers",
+  "library_version": "1.43.1",
+  "reproduction_command": "bash run_repro.sh",
+  "setup_command": "bash setup_env.sh",
+  "runtime": {
+    "python": "3.12",
+    "torch": "2.13.0+cu130"
+  },
+  "source_files": [
+    "bug_report.txt",
+    "codebase/x_transformers/x_transformers.py",
+    "repro.py"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "reproducible": true,
+  "evidence": {
+    "source_file": "codebase/src/lightning/pytorch/plugins/precision/amp.py",
+    "source_line": 116,
+    "source_excerpt": "return torch.autocast(self.device, dtype=dtype, cache_enabled=False)",
+    "torch_version": "2.8.0+cu128",
+    "cuda_device": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+    "cache_enabled_true_peak_total_bytes": 75891712,
+    "cache_enabled_false_peak_total_bytes": 1132856320,
+    "peak_delta_bytes": 1056964608
+  },
+  "steps": [
+    "Verified `codebase/src/lightning/pytorch/plugins/precision/amp.py` line 116 contains `return torch.autocast(self.device, dtype=dtype, cache_enabled=False)`.",
+    "Imported torch 2.8.0+cu128.",
+    "CUDA device: NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition.",
+    "Ran a repeated decoder-style forward/backward benchmark under bf16 autocast with cache_enabled=True and False.",
+    "Observed a large peak-memory increase when cache_enabled=False was used."
+  ],
+  "blocking_reason": null,
+  "reproduction_command": "bash run_repro.sh"
+}

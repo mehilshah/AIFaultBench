@@ -1,0 +1,16 @@
+{
+  "bug_id": "345",
+  "issue_url": "https://github.com/jax-ml/jax/issues/38969",
+  "library_name": "jax",
+  "library_version": "0.10.2",
+  "reproducible": true,
+  "root_cause": "A pip-installed argparse backport shadows stdlib argparse and does not accept the required keyword passed by build/build.py.",
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ]
+}

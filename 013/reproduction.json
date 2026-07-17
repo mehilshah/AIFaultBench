@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Loading the real source file codebase/official/vision/utils/object_detection/visualization_utils.py switches Matplotlib from svg to Agg during import. That file contains an import-time matplotlib.use('Agg') call, which is the same side effect reached transitively from tensorflow_models.",
+  "steps": [
+    "Set Matplotlib backend to svg before importing the target module.",
+    "Execute codebase/official/vision/utils/object_detection/visualization_utils.py with minimal import stubs for TensorFlow and unrelated official modules.",
+    "Observe that the backend changes to Agg immediately after module import."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}
+

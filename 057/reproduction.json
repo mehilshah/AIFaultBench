@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With TensorFlow 2.14.0, Keras 2.14.0, and numpy<2, running the repro hits ImportError: cannot import name 'ops' from 'keras'.",
+  "steps": [
+    "Create a Python 3.11 virtual environment",
+    "Install the pinned dependencies from requirements.txt",
+    "Run repro.py"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

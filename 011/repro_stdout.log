@@ -1,0 +1,515 @@
+restoring or initializing model...
+restored model from 011/model_dir/ckpt-1.
+restored from checkpoint: 011/model_dir/ckpt-1
+train | step:      1 | training until step 100...
+train | step:      2 | steps/sec:    0.5 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.5984215),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(172.49466)}
+train | step:      3 | steps/sec:    1.7 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(1.5964496),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(66.97951)}
+train | step:      4 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.5936918),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(198.43898)}
+train | step:      5 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.5901507),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(555.0337)}
+train | step:      6 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.5858297),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(177.84921)}
+train | step:      7 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(1.5807334),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1297.6783)}
+train | step:      8 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.5748665),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(2149.193)}
+train | step:      9 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(1.5682349),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(2240.084)}
+train | step:     10 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.5608453),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(9772.871)}
+train | step:     11 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(1.5527047),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(14755.51)}
+train | step:     12 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.5438212),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(11149.254)}
+train | step:     13 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(1.5342038),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(30262.844)}
+train | step:     14 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.5238618),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(27340.791)}
+train | step:     15 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(1.5128052),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(51096.184)}
+train | step:     16 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.5010453),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(346268.62)}
+train | step:     17 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(1.4885937),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(966588.8)}
+train | step:     18 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.4754623),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.9831848e+06)}
+train | step:     19 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.4616644),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(3.4381498e+06)}
+train | step:     20 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(1.4472135),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(4.8922995e+06)}
+train | step:     21 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.432124),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(7.499035e+06)}
+train | step:     22 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.4164107),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(9.569626e+06)}
+train | step:     23 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.4000889),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.2124851e+07)}
+train | step:     24 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(1.3831749),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.4796e+07)}
+train | step:     25 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.3656855),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(2.0284018e+07)}
+train | step:     26 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(1.3476378),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(1.8819622e+07)}
+train | step:     27 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.3290495),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(2.5407624e+07)}
+train | step:     28 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.3099393),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(3.3087882e+07)}
+train | step:     29 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.2903256),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(3.5244364e+07)}
+train | step:     30 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.2702283),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(7.084514e+07)}
+train | step:     31 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.2496667),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(6.002339e+07)}
+train | step:     32 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.2286614),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(5.9957184e+07)}
+train | step:     33 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(1.2072331),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(7.0940904e+07)}
+train | step:     34 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(1.0),
+     'learning_rate': np.float32(1.1854029),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(7.766472e+07)}
+train | step:     35 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(1.1631924),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.05628824e+08)}
+train | step:     36 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.1406235),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.00868904e+08)}
+train | step:     37 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.1177183),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.4494851e+08)}
+train | step:     38 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.0944996),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.3900909e+08)}
+train | step:     39 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.0709904),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(8.2184407e+09)}
+train | step:     40 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(1.0472136),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(2.905112e+10)}
+train | step:     41 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(1.0231929),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(5.909664e+10)}
+train | step:     42 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(1.0),
+     'learning_rate': np.float32(0.9989519),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(9.4795e+10)}
+train | step:     43 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.9745146),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.3436569e+11)}
+train | step:     44 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.94990504),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.7586663e+11)}
+train | step:     45 | steps/sec:    1.6 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.92514765),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(2.1793386e+11)}
+train | step:     46 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.90026647),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(2.5962445e+11)}
+train | step:     47 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.8752867),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(3.0023883e+11)}
+train | step:     48 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.8502324),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(3.3929452e+11)}
+train | step:     49 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.82512856),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(3.7652768e+11)}
+train | step:     50 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.79999995),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(4.115685e+11)}
+train | step:     51 | steps/sec:    1.5 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.77487135),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(4.4446902e+11)}
+train | step:     52 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(1.0),
+     'learning_rate': np.float32(0.74976766),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(4.7511287e+11)}
+train | step:     53 | steps/sec:    1.8 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.7247134),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(5.0360536e+11)}
+train | step:     54 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.6997334),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(5.298237e+11)}
+train | step:     55 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.6748524),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(5.540177e+11)}
+train | step:     56 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.6500949),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(5.761838e+11)}
+train | step:     57 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.6254854),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(5.965263e+11)}
+train | step:     58 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.6010481),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(6.150824e+11)}
+train | step:     59 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.5768072),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(6.3200415e+11)}
+train | step:     60 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.5527863),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(6.5357506e+11)}
+train | step:     61 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.52900964),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(6.838153e+11)}
+train | step:     62 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.5055003),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(7.196865e+11)}
+train | step:     63 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.4822816),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(7.5907524e+11)}
+train | step:     64 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.45937654),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(8.002199e+11)}
+train | step:     65 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.4368077),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(8.418715e+11)}
+train | step:     66 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.41459695),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(8.8305795e+11)}
+train | step:     67 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.39276677),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(9.23161e+11)}
+train | step:     68 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.37133846),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(9.616968e+11)}
+train | step:     69 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.35033318),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(9.9833047e+11)}
+train | step:     70 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(1.0),
+     'learning_rate': np.float32(0.32977185),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(1.03288655e+12)}
+train | step:     71 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.3096744),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.06529554e+12)}
+train | step:     72 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.29006067),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.0954489e+12)}
+train | step:     73 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.27095038),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.1234409e+12)}
+train | step:     74 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.2523623),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.1492993e+12)}
+train | step:     75 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.23431459),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.1731007e+12)}
+train | step:     76 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.21682511),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.1949716e+12)}
+train | step:     77 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.19991112),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.2149812e+12)}
+train | step:     78 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(1.0),
+     'learning_rate': np.float32(0.18358937),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(1.2332646e+12)}
+train | step:     79 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.16787596),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.2499482e+12)}
+train | step:     80 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.15278636),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.2651485e+12)}
+train | step:     81 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.13833551),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.2789893e+12)}
+train | step:     82 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.12453761),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.2915021e+12)}
+train | step:     83 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.11140633),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.3028718e+12)}
+train | step:     84 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.09895468),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.3131788e+12)}
+train | step:     85 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.08719473),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(1.3225144e+12)}
+train | step:     86 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.07613831),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.3309663e+12)}
+train | step:     87 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.06579623),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.3385947e+12)}
+train | step:     88 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.05617876),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.3454921e+12)}
+train | step:     89 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.04729538),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.3517231e+12)}
+train | step:     90 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.039154816),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.3573649e+12)}
+train | step:     91 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.031764984),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.3624287e+12)}
+train | step:     92 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.02513342),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.3670205e+12)}
+train | step:     93 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.019266605),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.3711357e+12)}
+train | step:     94 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.014170217),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.3748707e+12)}
+train | step:     95 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.00984931),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.3782206e+12)}
+train | step:     96 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.0063082217),
+     'top_5_accuracy': np.float32(1.0),
+     'training_loss': np.float32(1.3812485e+12)}
+train | step:     97 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.0035503865),
+     'top_5_accuracy': np.float32(0.0),
+     'training_loss': np.float32(1.3839782e+12)}
+train | step:     98 | steps/sec:    1.9 | output: 
+    {'accuracy': np.float32(0.5),
+     'learning_rate': np.float32(0.0015786171),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.3864349e+12)}
+train | step:     99 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.0003947735),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.3886528e+12)}
+train | step:    100 | steps/sec:    2.0 | output: 
+    {'accuracy': np.float32(0.0),
+     'learning_rate': np.float32(0.0),
+     'top_5_accuracy': np.float32(0.5),
+     'training_loss': np.float32(1.3906514e+12)}
+saved checkpoint to 011/model_dir/ckpt-100.
+{
+  "blocking_reason": "In this Python 3.11 + TensorFlow 2.20 environment, the bundled snapshot does not reproduce the reported NaN loss. The run stays finite and finishes 100 training steps; the behavior differs from the issue report.",
+  "evidence": [
+    "The 100-step run completed without NaN.",
+    "Training loss exploded into the billions but stayed finite through step 100."
+  ],
+  "reproducible": false,
+  "reproduction_command": "bash run_repro.sh",
+  "steps": [
+    "Installed the bytecode loader for the bundled tensorflow/models snapshot.",
+    "Generated local TFRecord training and validation data.",
+    "Ran ImageClassificationTask with resnet_rs_imagenet-style settings for 100 steps.",
+    "Observed exploding but finite loss values instead of NaN."
+  ]
+}

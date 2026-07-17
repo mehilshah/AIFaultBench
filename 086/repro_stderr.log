@@ -1,0 +1,42 @@
+Traceback (most recent call last):
+  File "086/repro.py", line 23, in main
+    rotary.forward_from_seq_len(32)
+  File "086/codebase/x_transformers/x_transformers.py", line 652, in forward_from_seq_len
+    return self.forward(t)
+           ^^^^^^^^^^^^^^^
+  File "086/.venv/lib/python3.12/site-packages/torch/amp/autocast_mode.py", line 44, in decorate_autocast
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "086/codebase/x_transformers/x_transformers.py", line 669, in forward
+    scale = self.scale ** rearrange(power, 'n -> n 1')
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "086/.venv/lib/python3.12/site-packages/einops/einops.py", line 616, in rearrange
+    return reduce(tensor, pattern, reduction="rearrange", **axes_lengths)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "086/.venv/lib/python3.12/site-packages/einops/einops.py", line 550, in reduce
+    raise EinopsError(message + f"\n {e}") from None
+einops.EinopsError:  Error while processing rearrange-reduction pattern "n -> n 1".
+ Input tensor shape: torch.Size([1, 32]). Additional info: {}.
+ Wrong shape: expected 1 dims. Received 2-dim tensor.
+Traceback (most recent call last):
+  File "086/repro.py", line 31, in <module>
+    main()
+  File "086/repro.py", line 23, in main
+    rotary.forward_from_seq_len(32)
+  File "086/codebase/x_transformers/x_transformers.py", line 652, in forward_from_seq_len
+    return self.forward(t)
+           ^^^^^^^^^^^^^^^
+  File "086/.venv/lib/python3.12/site-packages/torch/amp/autocast_mode.py", line 44, in decorate_autocast
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "086/codebase/x_transformers/x_transformers.py", line 669, in forward
+    scale = self.scale ** rearrange(power, 'n -> n 1')
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "086/.venv/lib/python3.12/site-packages/einops/einops.py", line 616, in rearrange
+    return reduce(tensor, pattern, reduction="rearrange", **axes_lengths)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "086/.venv/lib/python3.12/site-packages/einops/einops.py", line 550, in reduce
+    raise EinopsError(message + f"\n {e}") from None
+einops.EinopsError:  Error while processing rearrange-reduction pattern "n -> n 1".
+ Input tensor shape: torch.Size([1, 32]). Additional info: {}.
+ Wrong shape: expected 1 dims. Received 2-dim tensor.

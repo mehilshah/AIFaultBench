@@ -1,0 +1,70 @@
+Title: projections_from_fundamental output shape is different than advertised
+Date: 2021-05-03T08:54:13+00:00
+URL: https://github.com/kornia/kornia/issues/997
+
+Description:
+## 🐛 Bug
+
+The [docs](https://kornia.readthedocs.io/en/v0.5.0/geometry.epipolar.html#kornia.geometry.epipolar.projections_from_fundamental) state that the output shape is `(*, 4, 4, 2)` where in reality it's `(*, 3, 4, 2)` (which is reasonable, given that most other APIs assume projection matrices are 3x4, but still). In other words, I consider it a doc bug rather than code bug.
+
+Additionally, I find it non-intuitive that the dimension relating to the two matrices (P1 and P2) is the last dimension, rather than the leading (aside from batch) dimension. Prior to consulting the docs, based on kornia conventions, I'd expect the output to be `(*, 2, 3, 4)`, but perhaps rectifying this is too much of a breaking change to be worth it.
+
+## To Reproduce
+
+```python
+import torch
+import kornia
+
+F = torch.randn(1, 3, 3)
+print(kornia.projections_from_fundamental(F).shape) # prints `(1, 3, 4, 2)`.
+```
+
+## Expected behavior
+
+Output of shape `(*, 4, 4, 2)` or an update to the docs.
+
+## Environment
+Kornia 0.5.0
+
+PyTorch version: 1.8.1
+Is debug build: False
+CUDA used to build PyTorch: None
+ROCM used to build PyTorch: N/A
+
+OS: Ubuntu 20.04.2 LTS (x86_64)
+GCC version: (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0
+Clang version: Could not collect
+CMake version: version 3.16.3
+
+Python version: 3.8 (64-bit runtime)
+Is CUDA available: False
+CUDA runtime version: No CUDA
+GPU models and configuration: No CUDA
+Nvidia driver version: No CUDA
+cuDNN version: No CUDA
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+
+Versions of relevant libraries:
+[pip3] numpy==1.20.1
+[pip3] numpyro==0.6.0
+[pip3] torch==1.8.1
+[pip3] torch-dimcheck==0.0.1
+[pip3] torch-localize==0.1.0
+[pip3] torchaudio==0.8.0a0+e4e171a
+[pip3] torchvision==0.9.1
+[conda] blas 1.0 mkl
+[conda] cpuonly 1.0 0 pytorch
+[conda] ffmpeg 4.3 hf484d3e_0 pytorch
+[conda] mkl 2021.2.0 h06a4308_296
+[conda] mkl-service 2.3.0 py38h27cfd23_1
+[conda] mkl_fft 1.3.0 py38h42c9631_2
+[conda] mkl_random 1.2.1 py38ha9443f7_2
+[conda] numpy 1.20.1 py38h93e21f0_0
+[conda] numpy-base 1.20.1 py38h7d8b39e_0
+[conda] numpyro 0.6.0 pypi_0 pypi
+[conda] pytorch 1.8.1 py3.8_cpu_0 [cpuonly] pytorch
+[conda] torch-dimcheck 0.0.1 pypi_0 pypi
+[conda] torch-localize 0.1.0 pypi_0 pypi
+[conda] torchaudio 0.8.1 py38 pytorch
+[conda] torchvision 0.9.1 py38_cpu [cpuonly] pytorch

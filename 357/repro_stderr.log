@@ -1,0 +1,1 @@
+.venv/lib/python3.12/site-packages/numpy/_typing/_nested_sequence.py:60: error: Positional-only parameters are only supported in Python 3.8 and greater  [syntax]

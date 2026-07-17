@@ -1,0 +1,5 @@
+project_dir=534/total_limit_test
+checkpoint_root=534/total_limit_test/checkpoints
+expected_latest=['checkpoint_17', 'checkpoint_18', 'checkpoint_19']
+actual_retained=['checkpoint_19', 'checkpoint_8', 'checkpoint_9']
+BUG_REPRODUCED: save_state pruned the wrong checkpoint folders.

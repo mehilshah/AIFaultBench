@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "On the checked-out numpyro commit ddbd0b876d3cf07d457683d520f00c85f0cc0bb8, calling get_model_relations() on a guide with numpyro.param('p', lambda _: 1.0) raises TypeError: Value <function guide.<locals>.<lambda> ...> is not a valid JAX type.",
+  "steps": [
+    "Create a Python 3.12 virtual environment and install the pinned dependencies from requirements.txt.",
+    "Run bash run_repro.sh from the standardized bug folder.",
+    "Observe the TypeError in repro_stderr.log and the REPRODUCED marker in repro_stdout.log."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

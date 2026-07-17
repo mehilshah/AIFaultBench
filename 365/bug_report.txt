@@ -1,0 +1,65 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7905
+
+TITLE
+[BUG] SuperOffload Fails when having more than one optimizer group
+
+BODY
+**Describe the bug**
+SuperOffload (super_offload: true) fails when the model optimizer has more than one parameter group. The sub_group_to_param_num dictionary is keyed by local sub-group indices per optimizer group rather than global sub-group indices, causing a KeyError during the backward pass when gradient buckets are being processed.
+
+
+**To Reproduce**
+
+1. Use any model initialized with multiple optimizer parameter groups (e.g. the standard HuggingFace weight decay split: one group with weight decay for non-layernorm/non-bias params, one without for layernorm params)
+
+2. Use the following DeepSpeed config with super_offload: true:
+```
+{
+    "zero_optimization": {
+        "stage": 3,
+        "overlap_comm": false,
+        "reduce_bucket_size": 1e9,
+        "sub_group_size": 1e9,
+        "offload_optimizer": {
+            "device": "cpu",
+            "pin_memory": true,
+            "ratio": 0.90,
+            "super_offload": true,
+            "cpuadam_cores_perc": 0.90
+        }
+    }
+}
+```
+
+3. Launch training
+4. Error occurs within the first backward pass
+
+**Expected behavior**
+Training should proceed normally regardless of the number of optimizer parameter groups, consistent with standard ZeRO-3 behavior.
+
+
+**Error Trace:**
+```
+[rank3]:   File "../python3.12/site-packages/deepspeed/runtime/zero/stage3.py", line 1287, in reduce_partition_and_remove_grads
+[rank3]:     self.reduce_ready_partitions_and_remove_grads(param)
+[rank3]:   File "../python3.12/site-packages/deepspeed/runtime/zero/stage3.py", line 1632, in reduce_ready_partitions_and_remove_grads
+[rank3]:     self.reduce_independent_p_g_buckets_and_remove_grads(param)
+[rank3]:   File "../python3.12/site-packages/deepspeed/runtime/superoffload/superoffload_stage3.py", line 119, in reduce_independent_p_g_buckets_and_remove_grads
+[rank3]:     if self.sub_group_to_param_num[self._cur_bucket_index] == len(bucket.params):
+[rank3]:        ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]: KeyError: 2
+```
+
+
+**System info (please complete the following information):**
+OS: RHEL 9, aarch64
+GPU count and types: 4× GH200 superchips (single node)
+Interconnects: NVLink-C2C
+Python: 3.12.13
+PyTorch version (GPU?): 2.9.1+cu130 (True)
+DeepSpeed version: 0.18.7
+transformers version: 4.57.1
+
+**Launcher context**
+SLURM with srun, using HuggingFace Trainer + Accelerate with DeepSpeed integration (not the deepspeed launcher directly).
+

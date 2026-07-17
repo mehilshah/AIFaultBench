@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` prints `verified source marker: codebase/src/diffusers/pipelines/cosmos/pipeline_cosmos2_5_predict.py:677` and then fails with `AttributeError: 'Cosmos2_5_PredictBasePipeline' object has no attribute 'check_text_safety'`.",
+  "steps": [
+    "Read the bug report and identified that the failing path is the Cosmos pipeline's text-safety check.",
+    "Verified the source line in `codebase/src/diffusers/pipelines/cosmos/pipeline_cosmos2_5_predict.py` that calls `self.safety_checker.check_text_safety(p)`.",
+    "Ran the minimal repro with a pipeline object assigned to `safety_checker` and observed the reported `AttributeError`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

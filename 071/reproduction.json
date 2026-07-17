@@ -1,0 +1,10 @@
+{
+  "reproducible": true,
+  "evidence": "codebase/applications/DeepSpeed-Chat/dschat/utils/model/model_utils.py imports HfDeepSpeedConfig from transformers.deepspeed. With transformers==5.14.1, running the repro script raises ModuleNotFoundError: No module named 'transformers.deepspeed'.",
+  "steps": [
+    "Create a Python 3.12 virtual environment and install requirements.txt.",
+    "Run bash run_repro.sh from the standardized folder root."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

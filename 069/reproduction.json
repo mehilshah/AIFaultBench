@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the repro in a local virtualenv prints pandas 3.0.3, then fails in `show_heatmap(df)` at `plt.matshow(data.corr())` with `ValueError: could not convert string to float: '01.01.2009 00:10:00'`.",
+  "steps": [
+    "Created a synthetic DataFrame that matches the example's `Date Time` string column and numeric weather columns.",
+    "Called the example's `show_heatmap` logic with `plt.matshow(data.corr())`.",
+    "Observed the same ValueError reported in the issue."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

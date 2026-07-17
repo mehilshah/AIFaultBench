@@ -1,0 +1,191 @@
+Traceback (most recent call last):
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_subclasses/fake_tensor.py", line 2717, in _dispatch_impl
+    r = func(*args, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_ops.py", line 829, in __call__
+    return self._op(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+NotImplementedError: pyg::knn: attempted to run this operator with Meta tensors, but there was no fake impl or Meta kernel registered. You may have run into this message while using an operator with PT2 compilation APIs (torch.compile/torch.export); in order to use this operator with those APIs you'll need to add a fake impl. Please see the following for next steps:  https://pytorch.org/tutorials/advanced/custom_ops_landing_page.html
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<stdin>", line 17, in <module>
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/__init__.py", line 319, in export
+    raise e
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/__init__.py", line 286, in export
+    return _export(
+           ^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/_trace.py", line 1164, in wrapper
+    raise e
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/_trace.py", line 1130, in wrapper
+    ep = fn(*args, **kwargs)
+         ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/exported_program.py", line 123, in wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/_trace.py", line 2176, in _export
+    ep = _export_for_training(
+         ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/_trace.py", line 1164, in wrapper
+    raise e
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/_trace.py", line 1130, in wrapper
+    ep = fn(*args, **kwargs)
+         ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/exported_program.py", line 123, in wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/_trace.py", line 2037, in _export_for_training
+    export_artifact = export_func(
+                      ^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/_trace.py", line 1979, in _non_strict_export
+    aten_export_artifact = _to_aten_func(  # type: ignore[operator]
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/_trace.py", line 1770, in _export_to_aten_ir_make_fx
+    gm, graph_signature = transform(_make_fx_helper)(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/_trace.py", line 1900, in _aot_export_non_strict
+    gm, sig = aot_export(wrapped_mod, args, kwargs=kwargs, **flags)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/_trace.py", line 1685, in _make_fx_helper
+    gm = make_fx(
+         ^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/experimental/proxy_tensor.py", line 2318, in wrapped
+    return make_fx_tracer.trace(f, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/experimental/proxy_tensor.py", line 2250, in trace
+    return self._trace_inner(f, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/experimental/proxy_tensor.py", line 2221, in _trace_inner
+    t = dispatch_trace(
+        ^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_compile.py", line 53, in inner
+    return disable_fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 929, in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/experimental/proxy_tensor.py", line 1254, in dispatch_trace
+    graph = tracer.trace(root, concrete_args)  # type: ignore[arg-type]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/experimental/proxy_tensor.py", line 1835, in trace
+    res = super().trace(root, concrete_args)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/_symbolic_trace.py", line 850, in trace
+    (self.create_arg(fn(*args)),),
+                     ^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/experimental/proxy_tensor.py", line 1312, in wrapped
+    out = f(*tensors)  # type:ignore[call-arg]
+          ^^^^^^^^^^^
+  File "<string>", line 1, in <lambda>
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/_trace.py", line 1589, in wrapped_fn
+    return tuple(flat_fn(*args))
+                 ^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/utils.py", line 184, in flat_fn
+    tree_out = fn(*args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/traced_function_transforms.py", line 906, in functional_call
+    out = mod(*args[params_len:], **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/_symbolic_trace.py", line 825, in module_call_wrapper
+    return self.call_module(mod, forward, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/experimental/proxy_tensor.py", line 1905, in call_module
+    return Tracer.call_module(self, m, forward, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/_symbolic_trace.py", line 542, in call_module
+    ret_val = forward(*args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/_symbolic_trace.py", line 818, in forward
+    return _orig_module_call(mod, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/export/_trace.py", line 1884, in forward
+    tree_out = mod(*args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/_symbolic_trace.py", line 825, in module_call_wrapper
+    return self.call_module(mod, forward, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/experimental/proxy_tensor.py", line 1905, in call_module
+    return Tracer.call_module(self, m, forward, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/_symbolic_trace.py", line 542, in call_module
+    ret_val = forward(*args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/_symbolic_trace.py", line 818, in forward
+    return _orig_module_call(mod, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<stdin>", line 9, in forward
+  File "281/codebase/torch_geometric/nn/pool/__init__.py", line 199, in knn_graph
+    edge_index = torch.ops.pyg.knn(x, x, ptr, ptr, k if loop else k + 1,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_ops.py", line 1243, in __call__
+    return self._op(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/experimental/proxy_tensor.py", line 1360, in __torch_function__
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_ops.py", line 1243, in __call__
+    return self._op(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/experimental/proxy_tensor.py", line 1407, in __torch_function__
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_ops.py", line 1243, in __call__
+    return self._op(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_export/non_strict_utils.py", line 1051, in __torch_function__
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_ops.py", line 1243, in __call__
+    return self._op(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_ops.py", line 950, in handler
+    return torch._library.utils.handle_dispatch_mode(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_library/utils.py", line 296, in handle_dispatch_mode
+    return curr_mode.__torch_dispatch__(op_overload, overload_types, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/utils/_stats.py", line 28, in wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/experimental/proxy_tensor.py", line 1462, in __torch_dispatch__
+    return proxy_call(self, func, self.pre_dispatch, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/fx/experimental/proxy_tensor.py", line 914, in proxy_call
+    out = func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_ops.py", line 829, in __call__
+    return self._op(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/utils/_stats.py", line 28, in wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_subclasses/fake_tensor.py", line 1352, in __torch_dispatch__
+    return self.dispatch(func, types, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_subclasses/fake_tensor.py", line 2058, in dispatch
+    return self._cached_dispatch_impl(func, types, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_subclasses/fake_tensor.py", line 1487, in _cached_dispatch_impl
+    output = self._dispatch_impl(func, types, args, kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_subclasses/fake_tensor.py", line 2719, in _dispatch_impl
+    return maybe_run_unsafe_fallback(not_implemented_error)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/bug281-venv/lib/python3.12/site-packages/torch/_subclasses/fake_tensor.py", line 2701, in maybe_run_unsafe_fallback
+    raise UnsupportedOperatorException(func)
+torch._subclasses.fake_tensor.UnsupportedOperatorException: pyg.knn.default
+
+The error above occurred when calling torch.export.export. If you would like to view some more information about this error, and get a list of all other errors that may occur in your export call, you can replace your `export()` call with `draft_export()`.

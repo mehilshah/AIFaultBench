@@ -1,0 +1,73 @@
+Title: TypeError when evaluating similarity model on A100 GPUs using EmbeddingSimilarityEvaluator (works on CPU)
+Date: 2025-07-25T14:54:42+00:00
+URL: https://github.com/huggingface/sentence-transformers/issues/3468
+
+Description:
+
+
+
+Hello,
+
+I'm encountering a TypeError when evaluating a sentence similarity model using EmbeddingSimilarityEvaluator on an A100 GPU.
+
+The same code works fine on CPU.
+
+I've tested it with both sentence-transformers versions 3.4.1 and 5.0.0, and the issue persists.
+
+Minimal reproducible code:
+```python
+
+from datasets import load_dataset
+from sentence_transformers.evaluation import EmbeddingSimilarityEvaluator, SimilarityFunction
+from sentence_transformers import SentenceTransformer
+
+# Load the STSB dataset
+eval_dataset = load_dataset("sentence-transformers/stsb", split="validation")
+
+# Initialize the evaluator
+dev_evaluator = EmbeddingSimilarityEvaluator(
+    sentences1=eval_dataset["sentence1"],
+    sentences2=eval_dataset["sentence2"],
+    scores=eval_dataset["score"],
+    main_similarity=SimilarityFunction.COSINE,
+)
+
+model_name = "sentence-transformers/all-mpnet-base-v2"
+model = SentenceTransformer(model_name)
+
+# Load model on GPU
+# model = SentenceTransformer(model_name, device="cuda" if torch.cuda.is_available() else "cpu", cache_folder=os.environ["HF_HOME"])
+
+
+# Run evaluation manually
+print(dev_evaluator(model))
+```
+Error traceback:
+```
+def embed_inputs(
+    245     self,
+    246     model: SentenceTransformer,
+    247     sentences: str | list[str] | np.ndarray,
+    248     **kwargs,
+    249 ) -> np.ndarray:
+--> 250     return model.encode(
+    251         sentences,
+    252         batch_size=self.batch_size,
+    253         show_progress_bar=self.show_progress_bar,
+...
+---> 44     raise TypeError(
+     45         f"Wrong key type: '{key}' of type '{type(key)}'. Expected one of int, slice, range, str or Iterable."
+     46     )
+
+TypeError: Wrong key type: '1243' of type '<class 'numpy.int64'>'. Expected one of int, slice, range, str or Iterable.
+```
+Environment:
+Python: 3.10.12
+datasets: 4.0
+
+GPU: A100
+
+sentence-transformers: tested with both 3.4.1 and 5.0.0
+
+This error only occurs on GPU. On CPU, it works as expected.
+Let me know if you need additional logs or environment details.

@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With torch 2.13.0+cu129 on the local Blackwell GPU, `bash run_repro.sh` reaches `fabric.backward(loss)` and raises the reported `UserWarning: The AccumulateGrad node's stream does not match...` from `torch.autograd`.",
+  "steps": [
+    "Created and activated a clean venv with the bundle dependencies and editable local codebase install.",
+    "Upgraded PyTorch to a CUDA build that supports the host GPU (`torch==2.13.0+cu129`, `sm_120`).",
+    "Ran `bash run_repro.sh`; the script printed `step=0` and then failed with the AccumulateGrad stream-mismatch warning in stderr."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

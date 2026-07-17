@@ -1,0 +1,15 @@
+{
+  "bug_id": "177",
+  "issue_url": "https://github.com/lark-parser/lark/issues/1457",
+  "library_name": "lark",
+  "library_version": "unknown",
+  "reproduction_command": "bash run_repro.sh",
+  "artifacts": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "README.md"
+  ]
+}

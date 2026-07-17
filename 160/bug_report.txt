@@ -1,0 +1,53 @@
+Title: `class Point` doesn't support equality comparison
+Date: 2023-12-19T12:35:24+00:00
+URL: https://github.com/influxdata/influxdb-client-python/issues/623
+
+Description:
+### Specifications
+
+* Client Version: influxdb-client==1.39.0
+* InfluxDB Version: irrelevant
+* Platform: windows
+
+
+### Code sample to reproduce problem
+
+```python
+def test_point_equality():
+    point_a = (
+        Point("asd")
+        .tag("foo", "bar")
+        .field("value", 123.45)
+        .time(datetime(2023, 12, 19, 13, 27, 42, 215000, tzinfo=timezone.utc))
+    )
+
+    point_b = (
+        Point("asd")
+        .tag("foo", "bar")
+        .field("value", 123.45)
+        .time(datetime(2023, 12, 19, 13, 27, 42, 215000, tzinfo=timezone.utc))
+    )
+
+    assert point_a == point_b
+```
+
+
+### Expected behavior
+
+Points with equal measurement_name, tags, fields and datetime shall be equal using the `==` comparison.
+
+### Actual behavior
+
+they are not equal:
+> >       assert point_a == point_b
+> E       assert <influxdb_client.client.write.point.Point object at 0x0000022C05D11110> == <influxdb_client.client.write.point.Point object at 0x0000022C05D11150>
+
+**But**
+```python
+assert point_a.to_line_protocol() == point_b.to_line_protocol()
+```
+is fulfilled.
+
+### Additional info
+
+Maybe I'm missing a key concept here why points are not equatable but line protocols are?

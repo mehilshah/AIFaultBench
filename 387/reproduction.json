@@ -1,0 +1,12 @@
+{
+  "reproducible": false,
+  "evidence": "Running `bash run_repro.sh` prints `BLOCKED: current snapshot rejects composite primary keys before relationship` and `InvalidMetadataError: 'primary_key' must be a string.` from `codebase/sdv/metadata/single_table.py`.",
+  "steps": [
+    "Restore the referenced SDV snapshot with `bash setup_codebase.sh`.",
+    "Create a local virtualenv and install the lightweight repro dependencies with `bash setup_env.sh`.",
+    "Run `bash run_repro.sh` to execute the local metadata scenario.",
+    "Observe that the composite primary-key step is rejected before the reported relationship-validation bug can be reached."
+  ],
+  "blocking_reason": "This checkout does not accept composite primary keys through the public single-table metadata API, so the reported scenario cannot be exercised here.",
+  "reproduction_command": "bash run_repro.sh"
+}

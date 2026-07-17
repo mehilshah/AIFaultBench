@@ -1,0 +1,42 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2825
+
+TITLE
+[Metadata composite keys] Validate that primary key columns are unique
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version:
+* Python version:
+* Operating System:
+
+### Error Description
+Passing the same column multiple times to `set_primary_key` results in a confusing error during fit: `AttributeError: 'DataFrame' object has no attribute 'dtype'`.
+
+When validating the primary key, we should error if the same column name appears multiple times. 
+
+### Steps to reproduce
+
+```python
+import pandas as pd
+import numpy as np
+from sdv.metadata import Metadata
+
+account_metadata = Metadata.load_from_dict({
+    'tables': {
+        'accounts': {
+            'columns': {
+                'user_id': {'sdtype': 'id', 'regex_format': 'ID_[0-9]{1,2}'},
+                'account_type': {'sdtype': 'categorical'},
+                'col1': {'sdtype': 'categorical'},
+                'col2': {'sdtype': 'categorical'},
+            }
+        }
+    }
+})
+account_metadata.set_primary_key(['user_id', 'user_id'], table_name='accounts')
+account_metadata.validate()
+```
+

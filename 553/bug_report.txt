@@ -1,0 +1,34 @@
+# recovered-from-issue: https://github.com/sdv-dev/SDV/issues/2716
+
+TITLE
+HMASynthesizer - Cap displayed column count in PerformanceAlert Message
+
+BODY
+### Environment Details
+
+Please indicate the following details about the environment in which you found the bug:
+
+* SDV version: 1.27.0
+* Python version: 3.13
+* Operating System: macOS
+
+### Error Description
+
+Currently, the `PerformanceAlert` message shows the exact number of columns that would be generated when using the `HMASynthesizer` on certain large metadata schemas.
+
+Here is a `PerformanceAlert` I got using a very large metadata schema:
+```
+PerformanceAlert: Using the HMASynthesizer on this metadata schema is not recommended. 
+To model this data, HMA will generate a large number of columns. 
+(1242795205357604006914869020662561187107625241835148490153429600217315241421606692231538188027763170639049979307498851647095492233628046002262389188320889247681567240900053358846233021294019783549076078252712990921252402451993983893028238847485415164014637876372898672029378093907665490521246632446090595249503672918730024317350694651405369816749632684669070640084712270111881829143034676735834502496296050125853224784350562181068011882278434 columns)
+```
+
+### Expected Behavior
+
+Introduce a maximum display cap for the column count in the alert message to 1000000.
+````
+PerformanceAlert: Using the HMASynthesizer on this metadata schema is not recommended. 
+To model this data, HMA will generate a large number of columns. (1000000+ columns)
+```
+
+Also, if possible, cap the computation that if the number is already exceeding 1000000 to stop computing and print the performance alert.

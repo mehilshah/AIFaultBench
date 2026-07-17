@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "033/repro.py", line 46, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "033/repro.py", line 39, in main
+    _ = kernel_self @ dst_features
+        ~~~~~~~~~~~~^~~~~~~~~~~~~~
+RuntimeError: Expected size for first two dimensions of batch2 tensor to be: [8910, 1] but got: [8910, 3].

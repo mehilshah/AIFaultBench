@@ -1,0 +1,10 @@
+{
+  "title": "ErnieImageTransformer2DModel missing from_single_file",
+  "bug_report": "bug_report.txt",
+  "source_root": "codebase/src",
+  "reproduction_script": "repro.py",
+  "setup_script": "setup_env.sh",
+  "run_script": "run_repro.sh",
+  "reproduction_command": "bash run_repro.sh",
+  "expected_failure": "AttributeError: type object 'ErnieImageTransformer2DModel' has no attribute 'from_single_file'"
+}

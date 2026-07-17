@@ -1,0 +1,26 @@
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+DeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully
+SEED_LAYERS=False BASE_SEED=1234 SEED_FN=None
+Using topology: {ProcessCoord(pipe=0, data=0): 0}
+stage=0 layers=1
+     0: Linear
+  loss: MSELoss
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+steps: 1 loss: 5.2188 iter time (s): 0.009 samples/sec: 923.957
+SEED_LAYERS=False BASE_SEED=1234 SEED_FN=None
+Using topology: {ProcessCoord(pipe=0, data=0): 0}
+stage=0 layers=1
+     0: Linear
+  loss: MSELoss
+steps: 1 loss: 5.2188 iter time (s): 0.009 samples/sec: 893.070
+{"delta": 0.0, "gas1_loss": 5.2187581062316895, "gas1_norm": 10.010870933532715, "gas4_loss": 5.2187581062316895, "gas4_norm": 10.010870933532715, "ratio": 1.0}
+No gradient scaling discrepancy observed.

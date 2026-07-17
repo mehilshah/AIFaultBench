@@ -1,0 +1,7 @@
+-e ./codebase
+torch
+torchvision
+pyyaml
+huggingface_hub
+safetensors
+numpy

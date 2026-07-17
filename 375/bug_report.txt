@@ -1,0 +1,87 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38634
+
+TITLE
+jax.scipy.special.gammaln returns inf for smallest positive subnormal float32 input
+
+BODY
+### Description
+
+`jax.scipy.special.gammaln` appears to return an incorrect `inf` result for the smallest positive `float32` subnormal input.
+
+For very small positive nonzero inputs, `gammaln(x)` should be large but finite. In particular, for `x = 1.401298464324817e-45`, the expected result is approximately `103.2789306640625`. However, JAX returns `inf`, which is the same behavior expected at the pole `x = 0`, not at a positive nonzero subnormal value.
+
+### Minimal reproducible example
+
+```
+#!/usr/bin/env python3
+import os
+import sys
+import warnings
+
+warnings.filterwarnings("ignore")
+os.environ.setdefault("JAX_PLATFORMS", "cpu")
+
+try:
+    import numpy as np
+    import jax
+    import jax.numpy as jnp
+    import jax.scipy.special as jsp
+except ImportError as e:
+    print(f"missing dep: {e}")
+    sys.exit(2)
+
+inf = float("inf")
+
+x = jnp.asarray(
+    np.asarray(
+        [
+            [-0.0, 0.0, 1.401298464324817e-45],
+            [-1.0, 1.0, 9.999999974752427e-07],
+        ],
+        dtype=np.float32,
+    )
+)
+
+out = np.asarray(jsp.gammaln(x))
+
+expected = np.asarray(
+    [
+        [inf, inf, 103.2789306640625],
+        [inf, 0.0, 13.815509796142578],
+    ],
+    dtype=np.float32,
+)
+
+print("jax:", out.tolist())
+print("expected:", expected.tolist())
+```
+
+### Actual result
+
+```
+jax: [[inf, inf, inf], [inf, 4.76837158203125e-07, 13.815508842468262]]
+expected: [[inf, inf, 103.2789306640625], [inf, 0.0, 13.815509796142578]]
+```
+
+### Expected result
+
+```
+gammaln(1.401298464324817e-45) should be finite, approximately:
+
+103.2789306640625
+```
+
+The `inf` results for `-0.0`, `+0.0`, and `-1.0` are expected because these are poles of the gamma function. The issue is specifically that JAX also returns `inf` for the smallest positive nonzero `float32` subnormal value, where a large finite value is expected.
+
+The small difference at `gammaln(1.0)` is not the main issue here. The main mismatch is the positive subnormal input being treated like zero.
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+jax: 0.10.1
+jaxlib: 0.10.1
+numpy: 2.4.6
+python: 3.13.13
+platform: Ubuntu 24.04.3 LTS, Linux x86_64
+accelerator: CPU backend
+
+Note: GPU is present, but CUDA-enabled jaxlib is not installed, so JAX falls back to CPU.

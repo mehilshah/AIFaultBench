@@ -1,0 +1,42 @@
+Title: Broken License File Link in README Files
+Date: 2025-12-12T15:14:04+00:00
+URL: https://github.com/kornia/kornia/issues/3371
+
+Description:
+## Description
+
+The license badge links in both README.md and README_zh-CN.md reference a file named LICENCE, but the actual license file in the repository is named LICENSE. This results in a broken link when users click on the license badge.
+
+## Steps to Reproduce
+
+- Navigate to the repository root
+- Open README.md or README_zh-CN.md
+- Click on the license badge link: [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENCE)
+- Observe that the link is broken (404 or file not found)
+
+**Expected Behavior**
+
+Clicking the license badge should navigate to the LICENSE file in the repository root.
+
+**Actual Behavior**
+
+The link points to LICENCE which doesn't exist, resulting in a broken link.
+
+## Affected Files:
+
+- README.md (line 23)
+- README_zh-CN.md (line 25)
+- Actual license file: LICENSE (exists in repository root)
+
+## Proposed Solution
+
+- Update the license badge links in both README files to reference LICENSE instead of LICENCE:
+
+## Impact
+
+User Impact: Users cannot access license information via the badge link
+Type: Bug / Documentation
+
+## Additional Context
+This is a simple typo fix that improves documentation accessibility. The license file itself is correctly named and accessible via direct navigation.
+

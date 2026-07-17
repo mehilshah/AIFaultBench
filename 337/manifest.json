@@ -1,0 +1,18 @@
+{
+  "name": "peft-olora-pissa-quantization-repro",
+  "description": "Minimal reproduction for PEFT LoRA initialization failures with 4-bit quantized layers and olora/pissa init modes.",
+  "reproduction_command": "bash run_repro.sh",
+  "files": [
+    "repro.py",
+    "requirements.txt",
+    "setup_env.sh",
+    "run_repro.sh",
+    "Dockerfile",
+    "manifest.json",
+    "README.md",
+    "bitsandbytes/__init__.py",
+    "bitsandbytes/nn.py",
+    "bitsandbytes/functional.py"
+  ]
+}
+

@@ -1,0 +1,102 @@
+# recovered-from-issue: https://github.com/vllm-project/vllm/issues/47027
+
+TITLE
+[Bug]: when using JSON output, thinking will be disabled even with thinking flag on
+
+BODY
+### Your current environment
+
+<details>
+<summary>The output of <code>python collect_env.py</code></summary>
+
+```text
+Key versions for the bug report:
+- vLLM: 0.23.0
+- PyTorch: 2.11.0+cu130 (CUDA 13.0)
+- transformers: 5.12.0
+- flashinfer-python: 0.6.12
+- GPU: 2× NVIDIA B200, driver 570.158.01, CUDA runtime 13.0.88
+- OS: Ubuntu 22.04.5, glibc 2.35, Python 3.12.13
+- Image: VLLM_USAGE_SOURCE=production-docker-image
+- Relevant env: VLLM_USE_FLASHINFER_SAMPLER=0, TORCH_CUDA_ARCH_LIST=7.5 8.0 8.6 8.9 9.0 10.0 12.0+PTX
+
+```
+
+</details>
+
+
+### 🐛 Describe the bug
+
+## Serve command (minimal)
+
+```bash
+docker run -d --rm --name vllm_repro \
+  --gpus '"device=0,1"' --ipc=host -p 8000:8000 \
+  -e HF_TOKEN=$HF_TOKEN \
+  vllm/vllm-openai:latest \
+  --model Qwen/Qwen3.6-27B --port 8000 \
+  --tensor-parallel-size 2 \
+  --gpu-memory-utilization 0.9
+  # NOTE: no --reasoning-parser; chat-template default is thinking ON
+```
+
+## Minimal reproducible code
+
+```python
+from openai import OpenAI
+from pydantic import BaseModel
+
+client = OpenAI(base_url="http://localhost:8000/v1", api_key="EMPTY")
+MODEL = "Qwen/Qwen3.6-27B"
+PROMPT = ("A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. "
+          "How much does the ball cost? Answer with just the dollar amount.")
+
+class Answer(BaseModel):            # answer-only schema
+    answer: str
+class ReasonedAnswer(BaseModel):    # reasoning field BEFORE answer
+    reasoning: str
+    answer: str
+
+msgs = [{"role": "user", "content": PROMPT}]
+
+# (1) free-form
+r = client.chat.completions.create(model=MODEL, messages=msgs, temperature=0.0, max_tokens=2048)
+c = r.choices[0].message.content or ""
+print("(1) free-form          tokens:", r.usage.completion_tokens, "has <think>:", "</think>" in c)
+
+# (2) structured, answer-only schema
+r = client.beta.chat.completions.parse(model=MODEL, messages=msgs, response_format=Answer, temperature=0.0, max_tokens=2048)
+c = r.choices[0].message.content or ""
+print("(2) structured {answer} tokens:", r.usage.completion_tokens, "has <think>:", "</think>" in c, "raw:", repr(c))
+
+# (3) structured, reasoning field first
+r = client.beta.chat.completions.parse(model=MODEL, messages=msgs, response_format=ReasonedAnswer, temperature=0.0, max_tokens=2048)
+print("(3) structured {reasoning,answer} tokens:", r.usage.completion_tokens,
+      "| reasoning present:", bool(r.choices[0].message.parsed.reasoning))
+```
+
+## Observed output
+
+```
+=== (1) free-form (no response_format) ===
+completion_tokens: 1152 | has <think>: True
+content[:400]: 'Here\'s a thinking process:\n\n1.  **Analyze the User Input:** ...'
+
+=== (2) structured response_format=Answer{answer} ===
+completion_tokens: 16 | has <think>: False
+parsed: answer='0.05' | raw content: '{\n  "answer":  "0.05"\n}'
+
+=== (3) structured response_format=ReasonedAnswer{reasoning,answer} ===
+completion_tokens: 130
+parsed.reasoning[:300]: 'Let the cost of the ball be x. Then the cost of the bat is x + 1.00 ...'
+parsed.answer: '0.05'
+```
+
+## Expected vs actual
+
+- **Expected:** with thinking-on as the chat-template default, a `response_format` request would still emit the `<think>…</think>` chain before the constrained JSON (as it does for free-form), then produce the schema-valid output.
+- **Actual:** the constrained request skips thinking entirely (case 2: 16 tokens, no `<think>`), unless the schema itself contains a leading field for the reasoning to occupy (case 3).
+
+### Before submitting a new issue...
+
+- [x] Make sure you already searched for relevant issues, and asked the chatbot living at the bottom right corner of the [documentation page](https://docs.vllm.ai/en/latest/), which can answer lots of frequently asked questions.

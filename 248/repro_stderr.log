@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "248/repro.py", line 9, in main
+    import eel  # noqa: F401
+    ^^^^^^^^^^
+  File "248/.venv/lib/python3.12/site-packages/eel/__init__.py", line 6, in <module>
+    from typing_extensions import Literal
+ModuleNotFoundError: No module named 'typing_extensions'

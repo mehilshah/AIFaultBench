@@ -1,0 +1,6 @@
+input_probability=0.300000
+input_logit=-0.847298
+zip_from_logits.gate=0.300000
+zip_from_gate.gate=0.300000
+zero_fraction_gate_logits=0.306000
+zero_fraction_gate=0.297000

@@ -1,0 +1,11 @@
+{
+  "bug_report": "bug_report.txt",
+  "repro_script": "repro.py",
+  "requirements": [
+    "torch>=2.13.0",
+    "labml>=0.5.3",
+    "labml-helpers>=0.4.89"
+  ],
+  "run_script": "run_repro.sh",
+  "setup_script": "setup_env.sh"
+}

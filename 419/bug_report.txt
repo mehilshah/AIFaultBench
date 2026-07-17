@@ -1,0 +1,211 @@
+# recovered-from-issue: https://github.com/jax-ml/jax/issues/38620
+
+TITLE
+jax.scipy.stats.chi2.logpdf returns nan at x=0.0 and x=inf for df=2.0
+
+BODY
+### Description
+
+jax.scipy.stats.chi2.logpdf(0.0, 2.0)` returns `nan`, while
+`scipy.stats.chi2.logpdf(0.0, 2.0)` returns the finite value
+`-0.6931471805599453`.
+
+`jax.scipy.stats.chi2.logpdf(inf, 2.0)` also returns `nan`, while SciPy
+returns `-inf`.
+
+These appear to be valid boundary cases for the chi-square distribution. For
+`df=2`, the chi-square density has a simple closed form:
+
+```text id="jsnha2"
+f(x; df=2) = 1/2 * exp(-x/2)
+```
+
+Therefore:
+
+```text id="r09vj0"
+log f(x; df=2) = -log(2) - x/2
+```
+
+This suggests that the value at `x=0.0` should be finite, while the value at
+`x=inf` should approach `-inf`.
+
+SciPy returns values consistent with this closed-form expression, while JAX
+currently returns `nan` for these boundary cases.
+
+This appears to be a boundary handling issue for `df=2.0`, possibly caused by
+evaluating a general expression containing an indeterminate term such as
+`0 * log(0)` instead of using the limiting value.
+
+## Origin
+
+Found via property-based testing derived from:
+
+```text id="wr0c4z"
+jax/tests/lax_scipy_stats_test.py
+  ::LaxBackedScipyStatsTests::testChi2LogPdf
+```
+
+The property uses a **reference oracle**: `jax.scipy.stats.chi2.logpdf`
+is compared against `scipy.stats.chi2.logpdf` in NaN/inf classification and
+finite values for valid inputs.
+
+The existing JAX test only exercises strictly positive, finite inputs, so
+`x=0`, `nan`, and `inf` are never covered. Testing was restricted to exactly
+`x ∈ {0.0, inf}` and `df = 2.0` to isolate this boundary failure from
+unrelated edge cases (`x<0`, `df=1.0`, `x=nan`), which exercise different
+code paths. Re-running with this restricted input set reproduces the failure
+deterministically:
+
+```text id="rerun1"
+chi2.logpdf NaN mismatch at x=0.0, df=2.0: jax=nan, scipy=-0.6931471805599453
+Falsifying example: x=np.float32(0.0), df=np.float32(2.0), loc=np.float32(0.0), scale=np.float32(1.0)
+```
+
+The failing cases use valid distribution parameters:
+
+```python id="lljlma"
+x = 0.0
+df = 2.0
+loc = 0.0
+scale = 1.0
+```
+
+and:
+
+```python id="2pedbm"
+x = inf
+df = 2.0
+loc = 0.0
+scale = 1.0
+```
+
+## Verification
+
+This case can be checked directly from the closed form of the chi-square
+density.
+
+For `df=2`, the chi-square distribution is equivalent to an exponential
+distribution with scale 2:
+
+```text id="f11lk3"
+f(x; df=2) = 1/2 * exp(-x/2)
+```
+
+Therefore the log-density is:
+
+```text id="f7q04f"
+log f(x; df=2) = -log(2) - x/2
+```
+
+At `x=0`:
+
+```text id="4m2m81"
+log f(0; df=2) = -log(2) = -0.6931471805599453
+```
+
+So the value at `x=0.0` appears to be finite. At `x=+inf`, the same expression
+tends to `-inf`.
+
+This verification is independent of SciPy. SciPy returns values consistent with
+this expression, while JAX currently returns `nan` for these boundary cases.
+
+## Minimal reproducer
+
+```python id="1cm6z2"
+import numpy as np
+import scipy.stats
+import jax
+import jax.numpy as jnp
+import jax.scipy.stats
+
+jax.config.update("jax_enable_x64", True)
+
+cases = [
+    (np.float32(0.0), np.float32(2.0)),
+    (np.float64(0.0), np.float64(2.0)),
+    (np.float32(np.inf), np.float32(2.0)),
+]
+
+for x, df in cases:
+    print(f"x = {x!r}, df = {df!r}")
+    print(f"  scipy: {scipy.stats.chi2.logpdf(np.array(x), np.array(df))}")
+    print(f"  jax:   {jax.scipy.stats.chi2.logpdf(jnp.array(x), jnp.array(df))}")
+    print(
+        "  jit:  ",
+        jax.jit(lambda x_, df_: jax.scipy.stats.chi2.logpdf(x_, df_))(
+            jnp.array(x), jnp.array(df)
+        ),
+    )
+    print()
+```
+
+## Expected behavior
+
+Unless I am missing some implementation detail, I would expect JAX to return
+values consistent with the closed-form expression above and with SciPy:
+
+```text id="jo3o7t"
+x = np.float32(0.0), df = np.float32(2.0)
+  scipy: -0.6931471805599453
+  jax:   -0.6931471805599453
+  jit:   -0.6931471805599453
+
+x = np.float64(0.0), df = np.float64(2.0)
+  scipy: -0.6931471805599453
+  jax:   -0.6931471805599453
+  jit:   -0.6931471805599453
+
+x = np.float32(inf), df = np.float32(2.0)
+  scipy: -inf
+  jax:   -inf
+  jit:   -inf
+```
+
+## Actual behavior
+
+```text id="x8g3u8"
+x = np.float32(0.0), df = np.float32(2.0)
+  scipy: -0.6931471805599453
+  jax:   nan
+  jit:   nan
+
+x = np.float64(0.0), df = np.float64(2.0)
+  scipy: -0.6931471805599453
+  jax:   nan
+  jit:   nan
+
+x = np.float32(inf), df = np.float32(2.0)
+  scipy: -inf
+  jax:   nan
+  jit:   nan
+```
+
+## Additional cases
+
+```text id="il8vvu"
+x=0.0,  df=2.0: scipy=-0.6931471805599453, jax=nan   ← mismatch
+x=inf,  df=2.0: scipy=-inf,                 jax=nan   ← mismatch
+
+x=1e-8, df=2.0: scipy≈-0.6931471856,        jax≈same  OK
+x=1e-4, df=2.0: scipy≈-0.6931971806,        jax≈same  OK
+
+x=0.0,  df=1.0: scipy=inf,                  jax=inf   OK
+x=0.0,  df=3.0: scipy=-inf,                 jax=-inf  OK
+
+x=nan,  df=2.0: scipy=nan,                  jax=nan   OK
+```
+
+The mismatch appears specific to `df=2.0` at boundary values where the limiting
+value seems to be well-defined.
+
+### System info (python version, jaxlib version, accelerator, etc.)
+
+```text id="7ybkz9"
+jax:     0.10.1
+jaxlib:  0.10.1
+numpy:   2.4.6
+scipy:   1.17.1
+python:  3.12.3
+OS:      Linux-6.17.0-29-generic-x86_64-with-glibc2.39
+backend: cpu
+```

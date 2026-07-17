@@ -1,0 +1,18 @@
+{
+  "bug_id": "368",
+  "bug_dir": "368",
+  "issue_url": "https://github.com/huggingface/pytorch-image-models/issues/2612",
+  "commit_hash": "ae4d1bbfefab7e4f2f49a744838a2d9c7713146d",
+  "library_name": "pytorch-image-models",
+  "library_version": "2.9.0+cu128",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "huggingface/pytorch-image-models@ae4d1bbfefab7e4f2f49a744838a2d9c7713146d",
+  "codebase_present": "true",
+  "standardized_dir": "../368",
+  "reproducible": false,
+  "runtime_notes": {
+    "gpu": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+    "torch": "2.9.0+cu128",
+    "observation": "full-model baseline and contiguous-patched timings were within noise"
+  }
+}

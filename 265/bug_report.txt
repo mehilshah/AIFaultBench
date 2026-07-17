@@ -1,0 +1,51 @@
+Title: [BUG] `lags_past_covariates` dict type breaks `lags_future_covariates` when `output_chunk_shift>0`
+Date: 2025-01-23T14:29:03+00:00
+URL: https://github.com/unit8co/darts/issues/2652
+
+Description:
+**Describe the bug**
+When initiating a model with `lags_past_covariates` as dict and `lags_future_covariates` as some other type (not dict), I get the below error when `output_chunk_shift>0`. This is probably because `processed_component_lags` is initialized for past lags but the key for future lags is not included as it not a dict.
+
+```python
+File darts\models\forecasting\regression_model.py:399, in RegressionModel._generate_lags(lags, lags_past_covariates, lags_future_covariates, output_chunk_shift)
+    [393](darts/models/forecasting/regression_model.py:393)         processed_lags[lags_abbrev] = [
+    [394](darts/models/forecasting/regression_model.py:394)             lag_ + output_chunk_shift for lag_ in processed_lags[lags_abbrev]
+    [395](darts/models/forecasting/regression_model.py:395)         ]
+    [396](darts/models/forecasting/regression_model.py:396)         if processed_component_lags:
+    [397](darts/models/forecasting/regression_model.py:397)             processed_component_lags[lags_abbrev] = {
+    [398](darts/models/forecasting/regression_model.py:398)                 comp_: [lag_ + output_chunk_shift for lag_ in lags_]
+--> [399](darts/models/forecasting/regression_model.py:399)                 for comp_, lags_ in processed_component_lags[
+    [400](darts/models/forecasting/regression_model.py:400)                     lags_abbrev
+    [401](darts/models/forecasting/regression_model.py:401)                 ].items()
+    [402](darts/models/forecasting/regression_model.py:402)             }
+    [403](darts/models/forecasting/regression_model.py:403) return processed_lags, processed_component_lags
+
+KeyError: 'future'
+```
+
+**To Reproduce**
+```python
+from darts.datasets import AirPassengersDataset
+from darts.models import LinearRegressionModel
+from darts.utils.timeseries_generation import datetime_attribute_timeseries
+
+series = AirPassengersDataset().load()
+air_year = datetime_attribute_timeseries(series, attribute="year")
+air_month = datetime_attribute_timeseries(series, attribute="month")
+series = series.drop_before(12).drop_after(120)
+
+model = LinearRegressionModel(
+    lags_past_covariates={"month": [-6]},
+    lags_future_covariates=[0],
+    output_chunk_shift=1,
+)
+model.fit(series, past_covariates=air_month, future_covariates=air_year)
+model.predict(1)
+```
+
+**Expected behavior**
+Expected behavior should be similar to behavior with `output_chunk_shift=0` for which the code above runs without problems. 
+
+**System (please complete the following information):**
+ - Python version: 3.12.7
+ - darts version: 0.32.0

@@ -1,0 +1,67 @@
+# recovered-from-issue: https://github.com/deepspeedai/DeepSpeed/issues/7835
+
+TITLE
+[BUG] DeprecationWarning from @torch.jit.script
+
+BODY
+**Describe the bug**
+With recent PyTorch versions (using torch-2.10.0), importing DeepSpeed triggers a DeprecationWarning for `torch.jit.script`, e.g. in `deepspeed/moe/sharded_moe.py`:
+> /__w/trl/trl/.venv/lib/python3.10/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+
+This is now warned at import time and is noisy for users. As it is a deprecation, eventually it will raise an error instead.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Install PyTorch 2.10.0
+2. Import deepspeed
+```python
+from deepspeed import DeepSpeedEngine
+```
+
+Traceback (when warning is errored):
+```python
+     from deepspeed import DeepSpeedEngine
+ .venv/lib/python3.12/site-packages/deepspeed/__init__.py:25: in <module>
+     from . import ops
+ .venv/lib/python3.12/site-packages/deepspeed/ops/__init__.py:11: in <module>
+     from . import transformer
+ .venv/lib/python3.12/site-packages/deepspeed/ops/transformer/__init__.py:9: in <module>
+     from .inference.moe_inference import DeepSpeedMoEInferenceConfig, DeepSpeedMoEInference
+ .venv/lib/python3.12/site-packages/deepspeed/ops/transformer/inference/__init__.py:8: in <module>
+     from .moe_inference import DeepSpeedMoEInferenceConfig, DeepSpeedMoEInference
+ .venv/lib/python3.12/site-packages/deepspeed/ops/transformer/inference/moe_inference.py:17: in <module>
+     from ....moe.sharded_moe import TopKGate
+ .venv/lib/python3.12/site-packages/deepspeed/moe/sharded_moe.py:160: in <module>
+     @torch.jit.script
+      ^^^^^^^^^^^^^^^^
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ 
+ obj = <function _capacity at 0x7f1f12f827a0>, optimize = None, _frames_up = 0
+ _rcb = None, example_inputs = None
+
+     def script(
+         obj,
+         optimize=None,
+         _frames_up=0,
+         _rcb=None,
+         example_inputs: Union[list[tuple], dict[Callable, list[tuple]], None] = None,
+      ):
+           
+          if sys.version_info >= (3, 14):
+              warnings.warn(
+                  "`torch.jit.script` is not supported in Python 3.14+ and may break. "
+                  "Please switch to `torch.compile` or `torch.export`.",
+                  DeprecationWarning,
+              )
+          else:
+  >           warnings.warn(
+                  "`torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+                  DeprecationWarning,
+              )
+  E           DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  
+  .venv/lib/python3.12/site-packages/torch/jit/_script.py:1480: DeprecationWarning
+```
+
+**Expected behavior**
+No warning is emitted.

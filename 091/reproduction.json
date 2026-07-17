@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the local repro on CPU reaches model.generate and then fails with RuntimeError: The size of tensor a (258) must match the size of tensor b (30) at non-singleton dimension 3. The traceback points to x_transformers/attend.py masked_fill during decoder cross-attention.",
+  "steps": [
+    "Create the local virtual environment and install the pinned CPU dependencies from requirements.txt.",
+    "Run repro.py through run_repro.sh using the local codebase snapshot.",
+    "Observe that training/backward complete, then generate() crashes with the 258-vs-30 mask shape mismatch."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

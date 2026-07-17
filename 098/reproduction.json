@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running `bash run_repro.sh` loads `codebase/denoising_diffusion_pytorch/denoising_diffusion_pytorch.py` and fails in `SinusoidalPosEmb.forward()` with `NameError: name 'theta' is not defined`. The bug is present at line 119 in the local source snapshot.",
+  "steps": [
+    "Read the issue report in `bug_report.txt` and located `SinusoidalPosEmb` in `codebase/denoising_diffusion_pytorch/denoising_diffusion_pytorch.py`.",
+    "Created a minimal repro script that executes the exact buggy class body from the local codebase and calls `forward()` on a dummy input.",
+    "Ran `bash run_repro.sh` and observed the expected `NameError`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

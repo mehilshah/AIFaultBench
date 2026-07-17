@@ -1,0 +1,12 @@
+{
+  "bug_id": "184",
+  "bug_dir": "184",
+  "issue_url": "https://github.com/ludwig-ai/ludwig/issues/3092",
+  "commit_hash": "",
+  "library_name": "ludwig",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "codebase",
+  "codebase_present": "true",
+  "standardized_dir": "../184"
+}

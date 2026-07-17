@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "On torch 2.5.1+cpu, torch.jit.save(scripted_model) fails with RuntimeError: Could not export Python function call 'is_fx_tracing'. The traceback points to codebase/detectron2/modeling/poolers.py:223 inside ROIPooler.forward.",
+  "steps": [
+    "Run setup_env.sh to create or reuse the local virtualenv and install the pinned runtime dependencies.",
+    "Export PYTHONPATH to include the local codebase/ tree.",
+    "Execute repro.py, which builds the local Mask R-CNN config, scripts it with scripting_with_instances(), and fails during torch.jit.save()."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,107 @@
+# recovered-from-issue: https://github.com/Lightning-AI/pytorch-lightning/issues/21804
+
+TITLE
+SIGSEGV (Segmentation Fault) when saving checkpoints with FSDP on CPU
+
+BODY
+### Bug description
+
+When running FSDP on CPU with `state_dict_type="full"`, attempting to save a checkpoint (or retrieve the state dict) results in a segmentation fault (SIGSEGV).
+
+This is caused by `_get_full_state_dict_context` unconditionally setting `offload_to_cpu=True` in `FullStateDictConfig` and `FullOptimStateDictConfig`.
+
+When FSDP is running on CPU, `offload_to_cpu=True` triggers a use-after-free in PyTorch's `FlatParamHandle.to_cpu()`. Specifically, `.to("cpu")` is a no-op for tensors that are already on CPU, meaning no copy is made (unlike when offloading from CUDA). As a result, the flat parameter and all original-parameter views of it continue to alias the padded unsharded storage. When `to_cpu()` subsequently frees this storage, it leads to a use-after-free. The subsequent `.clone()` call in the post-state-dict hook then crashes with a segmentation fault.
+
+The fix is to only set `offload_to_cpu=True` when the FSDP shards actually live on an accelerator (non-CPU device).
+
+### Steps to reproduce
+1. Run a model using FSDP strategy on CPU configured with `state_dict_type="full"`.
+2. Attempt to save a checkpoint (which triggers `_get_full_state_dict_context` with `offload_to_cpu=True` implicitly).
+
+### Expected behavior
+Checkpoint saving should succeed without crashing when FSDP is run on CPU.
+
+### Actual behavior
+The process crashes with a Segmentation Fault (SIGSEGV).
+
+
+### What version are you seeing the problem on?
+
+master, v2.6
+
+### Reproduced in studio
+
+_No response_
+
+### How to reproduce the bug
+
+```python
+import torch
+from lightning.fabric import Fabric
+from lightning.fabric.strategies import FSDPStrategy
+
+# Subclass to bypass Fabric's strict type check for FSDPStrategy on CPU
+class FSDPStrategySubclass(FSDPStrategy):
+    pass
+
+# Minimal model
+class MyModel(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer = torch.nn.Linear(10, 10)
+    def forward(self, x):
+        return self.layer(x)
+
+def main():
+    # Run on CPU with FSDP subclass, devices=2
+    strategy = FSDPStrategySubclass(state_dict_type="full")
+    fabric = Fabric(accelerator="cpu", devices=2, strategy=strategy)
+    fabric.launch()
+
+    model = MyModel()
+    model = fabric.setup(model)
+
+    # Trigger checkpoint saving, which will call _get_full_state_dict_context
+    # and fail when FSDP is on CPU and offload_to_cpu=True is set.
+    state = {"model": model}
+    try:
+        fabric.save("test_checkpoint.ckpt", state)
+        print(f"Rank {fabric.global_rank}: SUCCESS: Checkpoint saved without crash!")
+    except Exception as e:
+        print(f"Rank {fabric.global_rank}: FAILED with exception: {e}")
+
+if __name__ == "__main__":
+    main()
+```
+
+### Error messages and logs
+
+```
+# Error messages and logs here please
+```
+
+
+### Environment
+
+<details>
+  <summary>Current environment</summary>
+
+```
+#- PyTorch Lightning Version (e.g., 2.6.0):
+#- PyTorch Version (e.g., 2.5):
+#- Python version (e.g., 3.12):
+#- OS (e.g., Linux):
+#- CUDA/cuDNN version:
+#- GPU models and configuration:
+#- How you installed Lightning(`conda`, `pip`, source):
+```
+
+</details>
+
+
+### More info
+
+This issue was encountered while running macrobenchmarks, specifically a workload simulating Llama 3.1 8B on CPU using PyTorch Lightning.
+The benchmark configures `FSDPStrategy` with `state_dict_type="full"` (referred to as `fsdp_full` in the benchmark) to test consolidated checkpoint saving performance to GCS from CPU-based workers.
+
+cc @ethanwharris @justusschock @lantiga

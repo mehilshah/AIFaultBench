@@ -1,0 +1,51 @@
+# recovered-from-issue: https://github.com/huggingface/pytorch-image-models/issues/2682
+
+TITLE
+[BUG] `AttentionPool2d` produces non-deterministic outputs when `num_classes=0`
+
+BODY
+**Describe the bug**
+
+Creating CLIP ResNet models using the [documented feature extraction pattern](https://huggingface.co/docs/timm/feature_extraction#create-with-no-classifier-and-pooling) (`num_classes=0, global_pool=""`) produces non-deterministic outputs across instantiations. The root cause is in `AttentionPool2d.__init__`: `out_features or in_features` treats `0` as falsy, always creating a randomly-initialized `nn.Linear` proj. These random weights are never overwritten because `load_pretrained` strips classifier keys when `num_classes` differs from the pretrained config. The `reset()` method handles this correctly, so `reset_classifier(0, "")` after creation works as a workaround.
+
+**To Reproduce**
+
+```python
+import torch, timm
+
+x = torch.randn(1, 3, 224, 224)
+
+m1 = timm.create_model("resnet50_clip.openai", pretrained=True, num_classes=0, global_pool="")
+m1.eval()
+
+m2 = timm.create_model("resnet50_clip.openai", pretrained=True, num_classes=0, global_pool="")
+m2.eval()
+
+with torch.no_grad():
+    print((m1(x) - m2(x)).abs().max().item())  # >> non-zero, expected 0.0
+
+# Workaround
+m3 = timm.create_model("resnet50_clip.openai", pretrained=True)
+m3.reset_classifier(0, "")
+m3.eval()
+
+m4 = timm.create_model("resnet50_clip.openai", pretrained=True)
+m4.reset_classifier(0, "")
+m4.eval()
+
+with torch.no_grad():
+    print((m3(x) - m4(x)).abs().max().item())  # 0.0
+```
+
+**Expected behavior**
+
+Both instantiations should produce identical outputs. `create_model(..., num_classes=0)` and `create_model(...); reset_classifier(0)` should be equivalent, as documented and as is the case for all non-attention-pool models.
+
+**Desktop:**
+- OS: Ubuntu 24.04
+- timm version: 1.0.25
+- PyTorch version: 2.10.0
+
+**Additional context**
+
+`RotAttentionPool2d` has the same bug via the same `or` pattern. All `*_clip.{openai,cc12m,yfcc15m}` variants are affected.

@@ -1,0 +1,42 @@
+Python 3.12.3
+No additional dependencies required for this repro.
+Extracted Hopper FLOPs table from:
+  407/codebase/src/lightning/fabric/utilities/throughput.py
+{
+  "h100_nvl": {
+    "bfloat16": 1978800000000000.0,
+    "float16": 1978800000000000.0,
+    "float32": 133800000000000.0
+  },
+  "h100_pcie": {
+    "bfloat16": 756000000000000.0,
+    "float16": 756000000000000.0,
+    "float32": 51200000000000.0
+  },
+  "h100_sxm": {
+    "bfloat16": 989400000000000.0,
+    "float16": 989400000000000.0,
+    "float32": 66900000000000.0
+  },
+  "h200_nvl1": {
+    "bfloat16": 1700000000000000.0,
+    "float16": 1700000000000000.0,
+    "float32": 60000000000000.0
+  },
+  "h200_sxm1": {
+    "bfloat16": 2000000000000000.0,
+    "float16": 2000000000000000.0,
+    "float32": 67000000000000.0
+  },
+  "ratios_vs_h100_sxm": {
+    "h100_nvl_float32": 2.0,
+    "h100_pcie_float32": 0.7653213751868461,
+    "h200_nvl1_float32": 0.8968609865470852,
+    "h200_sxm1_float32": 1.0014947683109119
+  }
+}
+
+Observation:
+  H100 SXM and PCIE use the lower dense values, while H100 NVL and the H200 entries are in a different Hopper-tier band. The table mixes dense and sparse-style values across the H100/H200 variants.
+  Example: H100 NVL float32 = 1.338e+14 vs H100 SXM float32 = 6.69e+13 (ratio 2.00x).
+  H200 SXM1 float16 ratio vs H100 SXM is 2.02x, and H200 NVL1 is 1.72x.

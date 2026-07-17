@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "With jax==0.5.1, jaxlib==0.5.1, flax==0.10.4, and the in-tree numpyro 0.17.0 codebase, `numpyro.infer.util.log_likelihood(model, mcmc.get_samples(), x=x, y=y)` raises `ValueError: First argument passed to an init function should be a jax.PRNGKey or a dictionary mapping strings to jax.PRNGKey` when the model re-enters `random_flax_module`.",
+  "steps": [
+    "Create a virtual environment and install the pinned dependencies from `requirements.txt`.",
+    "Install the local `codebase/` tree into that environment.",
+    "Run `python repro.py` and observe the `ValueError` during `log_likelihood`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

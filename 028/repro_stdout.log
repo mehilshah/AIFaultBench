@@ -1,0 +1,3 @@
+target_file=028/codebase/vision_transformer/main.py
+num_classes_default=16
+num_classes_help='number of classes in dataset (default : 10 for CIFAR10)'

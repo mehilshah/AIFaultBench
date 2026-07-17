@@ -1,0 +1,3 @@
+# No third-party Python dependencies are required for this repro.
+# The harness uses only the Python 3 standard library and the checked-in
+# `codebase/` source tree for reference.

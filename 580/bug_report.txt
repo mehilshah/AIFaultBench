@@ -1,0 +1,52 @@
+# recovered-from-issue: https://github.com/pyg-team/pytorch_geometric/issues/9899
+
+TITLE
+Run failed when `train_without_ext_pred=True` in `glem` example
+
+BODY
+### 🐛 Describe the bug
+
+### Script
+```python examples/llm/glem.py --dataset arxiv --train_without_ext_pred```
+
+### Error
+```
+Namespace(gpu=0, num_runs=10, num_em_iters=1, dataset='arxiv', pl_ratio=0.5, hf_model='prajjwal1/bert-tiny', gnn_model='SAGE', gnn_hidden_channels=256, gnn_num_layers=3, gat_heads=4, lm_batch_size=256, gnn_batch_size=1024, external_pred_path=None, alpha=0.5, beta=0.5, lm_epochs=10, gnn_epochs=50, gnn_lr=0.002, lm_lr=0.001, patience=3, verbose=False, em_order='lm', lm_use_lora=False, token_on_disk=False, out_dir='output/', train_without_ext_pred=True)
+Running on: NVIDIA GeForce RTX 3090
+/home/ubuntu/Softwares/anaconda3/envs/pyg-dev/lib/python3.9/site-packages/ogb/nodeproppred/dataset_pyg.py:69: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  self.data, self.slices = torch.load(self.processed_paths[0])
+/home/ubuntu/Projects/pytorch_geometric/torch_geometric/data/in_memory_dataset.py:300: UserWarning: It is not recommended to directly access the internal storage format `data` of an 'InMemoryDataset'. If you are absolutely certain what you are doing, access the internal storage via `InMemoryDataset._data` instead to suppress this warning. Alternatively, you can access stacked individual attributes of every graph via `dataset.{attr_name}`.
+  warnings.warn(msg)
+Processing...
+Done!
+Tokenizing Text Attributed Graph: 100%|██████████████████████████████████████████████████████████████████████████████| 169343/169343 [00:21<00:00, 7737.44it/s]
+40 ['node-feat.csv.gz', 'node-label.csv.gz', 'ogbn-arxiv.csv', 'num-edge-list.csv.gz', 'num-node-list.csv.gz', 'node-gpt-response.csv.gz', 'edge.csv.gz', 'node_year.csv.gz', 'node-text.csv.gz']
+train_idx: 136411, gold_idx: 90941, pseudo labels ratio: 0.5, 0.49999450192982264
+Building language model dataloader...-->done
+GPU memory usage -- data to gpu: 0.10 GB
+build GNN dataloader(GraphSAGE NeighborLoader)--># GNN Params: 217640
+2024-12-28 01:03:22.375931: I tensorflow/core/util/port.cc:111] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2024-12-28 01:03:22.593200: E tensorflow/compiler/xla/stream_executor/cuda/cuda_dnn.cc:9342] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2024-12-28 01:03:22.593289: E tensorflow/compiler/xla/stream_executor/cuda/cuda_fft.cc:609] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2024-12-28 01:03:22.594523: E tensorflow/compiler/xla/stream_executor/cuda/cuda_blas.cc:1518] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2024-12-28 01:03:22.703042: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-12-28 01:03:23.241213: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+pytorch_model.bin: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████| 17.8M/17.8M [00:07<00:00, 2.35MB/s]
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at prajjwal1/bert-tiny and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+# LM Params: 4391080
+pretraining gnn to generate pseudo labels
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/pytorch_geometric/examples/llm/glem.py", line 443, in <module>
+    main(args)
+  File "/home/ubuntu/Projects/pytorch_geometric/examples/llm/glem.py", line 279, in main
+    acc, loss = model.train(pretrain_phase, pretrain_loader, pretrain_opt,
+  File "/home/ubuntu/Projects/pytorch_geometric/torch_geometric/nn/models/glem.py", line 147, in train
+    pseudo_labels = pseudo_labels.to(self.device)
+AttributeError: 'NoneType' object has no attribute 'to'
+```
+
+### Versions
+
+master branch

@@ -1,0 +1,85 @@
+Looking in indexes: https://download.pytorch.org/whl/cpu, https://pypi.org/simple
+Collecting torch==2.13.0+cpu (from -r requirements.txt (line 1))
+  Downloading torch-2.13.0%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (37 kB)
+Collecting torchvision==0.28.0+cpu (from -r requirements.txt (line 2))
+  Downloading torchvision-0.28.0%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (5.6 kB)
+Collecting tensordict==0.11.0 (from -r requirements.txt (line 3))
+  Downloading tensordict-0.11.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (10 kB)
+Collecting pyvers==0.2.3 (from -r requirements.txt (line 4))
+  Downloading pyvers-0.2.3-py3-none-any.whl.metadata (5.8 kB)
+Collecting filelock (from torch==2.13.0+cpu->-r requirements.txt (line 1))
+  Downloading filelock-3.30.2-py3-none-any.whl.metadata (2.0 kB)
+Collecting typing-extensions>=4.10.0 (from torch==2.13.0+cpu->-r requirements.txt (line 1))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting setuptools>=77.0.3 (from torch==2.13.0+cpu->-r requirements.txt (line 1))
+  Downloading setuptools-83.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting sympy>=1.13.3 (from torch==2.13.0+cpu->-r requirements.txt (line 1))
+  Downloading sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+Collecting networkx>=2.5.1 (from torch==2.13.0+cpu->-r requirements.txt (line 1))
+  Downloading networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+Collecting jinja2 (from torch==2.13.0+cpu->-r requirements.txt (line 1))
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting fsspec>=0.8.5 (from torch==2.13.0+cpu->-r requirements.txt (line 1))
+  Downloading fsspec-2026.6.0-py3-none-any.whl.metadata (10 kB)
+Collecting numpy (from torchvision==0.28.0+cpu->-r requirements.txt (line 2))
+  Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting pillow!=8.3.*,>=5.3.0 (from torchvision==0.28.0+cpu->-r requirements.txt (line 2))
+  Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)
+Collecting cloudpickle (from tensordict==0.11.0->-r requirements.txt (line 3))
+  Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+Collecting packaging (from tensordict==0.11.0->-r requirements.txt (line 3))
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting importlib_metadata (from tensordict==0.11.0->-r requirements.txt (line 3))
+  Downloading importlib_metadata-9.0.0-py3-none-any.whl.metadata (4.5 kB)
+Collecting orjson (from tensordict==0.11.0->-r requirements.txt (line 3))
+  Downloading orjson-3.11.9-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (41 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy>=1.13.3->torch==2.13.0+cpu->-r requirements.txt (line 1))
+  Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Collecting zipp>=3.20 (from importlib_metadata->tensordict==0.11.0->-r requirements.txt (line 3))
+  Downloading zipp-4.1.0-py3-none-any.whl.metadata (3.6 kB)
+Collecting MarkupSafe>=2.0 (from jinja2->torch==2.13.0+cpu->-r requirements.txt (line 1))
+  Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Downloading torch-2.13.0%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl (191.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 191.8/191.8 MB 106.0 MB/s  0:00:01
+
+Downloading torchvision-0.28.0%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 114.2 MB/s  0:00:00
+
+Downloading tensordict-0.11.0-cp312-cp312-manylinux_2_28_x86_64.whl (465 kB)
+Downloading pyvers-0.2.3-py3-none-any.whl (11 kB)
+Downloading fsspec-2026.6.0-py3-none-any.whl (203 kB)
+Downloading networkx-3.6.1-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 45.2 MB/s  0:00:00
+
+Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.9/6.9 MB 69.7 MB/s  0:00:00
+
+Downloading setuptools-83.0.0-py3-none-any.whl (1.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 71.1 MB/s  0:00:00
+
+Downloading sympy-1.14.0-py3-none-any.whl (6.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.3/6.3 MB 70.6 MB/s  0:00:00
+
+Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 91.4 MB/s  0:00:00
+
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+Downloading filelock-3.30.2-py3-none-any.whl (94 kB)
+Downloading importlib_metadata-9.0.0-py3-none-any.whl (27 kB)
+Downloading zipp-4.1.0-py3-none-any.whl (10 kB)
+Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 72.0 MB/s  0:00:00
+
+Downloading orjson-3.11.9-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (134 kB)
+Downloading packaging-26.2-py3-none-any.whl (100 kB)
+Installing collected packages: mpmath, zipp, typing-extensions, sympy, setuptools, pyvers, pillow, packaging, orjson, numpy, networkx, MarkupSafe, fsspec, filelock, cloudpickle, jinja2, importlib_metadata, torch, torchvision, tensordict
+
+
+Successfully installed MarkupSafe-3.0.3 cloudpickle-3.1.2 filelock-3.30.2 fsspec-2026.6.0 importlib_metadata-9.0.0 jinja2-3.1.6 mpmath-1.3.0 networkx-3.6.1 numpy-2.5.1 orjson-3.11.9 packaging-26.2 pillow-12.3.0 pyvers-0.2.3 setuptools-83.0.0 sympy-1.14.0 tensordict-0.11.0 torch-2.13.0+cpu torchvision-0.28.0+cpu typing-extensions-4.16.0 zipp-4.1.0
+torch=2.13.0+cpu
+torchvision=0.28.0+cpu
+torchvision.io.write_video exists= False
+calling CSVLogger.log_video(...)

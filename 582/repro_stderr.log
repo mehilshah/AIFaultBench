@@ -1,0 +1,8 @@
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Traceback (most recent call last):
+  File "582/repro.py", line 23, in main
+    tokenizer.apply_chat_template([], tokenize=False)
+  File "582/codebase/src/transformers/tokenization_utils_base.py", line 3090, in apply_chat_template
+    isinstance(conversation[0], (list, tuple)) or hasattr(conversation[0], "messages")
+               ~~~~~~~~~~~~^^^
+IndexError: list index out of range

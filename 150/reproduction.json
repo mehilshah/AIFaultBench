@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "With local codebase/src on PYTHONPATH, DataCollatorWithFlattening(return_tensors=\"pt\") raised TypeError('can only concatenate list (not \"Tensor\") to list') when features contained tensor labels.",
+    "The list-label control case succeeded and produced flattened input_ids, labels, and position_ids."
+  ],
+  "steps": [
+    "Install runtime dependencies from requirements.txt via setup_env.sh",
+    "Run repro.py against the local transformers source tree",
+    "Observe the tensor-label failure and the list-label success path"
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

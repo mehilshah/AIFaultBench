@@ -1,0 +1,38 @@
+328/.venv/lib/python3.12/site-packages/setuptools/dist.py:599: SetuptoolsDeprecationWarning: Invalid dash-separated key 'description-file' in 'metadata' (setup.cfg), please use the underscore name 'description_file' instead.
+!!
+
+        ********************************************************************************
+        Usage of dash-separated 'description-file' will not be supported in future
+        versions. Please use the underscore name 'description_file' instead.
+
+
+        Available configuration options are listed in:
+        https://setuptools.pypa.io/en/latest/userguide/declarative_config.html
+
+        This deprecation is overdue, please update your project and remove deprecated
+        calls to avoid build errors in the future.
+
+        See https://github.com/pypa/setuptools/discussions/5011 for details.
+        ********************************************************************************
+
+!!
+  opt = self._enforce_underscore(opt, section)
+328/.venv/lib/python3.12/site-packages/setuptools/dist.py:599: SetuptoolsDeprecationWarning: Invalid dash-separated key 'description-file' in 'metadata' (setup.cfg), please use the underscore name 'description_file' instead.
+!!
+
+        ********************************************************************************
+        Usage of dash-separated 'description-file' will not be supported in future
+        versions. Please use the underscore name 'description_file' instead.
+        (Affected: POT).
+
+        Available configuration options are listed in:
+        https://setuptools.pypa.io/en/latest/userguide/declarative_config.html
+
+        This deprecation is overdue, please update your project and remove deprecated
+        calls to avoid build errors in the future.
+
+        See https://github.com/pypa/setuptools/discussions/5011 for details.
+        ********************************************************************************
+
+!!
+  opt = self._enforce_underscore(opt, section)

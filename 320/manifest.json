@@ -1,0 +1,12 @@
+{
+  "bug_id": "320",
+  "bug_dir": "320",
+  "issue_url": "https://github.com/vllm-project/vllm/issues/48217",
+  "commit_hash": "e5588e49bc2642670116664a7fc4096e27adb179",
+  "library_name": "vllm",
+  "library_version": "0.24.0",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "local codebase/ checkout from bug folder",
+  "codebase_present": true,
+  "standardized_dir": "../320"
+}

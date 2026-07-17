@@ -1,0 +1,5 @@
+transformers=5.14.0.dev0
+huggingface_hub=1.22.0
+typer=0.26.8
+click=8.4.2
+Invoking transformers CLI through Typer CliRunner...

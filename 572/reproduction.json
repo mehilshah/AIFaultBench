@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "The issue report requires multiple GPUs with DeepSpeed inference.",
+    "This machine exposes only one CUDA device, so the reported distributed setup cannot be exercised here."
+  ],
+  "steps": [
+    "Read the bug report and local accelerate source tree.",
+    "Built a minimal reproducer matching the reported generate() loop under DeepSpeed zero-3 inference.",
+    "Checked the local GPU topology with nvidia-smi.",
+    "Aborted the run because only one GPU is visible."
+  ],
+  "blocking_reason": "Only one visible GPU is available in this environment, but the bug requires multiple GPUs with DeepSpeed.",
+  "reproduction_command": "./run_repro.sh"
+}

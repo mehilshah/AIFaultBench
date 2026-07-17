@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Running `python3 -m pip install --dry-run --isolated whisperx==3.4.3` inside a fresh virtual environment exited with code 0.",
+    "The resolver output ended with `Would install ... lightning-2.6.5 ... pyannote.audio-3.4.0 ... whisperx-3.4.3`, which means the current package index no longer reproduces the quarantined-lightning conflict from the report."
+  ],
+  "steps": [
+    "Created a clean Python 3.12 virtual environment with `setup_env.sh`.",
+    "Executed `repro.py`, which runs `pip install --dry-run --isolated whisperx==3.4.3`.",
+    "Observed a successful dependency resolution instead of the expected `lightning>=2.0.1` installation failure."
+  ],
+  "blocking_reason": "The current PyPI state differs from the report: `lightning` is installable again, so `whisperx==3.4.3` resolves successfully and the original uninstallable-dependency bug is no longer present in this environment.",
+  "reproduction_command": "bash run_repro.sh"
+}

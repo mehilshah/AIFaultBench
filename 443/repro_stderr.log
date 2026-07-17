@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "443/repro.py", line 37, in main
+    rb.extend(td)
+  File "443/codebase/torchrl/data/replay_buffers/replay_buffers.py", line 87, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "443/codebase/torchrl/data/replay_buffers/replay_buffers.py", line 1640, in extend
+    self._set_index_in_td(tensordicts, index)
+  File "443/codebase/torchrl/data/replay_buffers/replay_buffers.py", line 1669, in _set_index_in_td
+    tensordict.set("index", index)
+  File "443/.venv/lib/python3.12/site-packages/tensordict/base.py", line 7464, in set
+    return self._set_tuple(
+           ^^^^^^^^^^^^^^^^
+  File "443/.venv/lib/python3.12/site-packages/tensordict/_td.py", line 2537, in _set_tuple
+    return self._set_str(
+           ^^^^^^^^^^^^^^
+  File "443/.venv/lib/python3.12/site-packages/tensordict/_td.py", line 2480, in _set_str
+    value = self._validate_value(
+            ^^^^^^^^^^^^^^^^^^^^^
+  File "443/.venv/lib/python3.12/site-packages/tensordict/base.py", line 13114, in _validate_value_devicefree
+    raise RuntimeError(
+RuntimeError: batch dimension mismatch, got self.batch_size=torch.Size([1, 2048, 1]) and value.shape=torch.Size([1, 2048, 3]).

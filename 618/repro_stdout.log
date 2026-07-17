@@ -1,0 +1,69 @@
+CASE: empty_rows_detected_metadata
+METADATA: {
+  "tables": {
+    "table": {
+      "columns": {
+        "col": {
+          "sdtype": "numerical"
+        }
+      }
+    }
+  },
+  "relationships": [],
+  "METADATA_SPEC_VERSION": "V1"
+}
+RESULT: AttributeError: 'float' object has no attribute 'item'
+CASE: all_null_numerical
+METADATA: {
+  "tables": {
+    "table": {
+      "columns": {
+        "col": {
+          "sdtype": "numerical"
+        }
+      }
+    }
+  },
+  "relationships": [],
+  "METADATA_SPEC_VERSION": "V1"
+}
+RESULT: AttributeError: 'float' object has no attribute 'item'
+CASE: all_null_datetime
+METADATA: {
+  "tables": {
+    "table": {
+      "columns": {
+        "col": {
+          "sdtype": "datetime",
+          "datetime_format": "%Y-%m-%d"
+        }
+      }
+    }
+  },
+  "relationships": [],
+  "METADATA_SPEC_VERSION": "V1"
+}
+RESULT: ValueError: NaTType does not support strftime
+SUMMARY: {
+  "cases": [
+    {
+      "case": "empty_rows_detected_metadata",
+      "status": "exception",
+      "exception_type": "AttributeError",
+      "exception_message": "'float' object has no attribute 'item'"
+    },
+    {
+      "case": "all_null_numerical",
+      "status": "exception",
+      "exception_type": "AttributeError",
+      "exception_message": "'float' object has no attribute 'item'"
+    },
+    {
+      "case": "all_null_datetime",
+      "status": "exception",
+      "exception_type": "ValueError",
+      "exception_message": "NaTType does not support strftime"
+    }
+  ]
+}
+BUG REPRODUCED: all targeted cases raised exceptions instead of falling back.

@@ -1,0 +1,4 @@
+torch==2.4.0
+einops==0.7.0
+packaging>=24.0
+numpy>=1.26

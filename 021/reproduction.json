@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "run_repro.sh completed and repro_stderr.log captured InvalidArgumentError from ConcatV2 with N=0 at official/vision/modeling/layers/detection_generator.py:518. The repro uses a single-class raw score tensor that becomes zero classes after the background slice, leaving tf.concat([]) in _generate_detections_v2_class_aware.",
+  "steps": [
+    "Create a clean Python 3.12 virtual environment and install tensorflow-cpu==2.16.1.",
+    "Run repro.py through run_repro.sh from the standardized bug folder.",
+    "Observe the empty-list ConcatV2 InvalidArgumentError in repro_stderr.log."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

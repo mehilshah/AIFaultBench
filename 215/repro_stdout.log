@@ -1,0 +1,2 @@
+VALIDATE_OK
+BUG_REPRODUCED: duplicated foreign key reuse was accepted

@@ -1,0 +1,91 @@
+# recovered-from-issue: https://github.com/huggingface/transformers/issues/46701
+
+TITLE
+[DiffusionGemmaGenerationOutput] image-text-to-text pipeline does not work
+
+BODY
+### System Info
+
+transformers == 5.12.1
+
+### Who can help?
+
+@Rocketknight1
+
+### Information
+
+- [ ] The official example scripts
+- [x] My own modified scripts
+
+### Tasks
+
+- [ ] An officially supported task in the `examples` folder (such as GLUE/SQuAD, ...)
+- [x] My own task or dataset (give details below)
+
+### Reproduction
+
+To reproduce:
+
+```
+>>> from transformers import pipeline
+>>> nlp = pipeline("image-text-to-text", "google/diffusiongemma-26B-A4B-it", device_map="cpu")
+>>> img = "http://kanji.zinbun.kyoto-u.ac.jp/db-machine/toho/L/B0010001.jpg"
+>>> msg = [{"role":"user","content":[{"type":"image","image":img}, {"type":"text","text":"閱讀垂直文言文，逐行輸出。"}]}]
+>>> out = nlp(msg)
+
+.../transformers/models/diffusion_gemma/generation_diffusion_gemma.py", line 1235, in _prepare_sampler
+    config=generation_config.sampler_config,
+AttributeError: 'GenerationConfig' object has no attribute 'sampler_config'. Did you mean: 'compile_config'?
+```
+
+then avoiding this error:
+
+```
+>>> nlp.generation_config.sampler_config = nlp.model.generation_config.sampler_config
+>>> out = nlp(msg)
+
+.../transformers/models/diffusion_gemma/generation_diffusion_gemma.py", line 1238, in _prepare_sampler
+    max_denoising_steps=generation_config.max_denoising_steps,
+AttributeError: 'GenerationConfig' object has no attribute 'max_denoising_steps'
+
+>>> nlp.generation_config.max_denoising_steps = nlp.model.generation_config.max_denoising_steps
+>>> out = nlp(msg)
+
+.../transformers/models/diffusion_gemma/generation_diffusion_gemma.py", line 1180, in _prepare_logits_processor
+    if generation_config.t_min is not None and generation_config.t_max is not None:
+AttributeError: 'GenerationConfig' object has no attribute 't_min'
+
+>>> nlp.generation_config.t_min = nlp.model.generation_config.t_min
+>>> nlp.generation_config.t_max = nlp.model.generation_config.t_max
+>>> out = nlp(msg)
+
+.../transformers/models/diffusion_gemma/generation_diffusion_gemma.py", line 1220, in _prepare_diffusion_stopping_criteria
+    if generation_config.stability_threshold is not None and generation_config.confidence_threshold is not None:
+AttributeError: 'GenerationConfig' object has no attribute 'stability_threshold'
+
+>>> nlp.generation_config.stability_threshold = nlp.model.generation_config.stability_threshold
+>>> nlp.generation_config.confidence_threshold = nlp.model.generation_config.confidence_threshold
+>>> out = nlp(msg)
+```
+
+will cause several erros in `postprocess`:
+
+```
+.../transformers/pipelines/base.py", line 1284, in run_single
+    outputs = self.postprocess(model_outputs, **postprocess_params)
+.../transformers/pipelines/image_text_to_text.py", line 420, in postprocess
+    generated_texts = self.processor.post_process_image_text_to_text(
+.../transformers/processing_utils.py", line 2284, in post_process_image_text_to_text
+    return self.tokenizer.decode(generated_outputs, skip_special_tokens=skip_special_tokens, **kwargs)
+.../transformers/tokenization_utils_base.py", line 2897, in decode
+    return self._decode(
+.../transformers/tokenization_utils_tokenizers.py", line 1031, in _decode
+    token_ids = token_ids["input_ids"]
+KeyError: 'input_ids'
+```
+
+It seems because `nlp.model.generate` here outputs `DiffusionGemmaGenerationOutput` which is different from conventional `generate`.
+
+### Expected behavior
+
+output `generated_text` without error.

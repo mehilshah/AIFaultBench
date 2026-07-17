@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "codebase/intermediate_source/torch_compile_tutorial.py:166 contains `return result, start.elapsed_time(end) / 1024`.",
+    "codebase/intermediate_source/torch_compile_full_example.py:75 contains `return result, start.elapsed_time(end) / 1000`.",
+    "repro_stdout.log shows a 1024.0 ms example being reported as 1.000 s by the tutorial helper, while the correct value is 1.024 s."
+  ],
+  "steps": [
+    "Located the timing helper in the checked-in torch_compile tutorial source.",
+    "Compared it with the corrected helper in the related full example.",
+    "Ran `bash run_repro.sh` to capture the mismatch in the local logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

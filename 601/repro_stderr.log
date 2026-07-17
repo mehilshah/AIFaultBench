@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "601/repro.py", line 21, in <module>
+    main()
+  File "601/repro.py", line 16, in main
+    create_model("hf-hub:google/mobilenet_v2_1.0_224", pretrained=True)
+  File "601/codebase/timm/models/_factory.py", line 108, in create_model
+    pretrained_cfg, model_name, model_args = load_model_config_from_hf(
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "601/codebase/timm/models/_hub.py", line 172, in load_model_config_from_hf
+    hf_config['architecture'] = pretrained_cfg.pop('architecture')
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'architecture'

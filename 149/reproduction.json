@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "A clean virtual environment installed only huggingface_hub and tqdm, with requests absent.",
+    "Running repro.py against codebase/sentence_transformers/util/file_io.py failed at the top-level `import requests`.",
+    "The captured stderr contains `ModuleNotFoundError: No module named 'requests'`."
+  ],
+  "steps": [
+    "Create an isolated virtual environment with setup_env.sh.",
+    "Run run_repro.sh to execute repro.py.",
+    "Observe the import failure in repro_stderr.log."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

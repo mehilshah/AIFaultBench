@@ -1,0 +1,16 @@
+{
+  "allclose": false,
+  "dtype": "float32",
+  "eager_grad": [
+    Infinity
+  ],
+  "input": [
+    1.1754943508222875e-38
+  ],
+  "jax_version": "0.10.2.dev20260717",
+  "jaxlib_version": "0.10.1",
+  "jit_grad": [
+    1.0
+  ]
+}
+BUG REPRODUCED: jit(grad(f)) != grad(f) for sqrt(abs(square(x))).

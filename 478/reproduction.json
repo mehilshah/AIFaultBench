@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Florence2ForConditionalGeneration.loss_function is ForCausalLMLoss; model loss=2.348682880, direct CE on labels=2.449419260, shifted-label CE=2.348682880.",
+  "steps": [
+    "Build a tiny random Florence2ForConditionalGeneration model from the local transformers checkout.",
+    "Run a forward pass with synthetic input_ids and labels.",
+    "Compare the returned loss against direct cross-entropy on labels and against shifted-label cross-entropy."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_env.sh && bash run_repro.sh"
+}

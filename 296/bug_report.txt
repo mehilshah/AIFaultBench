@@ -1,0 +1,16 @@
+# recovered-from-issue: https://github.com/PythonOT/POT/issues/117
+
+TITLE
+getting 'std::length_error' when running pot.emd
+
+BODY
+I have a matrix M (50k by 50k) of distances (each distance between 0 and 1), and when running `ot.emd([], [], M)` I get the following error:
+
+```sh
+terminate called after throwing an instance of 'std::length_error'
+  what():  vector::_M_default_append
+Aborted
+```
+
+What could cause this? The same code works for smaller matrices ie 10k by 10k or 15k by 15k
+

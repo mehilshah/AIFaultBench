@@ -1,0 +1,33 @@
+Title: Missing `requests` dependency in v5.2.1
+Date: 2026-01-26T16:30:40+00:00
+URL: https://github.com/huggingface/sentence-transformers/issues/3617
+
+Description:
+Version 5.2.1 is missing `requests` as a declared dependency.
+
+## Error
+
+```python
+ModuleNotFoundError: No module named 'requests'
+```
+
+**Stack trace:**
+```
+File "sentence_transformers/__init__.py", line 10, in <module>
+  from sentence_transformers.backend import ...
+File "sentence_transformers/backend/__init__.py", line 5, in <module>
+  from .quantize import export_dynamic_quantized_onnx_model, export_static_quantized_openvino_model
+File "sentence_transformers/backend/quantize.py", line 7, in <module>
+  from sentence_transformers.util import disable_datasets_caching, is_datasets_available
+File "sentence_transformers/util/__init__.py", line 12, in <module>
+  from .file_io import disabled_tqdm, http_get, is_sentence_transformer_model, load_dir_path, load_file_path
+File "sentence_transformers/util/file_io.py", line 7, in <module>
+  import requests
+```
+
+## Reproduction
+
+```bash
+pip install sentence-transformers==5.2.1
+python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+```

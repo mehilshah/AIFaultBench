@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "276/repro.py", line 88, in <module>
+    reproduce_bug()
+  File "276/repro.py", line 79, in reproduce_bug
+    minari.load_dataset(DATASET_ID)
+  File "276/repro.py", line 43, in load_dataset
+    raise FileNotFoundError(
+FileNotFoundError: Dataset D4RL/door/human-v2 not found locally at /users/grad/mehil/.minari/datasets/D4RL/door/human-v2. Use download=True to download the dataset.

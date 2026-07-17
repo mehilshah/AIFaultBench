@@ -1,0 +1,11 @@
+{
+  "reproducible": true,
+  "evidence": "Running the CEVAE synthetic example with --cuda on this checkout raises RuntimeError: Expected a 'cuda' device type for generator but found 'cpu'.",
+  "steps": [
+    "Create the venv and install the CUDA-enabled torch build plus the editable local Pyro checkout.",
+    "Run `bash run_repro.sh` or `python repro.py --cuda --num-data 10 --batch-size 10 --num-epochs 1` in the venv.",
+    "Observe the DataLoader shuffle path fail inside `pyro/contrib/cevae/__init__.py` before the first training step completes."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

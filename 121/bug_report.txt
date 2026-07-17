@@ -1,0 +1,60 @@
+Title: [Bug]: if learning_rate function uses special types, they can cause torch.load to fail when weights_only=True
+Date: 2024-04-19T01:11:06+00:00
+URL: https://github.com/DLR-RM/stable-baselines3/issues/1900
+
+Description:
+### 🐛 Bug
+
+When using the model save/load function, using certain types in a learning_rate function will cause the ``model.load`` to require ``weights_only=False`` because they are not an allowed safe unpickle type.
+
+### To Reproduce
+
+```python
+from stable_baselines3 import PPO
+import numpy as np
+path = "ppo_pendulum.zip"
+PPO("MlpPolicy", "Pendulum-v1", learning_rate=lambda _: np.sin(1.0)).save(path)       
+PPO.load(path) # 💥
+```
+
+
+### Relevant log output / Error message
+
+```shell
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/mscs/OneFiveOne/venv/lib/python3.10/site-packages/stable_baselines3/common/base_class.py", line 680, in load
+    data, params, pytorch_variables = load_from_zip_file(
+  File "/home/mscs/OneFiveOne/venv/lib/python3.10/site-packages/stable_baselines3/common/save_util.py", line 450, in load_from_zip_file
+    th_object = th.load(file_content, map_location=device, weights_only=True)
+  File "/home/mscs/OneFiveOne/venv/lib/python3.10/site-packages/torch/serialization.py", line 1024, in load
+    raise pickle.UnpicklingError(UNSAFE_MESSAGE + str(e)) from None
+_pickle.UnpicklingError: Weights only load failed. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution.Do it only if you get the file from a trusted source. WeightsUnpickler error: Unsupported class numpy.core.multiarray.scalar
+```
+
+
+### System Info
+
+```
+(venv) mscs@hush:~/OneFiveOne$ python -c 'import stable_baselines3 as sb3; sb3.get_system_info()'
+2024-04-18 21:09:04.412040: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+- OS: Linux-6.5.0-27-generic-x86_64-with-glibc2.35 # 28~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Fri Mar 15 10:51:06 UTC 2
+- Python: 3.10.12
+- Stable-Baselines3: 2.3.0
+- PyTorch: 2.4.0.dev20240417+rocm6.0
+- GPU Enabled: True
+- Numpy: 1.26.4
+- Cloudpickle: 3.0.0
+- Gymnasium: 0.29.1
+- OpenAI Gym: 0.26.2
+```
+
+
+### Checklist
+
+- [X] My issue does not relate to a custom gym environment. (Use the custom gym env template instead)
+- [X] I have checked that there is no similar [issue](https://github.com/DLR-RM/stable-baselines3/issues) in the repo
+- [X] I have read the [documentation](https://stable-baselines3.readthedocs.io/en/master/)
+- [X] I have provided a [minimal and working](https://github.com/DLR-RM/stable-baselines3/issues/982#issuecomment-1197044014) example to reproduce the bug
+- [X] I've used the [markdown code blocks](https://help.github.com/en/articles/creating-and-highlighting-code-blocks) for both code and stack traces.

@@ -1,0 +1,12 @@
+{
+  "bug_id": "380",
+  "bug_dir": "380",
+  "issue_url": "https://github.com/deepspeedai/DeepSpeed/issues/7885",
+  "commit_hash": "a41a96b19f2b5e75567c85ff9155e4bb09c8e539",
+  "library_name": "DeepSpeed",
+  "library_version": "0.18.5 regression reproduced against 0.18.4 baseline; local snapshot is 0.18.7-fixed source",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "local codebase/ snapshot from a41a96b19f2b5e75567c85ff9155e4bb09c8e539",
+  "codebase_present": "true",
+  "standardized_dir": "../380"
+}

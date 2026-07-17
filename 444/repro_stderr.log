@@ -1,0 +1,46 @@
+WARNING:2026-07-17 05:11:29,565:jax._src.xla_bridge:864: An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+Traceback (most recent call last):
+  File "444/repro.py", line 41, in <module>
+    main()
+  File "444/repro.py", line 36, in main
+    modern_out = run_with_key(modern_key)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "444/repro.py", line 19, in run_with_key
+    return predictive(key)
+           ^^^^^^^^^^^^^^^
+  File "444/codebase/numpyro/infer/util.py", line 1082, in __call__
+    return self._call_with_params(rng_key, self.params, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "444/codebase/numpyro/infer/util.py", line 1058, in _call_with_params
+    return _predictive(
+           ^^^^^^^^^^^^
+  File "444/codebase/numpyro/infer/util.py", line 884, in _predictive
+    return soft_vmap(
+           ^^^^^^^^^^
+  File "444/codebase/numpyro/util.py", line 442, in soft_vmap
+    xs = jax.tree.map(
+         ^^^^^^^^^^^^^
+  File "444/.venv/lib/python3.12/site-packages/jax/_src/tree.py", line 155, in map
+    return tree_util.tree_map(f, tree, *rest, is_leaf=is_leaf)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "444/.venv/lib/python3.12/site-packages/jax/_src/tree_util.py", line 361, in tree_map
+    return treedef.unflatten(f(*xs) for xs in zip(*all_leaves))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "444/.venv/lib/python3.12/site-packages/jax/_src/tree_util.py", line 361, in <genexpr>
+    return treedef.unflatten(f(*xs) for xs in zip(*all_leaves))
+                             ^^^^^^
+  File "444/codebase/numpyro/util.py", line 443, in <lambda>
+    lambda x: jnp.pad(x, ((0, pad),) + ((0, 0),) * (np.ndim(x) - 1)), xs
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "444/.venv/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py", line 4386, in pad
+    return _pad(array, pad_width, mode, constant_values, stat_length, end_values, reflect_type)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "444/.venv/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py", line 4206, in _pad
+    return _pad_constant(array, pad_width, asarray(constant_values))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "444/.venv/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py", line 3950, in _pad_constant
+    constant_values = lax._convert_element_type(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Cannot convert_element_type from int32 to key<fry>
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.
