@@ -1,12 +1,13 @@
-# Benchmark of DL Bugs
+# DLFaultBench: A Reproducible Benchmark of Real-World Deep-Learning Bugs
 
 > **📢 MSR 2027 Mining Challenge dataset.** A reproducibility benchmark of real-world
 > deep-learning bugs, packaged as self-contained, runnable reproductions.
 
-<!-- TODO: fill in once the paper / dataset record exist -->
+<!-- TODO: add the arXiv paper link once available -->
 [![Paper](https://img.shields.io/badge/paper-arXiv-b31b1b.svg)](TODO)
-[![Dataset](https://img.shields.io/badge/dataset-Zenodo-1682d4.svg)](TODO)
-[![DOI](https://img.shields.io/badge/DOI-TODO-blue.svg)](TODO)
+[![Dataset on Zenodo](https://img.shields.io/badge/dataset-Zenodo-1682d4.svg)](https://doi.org/10.5281/zenodo.21422606)
+[![Dataset on HF](https://img.shields.io/badge/dataset-%F0%9F%A4%97%20Hugging%20Face-yellow.svg)](https://huggingface.co/datasets/mehilshah/MSR-MiningChallenge-2027)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21422606.svg)](https://doi.org/10.5281/zenodo.21422606)
 
 A reproducibility benchmark of **640 real-world deep-learning bugs** mined from the issue
 trackers of **87 popular ML/DL repositories** across **63 organizations** — transformers, JAX,
@@ -293,12 +294,12 @@ unavailable hardware — not the bug genuinely disappearing.
 If you use this benchmark, please cite the accompanying paper:
 
 ```bibtex
-@misc{benchmark_dl_bugs_2027,
-  title  = {Benchmark DL Bugs: A Reproducibility Benchmark of Real-World Deep-Learning Bugs},
-  author = {TODO},
+@misc{dlfaultbench_2027,
+  title  = {DLFaultBench: A Reproducible Benchmark of Real-World Deep-Learning Bugs},
+  author = {Shah, Mehil B and Rahman, Mohammad Masudur and Khomh, Foutse},
   year   = {2027},
   note   = {MSR 2027 Mining Challenge dataset},
-  doi    = {TODO}
+  doi    = {10.5281/zenodo.21422606}
 }
 ```
 
