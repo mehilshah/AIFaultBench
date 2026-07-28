@@ -1,0 +1,50 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 38529,
+  "html_url": "https://github.com/jax-ml/jax/issues/38529",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Saving ShapeDtypeStruct",
+  "author": "lockwo",
+  "created_at": "2026-06-17T07:34:32Z",
+  "updated_at": "2026-06-23T21:55:29Z",
+  "closed_at": "2026-06-23T21:55:29Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 6.6,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:13.570243+00:00",
+  "comments": [
+    {
+      "author": "jakevdp",
+      "created_at": "2026-06-22T19:37:27Z",
+      "body": "Hi - I think unfortunately this is working as expected: `jax.numpy.save` (which is a thin wrapper of `numpy.save`) is meant to save array objects, and `ShapeDtypeStruct` is not an array object. For doing anything more sophisticated, you'll need another tool. One option is [orbax](https://orbax.readthedocs.io/en/latest/), and in particular the `orbax-export` tools."
+    },
+    {
+      "author": "lockwo",
+      "created_at": "2026-06-23T21:55:29Z",
+      "body": "Hmmm ok makes sense, thanks for the response"
+    }
+  ]
+}

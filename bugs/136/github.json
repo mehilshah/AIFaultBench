@@ -1,0 +1,43 @@
+{
+  "owner": "google",
+  "repo": "deepvariant",
+  "number": 897,
+  "html_url": "https://github.com/google/deepvariant/issues/897",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Typo in `docs/deepvariant-details.md`",
+  "author": "Sunjnn",
+  "created_at": "2024-10-21T08:20:58Z",
+  "updated_at": "2024-10-21T17:45:14Z",
+  "closed_at": "2024-10-21T17:45:14Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.39,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:41.963698+00:00",
+  "comments": [
+    {
+      "author": "kishwarshafin",
+      "created_at": "2024-10-21T17:40:47Z",
+      "body": "Thank you, this will be updated in the next release."
+    }
+  ]
+}

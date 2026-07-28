@@ -1,0 +1,60 @@
+{
+  "owner": "unslothai",
+  "repo": "unsloth",
+  "number": 3488,
+  "html_url": "https://github.com/unslothai/unsloth/issues/3488",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug] Python 3.9 is silently broken",
+  "author": "jonnyli1125",
+  "created_at": "2025-10-20T20:25:39Z",
+  "updated_at": "2025-10-27T06:39:22Z",
+  "closed_at": "2025-10-23T08:39:20Z",
+  "labels": [
+    "fixed"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.51,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:01.470109+00:00",
+  "comments": [
+    {
+      "author": "shimmyshimmer",
+      "created_at": "2025-10-23T08:39:20Z",
+      "body": "We now disable cut cross entropy so it's not utilized anymore. Also Python 3.9 is more than 5 years old so I don't think so many people use it at all."
+    },
+    {
+      "author": "jonnyli1125",
+      "created_at": "2025-10-23T17:04:16Z",
+      "body": "Could you remove cut_cross_entropy from here, if it is disabled? https://github.com/unslothai/unsloth-zoo/blob/main/pyproject.toml#L44\n\nThat would fix the installation at least."
+    },
+    {
+      "author": "shimmyshimmer",
+      "created_at": "2025-10-24T07:37:16Z",
+      "body": "> Could you remove cut_cross_entropy from here, if it is disabled? https://github.com/unslothai/unsloth-zoo/blob/main/pyproject.toml#L44\n> \n> That would fix the installation at least.\n\nYes good idea we'll remove it, I'll update you!"
+    },
+    {
+      "author": "shimmyshimmer",
+      "created_at": "2025-10-27T06:39:22Z",
+      "body": "@jonnyli1125 should now be fixed, please update Unsloth!\n\nP.S. don't forget to Star our repo! Thank you so much! \ud83e\udd70"
+    }
+  ]
+}

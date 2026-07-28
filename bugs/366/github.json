@@ -1,0 +1,50 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 47956,
+  "html_url": "https://github.com/vllm-project/vllm/issues/47956",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: Cannot serve a Qwen3-VL sequence classification model with num_labels > 2 (multi-label classification)",
+  "author": "TonyUSTC",
+  "created_at": "2026-07-08T03:41:07Z",
+  "updated_at": "2026-07-08T07:05:55Z",
+  "closed_at": "2026-07-08T07:05:55Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.14,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:31.651828+00:00",
+  "comments": [
+    {
+      "author": "noooop",
+      "created_at": "2026-07-08T05:34:45Z",
+      "body": "I believe it can definitely work. Let's see how we can get it to run along the correct code path.\n\n\n1. You need to specify {\"architectures\": [\"Qwen3VLForSequenceClassification\"]} so that it enters the as_seq_cls_model code path.\nhttps://github.com/vllm-project/vllm/blob/2afa3f7e950264bb179d030c23a1ed1f46558fd9/vllm/model_executor/models/adapters.py#L321-L329\n\n2. **You need to find a way to make text_config.num_labels equal to 20. (code line 232 above) The code here may need some optimization to be compatible with more models.**\n\n3. You need to specify  {\"problem_type\": \"multi_label_classification\"}' so that it enters the PoolerMultiLabelClassify code path.\n\nhttps://github.com/vllm-project/vllm/blob/2afa3f7e950264bb179d030c23a1ed1f46558fd9/vllm/model_executor/layers/pooler/activations.py#L30-L36\n"
+    },
+    {
+      "author": "TonyUSTC",
+      "created_at": "2026-07-08T06:56:34Z",
+      "body": "> I believe it can definitely work. Let's see how we can get it to run along the correct code path.\n> \n> 1. You need to specify {\"architectures\": [\"Qwen3VLForSequenceClassification\"]} so that it enters the as_seq_cls_model code path.\n>    \n>      \n>        \n>          [vllm/vllm/model_executor/models/adapters.py](https://github.com/vllm-project/vllm/blob/2afa3f7e950264bb179d030c23a1ed1f46558fd9/vllm/model_executor/models/adapters.py#L321-L329)\n>        \n>        \n>            Lines 321 to 329\n>          in\n>          [2afa3f7](/vllm-project/vllm/commit/2afa3f7e950264bb179d030c23a1ed1f46558fd9)\n>        \n>      \n>      \n>        \n>    \n>            \n>              \n>               self.score = ReplicatedLinear( \n>            \n>    \n>            \n>              \n>                   model_config.get_hidden_size(), \n>            \n>    \n>            \n>              \n>                   text_config.num_labels, \n>            \n>    \n>            \n>              \n>                   bias=False, \n>            \n>    \n>            \n>              \n>                   params_dtype=model_config.head_dtype, \n>            \n>    \n>            \n>              \n>                   quant_config=quant_config, \n>            \n>    \n>            \n>              \n>                   return_bias=False, \n>            \n>    \n>            \n>              \n>                   prefix=maybe_prefix(prefix, \"score\"), \n>            \n>    \n>            \n>              \n>               )\n> 2. **You need to find a way to make text_config.num_labels equal to 20. (code line 232 above) The code here may need some optimization to be compatible with more models.**\n> 3. You need to specify  {\"problem_type\": \"multi_label_classification\"}' so that it enters the PoolerMultiLabelClassify code path.\n> \n> [vllm/vllm/model_executor/layers/pooler/activations.py](https://github.com/vllm-project/vllm/blob/2afa3f7e950264bb179d030c23a1ed1f46558fd9/vllm/model_executor/layers/pooler/activations.py#L30-L36)\n> \n> Lines 30 to 36 in [2afa3f7](/vllm-project/vllm/commit/2afa3f7e950264bb179d030c23a1ed1f46558fd9)\n> \n>  problem_type = getattr(config, \"problem_type\", \"\") \n>  if problem_type == \"regression\": \n>      return PoolerIdentity() \n>  if problem_type == \"single_label_classification\": \n>      return PoolerClassify(num_labels=num_labels) \n>  if problem_type == \"multi_label_classification\": \n>      return PoolerMultiLabelClassify()\n\nThank you so much; It solved my problem.\n"
+    }
+  ]
+}

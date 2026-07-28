@@ -1,0 +1,55 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2019,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2019",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "JAX 0.6.0 + Haiku Compatibility",
+  "author": "juanitorduz",
+  "created_at": "2025-04-17T20:41:26Z",
+  "updated_at": "2025-04-23T15:29:59Z",
+  "closed_at": "2025-04-19T17:18:57Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.86,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:44.606985+00:00",
+  "comments": [
+    {
+      "author": "fehiepsi",
+      "created_at": "2025-04-19T13:15:25Z",
+      "body": "It seems that haiku is deprecated. We can mark those tests as xfail I think."
+    },
+    {
+      "author": "tare",
+      "created_at": "2025-04-23T13:32:16Z",
+      "body": "@fehiepsi FYI [Haiku 0.0.14](https://github.com/google-deepmind/dm-haiku/releases/tag/v0.0.14) released yesterday fixed the failing tests. Happy to create a PR to reenable the tests.\n\nIn [README.md](https://github.com/google-deepmind/dm-haiku/blob/main/README.md), the authors say that Haiku is in maintenance mode, i.e. there will be bug fixes and they try to keep the library compatible with new releases of Jax.  Therefore, from somewhat selfish reasons, I hope NumPyro is not dropping the Haiku support."
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2025-04-23T15:29:58Z",
+      "body": " Yes, let's enable the tests again. Thanks @tare !"
+    }
+  ]
+}

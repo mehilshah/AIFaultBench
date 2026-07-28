@@ -1,0 +1,55 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 1116,
+  "html_url": "https://github.com/huggingface/accelerate/issues/1116",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Multi-node doesn't work if you provide a list of gpus",
+  "author": "GabPrato",
+  "created_at": "2023-02-25T16:13:48Z",
+  "updated_at": "2023-10-20T20:30:52Z",
+  "closed_at": "2023-04-05T15:06:22Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 38.95,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:59.047559+00:00",
+  "comments": [
+    {
+      "author": "muellerzr",
+      "created_at": "2023-02-28T15:28:44Z",
+      "body": "Hi @pratogab, can you try using the same script and install Accelerate from `pip install git+https://github.com/huggingface/accelerate@multinode-fix`? This should fix it up for you, thanks!"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-03-28T15:06:15Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\nPlease note that issues that do not follow the [contributing guidelines](https://github.com/huggingface/accelerate/blob/main/CONTRIBUTING.md) are likely to be ignored."
+    },
+    {
+      "author": "GabPrato",
+      "created_at": "2023-10-20T20:30:51Z",
+      "body": "Issue seems solved with v0.23 of accelerate."
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 11141,
+  "html_url": "https://github.com/tensorflow/models/issues/11141",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Faster RCNN Pretrained model facing error: Value error is not supported for tf2 version",
+  "author": "ck12780",
+  "created_at": "2024-01-11T13:32:02Z",
+  "updated_at": "2024-01-21T08:12:25Z",
+  "closed_at": "2024-01-21T08:12:22Z",
+  "labels": [
+    "stat:awaiting response",
+    "type:support",
+    "models:research"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 9.78,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:23.506130+00:00",
+  "comments": [
+    {
+      "author": "laxmareddyp",
+      "created_at": "2024-01-11T16:12:55Z",
+      "body": "Hi @ck12780,\r\n\r\nTo assist you more efficiently, could you please share a code sample or a link to a Google Colab notebook that reproduces the issue you're experiencing? Additionally, it would be helpful to know whether you are using the official TensorFlow Model Garden repository or a research-based one.\r\n\r\nThanks."
+    },
+    {
+      "author": "ck12780",
+      "created_at": "2024-01-12T09:12:04Z",
+      "body": "https://colab.research.google.com/drive/1VUti4pU4n7SlFRSbmG17ITp90iw9alWU?usp=sharing\r\nAbove attached link is my colab code is take from github with modify changing pretrained model to faster rcnn 640x640 v2 from \r\nhttps://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md"
+    },
+    {
+      "author": "laxmareddyp",
+      "created_at": "2024-01-18T21:35:46Z",
+      "body": "Hi @ck12780,\r\n\r\nCould you please check  this [ gist](https://colab.sandbox.google.com/gist/sineeli/5e053146251bf64e4eae1e7f264e7a3b/object_detection.ipynb).This is how you can train  fasterrcnn_resnetfpn_coco setup  from official models.\r\n\r\n\r\nI strongly suggest utilizing the [TensorFlow Official Model Garden](https://github.com/tensorflow/models/tree/master/official/vision#table-of-contents) to circumvent issues related to outdated code commonly found in research codebases. Unlike the research repositories, the [Official Model Garden](https://www.tensorflow.org/tfmodels) is consistently updated and aligned with the latest changes in TensorFlow and other libraries and there are lot of API's are available that you can define a training experiment using Python commands in the [TensorFlow Model library](https://www.tensorflow.org/api_docs/python/tfm/core)."
+    },
+    {
+      "author": "google-ml-butler[bot]",
+      "created_at": "2024-01-21T08:12:24Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=Yes&entry.2137816233=https://github.com/tensorflow/models/issues/11141\">Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=No&entry.2137816233=https://github.com/tensorflow/models/issues/11141\">No</a>\n"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 9818,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/9818",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "ImportError: 'NeighborSampler' requires either 'pyg-lib' or 'torch-sparse'",
+  "author": "xubingze",
+  "created_at": "2024-12-03T05:33:16Z",
+  "updated_at": "2024-12-06T18:25:03Z",
+  "closed_at": "2024-12-06T18:25:03Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.54,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:37:04.802936+00:00",
+  "comments": [
+    {
+      "author": "xubingze",
+      "created_at": "2024-12-04T00:22:51Z",
+      "body": "Okay, I think the problem is that \r\n```\r\nERROR: Could not find a version that satisfies the requirement pyg-lib (from versions: none)\r\nERROR: No matching distribution found for pyg-lib\r\n```\r\nSo I tried to install the matched version of torch pyg-lib and torch-sparse, but still face the problems. Here are the new versions.\r\n\r\n```\r\n2.1.0+cu121\r\n\r\nName: pyg-lib\r\nVersion: 0.4.0+pt25cu121\r\nSummary: Low-Level Graph Neural Network Operators for PyG\r\nHome-page: https://github.com/pyg-team/pyg-lib\r\nAuthor: PyG Team\r\nAuthor-email: [team@pyg.org](mailto:team@pyg.org)\r\nLicense: \r\nLocation: /usr/local/lib/python3.10/dist-packages\r\nRequires: \r\nRequired-by: \r\n---\r\nName: torch_sparse\r\nVersion: 0.6.18+pt25cu121\r\nSummary: PyTorch Extension Library of Optimized Autograd Sparse Matrix Operations\r\nHome-page: https://github.com/rusty1s/pytorch_sparse\r\nAuthor: Matthias Fey\r\nAuthor-email: [matthias.fey@tu-dortmund.de](mailto:matthias.fey@tu-dortmund.de)\r\nLicense: \r\nLocation: /usr/local/lib/python3.10/dist-packages\r\nRequires: scipy\r\nRequired-by:\r\n```"
+    }
+  ]
+}

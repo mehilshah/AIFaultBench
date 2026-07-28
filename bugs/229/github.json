@@ -1,0 +1,66 @@
+{
+  "owner": "PythonOT",
+  "repo": "POT",
+  "number": 738,
+  "html_url": "https://github.com/PythonOT/POT/issues/738",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Wasserstein Circle distance doesn't seem correct?",
+  "author": "ckp95",
+  "created_at": "2025-05-20T18:26:36Z",
+  "updated_at": "2025-10-21T11:06:24Z",
+  "closed_at": "2025-10-21T11:06:24Z",
+  "labels": [
+    "bug",
+    "help wanted"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 153.69,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:06.218280+00:00",
+  "comments": [
+    {
+      "author": "clbonet",
+      "created_at": "2025-05-20T18:43:33Z",
+      "body": "You are right, `wasserstein_circle` should be rotationally symmetric. It seems that the problem comes from the closed-form we are trying to approximate in the case `p=1`, which is the default case of `wasserstein_circle`, and does not seem to work always well. If you try with the function `binary_search_circle`, it should be well rotationally symmetric.\n\nI just proposed in #PR736 to change the default behaviour of `wasserstein_circle` to always use the `binary_search_circle`, which seems to work better in general."
+    },
+    {
+      "author": "ckp95",
+      "created_at": "2025-05-20T19:08:43Z",
+      "body": "Okay, good to know I'm not going crazy \ud83d\ude05 \n\nHave you considered using [hypothesis](https://github.com/HypothesisWorks/hypothesis) to property-test this library? It works particularly well for mathematical code with lots of clean invariants / symmetries. This property-test immediately finds a minimal counterexample:\n\n```python\nimport hypothesis.strategies as st\nfrom hypothesis import given\nimport numpy as np\nimport ot\n\n\n@given(\n    arr1=st.lists(\n        st.floats(min_value=0, max_value=1),\n        min_size=1, max_size=10,\n    ),\n    arr2=st.lists(\n        st.floats(min_value=0, max_value=1),\n        min_size=1, max_size=10,\n    ),\n    delta=st.floats(min_value=-1, max_value=1)\n)\ndef test_wasserstein_circle_is_rotationally_symmetric(arr1, arr2, delta):\n    arr1 = np.array(arr1)\n    arr2 = np.array(arr2)\n\n    [d1] = ot.wasserstein_circle(arr1, arr2)\n    [d2] = ot.wasserstein_circle((arr1 + delta) % 1, (arr2 + delta) % 1)\n\n    assert np.isclose(d1, d2, atol=1e-3)\n```\n\n```\nE       Falsifying example: test_wasserstein_circle_is_rotationally_symmetric(                                               \nE           arr1=[0.0],                                                                                                      \nE           arr2=[0.125],                                                                                                    \nE           delta=0.5,                                                                                                       \nE       )  \n```\n\nThe `binary_search_circle` function passes this test \ud83d\ude42"
+    },
+    {
+      "author": "ckp95",
+      "created_at": "2025-05-20T19:27:21Z",
+      "body": ">The binary_search_circle function passes this test \ud83d\ude42\n\nActually not quite, this gives a warning:\n\n```python\nE               RuntimeWarning: invalid value encountered in divide\nE               Falsifying example: test_binary_search_circle_is_rotationally_symmetric(\nE                   arr1=[0.5],\nE                   arr2=[0.25],\nE                   delta=0.5,\nE               )\n```\n\nStandalone example:\n\n```python\nimport numpy as np\nimport ot\nimport warnings\nwarnings.filterwarnings(\"error\")\n\narr1 = np.array([0.5])\narr2 = np.array([0.25])\ndelta = 0.5\n\n[d1] = ot.binary_search_circle(arr1, arr2)\n[d2] = ot.binary_search_circle((arr1 + delta) % 1, (arr2 + delta) % 1)\n\nassert np.isclose(d1, d2, atol=1e-3)\n```\n\n```\n---------------------------------------------------------------------------\nRuntimeWarning                            Traceback (most recent call last)\nCell In[16], line 9\n      6 delta = 0.5\n      8 [d1] = ot.binary_search_circle(arr1, arr2)\n----> 9 [d2] = ot.binary_search_circle((arr1 + delta) % 1, (arr2 + delta) % 1)\n     11 assert np.isclose(d1, d2, atol=1e-3)\n\nFile /nix/store/nlrk6vd18px7gg88yjaxgn0l8dalpbcg-python3-3.12.7-env/lib/python3.12/site-packages/ot/lp/solver_1d.py:737, in binary_search_circle(u_values, v_values, u_weights, v_weights, p, Lm, Lp, tm, tp, eps, require_sort, log)\n    734     Ctp = ot_cost_on_circle(tp, u_values, v_values, u_cdf, v_cdf, p).reshape(-1, 1)\n    736     mask_end = mask * (nx.abs(dCptm - dCmtp) > 0.001)\n--> 737     tc[mask_end > 0] = ((Ctp - Ctm + tm * dCptm - tp * dCmtp) / (dCptm - dCmtp))[mask_end > 0]\n    738     done[nx.prod(mask, axis=-1) > 0] = 1\n    739 elif nx.any(1 - done):\n\nRuntimeWarning: invalid value encountered in divide\n```\n\nNot sure if this is a real bug but thought it was worth recording."
+    },
+    {
+      "author": "clbonet",
+      "created_at": "2025-05-20T19:53:09Z",
+      "body": "Sorry, it's my bad ^^. I shouldn't have use this implementation for the default behaviour... \n\nI didn't know the hypothesis library. It seems very useful! I am reassured that `binary_search_circle` seems to pass the test...\n\nConcerning the `binary_search_circle`, thank you for noticing this little bug. I think this warning arises as `dCptm - dCmtp==0`, but it is not a problem as the corresponding values are not updated thanks to the condition `mask_end>0`. However, it would be nice to avoid to raise a warning in this case. I will see if I can fix this."
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2025-10-21T11:06:24Z",
+      "body": "Closing since this was fixed in #736 "
+    }
+  ]
+}

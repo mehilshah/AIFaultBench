@@ -1,0 +1,63 @@
+{
+  "owner": "lark-parser",
+  "repo": "lark",
+  "number": 1355,
+  "html_url": "https://github.com/lark-parser/lark/issues/1355",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "GrammarError: Rule 'anycase' used but not defined (in rule pipesyn)",
+  "author": "RossPatterson",
+  "created_at": "2023-10-22T00:13:29Z",
+  "updated_at": "2024-01-29T19:12:05Z",
+  "closed_at": "2024-01-29T19:12:04Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 99.79,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:42.515809+00:00",
+  "comments": [
+    {
+      "author": "MegaIng",
+      "created_at": "2023-10-22T09:10:03Z",
+      "body": "Nesting aliases inside of other constructs is not supported, and honestly should be throwing errors way earlier. Aliases should always be top level in a rule definition in an alternation (i.e. `|`). I am not even sure what you want do with all the `[]` pairs, but those are causing problems here."
+    },
+    {
+      "author": "RossPatterson",
+      "created_at": "2023-10-22T12:33:13Z",
+      "body": "> Nesting aliases inside of other constructs is not supported, and honestly should be throwing errors way earlier.\r\n\r\nI can see why that would be (I've hand-coded parsers many times), but I should point out that the Lark documentation doesn't even imply that, and this grammar parses successfully with the `grammars/lark.lark` parser:\r\n\r\n```\r\nimport lark\r\n\r\ngrammar = '''\r\nstart: pipesyn\r\npipesyn: [\"any\"i (\"c\"i (\"a\"i (\"s\"i (\"e\"i)? )? )? )? -> anycase]\r\n | [(\"mixed\"i\r\n | \"one\"i (\"s\"i)?\r\n | \"zero\"i (\"s\"i)?) -> mask]\r\n | [\"anyo\"i (\"f\"i)? -> anyof]\r\n'''\r\n\r\nparser = lark.Lark(open(\"C:/Ross/Source/Pype/.venv/Lib/site-packages/lark/grammars/lark.lark\"), parser=\"lalr\")\r\n\r\nparse_tree = parser.parse(grammar)\r\n\r\nprint(parse_tree.pretty())\r\n```\r\n\r\nyields:\r\n\r\n```\r\nstart\r\n  rule\r\n    start\r\n    rule_params\tNone\r\n    alias\r\n      expr\r\n        name\tpipesyn\r\n        None\r\n        None\r\n      None\r\n  rule\r\n    pipesyn\r\n    rule_params\tNone\r\n    expansions\r\n      alias\r\n        expr\r\n          maybe\r\n            alias\r\n              expansion\r\n                expr\r\n                  literal\t\"any\"i\r\n                  None\r\n                  None\r\n                expr\r\n                  alias\r\n                    expansion\r\n                      expr\r\n                        literal\t\"c\"i\r\n                        None\r\n                        None\r\n... much elided ...\r\n      alias\r\n        expr\r\n          maybe\r\n            alias\r\n              expansion\r\n                expr\r\n                  literal\t\"anyo\"i\r\n                  None\r\n                  None\r\n                expr\r\n                  alias\r\n                    expr\r\n                      literal\t\"f\"i\r\n                      None\r\n                      None\r\n                    None\r\n                  ?\r\n              anyof\r\n          None\r\n          None\r\n        None\r\n```\r\n\r\n"
+    },
+    {
+      "author": "MegaIng",
+      "created_at": "2023-10-22T12:35:26Z",
+      "body": "Yes, it *parses* successfully, but aliases then break or get ignored in the post processing. This has been on my radar for some time, but you are actually the first person I remember running into this issue so it's low priority."
+    },
+    {
+      "author": "RossPatterson",
+      "created_at": "2023-10-22T13:10:47Z",
+      "body": "> Yes, it *parses* successfully, but aliases then break or get ignored in the post processing. \n\nGot it.\n\n> so it's low priority.\n\nAgreed.  I'll change my use of Lark to not do this, and I'll probably work up a documentation PR to clarify the use of rule aliases."
+    },
+    {
+      "author": "RossPatterson",
+      "created_at": "2024-01-29T19:12:05Z",
+      "body": "Closing this, as the error was mine, not Lark's.  I'll pursue the PR separately."
+    }
+  ]
+}

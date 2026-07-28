@@ -1,0 +1,39 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 47332,
+  "html_url": "https://github.com/huggingface/transformers/issues/47332",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "duplicate",
+  "title": "[Offloading] Cannot save disk-offloaded `Qwen3-VL-32B-Instruct`",
+  "author": "kylesayrs",
+  "created_at": "2026-07-15T06:29:35Z",
+  "updated_at": "2026-07-15T07:06:10Z",
+  "closed_at": "2026-07-15T07:06:10Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:25.958593+00:00",
+  "comments": []
+}

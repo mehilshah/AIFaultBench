@@ -1,0 +1,62 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-io",
+  "number": 1512,
+  "html_url": "https://github.com/keras-team/keras-io/issues/1512",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Error in examples/vision /oxford_pets_image_segmentation.py",
+  "author": "pnl712",
+  "created_at": "2023-09-05T21:36:09Z",
+  "updated_at": "2024-05-31T01:47:28Z",
+  "closed_at": "2024-05-31T01:47:11Z",
+  "labels": [
+    "stale",
+    "stat:awaiting response from contributor",
+    "type:bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 268.17,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:53.430185+00:00",
+  "comments": [
+    {
+      "author": "sachinprasadhs",
+      "created_at": "2024-05-02T23:45:19Z",
+      "body": "https://keras.io/examples/vision/oxford_pets_image_segmentation/  Example has been rewritten with many changes to work with Keras 3, it should run without any issues. Please check and confirm. Thanks!"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-05-17T01:45:51Z",
+      "body": "This issue is stale because it has been open for 14 days with no activity. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-05-31T01:47:11Z",
+      "body": "This issue was closed because it has been inactive for 28 days. Please reopen if you'd like to work on this further."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-05-31T01:47:27Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdHag0RVFS7UXzZkKcsFCKOcX8raCupKK9RHSlYxp5U8lSJbQ/viewform?entry.492125872=Yes&entry.243948740=https://github.com/keras-team/keras-io/issues/1512\"> Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdHag0RVFS7UXzZkKcsFCKOcX8raCupKK9RHSlYxp5U8lSJbQ/viewform?entry.492125872=No&entry.243948740=https://github.com/keras-team/keras-io/issues/1512\"> No</a>\n"
+    }
+  ]
+}

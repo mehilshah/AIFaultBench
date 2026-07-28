@@ -1,0 +1,73 @@
+{
+  "owner": "ludwig-ai",
+  "repo": "ludwig",
+  "number": 3092,
+  "html_url": "https://github.com/ludwig-ai/ludwig/issues/3092",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "RunTimeError when running regression example with GBM model type",
+  "author": "skunkwerk",
+  "created_at": "2023-02-14T01:59:43Z",
+  "updated_at": "2024-10-18T13:21:10Z",
+  "closed_at": "2024-10-18T13:21:10Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 612.47,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:57.586511+00:00",
+  "comments": [
+    {
+      "author": "tgaddair",
+      "created_at": "2023-02-14T04:41:03Z",
+      "body": "Thanks for raising this issue and providing and repo script @skunkwerk!\r\n\r\n@jeffkinnison can you take a look?"
+    },
+    {
+      "author": "skunkwerk",
+      "created_at": "2023-02-14T20:11:39Z",
+      "body": "I'm also sometimes getting a different error from the same code, and I'm not sure how it surfaces but it seems to be coming from Ray:\r\n\r\nValueError: The `num_actors` parameter is set to 0. Please always specify the number of distributed actors you want to use.\r\nFIX THIS by passing a `RayParams(num_actors=X)` argument to your call to lightgbm_ray."
+    },
+    {
+      "author": "jeffkinnison",
+      "created_at": "2023-02-14T20:16:27Z",
+      "body": "@skunkwerk Thanks for following up here! I'm looking into both of these issues, but in the meantime can you see if they repro in nightly? GBMs were heavily updated recently, including moving away from `hummingbird` training, so the original issue may have been fixed already."
+    },
+    {
+      "author": "jeffkinnison",
+      "created_at": "2023-02-14T22:07:32Z",
+      "body": "I was just able to repro this in master. Looking into a fix now!"
+    },
+    {
+      "author": "skunkwerk",
+      "created_at": "2023-02-15T17:30:59Z",
+      "body": "I just tried it in the nightly docker image, and was able to reproduce one of the errors:\r\n\"RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu!\"\r\n\r\nthanks"
+    },
+    {
+      "author": "jeffkinnison",
+      "created_at": "2023-02-21T16:17:11Z",
+      "body": "Hi @skunkwerk, I wanted to follow up here because this turned out to be more complex than it initially seemed. I'm working on making GBM pytorch tensor dtypes consistent throughout GPU training, and will keep you updated as that progresses. For the time being, GBMs should train on CPU in 0.6.3 and 0.6.4. Thanks for your patience!"
+    },
+    {
+      "author": "skunkwerk",
+      "created_at": "2023-02-21T17:46:40Z",
+      "body": "thanks Jeff, no worries.  I'll try it out with CPU training for the time being."
+    }
+  ]
+}

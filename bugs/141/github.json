@@ -1,0 +1,88 @@
+{
+  "owner": "huggingface",
+  "repo": "safetensors",
+  "number": 442,
+  "html_url": "https://github.com/safetensors/safetensors/issues/442",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Failed to load `.safetensors` as state dict with error from `torch.frombuffer` in `safetensors.torch.load`",
+  "author": "RunDevelopment",
+  "created_at": "2024-02-16T22:26:36Z",
+  "updated_at": "2024-07-31T12:30:41Z",
+  "closed_at": "2024-07-31T12:30:41Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 10,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 165.59,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:51.359873+00:00",
+  "comments": [
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-03-18T01:46:30Z",
+      "body": "This issue is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 5 days."
+    },
+    {
+      "author": "RunDevelopment",
+      "created_at": "2024-03-18T03:50:13Z",
+      "body": "Still a problem."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-04-18T01:46:50Z",
+      "body": "This issue is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 5 days."
+    },
+    {
+      "author": "RunDevelopment",
+      "created_at": "2024-04-18T10:41:08Z",
+      "body": "Still a problem."
+    },
+    {
+      "author": "fpgaminer",
+      "created_at": "2024-05-03T06:01:45Z",
+      "body": "Ran into this issue as well. Seems like adding a check before (https://github.com/huggingface/safetensors/blob/079781fd0dc455ba0fe851e2b4507c33d0c0d407/bindings/python/py_src/safetensors/torch.py#L389) would workaround the issue. Check if the buffer is length 0, and if so, create an empty tensor instead of calling `frombuffer`.\r\n\r\nWould the maintainers like a pull request to that effect?\r\n\r\n\r\nEDIT:\r\n\r\nHere's my patched version of that function (works for me, but not fully tested):\r\n\r\n```\r\ndef _view2torch(safeview) -> dict[str, torch.Tensor]:\r\n\tresult = {}\r\n\tfor k, v in safeview:\r\n\t\tdtype = safetensors.torch._getdtype(v[\"dtype\"])\r\n\t\tif len(v[\"data\"]) == 0:\r\n\t\t\tassert all(x == 0 for x in v[\"shape\"])\r\n\t\t\tarr = torch.empty(v[\"shape\"], dtype=dtype)\r\n\t\telse:\r\n\t\t\tarr = torch.frombuffer(v[\"data\"], dtype=dtype).reshape(v[\"shape\"])\r\n\t\tif sys.byteorder == \"big\":\r\n\t\t\tarr = torch.from_numpy(arr.numpy().byteswap(inplace=False))\r\n\t\tresult[k] = arr\r\n\r\n\treturn result\r\n```"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-06-03T01:50:08Z",
+      "body": "This issue is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 5 days."
+    },
+    {
+      "author": "fpgaminer",
+      "created_at": "2024-06-03T04:15:00Z",
+      "body": "Bump"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-07-04T01:50:50Z",
+      "body": "This issue is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 5 days."
+    },
+    {
+      "author": "fpgaminer",
+      "created_at": "2024-07-04T23:08:04Z",
+      "body": "Bamp"
+    },
+    {
+      "author": "Narsil",
+      "created_at": "2024-07-31T11:31:54Z",
+      "body": "Hi @fpgaminer,\r\n\r\nThanks for the workaround.\r\nI think this bug should be filed upstream in pytorch since `torch.zeros((2, 0))` is valid, there is no reason for `torch.frombuffer` not to accept zero-length tensors.\r\n\r\nThat being said we can workaround in the meantime."
+    }
+  ]
+}

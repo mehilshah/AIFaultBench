@@ -1,0 +1,61 @@
+{
+  "owner": "towhee-io",
+  "repo": "towhee",
+  "number": 2714,
+  "html_url": "https://github.com/towhee-io/towhee/issues/2714",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: triton/pipeline_client: RuntimeError: no running event loop",
+  "author": "abysshal",
+  "created_at": "2024-12-05T12:00:40Z",
+  "updated_at": "2024-12-06T03:24:40Z",
+  "closed_at": "2024-12-06T03:24:40Z",
+  "labels": [
+    "kind/bug",
+    "needs-triage"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.64,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:55.384109+00:00",
+  "comments": [
+    {
+      "author": "junjiejiangjjj",
+      "created_at": "2024-12-06T02:19:40Z",
+      "body": "hi @abysshal , before using triton_client, create an event loop by this code\r\n```python\r\n try:\r\n        loop = asyncio.get_event_loop()\r\n    except:\r\n        loop = asyncio.new_event_loop()\r\n        asyncio.set_event_loop(loop)"
+    },
+    {
+      "author": "abysshal",
+      "created_at": "2024-12-06T03:11:16Z",
+      "body": "> hi @abysshal , before using triton_client, create an event loop by this code\r\n> \r\n> ```python\r\n>  try:\r\n>         loop = asyncio.get_event_loop()\r\n>     except:\r\n>         loop = asyncio.new_event_loop()\r\n>         asyncio.set_event_loop(loop)\r\n> ```\r\n\r\n\u611f\u8c22\u56de\u590d\uff0c\u6211\u7b80\u5355\u5feb\u901f\u7684\u6d4b\u8bd5\u4e86\u4e00\u4e0b\uff0c\u4ecd\u65e7\u662f\u62a5\u76f8\u540c\u7684\u9519\u8bef\uff0c\u6d4b\u8bd5\u4ee3\u7801\u5982\u4e0b\uff1a\r\n```\r\nfrom towhee import triton_client\r\nimport asyncio\r\n\r\ntry:\r\n    loop = asyncio.get_event_loop()\r\nexcept:\r\n    print('failed to get_event_loop()')\r\n    loop = asyncio.new_event_loop()\r\n    asyncio.set_event_loop(loop)\r\n\r\nprint(loop)\r\nclient = triton_client.Client(url='127.0.0.1:8010')\r\nres = client('dog')\r\nprint(res)\r\n```\r\n\r\n\u4f46\u662f\u4f60\u7684\u56de\u590d\u8ba9\u6211\u4e86\u89e3\u5230\u4ec5\u9760\u6587\u6863\u91cc\u5c55\u793a\u7684\u51e0\u884c\u793a\u4f8b\u4ee3\u7801\u53ef\u80fd\u662f\u65e0\u6cd5\u76f4\u63a5\u641e\u5b9a\u7684\uff0c\u6211\u4f1a\u5b66\u4e60`asyncio`\u5e93\uff0c\u6dfb\u52a0\u66f4\u591a\u7684\u4e0a\u4e0b\u6587\u73af\u5883\uff0c\u5c1d\u8bd5\u641e\u5b9a \u8c03\u7528tritronserver \u63a8\u7406\u7684\u8fd9\u4e2a\u4f8b\u5b50\u7684\u3002\r\n"
+    },
+    {
+      "author": "junjiejiangjjj",
+      "created_at": "2024-12-06T03:19:31Z",
+      "body": "Check if the version of this dependent library is correct\uff1a aiohttp==3.9.5"
+    },
+    {
+      "author": "abysshal",
+      "created_at": "2024-12-06T03:24:40Z",
+      "body": "> Check if the version of this dependent library is correct\uff1a aiohttp==3.9.5\r\n\r\n\u539f\u6765\u9ed8\u8ba4\u5b89\u88c5\u7684\u662f aiohttp==3.11.9\u7248\u672c\uff0c\u5f53\u91cd\u65b0\u5b89\u88c5 3.9.5 \u7248\u672c\u540e\uff0c\u95ee\u9898\u89e3\u51b3\u4e86\u3002\u751a\u81f3\u53ea\u8981\u4e09\u884c\u4e5f\u80fd\u8fd0\u884c\u4e86\uff1a\r\n```\r\nfrom towhee import triton_client\r\nclient = triton_client.Client(url='127.0.0.1:8000')\r\nres = client(text_to_search)\r\n```"
+    }
+  ]
+}

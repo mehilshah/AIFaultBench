@@ -1,0 +1,75 @@
+{
+  "owner": "PythonOT",
+  "repo": "POT",
+  "number": 117,
+  "html_url": "https://github.com/PythonOT/POT/issues/117",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "getting 'std::length_error' when running pot.emd",
+  "author": "sztankatt",
+  "created_at": "2019-12-16T17:09:09Z",
+  "updated_at": "2021-12-31T11:57:15Z",
+  "closed_at": "2021-12-31T11:57:15Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 745.78,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:45.429868+00:00",
+  "comments": [
+    {
+      "author": "rflamary",
+      "created_at": "2019-12-19T13:21:41Z",
+      "body": "Hello @sztankatt \r\n\r\nThe error is probably due to a memory problem (the memory allocation fails).\r\n\r\nNote that due to the architecture of the C++ solver we need to copy i memory the cost matrix which can fail if the memory cannot fit the copy.\r\n\r\n"
+    },
+    {
+      "author": "sztankatt",
+      "created_at": "2019-12-23T08:13:16Z",
+      "body": "Hi @rflamary! Thanks for the reply. I am running the code on a big server (1.5TB memory), so should have enough memory.\r\n\r\nCould it be that somehow in my python code I mess up the memory allocation of C++?\r\n\r\nOtherwise, I have no idea how to fix this..."
+    },
+    {
+      "author": "sztankatt",
+      "created_at": "2019-12-23T10:40:28Z",
+      "body": "Hi @rflamary! So my code is literally this:\r\n\r\n```python\r\n>>> import numpy as np\r\n>>> import ot\r\n>>> M = np.load('test.npy')\r\n>>> np.shape(M)\r\n(62332, 53526)\r\n>>> M\r\narray([[1.40118821e-05, 1.71256336e-05, 1.40118821e-05, ...,\r\n        1.24550063e-05, 1.40118821e-05, 1.40118821e-05],\r\n       [1.71256336e-05, 9.34125472e-06, 1.86825094e-05, ...,\r\n        1.08981305e-05, 1.55687579e-05, 1.55687579e-05],\r\n       [1.55687579e-05, 1.08981305e-05, 1.24550063e-05, ...,\r\n        1.40118821e-05, 1.40118821e-05, 1.71256336e-05],\r\n       ...,\r\n       [1.86825094e-05, 1.24550063e-05, 1.40118821e-05, ...,\r\n        1.40118821e-05, 1.55687579e-05, 1.86825094e-05],\r\n       [1.71256336e-05, 7.78437893e-06, 1.55687579e-05, ...,\r\n        1.24550063e-05, 1.08981305e-05, 1.24550063e-05],\r\n       [1.24550063e-05, 1.55687579e-05, 1.40118821e-05, ...,\r\n        1.71256336e-05, 1.08981305e-05, 1.24550063e-05]])\r\n>>> M.dtype\r\ndtype('float64')\r\n>>> ot.emd([], [], M)\r\n```\r\n\r\nand then I get immediately the error:\r\n\r\n```sh\r\nterminate called after throwing an instance of 'std::length_error'\r\n  what():  vector::_M_default_append\r\nAborted\r\n```"
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2019-12-31T13:09:05Z",
+      "body": "Humm, it's hard to know, if it comes from the underlying C++ code it's hard to find the erreor.  Could you try and find at which size of problem things explode? I recall running it on 50kx50k with some tinkerring of nitermax.\r\n\r\nAslo try giving the emd functions some proper weights from ot.unif . It is probably not the problem but it's worth trying."
+    },
+    {
+      "author": "mnmjh1215",
+      "created_at": "2021-10-08T19:14:06Z",
+      "body": "Any update on this error?\r\nI'm experiencing the same problem with matrix of size approximately 20k x 120k when running pot.emd."
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2021-10-10T07:36:44Z",
+      "body": "Hello we recently merged a new cleaned up implementation for the c++ solver, could you install/copile the master version of POT nd tell us if you still have this problem (it should be fixed we put all index in int64) ?"
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2021-12-31T11:57:15Z",
+      "body": "We have solved EMD problems of size 150kx150k  with version 0.8 so I'm closing this issue"
+    }
+  ]
+}

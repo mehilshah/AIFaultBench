@@ -1,0 +1,65 @@
+{
+  "owner": "PythonOT",
+  "repo": "POT",
+  "number": 24,
+  "html_url": "https://github.com/PythonOT/POT/issues/24",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Another issue on Windows with ot.da.OTDA()",
+  "author": "toto6",
+  "created_at": "2017-08-29T10:34:43Z",
+  "updated_at": "2017-08-30T13:47:17Z",
+  "closed_at": "2017-08-30T13:47:17Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.13,
+  "fix": {
+    "closing_commit": "16697047eff9326a0ecb483317c13a854a3d3a71",
+    "linked_prs": [],
+    "best_guess_fix_commit": "16697047eff9326a0ecb483317c13a854a3d3a71",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:29:32.815900+00:00",
+  "comments": [
+    {
+      "author": "rflamary",
+      "created_at": "2017-08-29T11:15:43Z",
+      "body": "The difference between the Windows and Debian result is indeed a serious problem. I personally cannot investigate this bug because I don't have any Windows available. Could you confirm that it happens only on very large problems?\r\n\r\nThe fact that it does not sum to 1 is because the LP solver has not converged. \r\nIt comes from the fact that we limit the number of iteration in the C code and it should be a parameters of emd function.\r\n\r\nIf you set a larger value manually, in the C code and compile manually it should work better.  We really need to do it because your are the second to ask this question.\r\n"
+    },
+    {
+      "author": "toto6",
+      "created_at": "2017-08-29T11:22:34Z",
+      "body": "with\r\n```\r\nimport numpy as np\r\nimport ot\r\na = np.random.rand(1500, 95)\r\nb = np.random.rand(4000, 95)\r\nopt = ot.da.OTDA()\r\nopt.fit(a,b)\r\nprint(np.sum(opt.G))\r\n```\r\nit returns `1` on both Windows and Debian.\r\nBy increasing by 1000:\r\n```\r\nimport numpy as np\r\nimport ot\r\na = np.random.rand(1500, 95)\r\nb = np.random.rand(5000, 95)\r\nopt = ot.da.OTDA()\r\nopt.fit(a,b)\r\nprint(np.sum(opt.G))\r\n```\r\nit returns me `0.9992` on debian and `0` on Windows."
+    },
+    {
+      "author": "toto6",
+      "created_at": "2017-08-29T11:31:20Z",
+      "body": "I increased as you said in file EMD_wrapper.cpp the variable max_iter and it worked!\r\n\r\nTrue that it could be useful to modify the max number of iteration, but also to display in the python console if the problem is not feasable.\r\nI saw that there is\r\n```\r\nstd::cout << \"Infeasible problem\";\r\n```\r\nin the source code but it is not displayed in the python console"
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2017-08-29T11:33:32Z",
+      "body": "Ok this clearly comes from this line:\r\nhttps://github.com/rflamary/POT/blob/master/ot/lp/EMD_wrapper.cpp#L22\r\n\r\n10000 iterations max is very small for large matrices as you are investigating.\r\n\r\n@aje  if you want to implement the parameter maxiter (should be numItermax in the emd function) you are welcome to submit a PR because I don't know if @ncourty  or me have time to do that onn short notice.\r\n\r\nI agree that the emd_c/EMD_wrap function should also return some kind of log which should be a log dictionnary for emd (as is done with sinkhorn). the cout in EMD_wrap does not print in the console indeed so it should happen in emd_c.\r\n\r\n"
+    },
+    {
+      "author": "toto6",
+      "created_at": "2017-08-29T11:36:41Z",
+      "body": "I try to make this change"
+    }
+  ]
+}

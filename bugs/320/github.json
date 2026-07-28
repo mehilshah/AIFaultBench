@@ -1,0 +1,50 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 48217,
+  "html_url": "https://github.com/vllm-project/vllm/issues/48217",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: Gemma4 parser classifies plain output without channel markers differently in streaming and non-streaming mode",
+  "author": "DavidDiao",
+  "created_at": "2026-07-10T07:19:10Z",
+  "updated_at": "2026-07-14T13:30:18Z",
+  "closed_at": "2026-07-14T13:30:18Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 4.26,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:21.058542+00:00",
+  "comments": [
+    {
+      "author": "adesai-24",
+      "created_at": "2026-07-10T07:55:59Z",
+      "body": "Hello, I would love to take a crack at this bug, will being working on fixing this bug!"
+    },
+    {
+      "author": "lcw99",
+      "created_at": "2026-07-12T02:17:15Z",
+      "body": "I independently hit the same root cause on `v0.25.0` with\n`google/gemma-4-31B-it-qat-w4a16-ct` (reasoning + tool parser `gemma4`).\nConfirming: `adjust_initial_state_from_prompt` unconditionally pre-inits\n`REASONING` for any new-turn prompt (since `is_reasoning_end` returns `False`\non `<|turn>` when thinking is enabled), so channel-less direct answers stream\nentirely as `reasoning` with empty `content`. The fix in this PR matches my\nlocal reproduction \u2014 thanks for picking it up.\n\nOne related but SEPARATE bug this PR does not cover, which becomes visible\nprecisely after bug 1 is fixed (because normal text now correctly flows through\nCONTENT): the `<turn|>` EOT token (and `<eos>`) can leak verbatim into the\nstreamed `content` field.\n\nRoot cause: `StreamingParserEngine._on_terminal` only drops these special\ntokens (mapped to the internal `DROP_TERMINAL`) when they arrive WITH their\ntoken ID in the same delta. In a streaming race where the detokenizer flushes\nthe token's text BEFORE its token ID reaches the parser, the text is lexed as\nplain `CONTENT` and emitted as-is.\n\nMinimal repro (no model/GPU needed):\n```python\nfrom vllm.parser.gemma4 import Gemma4Parser\n# build parser with enable_thinking=True, feed a new-turn prompt tail\nout = parser.parse_delta(\n    \"The answer is 4.<turn|>\",          # text includes EOT\n    token_ids_for(\"The answer is 4.\"),  # but token id for <turn|> NOT in this delta\n    finished=True,\n)\n# -> content == \"The answer is 4.<turn|>\"   (leaked!)"
+    }
+  ]
+}

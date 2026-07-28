@@ -1,0 +1,55 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 2724,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/2724",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "contrib.funsor.infer.TraceEnum_ELBO can compute inaccurate elbo for certain guide-enumerated models ",
+  "author": "ordabayevy",
+  "created_at": "2020-12-26T00:05:50Z",
+  "updated_at": "2021-03-10T21:22:22Z",
+  "closed_at": "2021-03-10T21:22:22Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 74.89,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:37:23.589367+00:00",
+  "comments": [
+    {
+      "author": "eb8680",
+      "created_at": "2020-12-28T02:32:46Z",
+      "body": "Good catch!  I'm not opposed to adding a temporary fix to `TraceMarkovEnum_ELBO` like the one you suggested, since it would unblock your problem, but it would be nice to at least find a way to avoid exponentiation of individual terms and the accompanying numerical underflows.\r\n\r\nAs a reference, there's a [correct, numerically stable, optimized version of this computation in Pyro](https://github.com/pyro-ppl/pyro/blob/dev/pyro/infer/util.py#L249), although the implementation is quite complicated and I think we could do better than just porting it directly."
+    },
+    {
+      "author": "ordabayevy",
+      "created_at": "2020-12-28T04:24:09Z",
+      "body": "@eb8680 the newly added `sum_product.compute_expectation` is the stripped down version of the function mention [here](https://github.com/pyro-ppl/pyro/pull/2716#issuecomment-750772256). If it works we can later update it to compute expectation wrt to markov variables too."
+    },
+    {
+      "author": "eb8680",
+      "created_at": "2021-03-10T21:22:22Z",
+      "body": "Resolved in #2725 "
+    }
+  ]
+}

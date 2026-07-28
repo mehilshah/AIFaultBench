@@ -1,0 +1,60 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 48831,
+  "html_url": "https://github.com/vllm-project/vllm/issues/48831",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: V1 Engine Produces Incorrect Scores for Qwen3-Reranker-0.6B on Long Sequences (>8K tokens)",
+  "author": "yuejiyueren",
+  "created_at": "2026-07-16T08:37:34Z",
+  "updated_at": "2026-07-17T05:19:13Z",
+  "closed_at": "2026-07-17T05:19:13Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.86,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:00.234776+00:00",
+  "comments": [
+    {
+      "author": "woosebastian",
+      "created_at": "2026-07-16T08:48:57Z",
+      "body": "working on this"
+    },
+    {
+      "author": "ravenZ3",
+      "created_at": "2026-07-16T09:06:12Z",
+      "body": "@woosebastian Tell me if you have any leads, I had run into the same issue some time back.\n"
+    },
+    {
+      "author": "woosebastian",
+      "created_at": "2026-07-17T01:49:23Z",
+      "body": "fix up in #48901.\n\nRoot cause turned out to be a bit different from the async-copy theory: it's an interaction between `torch.compile` and **chunked prefill** specifically \u2014 the pooled last-token hidden state reads a reused/aliased buffer whose producing kernel hasn't completed for the partial-prefill shape. It reproduces only when both are on (`--enforce-eager` is always correct; a single-chunk prompt is always correct), which matches why offline `LLM.score()` looked fine.\n\n@ravenZ3 thanks for offering to help. if you're able to try #48901 against your original case (long query+doc, chunked prefill, compile on) and confirm it resolves the issue you saw, that'd be a useful second data point."
+    },
+    {
+      "author": "yuejiyueren",
+      "created_at": "2026-07-17T02:16:39Z",
+      "body": "The score returned to normal after I applied the code #48901 . thanks"
+    }
+  ]
+}

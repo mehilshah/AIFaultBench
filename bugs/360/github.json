@@ -1,0 +1,55 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 38813,
+  "html_url": "https://github.com/jax-ml/jax/issues/38813",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "jax.nn.scaled_matmul raises NotImplementedError on CPU with no graceful error",
+  "author": "anna-researcher",
+  "created_at": "2026-06-26T23:05:42Z",
+  "updated_at": "2026-07-09T00:24:23Z",
+  "closed_at": "2026-07-09T00:24:22Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 12.05,
+  "fix": {
+    "closing_commit": "bf4e88bb8d113cd9af730168eb5a09728bb83c65",
+    "linked_prs": [],
+    "best_guess_fix_commit": "bf4e88bb8d113cd9af730168eb5a09728bb83c65",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:30:20.964187+00:00",
+  "comments": [
+    {
+      "author": "coder-jayp",
+      "created_at": "2026-06-27T04:06:05Z",
+      "body": "I would like to fix this\n\n**Root cause**: `jax.nn.scaled_matmul` has no platform check. It directly calls a primitive that only registers MLIR lowerings for `cuda`/`rocm`, so it throws a raw internal `NotImplementedError` on CPU.\n\n**Plan**: Add a clear `NotImplementedError` early in `scaled_matmul()` explaining the GPU requirement + add a test."
+    },
+    {
+      "author": "jakevdp",
+      "created_at": "2026-06-27T17:16:26Z",
+      "body": "Pinged @IvyZX, who reviewed the initial contribution in #26345. Is there reasonable way for us to implement this on CPU?\n\n(For what it's worth, I don't think the error here is all that problematic: it explicitly tells you the issue: the function is not implemented on CPU)"
+    },
+    {
+      "author": "IvyZX",
+      "created_at": "2026-06-30T20:46:13Z",
+      "body": "> Is there reasonable way for us to implement this on CPU?\n\nIf we don't care for it to be numerically identical with GPU, then yes, this is just a standard quantized matmul. In fact, the [docstring](https://docs.jax.dev/en/latest/_autosummary/jax.nn.scaled_matmul.html) already documented the exact code to do it.\n\nI'm not sure how to match the GPU/rocm version identically though."
+    }
+  ]
+}

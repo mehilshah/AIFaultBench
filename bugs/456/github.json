@@ -1,0 +1,55 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2555,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2555",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Use of `timm 1.0.18` with Python 3.9 results in TypeError",
+  "author": "KellyWalker",
+  "created_at": "2025-07-23T22:12:24Z",
+  "updated_at": "2025-07-24T03:03:15Z",
+  "closed_at": "2025-07-24T03:03:15Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.2,
+  "fix": {
+    "closing_commit": "d08d5a039222684f3173af23c146099c4ed7084b",
+    "linked_prs": [],
+    "best_guess_fix_commit": "d08d5a039222684f3173af23c146099c4ed7084b",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:32:49.030004+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-07-23T22:16:57Z",
+      "body": "Aww crap, I only test with Python 3.10 and above these days. Almost officially bumped up to 3.10 but guess this is probably the only thing... I can patch release later today / tomorrow AM."
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-07-23T22:22:08Z",
+      "body": "@KellyWalker can you confirm if main branch works for you?"
+    },
+    {
+      "author": "KellyWalker",
+      "created_at": "2025-07-24T00:59:15Z",
+      "body": "Confirmed.\n\n```\n>uv pip install git+https://github.com/huggingface/pytorch-image-models.git\n    Updated https://github.com/huggingface/pytorch-image-models.git (0e79579323501a8ccb050845fa123e5dda08f542)\nResolved 24 packages in 5.02s                                                                                                                                                                                                                                                 \n      Built timm @ git+https://github.com/huggingface/pytorch-image-models.git@0e79579323501a8ccb050845fa123e5dda08f542\nPrepared 1 package in 9.40s\nInstalled 1 package in 213ms\n + timm==1.0.18 (from git+https://github.com/huggingface/pytorch-image-models.git@0e79579323501a8ccb050845fa123e5dda08f542)\n\n>python\nPython 3.9.21 (main, Jan 14 2025, 22:41:44) [MSC v.1929 64 bit (AMD64)] on win32\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n>>> import timm\n>>> \n```"
+    }
+  ]
+}

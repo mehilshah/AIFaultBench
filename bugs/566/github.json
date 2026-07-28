@@ -1,0 +1,52 @@
+{
+  "owner": "sdv-dev",
+  "repo": "SDV",
+  "number": 2714,
+  "html_url": "https://github.com/sdv-dev/SDV/issues/2714",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Key Error While Using Synthesizers",
+  "author": "atulkakrana",
+  "created_at": "2025-10-10T13:54:27Z",
+  "updated_at": "2025-12-01T22:58:36Z",
+  "closed_at": "2025-12-01T22:58:28Z",
+  "labels": [
+    "bug",
+    "data:sequential",
+    "resolution:cannot replicate"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 52.38,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:27.784470+00:00",
+  "comments": [
+    {
+      "author": "npatki",
+      "created_at": "2025-10-13T16:32:00Z",
+      "body": "Hi @atulkakrana, thanks for filing the issue with the details of the metadata and your code.\n\nI'm not able to replicate the exact error you are getting. However, I did find a possible related bug that happens for context columns in #2719. The problem is that for context columns (in your case, `diag_label`, `gender`, and `anchor_age`), PARSynthesizer is expecting to you provide them in the same order as how they appear in your data (from left to right). If you accidentally swap their order, it may cause a problem down-the-line. \n\nCould you confirm whether `['diag_label', 'gender', 'anchor_age']` is the correct order of context columns based on your dataframe? If not, does adjusting the order help?\n\nIn the meantime, we'll continue to look into it to see if we can replicate this case exactly. If you are able to provide any more info about your data, or even any minimum example to help us replicate, that may speed up the process. Thanks!"
+    },
+    {
+      "author": "npatki",
+      "created_at": "2025-12-01T22:58:28Z",
+      "body": "Hi @atulkakrana, are you still working on this project? This issue has been inactive for some time, so I'm closing it off. But please do feel free to reply down below if you are still encountering the problem -- I can always reopen.\n\nNote that we have since fixed the issue in #2719, a bug that used to happen if you provided the context column in a different order from your actual data table. If you update SDV to the latest version, this should not longer be a problem. "
+    }
+  ]
+}

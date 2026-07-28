@@ -1,0 +1,57 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 13998,
+  "html_url": "https://github.com/huggingface/diffusers/issues/13998",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "FLUX kohya LoRA conversion crashes on `final_layer` (KeyError on missing adaLN_modulation_1; \"Incompatible keys\" on final_layer alphas)",
+  "author": "christopher5106",
+  "created_at": "2026-06-19T09:30:12Z",
+  "updated_at": "2026-06-20T08:47:12Z",
+  "closed_at": "2026-06-20T08:47:12Z",
+  "labels": [
+    "bug",
+    "lora",
+    "pipelines"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.97,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:09.409218+00:00",
+  "comments": [
+    {
+      "author": "christopher5106",
+      "created_at": "2026-06-19T09:53:50Z",
+      "body": "This also blocks the **ComfyUI / SwarmUI full-export** FLUX LoRA path on `main`, not just hand-written kohya LoRAs \u2014 worth noting since that's a very common export format.\n\nThose exports carry `diffusion_model.final_layer.linear` **and** `diffusion_model.final_layer.adaLN_modulation.1` (so Case A doesn't fire), but they include `.alpha` for every module \u2014 so Case B does. On `main` (`0.39.0.dev0`) the ComfyUI branch correctly remaps `diffusion_model.*` \u2192 `lora_unet_*` and `text_encoders.clip_l.transformer.*` \u2192 `lora_te_*`, but conversion then fails on the unconsumed `final_layer` alphas, which also drags the otherwise-valid `lora_te_*` keys into the error message:\n\n```python\n# diffusers 0.39.0.dev0 (main), real ComfyUI FLUX LoRA export\nFluxLoraLoaderMixin.lora_state_dict(comfy_state_dict)\n# ValueError: Incompatible keys detected:\n#   lora_unet_final_layer_adaLN_modulation_1.alpha, lora_unet_final_layer_linear.alpha,\n#   lora_te_text_model_encoder_layers_0_mlp_fc1.alpha, lora_te_text_model_encoder_layers_0_mlp_fc1.lora_down.weight, ...\n```\n\nDropping just the `final_layer` keys, the exact same export converts cleanly on `main` \u2014 confirming the ComfyUI mapping itself is fine and `final_layer` (this issue) is the sole blocker:\n\n```python\ncomfy_no_final = {k: v for k, v in comfy_state_dict.items() if \"final_layer\" not in k}\nsd = FluxLoraLoaderMixin.lora_state_dict(comfy_no_final)\n# OK -> 988 transformer.* keys + 144 text_encoder.* keys\n```\n\nSo fixing the `final_layer` alpha handling here would unblock the full ComfyUI/SwarmUI export as a side effect.\n"
+    },
+    {
+      "author": "christopher5106",
+      "created_at": "2026-06-19T15:19:55Z",
+      "body": "A third `final_layer` converter issue in `_convert_sd_scripts_to_ai_toolkit`, distinct from the two above \u2014 flagging it here since it's the same code path.\n\n`assign_remaining_weights` applies its `transform` (here `swap_scale_shift`) to **both** `lora_A` (down) and `lora_B` (up):\n\n```python\nfor lora_key in [\"lora_A\", \"lora_B\"]:\n    ...\n    if transform:\n        value = transform(value)   # applied to BOTH A and B\n```\n\nFor the `final_layer.adaLN_modulation_1 \u2192 norm_out.linear` mapping that's wrong: the intended converted delta is `swap(B @ A)`, and since `swap_scale_shift` permutes the **output** axis, `swap(B @ A) = swap(B) @ A` \u2014 only the up tensor should be swapped. `lora_A` has shape `(rank, hidden)`, so swapping it permutes the **rank** axis and yields `swap(B) @ swap(A) \u2260 swap(B @ A)`, silently corrupting the `norm_out` LoRA for any FLUX LoRA that trains the final-layer adaLN modulation (ComfyUI/XLabs full exports do).\n\nMinimal numeric repro:\n\n```python\nimport torch\nfrom diffusers.loaders.lora_conversion_utils import swap_scale_shift\nr, h = 4, 8\nA = torch.randn(r, h)      # down (rank, hidden)\nB = torch.randn(2*h, r)    # up   (2*hidden, rank)\nassert torch.allclose(swap_scale_shift(B @ A), swap_scale_shift(B) @ A)        # intended, up-only  -> True\nassert not torch.allclose(swap_scale_shift(B @ A), swap_scale_shift(B) @ swap_scale_shift(A))  # current -> mismatch\n```\n\nFix: only transform the up tensor, e.g. gate it on `lora_key == \"lora_B\"` in `assign_remaining_weights` (`if transform and lora_key == \"lora_B\":`).\n"
+    },
+    {
+      "author": "lcheng321",
+      "created_at": "2026-06-20T07:34:16Z",
+      "body": "Fixed in https://github.com/huggingface/diffusers/pull/14001. All three cases addressed: KeyError, Incompatible keys, and swap_scale_shift on lora_A."
+    }
+  ]
+}

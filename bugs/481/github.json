@@ -1,0 +1,75 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2041,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2041",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "bug: `WishartCholesky.infer_shapes` assumes tuples instead of supporting arrays",
+  "author": "Qazalbash",
+  "created_at": "2025-07-05T01:34:30Z",
+  "updated_at": "2025-08-04T21:42:16Z",
+  "closed_at": "2025-08-04T21:42:15Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": "0.19",
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 30.84,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:24.477251+00:00",
+  "comments": [
+    {
+      "author": "fehiepsi",
+      "created_at": "2025-07-05T02:19:21Z",
+      "body": "It is expected because `infer_shapes` accepts tuples of ints as arguments."
+    },
+    {
+      "author": "Qazalbash",
+      "created_at": "2025-07-05T14:23:09Z",
+      "body": "Then the parameters should be renamed in the `infer_shapes` method such that they convey that there should be a tuple of ints instead of arrays."
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2025-07-05T15:28:17Z",
+      "body": "Maybe we can enhance the docstring? We would like to keep the parameter names as is for some inference logic"
+    },
+    {
+      "author": "Qazalbash",
+      "created_at": "2025-07-05T20:16:06Z",
+      "body": "Sure, we can do that too."
+    },
+    {
+      "author": "tillahoffmann",
+      "created_at": "2025-07-07T15:25:15Z",
+      "body": "While updating the docstring, we should also have a look at the corresponding type hints from #2032."
+    },
+    {
+      "author": "Qazalbash",
+      "created_at": "2025-07-07T15:34:48Z",
+      "body": "I got to this issue while solving these type hint bugs from #2032. I have solved around 70% of them. I will make sure changes required to reflect the discussion under this issue are also there."
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2025-08-04T21:42:14Z",
+      "body": "Fixed in #2059 "
+    }
+  ]
+}

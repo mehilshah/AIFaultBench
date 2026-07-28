@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2051,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2051",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Incompatibility with jax 0.7.0",
+  "author": "damonbayer",
+  "created_at": "2025-07-22T22:03:46Z",
+  "updated_at": "2025-08-04T15:09:22Z",
+  "closed_at": "2025-08-04T15:09:22Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 18,
+    "+1": 18,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 12.71,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:23.046848+00:00",
+  "comments": [
+    {
+      "author": "jjyyxx",
+      "created_at": "2025-07-23T22:19:40Z",
+      "body": "A temporary workaround might be adding\n```python\nimport jax.experimental.pjit\nfrom jax.extend.core.primitives import jit_p\njax.experimental.pjit.pjit_p = jit_p\n```\nbefore any numpyro import."
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2025-08-04T15:09:22Z",
+      "body": "Sorry for the late response. @tare fixed the issue in #2052."
+    }
+  ]
+}

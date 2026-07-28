@@ -1,0 +1,95 @@
+{
+  "owner": "huggingface",
+  "repo": "peft",
+  "number": 602,
+  "html_url": "https://github.com/huggingface/peft/issues/602",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`modules_to_save` incompatible with `load_in_4bit / load_in_8bit` ?",
+  "author": "linhdvu14",
+  "created_at": "2023-06-20T04:21:25Z",
+  "updated_at": "2024-01-30T19:16:20Z",
+  "closed_at": "2023-07-27T08:29:33Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 11,
+  "reactions": {
+    "total_count": 1,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 1
+  },
+  "resolution_days": 37.17,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:39.949579+00:00",
+  "comments": [
+    {
+      "author": "00ber",
+      "created_at": "2023-06-21T06:51:28Z",
+      "body": "I experienced the same problem today. I had 92% accuracy during training but after loading the saved model, my model's accuracy dropped to like 30%. I retrained the model and checked the before-training and after-training weights of both `model.score.modules_to_save` and `model.score.original_module` and found that the `model.score.original_module` was being updated rather than `model.score.modules_to_save` which is causing the model to use the non-optimized weights after it is loaded.\r\n\r\nUntil this is fixed, I'm using the following workaround, which seems to work for me (will need to retrain the classifier again though): \r\n\r\n1. Along with the model, save the classification head's state dict separately\r\n```\r\n..........\r\nmodel.save_pretrained(\"my-awesome-model\")\r\ntorch.save(model.score.state_dict(), 'score-params.pt')\r\n```\r\n2. During inference, after loading the peft model, load the saved params into the model's classification head\r\n```\r\nimport torch\r\nfrom transformers import AutoTokenizer, AutoModelForSequenceClassification\r\nfrom peft import PeftModel, PeftConfig\r\n\r\ndevice_map = \"auto\"\r\npeft_model_id = \"my-awesome-model\"\r\nconfig = PeftConfig.from_pretrained(peft_model_id)\r\nmodel = AutoModelForSequenceClassification.from_pretrained(\r\n    config.base_model_name_or_path,\r\n    load_in_8bit=True,\r\n    torch_dtype=torch.float16,\r\n    device_map=device_map,\r\n    num_labels=3\r\n)\r\nmodel = PeftModel.from_pretrained(model, peft_model_id)\r\ntokenizer = AutoTokenizer.from_pretrained(config.base_model_name_or_path)\r\nscore_params = torch.load('score-params.pt') \r\nmodel.score.load_state_dict(score_params)\r\n```"
+    },
+    {
+      "author": "linhdvu14",
+      "created_at": "2023-06-22T02:53:54Z",
+      "body": "Thanks @00ber for sharing your workaround.\r\n\r\nI wonder what is the purpose of `ModulesToSaveWrapper` splitting into `original_module` and `modules_to_save`? Don't you always want to retrain the head i.e. no need for `original_module`?\r\n\r\nAside from this issue, I've also ran into a weird `modules_to_save` error with DeepSpeed zero3. Seems if you initialize DeepSpeed before creating the model (e.g. by using `HfArgumentParser`):\r\n1. `from_pretrained` will partition model params: https://github.com/huggingface/transformers/blob/v4.30.2/src/transformers/modeling_utils.py#L2666\r\n2. `ModulesToSaveWrapper` will copy the (now empty) `original_module`: https://github.com/huggingface/peft/blob/main/src/peft/utils/other.py#L136\r\n3. The forward pass will `RuntimeError: size mismatch, got XX, XXxYYY,0` as the head is empty\r\n\r\nSeems this module might need more testing?"
+    },
+    {
+      "author": "00ber",
+      "created_at": "2023-06-28T16:37:54Z",
+      "body": "@linhdvu14 I'm not sure of the original purpose behind splitting into original_module and modules_to_save either....But yeah, this module definitely needs a bit more testing it seems. I thought it was an issue just with the sequence classification model, but recently when I tried saving the LM Head for a CausalLM model, I faced a similar issue of the weights not being saved correctly."
+    },
+    {
+      "author": "liuyu666-thu",
+      "created_at": "2023-07-13T07:09:07Z",
+      "body": "> @linhdvu14 I'm not sure of the original purpose behind splitting into original_module and modules_to_save either....But yeah, this module definitely needs a bit more testing it seems. I thought it was an issue just with the sequence classification model, but recently when I tried saving the LM Head for a CausalLM model, I faced a similar issue of the weights not being saved correctly.\r\n\r\n@00ber @younesbelkada  I met the same weird problem and had a rough conclusion: it is caused by `dispatch_model` function triggered by `load_in_8bit=True` or `device_map is not None`. A AlignDeviceHook may be attached to that causes unexpected module forwarding."
+    },
+    {
+      "author": "sjrl",
+      "created_at": "2023-07-24T06:17:58Z",
+      "body": "I'm also running into the same issue. Thanks for the workaround @00ber, I'll try that out today."
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2023-07-26T16:22:33Z",
+      "body": "Hey, thanks everyone here for investigating this bug and providing code to replicate it. We could confirm the error and could pinpoint the issue, the fix is provided in #755. Since this is quite a tricky bug, it would be great if you could help us by checking if the fix solves your original problem."
+    },
+    {
+      "author": "vincentmin",
+      "created_at": "2023-07-26T16:57:31Z",
+      "body": "@BenjaminBossan Thanks for looking into this issue. For my understanding, could you explain if this fix requires a retraining of our models, or if we can use the adapters from our original training with the old code?"
+    },
+    {
+      "author": "vincentmin",
+      "created_at": "2023-07-26T17:14:29Z",
+      "body": "I just tried running the following code from @younesbelkada new fix branch:\r\n```\r\nimport torch\r\nfrom peft import PeftModel, PeftConfig\r\nfrom transformers import AutoModelForSequenceClassification, AutoTokenizer\r\n\r\npeft_model_id = \"vincentmin/llama-2-7b-reward-oasst1\"\r\nconfig = PeftConfig.from_pretrained(peft_model_id)\r\nmodel = AutoModelForSequenceClassification.from_pretrained(\r\n    config.base_model_name_or_path,\r\n    num_labels=1,\r\n    load_in_8bit=True,\r\n    torch_dtype=torch.float16,\r\n)\r\nmodel = PeftModel.from_pretrained(model, peft_model_id)\r\ntokenizer = AutoTokenizer.from_pretrained(config.base_model_name_or_path, use_auth_token=True)\r\nmodel.eval()\r\nwith torch.no_grad():\r\n  test = model(**tokenizer(\"hello world\", return_tensors='pt')).logits\r\ntest\r\n```\r\nIf I run it twice, I get different results.\r\nNote that the adapters that I load here were created from a training run on the old branch.\r\nI guess that answers my question above: \"We cannot use adapters from our original training with the old code\".\r\nI can try again tomorrow to see if the issue is fixed if we also train on the new branch."
+    },
+    {
+      "author": "vincentmin",
+      "created_at": "2023-07-26T18:59:26Z",
+      "body": "@BenjaminBossan I managed to confirm that #755 fixes my issue. I trained in 4bit on the branch #755 and can now consistently load the model with the same model output. Thanks @BenjaminBossan  and @younesbelkada !"
+    },
+    {
+      "author": "yangjianxin1",
+      "created_at": "2023-08-18T02:49:25Z",
+      "body": "> I experienced the same problem today. I had 92% accuracy during training but after loading the saved model, my model's accuracy dropped to like 30%. I retrained the model and checked the before-training and after-training weights of both `model.score.modules_to_save` and `model.score.original_module` and found that the `model.score.original_module` was being updated rather than `model.score.modules_to_save` which is causing the model to use the non-optimized weights after it is loaded.\r\n> \r\n> Until this is fixed, I'm using the following workaround, which seems to work for me (will need to retrain the classifier again though):\r\n> \r\n> 1. Along with the model, save the classification head's state dict separately\r\n> \r\n> ```\r\n> ..........\r\n> model.save_pretrained(\"my-awesome-model\")\r\n> torch.save(model.score.state_dict(), 'score-params.pt')\r\n> ```\r\n> \r\n> 2. During inference, after loading the peft model, load the saved params into the model's classification head\r\n> \r\n> ```\r\n> import torch\r\n> from transformers import AutoTokenizer, AutoModelForSequenceClassification\r\n> from peft import PeftModel, PeftConfig\r\n> \r\n> device_map = \"auto\"\r\n> peft_model_id = \"my-awesome-model\"\r\n> config = PeftConfig.from_pretrained(peft_model_id)\r\n> model = AutoModelForSequenceClassification.from_pretrained(\r\n>     config.base_model_name_or_path,\r\n>     load_in_8bit=True,\r\n>     torch_dtype=torch.float16,\r\n>     device_map=device_map,\r\n>     num_labels=3\r\n> )\r\n> model = PeftModel.from_pretrained(model, peft_model_id)\r\n> tokenizer = AutoTokenizer.from_pretrained(config.base_model_name_or_path)\r\n> score_params = torch.load('score-params.pt') \r\n> model.score.load_state_dict(score_params)\r\n> ```\r\n\r\nit's a good method."
+    },
+    {
+      "author": "wufeim",
+      "created_at": "2024-01-30T19:16:18Z",
+      "body": "> Thanks @00ber for sharing your workaround.\r\n> \r\n> I wonder what is the purpose of `ModulesToSaveWrapper` splitting into `original_module` and `modules_to_save`? Don't you always want to retrain the head i.e. no need for `original_module`?\r\n> \r\n> Aside from this issue, I've also ran into a weird `modules_to_save` error with DeepSpeed zero3. Seems if you initialize DeepSpeed before creating the model (e.g. by using `HfArgumentParser`):\r\n> \r\n> 1. `from_pretrained` will partition model params: https://github.com/huggingface/transformers/blob/v4.30.2/src/transformers/modeling_utils.py#L2666\r\n> 2. `ModulesToSaveWrapper` will copy the (now empty) `original_module`: https://github.com/huggingface/peft/blob/main/src/peft/utils/other.py#L136\r\n> 3. The forward pass will `RuntimeError: size mismatch, got XX, XXxYYY,0` as the head is empty\r\n> \r\n> Seems this module might need more testing?\r\n\r\nHi @linhdvu14 how did u fix this issue?\r\n\r\nI'm having this same issue when tuning a LLaVA model with LoRA. I added a customize layer with config `LoraConfig(target_modules=['xxx'], modules_to_save=['customi_layer'])`. It failes on `peft==0.4.0` as specified by LLaVA and upgrading to `peft==0.6.2` or `perf==0.8.0` wouldn't fix this issue either. Is https://github.com/huggingface/peft/pull/755 also fixing this issue or some other workaround is still necessary?"
+    }
+  ]
+}

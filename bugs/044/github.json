@@ -1,0 +1,81 @@
+{
+  "owner": "facebookresearch",
+  "repo": "fairseq",
+  "number": 5142,
+  "html_url": "https://github.com/facebookresearch/fairseq/issues/5142",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "text after filtering OOV is empty output ",
+  "author": "lisea2017",
+  "created_at": "2023-05-24T03:02:51Z",
+  "updated_at": "2023-05-25T01:20:41Z",
+  "closed_at": "2023-05-25T01:20:41Z",
+  "labels": [
+    "bug",
+    "needs triage"
+  ],
+  "milestone": null,
+  "comments_count": 8,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.93,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:20.290020+00:00",
+  "comments": [
+    {
+      "author": "chevalierNoir",
+      "created_at": "2023-05-24T04:50:46Z",
+      "body": "@lisea2017 `jvn` is \"Javanese Surinamese\", not Japanese. "
+    },
+    {
+      "author": "lisea2017",
+      "created_at": "2023-05-24T06:34:35Z",
+      "body": "Sorry, if I want to try Japanese, which one should I use?"
+    },
+    {
+      "author": "w-ww",
+      "created_at": "2023-05-24T06:58:20Z",
+      "body": "There is no TTS model supporting Japanese. You can check the list.\r\nhttps://dl.fbaipublicfiles.com/mms/misc/language_coverage_mms.html"
+    },
+    {
+      "author": "lisea2017",
+      "created_at": "2023-05-24T07:04:03Z",
+      "body": "If I want to support Japanese, is there a plan and what should I do?"
+    },
+    {
+      "author": "serkandyck",
+      "created_at": "2023-05-24T14:36:57Z",
+      "body": "> There is no TTS model supporting Japanese. You can check the list. https://dl.fbaipublicfiles.com/mms/misc/language_coverage_mms.html\r\n\r\nsame on turkish oov filtering letter like \"\u00c7\", \"\u0130\", \"\u00d6\"\r\n![image](https://github.com/facebookresearch/fairseq/assets/12444059/f914edcd-39ca-4283-a137-fa087d8eb473)\r\n"
+    },
+    {
+      "author": "chevalierNoir",
+      "created_at": "2023-05-24T16:08:49Z",
+      "body": "> > There is no TTS model supporting Japanese. You can check the list. https://dl.fbaipublicfiles.com/mms/misc/language_coverage_mms.html\r\n> \r\n> same on turkish oov filtering letter like \"\u00c7\", \"\u0130\", \"\u00d6\" ![image](https://user-images.githubusercontent.com/12444059/240640022-f914edcd-39ca-4283-a137-fa087d8eb473.png)\r\n\r\nSee the thread [here](https://github.com/facebookresearch/fairseq/issues/5125#issuecomment-1561477259) "
+    },
+    {
+      "author": "chevalierNoir",
+      "created_at": "2023-05-24T16:35:12Z",
+      "body": "> If I want to support Japanese, is there a plan and what should I do?\r\n\r\n@lisea2017 Japanese TTS is not supported due to some technical issues. But you could train a TTS model for Japanese using the VITS code with some public Japanese speech datasets."
+    },
+    {
+      "author": "lisea2017",
+      "created_at": "2023-05-25T01:20:41Z",
+      "body": "ok.thanks"
+    }
+  ]
+}

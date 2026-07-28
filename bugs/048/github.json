@@ -1,0 +1,56 @@
+{
+  "owner": "facebookresearch",
+  "repo": "fairseq",
+  "number": 5123,
+  "html_url": "https://github.com/facebookresearch/fairseq/issues/5123",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "MMS - Forced Alignment: Array shapes problem",
+  "author": "yaya-sy",
+  "created_at": "2023-05-23T00:00:34Z",
+  "updated_at": "2023-05-23T18:36:37Z",
+  "closed_at": "2023-05-23T18:36:37Z",
+  "labels": [
+    "bug",
+    "needs triage"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.78,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:28.338736+00:00",
+  "comments": [
+    {
+      "author": "vineelpratap",
+      "created_at": "2023-05-23T01:00:56Z",
+      "body": "Hi, can you change `torch.cat(emissions_arr, dim=1)` --> `torch.cat(emissions_arr, dim=-1)`  in `align_and_segment.py` file. I'll send a PR to fix the code soon.  "
+    },
+    {
+      "author": "yunbin",
+      "created_at": "2023-05-23T18:02:03Z",
+      "body": "I had the same issue and change to dim=-1 does NOT fix the issue."
+    },
+    {
+      "author": "vineelpratap",
+      "created_at": "2023-05-23T18:36:37Z",
+      "body": "Hi, I just landed the fix in https://github.com/facebookresearch/fairseq/pull/5133. Please use the updated code. "
+    }
+  ]
+}

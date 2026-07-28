@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 47068,
+  "html_url": "https://github.com/huggingface/transformers/issues/47068",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Potential host synchronization in deepspeed_sp_compute_loss due to Python conditional on CUDA tensor",
+  "author": "hdimmfh",
+  "created_at": "2026-07-04T13:24:14Z",
+  "updated_at": "2026-07-10T14:04:16Z",
+  "closed_at": "2026-07-10T14:04:16Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 6.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:22.557010+00:00",
+  "comments": [
+    {
+      "author": "sshivampeta",
+      "created_at": "2026-07-04T17:25:37Z",
+      "body": "I would like to open PR for the GPU-side aggregation approach"
+    },
+    {
+      "author": "Rocketknight1",
+      "created_at": "2026-07-06T13:09:27Z",
+      "body": "cc @sunmarc I think"
+    }
+  ]
+}

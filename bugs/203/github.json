@@ -1,0 +1,66 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 1911,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/1911",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "MCMC returns no samples when model contains deterministic variables only",
+  "author": "hessammehr",
+  "created_at": "2024-11-17T14:16:16Z",
+  "updated_at": "2024-11-22T02:56:03Z",
+  "closed_at": "2024-11-22T02:56:02Z",
+  "labels": [
+    "bug",
+    "good first issue"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 4.53,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:27.559097+00:00",
+  "comments": [
+    {
+      "author": "fehiepsi",
+      "created_at": "2024-11-18T14:44:08Z",
+      "body": "Re `print_summary`: we can just simply not print anything if there are no samples to summarize from.\r\n\r\nRe model with only deterministic: currently, we skip postprocessing if there are no latent variables in the model. The main reason is: for vectorized postprocess_fn, we need some values to vmap over. To fix the issue, we can replace [vmap(postprocess_fn)](https://github.com/pyro-ppl/numpyro/blob/c110053eb95f5398f11b93ce3efa21de4559012c/numpyro/infer/mcmc.py#L406) by a call `ensure_vmap(postprocess_fn)`, where `ensure_vmap` can take empty argument. Something like\r\n```\r\ndef ensure_vmap(fn, batch_size=None):\r\n    def wrapper(x):\r\n        x_arrays = jax.tree.flatten(x)[0]\r\n        if len(x_arrays) > 0:\r\n            return vmap(fn)(x)\r\n        else:\r\n            assert batch_size is not None\r\n            return jax.tree.map(lambda x: jnp.broadcast_to(x, (batch_size,) + jnp.shape(x)), fn(x))\r\n\r\n    return wrapper\r\n``` "
+    },
+    {
+      "author": "hessammehr",
+      "created_at": "2024-11-20T11:05:16Z",
+      "body": "@fehiepsi Thanks for the thorough and very helpful explanation (as always). I wasn't able to change the behaviour by making the modification suggested to `mcmc.py` (see diff below) even when passing `chain_method='vectorized'` and `num_chains=2`.\r\n\r\n<img width=\"1293\" alt=\"image\" src=\"https://github.com/user-attachments/assets/12b7a57f-5f05-48cd-bc76-11aa6d908a44\">\r\n"
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2024-11-20T11:15:39Z",
+      "body": "Yoy can enable postprocessing for that case by removing this check https://github.com/pyro-ppl/numpyro/blob/5c2eafa4d7573d085895c6bb04ee4cff799df346/numpyro/infer/mcmc.py#L495"
+    },
+    {
+      "author": "hessammehr",
+      "created_at": "2024-11-20T12:07:20Z",
+      "body": "Now `postprocess_fn` seems to get called but this line seems to get called instead (`states` is `{}`):\r\n\r\nhttps://github.com/pyro-ppl/numpyro/blob/5c2eafa4d7573d085895c6bb04ee4cff799df346/numpyro/infer/mcmc.py#L408\r\n\r\nError message:\r\n\r\n```\r\n    return lax.map(body_fn, states)\r\n           ~~~~~~~^^^^^^^^^^^^^^^^^\r\nValueError: scan got no values to scan over and `length` not provided.\r\n```"
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2024-11-20T12:51:14Z",
+      "body": "Could you sync to master and apply the same logic?"
+    }
+  ]
+}

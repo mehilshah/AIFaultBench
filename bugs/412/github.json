@@ -1,0 +1,55 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2594,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2594",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] DINOv3 Model Export for CoreML fails",
+  "author": "jbadger3",
+  "created_at": "2025-10-14T16:50:18Z",
+  "updated_at": "2025-10-15T01:41:18Z",
+  "closed_at": "2025-10-14T18:14:25Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.06,
+  "fix": {
+    "closing_commit": "68bc434e9fa7846c371cc000efc89180b51d997f",
+    "linked_prs": [],
+    "best_guess_fix_commit": "68bc434e9fa7846c371cc000efc89180b51d997f",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:31:41.665583+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-10-14T17:34:15Z",
+      "body": "@jbadger3 seems this has been an issue for a long time because coreml does not support the 'tensor_split' op for some reason. You cannot use the other Attention impl as it doesn't support ROPE embeds and this issue is specific to the use of split in the timm ROPE impl.\n\nYou can fix by doing  change split at https://github.com/huggingface/pytorch-image-models/blob/1ec391520aeebe580b0340fcb795cda30d08ef70/timm/layers/pos_embed_sincos.py#L276\n\nto \n\n`sin_emb, cos_emb = emb.chunk(2, -1)`\n\nI'll make the change as there should be no negative impact or performance issues making this change. Silly that coreml cares though,."
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-10-14T17:35:04Z",
+      "body": "would have made the change sooner if someone had made me aware https://github.com/apple/coremltools/issues/2226"
+    },
+    {
+      "author": "jbadger3",
+      "created_at": "2025-10-15T01:41:18Z",
+      "body": "Thanks for the detailed explanations and fix.  Much appreciated! \ud83d\ude4f"
+    }
+  ]
+}

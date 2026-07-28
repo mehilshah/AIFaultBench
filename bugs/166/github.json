@@ -1,0 +1,45 @@
+{
+  "owner": "kornia",
+  "repo": "kornia",
+  "number": 2822,
+  "html_url": "https://github.com/kornia/kornia/issues/2822",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Quaternion multiplication wrong, because of Tensor.cross",
+  "author": "yzhhr",
+  "created_at": "2024-03-03T07:26:17Z",
+  "updated_at": "2025-09-18T10:04:18Z",
+  "closed_at": "2025-09-18T10:04:18Z",
+  "labels": [
+    "help wanted"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 564.11,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:30.545824+00:00",
+  "comments": [
+    {
+      "author": "cjpurackal",
+      "created_at": "2024-03-04T16:18:26Z",
+      "body": "Good catch, please go ahead with the PR and it would be great if you can update the tests as well!\r\n"
+    }
+  ]
+}

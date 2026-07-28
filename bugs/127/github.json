@@ -1,0 +1,43 @@
+{
+  "owner": "exaloop",
+  "repo": "codon",
+  "number": 609,
+  "html_url": "https://github.com/exaloop/codon/issues/609",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Overloading Class Example doesn't pick up correct constructor",
+  "author": "lewisfogden",
+  "created_at": "2024-11-23T16:39:42Z",
+  "updated_at": "2025-07-29T18:34:43Z",
+  "closed_at": "2025-07-29T18:34:43Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 248.08,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:28.575219+00:00",
+  "comments": [
+    {
+      "author": "lewisfogden",
+      "created_at": "2025-07-29T18:34:31Z",
+      "body": "This is fixed in 0.19.1\n\n```\n> codon run example.py\nempty 0 0\nint int 1 2\nint float 1 2\nint int 3 5\n```"
+    }
+  ]
+}

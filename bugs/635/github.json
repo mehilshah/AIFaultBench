@@ -1,0 +1,67 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 13462,
+  "html_url": "https://github.com/huggingface/diffusers/issues/13462",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Decorating bound methods in profiling utils breaks instance isolation",
+  "author": "ViktoriiaRomanova",
+  "created_at": "2026-04-13T22:05:24Z",
+  "updated_at": "2026-04-15T02:16:21Z",
+  "closed_at": "2026-04-15T02:16:21Z",
+  "labels": [
+    "bug",
+    "needs-code-example",
+    "pipelines"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.17,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:37:10.073961+00:00",
+  "comments": [
+    {
+      "author": "sayakpaul",
+      "created_at": "2026-04-14T03:26:31Z",
+      "body": "Is this particular to LTX2 because it has two schedulers?"
+    },
+    {
+      "author": "ViktoriiaRomanova",
+      "created_at": "2026-04-14T12:21:31Z",
+      "body": "Not specifically. The issue isn\u2019t tied to LTX2 having two schedulers, but rather to the fact that the scheduler is deep-copied inside the `__call__ ` method.\n\nDecorating a bound method freezes the `self` state at decoration time. In addition, without proper rebinding, the <class 'method'> is turned into a plain <class 'function'>, losing its descriptor behaviour. This can lead to a range of issues, especially when instances are copied.\n\nLTX2 just makes the problem more visible, but the underlying issue is general and can occur in any pipeline.\n\n> Is this particular to LTX2 because it has two schedulers?\n\n"
+    },
+    {
+      "author": "sayakpaul",
+      "created_at": "2026-04-14T12:22:51Z",
+      "body": "> Not specifically. The issue isn\u2019t tied to LTX2 having two schedulers, but rather to the fact that the scheduler is deep-copied inside the __call__  method.\n\n\nWhich other pipelines have this pattern?"
+    },
+    {
+      "author": "ViktoriiaRomanova",
+      "created_at": "2026-04-14T13:16:35Z",
+      "body": "Under the same conditions (i.e., the scheduler is copied inside the pipeline\u2019s `__call__`), I found the following pipelines that seem to follow this pattern:\n\n* pipeline_ltx2_condition.py\n* pipeline_ltx2_image2video.py\n* pipeline_skyreels_v2_diffusion_forcing_i2v.py\n* pipeline_skyreels_v2_diffusion_forcing_v2v.py\n* pipeline_skyreels_v2_diffusion_forcing.py\n\n> > Not specifically. The issue isn\u2019t tied to LTX2 having two schedulers, but rather to the fact that the scheduler is deep-copied inside the **call**  method.\n> \n> Which other pipelines have this pattern?\n\n"
+    },
+    {
+      "author": "Akash504-ai",
+      "created_at": "2026-04-14T18:43:32Z",
+      "body": "Fixes #13462. This updates the profiling utilities to decorate the underlying function instead of the bound method and rebinds it to the instance, preserving descriptor behavior and preventing shared state after deepcopy."
+    }
+  ]
+}

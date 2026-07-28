@@ -1,0 +1,56 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7710,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7710",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] self.average_tensor(bucket.buffer[bucket.index].narrow(0, 0, bucket.elements), comm_dtype) IndexError: list index out of range",
+  "author": "QWXL",
+  "created_at": "2025-12-01T19:22:08Z",
+  "updated_at": "2026-01-18T03:01:50Z",
+  "closed_at": "2025-12-08T16:32:23Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 6.88,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:34.018123+00:00",
+  "comments": [
+    {
+      "author": "sfc-gh-truwase",
+      "created_at": "2025-12-08T16:25:58Z",
+      "body": "@QWXL are you able to share a simple repro script? Thanks! "
+    },
+    {
+      "author": "QWXL",
+      "created_at": "2025-12-08T16:32:23Z",
+      "body": "oh, im has been\n\n> [@QWXL](https://github.com/QWXL) are you able to share a simple repro script? Thanks!\u60a8\u80fd\u5426\u5206\u4eab\u4e00\u4e2a\u7b80\u5355\u7684\u590d\u73b0\u811a\u672c\uff1f\u8c22\u8c22\uff01\n\nAh! Though I'm not sure what I did to cause the issue to occur/resolve itself, I no longer encounter this problem being thrown.\n\nThanks for u reply!"
+    },
+    {
+      "author": "WnQinm",
+      "created_at": "2026-01-18T02:48:42Z",
+      "body": "```\n[rank1]: Traceback (most recent call last):\n[rank1]:   File \"/home/xxx/workspace/describer/describe/ds_train.py\", line 91, in <module>\n[rank1]:     trainer.train()\n[rank1]:   File \"/home/xxx/miniconda3/envs/describer/lib/python3.10/site-packages/transformers/trainer.py\", line 2325, in train\n[rank1]:     return inner_training_loop(\n[rank1]:   File \"/home/xxx/miniconda3/envs/describer/lib/python3.10/site-packages/transformers/trainer.py\", line 2674, in _inner_training_loop\n[rank1]:     tr_loss_step = self.training_step(model, inputs, num_items_in_batch)\n[rank1]:   File \"/home/xxx/miniconda3/envs/describer/lib/python3.10/site-packages/transformers/trainer.py\", line 4071, in training_step\n[rank1]:     self.accelerator.backward(loss, **kwargs)\n[rank1]:   File \"/home/xxx/miniconda3/envs/describer/lib/python3.10/site-packages/accelerate/accelerator.py\", line 2726, in backward\n[rank1]:     self.deepspeed_engine_wrapped.backward(loss, sync_gradients=self.sync_gradients, **kwargs)\n[rank1]:   File \"/home/xxx/miniconda3/envs/describer/lib/python3.10/site-packages/accelerate/utils/deepspeed.py\", line 270, in backward\n[rank1]:     self.engine.backward(loss, **kwargs)\n[rank1]:   File \"/home/xxx/miniconda3/envs/describer/lib/python3.10/site-packages/deepspeed/utils/nvtx.py\", line 20, in wrapped_fn\n[rank1]:     ret_val = func(*args, **kwargs)\n[rank1]:   File \"/home/xxx/miniconda3/envs/describer/lib/python3.10/site-packages/deepspeed/runtime/engine.py\", line 2511, in backward\n[rank1]:     self._backward_epilogue()\n[rank1]:   File \"/home/xxx/miniconda3/envs/describer/lib/python3.10/site-packages/deepspeed/runtime/engine.py\", line 2352, in _backward_epilogue\n[rank1]:     self.allreduce_gradients()\n[rank1]:   File \"/home/xxx/miniconda3/envs/describer/lib/python3.10/site-packages/deepspeed/utils/nvtx.py\", line 20, in wrapped_fn\n[rank1]:     ret_val = func(*args, **kwargs)\n[rank1]:   File \"/home/xxx/miniconda3/envs/describer/lib/python3.10/site-packages/deepspeed/runtime/engine.py\", line 2303, in allreduce_gradients\n[rank1]:     self.optimizer.overlapping_partition_gradients_reduce_epilogue()\n[rank1]:   File \"/home/xxx/miniconda3/envs/describer/lib/python3.10/site-packages/deepspeed/runtime/zero/stage_1_and_2.py\", line 956, in overlapping_partition_gradients_reduce_epilogue\n[rank1]:     self.independent_gradient_partition_epilogue()\n[rank1]:   File \"/home/xxx/miniconda3/envs/describer/lib/python3.10/site-packages/deepspeed/runtime/zero/stage_1_and_2.py\", line 848, in independent_gradient_partition_epilogue\n[rank1]:     self.reduce_ipg_grads()\n[rank1]:   File \"/home/xxx/miniconda3/envs/describer/lib/python3.10/site-packages/deepspeed/runtime/zero/stage_1_and_2.py\", line 1504, in reduce_ipg_grads\n[rank1]:     self.average_tensor(bucket.buffer[bucket.index].narrow(0, 0, bucket.elements), comm_dtype)\n[rank1]: IndexError: list index out of range\n```\n\nSame error report. It is worth mentioning that I got this bug in the middle of training.\n\n## system info\n\n- OS: Ubuntu 20.04\n- 2*A40\n- Python 3.10.19\n\n## accelerator config\n\n```\ncompute_environment: LOCAL_MACHINE\ndebug: false\ndeepspeed_config:\n  deepspeed_config_file: /home/xxx/workspace/describer/describe/ds_config.json\n  zero3_init_flag: false\ndistributed_type: DEEPSPEED\ndowncast_bf16: 'no'\nenable_cpu_affinity: false\nmachine_rank: 0\nmain_training_function: main\nnum_machines: 1\nnum_processes: 2\nrdzv_backend: static\nsame_network: true\ntpu_env: []\ntpu_use_cluster: false\ntpu_use_sudo: false\nuse_cpu: false\n```\n\n## deepspeed config\n\n```\n{\n    \"bf16\": {\n        \"enabled\": true\n    },\n    \"zero_optimization\": {\n        \"stage\": 2,\n        \"allgather_partitions\": true,\n        \"allgather_bucket_size\": 2e8,\n        \"overlap_comm\": true,\n        \"reduce_scatter\": true,\n        \"reduce_bucket_size\": \"auto\",\n        \"contiguous_gradients\": true,\n        \"offload_optimizer\": {\n            \"device\": \"none\"\n        },\n        \"offload_param\": {\n            \"device\": \"none\"\n        }\n    },\n    \"gradient_accumulation_steps\": 2,\n    \"gradient_clipping\": \"auto\",\n    \"steps_per_print\": 10,\n    \"train_batch_size\": \"auto\",\n    \"train_micro_batch_size_per_gpu\": \"auto\",\n    \"wall_clock_breakdown\": false\n}\n```\n\n## training args\n\n- per_device_train_batch_size 4\n- gradient_accumulation_steps 2\n- use lora\n\n## Relevant python package versions\n\n- accelerate 1.10.1\n- deepspeed 0.18.4\n- flash-attn 2.7.3\n- peft 0.17.1\n- torch 2.6.0+cu118"
+    }
+  ]
+}

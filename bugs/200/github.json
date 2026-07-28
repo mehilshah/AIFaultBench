@@ -1,0 +1,83 @@
+{
+  "owner": "pypa",
+  "repo": "cibuildwheel",
+  "number": 2659,
+  "html_url": "https://github.com/pypa/cibuildwheel/issues/2659",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "GitLab fails to detect Linux docker version",
+  "author": "xasc",
+  "created_at": "2025-11-11T20:45:11Z",
+  "updated_at": "2025-11-13T13:19:05Z",
+  "closed_at": "2025-11-12T19:15:11Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 9,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.94,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:23.009287+00:00",
+  "comments": [
+    {
+      "author": "henryiii",
+      "created_at": "2025-11-11T23:43:31Z",
+      "body": "`Client` is `ApiVersion` and `Server` is `APIVersion`? That's jarring. Maybe we can make this case insensitive?"
+    },
+    {
+      "author": "joerick",
+      "created_at": "2025-11-12T07:46:19Z",
+      "body": "Ouch. So did Docker change the case of their key name? That would be their bug IMO but using case insensitive lookup would fit this on our side. "
+    },
+    {
+      "author": "Jonatan-Rydberg-work-account",
+      "created_at": "2025-11-12T15:02:59Z",
+      "body": "how soon will this be fixed?\n- within a week\n- within a month\n- unknown, never or more than a month\n- or will you wait and see what docker does?\n\nthanks for creating cibuildwheel\n\n"
+    },
+    {
+      "author": "joerick",
+      "created_at": "2025-11-12T15:43:23Z",
+      "body": "We'll fix it. I assume you're seeing it as well. What platform & version of docker are you seeing the issue on jonatan?\n\n"
+    },
+    {
+      "author": "Thf772",
+      "created_at": "2025-11-12T16:39:57Z",
+      "body": "This isn't a Gitlab-specific issue, though I also have it on Gitlab. The problem is caused by Docker CLI client version 29 (which replaces the key for API version as @henryiii pointed out).\n\nAs a temporary workaround, I've replaced `curl -sSL https://get.docker.com/ | sh` in my CI file with this:\n```\ncurl -fsSL https://get.docker.com -o get-docker.sh && sh ./get-docker.sh --version 28 && rm get-docker.sh\n```\nThis will always install the latest Docker client with major version 28, which didn't break the JSON version output."
+    },
+    {
+      "author": "joerick",
+      "created_at": "2025-11-12T19:32:13Z",
+      "body": "This is fixed in [v3.3.0](https://github.com/pypa/cibuildwheel/releases/tag/v3.3.0)."
+    },
+    {
+      "author": "Jonatan-Rydberg-work-account",
+      "created_at": "2025-11-13T07:09:57Z",
+      "body": "I confirm that version v3.3.0 fixed the problem for our team.\n\nWe used docker image docker:dind (58cdce60b4d9), which is based on Alpine Linux version 3.22.2.\n\n```\npip show cibuildwheel\nName: cibuildwheel\nVersion: 3.3.0\nSummary: Build Python wheels on CI with minimal configuration.\nHome-page: https://github.com/pypa/cibuildwheel\nAuthor:\nAuthor-email: Joe Rickerby <joerick@mac.com>\nLicense-Expression: BSD-2-Clause\nLocation: /wrk/venv/lib/python3.12/site-packages\nRequires: bashlex, bracex, build, certifi, dependency-groups, filelock, humanize, packaging, patchelf, platformdirs, pyelftools, wheel\nRequired-by:\n```"
+    },
+    {
+      "author": "Thf772",
+      "created_at": "2025-11-13T12:37:54Z",
+      "body": "As a side note, it seems Docker reverted the change on their end too: https://github.com/docker/cli/pull/6648"
+    },
+    {
+      "author": "henryiii",
+      "created_at": "2025-11-13T13:19:05Z",
+      "body": "I thought they might, good to know."
+    }
+  ]
+}

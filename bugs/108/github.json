@@ -1,0 +1,55 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 42502,
+  "html_url": "https://github.com/huggingface/transformers/issues/42502",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "DataCollatorWithFlattening only accepts labels as list",
+  "author": "romitjain",
+  "created_at": "2025-12-01T07:05:31Z",
+  "updated_at": "2025-12-10T14:09:13Z",
+  "closed_at": "2025-12-10T14:09:13Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 9.29,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:59.085603+00:00",
+  "comments": [
+    {
+      "author": "Cyrilvallez",
+      "created_at": "2025-12-08T10:40:23Z",
+      "body": "cc @vasqu here, I don't remember, is this expected to fail or not? Do we only accept list inputs?"
+    },
+    {
+      "author": "vasqu",
+      "created_at": "2025-12-08T13:38:13Z",
+      "body": "Kinda expected as we do not expect a certain datatype beforehand, i.e. \"primitive\" python. It also does not hurt to support those cases tho, it's a nice qol improvement (seeing already #42620 adding this cc @Rocketknight1)"
+    },
+    {
+      "author": "Rocketknight1",
+      "created_at": "2025-12-08T16:18:12Z",
+      "body": "That was my logic too - I wasn't sure if it was supposed to work with tensors or not, but if we can easily support it without breaking other code then we probably should."
+    }
+  ]
+}

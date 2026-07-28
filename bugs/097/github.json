@@ -1,0 +1,43 @@
+{
+  "owner": "lucidrains",
+  "repo": "denoising-diffusion-pytorch",
+  "number": 262,
+  "html_url": "https://github.com/lucidrains/denoising-diffusion-pytorch/issues/262",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Missing device in classifier_free_guidance.py",
+  "author": "903124",
+  "created_at": "2023-10-17T07:46:01Z",
+  "updated_at": "2023-10-17T16:47:25Z",
+  "closed_at": "2023-10-17T16:47:25Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.38,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:42.499851+00:00",
+  "comments": [
+    {
+      "author": "lucidrains",
+      "created_at": "2023-10-17T16:47:13Z",
+      "body": "@903124 oh yes you are right, thanks!"
+    }
+  ]
+}

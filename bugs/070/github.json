@@ -1,0 +1,43 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeedExamples",
+  "number": 948,
+  "html_url": "https://github.com/deepspeedai/DeepSpeedExamples/issues/948",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Error when running training example DeepSpeed-Domino/pretrain_gpt3_2.7b.sh",
+  "author": "ZhiyiHu1999",
+  "created_at": "2025-01-02T22:58:00Z",
+  "updated_at": "2025-01-06T19:41:35Z",
+  "closed_at": "2025-01-06T19:15:23Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.85,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:04.894670+00:00",
+  "comments": [
+    {
+      "author": "hwchen2017",
+      "created_at": "2025-01-06T19:15:23Z",
+      "body": "Hi @ZhiyiHu1999, this error has been fixed by Microsoft/Deepspeed#6880.  To run the Domino example now, reinstall the deepspeed library from source. https://www.deepspeed.ai/tutorials/advanced-install/#install-deepspeed-from-source\n"
+    }
+  ]
+}

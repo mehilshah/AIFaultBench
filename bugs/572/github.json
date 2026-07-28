@@ -1,0 +1,55 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 1004,
+  "html_url": "https://github.com/huggingface/accelerate/issues/1004",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Hanging when using accelerate/deepspeed with multiple GPUs at inference time",
+  "author": "EmilyAlsentzer",
+  "created_at": "2023-01-24T16:24:13Z",
+  "updated_at": "2023-01-24T17:08:28Z",
+  "closed_at": "2023-01-24T17:08:27Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:36.360490+00:00",
+  "comments": [
+    {
+      "author": "muellerzr",
+      "created_at": "2023-01-24T16:25:40Z",
+      "body": "cc @pacman100 "
+    },
+    {
+      "author": "pacman100",
+      "created_at": "2023-01-24T16:27:56Z",
+      "body": "Hello @EmilyAlsentzer, please refer https://github.com/huggingface/transformers/issues/20130#issuecomment-1310284553.\r\nI will document this in the deepspeed docs to avoid recurring issues for this. Please let us know if that solves the issue.\r\n "
+    },
+    {
+      "author": "EmilyAlsentzer",
+      "created_at": "2023-01-24T17:08:27Z",
+      "body": "Yes, that fixed it. Apologies for missing the prior issue and thanks for your quick response! "
+    }
+  ]
+}

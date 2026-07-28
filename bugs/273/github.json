@@ -1,0 +1,85 @@
+{
+  "owner": "huggingface",
+  "repo": "peft",
+  "number": 2627,
+  "html_url": "https://github.com/huggingface/peft/issues/2627",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Some Gemma generate tests fail on GPU with: torch._dynamo.exc.Unsupported: Data-dependent branching",
+  "author": "BenjaminBossan",
+  "created_at": "2025-07-02T09:21:19Z",
+  "updated_at": "2025-08-19T09:36:24Z",
+  "closed_at": "2025-08-18T09:35:34Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 9,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 47.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:11.699436+00:00",
+  "comments": [
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2025-07-03T08:55:59Z",
+      "body": "Once that is fixed, Gemma GPU tests can be re-enabled:\n\nhttps://github.com/huggingface/peft/blob/180777ea979395e7b44028441f9b51f8e55bd6fd/Makefile#L34-L37"
+    },
+    {
+      "author": "tanuj-rai",
+      "created_at": "2025-07-25T18:30:52Z",
+      "body": "Hi @BenjaminBossan, can i work on it?\n\n\n"
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2025-07-25T19:35:50Z",
+      "body": "I'm glad for any help on this. Even if you just have some ideas what the reason could be, I'd be happy to hear them. A full on fix is even better :)"
+    },
+    {
+      "author": "rojagtap",
+      "created_at": "2025-08-10T18:28:51Z",
+      "body": "Hi! I see there hasn\u2019t been movement here in a while. I'd be more than happy to work on this if it\u2019s still needed."
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2025-08-11T09:08:49Z",
+      "body": "@rojagtap Thanks, if you want to give this a go, that would be great. Don't hesitate to ask questions or share early results."
+    },
+    {
+      "author": "rojagtap",
+      "created_at": "2025-08-16T20:37:29Z",
+      "body": "Hi @BenjaminBossan could you share the exact transformers commit or version you were running when you saw this stack trace, and your torch version as well? I\u2019m testing against the latest transformers main and I am not able to reproduce this error.\n\nHere\u2019s what I see on my side:\n```tests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[AdaLoraConfig-config_kwargs0-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                       [  5%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[BOFTConfig-config_kwargs1-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                          [ 11%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[BoneConfig-config_kwargs2-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                          [ 16%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[MissConfig-config_kwargs3-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                          [ 22%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[CPTConfig-config_kwargs4-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                           [ 27%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[FourierFTConfig-config_kwargs5-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                     [ 33%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[HRAConfig-config_kwargs6-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                           [ 38%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[IA3Config-config_kwargs7-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                           [ 44%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[LoraConfig-config_kwargs8-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                          [ 50%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[LoraConfig-config_kwargs9-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                          [ 55%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[OFTConfig-config_kwargs10-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                          [ 61%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[PrefixTuningConfig-config_kwargs11-hf-internal-testing/tiny-random-Gemma3ForCausalLM] FAILED                                                 [ 66%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[PromptEncoderConfig-config_kwargs12-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                [ 72%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[PromptTuningConfig-config_kwargs13-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                 [ 77%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[ShiraConfig-config_kwargs14-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                        [ 83%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[VBLoRAConfig-config_kwargs15-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                       [ 88%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[VeraConfig-config_kwargs16-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                         [ 94%]\ntests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[C3AConfig-config_kwargs17-hf-internal-testing/tiny-random-Gemma3ForCausalLM] PASSED                                                          [100%]\n```\n\nHowever, i took the liberty to look around based on your stack trace. Here's what I found:\n\nBased on the provided logs, it is clear that the error is rooted at: `_get_lora_matrices` in `peft/tuners/vblora/layer.py`\n```if self.training and vblora_logits_A[0, 0].isinf().any():```\n\nThis type of data-dependent branching is not supported by pytorch's dynamo compiler when using `torch.compile()`. Basically, `torch.compile` fails because `_get_lora_matrices` uses a python `if` that depends on tensor data.\n\nI found a similar graph break here: https://thomasjpfan.com/2025/03/pytorch-graphs-three-ways-data-dependent-control-flow/\n\nTypically, we want to use a tensorized control flow like:\n```\ntorch._assert(\n        torch.isfinite(vblora_logits_A[0, 0]).all(),\n        \"Found infinity values in VB-LoRA logits. Ensure training was not resumed from a `save_only_topk_weights` model.\"\n    )\n```\n\nor perhaps using `torch.cond`\n\nOnce I know your versions, I can try to reproduce your environment more accurately and work on a concrete fix.\n"
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2025-08-18T09:35:34Z",
+      "body": "Thanks a lot for your investigation @rojagtap. I retried the tests again and indeed they now pass.\n\nRegarding the versions, I wrote above\n\n> Current PEFT version, transformers 4.54.0.dev0, torch 2.7.1.\n\nSo unfortunately, I did not document the commit hash for PEFT and transformers, but if I install transformers 4.54.0 and torch 2.7.1 alongside the current PEFT from main (`47961bb54706`), I get torch compile errors, albeit not exactly the same:\n\n```\nFAILED tests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[CPTConfig-config_kwargs4-hf-internal-testing/tiny-random-Gemma3ForCausalLM] - torch._dynamo.exc.Unsupported: Data dependent operator\nFAILED tests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[LoraConfig-config_kwargs9-hf-internal-testing/tiny-random-Gemma3ForCausalLM] - torch._dynamo.exc.FailOnRecompileLimitHit: recompile_limit reached with one_graph=True. Excessive recompilations can degrade performance due to the compilation overhead of each recompilation. To monitor recompilations, enable TORCH_LOGS=recompiles. If recompilations are ...\nFAILED tests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[OFTConfig-config_kwargs10-hf-internal-testing/tiny-random-Gemma3ForCausalLM] - torch._dynamo.exc.FailOnRecompileLimitHit: recompile_limit reached with one_graph=True. Excessive recompilations can degrade performance due to the compilation overhead of each recompilation. To monitor recompilations, enable TORCH_LOGS=recompiles. If recompilations are ...\nFAILED tests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[PrefixTuningConfig-config_kwargs11-hf-internal-testing/tiny-random-Gemma3ForCausalLM] - torch._dynamo.exc.FailOnRecompileLimitHit: recompile_limit reached with one_graph=True. Excessive recompilations can degrade performance due to the compilation overhead of each recompilation. To monitor recompilations, enable TORCH_LOGS=recompiles. If recompilations are ...\nFAILED tests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[PromptEncoderConfig-config_kwargs12-hf-internal-testing/tiny-random-Gemma3ForCausalLM] - torch._dynamo.exc.FailOnRecompileLimitHit: recompile_limit reached with one_graph=True. Excessive recompilations can degrade performance due to the compilation overhead of each recompilation. To monitor recompilations, enable TORCH_LOGS=recompiles. If recompilations are ...\nFAILED tests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[PromptTuningConfig-config_kwargs13-hf-internal-testing/tiny-random-Gemma3ForCausalLM] - torch._dynamo.exc.FailOnRecompileLimitHit: recompile_limit reached with one_graph=True. Excessive recompilations can degrade performance due to the compilation overhead of each recompilation. To monitor recompilations, enable TORCH_LOGS=recompiles. If recompilations are ...\nFAILED tests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[ShiraConfig-config_kwargs14-hf-internal-testing/tiny-random-Gemma3ForCausalLM] - torch._dynamo.exc.FailOnRecompileLimitHit: recompile_limit reached with one_graph=True. Excessive recompilations can degrade performance due to the compilation overhead of each recompilation. To monitor recompilations, enable TORCH_LOGS=recompiles. If recompilations are ...\nFAILED tests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[VBLoRAConfig-config_kwargs15-hf-internal-testing/tiny-random-Gemma3ForCausalLM] - torch._dynamo.exc.FailOnRecompileLimitHit: recompile_limit reached with one_graph=True. Excessive recompilations can degrade performance due to the compilation overhead of each recompilation. To monitor recompilations, enable TORCH_LOGS=recompiles. If recompilations are ...\nFAILED tests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[VeraConfig-config_kwargs16-hf-internal-testing/tiny-random-Gemma3ForCausalLM] - torch._dynamo.exc.FailOnRecompileLimitHit: recompile_limit reached with one_graph=True. Excessive recompilations can degrade performance due to the compilation overhead of each recompilation. To monitor recompilations, enable TORCH_LOGS=recompiles. If recompilations are ...\nFAILED tests/test_decoder_models.py::TestDecoderModels::test_generate_pos_args[C3AConfig-config_kwargs17-hf-internal-testing/tiny-random-Gemma3ForCausalLM] - torch._dynamo.exc.FailOnRecompileLimitHit: recompile_limit reached with one_graph=True. Excessive recompilations can degrade performance due to the compilation overhead of each recompilation. To monitor recompilations, enable TORCH_LOGS=recompiles. If recompilations are ...\n```\n\n> Based on the provided logs, it is clear that the error is rooted at: `_get_lora_matrices` in `peft/tuners/vblora/layer.py` `if self.training and vblora_logits_A[0, 0].isinf().any():`\n> \n> This type of data-dependent branching is not supported by pytorch's dynamo compiler when using `torch.compile()`. Basically, `torch.compile` fails because `_get_lora_matrices` uses a python `if` that depends on tensor data.\n\nYes, true. This is probably not the most urgent of issues, but yes, it would be nice to remove this data dependency.\n\nOverall, though, since this seems to be resolved with the latest versions of torch and transformers, I think we can close the issue. Again, big thanks for investigating."
+    },
+    {
+      "author": "rojagtap",
+      "created_at": "2025-08-18T19:55:50Z",
+      "body": "> Regarding the versions, I wrote above\n> \n> > Current PEFT version, transformers 4.54.0.dev0, torch 2.7.1.\n\nAh, I was too caught up in the logs and totally missed the version details, sorry about that!\n\n\nAnd agreed,\n\n> not the most urgent of issues, but yes, it would be nice to remove this data dependency\n\nPlease do let me know if/when we plan to implement this fix; I\u2019d be more than happy to help."
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2025-08-19T09:36:24Z",
+      "body": "> Please do let me know if/when we plan to implement this fix; I\u2019d be more than happy to help.\n\nIf you would like to contribute a fix, feel free to do that at any time, thanks."
+    }
+  ]
+}

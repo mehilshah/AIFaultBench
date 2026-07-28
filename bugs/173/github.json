@@ -1,0 +1,66 @@
+{
+  "owner": "kubeflow",
+  "repo": "katib",
+  "number": 2346,
+  "html_url": "https://github.com/kubeflow/katib/issues/2346",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Python SDK for Katib and Kubeflow Pipelines can not be installed at the same time",
+  "author": "thesuperzapper",
+  "created_at": "2024-06-08T17:53:52Z",
+  "updated_at": "2024-06-17T10:51:59Z",
+  "closed_at": "2024-06-17T10:51:58Z",
+  "labels": [
+    "kind/bug",
+    "release/0.17"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 4,
+    "+1": 4,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 8.71,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:40.988628+00:00",
+  "comments": [
+    {
+      "author": "thesuperzapper",
+      "created_at": "2024-06-08T17:56:40Z",
+      "body": "For those wondering, the latest versions which will work together are:\r\n\r\n```shell\r\npip install kfp==2.5.0 kubeflow-katib==0.16.0\r\n```"
+    },
+    {
+      "author": "thesuperzapper",
+      "created_at": "2024-06-08T18:04:41Z",
+      "body": "Can the @kubeflow/pipelines and @kubeflow/wg-automl-leads please work together to try and prevent these kind of dependency conflicts in the python packages, so we can always install the latest versions of both in Kubeflow Notebooks?"
+    },
+    {
+      "author": "tenzen-y",
+      "created_at": "2024-06-10T06:11:21Z",
+      "body": "IIRC, This protobuf version limitation is brought us from #2141.\nSo, Unless we resolve the #2141, we can not update the protobuf version to v4."
+    },
+    {
+      "author": "thesuperzapper",
+      "created_at": "2024-06-11T03:54:43Z",
+      "body": "I have raised a similar issue for KServe, which also has a dependency conflict with `protobuf`: https://github.com/kserve/kserve/issues/3730"
+    },
+    {
+      "author": "tenzen-y",
+      "created_at": "2024-06-15T09:42:27Z",
+      "body": "/assign\r\nAfter #2344 is merged, I will open a PR to resolve this conflict.\r\n"
+    }
+  ]
+}

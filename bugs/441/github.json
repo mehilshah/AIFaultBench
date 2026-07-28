@@ -1,0 +1,39 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2577,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2577",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Fix ResizeKeepRatio.repr",
+  "author": "amirhfarzaneh",
+  "created_at": "2025-09-10T21:29:04Z",
+  "updated_at": "2025-09-21T00:13:15Z",
+  "closed_at": "2025-09-21T00:13:15Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 10.11,
+  "fix": {
+    "closing_commit": "05152943e5593af57caf5dd9af096cebf63a0cf2",
+    "linked_prs": [],
+    "best_guess_fix_commit": "05152943e5593af57caf5dd9af096cebf63a0cf2",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:32:25.722291+00:00",
+  "comments": []
+}

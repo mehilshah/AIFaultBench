@@ -1,0 +1,47 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21692,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21692",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "please play attention",
+  "author": "pvdz",
+  "created_at": "2026-04-30T14:07:09Z",
+  "updated_at": "2026-04-30T14:11:43Z",
+  "closed_at": "2026-04-30T14:08:27Z",
+  "labels": [
+    "bug",
+    "needs triage",
+    "ver: 2.6.x"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.0,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:49.556992+00:00",
+  "comments": [
+    {
+      "author": "pvdz",
+      "created_at": "2026-04-30T14:08:52Z",
+      "body": "(we can keep this closed, i see leads have woken up)"
+    }
+  ]
+}

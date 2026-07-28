@@ -1,0 +1,50 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 10356,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/10356",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Potential memory leak when loading graphs from disk",
+  "author": "citoplasme",
+  "created_at": "2025-07-10T14:39:04Z",
+  "updated_at": "2025-07-16T09:55:10Z",
+  "closed_at": "2025-07-16T09:55:10Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 5.8,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:04.953885+00:00",
+  "comments": [
+    {
+      "author": "citoplasme",
+      "created_at": "2025-07-10T14:45:39Z",
+      "body": "I just tried increasing the num_workers to 1 and 2 on the DataLoader and that seems to solve the problem, as seen below:\n\n```\n[BEFORE EPOCHS] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 559.99 MB\n[EPOCH 0] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 1] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 2] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 3] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 4] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 5] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 6] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 7] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 8] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 9] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 10] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 11] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 12] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 13] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 14] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 15] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 16] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 17] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 18] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 19] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 20] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 21] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 22] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 23] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 24] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 25] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 26] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 27] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 28] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n[EPOCH 29] Allocated: 0.00 MB, Reserved: 0.00 MB, CPU: 560.49 MB\n```\n\nBased on this behaviour, I safely assume this is a bug..."
+    },
+    {
+      "author": "citoplasme",
+      "created_at": "2025-07-16T09:55:10Z",
+      "body": "I was able to find the source of the problem and fix it. The memory leak is due to torch.load with weights_only = False. Since setting this parameter to True results in an error when loading a PyG.Data object, I had to store the tensors as dictionary entries as seen below.\n\n```\ndef get(self, idx):\n    path = os.path.join(self.data_dir, f'{idx}.pt')\n    if os.path.exists(path):\n        data_dict = torch.load(path)\n        return torch_geometric.data.Data(**data_dict)\n    else:\n        x = torch.randn((500, 1024))\n        edge_index = torch.randint(0, 500, (2, 1500))\n        y = torch.tensor([idx % 2], dtype = torch.long)\n        data = dict(x = x, edge_index = edge_index, y = y)\n        torch.save(data, path)\n        return torch_geometric.data.Data(**data)\n```\n\nHope this helps someone facing a similar problem! :)"
+    }
+  ]
+}

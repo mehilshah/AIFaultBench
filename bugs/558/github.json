@@ -1,0 +1,62 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21477,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21477",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`LightningDataModule.load_from_checkpoint` does not restore subclass from `datamodule_hyper_parameters`",
+  "author": "aditya0by0",
+  "created_at": "2026-01-10T20:47:03Z",
+  "updated_at": "2026-01-12T10:00:31Z",
+  "closed_at": "2026-01-12T10:00:31Z",
+  "labels": [
+    "bug",
+    "checkpointing",
+    "lightningdatamodule"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.55,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:16.389990+00:00",
+  "comments": [
+    {
+      "author": "GdoongMathew",
+      "created_at": "2026-01-11T06:57:38Z",
+      "body": "Hi @aditya0by0, thanks for reporting this issue. \n\nI don\u2019t have extensive experience with `LightningDataModule`, but from what I can tell, the intention of `load_from_checkpoint` does not seem to be to instantiate any subclasses via the base `LightningDataModule` class. This behavior is consistent with how `LightningModule` works as well.\n\nFor instance,\n```python\n>>> class BoringModule(LightningModule):\n...    def __init__(self, *args, **kwargs):\n...        ...\n\n>>> BoringModule.load_from_checkpoint(ckpt_path)  # this should work as expected\n>>> LightningModule.load_from_checkpoint(ckpt_path)  # this won't work\n```\n\nRegarding `cls_spec.varkw` is False, this happens because the inspected `cls_spec` corresponds to `LightningDataModule` rather than the user's custom subclass. If we change same line in \nhttps://github.com/Lightning-AI/pytorch-lightning/pull/21478/changes#diff-66f006dbadabdd4826bf8fb6dcb776fe4b73871f73daf05f205b6e27aae7a548R1102 to `TestDataSaveHparams.load_from_checkpoint(checkpoint_path)`, then the newly added test cases should pass.\n\n"
+    },
+    {
+      "author": "aditya0by0",
+      "created_at": "2026-01-11T10:41:22Z",
+      "body": "\n\n@GdoongMathew , thanks for the detailed response and for taking a look at this.\n\n> This behavior is consistent with how `LightningModule` works as well.\n\nI don\u2019t think this is fully consistent with `LightningModule`. To illustrate this, there is an existing test case that explicitly relies on this behavior:\n\n[https://github.com/Lightning-AI/pytorch-lightning/blob/master/tests/tests_pytorch/test_cli.py#L1069-L1070](https://github.com/Lightning-AI/pytorch-lightning/blob/master/tests/tests_pytorch/test_cli.py#L1069-L1070)\n\nIn this test, calling `LightningModule.load_from_checkpoint(...)` correctly instantiates the concrete subclass specified via `_class_path`, even though the base `LightningModule` class is used to invoke `load_from_checkpoint`.\n\nThere is also some related discussion here that touches on the same expectation:\n[https://github.com/Lightning-AI/pytorch-lightning/discussions/21474](https://github.com/Lightning-AI/pytorch-lightning/discussions/21474)\n\nComing back to the initially provided reproducible example, if we add the following lines:\n\n```python\nmodel = LightningModule.load_from_checkpoint(checkpoint_path)\nassert isinstance(model, TestModelSaveHparams)\n```\n\nthe assertion passes as expected, which further demonstrates that `LightningModule.load_from_checkpoint` *does* restore the subclass when `_class_path` is present.\n\nThis is why the behavior of `LightningDataModule.load_from_checkpoint` felt inconsistent to me, and why I believe the current behavior is a bug rather than an intentional design difference.\n\nHappy to clarify further or adjust the approach if I\u2019m missing something.\n"
+    },
+    {
+      "author": "GdoongMathew",
+      "created_at": "2026-01-11T16:00:28Z",
+      "body": "Hi @aditya0by0 , thanks for pointing out the test case \u2014 I wasn\u2019t aware of that at all!\n\nThat said, I think this might also be a CLI-limited use case. In practice, `_instantiator` usually isn\u2019t present in the checkpoint state_dict when `LightningCLI` isn\u2019t used. For example, the following test would fail:\n\n```python\nfrom lightning.pytorch.demos.boring_classes import BoringModel\nfrom lightning import LightningModule\n\ndef test_load_from_checkpoint_lightning(tmp_path):\n\n    class Boring2Module(BoringModel):\n        def __init__(self, num_layers: int = 2):\n            super().__init__()\n            self.save_hyperparameters()\n            self.layers = torch.nn.ModuleList(\n                [torch.nn.Linear(32, 32) for _ in range(num_layers)]\n            )\n\n        def forward(self, x: Tensor) -> Tensor:\n            for layer in self.layers:\n                x = layer(x)\n            return super().forward(x)\n\n    create_boring_checkpoint(tmp_path, model=Boring2Module(), accelerator=\"cpu\")\n    model = LightningModule.load_from_checkpoint(f\"{tmp_path}/checkpoint.ckpt\")\n    assert isinstance(model, Boring2Module)\n```\n\nI also wouldn\u2019t be opposed to adding `*args, **kwargs` to `LightningDataModule.__init__`. If that\u2019s the direction we want to take, I\u2019d be happy to help with the review."
+    },
+    {
+      "author": "aditya0by0",
+      "created_at": "2026-01-11T16:24:00Z",
+      "body": "\n\n@GdoongMathew, thanks for the reply.\n\nYou\u2019re absolutely right that this is a CLI-specific use case, and that `_instantiator` and `_class_path` are only stored in the checkpoint when using `LightningCLI`. That said, this behavior is still quite valuable in practice: when all model and datamodule classes are already available in the environment, it allows dynamic loading and instantiation at runtime from checkpoint without requiring the user to explicitly reference the concrete class. \n\nThis is especially useful for reproducibility and quick experiment workflows built around the CLI for my use case.\n\nRegarding adding `*args, **kwargs` to `LightningDataModule.__init__`, I don\u2019t think this would introduce issues. `LightningDataModule` and `LightningModule` already share a very similar inheritance structure and both include `HyperparametersMixin` and `DataHooks`:\n\n```python\nclass LightningDataModule(DataHooks, HyperparametersMixin):\n    ...\n```\n\n```python\nclass LightningModule(\n    _DeviceDtypeModuleMixin,\n    HyperparametersMixin,\n    ModelHooks,\n    DataHooks,\n    CheckpointHooks,\n    Module,\n):\n    ...\n```\n>I also wouldn\u2019t be opposed to adding *args, **kwargs to LightningDataModule.__init__. If that\u2019s the direction we want to take, I\u2019d be happy to help with the review.\n\nGiven this similarity, aligning `LightningDataModule` with `LightningModule` by allowing `*args, **kwargs` in the constructor seems consistent. Hence, I\u2019m happy to proceed with this direction and would appreciate your review on the PR.\n"
+    }
+  ]
+}

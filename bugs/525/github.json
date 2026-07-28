@@ -1,0 +1,65 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2485,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2485",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Potential issue with torchvision ImageNet in `create_dataset`?",
+  "author": "ryan-caesar-ramos",
+  "created_at": "2025-05-08T14:24:46Z",
+  "updated_at": "2025-05-09T14:35:52Z",
+  "closed_at": "2025-05-09T14:34:56Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:28.561591+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-05-08T16:46:04Z",
+      "body": "@ryan-caesar-ramos looks like torchvision removed the download argument, it used to be accepted but would error if True, now it's removed altogether. So for the ImageNet branch the download needs to be popped from kwargs, PR welcome or can get to it in a bit"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-05-08T16:47:03Z",
+      "body": "the default timm based image folder can resolve a fairly canonical imagenet dataset where train is in root/train, validation is in root/val or root/validation and all the classes for both train and val are in their own sysnet name based sub-folders"
+    },
+    {
+      "author": "ryan-caesar-ramos",
+      "created_at": "2025-05-08T16:54:01Z",
+      "body": "Thanks for clarifying things @rwightman! I'll try making a PR tomorrow"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-05-09T14:34:56Z",
+      "body": "Should be fixed with your PR now"
+    },
+    {
+      "author": "ryan-caesar-ramos",
+      "created_at": "2025-05-09T14:35:51Z",
+      "body": "Thanks! As always appreciate your work on all this"
+    }
+  ]
+}

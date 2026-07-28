@@ -1,0 +1,41 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 13488,
+  "html_url": "https://github.com/huggingface/diffusers/issues/13488",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "diffusers-0.38.0.dev0 breaks offloading",
+  "author": "Sector14",
+  "created_at": "2026-04-15T21:13:44Z",
+  "updated_at": "2026-04-30T15:16:22Z",
+  "closed_at": "2026-04-30T15:16:22Z",
+  "labels": [
+    "bug",
+    "group-offloading",
+    "pipelines"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 14.75,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:10.426113+00:00",
+  "comments": []
+}

@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2453,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2453",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Hello\uff0c I want use the mobilenet, but after training, it dose not work.",
+  "author": "NewboySoCool",
+  "created_at": "2025-03-17T09:44:31Z",
+  "updated_at": "2025-03-17T14:53:35Z",
+  "closed_at": "2025-03-17T14:53:24Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.21,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:58.958537+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-03-17T14:53:24Z",
+      "body": "@NewboySoCool This is a usage issue not timm issue. What you have should do something though hard to say without full context of training/fine-tune and I can't really get into debugging that. There are features in timm for extracting specific stage features that are documented as well https://huggingface.co/docs/timm/feature_extraction"
+    }
+  ]
+}

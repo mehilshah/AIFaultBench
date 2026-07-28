@@ -1,0 +1,75 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 3486,
+  "html_url": "https://github.com/huggingface/accelerate/issues/3486",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Minimal FSDP2 w Accelerate + SFTTrainer doesn't properly set DeviceMesh",
+  "author": "winglian",
+  "created_at": "2025-04-05T13:37:01Z",
+  "updated_at": "2025-05-14T15:07:47Z",
+  "closed_at": "2025-05-14T15:07:47Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 39.06,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:17.985823+00:00",
+  "comments": [
+    {
+      "author": "kiansierra",
+      "created_at": "2025-04-05T18:08:10Z",
+      "body": "Hi @winglian love the work you do at axolotl.\nThis might not be the answer you're interested, but I think the issue stems from the device placement.\nI managed to reproduce your error, and the below changes made it work for me\n\n```py\nfrom datasets import load_dataset\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\nfrom trl import SFTConfig, SFTTrainer\nfrom accelerate import Accelerator\ndef main():\n    dataset = load_dataset(\"winglian/alpaca-cleaned-chat\", split=\"train\")\n\n    model_name = \"HuggingFaceTB/SmolLM2-135M\"\n    processor_name = \"HuggingFaceTB/SmolLM2-135M-Instruct\"\n    accelerator = Accelerator()\n\n    model = AutoModelForCausalLM.from_pretrained(\n        model_name,\n        device_map={'':accelerator.device},\n        attn_implementation=\"flash_attention_2\",\n    )\n    processing_class = AutoTokenizer.from_pretrained(processor_name)\n\n    training_args = SFTConfig(\n        max_length=2048,\n        output_dir=\"/tmp\",\n        report_to=None,\n        bf16=True,\n        per_device_train_batch_size=2,\n        gradient_accumulation_steps=1,\n        num_train_epochs=1,\n        logging_steps=1,\n    )\n    trainer = SFTTrainer(\n        model,\n        processing_class=processing_class,\n        train_dataset=dataset,\n        args=training_args,\n    )\n    trainer.train()\n\nif __name__ == \"__main__\":\n    main()\n```"
+    },
+    {
+      "author": "SunMarc",
+      "created_at": "2025-04-07T13:49:30Z",
+      "body": "cc @S1ro1 "
+    },
+    {
+      "author": "S1ro1",
+      "created_at": "2025-04-07T14:11:11Z",
+      "body": "@winglian You can just disable `device_map=\"auto\"`. I'm pretty sure that doesn't work even with `FSDP1` but I can't tell you exact reason.\n"
+    },
+    {
+      "author": "S1ro1",
+      "created_at": "2025-04-07T14:19:43Z",
+      "body": "@SunMarc [this snippet](https://github.com/huggingface/accelerate/blob/main/src/accelerate/accelerator.py#L1507-L1511) Should get triggered and throw an error as we do not support `device_map=\"auto\"` with parallelism, though it doesn't.\n\n```python\n  def verify_device_map(self, model: torch.nn.Module) -> bool:\n      \"\"\"\n      Verifies that `model` has not been prepared with big model inference with a device-map resembling `auto`.\n      \"\"\"\n      # Checks if any of the child modules has the attribute `hf_device_map` and this map has more than one entry.\n      for m in model.modules():\n          if hasattr(m, \"hf_device_map\") and len(m.hf_device_map) > 1:\n              return True\n\n      return False\n```\nAny idea why? I'm not aware of a particular change in `transformers` that causes this to not work, so maybe you know?"
+    },
+    {
+      "author": "SunMarc",
+      "created_at": "2025-04-07T14:29:00Z",
+      "body": "Not sure until we check that we have in `hf_device_map` in the model. We should have picked this up indeed ! "
+    },
+    {
+      "author": "S1ro1",
+      "created_at": "2025-04-07T14:30:40Z",
+      "body": "The attribute just doesn't exist anymore. That's why the func fails. I'll try to find the commit that changes this in `transformers`. Though this should be resolved by it, just need a better error message."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2025-05-05T15:07:41Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\nPlease note that issues that do not follow the [contributing guidelines](https://github.com/huggingface/accelerate/blob/main/CONTRIBUTING.md) are likely to be ignored."
+    }
+  ]
+}

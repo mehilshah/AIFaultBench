@@ -1,0 +1,40 @@
+{
+  "owner": "sdv-dev",
+  "repo": "SDV",
+  "number": 2601,
+  "html_url": "https://github.com/sdv-dev/SDV/issues/2601",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Unable to add overlapping single-table constraints to a multi-table schema",
+  "author": "npatki",
+  "created_at": "2025-07-07T20:39:00Z",
+  "updated_at": "2025-07-11T19:50:06Z",
+  "closed_at": "2025-07-11T19:50:05Z",
+  "labels": [
+    "bug",
+    "data:multi-table"
+  ],
+  "milestone": "1.24.1",
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.97,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:52.419760+00:00",
+  "comments": []
+}

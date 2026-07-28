@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 46877,
+  "html_url": "https://github.com/huggingface/transformers/issues/46877",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "auto_docstring prints [ERROR] doc-lint diagnostics to stdout at import time",
+  "author": "CalamitousFelicitousness",
+  "created_at": "2026-06-25T08:49:25Z",
+  "updated_at": "2026-06-25T14:56:10Z",
+  "closed_at": "2026-06-25T14:56:10Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.25,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:27.198162+00:00",
+  "comments": [
+    {
+      "author": "zucchini-nlp",
+      "created_at": "2026-06-25T10:49:47Z",
+      "body": "The log printing at import time is kinda expected and should be delayed to later after https://github.com/huggingface/transformers/pull/45056 is merged\n\nThough it's interesting you see errors on missing args. I added recently support for merging docs from parent classes and re-checking now on `main` branch, I can't reproduce it. Could be related to python version and how dataclasses get resolved \ud83e\udd14  \nI am using python 3.10, but let me get 3.13 and check again"
+    },
+    {
+      "author": "zucchini-nlp",
+      "created_at": "2026-06-25T14:56:10Z",
+      "body": "Ah it was fixed on main, I forgot that I merged it recently. Closing as resolved then"
+    }
+  ]
+}

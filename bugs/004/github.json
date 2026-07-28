@@ -1,0 +1,67 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 13490,
+  "html_url": "https://github.com/tensorflow/models/issues/13490",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "MixUp + Cutmix implementation is (badly!) incorrect",
+  "author": "dibyaghosh",
+  "created_at": "2024-12-11T00:03:17Z",
+  "updated_at": "2025-03-29T02:03:43Z",
+  "closed_at": "2025-03-29T02:03:42Z",
+  "labels": [
+    "stat:awaiting response",
+    "models:official",
+    "stale"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 108.08,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:17.901094+00:00",
+  "comments": [
+    {
+      "author": "LakshmiKalaKadali",
+      "created_at": "2024-12-12T06:12:25Z",
+      "body": "Hi @dibyaghosh,\r\n\r\nThanks for bringing out the issue and raising PR. I have reproduced the issue and observed the deviation between `beta distribution in tfm.vision.augment.MixupAndCutmix._sample_from_beta` and `np.random.beta(0.2, 0.2, 100000)` . Here is the [gist].(https://colab.sandbox.google.com/gist/LakshmiKalaKadali/06533824610d6e85ea4aa3c6399819e6/tf_model_13490.ipynb).  The observations are attached: \r\n![image](https://github.com/user-attachments/assets/492e28dd-a52c-4688-b639-6e5c37c3557c)\r\n![image](https://github.com/user-attachments/assets/b0ede191-757c-4b1a-9a98-263672184a0c)\r\n\r\nPlease track the PR raised for this issue as well.\r\n\r\nThank You"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-12-20T02:00:00Z",
+      "body": "This issue has been marked stale because it has no recent activity since 7 days. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-12-28T01:57:59Z",
+      "body": "This issue was closed due to lack of activity after being marked stale for past 7 days."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2025-02-07T01:59:30Z",
+      "body": "This issue was closed due to lack of activity after being marked stale for past 7 days."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2025-03-29T02:03:42Z",
+      "body": "This issue was closed due to lack of activity after being marked stale for past 7 days."
+    }
+  ]
+}

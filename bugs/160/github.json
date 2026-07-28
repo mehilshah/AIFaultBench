@@ -1,0 +1,65 @@
+{
+  "owner": "influxdata",
+  "repo": "influxdb-client-python",
+  "number": 623,
+  "html_url": "https://github.com/influxdata/influxdb-client-python/issues/623",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`class Point` doesn't support equality comparison",
+  "author": "hf-kklein",
+  "created_at": "2023-12-19T12:35:24Z",
+  "updated_at": "2024-04-17T05:59:07Z",
+  "closed_at": "2024-01-04T09:30:45Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": "1.41.0",
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 15.87,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:21.715679+00:00",
+  "comments": [
+    {
+      "author": "bednar",
+      "created_at": "2024-01-03T13:32:40Z",
+      "body": "HI @hf-kklein,\r\n\r\nthanks for using our client and report this issue.\r\n\r\nIs this something you would be willing to help with? All PR is welcome and we will be happy to review your submission.\r\n\r\nRegards"
+    },
+    {
+      "author": "hf-kklein",
+      "created_at": "2024-01-03T13:37:10Z",
+      "body": "will open a PR and report back."
+    },
+    {
+      "author": "bednar",
+      "created_at": "2024-01-03T13:37:57Z",
+      "body": "@hf-kklein thanks a lot"
+    },
+    {
+      "author": "hf-kklein",
+      "created_at": "2024-01-03T15:04:48Z",
+      "body": "@bednar #625 . Sorry for the repetitive test cases. Didn't know how to properly parametrize the tests with only the stdlib unittest lib."
+    },
+    {
+      "author": "bednar",
+      "created_at": "2024-01-04T07:43:53Z",
+      "body": "@hf-kklein it's ok"
+    }
+  ]
+}

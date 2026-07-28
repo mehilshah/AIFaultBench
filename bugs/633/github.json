@@ -1,0 +1,45 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 37921,
+  "html_url": "https://github.com/jax-ml/jax/issues/37921",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`jnp.searchsorted` returns `int32` instead of `int64` regardless of `jax_enable_x64`",
+  "author": "AjBrown89",
+  "created_at": "2026-05-22T02:37:41Z",
+  "updated_at": "2026-05-22T13:21:43Z",
+  "closed_at": "2026-05-22T13:21:43Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.45,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:37:06.315426+00:00",
+  "comments": [
+    {
+      "author": "jakevdp",
+      "created_at": "2026-05-22T13:21:43Z",
+      "body": "Hi - thanks for the report. This is working as intended \u2013\u00a0in general `jax.numpy` avoids promoting everything to 64-bit as NumPy does, because 64-bit values often come with performance penalties on accelerators."
+    }
+  ]
+}

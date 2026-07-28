@@ -1,0 +1,50 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 10159,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/10159",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "nn.dense.Linear return different results",
+  "author": "shaharma93",
+  "created_at": "2025-04-02T14:01:14Z",
+  "updated_at": "2025-04-03T21:20:51Z",
+  "closed_at": "2025-04-03T21:20:50Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.31,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:34.278527+00:00",
+  "comments": [
+    {
+      "author": "shaharma93",
+      "created_at": "2025-04-03T12:07:24Z",
+      "body": "I find this random error is more fundamental than that..\nIn this code I run in a python console I run the same code twice and get different results. This time I compute the Linear layer straight ahead.\n\n```\npure_lin = [x @ self.linear_cand_junc.weight.T + self.linear_cand_junc.bias for _ in range(10)]\nmax([torch.max(torch.abs(pure_lin[0] - pure_lin[i])) for i in range(10)])\n>>> tensor(0.)\npure_lin = [x @ self.linear_cand_junc.weight.T + self.linear_cand_junc.bias for _ in range(10)]\nmax([torch.max(torch.abs(pure_lin[0] - pure_lin[i])) for i in range(10)])\n>>> tensor(10.7247)\n```\n\nAny idea might help"
+    },
+    {
+      "author": "shaharma93",
+      "created_at": "2025-04-03T21:20:50Z",
+      "body": "I found this problem was caused by importing numpy before importing opencv.\nFrom some unknown reason importing opencv after importing numpy make this random error.\nA bug was opened in opencv repo https://github.com/opencv/opencv/issues/27195"
+    }
+  ]
+}

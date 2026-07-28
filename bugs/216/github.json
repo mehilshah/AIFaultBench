@@ -1,0 +1,39 @@
+{
+  "owner": "spulec",
+  "repo": "freezegun",
+  "number": 344,
+  "html_url": "https://github.com/spulec/freezegun/issues/344",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Using tz_offset breaks t == fromtimestamp(t).timestamp()",
+  "author": "Strilanc",
+  "created_at": "2020-04-01T17:52:13Z",
+  "updated_at": "2024-03-18T12:22:53Z",
+  "closed_at": "2024-03-18T12:22:53Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1446.77,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:46.749106+00:00",
+  "comments": []
+}

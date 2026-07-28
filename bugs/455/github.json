@@ -1,0 +1,95 @@
+{
+  "owner": "huggingface",
+  "repo": "peft",
+  "number": 297,
+  "html_url": "https://github.com/huggingface/peft/issues/297",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Deepspeed Zero3 LoRA merge error",
+  "author": "hendrydong",
+  "created_at": "2023-04-12T03:21:23Z",
+  "updated_at": "2024-06-24T01:43:16Z",
+  "closed_at": "2023-08-20T15:03:40Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 11,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 130.49,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:47.432357+00:00",
+  "comments": [
+    {
+      "author": "bestpredicts",
+      "created_at": "2023-05-09T02:40:48Z",
+      "body": "same error here , any update?"
+    },
+    {
+      "author": "ericzhou571",
+      "created_at": "2023-05-11T09:01:00Z",
+      "body": "same error here, any update?"
+    },
+    {
+      "author": "ericzhou571",
+      "created_at": "2023-05-11T09:07:01Z",
+      "body": "Here is deepspeed config:\r\n{\r\n    \"fp16\": {\r\n        \"enabled\": \"auto\",\r\n        \"loss_scale\": 0,\r\n        \"loss_scale_window\": 1000,\r\n        \"initial_scale_power\": 16,\r\n        \"hysteresis\": 2,\r\n        \"min_loss_scale\": 1\r\n    },\r\n\r\n    \"optimizer\": {\r\n        \"type\": \"AdamW\",\r\n        \"params\": {\r\n            \"lr\": \"auto\",\r\n            \"betas\": \"auto\",\r\n            \"eps\": \"auto\",\r\n            \"weight_decay\": \"auto\"\r\n        }\r\n    },\r\n\r\n    \"scheduler\": {\r\n        \"type\": \"WarmupLR\",\r\n        \"params\": {\r\n            \"warmup_min_lr\": \"auto\",\r\n            \"warmup_max_lr\": \"auto\",\r\n            \"warmup_num_steps\": \"auto\"\r\n        }\r\n    },\r\n\r\n    \"zero_optimization\": {\r\n        \"stage\": 3,\r\n        \"offload_optimizer\": {\r\n            \"device\": \"cpu\",\r\n            \"pin_memory\": true\r\n        },\r\n        \"offload_param\": {\r\n            \"device\": \"cpu\",\r\n            \"pin_memory\": true\r\n        },\r\n        \"overlap_comm\": true,\r\n        \"contiguous_gradients\": true,\r\n        \"sub_group_size\": 1e9,\r\n        \"reduce_bucket_size\": \"auto\",\r\n        \"stage3_prefetch_bucket_size\": \"auto\",\r\n        \"stage3_param_persistence_threshold\": \"auto\",\r\n        \"stage3_max_live_parameters\": 1e9,\r\n        \"stage3_max_reuse_distance\": 1e9,\r\n        \"stage3_gather_16bit_weights_on_model_save\": true\r\n    },\r\n\r\n    \"gradient_accumulation_steps\": \"auto\",\r\n    \"gradient_clipping\": \"auto\",\r\n    \"steps_per_print\": 2000,\r\n    \"train_batch_size\": \"auto\",\r\n    \"train_micro_batch_size_per_gpu\": \"auto\",\r\n    \"wall_clock_breakdown\": false\r\n}\r\n\r\n\r\nI find that is quite strange.\r\n\r\nbefore training with huggingface Trainer, deepspeed zero3 and lora A and B weight are not empty tensor.\r\n<img width=\"915\" alt=\"\u622a\u5c4f2023-05-11 17 04 46\" src=\"https://github.com/huggingface/peft/assets/57415741/90413acc-5d31-492a-bd47-bbbbf468fdc6\">\r\nAfter training,  no matter we apply gathering parameters or not all lora A and B weight are empty tensor.\r\n<img width=\"896\" alt=\"\u622a\u5c4f2023-05-11 17 04 28\" src=\"https://github.com/huggingface/peft/assets/57415741/8a4f6753-60e3-4d35-9bca-6417715c067f\">"
+    },
+    {
+      "author": "2018211801",
+      "created_at": "2023-06-08T13:27:37Z",
+      "body": "same question\r\n"
+    },
+    {
+      "author": "linyubupa",
+      "created_at": "2023-06-16T16:31:31Z",
+      "body": "\r\nsame question\r\n\r\n"
+    },
+    {
+      "author": "RicardoLeeV587",
+      "created_at": "2023-06-29T09:08:29Z",
+      "body": "Same problem\r\nZero3 is quite useful for me since I only have V100 graphic cards. "
+    },
+    {
+      "author": "1ytic",
+      "created_at": "2023-07-18T10:48:56Z",
+      "body": "Let me clarify few points about ZeRO3 model initialisation with `transformers` library.\r\n\r\nThe method `from_pretrained()` can handle ZeRO3 config if it was initialised before. For example, you create `TrainingArguments(..., deepspeed=\"ds_config_zero3.json\")` object before you run `from_pretrained()` method. In this case, the model will be created with the special context `deepspeed.zero.Init()`.\r\n\r\nThis context manager will partitioned the model parameters and store them in the new `param.ds_tensor` tensor. The original `param.data` tensor becomes empty after this initialisation. @ericzhou571 this could probably explain why you are seeing empty tensors.\r\n\r\nThings get more complicated when we add LoRA parameters to this model. For example, we wrap the partitioned model with  this `get_peft_model()` function. If this model has the classification head `score` like this one `LlamaForSequenceClassification`, it will be copied inside `ModulesToSaveWrapper` class and breaks the forward pass. @hendrydong I didn't used `LMFlow` package, but maybe it is similar case."
+    },
+    {
+      "author": "RicardoLeeV587",
+      "created_at": "2023-07-19T09:58:32Z",
+      "body": "@1ytic \r\nThanks for your clarification! "
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-08-12T15:03:34Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\n"
+    },
+    {
+      "author": "ANYMS-A",
+      "created_at": "2024-06-21T01:47:20Z",
+      "body": "> @1ytic Thanks for your clarification!\r\n\r\nHello , I met a same situation as you did. Have you find a solution to combine LoRA and DeepSpeed ZeRO3 to finetune model?"
+    },
+    {
+      "author": "RicardoLeeV587",
+      "created_at": "2024-06-24T01:43:14Z",
+      "body": "> > @1ytic Thanks for your clarification!\r\n> \r\n> Hello , I met a same situation as you did. Have you find a solution to combine LoRA and DeepSpeed ZeRO3 to finetune model?\r\n\r\nHi Anyms:\r\n\r\nThis is a quite old issue so I am not sure if there has already had some new and elegant method to tackle it. \r\n\r\nOne year ago, I gave a try to first call \"model_wrapped._zero3_consolidated_16bit_state_dict()\" then \"get_peft_model_state_dict\" on the new engine_state_dict. This is based on Deepspeed 0.10 and Peft \"13e53fc\" head. \r\n\r\nEven though my method could successfully save the correct \"adapter.bin\", it was time consuming to aggregate all model slices. Therefore, I would not suggest you to follow my solution."
+    }
+  ]
+}

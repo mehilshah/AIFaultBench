@@ -1,0 +1,45 @@
+{
+  "owner": "patrick-kidger",
+  "repo": "jaxtyping",
+  "number": 290,
+  "html_url": "https://github.com/patrick-kidger/jaxtyping/issues/290",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Inconsistent shape resolution scope when using dataclasses",
+  "author": "jpthalman",
+  "created_at": "2025-02-01T00:23:21Z",
+  "updated_at": "2025-02-11T17:54:32Z",
+  "closed_at": "2025-02-11T17:54:32Z",
+  "labels": [
+    "question"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 10.73,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:17.207159+00:00",
+  "comments": [
+    {
+      "author": "patrick-kidger",
+      "created_at": "2025-02-01T13:36:33Z",
+      "body": "This is intended. jaxtyping only sees the type hint you've written directly in-line, which in this case is `Vector`. It will then essentially do `isinstance(..., Vector)`, which passes. Job done. This is normal Python behaviour, `isinstance` against a class is 'shallow' and doesn't try to recursively check every sub-object contained within the class.\n\nI think the behaviour you're after here is obtainable, though! You'd need to override `type(Vector).__instancecheck__` so that the `isinstance` will only pass if `isinstance(v.x, Vector.x) and isinstance(v.y, Vector.y)`.\n\nFinally I'd note that you're using `chex.dataclass`. If you're here and using the Equinox ecosystem then you might like [`equinox.Module`](https://github.com/patrick-kidger/equinox), which is similar but fixes several footguns too. (Inheritance, bound methods, new stuff like abstract variables, ...)\n\nI hope that helps!"
+    }
+  ]
+}

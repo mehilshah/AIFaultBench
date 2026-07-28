@@ -1,0 +1,65 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-cv",
+  "number": 2370,
+  "html_url": "https://github.com/keras-team/keras-cv/issues/2370",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Boxes from TensorFlow Serving",
+  "author": "alejones",
+  "created_at": "2024-03-01T20:40:22Z",
+  "updated_at": "2024-03-08T15:04:59Z",
+  "closed_at": "2024-03-07T15:16:56Z",
+  "labels": [
+    "stat:awaiting keras-eng"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 5.78,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:26.260309+00:00",
+  "comments": [
+    {
+      "author": "Alparslan-Tamer",
+      "created_at": "2024-03-02T12:03:27Z",
+      "body": "you need to write custom postprocessing for serving:\r\n\r\nhttps://colab.research.google.com/gist/Alparslan-Tamer/8f17cf31e5bdb21e9cb1e52b8347c903/object_detection_keras_cv.ipynb\r\n\r\ni changed your code in here."
+    },
+    {
+      "author": "tirthasheshpatel",
+      "created_at": "2024-03-04T17:51:04Z",
+      "body": "@Alparslan-Tamer is right. Thanks for responding @Alparslan-Tamer! Let me know if this addresses your issue @alejones."
+    },
+    {
+      "author": "alejones",
+      "created_at": "2024-03-04T18:05:34Z",
+      "body": "@Alparslan-Tamer, Thank you! That solved my issue.\r\n\r\nIs there any documentation on how to add a signature or other postprocessing functions. In particular I'd like to be able to return a string with the class name instead of having an int that needs to be mapped to a class name."
+    },
+    {
+      "author": "Alparslan-Tamer",
+      "created_at": "2024-03-05T18:00:12Z",
+      "body": "Hi @alejones , you can do any customization inside the inference function, I wrote a simple code (you can write a better one) for the problem you mentioned, you can see it from the link below.\r\n\r\nhttps://colab.research.google.com/gist/Alparslan-Tamer/8f17cf31e5bdb21e9cb1e52b8347c903/object_detection_keras_cv.ipynb\r\n"
+    },
+    {
+      "author": "alejones",
+      "created_at": "2024-03-07T15:16:56Z",
+      "body": "@Alparslan-Tamer, Thanks again! This is what I was looking for.  "
+    }
+  ]
+}

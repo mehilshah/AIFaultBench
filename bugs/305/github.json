@@ -1,0 +1,46 @@
+{
+  "owner": "huggingface",
+  "repo": "peft",
+  "number": 2381,
+  "html_url": "https://github.com/huggingface/peft/issues/2381",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Bug when deleting adapters of a model with modules_to_save",
+  "author": "BenjaminBossan",
+  "created_at": "2025-02-17T11:22:34Z",
+  "updated_at": "2025-04-08T14:46:23Z",
+  "closed_at": "2025-04-08T14:46:23Z",
+  "labels": [
+    "bug",
+    "wip"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 50.14,
+  "fix": {
+    "closing_commit": "21fc8bd7155a2f345cfcf1f37dd7232efe41f419",
+    "linked_prs": [],
+    "best_guess_fix_commit": "21fc8bd7155a2f345cfcf1f37dd7232efe41f419",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:28:59.215087+00:00",
+  "comments": [
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2025-03-19T15:04:08Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\n"
+    }
+  ]
+}

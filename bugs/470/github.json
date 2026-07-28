@@ -1,0 +1,55 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2549,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2549",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Eva model crashes on applying RotaryEmbeddingCat when patch drop rate is set",
+  "author": "surajpaib",
+  "created_at": "2025-07-16T02:50:42Z",
+  "updated_at": "2025-07-19T22:56:53Z",
+  "closed_at": "2025-07-19T22:56:53Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.84,
+  "fix": {
+    "closing_commit": "6063f828415926c00979cc6257281160e19c9777",
+    "linked_prs": [],
+    "best_guess_fix_commit": "6063f828415926c00979cc6257281160e19c9777",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:33:08.947711+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-07-16T18:29:47Z",
+      "body": "@surajpaib hmm, yeah, I did indeed break that. Adding the mixed mode ROPE increased the variation in layouts for the rope embed tensor. I forgot about the batch dim expansion when patch drop is used, so there's even more cases now.\n\nI'm working through this right now actually, in part to add ROPE to the NaFlexVit, so when I've enumerated all the cases I'll have a fix for this."
+    },
+    {
+      "author": "surajpaib",
+      "created_at": "2025-07-16T20:25:54Z",
+      "body": "Thanks @rwightman! I'm happy to wait for the fix. "
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-07-18T16:41:52Z",
+      "body": "@surajpaib I've got a PR that includes the fix for this with the NaFlexVit support (it was all tied together). Still verifying things, but this use case appeared to be working, the number of cases and tensor shapes that needed to be supported for the ROPE embeds when patch drop was enabled got quite a bit more complicated, heh."
+    }
+  ]
+}

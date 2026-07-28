@@ -1,0 +1,45 @@
+{
+  "owner": "pytorch",
+  "repo": "rl",
+  "number": 3244,
+  "html_url": "https://github.com/pytorch/rl/issues/3244",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Unable to download VIP model weights",
+  "author": "deepsworld",
+  "created_at": "2025-12-05T17:31:06Z",
+  "updated_at": "2025-12-05T18:12:10Z",
+  "closed_at": "2025-12-05T18:12:10Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:19.141871+00:00",
+  "comments": [
+    {
+      "author": "deepsworld",
+      "created_at": "2025-12-05T18:12:10Z",
+      "body": "Never mind that was a firewall issue on my end. "
+    }
+  ]
+}

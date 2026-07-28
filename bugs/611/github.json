@@ -1,0 +1,61 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 960,
+  "html_url": "https://github.com/huggingface/accelerate/issues/960",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`gather_for_metrics` and `GradientState` don't work with arbitrary evaluation intervals",
+  "author": "ernestchu",
+  "created_at": "2023-01-09T05:27:52Z",
+  "updated_at": "2023-03-07T20:04:45Z",
+  "closed_at": "2023-03-07T20:04:45Z",
+  "labels": [
+    "bug",
+    "wip"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 57.61,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:32.435822+00:00",
+  "comments": [
+    {
+      "author": "ernestchu",
+      "created_at": "2023-01-09T08:02:53Z",
+      "body": "After some investigations, I know the `GradientState` is synced by the **singleton class** design. My current workaround is manually setting `accelerator.gradient_state.end_of_dataloader` to `False` after the evaluation, so the following training would not incorrectly drop samples."
+    },
+    {
+      "author": "sgugger",
+      "created_at": "2023-01-09T17:28:38Z",
+      "body": "cc @muellerzr "
+    },
+    {
+      "author": "muellerzr",
+      "created_at": "2023-01-18T15:52:52Z",
+      "body": "@ernestchu `GradientState` is a singleton designed to work with a single dataloader that is currently being iterated upon, which is why you're experiencing this trouble. One thing I could think of is setting an api such as `pause` and `resume` which will \"turn off\" `GradientState` and/or reset it. So essentially the API would be:\r\n\r\n```python\r\ndl1, dl2 = accelerator.prepare(dl1, dl2)\r\nfor i,batch in enumerate(dl1):\r\n    ...\r\n    if i == 5:\r\n        accelerator.gradient_state.pause()\r\n        for batch in dl2:\r\n            ....\r\n        accelerator.gradient_state.resume()\r\n    ...\r\n```\r\n\r\nDoes this seem reasonable to you both @ernestchu @sgugger\r\n\r\nThe other thought would be just explicitly switching dataloaders, e.g. `accelerator.gradient_state.switch(dl2)`"
+    },
+    {
+      "author": "muellerzr",
+      "created_at": "2023-03-07T20:04:45Z",
+      "body": "Should be closed with https://github.com/huggingface/accelerate/pull/1162, doesn't require any modification in the code"
+    }
+  ]
+}

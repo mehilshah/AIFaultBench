@@ -1,0 +1,45 @@
+{
+  "owner": "facebookresearch",
+  "repo": "detectron2",
+  "number": 3405,
+  "html_url": "https://github.com/facebookresearch/detectron2/issues/3405",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Possible bugs in detectron2.data.MapDataset?",
+  "author": "Dylan-H-Wang",
+  "created_at": "2021-08-26T02:46:29Z",
+  "updated_at": "2021-08-27T20:37:20Z",
+  "closed_at": "2021-08-27T20:37:20Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.74,
+  "fix": {
+    "closing_commit": "01120e438cb49ec2c15da81fa2784ec253ace59b",
+    "linked_prs": [],
+    "best_guess_fix_commit": "01120e438cb49ec2c15da81fa2784ec253ace59b",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:29:25.728591+00:00",
+  "comments": [
+    {
+      "author": "ppwwyyxx",
+      "created_at": "2021-08-27T06:35:20Z",
+      "body": "Thanks for reporting. This works for older python versions but indeed fails in python 3.9"
+    }
+  ]
+}

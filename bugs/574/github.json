@@ -1,0 +1,45 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 47037,
+  "html_url": "https://github.com/vllm-project/vllm/issues/47037",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: vLLM 0.23.0: FlashInfer /  Triton attention + FP8 KV cache doesn't work on H200 (sm_90)",
+  "author": "JeanPaulShapo",
+  "created_at": "2026-06-29T13:03:55Z",
+  "updated_at": "2026-06-30T19:42:27Z",
+  "closed_at": "2026-06-30T19:42:27Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.28,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:39.272675+00:00",
+  "comments": [
+    {
+      "author": "JeanPaulShapo",
+      "created_at": "2026-06-30T19:42:27Z",
+      "body": "Fixed in #47039 "
+    }
+  ]
+}

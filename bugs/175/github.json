@@ -1,0 +1,55 @@
+{
+  "owner": "lark-parser",
+  "repo": "lark",
+  "number": 1416,
+  "html_url": "https://github.com/lark-parser/lark/issues/1416",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Transformer Not Applying Expected Transformations in Lark Parser",
+  "author": "chenshimeng",
+  "created_at": "2024-05-21T09:53:58Z",
+  "updated_at": "2024-06-22T15:36:55Z",
+  "closed_at": "2024-06-22T15:36:55Z",
+  "labels": [
+    "question"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 32.24,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:44.032178+00:00",
+  "comments": [
+    {
+      "author": "erezsh",
+      "created_at": "2024-05-21T18:56:17Z",
+      "body": "I think that you're right that your function isn't being called.\r\n\r\nThat's because you defined it as `?acos_func`, and the \"?\" tells Lark that if there is only 1 argument, to inline the rule and not call its callback. And your rule only has one argument, NUMBER.\r\n"
+    },
+    {
+      "author": "chenshimeng",
+      "created_at": "2024-05-22T02:43:46Z",
+      "body": "Thank you for your assistance and explanation regarding the behavior of the ? prefix in Lark's grammar rules. Following your guidance, I have conducted further tests and confirmed that removing the ? prefix indeed allows the acos_func transformation method to be called as expected. Additionally, I discovered that if I retain the ? prefix in the rule ?acos_func: (\"acos\" | \"ACOS\") \"(\" NUMBER \")\" but append -> acos_func at the end, the transformation method acos_func also gets called correctly.\r\n\r\nCould you please advise which solution is considered more optimal or appropriate in terms of Lark's best practices? Are there any considerations regarding performance, readability, or future maintenance that I should be aware of when choosing between these two approaches?\r\n\r\nThank you once again for your support. Your explanation was instrumental in helping me understand and resolve the issue."
+    },
+    {
+      "author": "erezsh",
+      "created_at": "2024-06-22T15:36:55Z",
+      "body": "Well, alias (`->`) doesn't have performance costs. Using `?` does have a small cost, but I think it's very negligible."
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "owner": "facebookresearch",
+  "repo": "detectron2",
+  "number": 1132,
+  "html_url": "https://github.com/facebookresearch/detectron2/issues/1132",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Unable to run inference using a Cascade RCNN model",
+  "author": "ananthu-aniraj",
+  "created_at": "2020-04-01T17:20:50Z",
+  "updated_at": "2020-11-16T06:01:03Z",
+  "closed_at": "2020-04-01T20:37:55Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.14,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:20.627037+00:00",
+  "comments": [
+    {
+      "author": "zarkaltair",
+      "created_at": "2020-04-01T17:46:41Z",
+      "body": "I have the same problem, only the model is different \"panoptic_fpn_R_101_dconv_cascade_gn_3x\"\r\n```\r\n# Create config to image segmentation\r\ncfg = get_cfg()\r\ncfg.merge_from_file(\"./detectron2_repo/configs/Misc/panoptic_fpn_R_101_dconv_cascade_gn_3x.yaml\")\r\ncfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set threshold for this model\r\ncfg.MODEL.WEIGHTS = \"detectron2://Misc/panoptic_fpn_R_101_dconv_cascade_gn_3x/139797668/model_final_be35db.pkl\"\r\npredictor = DefaultPredictor(cfg)\r\n\r\n# Make prediction\r\noutputs = predictor(im)\r\n```\r\n```\r\n---------------------------------------------------------------------------\r\nAttributeError                            Traceback (most recent call last)\r\n<ipython-input-8-40686331698f> in <module>()\r\n----> 1 outputs = predictor(im)\r\n\r\n/content/detectron2_repo/detectron2/engine/defaults.py in __call__(self, original_image)\r\n    195 \r\n    196             inputs = {\"image\": image, \"height\": height, \"width\": width}\r\n--> 197             predictions = self.model([inputs])[0]\r\n    198             return predictions\r\n    199 \r\n\r\n/usr/local/lib/python3.6/dist-packages/torch/nn/modules/module.py in __call__(self, *input, **kwargs)\r\n    530             result = self._slow_forward(*input, **kwargs)\r\n    531         else:\r\n--> 532             result = self.forward(*input, **kwargs)\r\n    533         for hook in self._forward_hooks.values():\r\n    534             hook_result = hook(self, input, result)\r\n\r\n/content/detectron2_repo/detectron2/modeling/meta_arch/panoptic_fpn.py in forward(self, batched_inputs)\r\n     98             proposals, proposal_losses = self.proposal_generator(images, features, gt_instances)\r\n     99         detector_results, detector_losses = self.roi_heads(\r\n--> 100             images, features, proposals, gt_instances\r\n    101         )\r\n    102 \r\n\r\n/usr/local/lib/python3.6/dist-packages/torch/nn/modules/module.py in __call__(self, *input, **kwargs)\r\n    530             result = self._slow_forward(*input, **kwargs)\r\n    531         else:\r\n--> 532             result = self.forward(*input, **kwargs)\r\n    533         for hook in self._forward_hooks.values():\r\n    534             hook_result = hook(self, input, result)\r\n\r\n/content/detectron2_repo/detectron2/modeling/roi_heads/cascade_rcnn.py in forward(***failed resolving arguments***)\r\n     94             return proposals, losses\r\n     95         else:\r\n---> 96             pred_instances = self._forward_box(features, proposals)\r\n     97             pred_instances = self.forward_with_given_boxes(features, pred_instances)\r\n     98             return pred_instances, {}\r\n\r\n/content/detectron2_repo/detectron2/modeling/roi_heads/cascade_rcnn.py in _forward_box(self, features, proposals, targets)\r\n    147                 scores,\r\n    148                 image_sizes,\r\n--> 149                 self.test_score_thresh,\r\n    150                 self.test_nms_thresh,\r\n    151                 self.test_detections_per_img,\r\n\r\n/usr/local/lib/python3.6/dist-packages/torch/nn/modules/module.py in __getattr__(self, name)\r\n    574                 return modules[name]\r\n    575         raise AttributeError(\"'{}' object has no attribute '{}'\".format(\r\n--> 576             type(self).__name__, name))\r\n    577 \r\n    578     def __setattr__(self, name, value):\r\n\r\nAttributeError: 'CascadeROIHeads' object has no attribute 'test_score_thresh'\r\n```"
+    },
+    {
+      "author": "ppwwyyxx",
+      "created_at": "2020-04-01T17:55:30Z",
+      "body": "Thanks for reporting. It is introduced in the most recent commit e12b2d6534b5fb1c0e6bdc8f486986433e502d1a and will be fixed soon."
+    },
+    {
+      "author": "appledora",
+      "created_at": "2020-11-16T05:56:00Z",
+      "body": "Have this error been fixed yet?? "
+    },
+    {
+      "author": "ppwwyyxx",
+      "created_at": "2020-11-16T06:01:03Z",
+      "body": "It was fixed in https://github.com/facebookresearch/detectron2/commit/95a8d6cf0e19a72a8e2ac14aff59a51bafce2ec2"
+    }
+  ]
+}

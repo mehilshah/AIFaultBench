@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 46762,
+  "html_url": "https://github.com/huggingface/transformers/issues/46762",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Substantial numerical differences with Minimax MSA attention vs Minimax's Reference",
+  "author": "CoffeeVampir3",
+  "created_at": "2026-06-19T03:38:05Z",
+  "updated_at": "2026-06-20T19:54:43Z",
+  "closed_at": "2026-06-20T19:54:43Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.68,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:32.033870+00:00",
+  "comments": [
+    {
+      "author": "Charly21r",
+      "created_at": "2026-06-19T08:03:40Z",
+      "body": "Thanks for the analysis, I dug into the code and can confirm this. The bug isn't isolated to that one line, the head-collapse is assumed by every consumer of the selection.\n\n## Root cause\n[modular_minimax_m3_vl.py:550](https://github.com/huggingface/transformers/blob/main/src/transformers/models/minimax_m3_vl/modular_minimax_m3_vl.py#L550):\n\n```\nblock_scores = scores.amax(dim=-1).amax(dim=1)  # -> [B, S_q, num_key_blocks]\n```\n\nscores is `[B, H_idx, S_q, num_key_blocks, block_size]`:\n - `.amax(dim=-1)` pools within the 128-key block\n - .`amax(dim=1)` collapses `H_idx` producing one shared block list per query\n\nThe MSA reference's `sparse_topk_select` emits `(total_qo_len, num_qo_heads, topk)` (per-head), where in the MQA-proxy path `max_score.shape[0] == num_kv_heads_real`. With this config `index_n_heads == num_key_value_heads == 4`, so each index head owns one KV group (`qheads_per_kv = 64/4 = 16`). Collapsing the head axis is exactly what drives the ~99.5% selection divergence and the inflated distinct-block count.\n\n\nIt's a shared-selection assumption in 3 places, not one line:\n1. Indexer ([modular:550-564](https://github.com/huggingface/transformers/blob/main/src/transformers/models/minimax_m3_vl/modular_minimax_m3_vl.py#L550-L564)): collapses heads, returns `[B, S_q, topk]`.\n2. eager/sdpa mask ([modular:588](https://github.com/huggingface/transformers/blob/main/src/transformers/models/minimax_m3_vl/modular_minimax_m3_vl.py#L588)): build_block_mask does `.unsqueeze(1)`, broadcasting one mask to all query heads.\n3. MSA kernel path ([msa_attention.py:204](https://github.com/huggingface/transformers/blob/main/src/transformers/integrations/msa_attention.py#L204)): `q2k ... .unsqueeze(0).expand(num_kv_heads, -1, -1)` literally broadcasts the same list to every KV head instead of indexing per head.\n\nSo even the kernel path feeds the deployment kernel a head-broadcast selection.\n\n## Proposed fix\n Keep the head axis end-to-end (index head <-> KV head, 1:1):\n- `Indexer.forward`: drop `.amax(dim=1)`, keep `block_scores = [B, H_idx, S_q, num_key_blocks]`, and apply the local-block boost and topk per head -> return `[B, H_idx, S_q, topk]`.\n- `build_block_mask`: scatter per index head and `repeat_interleave(num_q_heads // H_idx, dim=1)` so it returns `[B, num_q_heads, S_q, S_k]`.\n- `_sparse_attention`: replace the `expand(num_kv_heads, \u2026)` with a real per-head reshape, e.g. `q2k = block_indices.permute(1, 0, 2).reshape(num_kv_heads, bsz * q_len, topk)`.\n\nPlus an equivalence test against the reference selection (the overlap metric above is a good basis).\n\nI'm happy to open a PR for this."
+    },
+    {
+      "author": "ArthurZucker",
+      "created_at": "2026-06-19T13:07:51Z",
+      "body": "#46719 fixes this "
+    }
+  ]
+}

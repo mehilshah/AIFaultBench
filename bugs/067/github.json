@@ -1,0 +1,62 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-io",
+  "number": 1147,
+  "html_url": "https://github.com/keras-team/keras-io/issues/1147",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Wrong application of sparse categorical cross entropy loss in tutorial",
+  "author": "Laubeee",
+  "created_at": "2022-12-06T18:25:57Z",
+  "updated_at": "2024-02-07T01:43:41Z",
+  "closed_at": "2024-02-07T01:43:41Z",
+  "labels": [
+    "stale",
+    "stat:awaiting response from contributor",
+    "type:bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 427.3,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:59.923788+00:00",
+  "comments": [
+    {
+      "author": "sachinprasadhs",
+      "created_at": "2023-12-27T23:26:38Z",
+      "body": "Hi,\r\n\r\nThe linked tutorial is to demonstrate the API usage, but not to prove any benchmark results.\r\n\r\nFeel free to to fine-tune the network as per your use case. Thanks!"
+    },
+    {
+      "author": "Laubeee",
+      "created_at": "2024-01-08T23:26:54Z",
+      "body": "phew, it's been a while, and my links to the code seem no longer to point to anything useful unfortunately.\r\n\r\nIf I remember correctly, the tutorial was simply wrong in how it used the data.\r\nIMO it is misleading for a tutorial, especially for the sake of API usage, to use incorrect dimensions resulting in a net that doesn't actually learn something useful, hence I reported this here.\r\n\r\nHowever, I won't pursue this further (i.e. check if the issue still persists) as it's no longer relevant for me."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-01-23T01:47:38Z",
+      "body": "This issue is stale because it has been open for 14 days with no activity. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-02-07T01:43:40Z",
+      "body": "This issue was closed because it has been inactive for 28 days. Please reopen if you'd like to work on this further."
+    }
+  ]
+}

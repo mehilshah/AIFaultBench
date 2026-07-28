@@ -1,0 +1,39 @@
+{
+  "owner": "pytorch",
+  "repo": "rl",
+  "number": 3778,
+  "html_url": "https://github.com/pytorch/rl/issues/3778",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] coding_ppo tutorial: `multiprocessing` import hidden from visible code blocks causes NameError",
+  "author": "Pablomg02",
+  "created_at": "2026-05-18T16:57:53Z",
+  "updated_at": "2026-06-03T16:14:02Z",
+  "closed_at": "2026-06-03T16:14:02Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 15.97,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:13.698343+00:00",
+  "comments": []
+}

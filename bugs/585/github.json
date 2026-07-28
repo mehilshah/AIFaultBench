@@ -1,0 +1,60 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 996,
+  "html_url": "https://github.com/huggingface/accelerate/issues/996",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`accelerate launch` returns exit code `0` on error",
+  "author": "salieri",
+  "created_at": "2023-01-22T18:58:40Z",
+  "updated_at": "2023-02-28T12:54:35Z",
+  "closed_at": "2023-02-28T12:54:35Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 36.75,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:54.845925+00:00",
+  "comments": [
+    {
+      "author": "muellerzr",
+      "created_at": "2023-01-24T19:28:06Z",
+      "body": "@salieri could you provide a little more information for me please? \r\n\r\nI need:\r\n\r\n1. To know what GPU kind you are running on\r\n2. To know what repo has `train_text_to_image.py` :) (e.g. is it diffusers?)\r\n\r\nThanks!"
+    },
+    {
+      "author": "SebastianEndrikat",
+      "created_at": "2023-02-14T01:35:59Z",
+      "body": "A different example that should also exit non-zero:\r\n\r\n```bash\r\nSingularity> accelerate launch /not_a_file.py; echo \"Exit code is: $?\"\r\n/anaconda/bin/python3.9: can't open file '/not_a_file.py': [Errno 2] No such file or directory\r\n/anaconda/bin/python3.9: can't open file '/not_a_file.py': [Errno 2] No such file or directory\r\n/anaconda/bin/python3.9: can't open file '/not_a_file.py': [Errno 2] No such file or directory\r\nERROR:torch.distributed.elastic.multiprocessing.api:failed (exitcode: 2) local_rank: 0 (pid: 223625) of binary: /anaconda/bin/python3.9\r\nExit code is: 0\r\n```\r\n\r\n```bash\r\ncat /anaconda/lib/python3.9/site-packages/accelerate/__init__.py | grep version\r\n__version__ = \"0.14.0\"\r\n```"
+    },
+    {
+      "author": "salieri",
+      "created_at": "2023-02-14T02:11:10Z",
+      "body": "@muellerzr Sorry, missed your question! I noticed that on A100s running [runpod/pytorch](https://hub.docker.com/r/runpod/pytorch) Docker image. But I believe I've seen it on my RTX4090/Windows setup too.\r\n\r\n[train_text_to_image.py](https://github.com/huggingface/diffusers/blob/main/examples/text_to_image/train_text_to_image.py)"
+    },
+    {
+      "author": "psobot",
+      "created_at": "2023-02-16T21:01:39Z",
+      "body": "+1 to this - it looks like [the code in launch.py does `except Exception`, then logs exceptions as they occur but does not propagate the exception upwards](https://github.com/huggingface/accelerate/blob/main/src/accelerate/commands/launch.py#L680-L689):\r\n\r\nhttps://github.com/huggingface/accelerate/blob/b34db0b98743692993288979822f9eabe6098008/src/accelerate/commands/launch.py#L680-L689"
+    }
+  ]
+}

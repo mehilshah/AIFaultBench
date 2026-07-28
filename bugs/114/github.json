@@ -1,0 +1,145 @@
+{
+  "owner": "axolotl-ai-cloud",
+  "repo": "axolotl",
+  "number": 2387,
+  "html_url": "https://github.com/axolotl-ai-cloud/axolotl/issues/2387",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "not_planned",
+  "title": "ImportError: cannot import name 'shard_checkpoint' from 'transformers.modeling_utils' (transformers 4.49.0)",
+  "author": "shing100",
+  "created_at": "2025-03-06T10:43:23Z",
+  "updated_at": "2025-08-02T02:43:14Z",
+  "closed_at": "2025-08-02T02:43:14Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 21,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 148.67,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:09.120000+00:00",
+  "comments": [
+    {
+      "author": "NanoCode012",
+      "created_at": "2025-03-07T11:07:44Z",
+      "body": "@shing100 , hey, could you provide us the stack trace for this? I don't see any explicit calls to that function on our end."
+    },
+    {
+      "author": "NanoCode012",
+      "created_at": "2025-03-07T11:12:42Z",
+      "body": "They had a deprecation warning for a while as well https://github.com/huggingface/transformers/blob/c2820c94916e34baf4486accae74760972183a2f/src/transformers/modeling_utils.py#L400-L403"
+    },
+    {
+      "author": "shing100",
+      "created_at": "2025-03-09T02:07:19Z",
+      "body": "![Image](https://github.com/user-attachments/assets/000d2daf-af56-445a-ae0b-9f1e162326d3)\n\nI used git pull to get it and then installed it. I will delete it again and then install it."
+    },
+    {
+      "author": "shing100",
+      "created_at": "2025-03-10T04:01:49Z",
+      "body": "After updating the repository, multi-GPU learning is using too much memory.\nIt takes 343GB of memory to train an 8B model. This is very wrong.\nPreviously, training a 32B model with H100*16 was possible (Multi-GPU environment(2 nodes) + deepspeed zero3 + liger-kernal), but now it is not possible."
+    },
+    {
+      "author": "NanoCode012",
+      "created_at": "2025-03-10T06:21:38Z",
+      "body": "Looking at the stack trace, are you doing AWQ training?\n\n> After updating the repository, multi-GPU learning is using too much memory.\n> It takes 343GB of memory to train an 8B model. This is very wrong.\n\nDo you perhaps have the logs between which to which commit you were on? Or are able to narrow down to potential offending commits? That's too much memory usage for 8B."
+    },
+    {
+      "author": "shing100",
+      "created_at": "2025-03-10T06:58:32Z",
+      "body": "The first picture above is an error when using the merge method after dpo learning using qlora.\n\n<img width=\"556\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/3518b4bc-b08f-4ab1-b3b8-b0a5f6f9b499\" />\n\nWhen SFT training the 7.8b model with 2 nodes (H100*8), we use a total of 454.08 GiB.\n- Liger-kernal + deepspeed zero3\n- micro batch size 1\n- sequence_len 8192\n\nLearning the 32b model with the same setting results in oom."
+    },
+    {
+      "author": "NanoCode012",
+      "created_at": "2025-03-10T07:09:25Z",
+      "body": "Hey, let's try to tackle the original issue first.\n\nDoes the `shard_checkpoint` issue still exist on merge? Maybe run a training for `max_steps: 10` or with `save_steps: 5` to then get it to merge?\n\nRegarding the second issue, do you have a timeframe from whence you upgraded your codebase from so it's possible to track down this problem?\n"
+    },
+    {
+      "author": "shing100",
+      "created_at": "2025-03-10T09:07:03Z",
+      "body": "The first issue has been resolved since the reinstallation, thank you.\n\nAfter using the v0.5.0 version, I proceeded with the update this time, so tracking is difficult.."
+    },
+    {
+      "author": "NanoCode012",
+      "created_at": "2025-03-10T09:12:27Z",
+      "body": "> The first issue has been resolved since the reinstallation, thank you.\n\nThanks for clarifying.\n\n> After using the v0.5.0 version, I proceeded with the update this time, so tracking is difficult..\n\nThat'll be quite troubling to track as there has been a lot of changes since hmm"
+    },
+    {
+      "author": "shing100",
+      "created_at": "2025-03-10T09:16:54Z",
+      "body": "Then I'll solve it first by rolling back and using it."
+    },
+    {
+      "author": "NanoCode012",
+      "created_at": "2025-03-10T09:22:22Z",
+      "body": "Yep, will recommend keeping the old transformers / peft version if those features work for you!"
+    },
+    {
+      "author": "shing100",
+      "created_at": "2025-03-11T08:57:06Z",
+      "body": "https://github.com/huggingface/trl/issues/2864"
+    },
+    {
+      "author": "winglian",
+      "created_at": "2025-03-11T13:45:18Z",
+      "body": "What base model are you using? MPT? Are you using a pre-quantized base model?"
+    },
+    {
+      "author": "winglian",
+      "created_at": "2025-03-11T13:47:16Z",
+      "body": "Can you share a full YAML configuration? I've been able to SFT a 70B on 2x8xH100 using Zero-3 + liger as well with minimal problems at a sequence length of 16k and batch size or 4."
+    },
+    {
+      "author": "shing100",
+      "created_at": "2025-03-11T23:17:38Z",
+      "body": "I'm learning llamafy models. The same is issue with Qwen2.5.\n\nI'm using the settings below and I'm using zero3.json as the --deepspeed option.\n\nPlease let me know if there is anything wrong with the setting I am using\n\n```\nbase_model: Qwen/Qwen2.5-32B-Instruct\n\nplugins:\n  - axolotl.integrations.liger.LigerPlugin\nliger_rope: true\nliger_rms_norm: true\nliger_glu_activation: true\nliger_fused_linear_cross_entropy: true\n\nstrict: false\n\nchat_template: tokenizer_default\ndatasets:\n  - path: CarrotAI/Korean-Common\n    type: chat_template\n    field_messages: conversations\n    message_property_mappings:\n      role: from\n      content: value\n\n#dataset_exact_deduplication: true\n\ndefault_system_message: \"You are a helpful assistant. Please give a long and detailed answer.\"\ndataset_prepared_path: last_run_prepared\nval_set_size: 0.05\noutput_dir: /output/sft\n\n# 16384, 8192\nsequence_len: 8192\nsample_packing: false\npad_to_sequence_len: true\n\nwandb_project:\nwandb_entity:\nwandb_watch:\nwandb_name: \nwandb_log_model:\n\ngradient_accumulation_steps: 8\nmicro_batch_size: 1\nnum_epochs: 2\noptimizer: adamw_bnb_8bit\nlr_scheduler: cosine\nlearning_rate: 7e-6\n\ntrain_on_inputs: false\ngroup_by_length: false\nbf16: auto\nfp16:\ntf32: false\n\ngradient_checkpointing: true\ngradient_checkpointing_kwargs:\n  use_reentrant: false\nearly_stopping_patience:\nresume_from_checkpoint:\nlogging_steps: 1\nxformers_attention:\nflash_attention: true\n\nwarmup_steps: 100\nevals_per_epoch: 0\neval_table_size:\neval_batch_size:\nsaves_per_epoch: 1\ndebug:\ndeepspeed:\nweight_decay: 0.0\nfsdp:\nfsdp_config:\nspecial_tokens:\n```"
+    },
+    {
+      "author": "shing100",
+      "created_at": "2025-04-27T07:18:40Z",
+      "body": "```\ncache_dir: ~/cache\nenvironment: LOCAL_MACHINE\ndebug: false\ndeepspeed_config:\n  deepspeed_config_file: /data/axolotl/deepspeed_configs/zero3.json\n  deepspeed_hostfile: /data/axolotl/hosts/hostfile\n  deepspeed_multinode_launcher: pdsh\n  zero3_init_flag: true\ndistributed_type: DEEPSPEED\ndowncast_bf16: 'no'\nenable_cpu_affinity: false\nmachine_rank: 0\nmain_process_ip: [main_ip]\nmain_process_port: [main_port]\nmain_training_function: main\nnum_machines: 2\nnum_processes: 16\nrdzv_backend: static\nsame_network: true\ntpu_env: []\ntpu_use_cluster: false\ntpu_use_sudo: false\nuse_cpu: false\n\n```\n\nWould my config file be weird?\nCould you share the config file that works normally?"
+    },
+    {
+      "author": "NanoCode012",
+      "created_at": "2025-04-28T03:36:45Z",
+      "body": "Hey @shing100 , have you tried giving another run from git latest a try again to see if the problem is solved? (Make sure to install the dependencies at the time)"
+    },
+    {
+      "author": "shing100",
+      "created_at": "2025-04-28T05:36:35Z",
+      "body": "It works fine if you run it with yes 0.4.1 version. Or if you run it with cpu_offload in the current version, But it takes a very long time."
+    },
+    {
+      "author": "NanoCode012",
+      "created_at": "2025-04-28T05:38:20Z",
+      "body": "@shing100 , do you mean `0.8.1`? What do you mean by `it goes back`?"
+    },
+    {
+      "author": "shing100",
+      "created_at": "2025-04-28T05:39:13Z",
+      "body": "yes 0.8.1 version"
+    },
+    {
+      "author": "NanoCode012",
+      "created_at": "2025-04-28T05:56:18Z",
+      "body": "@shing100 , sorry, could you remind us, what is the current issue now? It sounds like the original issue is fixed. Do you need to make a separate issue to keep things organized?"
+    }
+  ]
+}

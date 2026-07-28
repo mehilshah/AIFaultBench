@@ -1,0 +1,45 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 39167,
+  "html_url": "https://github.com/jax-ml/jax/issues/39167",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Multi-GPU NCCL collectives fail with \"corrupted comm object detected\" when TensorFlow is imported in the same process (Kaggle T4 x2)",
+  "author": "yassienashrafwasfy",
+  "created_at": "2026-07-15T02:50:52Z",
+  "updated_at": "2026-07-15T16:48:09Z",
+  "closed_at": "2026-07-15T16:48:09Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.58,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:00.983106+00:00",
+  "comments": [
+    {
+      "author": "yassienashrafwasfy",
+      "created_at": "2026-07-15T16:48:09Z",
+      "body": "The Fix at [Issue-4942](https://github.com/google/flax/issues/4942) worked."
+    }
+  ]
+}

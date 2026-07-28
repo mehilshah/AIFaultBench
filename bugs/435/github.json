@@ -1,0 +1,41 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 13930,
+  "html_url": "https://github.com/huggingface/diffusers/issues/13930",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "LTX2 text connectors pass reversed prompt tokens and misplaced registers to the transformer (regression from #13564)",
+  "author": "Boffee",
+  "created_at": "2026-06-12T19:51:42Z",
+  "updated_at": "2026-06-19T02:56:26Z",
+  "closed_at": "2026-06-19T02:56:26Z",
+  "labels": [
+    "bug",
+    "models",
+    "pipelines"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 6.29,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:16.399562+00:00",
+  "comments": []
+}

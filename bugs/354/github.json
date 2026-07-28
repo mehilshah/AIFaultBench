@@ -1,0 +1,39 @@
+{
+  "owner": "facebookresearch",
+  "repo": "detectron2",
+  "number": 2236,
+  "html_url": "https://github.com/facebookresearch/detectron2/issues/2236",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Error when reading images in class GeneralizedRCNNWithTTA",
+  "author": "h2fishcake",
+  "created_at": "2020-11-06T09:21:01Z",
+  "updated_at": "2020-11-08T04:24:20Z",
+  "closed_at": "2020-11-08T04:24:20Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.79,
+  "fix": {
+    "closing_commit": "fc4aa4fb299685a91c17519e8b77e0438d573123",
+    "linked_prs": [],
+    "best_guess_fix_commit": "fc4aa4fb299685a91c17519e8b77e0438d573123",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:30:12.277617+00:00",
+  "comments": []
+}

@@ -1,0 +1,39 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 38125,
+  "html_url": "https://github.com/jax-ml/jax/issues/38125",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "vmap of jit does not work in presence of hi types",
+  "author": "gnecula",
+  "created_at": "2026-06-02T11:01:08Z",
+  "updated_at": "2026-07-03T17:09:27Z",
+  "closed_at": "2026-07-03T17:09:27Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 31.26,
+  "fix": {
+    "closing_commit": "c1a95c69ae7faefd84c3e60c13c926271f05de99",
+    "linked_prs": [],
+    "best_guess_fix_commit": "c1a95c69ae7faefd84c3e60c13c926271f05de99",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:33:25.870198+00:00",
+  "comments": []
+}

@@ -1,0 +1,55 @@
+{
+  "owner": "patrick-kidger",
+  "repo": "equinox",
+  "number": 1156,
+  "html_url": "https://github.com/patrick-kidger/equinox/issues/1156",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`error_if` sometimes raises `ValueError` instead of `EquinoxRuntimeError` depending on execution order",
+  "author": "bonauer-pf",
+  "created_at": "2025-12-22T10:58:21Z",
+  "updated_at": "2026-01-25T00:31:00Z",
+  "closed_at": "2026-01-25T00:30:59Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 33.56,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:13.325759+00:00",
+  "comments": [
+    {
+      "author": "patrick-kidger",
+      "created_at": "2025-12-22T14:16:02Z",
+      "body": "Thanks for the report! This should be fixed in https://github.com/patrick-kidger/equinox/pull/1157. Looks like JAX will sometimes emit a `ValueError` and will sometimes emit a `JaxRuntimeError`.\n\nI seem to recal that this discrepancy could also occur in very old versions of JAX."
+    },
+    {
+      "author": "bonauer-pf",
+      "created_at": "2025-12-22T14:37:44Z",
+      "body": "Incredible, thanks for the super fast response! I've also reported the upstream issue to JAX here: https://github.com/jax-ml/jax/issues/34083\n"
+    },
+    {
+      "author": "patrick-kidger",
+      "created_at": "2026-01-25T00:31:00Z",
+      "body": "Closed in #1157."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2071,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2071",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Parallel Predictive with new-style prng keys",
+  "author": "ludaavics",
+  "created_at": "2025-09-24T12:50:13Z",
+  "updated_at": "2025-09-28T22:05:48Z",
+  "closed_at": "2025-09-28T22:05:48Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 4.39,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:30.099819+00:00",
+  "comments": [
+    {
+      "author": "ludaavics",
+      "created_at": "2025-09-24T13:08:42Z",
+      "body": "I guess a quick work around is to convert to old style keys when calling `predictive`:\n\n```python\nposterior_predictive_samples = posterior_predictive(\n        jax.random.key_data(key),\n        marriage=dset[\"Marriage\"].values,\n        divorce=None,\n    )\n```\n\nAny objections to that as a way to support older version of nunpyro? Any gotcha I might be setting myself up for?"
+    },
+    {
+      "author": "juanitorduz",
+      "created_at": "2025-09-26T07:22:57Z",
+      "body": "Hi @ludaavics , I proposed a fix in https://github.com/pyro-ppl/numpyro/pull/2073 :) Happy to get feedback."
+    }
+  ]
+}

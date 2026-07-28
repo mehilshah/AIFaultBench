@@ -1,0 +1,53 @@
+{
+  "owner": "huggingface",
+  "repo": "safetensors",
+  "number": 439,
+  "html_url": "https://github.com/safetensors/safetensors/issues/439",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Slice loading errors with integer indices",
+  "author": "hct-synth",
+  "created_at": "2024-02-14T11:31:39Z",
+  "updated_at": "2024-02-16T09:14:25Z",
+  "closed_at": "2024-02-16T09:14:25Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 1,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 1,
+    "eyes": 0
+  },
+  "resolution_days": 1.9,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:48.584361+00:00",
+  "comments": [
+    {
+      "author": "hct-synth",
+      "created_at": "2024-02-14T13:25:36Z",
+      "body": "NB: For anyone running into this, the workaround is to use a slice width of one, which resolves the issue:\r\n`print(f.get_slice(\"test\")[0:1, :]) # WORKS`"
+    },
+    {
+      "author": "Narsil",
+      "created_at": "2024-02-14T14:21:32Z",
+      "body": "Thanks a lot for reporting this, I've prepared a fix !\r\n\r\nAnd yes slicing with real slices work, I forgot to add support for real index indexing.\r\nI added support for negative indexing too."
+    },
+    {
+      "author": "hct-synth",
+      "created_at": "2024-02-15T11:06:40Z",
+      "body": "@Narsil - thanks for looking into this! Cool to see a PR so soon."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 10138,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/10138",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "not_planned",
+  "title": "Type hint error for python 3.12.2(?)",
+  "author": "Nokimann",
+  "created_at": "2025-03-24T08:36:25Z",
+  "updated_at": "2026-02-07T09:13:06Z",
+  "closed_at": "2026-02-07T09:13:06Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 320.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:57.432761+00:00",
+  "comments": [
+    {
+      "author": "akihironitta",
+      "created_at": "2025-04-18T09:18:05Z",
+      "body": "I believe this is a limitation by TorchScript since `|` type was not supported by TorchScript (at least in the past), but looking at https://github.com/pytorch/pytorch/pull/109293, it looks like they added support for it in PyTorch 2.2+? Given https://github.com/pytorch/pytorch/pull/109293#issuecomment-1732818938 and TorchScript being not developed actively anymore in favor of `torch.compile`, I'd suggest simply using `Optional`, or probably decorating your method with `torch.jit.unused` should allow you to avoid the error if you'd like to keep using `|`."
+    },
+    {
+      "author": "akihironitta",
+      "created_at": "2026-02-07T09:13:06Z",
+      "body": "Closing this issue because TorchScript has been unmaintained for 3+ years, and PyTorch 2.9 has deprecated its support in favor of PT2 stack."
+    }
+  ]
+}

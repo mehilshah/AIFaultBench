@@ -1,0 +1,58 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 13722,
+  "html_url": "https://github.com/huggingface/diffusers/issues/13722",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "ErnieImageTransformer2DModel does not implement from_single_file",
+  "author": "dxqb",
+  "created_at": "2026-05-11T21:29:10Z",
+  "updated_at": "2026-06-08T10:50:20Z",
+  "closed_at": "2026-06-08T10:50:20Z",
+  "labels": [
+    "bug",
+    "models",
+    "single-file",
+    "feature-request"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 27.56,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:38.472936+00:00",
+  "comments": [
+    {
+      "author": "akshan-main",
+      "created_at": "2026-05-12T05:30:31Z",
+      "body": "The class still inherits `(ModelMixin, ConfigMixin, PeftAdapterMixin)` without `FromOriginalModelMixin`, matching Flux/Chroma's pattern will fix this. Can I take it? @sayakpaul @DN6 \n"
+    },
+    {
+      "author": "akshan-main",
+      "created_at": "2026-05-12T07:25:21Z",
+      "body": "tested on colab using \n\n```python\n\n!rm -rf /content/diffusers\n!git clone --depth=1 https://github.com/huggingface/diffusers.git /content/diffusers\n!pip uninstall -y diffusers -q\n!pip install -e /content/diffusers -q\n!pip install -q transformers accelerate safetensors\n\n# apply two-file patch\nimport pathlib\n\n# Patch 1: transformer class \u2014 add FromOriginalModelMixin\ntp = pathlib.Path(\"/content/diffusers/src/diffusers/models/transformers/transformer_ernie_image.py\")\nsrc = tp.read_text()\nOLD_IMPORT = \"from ..modeling_utils import ModelMixin\"\nNEW_IMPORT = \"from ...loaders import FromOriginalModelMixin\\nfrom ..modeling_utils import ModelMixin\"\nOLD_CLASS = \"class ErnieImageTransformer2DModel(ModelMixin, ConfigMixin, PeftAdapterMixin):\"\nNEW_CLASS = \"class ErnieImageTransformer2DModel(ModelMixin, ConfigMixin, PeftAdapterMixin, FromOriginalModelMixin):\"\nassert OLD_IMPORT in src and OLD_CLASS in src\ntp.write_text(src.replace(OLD_IMPORT, NEW_IMPORT).replace(OLD_CLASS, NEW_CLASS))\n\n# Patch 2: add a minimal converter in single_file_utils.py\nsfu = pathlib.Path(\"/content/diffusers/src/diffusers/loaders/single_file_utils.py\")\nsrc = sfu.read_text()\nCONVERTER = '''\n\ndef convert_ernie_image_transformer_checkpoint_to_diffusers(checkpoint, **kwargs):\n    converted = {}\n    for k in list(checkpoint.keys()):\n        new_k = k.replace(\"model.diffusion_model.\", \"\")\n        converted[new_k] = checkpoint.pop(k)\n    return converted\n'''\nassert \"convert_ernie_image_transformer_checkpoint_to_diffusers\" not in src\nsfu.write_text(src + CONVERTER)\n\n# Patch 3: register in single_file_model.py\nsf = pathlib.Path(\"/content/diffusers/src/diffusers/loaders/single_file_model.py\")\nsrc = sf.read_text()\nOLD_IMPORTS = \"from .single_file_utils import (\"\nNEW_IMPORTS = OLD_IMPORTS + \"\\n    convert_ernie_image_transformer_checkpoint_to_diffusers,\"\nassert OLD_IMPORTS in src and \"convert_ernie_image_transformer_checkpoint_to_diffusers\" not in src\nsrc = src.replace(OLD_IMPORTS, NEW_IMPORTS)\nOLD_REG = '''    \"ChromaTransformer2DModel\": {\n        \"checkpoint_mapping_fn\": convert_chroma_transformer_checkpoint_to_diffusers,\n        \"default_subfolder\": \"transformer\",\n    },'''\nNEW_REG = OLD_REG + '''\n    \"ErnieImageTransformer2DModel\": {\n        \"checkpoint_mapping_fn\": convert_ernie_image_transformer_checkpoint_to_diffusers,\n        \"default_subfolder\": \"transformer\",\n    },'''\nassert OLD_REG in src\nsrc = src.replace(OLD_REG, NEW_REG)\nsf.write_text(src)\nprint(\"patched (3 files)\")\n\n\n# force-load patched diffusers, run round-trip test\nimport sys, torch\nsys.path.insert(0, \"/content/diffusers/src\")\nfor m in list(sys.modules):\n    if m == \"diffusers\" or m.startswith(\"diffusers.\"):\n        del sys.modules[m]\n\nfrom diffusers import ErnieImageTransformer2DModel\nfrom safetensors.torch import save_file\n\nprint(\"loading sharded checkpoint...\")\nref = ErnieImageTransformer2DModel.from_pretrained(\n    \"baidu/ERNIE-Image\", subfolder=\"transformer\", torch_dtype=torch.bfloat16\n)\nprint(\"loaded, params:\", sum(p.numel() for p in ref.parameters()))\n\nsingle_path = \"/content/ernie_transformer_single.safetensors\"\nsave_file(ref.state_dict(), single_path)\nprint(f\"saved: {single_path}\")\n\nprint(\"loading via from_single_file...\")\nloaded = ErnieImageTransformer2DModel.from_single_file(\n    single_path,\n    config=\"baidu/ERNIE-Image\",\n    subfolder=\"transformer\",\n    torch_dtype=torch.bfloat16,\n)\nprint(\"loaded, params:\", sum(p.numel() for p in loaded.parameters()))\n\nref_sd, loaded_sd = ref.state_dict(), loaded.state_dict()\nkeys_match = set(ref_sd.keys()) == set(loaded_sd.keys())\nsample_key = next(iter(ref_sd))\ntensors_equal = torch.equal(ref_sd[sample_key], loaded_sd[sample_key])\nprint(f\"\\nkey match: {keys_match}\")\nprint(f\"sample tensor '{sample_key}' equal: {tensors_equal}\")\nprint(\"\\nROUND-TRIP OK\" if (keys_match and tensors_equal) else \"MISMATCH - converter needed\")\n\n```\n\n```\noutput: ROUND-TRIP OK\n```\n\ncan apply the same fix"
+    },
+    {
+      "author": "sayakpaul",
+      "created_at": "2026-05-12T07:26:41Z",
+      "body": "Feel free to take it! Thank you."
+    }
+  ]
+}

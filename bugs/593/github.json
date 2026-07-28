@@ -1,0 +1,45 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 9897,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/9897",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "not_planned",
+  "title": "cannot import name 'BaseData' from 'torch_geometric.data.data'",
+  "author": "MothingAI",
+  "created_at": "2024-12-27T10:57:01Z",
+  "updated_at": "2024-12-28T18:21:29Z",
+  "closed_at": "2024-12-28T18:21:29Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.31,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:06.210364+00:00",
+  "comments": [
+    {
+      "author": "MothingAI",
+      "created_at": "2024-12-27T11:55:51Z",
+      "body": "I tried restarting Anaconda, and the problem was successfully solved."
+    }
+  ]
+}

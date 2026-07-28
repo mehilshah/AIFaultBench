@@ -1,0 +1,96 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7905,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7905",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] SuperOffload Fails when having more than one optimizer group",
+  "author": "Mahmoud363",
+  "created_at": "2026-03-14T12:22:48Z",
+  "updated_at": "2026-03-26T11:26:04Z",
+  "closed_at": "2026-03-26T11:26:04Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 11,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 11.96,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:29.070044+00:00",
+  "comments": [
+    {
+      "author": "xylian86",
+      "created_at": "2026-03-14T18:13:47Z",
+      "body": "@Mahmoud363 Thank you for raising this issue. I\u2019m working on it and will open a PR to address it."
+    },
+    {
+      "author": "xylian86",
+      "created_at": "2026-03-15T04:24:46Z",
+      "body": "@Mahmoud363 I have opened a PR (https://github.com/deepspeedai/DeepSpeed/pull/7906) to address it. Could you please test it on your side with this version?\n\nAlso, could you share your use case for SuperOffload? For example, are you using it for pre-training, fine-tuning, or just benchmarking?"
+    },
+    {
+      "author": "Mahmoud363",
+      "created_at": "2026-03-15T12:23:52Z",
+      "body": "@xylian86 Thanks for your fast response.\nI am mainly trying it now for benchmarking and will later use it for finetuning.\n\nWhen I try the PR, it gives me this error:\n```\n[rank3]:   File \"../python3.12/site-packages/deepspeed/runtime/superoffload/superoffload_stage3.py\", line 208, in partition_grads\n[rank3]:     fp32_grad_tensor.copy_(concatenated_buffer, non_blocking=True)\n[rank3]: RuntimeError: The size of tensor a (130280) must match the size of tensor b (129704) at non-singleton dimension 0\n```\n\nI think this is because in the code, when multiple parameters belong to the same sub-group, their grad partitions are placed at specific offsets within the flat buffer (fp32_param.grad) and these offsets aren't necessarily contiguous.\n\nNot sure if this is the intended behaviour and it's an issue with my config or it's another thing that requires modifying."
+    },
+    {
+      "author": "xylian86",
+      "created_at": "2026-03-15T17:07:39Z",
+      "body": "Hi @Mahmoud363, I tried the Qwen3-4B model on a GH200x4 node using the same settings as yours, but I was unable to reproduce the issue you encountered. Could you share the script and ds_config you are using to reproduce the issue?\n\nAlso, based on the error log, the error occurs at line 208. However, in the PR version, line 208 is not the copy operation shown in your stack trace. Did you modify the code there?\n\nhttps://github.com/deepspeedai/DeepSpeed/blob/3d8ecb595e0fb8896c2f74f76ae2fc1963f35da1/deepspeed/runtime/superoffload/superoffload_stage3.py#L208\n\n\n\n> I am mainly trying it now for benchmarking and will later use it for finetuning.\n\nGlad to hear that. Please feel free to let me know if you run into any issues while using SuperOffload.\n\n"
+    },
+    {
+      "author": "Mahmoud363",
+      "created_at": "2026-03-15T18:13:53Z",
+      "body": "```\n[rank3]:   File \"env/lib/python3.12/site-packages/deepspeed/runtime/zero/stage3.py\", line 1423, in __reduce_and_partition_ipg_grads\n[rank3]:     self.partition_grads(params_in_bucket, grad_partitions)\n[rank3]:   File \"env/lib/python3.12/site-packages/deepspeed/utils/nvtx.py\", line 20, in wrapped_fn\n[rank3]:     ret_val = func(*args, **kwargs)\n[rank3]:               ^^^^^^^^^^^^^^^^^^^^^\n[rank3]:   File \"env/lib/python3.12/site-packages/deepspeed/runtime/superoffload/superoffload_stage3.py\", line 231, in partition_grads\n[rank3]:     fp32_grad_tensor.copy_(concatenated_buffer, non_blocking=True)\n[rank3]: RuntimeError: The size of tensor a (130280) must match the size of tensor b (129704) at non-singleton dimension 0\n```\n\nthis is the full trace. I don't remember why the line pointed to the wrong one earlier but this is the output with the current PR.\n\nFor this run, I mainly tried changing the sub_group_size but the same persists with 1e9.\n```\n    \"zero_optimization\": {\n        \"stage\": 3,\n        \"overlap_comm\": false,\n        \"reduce_bucket_size\": 4e8,\n        \"sub_group_size\": 4e8,\n        \"offload_optimizer\": {\n            \"device\": \"cpu\",\n            \"pin_memory\": true,\n            \"ratio\": 0.90,\n            \"super_offload\": true,\n            \"cpuadam_cores_perc\": 0.90\n        }\n    },\n```\n\nRegarding reproducing. Apologies for not mentioning it earlier but i am specifically running the llava repo finetuning script (https://github.com/LLaVA-VL/LLaVA-NeXT/blob/main/scripts/video/train/SO400M_Qwen2_7B_ov_to_video_am9.sh) with only one learning rate for the whole model (vision tower and mlp adapter learning rate are disabled) while modifying the zero config file\n\nGiven that it is a multimodal scenario, the partions in the sub_group may not be contiguous  compared to the case of Qwen3-4B. \n\n\nTo overcome this point, i applied a monkey patch to this function as follows to copy each gradient separately:\n```\n    @instrument_w_nvtx\n    def partition_grads(self, params_to_release: List[Parameter], grad_partitions: List[Tensor]) -> None:\n        # FIX: Track per-partition offsets instead of min/max span.\n        # Original used buffer_numel_min/max to narrow a contiguous span, but\n        # padding gaps between parameters made the span larger than the\n        # concatenated data, causing a size mismatch RuntimeError.\n        grad_info_by_subgroup = {}  # i -> [(dest_offset, grad_partition), ...]\n\n        for param, grad_partition in zip(params_to_release, grad_partitions):\n            i, dest_offset, _ = self.grad_position[self.get_param_id(param)]\n\n            if self.is_gradient_accumulation_boundary:\n                self.norm_for_param_grads[self.get_param_id(param)] = self._constant_buffered_norm2(grad_partition)\n\n            if i not in grad_info_by_subgroup:\n                grad_info_by_subgroup[i] = []\n            grad_info_by_subgroup[i].append((dest_offset, grad_partition))\n\n        if self.is_gradient_accumulation_boundary:\n            for i, grad_infos in grad_info_by_subgroup.items():\n                fp32_grad = self.fp32_partitioned_groups_flat[i].grad\n\n                if self.subgroup_to_device[i] == 'cpu':\n                    param_group_id = self.sub_group_to_group_id[i]\n                    fp32_param = self.fp32_partitioned_groups_flat[i]\n\n                    # FIX: Copy each partition to its exact offset (handles gaps)\n                    # Original: fp32_grad_tensor = narrow(min, max-min)  \u2190 includes gaps\n                    #           concatenated_buffer = cat(partitions)    \u2190 no gaps\n                    #           fp32_grad_tensor.copy_(concatenated_buffer) \u2190 SIZE MISMATCH\n                    for dest_offset, grad_partition in grad_infos:\n                        fp32_grad.narrow(0, dest_offset, grad_partition.numel()).copy_(\n                            grad_partition.to(dtype=self.master_weights_and_grads_dtype), non_blocking=True)\n\n                    # FIX: Send full flat grad (same size as fp32_param.data) to worker\n                    # Original sent concatenated_buffer.data which was smaller\n                    self.superoffload_cpu_optimizer.async_step(param_group_id, i, fp32_param.data,\n                                                               fp32_param.grad.data)\n                    self.async_cpuadam_num += 1\n\n                    result = self.superoffload_cpu_optimizer.get_result()\n                    if result is not None:\n                        self._reassign_or_swap_out_partitioned_parameters_async(result[TaskKeys.SUB_GROUP_ID],\n                                                                                result[ResultKeys.UPDATED_PARAM])\n                        self.async_cpuadam_num -= 1\n\n                else:\n                    # FIX: Same per-partition copy for non-CPU subgroups\n                    for dest_offset, grad_partition in grad_infos:\n                        fp32_grad.narrow(0, dest_offset, grad_partition.numel()).copy_(\n                            grad_partition.to(dtype=self.master_weights_and_grads_dtype), non_blocking=True)\n\n        # Clean up parameter gradients\n        for param in params_to_release:\n            if not get_accelerator().is_synchronized_device():\n                param.grad.record_stream(get_accelerator().current_stream())\n            param.grad = None\n```\n\nThis works for the 7B case but not sure if there is a better way to handle it."
+    },
+    {
+      "author": "xylian86",
+      "created_at": "2026-03-16T00:36:46Z",
+      "body": "@Mahmoud363  thank you for sharing the reproducible example. The previous SuperOffload implementation does not support the cases where some parameters do not have gradients, such as in multimodal scenarios. I have updated the branch to support this case.\n\nCould you pull and test https://github.com/deepspeedai/DeepSpeed/pull/7906? It has passed on my side using the script you shared, but please let me know if you encounter any other issues."
+    },
+    {
+      "author": "Mahmoud363",
+      "created_at": "2026-03-16T20:51:49Z",
+      "body": "@xylian86  While the original two errors are now fixed. The first training still fails on my side and gives the following error:\n```\n[rank0]:   File \"env/lib/python3.12/site-packages/accelerate/utils/deepspeed.py\", line 281, in backward\n[rank0]:     self.engine.step()\n[rank0]:   File \"env/lib/python3.12/site-packages/deepspeed/runtime/engine.py\", line 2771, in step\n[rank0]:     self._take_model_step(lr_kwargs)\n[rank0]:   File \"env/lib/python3.12/site-packages/deepspeed/runtime/engine.py\", line 2666, in _take_model_step\n[rank0]:     self.optimizer.step()\n[rank0]:   File \"env/lib/python3.12/site-packages/deepspeed/utils/nvtx.py\", line 20, in wrapped_fn\n[rank0]:     ret_val = func(*args, **kwargs)\n[rank0]:               ^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"env/lib/python3.12/site-packages/deepspeed/runtime/superoffload/superoffload_stage3.py\", line 296, in step\n[rank0]:     self._handle_gradient_clipping(scaled_global_grad_norm)\n[rank0]:   File \"env/lib/python3.12/site-packages/deepspeed/runtime/superoffload/superoffload_stage3.py\", line 389, in _handle_gradient_clipping\n[rank0]:     self._sync_cpu_optimizer_step(sub_group_id, rollback=True)\n[rank0]:   File \"env/lib/python3.12/site-packages/deepspeed/runtime/superoffload/superoffload_stage3.py\", line 375, in _sync_cpu_optimizer_step\n[rank0]:     self._wait_for_single_async_result(event_type, timeout_seconds)\n[rank0]:   File \"env/lib/python3.12/site-packages/deepspeed/runtime/superoffload/superoffload_stage3.py\", line 357, in _wait_for_single_async_result\n[rank0]:     result = self.superoffload_cpu_optimizer.get_result(expected_event_type=event_type)\n[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"env/lib/python3.12/site-packages/deepspeed/runtime/superoffload/superoffload_utils.py\", line 221, in get_result\n[rank0]:     raise RuntimeError(f\"Error in worker process: {result['error']}\")\n[rank0]: RuntimeError: Error in worker process: Unexpected error in worker process: Cannot rollback optimizer state for sub_group_id 0 as it has not been initialized.\n```\n\ncould this have to with section 4.4 of the paper regarding:\n\"gradient clipping and normalization are deferred to occur during CPU idle periods, concurrent with the GPU executing the forward pass for the next iteration. \"\n\nIf gradient clipping is triggered on the first step and gradients aren't ready, could it be causing this issue?  \nI am not sure if this is the normal behavior and the issue is why the gradients are not ready by that point or something else is causing it.\n"
+    },
+    {
+      "author": "Mahmoud363",
+      "created_at": "2026-03-18T13:04:21Z",
+      "body": "The rollback issue is due to gradient clipping being triggered at the first step which is expected to fail as there is no state to revert to. \nIf I disable the gradient clipping, I get the following issue with a duplicated parameter in one of the buckets:\nDebug output:\n```\n[15:26:57.012849] [DEBUG] Duplicate ds_id=505, param_name=model.layers.4.mlp.up_proj.weight, grad is None: False, bucket size: 43\n```\nError:\n```\n[rank1]:   File \"env/lib/python3.12/site-packages/deepspeed/utils/nvtx.py\", line 20, in wrapped_fn\n[rank1]:     ret_val = func(*args, **kwargs)\n[rank1]:               ^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"env/lib/python3.12/site-packages/torch/utils/_contextlib.py\", line 120, in decorate_context\n[rank1]:     return func(*args, **kwargs)\n[rank1]:            ^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"env/lib/python3.12/site-packages/deepspeed/runtime/zero/stage3.py\", line 1412, in __reduce_and_partition_ipg_grads\n[rank1]:     assert len(set(p.ds_id for p in params_in_bucket)) == len(params_in_bucket), f'{len(set(p.ds_id for p in params_in_bucket))}, {len(params_in_bucket)}'\n[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]: AssertionError: 42, 43\n```\n\nFrom my debugging, it seems that the issue comes from reduce_independent_p_g_buckets_and_remove_grads but I haven't been able to fully understand why it is the case.\n\nThis is obtained when running the LLaVA video script with the base LLM being Qwen2-7B and the ViT being Siglip. The projector is initialized from scratch and the rest of the model isn't aligned with visual modality yet, so it explains the gradient clipping being triggered.  "
+    },
+    {
+      "author": "xylian86",
+      "created_at": "2026-03-18T14:48:53Z",
+      "body": "Thank you for the detailed information. I am working on it and hope to have it resolved shortly."
+    },
+    {
+      "author": "xylian86",
+      "created_at": "2026-03-22T15:10:09Z",
+      "body": "@Mahmoud363 The newest version of the PR should solve the issue, could you pull and test https://github.com/deepspeedai/DeepSpeed/pull/7906?"
+    },
+    {
+      "author": "Mahmoud363",
+      "created_at": "2026-03-26T11:26:04Z",
+      "body": "@xylian86  I tested it on both 7B and 32B models. Both cases are working smoothly on my side as well and with the loss converging in a similar way as the sync and no offloading version.\nThanks for your help."
+    }
+  ]
+}

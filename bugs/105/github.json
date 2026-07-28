@@ -1,0 +1,123 @@
+{
+  "owner": "lucidrains",
+  "repo": "vector-quantize-pytorch",
+  "number": 142,
+  "html_url": "https://github.com/lucidrains/vector-quantize-pytorch/issues/142",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Residual VQ - self.embed.data[ind][mask] = sampled - RuntimeError: shape mismatch: ",
+  "author": "dwromero",
+  "created_at": "2024-06-25T11:37:29Z",
+  "updated_at": "2024-07-25T11:21:43Z",
+  "closed_at": "2024-07-25T11:21:43Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 17,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 29.99,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:54.251540+00:00",
+  "comments": [
+    {
+      "author": "lucidrains",
+      "created_at": "2024-06-25T15:58:09Z",
+      "body": "@dwromero hey David! want to try setting [this](https://github.com/lucidrains/vector-quantize-pytorch/commit/013ff8481f115611d15a0bc850dad7dc0fbf4711#diff-8bcd9c958b614ce130dc4091c094d4cfcc2023716823c181e3a9edaddbcd433dR733) to `False` for now and see if that resolves your issue?"
+    },
+    {
+      "author": "dwromero",
+      "created_at": "2024-06-26T09:13:00Z",
+      "body": "Hi @lucidrains , thank you for your fast reply. I'll try it out now. \r\n\r\nDavid"
+    },
+    {
+      "author": "dwromero",
+      "created_at": "2024-06-27T10:17:22Z",
+      "body": "@lucidrains, it works now! I do not know if this is a full solution to the problem though. Please let me know if you feel this is the case and I can close the issue."
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-06-27T13:00:18Z",
+      "body": "@dwromero nice! at least it doesn't block you from your research now!\r\n\r\nif you'd like to help me get to the bottom of this, you could turn it back to `True` in 1.14.40 and share with me the stack trace once it errors again"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-06-27T13:31:08Z",
+      "body": "@dwromero the other thing that would be helpful (if you have the time), is to run it with only one quantizer and see if it still errors \ud83d\ude4f "
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-06-28T02:08:57Z",
+      "body": "@dwromero hey David, realized just now the local sampling won't work, as the codes will no longer be synced\r\n\r\ncould you try again on the latest?"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-06-29T02:39:31Z",
+      "body": "@dwromero hey David again\r\n\r\nso I think your error may be related to an issue with the quantize dropout in a distributed environment, which would also make the above solution not work. i put in a potential fix, if you are still running experiments"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-06-29T17:33:59Z",
+      "body": "another way to avoid this issue is to offer a way to delay the expiration of the codes until all the quantizers have been invoked"
+    },
+    {
+      "author": "dwromero",
+      "created_at": "2024-07-01T09:47:31Z",
+      "body": "Hi @lucidrains,\r\n\r\nSo, just to clarify, I should be able to run with the same configurations as in the formulation of this thread and it should work now? Would you like me to check that?"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-07-03T14:51:25Z",
+      "body": "@dwromero yes please! \ud83d\ude4f "
+    },
+    {
+      "author": "dwromero",
+      "created_at": "2024-07-09T11:00:43Z",
+      "body": "@lucidrains It's still not working. I get this now:\r\n\r\n```\r\n   z_tilde, _, commit_loss = self.vq(z)\r\n  File \"/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py\", line 1510, in _wrapped_call_impl\r\n    return self._call_impl(*args, **kwargs)\r\n  File \"/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py\", line 1519, in _call_impl\r\n    return forward_call(*args, **kwargs)\r\n  File \"/usr/local/lib/python3.10/dist-packages/vector_quantize_pytorch/residual_vq.py\", line 175, in forward\r\n    dropout_seed = dist.all_reduce(t).item()\r\n  File \"/usr/local/lib/python3.10/dist-packages/torch/distributed/c10d_logger.py\", line 72, in wrapper\r\n    return func(*args, **kwargs)\r\n  File \"/usr/local/lib/python3.10/dist-packages/torch/distributed/distributed_c10d.py\", line 2087, in all_reduce\r\n    work = group.allreduce([tensor], opts)\r\nRuntimeError: No backend type associated with device type cpu\r\n```"
+    },
+    {
+      "author": "dwromero",
+      "created_at": "2024-07-09T12:02:38Z",
+      "body": "@lucidrains Do you have any recommendation for now? \r\n\r\n@lucidrains I got rid of the problem for now by disabling code dropout. The problem is in the part of the `should_quantize_dropout` block:\r\n\r\n```\r\n           elif is_distributed():\r\n                # in distributed environment, synchronize a random seed value if not given\r\n                t = torch.tensor(random.randrange(10_000))\r\n                dropout_seed = dist.all_reduce(t).item()\r\n                rand = random.Random(dropout_seed)\r\n```\r\n"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-07-09T12:54:00Z",
+      "body": "@dwromero oops! one more time?"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-07-09T12:54:15Z",
+      "body": "almost there :smile: "
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-07-12T16:02:58Z",
+      "body": "@dwromero works?"
+    },
+    {
+      "author": "dwromero",
+      "created_at": "2024-07-25T08:37:48Z",
+      "body": "Hi @lucidrains. Sorry for the long delay. It seems to work now! :) \r\n\r\nThank you!"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-07-25T11:21:40Z",
+      "body": "nice! happy training!"
+    }
+  ]
+}

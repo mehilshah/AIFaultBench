@@ -1,0 +1,66 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 10986,
+  "html_url": "https://github.com/tensorflow/models/issues/10986",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "tf-models-official==2.12.0 conflicts python 3.8 \"TypeError: unsupported operand type(s) for |: 'dict' and 'dict'\"",
+  "author": "Wjppppp",
+  "created_at": "2023-04-27T09:44:20Z",
+  "updated_at": "2023-07-31T13:28:37Z",
+  "closed_at": "2023-04-28T14:09:12Z",
+  "labels": [
+    "type:bug",
+    "models:official"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 2,
+    "+1": 2,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.18,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:44.613122+00:00",
+  "comments": [
+    {
+      "author": "Wjppppp",
+      "created_at": "2023-04-28T14:09:12Z",
+      "body": "I solved it by updating to python3.10 and ubuntu22.04. But this bug still needs to be solved for tfm-official-model==2.12.0 and python==3.8."
+    },
+    {
+      "author": "google-ml-butler[bot]",
+      "created_at": "2023-04-28T14:09:14Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=Yes&entry.2137816233=https://github.com/tensorflow/models/issues/10986\">Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=No&entry.2137816233=https://github.com/tensorflow/models/issues/10986\">No</a>\n"
+    },
+    {
+      "author": "laxmareddyp",
+      "created_at": "2023-04-28T15:21:13Z",
+      "body": "@Wjppppp,\r\n\r\nYes it is working on latest python version and we were trying yesterday to replicate the issue on python version 3.8 with tfm-official-model==2.12.0, if it is  reproducible on python 3.8 ,then we will give a fix for it .\r\n\r\nThanks."
+    },
+    {
+      "author": "jaehanjaehan",
+      "created_at": "2023-07-31T06:43:15Z",
+      "body": "i have same problem.  my environment is Ubuntu 20.04, python 3.8.10(automatically installed while build docker image)\r\nbuild from tensorflow:2.13.0-gpu docker image.\r\n\r\nthis is my dockerfile. I copied the requirements from the git clone models.git and using it.\r\nFROM tensorflow/tensorflow:2.13.0-gpu\r\n\r\nENV PYTHONPATH \"${PYTHONPATH}:/app/models\"\r\nWORKDIR /app\r\nRUN pip install --upgrade pip\r\nCOPY requirements.txt /tmp/requirements.txt\r\nRUN pip3 install --user -r /tmp/requirements.txt\r\nRUN pip3 install tensorflow-text-nightly\r\nRUN pip install -U jupyterlab\r\nRUN apt-get update \r\nRUN apt install -y libgl1-mesa-glx\r\nRUN apt install -y git-all\r\nRUN pip install funcy\r\nShould I have to upgrade the python version or downgrade the tensorflow docker image to 2.12?\r\nIf I have to upgrade a python version, would it be better to install tensorflow from the python docker image? and also recommend a Python version"
+    },
+    {
+      "author": "Wjppppp",
+      "created_at": "2023-07-31T13:28:37Z",
+      "body": "> i have same problem. my environment is Ubuntu 20.04, python 3.8.10(automatically installed while build docker image) build from tensorflow:2.13.0-gpu docker image.\r\n> \r\n> this is my dockerfile. I copied the requirements from the git clone models.git and using it. FROM tensorflow/tensorflow:2.13.0-gpu\r\n> \r\n> ENV PYTHONPATH \"${PYTHONPATH}:/app/models\" WORKDIR /app RUN pip install --upgrade pip COPY requirements.txt /tmp/requirements.txt RUN pip3 install --user -r /tmp/requirements.txt RUN pip3 install tensorflow-text-nightly RUN pip install -U jupyterlab RUN apt-get update RUN apt install -y libgl1-mesa-glx RUN apt install -y git-all RUN pip install funcy Should I have to upgrade the python version or downgrade the tensorflow docker image to 2.12? If I have to upgrade a python version, would it be better to install tensorflow from the python docker image? and also recommend a Python version\r\n\r\n\r\nI had a dockerfile built with python 3.10 + tensorflow 2.12.0 + tf-models-official==2.12.0 you may want to try:\r\nhttps://github.com/Wjppppp/TF2_Object_Detection_Docker"
+    }
+  ]
+}

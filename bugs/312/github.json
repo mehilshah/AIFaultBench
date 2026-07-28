@@ -1,0 +1,70 @@
+{
+  "owner": "PythonOT",
+  "repo": "POT",
+  "number": 82,
+  "html_url": "https://github.com/PythonOT/POT/issues/82",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Gromov-Wasserstein fails when the cost matrices are slightly different ",
+  "author": "devmessias",
+  "created_at": "2019-05-06T22:59:05Z",
+  "updated_at": "2019-06-04T09:57:20Z",
+  "closed_at": "2019-06-04T09:57:20Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 28.46,
+  "fix": {
+    "closing_commit": "5a6b226de20624b51c2ff98bc30e5611a7a788c7",
+    "linked_prs": [],
+    "best_guess_fix_commit": "5a6b226de20624b51c2ff98bc30e5611a7a788c7",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:29:09.166939+00:00",
+  "comments": [
+    {
+      "author": "rflamary",
+      "created_at": "2019-05-07T06:12:11Z",
+      "body": "Hello, thank you for reporting this detailed and precise bug.\r\n\r\nI think it might come from the fact that we test convergence only in terms of relative variation of the loss that actually never changes for cases with same (or too similar) cost matrices and we never erah conevrgence.\r\n\r\nyou can see the test here:\r\nhttps://github.com/rflamary/POT/blob/master/ot/optim.py#L188\r\n\r\nFor a quick and dirty patch if you need it you can do as @tvayer did here\r\nhttps://github.com/tvayer/FGW/blob/master/lib/optim.py#L253\r\nand replace the relative loss variation by the loss variation.\r\n\r\nWe plan on implementing this (at least add another threshold for non-relative variation) in the future but it will have to wait for the NeurIPS deadline i'm afraid.\r\n\r\n\r\n"
+    },
+    {
+      "author": "devmessias",
+      "created_at": "2019-05-07T19:20:29Z",
+      "body": "Thanks! This  worked for me. However, I'm having the same convergence issues for other cases, even using this \"dirty patch\"\r\n\r\nDistance_matrix_0\r\n![image](https://user-images.githubusercontent.com/6979335/57326407-ce71e000-70e2-11e9-8151-9c5b4f32f021.png)\r\nDistance_matrix_1\r\n![image](https://user-images.githubusercontent.com/6979335/57326379-c023c400-70e2-11e9-9a9b-3209b1acd584.png)\r\nDistance_matrix_2\r\n![image](https://user-images.githubusercontent.com/6979335/57326432-dd589280-70e2-11e9-83b9-147307cfd8c0.png)\r\n\r\nThe GW implementation works for  [0,2], [1,2] but not for [0,1].\r\n\r\n```\r\n---------------------------------------------------------------------------\r\nTypeError                                 Traceback (most recent call last)\r\n<ipython-input-77-71f5a2aaa52c> in <module>()\r\n----> 1 get_gromov_dist(dists[0], dists[1])\r\n\r\n<ipython-input-76-9c4bb904dd5f> in get_gromov_dist(dist1, dist2)\r\n     85     #try:\r\n     86     gw0, log0 = ot.gromov.gromov_wasserstein(\r\n---> 87         dist1, dist2, p, q, 'square_loss', verbose=False, log=True,)\r\n     88     dist = log0[\"gw_dist\"]\r\n     89     #except:\r\n\r\n~/.local/lib/python3.4/site-packages/POT-0.5.1-py3.4-linux-x86_64.egg/ot/gromov.py in gromov_wasserstein(C1, C2, p, q, loss_fun, log, **kwargs)\r\n    343 \r\n    344     if log:\r\n--> 345         res, log = cg(p, q, 0, 1, f, df, G0, log=True, **kwargs)\r\n    346         log['gw_dist'] = gwloss(constC, hC1, hC2, res)\r\n    347         return res, log\r\n\r\n~/.local/lib/python3.4/site-packages/POT-0.5.1-py3.4-linux-x86_64.egg/ot/optim.py in cg(a, b, M, reg, f, df, G0, numItermax, stopThr, verbose, log)\r\n    180         alpha, fc, f_val = line_search_armijo(cost, G, deltaG, Mi, f_val)\r\n    181 \r\n--> 182         G = G + alpha * deltaG\r\n    183 \r\n    184         # test convergence\r\n\r\nTypeError: unsupported operand type(s) for *: 'NoneType' and 'float'\r\n```"
+    },
+    {
+      "author": "tvayer",
+      "created_at": "2019-05-08T06:58:15Z",
+      "body": "Hello, \r\nI may have missed something but based on your error I don't think you are using the right \"dirty patch\".\r\nYou can use https://github.com/tvayer/FGW/blob/master/lib/optim.py, check out the function do_linesearch which uses wether line_search_amijo (that fails in your case) or a linesearch method based on a closed form expression. \r\nYou juste have to feed the cg method with C1,C2 and constC and to set \"amijo=False\" to use the dirty patch.\r\nBoth methods do not come with same results because amijo approximates the function \r\n\r\nHope it helps"
+    },
+    {
+      "author": "devmessias",
+      "created_at": "2019-05-08T15:53:12Z",
+      "body": "Hi @tvayer! You're right. \r\n\r\nI didn't read your recent work about the Fused GW distance, looks  realy cool! But what is the meaning of constC matrix? \r\n\r\nReading your code I saw the folowing lines. \r\nhttps://github.com/tvayer/FGW/blob/8c848845075d3c6a30066dcccec29c82eb55dead/lib/FGW.py#L53-L72\r\n\r\nBut I don't get. I can just copy-and-paste that in my code?"
+    },
+    {
+      "author": "tvayer",
+      "created_at": "2019-05-08T16:04:52Z",
+      "body": "Thanks ! \r\n\r\nThe constC matrix is defined eq (6) in https://www.archives-ouvertes.fr/hal-01322992/document. It is used to compute the tensor product used in gromov.\r\n\r\nFor your code to work with the solver in FGW you can for example : \r\n- Download the optim.py/FGW.py files of FGW\r\n- Use the gw_lp method in FGW.py (by setting amijo=False in the arguments when there is convergence problems) instead of the gw_lp of POT. You will need also to comment L-6-7 in FGW.py if you just want to use gromov you won't need theses."
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2019-05-09T06:55:08Z",
+      "body": "@tvayer thank you for coming and helping with this issue.\r\n\r\nWe definitely need to add the new implementation to POT with a PR (also FGW) as soon as we find time for it.\r\n\r\n "
+    }
+  ]
+}

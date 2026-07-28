@@ -1,0 +1,50 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 11038,
+  "html_url": "https://github.com/tensorflow/models/issues/11038",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "object_detection_tutorial.ipynb with TF1",
+  "author": "Petros626",
+  "created_at": "2023-07-02T18:13:08Z",
+  "updated_at": "2023-07-06T16:44:26Z",
+  "closed_at": "2023-07-06T16:44:22Z",
+  "labels": [
+    "type:support"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.94,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:39.612878+00:00",
+  "comments": [
+    {
+      "author": "Petros626",
+      "created_at": "2023-07-06T16:44:22Z",
+      "body": "FIX 1:\r\nuse the new version of the load_model function:\r\n```python\r\nmodel = tf.saved_model.load_v2(str(model_dir))\r\nmodel.signatures[\\\"serving_default\\\"]\r\n```\r\nFIX 2:\r\nhttps://github.com/tensorflow/models/pull/9430/commits/8b46103702685b9e56dea35f670725688422e609\r\nhttps://github.com/ykchong45/models/commit/1eaef36a18a50711eb1ed5545e3319625f1f1a67"
+    },
+    {
+      "author": "google-ml-butler[bot]",
+      "created_at": "2023-07-06T16:44:25Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=Yes&entry.2137816233=https://github.com/tensorflow/models/issues/11038\">Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=No&entry.2137816233=https://github.com/tensorflow/models/issues/11038\">No</a>\n"
+    }
+  ]
+}

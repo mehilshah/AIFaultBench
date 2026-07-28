@@ -1,0 +1,50 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 47027,
+  "html_url": "https://github.com/vllm-project/vllm/issues/47027",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: when using JSON output, thinking will be disabled even with thinking flag on",
+  "author": "weathon",
+  "created_at": "2026-06-29T10:49:16Z",
+  "updated_at": "2026-06-29T11:10:34Z",
+  "closed_at": "2026-06-29T11:10:34Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:57.640693+00:00",
+  "comments": [
+    {
+      "author": "chaunceyjiang",
+      "created_at": "2026-06-29T11:01:48Z",
+      "body": "This is expected behavior. If you do not set `--reasoning-parser`, vLLM will directly output the structured result.\n\nYou need to configure the `--reasoning-parser` parameter so that vLLM can first emit the reasoning content and then produce the structured output.\n"
+    },
+    {
+      "author": "weathon",
+      "created_at": "2026-06-29T11:10:34Z",
+      "body": "@chaunceyjiang Thanks for the information, i didn't know that. "
+    }
+  ]
+}

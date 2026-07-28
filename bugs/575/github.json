@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2457,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2457",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "'Namespace' object has no attribute 'validation_batch_size'",
+  "author": "banpeiran",
+  "created_at": "2025-03-21T09:20:02Z",
+  "updated_at": "2025-03-24T18:52:21Z",
+  "closed_at": "2025-03-24T18:52:20Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.4,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:40.730078+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-03-21T16:10:12Z",
+      "body": "@banpeiran are you sure you've synced the latest train.py script from here? Latest timm release with latest train script has no issues for me."
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-03-24T18:52:20Z",
+      "body": "booted up windows test machine to check for any platform issues, there's no problem with current train.py"
+    }
+  ]
+}

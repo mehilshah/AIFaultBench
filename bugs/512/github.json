@@ -1,0 +1,78 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21556,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21556",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Fabric FSDP precision: incorrect dtype during init when using bf16-mixed",
+  "author": "zhixuan-lin",
+  "created_at": "2026-02-27T02:14:57Z",
+  "updated_at": "2026-03-17T09:20:13Z",
+  "closed_at": "2026-03-17T09:20:13Z",
+  "labels": [
+    "bug",
+    "distributed",
+    "strategy: fsdp",
+    "ver: 2.5.x"
+  ],
+  "milestone": null,
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 18.3,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:10.991585+00:00",
+  "comments": [
+    {
+      "author": "zhixuan-lin",
+      "created_at": "2026-02-27T02:19:55Z",
+      "body": "Also I think the warning [here](https://github.com/Lightning-AI/pytorch-lightning/blob/8d86b2417d56703d5cc4f0da76acc71717d1dab7/src/lightning/fabric/plugins/precision/fsdp.py#L88-L92) should be probably be for bf16-mixed/fp16-mixed instead of bf16-true/fp16-true, as suggested by the doc https://lightning.ai/docs/fabric/stable/api/fabric_args.html#precision"
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-02-27T07:34:28Z",
+      "body": "hi @zhixuan-lin,\n\n[please refer here](https://docs.pytorch.org/docs/stable/fsdp.html#torch.distributed.fsdp.MixedPrecision)\n\n- especially this part:\n\n`param_dtype`: This specifies the dtype for model parameters during forward and backward and thus the dtype for forward and backward computation. **`Outside forward and backward, the sharded parameters are kept in full precision (e.g. for the optimizer step), and for model checkpointing, the parameters are always saved in full precision`**.\n\n---\n\nThe warning is emitted, for the reason, when one uses `16-mixed/bf16-mixed`, they are already aware some parameters will be in `full precision`, but when using `16-true or bf16-true`, expectation is no parameters are in `full precision`, which is not the case, so we warn this."
+    },
+    {
+      "author": "zhixuan-lin",
+      "created_at": "2026-02-27T13:28:31Z",
+      "body": "Hi @deependujha, I understand the warning now, thanks! However, the main problem is that when using bf16-mixed (or bf16-true/fp16-mixed/bf16-mixed), the parameters are initialized to be bf16 instead of fp32. I don't think this is the intended behavior given the doc says `the sharded parameters are kept in full precision`. "
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-02-27T14:41:47Z",
+      "body": "Thanks, we need to update docs. Another thing is, if you keep model weights in torch.Float32, and only buffers and reduce dtype is set to lower precision, there\u2019s little to no improvement.\n\nIs there any specific usecase where you want this?\nIf so, an option can be to create a new strategy inheriting FSDP and just override the specific method \u2018mixed precision config\u2019."
+    },
+    {
+      "author": "zhixuan-lin",
+      "created_at": "2026-02-27T15:02:52Z",
+      "body": "I think the standard practice in mixed precision training is to always maintain a main copy of parameters in fp32 and only cast to bf16/fp16 when doing forward/backward (Section 3.1 in [this paper](https://arxiv.org/abs/1710.03740)). For FSDP this reduces both memory consumption and communication costs (sharded parameters are stored in fp32 and when doing gathering for forward/backward we cast to bf16). This is also the semantics of `param_dtype` specified by the official PyTorch doc i.e., `Outside forward and backward, the sharded parameters are kept in full precision`. This explicitly says that the intended behavior is that the parameters themselves should be kept in fp32, even if `param_dtype`is bf16/fp16.\n\nSo I think the correct thing to do, at least based on the lightning doc [here](https://lightning.ai/docs/fabric/stable/api/fabric_args.html#precision)  is \n1. For bf16-mixed/fp16-mixed, `module_init_context` should use fp32 \n2. For bf16-true/fp16-true, `module_init_context` should use bf16/fp16.\n\n`param_dtype` should always be set to bf16/fp16 though."
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-02-28T15:36:50Z",
+      "body": "Hi @zhixuan-lin, thanks for your patience and for explaining it clearly. I agree with your proposal.\n\nWould love a PR from you fixing it.\nThanks."
+    },
+    {
+      "author": "bhimrazy",
+      "created_at": "2026-03-17T03:09:55Z",
+      "body": "Hi, I\u2019d like to take this issue up as it seems important and inactive. Thanks!"
+    }
+  ]
+}

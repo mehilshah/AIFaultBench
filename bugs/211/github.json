@@ -1,0 +1,46 @@
+{
+  "owner": "sdv-dev",
+  "repo": "SDV",
+  "number": 1910,
+  "html_url": "https://github.com/sdv-dev/SDV/issues/1910",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "PAR DiagnosticReport not 1.0 with float categorical columns",
+  "author": "frances-h",
+  "created_at": "2024-04-10T18:51:35Z",
+  "updated_at": "2024-07-15T17:00:35Z",
+  "closed_at": "2024-07-15T17:00:35Z",
+  "labels": [
+    "bug",
+    "data:sequential"
+  ],
+  "milestone": "1.16.0",
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 95.92,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:39.741332+00:00",
+  "comments": [
+    {
+      "author": "npatki",
+      "created_at": "2024-04-16T21:30:18Z",
+      "body": "### Workaround\r\n\r\nIf anyone is running into this, here is a suggested workaround:\r\n\r\n1. Identify any `categorical` columns (in the metadata) that are actually represented as numbers in your data (ints, floats, etc.)\r\n2. Cast these columns as objects before inputting them into the PARSynthesizer.\r\n3. At the end when you get synthetic data, cast them back as ints, floats, etc.\r\n\r\nHere is a code snippet that accomplishes the below. Replace the list `CAT_COLUMN_NAMES` with the list of your column names.\r\n\r\n```python\r\nCAT_COLUMN_NAMES = ['ColA', 'ColB', ... ]\r\n\r\ndata = <your pandas DataFrame>\r\nmetadata = <your SingleTableMetadata object>\r\n\r\n# cast the categorical columns to strings\r\nfor col_name in CAT_COLUMN_NAMES:\r\n  data[col_name] = data[col_name].astype('object')\r\n\r\n# now proceed with modeling and sampling as usual\r\nsynthesizer = PARSynthesizer(metadata)\r\nsynthesizer.fit(data)\r\nsynthetic_data = synthesizer.sample(num_sequences=10)\r\n\r\n# (optional) cast the categorical columns back to floats\r\nfor col_name in CAT_COLUMN_NAMES:\r\n  try:\r\n    synthetic_data[col_name] = synthetic_data[col_name].astype('float')\r\n  except:\r\n    print('Column name', col_name, 'could not be converted back to a float')\r\n    continue\r\n```"
+    }
+  ]
+}

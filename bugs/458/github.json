@@ -1,0 +1,55 @@
+{
+  "owner": "pytorch",
+  "repo": "rl",
+  "number": 3508,
+  "html_url": "https://github.com/pytorch/rl/issues/3508",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] SumSegmentTreeFp32 not available",
+  "author": "NST-d",
+  "created_at": "2026-02-13T15:43:45Z",
+  "updated_at": "2026-02-13T16:20:28Z",
+  "closed_at": "2026-02-13T16:20:28Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:51.812434+00:00",
+  "comments": [
+    {
+      "author": "vmoens",
+      "created_at": "2026-02-13T15:46:39Z",
+      "body": "Hello\nTorchrl is built against a specific version of PyTorch -- 2.10 for Torchrl 0.11\nYou can build it locally by doing `pip install git+https://github.com/pytorch/rl.git@v0.11.1` IIRC\nAlso, you can ignore this if you don't need prioritised replay buffers!"
+    },
+    {
+      "author": "NST-d",
+      "created_at": "2026-02-13T15:59:11Z",
+      "body": "Thanks for the quick reply, updating torch has indeed fixed this problem.\nBut for unrelated parts of my project, I would like to stick with older torch versions without local builds. Is there any table where I can see which torchrl version was build for which torch?"
+    },
+    {
+      "author": "vmoens",
+      "created_at": "2026-02-13T16:15:12Z",
+      "body": "2.8 was 0.10 I believe (I think we skipped 2.9).\nOtherwise a local build! That's probably the easiest thing to do"
+    }
+  ]
+}

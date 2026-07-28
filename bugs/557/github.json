@@ -1,0 +1,46 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 13703,
+  "html_url": "https://github.com/huggingface/diffusers/issues/13703",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "UNet1DModel loss plateauing at \u22430.5. How to fix time blindness when training on sequential data.",
+  "author": "elcaidaprojects-art",
+  "created_at": "2026-05-09T14:48:04Z",
+  "updated_at": "2026-05-09T23:43:16Z",
+  "closed_at": "2026-05-09T23:43:16Z",
+  "labels": [
+    "bug",
+    "models"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.37,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:14.829096+00:00",
+  "comments": [
+    {
+      "author": "sayakpaul",
+      "created_at": "2026-05-09T23:43:16Z",
+      "body": "Thanks for your finding.\n\nDefaults are meant to be defaults. Since users can modify them and fix issues like non-convergent training losses, I don't think it's a real issue."
+    }
+  ]
+}

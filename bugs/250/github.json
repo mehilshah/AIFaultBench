@@ -1,0 +1,45 @@
+{
+  "owner": "pytorch",
+  "repo": "rl",
+  "number": 2404,
+  "html_url": "https://github.com/pytorch/rl/issues/2404",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] TensorDictReplayBuffer's pin_memory=True does not work with custom transforms",
+  "author": "kalyan0510",
+  "created_at": "2024-08-30T04:43:30Z",
+  "updated_at": "2024-09-02T15:07:08Z",
+  "closed_at": "2024-09-02T15:07:08Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.43,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:38.339514+00:00",
+  "comments": [
+    {
+      "author": "vmoens",
+      "created_at": "2024-09-02T14:32:38Z",
+      "body": "Good catch, we should move the decorator from `_sample` to `sample` here:\r\nhttps://github.com/pytorch/rl/blob/e82a69f5af94cc936c4b872fd2ed499ed33b4f8e/torchrl/data/replay_buffers/replay_buffers.py#L655-L679\r\nNote that this pin-memory implementation isn't very smart, see https://pytorch.org/tutorials/intermediate/pinmem_nonblock.html#:~:text=Importantly%2C%20pin_memory%20is%20blocking%20on,ones()%20and%20other%20constructors."
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 39108,
+  "html_url": "https://github.com/jax-ml/jax/issues/39108",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "jax.scipy.special.gammaincc returns NaN for a=inf where one is expected",
+  "author": "ALinrunrun",
+  "created_at": "2026-07-12T22:04:29Z",
+  "updated_at": "2026-07-12T23:15:45Z",
+  "closed_at": "2026-07-12T23:15:45Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.05,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:12.062546+00:00",
+  "comments": [
+    {
+      "author": "jakevdp",
+      "created_at": "2026-07-12T23:15:45Z",
+      "body": "Duplicate of #38272, already fixed in #38820, which will be part of the next release."
+    }
+  ]
+}

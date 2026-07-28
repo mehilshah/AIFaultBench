@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2546,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2546",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] timm is unable to load the huggingface custom model",
+  "author": "fangyynb",
+  "created_at": "2025-07-11T06:56:03Z",
+  "updated_at": "2025-07-11T18:11:28Z",
+  "closed_at": "2025-07-11T18:11:28Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.47,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:37.059047+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-07-11T14:19:45Z",
+      "body": "@fangyynb I really can't tell what's going on here, but if the model requires an implementation that isn't built into timm, it has to have model entrypoint functions adhering to timm API that are registered with the `@register_model` dectorator, and whatever module has those has to be imported into the python environment before creating the model, whether the weights are on the hub or not\n\nEDIT: I looked closer, found their model, you need to checkout their codebase and use relative to their, they didn't create a package (the `lsnet` below is not real) or adhere to the registration API closely enough to  do something like the snippet ... ideally if they fixed their code you'd be able to do\n\n`pip install timm lsnet`\n\n```\nimport timm\nimport lsnet  # <-- this is needed to register custom models but not in the example, so you have to run within their repo path\nimport torch\nfrom PIL import Image\nimport requests\nfrom timm.data import resolve_data_config, create_transform\n\n# Load the model\nmodel = timm.create_model(\n    'hf_hub:jameslahm/lsnet_b',\n    pretrained=True\n)\nmodel.eval()\n\n# Load and transform image\n# Example using a URL:\nurl = 'https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/beignets-task-guide.png'\nimg = Image.open(requests.get(url, stream=True).raw)\n\nconfig = resolve_data_config({}, model=model)\ntransform = create_transform(**config)\ninput_tensor = transform(img).unsqueeze(0) # transform and add batch dimension\n\n# Make prediction\nwith torch.no_grad():\n    output = model(input_tensor)\nprobabilities = torch.nn.functional.softmax(output[0], dim=0)\n\n# Get top 5 predictions\ntop5_prob, top5_catid = torch.topk(probabilities, 5)\n# Assuming you have imagenet labels list 'imagenet_labels'\n# for i in range(top5_prob.size(0)):\n#     print(imagenet_labels[top5_catid[i]], top5_prob[i].item())\n```"
+    }
+  ]
+}

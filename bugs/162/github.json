@@ -1,0 +1,55 @@
+{
+  "owner": "jupyter",
+  "repo": "docker-stacks",
+  "number": 2138,
+  "html_url": "https://github.com/jupyter/docker-stacks/issues/2138",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Missing `hub-4.1.6` tag for JupyterLab images",
+  "author": "jrdnbradford",
+  "created_at": "2024-08-27T14:11:55Z",
+  "updated_at": "2024-08-27T14:46:13Z",
+  "closed_at": "2024-08-27T14:22:47Z",
+  "labels": [
+    "type:Bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:24.734577+00:00",
+  "comments": [
+    {
+      "author": "mathbunnyru",
+      "created_at": "2024-08-27T14:22:47Z",
+      "body": "This is most likely not a bug - this project doesn't build for all the versions of all the packages used in images - that's impossible.\r\nInstead, we only build images weekly automatically and when some PR changes some images (we also rebuild everything).\r\n\r\n4.1.6 tag happened Jul 31: https://github.com/jupyterhub/jupyterhub/releases/tag/4.1.6\r\n5.1.0 tag also happened Jul 31: https://github.com/jupyterhub/jupyterhub/releases/tag/5.1.0\r\nSo it's very likely that there were no conflicts with the newer version, and it was chosen automatically by `mamba`'s resolver.\r\n\r\nNow, let's talk about the issue you have.\r\nYou want to use `jupyterhub` version `4.1.6` (which is fine).\r\nThe easiest way to do it is to find the image that works well for you except jupyterhub and a few other things, then install the needed version.\r\nHere is an example: https://jupyter-docker-stacks.readthedocs.io/en/latest/using/recipes.html#using-mamba-install-recommended-or-pip-install-in-a-child-docker-image (there is no pinned version in an example, but you can use `mamba install jupyterhub=4.1.6`)\r\n\r\nHope this helps. If it doesn't, please, reopen the issue."
+    },
+    {
+      "author": "jrdnbradford",
+      "created_at": "2024-08-27T14:31:33Z",
+      "body": "Hi @mathbunnyru, thanks for the explanation. I have no issues with getting something up and working with my setup, just thought something was potentially wrong here and wanted to report. The setup makes sense. Thanks!"
+    },
+    {
+      "author": "mathbunnyru",
+      "created_at": "2024-08-27T14:33:26Z",
+      "body": "> Hi @mathbunnyru, thanks for the explanation. I have no issues with getting something up and working with my setup, just thought something was potentially wrong here and wanted to report. The setup makes sense. Thanks!\r\n\r\nThank you for the report, it's better to report, rather than have an issue \ud83d\udc4d \r\nIn this case, everything worked as expected \ud83d\ude42 "
+    }
+  ]
+}

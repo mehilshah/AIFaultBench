@@ -1,0 +1,51 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 8711,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/8711",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`get_num_hops` incorrectly counts \"multi-hop\" layers",
+  "author": "arthurfeeney",
+  "created_at": "2024-01-03T01:48:17Z",
+  "updated_at": "2024-01-05T14:37:12Z",
+  "closed_at": "2024-01-05T14:37:12Z",
+  "labels": [
+    "bug",
+    "utils"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.53,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:21.461062+00:00",
+  "comments": [
+    {
+      "author": "akihironitta",
+      "created_at": "2024-01-05T03:17:35Z",
+      "body": "Since I assume `get_num_hops` is not called every batch iteration in most cases, we could possibly do something fancy without any performance concerns, but I'm not sure if there's a robust way to count the number of hops.\r\n\r\nAs a quick fix, we can update the docs as you suggest :)"
+    },
+    {
+      "author": "rusty1s",
+      "created_at": "2024-01-05T14:36:39Z",
+      "body": "Thanks for the issue. Added a note in the doc for now: https://github.com/pyg-team/pytorch_geometric/pull/8723. Leaving this issue open in case we want to come up with a more principled solution."
+    }
+  ]
+}

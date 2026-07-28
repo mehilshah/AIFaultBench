@@ -1,0 +1,39 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 47935,
+  "html_url": "https://github.com/vllm-project/vllm/issues/47935",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: DP/EP with fp8 KV Cache Brokens for FlashMLA",
+  "author": "robertgshaw2-redhat",
+  "created_at": "2026-07-08T00:26:38Z",
+  "updated_at": "2026-07-10T19:24:54Z",
+  "closed_at": "2026-07-10T19:24:54Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.79,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:54.411420+00:00",
+  "comments": []
+}

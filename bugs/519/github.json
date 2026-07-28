@@ -1,0 +1,45 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 10018,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/10018",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "not_planned",
+  "title": "ModuleNotFoundError: No module named 'torch_geometric.graphgym.imports'",
+  "author": "erenpolat19",
+  "created_at": "2025-02-12T00:17:27Z",
+  "updated_at": "2025-02-12T11:17:39Z",
+  "closed_at": "2025-02-12T11:17:38Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.46,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:21.286864+00:00",
+  "comments": [
+    {
+      "author": "akihironitta",
+      "created_at": "2025-02-12T11:17:38Z",
+      "body": "Looks like 2.0.4 doesn't have graphgym as you see at https://github.com/pyg-team/pytorch_geometric/tree/2.0.4/torch_geometric/graphgym. I would suggest reaching out to the paper authors to clarify which exact version of PyG they used for the repository."
+    }
+  ]
+}

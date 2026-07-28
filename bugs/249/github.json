@@ -1,0 +1,50 @@
+{
+  "owner": "pytorch",
+  "repo": "rl",
+  "number": 2328,
+  "html_url": "https://github.com/pytorch/rl/issues/2328",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Surprising `MLP` default behavior",
+  "author": "chnyutao",
+  "created_at": "2024-07-29T07:20:19Z",
+  "updated_at": "2024-08-13T20:16:03Z",
+  "closed_at": "2024-08-13T20:16:02Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 15.54,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:36.914974+00:00",
+  "comments": [
+    {
+      "author": "vmoens",
+      "created_at": "2024-07-29T18:16:34Z",
+      "body": "I agree, it's more a historical debt than anything meaningful.\nI will make a PR to progressively deprecate this.\nIn the future, I can see two default behaviours for your example:\n- no depth, just a linear layer\n- error: one must say what depth / number of cells is to be used\nLet me know what you think would make more sense here!"
+    },
+    {
+      "author": "chnyutao",
+      "created_at": "2024-07-29T21:50:38Z",
+      "body": "Thanks, I personally would prefer the former behavior (no depth implies `depth=0`)."
+    }
+  ]
+}

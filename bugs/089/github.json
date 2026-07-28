@@ -1,0 +1,98 @@
+{
+  "owner": "lucidrains",
+  "repo": "x-transformers",
+  "number": 282,
+  "html_url": "https://github.com/lucidrains/x-transformers/issues/282",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "qk_norm and kv_heads conflict",
+  "author": "alexdemartos",
+  "created_at": "2024-10-28T12:12:36Z",
+  "updated_at": "2024-11-04T20:14:56Z",
+  "closed_at": "2024-10-28T13:21:44Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 12,
+  "reactions": {
+    "total_count": 1,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 1,
+    "eyes": 0
+  },
+  "resolution_days": 0.05,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:31.207945+00:00",
+  "comments": [
+    {
+      "author": "lucidrains",
+      "created_at": "2024-10-28T13:21:42Z",
+      "body": "thanks Alejandro!"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-10-28T13:45:16Z",
+      "body": "@alexdemartos have you seen [e2-tts](https://github.com/lucidrains/e2-tts-pytorch) btw?"
+    },
+    {
+      "author": "alexdemartos",
+      "created_at": "2024-10-28T15:56:33Z",
+      "body": "> @alexdemartos have you seen [e2-tts](https://github.com/lucidrains/e2-tts-pytorch) btw?\r\n\r\nYes, this was an interesting work. I tried a very similar approach. In my case it works generally OK, but I'm finding some stability issues with long sequences (basically the model doesn't seem to extrapolate well to longer sequences than those seen during training). Explicit duration prediction is robust to long sequences at the expense of minor naturalness degradation.\r\n\r\nWhat was your experience?"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-10-28T15:59:48Z",
+      "body": "@alexdemartos indeed, although i've also heard it improves with training on said longer sequences\r\n\r\na student has open sourced quite a [good model](https://github.com/SWivid/F5-TTS) based on e2-tts. think we will see a lot of follow up research along these lines soon\r\n\r\nquite a surprising paper!"
+    },
+    {
+      "author": "alexdemartos",
+      "created_at": "2024-10-28T18:04:29Z",
+      "body": "Thanks for sharing, I'll take a closer look tomorrow.\r\n\r\nI'm very much interested in works trying to address stability/hallucination issues in both AR and E2TTS-like architectures. Most people/companies often omit details or try to hide them..."
+    },
+    {
+      "author": "alexdemartos",
+      "created_at": "2024-11-01T11:54:25Z",
+      "body": "> I'm very much interested in works trying to address stability/hallucination issues in both AR and E2TTS-like architectures\r\n\r\nFYI, on this topic I just found about a new Tacotron-series paper (Very Attentive Tacotron):\r\nhttps://arxiv.org/pdf/2410.22179"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-11-01T13:56:53Z",
+      "body": "@alexdemartos nice! so some position engineering and an RNN does the trick"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-11-01T14:28:31Z",
+      "body": "@alexdemartos have you ever tried adding relative positions to the cross attention block? i have a few ideas"
+    },
+    {
+      "author": "alexdemartos",
+      "created_at": "2024-11-01T19:11:00Z",
+      "body": "> @alexdemartos have you ever tried adding relative positions to the cross attention block? i have a few ideas\r\n\r\nOnly for synchronous sequences, so not really. I guess the tricky part here is how to solve the alignment problem between target and cross-attended sequences (i.e. how to center the relative position in the cross-attention sequence at each target timestep). Happy to hear about your ideas!"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-11-01T20:26:43Z",
+      "body": "@alexdemartos haha don't get too excited, its just a simple idea for generating attention bias with monotonicity"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-11-01T20:27:06Z",
+      "body": "@alexdemartos i'll throw it into a separate branch and ping you when i do"
+    },
+    {
+      "author": "alexdemartos",
+      "created_at": "2024-11-04T12:16:53Z",
+      "body": "Hi @lucidrains . (FYI) Again, on the same topic, I found relevant the following work proposing Position-Aware Cross-Attention (Section 2.1): https://arxiv.org/pdf/2406.04467"
+    }
+  ]
+}

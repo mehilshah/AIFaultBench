@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2146,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2146",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Dirichlet and Beta forward sampling implementation uses `jnp.finfo` in a deprecated way",
+  "author": "dylanhmorris",
+  "created_at": "2026-03-12T16:44:08Z",
+  "updated_at": "2026-03-17T18:32:50Z",
+  "closed_at": "2026-03-17T18:32:50Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 5.08,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:28.603974+00:00",
+  "comments": [
+    {
+      "author": "dylanhmorris",
+      "created_at": "2026-03-12T16:55:50Z",
+      "body": "Searched the code and found one other instance of `jnp.finfo` called on an array rather than on a `dtype`. Will fix in the same PR.\n\nhttps://github.com/pyro-ppl/numpyro/blob/78c366530db3c26075a63dba370ad002b17b006a/numpyro/distributions/discrete.py#L1059\n\nsearch query: https://github.com/search?q=repo%3Apyro-ppl%2Fnumpyro%20finfo&type=code"
+    },
+    {
+      "author": "JiwaniZakir",
+      "created_at": "2026-03-17T09:44:42Z",
+      "body": "I think I see what's going on here. Going to put together a fix."
+    }
+  ]
+}

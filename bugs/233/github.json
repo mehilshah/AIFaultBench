@@ -1,0 +1,50 @@
+{
+  "owner": "patrick-kidger",
+  "repo": "equinox",
+  "number": 1089,
+  "html_url": "https://github.com/patrick-kidger/equinox/issues/1089",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Non-hashable static arguments are not supported.",
+  "author": "lockwo",
+  "created_at": "2025-08-25T18:59:34Z",
+  "updated_at": "2025-09-24T22:23:28Z",
+  "closed_at": "2025-09-24T22:23:28Z",
+  "labels": [
+    "question"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 30.14,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:11.791981+00:00",
+  "comments": [
+    {
+      "author": "patrick-kidger",
+      "created_at": "2025-08-31T12:07:08Z",
+      "body": "This is intentional / I think for the best.\n\nBetter for us to delegate to the underlying `__hash__` implementation of any wrapped classes, rather than just bypassing them altogether. (I think I've had at least a few use-cases for this in exceptional cases.)\n\nIf need be this should be solveable in userland by wrapping unhashable types like dictionaries with a module whose `__hash__` method flattens-and-hashes its leaves."
+    },
+    {
+      "author": "lockwo",
+      "created_at": "2025-08-31T17:55:51Z",
+      "body": "Fair enough, I just wanted to make sure since it was a breaking change"
+    }
+  ]
+}

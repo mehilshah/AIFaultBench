@@ -1,0 +1,39 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2053,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2053",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Master depends on `typing_extensions` but doesn't state it",
+  "author": "tare",
+  "created_at": "2025-07-23T15:25:23Z",
+  "updated_at": "2025-08-04T19:32:23Z",
+  "closed_at": "2025-08-04T19:32:23Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 12.17,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:05.034423+00:00",
+  "comments": []
+}

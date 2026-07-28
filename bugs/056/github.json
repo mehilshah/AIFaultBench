@@ -1,0 +1,51 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-io",
+  "number": 1672,
+  "html_url": "https://github.com/keras-team/keras-io/issues/1672",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Get erorr when run Image classification with Vision Transformer",
+  "author": "Vudao0407",
+  "created_at": "2023-12-06T18:35:56Z",
+  "updated_at": "2023-12-07T08:16:55Z",
+  "closed_at": "2023-12-07T08:16:55Z",
+  "labels": [
+    "stat:awaiting response from contributor",
+    "type:bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.57,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:41.431667+00:00",
+  "comments": [
+    {
+      "author": "sachinprasadhs",
+      "created_at": "2023-12-06T19:25:57Z",
+      "body": "Hi,\r\n\r\nSince the tutorial uses Keras 3, you need to install TensorFlow 2.15 and Keras 3.0 to run this in colab.\r\n\r\nAdding \r\n```\r\n!pip install -q tensorflow==2.15.0\r\n!pip install -q keras==3.0.0\r\n``` \r\nwill resolve the issue.\r\n\r\nHere is the working Gist for reference https://gist.github.com/sachinprasadhs/63b6348d94994f73421dafaefd8cdcec"
+    },
+    {
+      "author": "Vudao0407",
+      "created_at": "2023-12-07T08:16:30Z",
+      "body": "It works successfully. Thanks you!"
+    }
+  ]
+}

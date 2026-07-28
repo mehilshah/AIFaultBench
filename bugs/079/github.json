@@ -1,0 +1,43 @@
+{
+  "owner": "lucidrains",
+  "repo": "vit-pytorch",
+  "number": 330,
+  "html_url": "https://github.com/lucidrains/vit-pytorch/issues/330",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "RegionViT - Local token embedding",
+  "author": "minhquoc0712",
+  "created_at": "2024-10-04T13:54:47Z",
+  "updated_at": "2024-10-04T14:02:26Z",
+  "closed_at": "2024-10-04T14:02:26Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:17.503279+00:00",
+  "comments": [
+    {
+      "author": "lucidrains",
+      "created_at": "2024-10-04T14:02:20Z",
+      "body": "@minhquoc0712 ah, good catch\r\n\r\nthank you Quoc!"
+    }
+  ]
+}

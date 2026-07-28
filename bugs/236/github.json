@@ -1,0 +1,60 @@
+{
+  "owner": "patrick-kidger",
+  "repo": "equinox",
+  "number": 898,
+  "html_url": "https://github.com/patrick-kidger/equinox/issues/898",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "An array-like defined with `eqx.Module` does not support `jnp.asarray` with the `__array__` method",
+  "author": "gautierronan",
+  "created_at": "2024-11-21T10:38:36Z",
+  "updated_at": "2024-11-21T16:13:39Z",
+  "closed_at": "2024-11-21T16:13:39Z",
+  "labels": [
+    "question"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.23,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:17.134490+00:00",
+  "comments": [
+    {
+      "author": "johannahaffner",
+      "created_at": "2024-11-21T13:46:22Z",
+      "body": "Hi, \r\n\r\nthis is because JAX handles arrays a bit differently, I think. If I switch to the magic method `__jax_array__`, it works. \r\nIn that case, there is also no mix between `numpy` and `jax.numpy`, which don't always do the same thing under the hood and could potentially lead to confusing errata arising from their interactions. \r\n\r\nHere is the modified MWE, which now works: \r\n\r\n```python\r\nimport jax.numpy as jnp\r\nimport equinox as eqx\r\nfrom jaxtyping import Array\r\n\r\nclass MyArray:\r\n    def __init__(self, x):\r\n        self.x = x\r\n\r\n    def __jax_array__(self) -> Array:\r\n        return self.x\r\n\r\nclass MyEqxArray(eqx.Module):\r\n    x: Array\r\n\r\n    def __jax_array__(self) -> Array:\r\n        return self.x\r\n\r\nx = MyArray(jnp.array([1, 2, 3]))\r\nprint(jnp.asarray(x))\r\n\r\ny = MyEqxArray(jnp.array([1, 2, 3]))\r\nprint(jnp.asarray(y))\r\n```\r\n\r\nDepending on what purpose you want to extract arrays for, the `eqx.partition` and `eqx.combine` methods allow you to split models into array and non-array components, as described [here](https://docs.kidger.site/equinox/all-of-equinox/#2-filtering). \r\nI'm not quite sure what the best practice on magic methods is, though, since they are handled differently from regular methods, as Patrick stated [here](https://github.com/patrick-kidger/equinox/issues/770#issuecomment-2188003711).\r\n\r\nNote: I've also switched to jaxtyping for the type annotation, but that should have no bearing on the errata avoided."
+    },
+    {
+      "author": "johannahaffner",
+      "created_at": "2024-11-21T14:12:27Z",
+      "body": "PS: Take my recommendation with a few grains of salt, the future of `__jax_array__` [appears uncertain](https://github.com/jax-ml/jax/issues/10065). Way to fascinating for ordinary coffee breaks \ud83d\ude03  "
+    },
+    {
+      "author": "patrick-kidger",
+      "created_at": "2024-11-21T15:06:47Z",
+      "body": "Looks like this is because Equinox modules are trees, so they get flattened here:\r\n\r\nhttps://github.com/jax-ml/jax/blob/1bc9df429d87920bdbbf874e84a63fbe3111e27d/jax/_src/numpy/lax_numpy.py#L5643\r\n\r\nAs Johanna highlights, I think `__array__` and `__jax_array__` should probably not be considered fully supported in JAX."
+    },
+    {
+      "author": "gautierronan",
+      "created_at": "2024-11-21T16:13:39Z",
+      "body": "Right, thanks for both of your answers. This issue about `__jax_array__` keeps coming up and is fairly annoying I have to say haha! Its lack of support is actually why I only implemented `__array__` in my example above.\r\n\r\nI guess I should be raising a bug report in JAX, as the documentation of `jnp.asarray` does state explicity that a class with the `__array__` method should be supported as input."
+    }
+  ]
+}

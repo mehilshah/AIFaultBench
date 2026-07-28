@@ -1,0 +1,43 @@
+{
+  "owner": "meta-pytorch",
+  "repo": "torchtune",
+  "number": 2828,
+  "html_url": "https://github.com/meta-pytorch/torchtune/issues/2828",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "TensorSict `set_list_to_stack` causes TorchTune `RequestOutput` class error",
+  "author": "albertbou92",
+  "created_at": "2025-06-13T19:43:43Z",
+  "updated_at": "2025-06-26T16:21:11Z",
+  "closed_at": "2025-06-26T16:21:11Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 12.86,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:03.572545+00:00",
+  "comments": [
+    {
+      "author": "albertbou92",
+      "created_at": "2025-06-15T13:31:40Z",
+      "body": "After looking into it further, I noticed that `TorchRL` uses `set_list_to_stack` as a decorator here for the `LLMEnv`:\nhttps://github.com/pytorch/rl/blob/main/torchrl/envs/llm/envs.py#L681\n\nIt seems like my version of `ChatEnv` class could do something similar.\n\nIf that is the intended solution, I will go ahead and close this issue.\n\nBut I see here that the stack behavior will be on by default in the future, so maybe what I am seeing becomes an issue in the future.\nhttps://github.com/pytorch/tensordict/blob/e03c25eb8b8efd45bc2801611300298208145059/tensordict/utils.py#L2051"
+    }
+  ]
+}

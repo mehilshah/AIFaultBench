@@ -1,0 +1,55 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 47215,
+  "html_url": "https://github.com/vllm-project/vllm/issues/47215",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: nvidia/Qwen3.6-27B-NVFP4 (dense, MIXED_PRECISION W4A16_NVFP4) fails to load \u2014 \"RuntimeError: start (0) + length (17408) exceeds dimension size (8704)\"",
+  "author": "yinjiuxun",
+  "created_at": "2026-06-30T21:47:31Z",
+  "updated_at": "2026-07-07T21:39:41Z",
+  "closed_at": "2026-07-01T15:54:32Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.75,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:55.790496+00:00",
+  "comments": [
+    {
+      "author": "pranavthakur0-0",
+      "created_at": "2026-07-01T01:46:33Z",
+      "body": "can I work on this issue ?"
+    },
+    {
+      "author": "ArsalanShakil",
+      "created_at": "2026-07-01T08:42:45Z",
+      "body": "I looked into this on current `main` using the actual published `nvidia/Qwen3.6-27B-NVFP4` config, and I can't reproduce the fall-through \u2014 the mixed-precision dispatch chain appears to route the dense `W4A16_NVFP4` layers correctly now. Sharing what I found in case it helps narrow it down.\n\n**Config selection \u2192 per-layer routing (verified against the real `config.json` `quantization_config`):**\n\n- `ModelOptMixedPrecisionConfig.override_quantization_method(...)` \u2192 `\"modelopt_mixed\"` (so a `MIXED_PRECISION` checkpoint is picked up regardless of `--quantization modelopt`/`modelopt_fp4`, via the override scan in `config/model.py`).\n- `_resolve_quant_algo(\"language_model.model.layers.0.mlp.down_proj\")` \u2192 `W4A16_NVFP4` (and `...linear_attn.out_proj` \u2192 `FP8`). The `language_model.model.` \u2194 `model.language_model.` prefix swap is handled by `_quantized_layer_prefix_candidates`.\n- `get_quant_method(...)` for that `W4A16_NVFP4` `LinearBase` returns `ModelOptNvFp4W4A16LinearMethod` (`modelopt.py:2508`), i.e. it does **not** fall through to `UnquantizedLinearMethod`.\n\n(All of the above is the pure config\u2192dispatch decision, checked on CPU; I don't have GB10/sm_121 hardware to run the full weight load + Marlin kernel end-to-end.)\n\nTwo things I noticed that might explain the discrepancy:\n\n1. The published `config.json` reports `architectures: [\"Qwen3_5ForConditionalGeneration\"]` (multimodal, `language_model_only: false`), whereas the issue lists `Qwen3_5ForCausalLM`. The quantized-layer keys are prefixed `model.language_model.\u2026`, which lines up with the multimodal wrapper's `language_model.model.\u2026` module prefixes. Under the current config this resolves.\n\n2. All of the mixed-precision + `W4A16_NVFP4` dispatch machinery (#35047, #42566) predates the build in the report (`0.23.1rc1.dev515`, ~2026-06-27), so it's possible the model's HF config was updated after filing.\n\nCould you retest on the latest nightly and confirm whether it still fails? If it does, it'd help to attach the exact `config.json` and `hf_quant_config.json` you're loading (or `git rev-parse HEAD` of the image) and the arch actually instantiated, so the failing prefix can be pinned down.\n\nOne latent edge I did spot while tracing: `_resolve_quant_algo` bridges `language_model.model.` \u2194 `model.language_model.`, but not a bare `model.layers.N.\u2026` prefix \u2192 `model.language_model.layers.N.\u2026` keys. That only matters for a text-only load path, which the current multimodal config doesn't take \u2014 mentioning it in case your setup instantiates the LM standalone."
+    },
+    {
+      "author": "yinjiuxun",
+      "created_at": "2026-07-01T15:54:13Z",
+      "body": "Closing this \u2014 root cause was a stale image, not a vLLM bug. Apologies for the noise, and thanks a lot for the detailed trace through the dispatch chain.\n\n**What happened:** the version I reported (`0.23.1rc1.dev515+g68ee8300a`) was from a *different* service. The container that actually failed was running an **older image** (`vllm/vllm-openai:cu130-nightly`), which reports:\n\n```\nInitializing a V1 LLM engine (v0.19.2rc1.dev134+gfe9c3d6c5)\n```\n\nOn that old build the dense `W4A16_NVFP4` `down_proj` dispatch was incomplete, hence `input_scale not found` \u2192 `narrow() ... exceeds dimension size (8704)`.\n\n**Confirmed fix:** switching that service to `vllm/vllm-openai:nightly` (0.23.x) loads `nvidia/Qwen3.6-27B-NVFP4` successfully. As you noted, the arch resolves to `Qwen3_5ForConditionalGeneration` with `quantization=modelopt_mixed`, so the text-only prefix edge you spotted was not involved here \u2014 it was purely the older image lacking the mixed-precision W4A16 dispatch from #42566.\n\nThanks again \u2014 closing as resolved."
+    }
+  ]
+}

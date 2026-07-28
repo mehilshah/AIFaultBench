@@ -1,0 +1,56 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7773,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7773",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Gradients are summed instead of averaged when using gradient accumulation steps with pipeline parallelism",
+  "author": "tdrussell",
+  "created_at": "2026-01-11T20:14:28Z",
+  "updated_at": "2026-04-07T22:58:02Z",
+  "closed_at": "2026-01-23T20:22:35Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 12.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:54.289040+00:00",
+  "comments": [
+    {
+      "author": "tdrussell",
+      "created_at": "2026-01-12T00:09:58Z",
+      "body": "Here is a minimal script that reproduces the issue: https://gist.github.com/tdrussell/a848a03f125bbe14d76c555d0d3f9a59\n\nOutput:\n```\ndeepspeed --num_gpus=1 deepspeed_gas_bug.py --bs 128 --gas 1\n```\nsteps: 1 loss: 0.3261 iter time (s): 0.199 samples/sec: 641.743\nGrad norm: 3.4111355480874153\nsteps: 2 loss: 0.3389 iter time (s): 0.003 samples/sec: 47626.420\nGrad norm: 3.480790320806196\nsteps: 3 loss: 0.2807 iter time (s): 0.002 samples/sec: 68239.590\nGrad norm: 3.165752555980085\nsteps: 4 loss: 0.2681 iter time (s): 0.002 samples/sec: 70857.912\nGrad norm: 3.0587000477883244\nsteps: 5 loss: 0.3357 iter time (s): 0.002 samples/sec: 66653.334\nGrad norm: 3.564681441134813\n\n```\ndeepspeed --num_gpus=1 deepspeed_gas_bug.py --bs 32 --gas 4\n```\nsteps: 1 loss: 0.2881 iter time (s): 0.200 samples/sec: 641.282\nGrad norm: 13.036201201403596\nsteps: 2 loss: 0.3292 iter time (s): 0.004 samples/sec: 33447.334\nGrad norm: 13.98913990761539\nsteps: 3 loss: 0.3404 iter time (s): 0.003 samples/sec: 39408.478\nGrad norm: 13.823161154583502\nsteps: 4 loss: 0.3789 iter time (s): 0.003 samples/sec: 39903.833\nGrad norm: 14.99074135513952\nsteps: 5 loss: 0.3328 iter time (s): 0.003 samples/sec: 40012.804\nGrad norm: 13.549405672998114\n\nSame global batch size but grad norm is 4 times higher in the second case."
+    },
+    {
+      "author": "tdrussell",
+      "created_at": "2026-01-12T00:55:43Z",
+      "body": "I am using Deepspeed 0.18.2. This issue is fixed starting with 0.18.3, I am seeing the correct gradients with that version. #7665 appears to be the PR that fixed it. I had other problems upgrading my application to the latest Deepspeed versions, but I guess I will try again so I can pull in the fix.\n\nI don't see any issues about this or mentions of the fix in the changelog, so I'll leave this issue open for visibility. Feel free to close if you feel like this has been fully addressed."
+    },
+    {
+      "author": "tohtana",
+      "created_at": "2026-01-23T20:22:35Z",
+      "body": "Hi @tdrussell,\nYes, we had a bug related to gradient accumulation, which is now resolved. I\u2019ll close this issue for now, but please feel free to open a new issue or reopen this one if needed."
+    }
+  ]
+}

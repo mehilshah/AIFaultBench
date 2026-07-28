@@ -1,0 +1,46 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 3032,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/3032",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[CI] `torch.meshgrid` having new default indexing in 1.10.0 (CI server currently installs 1.9.0)",
+  "author": "nipunbatra",
+  "created_at": "2022-03-02T10:38:15Z",
+  "updated_at": "2022-03-17T16:45:00Z",
+  "closed_at": "2022-03-17T16:45:00Z",
+  "labels": [
+    "bug",
+    "testing"
+  ],
+  "milestone": "1.8.1 release",
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 15.25,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:49.435771+00:00",
+  "comments": [
+    {
+      "author": "fritzo",
+      "created_at": "2022-03-02T15:00:49Z",
+      "body": "Thanks for pointing this out @nipunbatra! We've been a bit busy and haven't had a chance to fully update to PyTorch 1.10."
+    }
+  ]
+}

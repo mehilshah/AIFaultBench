@@ -1,0 +1,39 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 39089,
+  "html_url": "https://github.com/jax-ml/jax/issues/39089",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`jit` C++ fastpath attaches the logical instead of the physical sharding to PRNG key outputs, causing a spurious cache miss when keys are fed back in",
+  "author": "Gattocrucco",
+  "created_at": "2026-07-11T07:19:46Z",
+  "updated_at": "2026-07-11T17:28:57Z",
+  "closed_at": "2026-07-11T17:28:57Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.42,
+  "fix": {
+    "closing_commit": "9120bf895b322f163c10950dce1e39895b265572",
+    "linked_prs": [],
+    "best_guess_fix_commit": "9120bf895b322f163c10950dce1e39895b265572",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:29:35.716935+00:00",
+  "comments": []
+}

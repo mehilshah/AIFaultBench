@@ -1,0 +1,55 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 3218,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/3218",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`ProvenanceTensor` bug when used with `torch.set_default_device`",
+  "author": "ordabayevy",
+  "created_at": "2023-05-21T01:05:11Z",
+  "updated_at": "2023-05-28T15:04:40Z",
+  "closed_at": "2023-05-28T15:04:40Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 7.58,
+  "fix": {
+    "closing_commit": "831c463397925ba60e920e7aa53d1c0975c95c18",
+    "linked_prs": [],
+    "best_guess_fix_commit": "831c463397925ba60e920e7aa53d1c0975c95c18",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:31:47.204832+00:00",
+  "comments": [
+    {
+      "author": "ilia-kats",
+      "created_at": "2023-05-25T08:22:24Z",
+      "body": "I don't think it's related to `set_default_device`, but rather more generally to device handling in `as_tensor`:\r\n```python\r\nimport torch\r\nfrom pyro.ops.provenance import ProvenanceTensor\r\n\r\ndevice = torch.device(\"cuda\")\r\nx = torch.tensor([1., 2., 3.])\r\ny = ProvenanceTensor(x, frozenset([\"x\"]))\r\nprint(torch.as_tensor(y, device=device))\r\n```\r\nalso returns an empty tensor"
+    },
+    {
+      "author": "ilia-kats",
+      "created_at": "2023-05-25T08:39:50Z",
+      "body": "I think device handing in `ProvenanceTensor` is generally buggy:\r\n```python\r\nimport torch\r\nfrom pyro.ops.provenance import ProvenanceTensor\r\n\r\ndevice = torch.device(\"cuda\")\r\nx = torch.tensor([1., 2., 3.])\r\ny = ProvenanceTensor(x, frozenset([\"x\"]))\r\nprint(torch.as_tensor(y.cuda(), device=\"cpu\").device)\r\n```\r\nreturns `device(type='cuda', index=0)`\r\n\r\nbut\r\n```python\r\nprint(torch.as_tensor(torch.arange(5).cuda(), device=\"cpu\").device)\r\n```\r\nreturns `device(type='cpu')` as expected"
+    },
+    {
+      "author": "ilia-kats",
+      "created_at": "2023-05-25T08:51:09Z",
+      "body": "Apparently `ProvenanceTensor.__torch_function__` is not being called in `as_tensor`. It is being called for `y.cuda()`, though"
+    }
+  ]
+}

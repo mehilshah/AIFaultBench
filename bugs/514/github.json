@@ -1,0 +1,40 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7770,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7770",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG][Deepcompile] OOM during DeepCompile pre-pass eager node-by-node profiling (FX Interpreter) due to decomposed cross_entropy materializing huge intermediates",
+  "author": "zuoyanzhang",
+  "created_at": "2026-01-10T13:49:14Z",
+  "updated_at": "2026-04-01T09:56:28Z",
+  "closed_at": "2026-04-01T09:56:28Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 80.84,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:14.131619+00:00",
+  "comments": []
+}

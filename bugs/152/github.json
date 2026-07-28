@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 42794,
+  "html_url": "https://github.com/huggingface/transformers/issues/42794",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`decoder_start_token_id` or `bos_token_id` has to be defined for encoder-decoder generation.",
+  "author": "jiqing-feng",
+  "created_at": "2025-12-11T06:22:58Z",
+  "updated_at": "2025-12-18T18:33:40Z",
+  "closed_at": "2025-12-18T18:33:40Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 7.51,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:09.601079+00:00",
+  "comments": [
+    {
+      "author": "zucchini-nlp",
+      "created_at": "2025-12-11T13:10:45Z",
+      "body": "Caused by https://github.com/huggingface/transformers/pull/41695/, will fix"
+    }
+  ]
+}

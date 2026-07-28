@@ -1,0 +1,55 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 2886,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/2886",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "RuntimeError: unsupported input to tensordot, got dims=0",
+  "author": "bdatko",
+  "created_at": "2021-06-26T16:55:13Z",
+  "updated_at": "2021-07-02T04:25:12Z",
+  "closed_at": "2021-07-02T04:25:12Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": "1.7 release",
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 5.48,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:03.349015+00:00",
+  "comments": [
+    {
+      "author": "fritzo",
+      "created_at": "2021-06-26T19:48:33Z",
+      "body": "Thanks @bdatko, looks like we need to add some fixes for PyTorch 1.9..."
+    },
+    {
+      "author": "fritzo",
+      "created_at": "2021-07-01T03:05:46Z",
+      "body": "Note this is caused by upstream PyTorch bug https://github.com/pytorch/pytorch/issues/61096 and we will be working around the bug in #2887 and the Pyro 1.7 release."
+    },
+    {
+      "author": "fritzo",
+      "created_at": "2021-07-02T04:25:12Z",
+      "body": "Resolved by #2887 "
+    }
+  ]
+}

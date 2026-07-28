@@ -1,0 +1,46 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7728,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7728",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] SP with PEFT",
+  "author": "shon-otmazgin-wix",
+  "created_at": "2025-12-16T20:52:21Z",
+  "updated_at": "2025-12-16T21:06:26Z",
+  "closed_at": "2025-12-16T21:06:26Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:37.833737+00:00",
+  "comments": [
+    {
+      "author": "shon-otmazgin-wix",
+      "created_at": "2025-12-16T21:06:26Z",
+      "body": "duplicate\n\nhttps://github.com/deepspeedai/DeepSpeed/issues/7729"
+    }
+  ]
+}

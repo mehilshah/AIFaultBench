@@ -1,0 +1,39 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 38188,
+  "html_url": "https://github.com/jax-ml/jax/issues/38188",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`jax.Array.platform()` is missing from the type stubs",
+  "author": "Gattocrucco",
+  "created_at": "2026-06-04T13:24:44Z",
+  "updated_at": "2026-06-05T21:50:18Z",
+  "closed_at": "2026-06-05T21:50:18Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.35,
+  "fix": {
+    "closing_commit": "4ca77a347bef116801bec90b0325dc4423199713",
+    "linked_prs": [],
+    "best_guess_fix_commit": "4ca77a347bef116801bec90b0325dc4423199713",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:33:18.858863+00:00",
+  "comments": []
+}

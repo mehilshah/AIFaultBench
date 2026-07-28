@@ -1,0 +1,46 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7812,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7812",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] DeepSpeedEngine __del__/destroy throws AttributeError after initialize() failure (missing _deepcompile_active) + BrokenPipeError noise",
+  "author": "griffinstalha",
+  "created_at": "2026-01-24T11:27:30Z",
+  "updated_at": "2026-01-25T16:20:02Z",
+  "closed_at": "2026-01-25T16:20:02Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.2,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:21.268075+00:00",
+  "comments": [
+    {
+      "author": "tohtana",
+      "created_at": "2026-01-25T07:58:50Z",
+      "body": "@griffinstalha Thank you for reporting! Let's address this by #7813."
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 11076,
+  "html_url": "https://github.com/tensorflow/models/issues/11076",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Bug when evaluating images with over 100 objects per image",
+  "author": "Sam-Seaberry",
+  "created_at": "2023-08-17T15:34:33Z",
+  "updated_at": "2024-06-04T18:01:04Z",
+  "closed_at": "2024-06-04T18:00:40Z",
+  "labels": [
+    "type:bug",
+    "models:research"
+  ],
+  "milestone": null,
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 292.1,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:34.441529+00:00",
+  "comments": [
+    {
+      "author": "MichalRoubalEL",
+      "created_at": "2023-09-07T17:12:11Z",
+      "body": "I am experiencing the same issue. I tested a lot of different scenarios though. I read [faq.md](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/faq.md) and based on this I found in protos default values set 100 which I changed to 1000 and trained the model without any change though.\r\n\r\nI also trained my model and scored high mAP 0.7 using classic CLI command with main_tf2.py and --checkpoint_dir and then run tensorboard and tensorboard for evaluationf always shows only 100 groundtruth used bounding boxes for each images. I suppose based on faq.md it also uses only 100 bboxes also for training and remaining bboxes are clipped and not used during the training. What I dont know is where / how to force TF2 objection detection API to use more 100 bboxes per image in trainig. Even if I set higher number in the pipeline.config manually and also in the found protos it still uses 100 per training.\r\n\r\nThe above model is usually able to detect approx 100 objects within the image but my use case is normally several hunders of objects per image. The only way around is manually delete objects to fit 100 objects per image and only with these train the model then it would work. But I have the issue with that my use case is highly imbalanced and in order to nitpick and erase certain elements for every training image is huge work. Nonetheless the object with bigger amount present in the image have different looks and it is desired to have looks variabilitiy within the training dataset.\r\n\r\nIt would be a huge help if you guys could help us navigate this issue. Thanks a lot."
+    },
+    {
+      "author": "Sam-Seaberry",
+      "created_at": "2023-09-07T18:46:55Z",
+      "body": "The error you are seeing with only 100 ground truth is due to a missing pipeline.config parameter. Tensorflow will default to the lowest BB number its given, so if you have haven't set one of the inputs to greater than 100 it will only ever display 100. \r\n\r\nThis is noted here https://github.com/tensorflow/models/blob/master/research/object_detection/protos/input_reader.proto line 111\r\n\r\nThe Protos folder gives information about what each section of your pipeline.config can/does accept, if there is a variable in a protos file that links to the max number of detection or bounding boxes that you do not set in your pipeline.config add it.\r\n\r\nFor example: post_processing.proto has variables: `max_total_detections` and `max_detections_per_class` if these are missing from your pipeline.config post_processing section you will get unwanted results (for images with over 100 detections per image/class)."
+    },
+    {
+      "author": "MichalRoubalEL",
+      "created_at": "2023-09-07T19:53:18Z",
+      "body": "Thanks for your input, however I did set all these variables within my config file and I still see only 100bboxes and  also  max_boxes_to_visualize is shoving only 20 model predictions even I change this behaviour in eval.proto as per line 59 in [eval.proto](https://github.com/tensorflow/models/blob/master/research/object_detection/protos/eval.proto) and set it also to 1000.\r\n\r\nI \"overshoot\"  max_number_of_boxes variable within one image and still got issues with display and model still recognized only about 100 object not all of them. See my pipeline.config below\r\n[pipeline.txt](https://github.com/tensorflow/models/files/12552928/pipeline.txt)\r\n"
+    },
+    {
+      "author": "Sam-Seaberry",
+      "created_at": "2023-09-07T21:18:09Z",
+      "body": "Please read my initial comment in full. From a quick look I can see you are missing:\r\n\r\n `max_number_of_boxes: 500` should be in your eval_input_reader section. \r\n\r\n`max_num_boxes_to_visualize: 500` and `num_visualizations: 500` should be in eval_config\r\n\r\n`max_number_of_boxes: 500` should be under train_input_reader\r\n\r\nThere may be more missing. Go though each section of you pipeline.config and check for missing values by looking at there respective .proto files."
+    },
+    {
+      "author": "MichalRoubalEL",
+      "created_at": "2023-09-08T08:44:46Z",
+      "body": "Sam, thanks a lot! At first I didn't understand your comment. It works now! I thought when I change my default values in proto it will work. I put all the variables in place according to protos and it works great!"
+    },
+    {
+      "author": "Sam-Seaberry",
+      "created_at": "2024-06-04T18:00:40Z",
+      "body": "I found the source of the error:\r\nThe eval_input_reader is repeated and so when writing to it you must specify the index. causing this :\r\n`pipeline_config.eval_input_reader.max_number_of_boxes = 500`\r\nTo throw an error. \r\n\r\nTo solve simple add an index to the call:\r\n`pipeline_config.eval_input_reader[0].max_number_of_boxes = 500`"
+    },
+    {
+      "author": "google-ml-butler[bot]",
+      "created_at": "2024-06-04T18:00:42Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=Yes&entry.2137816233=https://github.com/tensorflow/models/issues/11076\">Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=No&entry.2137816233=https://github.com/tensorflow/models/issues/11076\">No</a>\n"
+    }
+  ]
+}

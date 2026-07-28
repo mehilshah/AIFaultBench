@@ -1,0 +1,55 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-io",
+  "number": 1583,
+  "html_url": "https://github.com/keras-team/keras-io/issues/1583",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[KerasCV] Image segmentation with a U-Net-like architecture is not running successfuly.",
+  "author": "ElaraMori",
+  "created_at": "2023-11-08T19:59:34Z",
+  "updated_at": "2023-12-14T04:31:47Z",
+  "closed_at": "2023-12-14T04:31:47Z",
+  "labels": [
+    "type:bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 35.36,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:48.416158+00:00",
+  "comments": [
+    {
+      "author": "ElaraMori",
+      "created_at": "2023-11-14T14:46:15Z",
+      "body": "Probably a duplicate of https://github.com/keras-team/keras-io/issues/1512."
+    },
+    {
+      "author": "sartq333",
+      "created_at": "2023-12-13T13:27:24Z",
+      "body": "hello @jazzman1825, I was going through the article and there is no code containing 'augmented_train_ds' so if you could share colab file of your code that might be more helpful. Also this might help you https://stackoverflow.com/questions/77019222/sequential-model-error-in-unet-keras-image-segmentation."
+    },
+    {
+      "author": "ElaraMori",
+      "created_at": "2023-12-14T04:31:47Z",
+      "body": "Hey @SarthakJain333! Thanks for your comment, I have had a look at the article and colab environment once again and it seems like the code has been modified and now runs with no issue. Although the code is now different and runs perfectly, the `Last modified: ` line still states `2020/04/20`. No idea why this line wasn't updated with the latest modification, but anyways it makes the issue outdated now."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 1916,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/1916",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`MCMC.run` gets error after `MCMC.warmup` with `AIES`",
+  "author": "xiesl97",
+  "created_at": "2024-11-25T14:53:29Z",
+  "updated_at": "2024-11-29T01:52:21Z",
+  "closed_at": "2024-11-29T01:52:21Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.46,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:25.820766+00:00",
+  "comments": [
+    {
+      "author": "fehiepsi",
+      "created_at": "2024-11-27T22:40:07Z",
+      "body": "cc @amifalk "
+    },
+    {
+      "author": "amifalk",
+      "created_at": "2024-11-28T00:28:02Z",
+      "body": "What's going is that the rng_key is split by chain when num_chains > 1 https://github.com/pyro-ppl/numpyro/blob/f87f40ea7c30e2a5e9143a42fd57060680011638/numpyro/infer/mcmc.py#L655-L656\r\n\r\nand then the rng_key is injected into the state here\r\n\r\nhttps://github.com/pyro-ppl/numpyro/blob/f87f40ea7c30e2a5e9143a42fd57060680011638/numpyro/infer/mcmc.py#L658-L660\r\n\r\n, but methods that inherit from EnsembleSampler expect a singleton rng_key. So we should be able to fix this by checking that `sampler.is_ensemble_kernel` is false before splitting the key.\r\n"
+    }
+  ]
+}

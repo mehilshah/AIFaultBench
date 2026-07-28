@@ -1,0 +1,58 @@
+{
+  "owner": "patrick-kidger",
+  "repo": "jaxtyping",
+  "number": 231,
+  "html_url": "https://github.com/patrick-kidger/jaxtyping/issues/231",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Misleading exception when runtime type checker is used directly",
+  "author": "padix-key",
+  "created_at": "2024-07-16T11:02:06Z",
+  "updated_at": "2024-07-24T06:48:33Z",
+  "closed_at": "2024-07-24T06:48:32Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 7.82,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:15.879131+00:00",
+  "comments": [
+    {
+      "author": "patrick-kidger",
+      "created_at": "2024-07-18T19:09:40Z",
+      "body": "Ah, it sounds like we should include a message like \"have you included a jaxtyped decorator?\"\n\nHappy to take a PR tweaking this!"
+    },
+    {
+      "author": "padix-key",
+      "created_at": "2024-07-22T11:22:13Z",
+      "body": "I am not sure where the correct location would be. To me it seems like in `get_shape_memo()`\r\n\r\nhttps://github.com/patrick-kidger/jaxtyping/blob/c2f19dbea305e1e3b0b1d259ce56ee433a2df9e5/jaxtyping/_storage.py#L33-L46\r\n\r\nthis assumption is not correct:\r\n\r\n> In this case just create a temporary memo, since we're not going to be comparing against any stored values anyway.\r\n\r\nIn the erroneous case I have an empty `shape_memo`, but it still compares against it, as `beartype` is used. Is this correct? "
+    },
+    {
+      "author": "patrick-kidger",
+      "created_at": "2024-07-22T12:04:47Z",
+      "body": "So I'm just suggesting tweaking the error message you bumped into, which is available on this line:\r\n\r\nhttps://github.com/patrick-kidger/jaxtyping/blob/c2f19dbea305e1e3b0b1d259ce56ee433a2df9e5/jaxtyping/_array_types.py#L144"
+    },
+    {
+      "author": "padix-key",
+      "created_at": "2024-07-22T13:27:18Z",
+      "body": "OK, is created a PR for this."
+    }
+  ]
+}

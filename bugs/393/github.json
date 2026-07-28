@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 1573,
+  "html_url": "https://github.com/huggingface/accelerate/issues/1573",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Test failed with accelerate version 0.20.3 and deepspeed version 0.9.3 on single machine with 4x A100 GPU",
+  "author": "seraphzl",
+  "created_at": "2023-06-10T06:22:15Z",
+  "updated_at": "2023-06-13T13:15:02Z",
+  "closed_at": "2023-06-13T13:03:49Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.28,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:12.625052+00:00",
+  "comments": [
+    {
+      "author": "muellerzr",
+      "created_at": "2023-06-13T13:15:01Z",
+      "body": "Thanks for the flag! This has been fixed with #1586, which you can see if you install from git directly via: `pip install git+https://github.com/huggingface/accelerate`"
+    }
+  ]
+}

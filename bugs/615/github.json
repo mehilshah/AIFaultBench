@@ -1,0 +1,50 @@
+{
+  "owner": "pytorch",
+  "repo": "rl",
+  "number": 3242,
+  "html_url": "https://github.com/pytorch/rl/issues/3242",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] ActionMask fails for MultiDiscrete space with homogeneous nvec due to incorrect spec conversion",
+  "author": "wellcoming",
+  "created_at": "2025-11-26T06:30:30Z",
+  "updated_at": "2026-01-19T12:49:36Z",
+  "closed_at": "2026-01-19T12:49:36Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 54.26,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:38.211108+00:00",
+  "comments": [
+    {
+      "author": "wellcoming",
+      "created_at": "2025-11-26T08:54:08Z",
+      "body": "Ah, I see. The mask cannot be used for every two-dimensional combination but only for individual rows/columns. "
+    },
+    {
+      "author": "wellcoming",
+      "created_at": "2025-11-26T09:01:36Z",
+      "body": "So does this count as a Feature Request? (=_=)"
+    }
+  ]
+}

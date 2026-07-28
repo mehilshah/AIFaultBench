@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 3181,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/3181",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Difference in event_shape between pyro's LKJCholesky and torch's",
+  "author": "tingiskhan",
+  "created_at": "2023-02-13T12:25:59Z",
+  "updated_at": "2023-05-05T18:06:53Z",
+  "closed_at": "2023-05-05T18:06:53Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 81.24,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:54.663011+00:00",
+  "comments": [
+    {
+      "author": "ordabayevy",
+      "created_at": "2023-04-21T01:10:07Z",
+      "body": "It looks like `pyro.distributions.transforms.cholesky.CorrLCholeskyTransform` should be deprecated in favor of `torch.distributions.transforms.CorrCholeskyTransform`. Is that true @fritzo @fehiepsi?"
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2023-04-21T18:36:33Z",
+      "body": "Yes, I think we can use the upstream one."
+    }
+  ]
+}

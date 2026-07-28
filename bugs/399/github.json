@@ -1,0 +1,50 @@
+{
+  "owner": "pytorch",
+  "repo": "rl",
+  "number": 3599,
+  "html_url": "https://github.com/pytorch/rl/issues/3599",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] `CSVLogger` video logging is incompatible with `torchvision>=0.26`",
+  "author": "Xmaster6y",
+  "created_at": "2026-04-07T12:04:14Z",
+  "updated_at": "2026-04-08T15:31:22Z",
+  "closed_at": "2026-04-08T15:31:22Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.14,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:22.044368+00:00",
+  "comments": [
+    {
+      "author": "theap06",
+      "created_at": "2026-04-08T15:08:44Z",
+      "body": "@Xmaster6y This has already been fixed. We now use @implement_for to dispatch based on torchvision version: torchvision < 0.22 uses write_video, and >= 0.22 switches to torchcodec. You'll need to install torchcodec >= 0.10.0 for your current version of torchvision"
+    },
+    {
+      "author": "Xmaster6y",
+      "created_at": "2026-04-08T15:31:22Z",
+      "body": "Thank you for pointing this out! I didn't test with the latest version, my bad."
+    }
+  ]
+}

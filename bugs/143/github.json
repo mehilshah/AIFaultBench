@@ -1,0 +1,48 @@
+{
+  "owner": "huggingface",
+  "repo": "sentence-transformers",
+  "number": 3043,
+  "html_url": "https://github.com/huggingface/sentence-transformers/issues/3043",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Issue loading remote source code offline?",
+  "author": "brendanartley",
+  "created_at": "2024-11-08T00:34:39Z",
+  "updated_at": "2024-11-17T21:28:35Z",
+  "closed_at": "2024-11-17T21:28:35Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 9.87,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:55.918321+00:00",
+  "comments": [
+    {
+      "author": "tomaarsen",
+      "created_at": "2024-11-15T10:25:25Z",
+      "body": "Hello!\r\n\r\nIt is possible, but you have to make some modifications. Because the remote model itself requires modeling files that are in another remote location, we can't use `local_files_only=True` to only use cached files, as although we'd use the local files from the model itself, it would still require downloading the modeling files from another remote location.\r\n\r\nHere are the steps to get it working locally without internet:\r\n1. Save the model locally:\r\n   ```python\r\n   from sentence_transformers import SentenceTransformer\r\n\r\n   model = SentenceTransformer(\"nomic-ai/nomic-embed-text-v1\", trust_remote_code=True)\r\n   model.save_pretrained(\"nomic-embed-text-v1-local\")\r\n   ```\r\n2. Observe the `config.json` of the downloaded model and search for `auto_map`. This will be a mapping of autoclass names to either `{repository}--{file}.{class}` or `{file}.{class}`. Either way, we want to download all files mentioned in this mapping. Place them in the local model repository.\r\n3. If the `config.json` `auto_map` has the format of `{repository}--{file}.{class}`, update it to `{file}.{class}` instead. We have the files in the same directory as the config now, so this should work.\r\n4. Load the model \"like normal\", but with `local_files_only=True`: \r\n   ```python\r\n   embedding_model = SentenceTransformer(\r\n       \"nomic-embed-text-v1-local\", \r\n       trust_remote_code=True,\r\n       local_files_only=True,\r\n   )\r\n   ```\r\nP.s. I'm not sure if `trust_remote_code=True` is still necessary - it might not be, feel free to experiment.\r\n\r\n- Tom Aarsen"
+    },
+    {
+      "author": "brendanartley",
+      "created_at": "2024-11-17T21:28:35Z",
+      "body": "Awesome, this solved it. Thanks @tomaarsen!"
+    }
+  ]
+}

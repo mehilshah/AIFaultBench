@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2612,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2612",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Slow forward for conv_dw and mlp in ConvNeXt",
+  "author": "xiuqhou",
+  "created_at": "2025-11-18T09:47:07Z",
+  "updated_at": "2025-11-19T23:03:22Z",
+  "closed_at": "2025-11-19T23:03:22Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.55,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:34.988428+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-11-18T17:01:23Z",
+      "body": "@xiuqhou first of all, you can't time cuda forward like that, look up how\n\nsecond, I have a benchmark script `benchmark.py` that can be used and the performance remains comparable from 2.1 to 2.9. Slightly improving over time.\n\nI'd recommend torch.compile with these models, it helps with the awkward conv/norm permutes quite a bit.\n\nI've fiddled with contiguous vs not in different places, it can help some case but then it'll hurt others so in the end I'm leaving as is without compelling evidence across a wide range of hardware and model sizes. torchcompile will eliminate the benefit of that in any case.\n\n"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-11-19T23:02:31Z",
+      "body": "@xiuqhou \nSorry pasted the wrong analysis in here earlier.. but I did run comparisons for this one. Using the benchmark.py script included in the root, ran two sets on PyTorch 2.9.1 vs 2.1.2 w/ and w/o torch.compile used. There is a 4090 in this machine. No suprises here. Inference throughput is similar but slightly better in the latest PyTorch, and there was a bigger improvement in 2.9.1 in the train throughput.\n\n`python benchmark.py --model convnext_large --use-train-size --amp --amp-dtype bfloat16 \u00a0--torchcompile`\n\n```\nPyTorch 2.9.1 eager\n{\u00a0 \u00a0 \n    \"model\": \"convnext_large\",\n\u00a0 \u00a0 \"infer_samples_per_sec\": 1032.81,\n\u00a0 \u00a0 \"infer_step_time\": 247.856,\n\u00a0 \u00a0 \"infer_batch_size\": 256,\n\u00a0 \u00a0 \"infer_img_size\": 224,\n\u00a0 \u00a0 \"train_samples_per_sec\": 336.51,\n\u00a0 \u00a0 \"train_step_time\": 284.667,\n\u00a0 \u00a0 \"train_batch_size\": 96,\n\u00a0 \u00a0 \"train_img_size\": 224,\n\u00a0 \u00a0 \"param_count\": 197.77\n}\n\nPyTorch 2.9.1 torchcompile\n{\n\u00a0 \u00a0 \"model\": \"convnext_large\",\n\u00a0 \u00a0 \"infer_samples_per_sec\": 1455.69,\n\u00a0 \u00a0 \"infer_step_time\": 175.849,\n\u00a0 \u00a0 \"infer_batch_size\": 256,\n\u00a0 \u00a0 \"infer_img_size\": 224,\n\u00a0 \u00a0 \"train_samples_per_sec\": 408.6,\n\u00a0 \u00a0 \"train_step_time\": 234.529,\n\u00a0 \u00a0 \"train_batch_size\": 96,\n\u00a0 \u00a0 \"train_img_size\": 224,\n\u00a0 \u00a0 \"param_count\": 197.77\n}\n\nPytorch 2.1.2 eager\n{\n\u00a0 \u00a0 \"model\": \"convnext_large\",\n\u00a0 \u00a0 \"infer_samples_per_sec\": 1000.68,\n\u00a0 \u00a0 \"infer_step_time\": 255.814,\n\u00a0 \u00a0 \"infer_batch_size\": 256,\n\u00a0 \u00a0 \"infer_img_size\": 224,\n\u00a0 \u00a0 \"train_samples_per_sec\": 269.8,\n\u00a0 \u00a0 \"train_step_time\": 355.236,\n\u00a0 \u00a0 \"train_batch_size\": 96,\n\u00a0 \u00a0 \"train_img_size\": 224,\n\u00a0 \u00a0 \"param_count\": 197.77\n}\n\nPyTorch 2.1.2 torchcompile\n{\n\u00a0 \u00a0 \"model\": \"convnext_large\",\n\u00a0 \u00a0 \"infer_samples_per_sec\": 1413.6,\n\u00a0 \u00a0 \"infer_step_time\": 181.085,\n\u00a0 \u00a0 \"infer_batch_size\": 256,\n\u00a0 \u00a0 \"infer_img_size\": 224,\n\u00a0 \u00a0 \"train_samples_per_sec\": 345.19,\n\u00a0 \u00a0 \"train_step_time\": 277.673,\n\u00a0 \u00a0 \"train_batch_size\": 96,\n\u00a0 \u00a0 \"train_img_size\": 224,\n\u00a0 \u00a0 \"param_count\": 197.77\n}\n```\n\nSo, I'll close the issue with this as I don't see anything to go on."
+    }
+  ]
+}

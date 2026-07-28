@@ -1,0 +1,40 @@
+{
+  "owner": "sdv-dev",
+  "repo": "SDV",
+  "number": 2290,
+  "html_url": "https://github.com/sdv-dev/SDV/issues/2290",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Sampling with HMA Synthesizer generates many `SingleTableMetadata` deprecation warnings",
+  "author": "srinify",
+  "created_at": "2024-11-12T21:19:58Z",
+  "updated_at": "2025-01-08T11:27:34Z",
+  "closed_at": "2025-01-08T11:27:34Z",
+  "labels": [
+    "bug",
+    "feature:sampling"
+  ],
+  "milestone": "1.17.4",
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 56.59,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:41.205208+00:00",
+  "comments": []
+}

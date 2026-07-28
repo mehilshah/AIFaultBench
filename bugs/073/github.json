@@ -1,0 +1,48 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeedExamples",
+  "number": 940,
+  "html_url": "https://github.com/deepspeedai/DeepSpeedExamples/issues/940",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Failed to run Domino example",
+  "author": "lucifer1004",
+  "created_at": "2024-11-29T08:01:30Z",
+  "updated_at": "2024-12-20T21:29:31Z",
+  "closed_at": "2024-12-20T21:29:31Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 21.56,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:09.190952+00:00",
+  "comments": [
+    {
+      "author": "tkandi",
+      "created_at": "2024-12-15T10:15:53Z",
+      "body": "It seems that `deepspeed/runtime/domino/transformer.py` is using `deepspeed.comm.all_reduce`. \nWe should use `deepspeed.init_distributed()` to initialize `cdb` before that."
+    },
+    {
+      "author": "hwchen2017",
+      "created_at": "2024-12-20T21:29:14Z",
+      "body": "Hi @lucifer1004 , please check this issue Microsoft/DeepSpeed#6851 for more information. "
+    }
+  ]
+}

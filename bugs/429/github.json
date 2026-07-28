@@ -1,0 +1,45 @@
+{
+  "owner": "pytorch",
+  "repo": "rl",
+  "number": 3549,
+  "html_url": "https://github.com/pytorch/rl/issues/3549",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] MPS device crashes on float64 specs when moving environments with .to('mps')",
+  "author": "bsprenger",
+  "created_at": "2026-03-06T06:07:07Z",
+  "updated_at": "2026-03-07T08:12:17Z",
+  "closed_at": "2026-03-07T08:12:17Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.09,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:07.024103+00:00",
+  "comments": [
+    {
+      "author": "bsprenger",
+      "created_at": "2026-03-06T06:08:45Z",
+      "body": "I opened PR #3548 to fix this. LMK what you think \ud83d\ude42 "
+    }
+  ]
+}

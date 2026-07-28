@@ -1,0 +1,70 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 14013,
+  "html_url": "https://github.com/huggingface/diffusers/issues/14013",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "A bug on the set_timesteps function of the FlowMatchEulerDiscreteScheduler",
+  "author": "TheLovesOfLadyPurple",
+  "created_at": "2026-06-20T23:45:37Z",
+  "updated_at": "2026-07-07T08:45:58Z",
+  "closed_at": "2026-07-07T08:45:58Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 16.38,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:24.252812+00:00",
+  "comments": [
+    {
+      "author": "TheLovesOfLadyPurple",
+      "created_at": "2026-06-20T23:57:51Z",
+      "body": "we fix it in there: https://github.com/huggingface/diffusers/pull/14011"
+    },
+    {
+      "author": "TheLovesOfLadyPurple",
+      "created_at": "2026-06-24T23:13:33Z",
+      "body": "@dg845 Could You review this issue?  I do think it's a bug that deserves your attention."
+    },
+    {
+      "author": "TheLovesOfLadyPurple",
+      "created_at": "2026-07-03T03:12:52Z",
+      "body": "@yiyixuxu @sayakpaul @DN6 @asomoza @dg845 @stevhliu "
+    },
+    {
+      "author": "dg845",
+      "created_at": "2026-07-03T06:00:36Z",
+      "body": "If I understand correctly, the issue is that custom `timesteps` supplied to `FlowMatchEulerDiscreteScheduler.set_timesteps` get desynced from the underlying `sigmas` schedule under certain conditions, the most likely of which is `self.config.shift != 1.0`. (More precisely, they end up no longer satisfying the relationship `sigmas * self.config.num_train_timesteps = timesteps`.) The `timesteps` and `sigmas` start out synced at \n\nhttps://github.com/huggingface/diffusers/blob/c4123258d23a89562b6db699ec9136e207bda452/src/diffusers/schedulers/scheduling_flow_match_euler_discrete.py#L341\n\nSince we ultimately create `self.timesteps` from the raw custom `timesteps`:\n\nhttps://github.com/huggingface/diffusers/blob/c4123258d23a89562b6db699ec9136e207bda452/src/diffusers/schedulers/scheduling_flow_match_euler_discrete.py#L370\n\nif the `sigmas` are modified in between these two lines, for example by shifting (dynamic or not), then the two will no longer be synced. So a smaller reproduction of the issue is as follows:\n\n```python\nimport torch\nfrom diffusers import FlowMatchEulerDiscreteScheduler\n\n# Create a scheduler with shift != 1.0 (setting other configs like use_karras_sigmas=True would also work)\nscheduler = FlowMatchEulerDiscreteScheduler(shift=2.0)\nscheduler.set_timesteps(num_inference_steps=10)\ntorch.testing.assert_close(scheduler.sigmas[:-1] * scheduler.config.num_train_timesteps, scheduler.timesteps)\n\nsigmas = scheduler.sigmas\ncustom_timesteps = scheduler.timesteps.tolist()\nscheduler.set_timesteps(timesteps=custom_timesteps)\n# Assertions below fail as the sigmas and timesteps are desynced due to the issue\ntorch.testing.assert_close(scheduler.sigmas[:-1] * scheduler.config.num_train_timesteps, scheduler.timesteps)\ntorch.testing.assert_close(sigmas, scheduler.sigmas)\n```\n\nAn underlying design issue is: should we modify custom `sigmas` or `timesteps` which are supplied to `set_timesteps`? The current code does modify custom `sigmas`, for example by shifting them if shifting is active (which is related to the bug above). On the other hand, I think this behavior might be unexpected (under the assumption that custom timesteps are always honored). @yiyixuxu WDYT?\n\nOne case where this behavior matters is that the distilled LTX 2 checkpoints currently need to specify `shift=1.0`, etc. so that the distilled `sigmas` schedule doesn't get modified by `set_timesteps`."
+    },
+    {
+      "author": "dg845",
+      "created_at": "2026-07-03T06:25:31Z",
+      "body": "Actually, keeping the current behavior (at least for now) is probably better since this is the way dynamic shifting is usually implemented: most pipelines supply an unshifted custom `sigmas` schedule:\n\nhttps://github.com/huggingface/diffusers/blob/72eb60c2dad62e44777b5344f21705c6d47bf97f/src/diffusers/pipelines/flux2/pipeline_flux2.py#L934\n\nand expect `FlowMatchEulerDiscreteScheduler.set_timesteps` to do the dynamic shifting using the calculated `mu` value:\n\nhttps://github.com/huggingface/diffusers/blob/72eb60c2dad62e44777b5344f21705c6d47bf97f/src/diffusers/pipelines/flux2/pipeline_flux2.py#L938-L945\n\nSo respecting custom `sigmas` as-is would break this pattern."
+    },
+    {
+      "author": "TheLovesOfLadyPurple",
+      "created_at": "2026-07-03T12:10:55Z",
+      "body": "> If I understand correctly, the issue is that custom `timesteps` supplied to `FlowMatchEulerDiscreteScheduler.set_timesteps` get desynced from the underlying `sigmas` schedule under certain conditions, the most likely of which is `self.config.shift != 1.0`. (More precisely, they end up no longer satisfying the relationship `sigmas * self.config.num_train_timesteps = timesteps`.) The `timesteps` and `sigmas` start out synced at\n> \n> [diffusers/src/diffusers/schedulers/scheduling_flow_match_euler_discrete.py](https://github.com/huggingface/diffusers/blob/c4123258d23a89562b6db699ec9136e207bda452/src/diffusers/schedulers/scheduling_flow_match_euler_discrete.py#L341)\n> \n> Line 341 in [c412325](/huggingface/diffusers/commit/c4123258d23a89562b6db699ec9136e207bda452)\n> \n>  sigmas = timesteps / self.config.num_train_timesteps \n> Since we ultimately create `self.timesteps` from the raw custom `timesteps`:\n> \n> [diffusers/src/diffusers/schedulers/scheduling_flow_match_euler_discrete.py](https://github.com/huggingface/diffusers/blob/c4123258d23a89562b6db699ec9136e207bda452/src/diffusers/schedulers/scheduling_flow_match_euler_discrete.py#L370)\n> \n> Line 370 in [c412325](/huggingface/diffusers/commit/c4123258d23a89562b6db699ec9136e207bda452)\n> \n>  timesteps = torch.from_numpy(timesteps).to(dtype=torch.float32, device=device) \n> if the `sigmas` are modified in between these two lines, for example by shifting (dynamic or not), then the two will no longer be synced. So a smaller reproduction of the issue is as follows:\n> \n> import torch\n> from diffusers import FlowMatchEulerDiscreteScheduler\n> \n> # Create a scheduler with shift != 1.0 (setting other configs like use_karras_sigmas=True would also work)\n> scheduler = FlowMatchEulerDiscreteScheduler(shift=2.0)\n> scheduler.set_timesteps(num_inference_steps=10)\n> torch.testing.assert_close(scheduler.sigmas[:-1] * scheduler.config.num_train_timesteps, scheduler.timesteps)\n> \n> sigmas = scheduler.sigmas\n> custom_timesteps = scheduler.timesteps.tolist()\n> scheduler.set_timesteps(timesteps=custom_timesteps)\n> # Assertions below fail as the sigmas and timesteps are desynced due to the issue\n> torch.testing.assert_close(scheduler.sigmas[:-1] * scheduler.config.num_train_timesteps, scheduler.timesteps)\n> torch.testing.assert_close(sigmas, scheduler.sigmas)\n> An underlying design issue is: should we modify custom `sigmas` or `timesteps` which are supplied to `set_timesteps`? The current code does modify custom `sigmas`, for example by shifting them if shifting is active (which is related to the bug above). On the other hand, I think this behavior might be unexpected (under the assumption that custom timesteps are always honored). [@yiyixuxu](https://github.com/yiyixuxu) WDYT?\n> \n> One case where this behavior matters is that the distilled LTX 2 checkpoints currently need to specify `shift=1.0`, etc. so that the distilled `sigmas` schedule doesn't get modified by `set_timesteps`.\n\nYour understanding is correct.  The problem is that, no matter whether you allow the shift of the variance (the sigmas), the variance should still align with the timesteps.  We know that, in the diffusion model, when we train the neural network, we add noise to the image, and the sigma denotes the variance of the noise.  And in the inference, the t in the list named 'timesteps' will be input to the neural network, but it does not affect the noise level of the next step input/this step output, since the noise level is determined by sigmas. If the timestep does not align with the sigma, it would be a problem; the time label input to the neural network would not match the noise level used in training.  So, no matter whether we should shift the sigma, the timestep should still align with the sigma.  "
+    }
+  ]
+}

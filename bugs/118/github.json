@@ -1,0 +1,45 @@
+{
+  "owner": "clearml",
+  "repo": "clearml",
+  "number": 1440,
+  "html_url": "https://github.com/clearml/clearml/issues/1440",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "duplicate",
+  "title": "clearml-agent (1.9.3) incompatible with latest clearml version (2.0.0) #233",
+  "author": "materight",
+  "created_at": "2025-07-08T09:33:14Z",
+  "updated_at": "2025-07-08T09:56:38Z",
+  "closed_at": "2025-07-08T09:56:38Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.02,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:15.413789+00:00",
+  "comments": [
+    {
+      "author": "ainoam",
+      "created_at": "2025-07-08T09:56:38Z",
+      "body": "This issue lies with the ClearML Agent (https://github.com/clearml/clearml-agent/issues/233)"
+    }
+  ]
+}

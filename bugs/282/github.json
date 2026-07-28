@@ -1,0 +1,65 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 39145,
+  "html_url": "https://github.com/jax-ml/jax/issues/39145",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Change in the behavior of `XLA_PYTHON_CLIENT_ALLOCATOR=platform`",
+  "author": "YigitElma",
+  "created_at": "2026-07-14T16:24:48Z",
+  "updated_at": "2026-07-17T11:32:26Z",
+  "closed_at": "2026-07-17T00:18:08Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.33,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:24.523474+00:00",
+  "comments": [
+    {
+      "author": "hawkinsp",
+      "created_at": "2026-07-14T16:45:51Z",
+      "body": "Yes, I saw this also. \"address\" was added to restore the old \"platform\" behavior, but to my mind that was a mistake.\n\nhttps://github.com/openxla/xla/pull/45668 should fix."
+    },
+    {
+      "author": "YigitElma",
+      "created_at": "2026-07-14T18:18:15Z",
+      "body": "Thank you for the quick reply! \n\nI tried to use `os.environ[\"XLA_PYTHON_CLIENT_ALLOCATOR\"] = \"address\"` now, but it is not in the available options. I get the following for both `0.10.1` and `0.10.2`.\n```\nTraceback (most recent call last):\n  File \"/home/yigit/anaconda3/envs/gpu-jax-101/lib/python3.13/site-packages/jax/_src/xla_bridge.py\", line 495, in discover_pjrt_plugins\n    plugin_module.initialize()\n    ~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/home/yigit/anaconda3/envs/gpu-jax-101/lib/python3.13/site-packages/jax_plugins/xla_cuda12/__init__.py\", line 372, in initialize\n    options = xla_client.generate_pjrt_gpu_plugin_options()\n  File \"/home/yigit/anaconda3/envs/gpu-jax-101/lib/python3.13/site-packages/jaxlib/xla_client.py\", line 194, in generate_pjrt_gpu_plugin_options\n    raise ValueError(\n    ...<2 lines>...\n    )\nValueError: XLA_PYTHON_CLIENT_ALLOCATOR env var must be \"default\", \"platform\", \"bfc\", \"cuda_async\", or \"vmm\", got \"address\"\n```\nI know `address` is experimental for now, but I wanted to share the behavior here."
+    },
+    {
+      "author": "hawkinsp",
+      "created_at": "2026-07-14T18:41:52Z",
+      "body": "I guess it must have been added after 0.10.2, then. "
+    },
+    {
+      "author": "YigitElma",
+      "created_at": "2026-07-17T00:18:08Z",
+      "body": "Looks like that PR is merged. I will check it later and reopen this issue if the problem persists. Thanks for the fix for now!"
+    },
+    {
+      "author": "hawkinsp",
+      "created_at": "2026-07-17T11:32:26Z",
+      "body": "Yup, shipped in 0.11.0. Please try it out!"
+    }
+  ]
+}

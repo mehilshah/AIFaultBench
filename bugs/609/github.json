@@ -1,0 +1,52 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 13484,
+  "html_url": "https://github.com/huggingface/diffusers/issues/13484",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Lora loading fail on Flux 2 dev for FAL loras",
+  "author": "christopher5106",
+  "created_at": "2026-04-15T16:52:47Z",
+  "updated_at": "2026-04-18T04:20:17Z",
+  "closed_at": "2026-04-18T04:20:17Z",
+  "labels": [
+    "bug",
+    "lora",
+    "modular-pipelines"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.48,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:29.452963+00:00",
+  "comments": [
+    {
+      "author": "christopher5106",
+      "created_at": "2026-04-15T18:59:06Z",
+      "body": "Another  example \"fal/FLUX.2-dev-Turbo\" with a lot more keys:\n\n### Reproduction\n\n```python\nimport torch\nfrom diffusers import Flux2Pipeline\n\npipe = Flux2Pipeline.from_pretrained(\"black-forest-labs/FLUX.2-dev\", torch_dtype=torch.bfloat16)\npipe.load_lora_weights(\"fal/FLUX.2-dev-Turbo\")\n```\n\n### Logs\n\n```\nsrc/diffusers/loaders/lora_conversion_utils.py\", line 2477, in _convert_non_diffusers_flux2_lora_to_diffusers\n    raise ValueError(f\"`original_state_dict` should be empty at this point but has {original_state_dict.keys()=}.\")\nValueError: `original_state_dict` should be empty at this point but has original_state_dict.keys()=dict_keys(['guidance_in.in_layer.lora_A.weight', 'guidance_in.in_layer.lora_B.weight', 'guidance_in.out_layer.lora_A.weight', 'guidance_in.out_layer.lora_B.weight', 'sformer_blocks.0.attn.add_k_proj.lora_A.weight', 'sformer_blocks.0.attn.add_k_proj.lora_B.weight', 'sformer_blocks.0.attn.add_q_proj.lora_A.weight', 'sformer_blocks.0.attn.add_q_proj.lora_B.weight', 'sformer_blocks.0.attn.add_v_proj.lora_A.weight', 'sformer_blocks.0.attn.add_v_proj.lora_B.weight', 'sformer_blocks.0.attn.to_add_out.lora_A.weight', 'sformer_blocks.0.attn.to_add_out.lora_B.weight', 'sformer_blocks.0.attn.to_k.lora_A.weight', 'sformer_blocks.0.attn.to_k.lora_B.weight', 'sformer_blocks.0.attn.to_out.0.lora_A.weight', 'sformer_blocks.0.attn.to_out.0.lora_B.weight', 'sformer_blocks.0.attn.to_q.lora_A.weight', 'sformer_blocks.0.attn.to_q.lora_B.weight', 'sformer_blocks.0.attn.to_v.lora_A.weight', 'sformer_blocks.0.attn.to_v.lora_B.weight', 'sformer_blocks.1.attn.add_k_proj.lora_A.weight', 'sformer_blocks.1.attn.add_k_proj.lora_B.weight', 'sformer_blocks.1.attn.add_q_proj.lora_A.weight', 'sformer_blocks.1.attn.add_q_proj.lora_B.weight', 'sformer_blocks.1.attn.add_v_proj.lora_A.weight', 'sformer_blocks.1.attn.add_v_proj.lora_B.weight', 'sformer_blocks.1.attn.to_add_out.lora_A.weight', 'sformer_blocks.1.attn.to_add_out.lora_B.weight', 'sformer_blocks.1.attn.to_k.lora_A.weight', 'sformer_blocks.1.attn.to_k.lora_B.weight', 'sformer_blocks.1.attn.to_out.0.lora_A.weight', 'sformer_blocks.1.attn.to_out.0.lora_B.weight', 'sformer_blocks.1.attn.to_q.lora_A.weight', 'sformer_blocks.1.attn.to_q.lora_B.weight', 'sformer_blocks.1.attn.to_v.lora_A.weight', 'sformer_blocks.1.attn.to_v.lora_B.weight', 'sformer_blocks.2.attn.add_k_proj.lora_A.weight', 'sformer_blocks.2.attn.add_k_proj.lora_B.weight', 'sformer_blocks.2.attn.add_q_proj.lora_A.weight', 'sformer_blocks.2.attn.add_q_proj.lora_B.weight', 'sformer_blocks.2.attn.add_v_proj.lora_A.weight', 'sformer_blocks.2.attn.add_v_proj.lora_B.weight', 'sformer_blocks.2.attn.to_add_out.lora_A.weight', 'sformer_blocks.2.attn.to_add_out.lora_B.weight', 'sformer_blocks.2.attn.to_k.lora_A.weight', 'sformer_blocks.2.attn.to_k.lora_B.weight', 'sformer_blocks.2.attn.to_out.0.lora_A.weight', 'sformer_blocks.2.attn.to_out.0.lora_B.weight', 'sformer_blocks.2.attn.to_q.lora_A.weight', 'sformer_blocks.2.attn.to_q.lora_B.weight', 'sformer_blocks.2.attn.to_v.lora_A.weight', 'sformer_blocks.2.attn.to_v.lora_B.weight', 'sformer_blocks.3.attn.add_k_proj.lora_A.weight', 'sformer_blocks.3.attn.add_k_proj.lora_B.weight', 'sformer_blocks.3.attn.add_q_proj.lora_A.weight', 'sformer_blocks.3.attn.add_q_proj.lora_B.weight', 'sformer_blocks.3.attn.add_v_proj.lora_A.weight', 'sformer_blocks.3.attn.add_v_proj.lora_B.weight', 'sformer_blocks.3.attn.to_add_out.lora_A.weight', 'sformer_blocks.3.attn.to_add_out.lora_B.weight', 'sformer_blocks.3.attn.to_k.lora_A.weight', 'sformer_blocks.3.attn.to_k.lora_B.weight', 'sformer_blocks.3.attn.to_out.0.lora_A.weight', 'sformer_blocks.3.attn.to_out.0.lora_B.weight', 'sformer_blocks.3.attn.to_q.lora_A.weight', 'sformer_blocks.3.attn.to_q.lora_B.weight', 'sformer_blocks.3.attn.to_v.lora_A.weight', 'sformer_blocks.3.attn.to_v.lora_B.weight', 'sformer_blocks.4.attn.add_k_proj.lora_A.weight', 'sformer_blocks.4.attn.add_k_proj.lora_B.weight', 'sformer_blocks.4.attn.add_q_proj.lora_A.weight', 'sformer_blocks.4.attn.add_q_proj.lora_B.weight', 'sformer_blocks.4.attn.add_v_proj.lora_A.weight', 'sformer_blocks.4.attn.add_v_proj.lora_B.weight', 'sformer_blocks.4.attn.to_add_out.lora_A.weight', 'sformer_blocks.4.attn.to_add_out.lora_B.weight', 'sformer_blocks.4.attn.to_k.lora_A.weight', 'sformer_blocks.4.attn.to_k.lora_B.weight', 'sformer_blocks.4.attn.to_out.0.lora_A.weight', 'sformer_blocks.4.attn.to_out.0.lora_B.weight', 'sformer_blocks.4.attn.to_q.lora_A.weight', 'sformer_blocks.4.attn.to_q.lora_B.weight', 'sformer_blocks.4.attn.to_v.lora_A.weight', 'sformer_blocks.4.attn.to_v.lora_B.weight', 'sformer_blocks.5.attn.add_k_proj.lora_A.weight', 'sformer_blocks.5.attn.add_k_proj.lora_B.weight', 'sformer_blocks.5.attn.add_q_proj.lora_A.weight', 'sformer_blocks.5.attn.add_q_proj.lora_B.weight', 'sformer_blocks.5.attn.add_v_proj.lora_A.weight', 'sformer_blocks.5.attn.add_v_proj.lora_B.weight', 'sformer_blocks.5.attn.to_add_out.lora_A.weight', 'sformer_blocks.5.attn.to_add_out.lora_B.weight', 'sformer_blocks.5.attn.to_k.lora_A.weight', 'sformer_blocks.5.attn.to_k.lora_B.weight', 'sformer_blocks.5.attn.to_out.0.lora_A.weight', 'sformer_blocks.5.attn.to_out.0.lora_B.weight', 'sformer_blocks.5.attn.to_q.lora_A.weight', 'sformer_blocks.5.attn.to_q.lora_B.weight', 'sformer_blocks.5.attn.to_v.lora_A.weight', 'sformer_blocks.5.attn.to_v.lora_B.weight', 'sformer_blocks.6.attn.add_k_proj.lora_A.weight', 'sformer_blocks.6.attn.add_k_proj.lora_B.weight', 'sformer_blocks.6.attn.add_q_proj.lora_A.weight', 'sformer_blocks.6.attn.add_q_proj.lora_B.weight', 'sformer_blocks.6.attn.add_v_proj.lora_A.weight', 'sformer_blocks.6.attn.add_v_proj.lora_B.weight', 'sformer_blocks.6.attn.to_add_out.lora_A.weight', 'sformer_blocks.6.attn.to_add_out.lora_B.weight', 'sformer_blocks.6.attn.to_k.lora_A.weight', 'sformer_blocks.6.attn.to_k.lora_B.weight', 'sformer_blocks.6.attn.to_out.0.lora_A.weight', 'sformer_blocks.6.attn.to_out.0.lora_B.weight', 'sformer_blocks.6.attn.to_q.lora_A.weight', 'sformer_blocks.6.attn.to_q.lora_B.weight', 'sformer_blocks.6.attn.to_v.lora_A.weight', 'sformer_blocks.6.attn.to_v.lora_B.weight', 'sformer_blocks.7.attn.add_k_proj.lora_A.weight', 'sformer_blocks.7.attn.add_k_proj.lora_B.weight', 'sformer_blocks.7.attn.add_q_proj.lora_A.weight', 'sformer_blocks.7.attn.add_q_proj.lora_B.weight', 'sformer_blocks.7.attn.add_v_proj.lora_A.weight', 'sformer_blocks.7.attn.add_v_proj.lora_B.weight', 'sformer_blocks.7.attn.to_add_out.lora_A.weight', 'sformer_blocks.7.attn.to_add_out.lora_B.weight', 'sformer_blocks.7.attn.to_k.lora_A.weight', 'sformer_blocks.7.attn.to_k.lora_B.weight', 'sformer_blocks.7.attn.to_out.0.lora_A.weight', 'sformer_blocks.7.attn.to_out.0.lora_B.weight', 'sformer_blocks.7.attn.to_q.lora_A.weight', 'sformer_blocks.7.attn.to_q.lora_B.weight', 'sformer_blocks.7.attn.to_v.lora_A.weight', 'sformer_blocks.7.attn.to_v.lora_B.weight']).\n```\n"
+    },
+    {
+      "author": "yadferhad",
+      "created_at": "2026-04-16T00:15:01Z",
+      "body": "Thanks for adding the extra example.\n\nI updated PR #13486 to cover that variant as well, including the expanded Flux2 block-name path you hit.\n"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "owner": "mlfoundations",
+  "repo": "open_clip",
+  "number": 998,
+  "html_url": "https://github.com/mlfoundations/open_clip/issues/998",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Cannot train again on pretrained checkpoint due to change in default `weights_only=True` ",
+  "author": "ishaaq",
+  "created_at": "2024-11-20T09:49:29Z",
+  "updated_at": "2024-12-09T18:49:04Z",
+  "closed_at": "2024-12-09T18:49:04Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 9,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 19.37,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:05.353381+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2024-11-21T16:56:34Z",
+      "body": "@ishaaq TLDR You can hack the create_model_and_transforms call in main.py right now to include `load_weights_only=False`, we need to add an arg with a sensible name to allow this override from cmd line.\r\n\r\nCurrent train checkpoints are not weights only, so without cleaning the checkpoint to remove the extra items in the state dict, `load_weights_only=False` needs to be set in the factory but that arg isn't exposed to main.py, thought the usual use case was to use `--resume` but guess if one wants to use a train checkpoint as an initial checkpoint for a new train session that doesn't work..."
+    },
+    {
+      "author": "ishaaq",
+      "created_at": "2024-11-21T22:51:24Z",
+      "body": "Hmm, so it's appropriate/recommended (for security) to leave the flag defaulted to `True` for training on pretrained models but the only way to train on a checkpoint is to turn it off? Surely the security concerns don't go away with using checkpoints?\r\n\r\nThanks, yeah - I did hack the call to set it as a workaround for now.\r\n"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2024-11-21T23:50:26Z",
+      "body": "@ishaaq I wrote all below and then I just though, what pytorch ver are you using? I just tried `torch.load(..., weights_only=True)` on a recent train checkpoint (loaded in pytorch 2.5, train was using 2.2 I think). It worked.\r\n\r\nThere were a number of late additions to safe globals defaults in pytorch as this change evolved on their end. I don't feel we're saving any funky types in our train checkpoints by default, so curious what it's breaking on or if pytorch 2.5 fixes it?\r\n\r\n----\r\npretrained model weights are hosted and distributed online, training checkpoints are artifacts of your own training that were generated locally (though they could be shared, we don't distribute them). So the 'resume' functionality expects to be operating on the output of your own local training.\r\n\r\nI don't see requiring a `--pretrained-force-unsafe-load`  or something along those lines as being dangerous, it can be made clear that well 'it's not safe', and you should only do it to load your own training checkpoints as pretrained models.\r\n\r\nI see two paths\r\n1. what I mentioned, in train code pass an option flag to the create_model that disables the weights_only when you intend to load a training checkpoint as a pretrained weight. By default it's left as True and all of the normal pretrained weights work because they are just bare model state dicts, stripped of their training state.\r\n2. modify the --resume functionality with extra flags to ignore epoch or not load optimizer state, this mostly works but it then wouldn't work with the resizing, etc functionality that is integrated into the factory"
+    },
+    {
+      "author": "ishaaq",
+      "created_at": "2024-11-22T02:18:55Z",
+      "body": "In my minimal repro I had opted to do nothing else other than create a venv and then pip install `open_clip_torch[training]` and let it decide dependency versions. The torch version it opted to download was v2.5.1:\r\n```\r\nCollecting open_clip_torch[training]\r\n  Using cached open_clip_torch-2.29.0-py3-none-any.whl (1.5 MB)\r\n...\r\nCollecting torch>=1.9.0\r\n  Using cached torch-2.5.1-cp39-cp39-manylinux1_x86_64.whl (906.5 MB)\r\n```\r\n... so yes, the issue exists even in torch 2.5.1\r\n\r\nBack to your answer though... I understand it's not safe to load anything other than weights from an external/untrusted pretrained source, but are you saying that it's still safe to trust our own training checkpoints even if the training that generated those checkpoints were based off of an untrusted pretrained source? i.e. that's what my minimal repro above is doing.\r\n"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2024-11-22T16:34:08Z",
+      "body": "@ishaaq and in your example the checkpoint you were trying to load was also created by that env or from somewhere else? You trained a ViT-B-32 for an epoch and then it failed? weird, I don't see how a numpy global got in there. We ideally shouldn't be generating train checkpoints that don't load with weights_only=True and not quite sure how that's happening right now.\r\n\r\nAnd yes, it isn't necessarily 'safe' to load a train checkpoint with weights_only=False generated by code you did not audit yourself. Not aware of any abuse there but it's possible."
+    },
+    {
+      "author": "ishaaq",
+      "created_at": "2024-11-23T00:30:52Z",
+      "body": "The minimal repro is exactly that - i.e. the same env - I spun up an EC2 GPU instance and pip installed open_clip and ran both the first training run (which completed successfully) and then the second using the checkpoint from the first (which failed with the pickling error)."
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2024-11-24T01:04:43Z",
+      "body": "@ishaaq okay, I confirmed the minimal repro on a different environment + machine, found the issue, the cosine scheduler was using np.pi and np.cos and that resulted in a np.float64 LR being passed through to the optimizer and was getting saved in the optimizer state dict, I just pushed a fix to use python math. and now the train checkpoints don't have any globals that aren't allowed by default.\r\n\r\nIn my experiments that passed I was testing my recent addition to support timm optimizers, using ADOPT and it was probably casting the LR to a different type and avoiding that issue, that's what I initially used to try the successful load mentioned above. "
+    },
+    {
+      "author": "ishaaq",
+      "created_at": "2024-11-24T23:13:13Z",
+      "body": "Ok, great - thanks for confirming @rwightman! Can you please show me your diff so I can apply it to my install?"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2024-11-24T23:53:45Z",
+      "body": "@ishaaq already pushed to main https://github.com/mlfoundations/open_clip/commit/5f839622bd6820372c684435808c9f2cdf29a9d5"
+    }
+  ]
+}

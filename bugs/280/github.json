@@ -1,0 +1,39 @@
+{
+  "owner": "PythonOT",
+  "repo": "POT",
+  "number": 418,
+  "html_url": "https://github.com/PythonOT/POT/issues/418",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Wrong number of projections for sliced Wasserstein with predefined projections",
+  "author": "tvayer",
+  "created_at": "2022-12-16T12:15:49Z",
+  "updated_at": "2022-12-16T16:39:05Z",
+  "closed_at": "2022-12-16T15:26:12Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.13,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:21.483921+00:00",
+  "comments": []
+}

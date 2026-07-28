@@ -1,0 +1,45 @@
+{
+  "owner": "pytorch",
+  "repo": "rl",
+  "number": 3122,
+  "html_url": "https://github.com/pytorch/rl/issues/3122",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] IQL assumes specific action shape",
+  "author": "valterschutz",
+  "created_at": "2025-08-08T15:27:02Z",
+  "updated_at": "2025-08-11T09:59:59Z",
+  "closed_at": "2025-08-11T09:59:27Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.77,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:42.630620+00:00",
+  "comments": [
+    {
+      "author": "valterschutz",
+      "created_at": "2025-08-11T09:59:59Z",
+      "body": "I realized that I should probably have used `DiscreteIQLLoss`"
+    }
+  ]
+}

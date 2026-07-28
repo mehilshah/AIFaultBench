@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 2833,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/2833",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "RuntimeError: cannot reshape tensor of 0 elements into shape [-1, 0, 0] because the unspecified dimension size -1 can be any value and is ambiguous",
+  "author": "LysSanzMoreta",
+  "created_at": "2021-05-04T19:20:54Z",
+  "updated_at": "2021-05-05T10:55:31Z",
+  "closed_at": "2021-05-05T10:55:31Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.65,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:40.968486+00:00",
+  "comments": [
+    {
+      "author": "fritzo",
+      "created_at": "2021-05-04T20:06:42Z",
+      "body": "Hi @LysSanzMoreta, is your `mean` also empty in the debugger?  What is its shape?  It's hard to say without seeing more of the model, but my guess would be that some upstream tensor is getting sliced down to a zero tensor, or possibly you have a ragged input array one of whose rows has length zero.\r\n\r\nYou might also try using the distribution's `.expand()` method as in\r\n```py\r\nmean = torch.zeros(2)\r\ncovariance = torch.eye(2)\r\nd = MultivariateNormal(mean, covariance).expand([3]).to_event(1)\r\nassert d.loc.shape == (3, 2)\r\nassert d.covariance_matrix.shape == (3, 2, 2)\r\n```"
+    },
+    {
+      "author": "LysSanzMoreta",
+      "created_at": "2021-05-05T10:55:31Z",
+      "body": "Hi @fritzo , sorry about the confusion :) . Apparently it's an issue with transferring the data from cpu to gpu. It occurred in the server and it's a little complicated to debug there. Sorry,\r\n\r\nThanks for your insight!!!! It helped me look elsewhere"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7729,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7729",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] `UlyssesSPAttentionHF.register_with_transformers()` crashes with PEFT models due to overly strict `isinstance(model, PreTrainedModel)` check",
+  "author": "akshatvishu",
+  "created_at": "2025-12-16T20:58:37Z",
+  "updated_at": "2025-12-19T18:57:33Z",
+  "closed_at": "2025-12-19T18:57:33Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.92,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:19.513211+00:00",
+  "comments": []
+}

@@ -1,0 +1,43 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 3371,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/3371",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[discussion] Parameters not rendering when feeding into `pyro.deterministic`",
+  "author": "KevinTran-TRI",
+  "created_at": "2024-05-29T22:18:27Z",
+  "updated_at": "2024-06-27T20:50:57Z",
+  "closed_at": "2024-06-27T20:50:57Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 28.94,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:32.806782+00:00",
+  "comments": [
+    {
+      "author": "BenZickel",
+      "created_at": "2024-06-27T17:21:21Z",
+      "body": "Hi @KevinTran-TRI, the behavior you are seeing is a bug only in rendering the model's graph and will be fixed by #3378.\r\n\r\nI'm not sure what you are trying to do but the computation is done correctly.\r\n\r\nPlease note however that [deterministic nodes are used mainly for recording values which are completely determined by their parents and they do not affect the model probability density](https://docs.pyro.ai/en/dev/primitives.html?highlight=deterministic#pyro.primitives.deterministic) and [cannot be observed](https://github.com/pyro-ppl/pyro/issues/773).\r\n"
+    }
+  ]
+}

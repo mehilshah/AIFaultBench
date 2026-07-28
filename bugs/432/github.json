@@ -1,0 +1,60 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 10160,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/10160",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "CI Failing on Python 3.9 Torch 2.5 due to Upstream `pgmpy` changes",
+  "author": "zaristei",
+  "created_at": "2025-04-02T21:05:30Z",
+  "updated_at": "2025-04-03T22:10:55Z",
+  "closed_at": "2025-04-03T22:10:55Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 1,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 1,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.05,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:12.183016+00:00",
+  "comments": [
+    {
+      "author": "rusty1s",
+      "created_at": "2025-04-03T06:41:00Z",
+      "body": "We can skip the test for Python < 3.10. Alternatively, we pin `pgmpy` to an earlier version."
+    },
+    {
+      "author": "akihironitta",
+      "created_at": "2025-04-03T10:06:33Z",
+      "body": "I don't have a strong opinion (since it's only used in our `contrib`), but I'm in favor of pinning `pgmpy` to the last compatible version."
+    },
+    {
+      "author": "XinweiHe",
+      "created_at": "2025-04-03T20:06:38Z",
+      "body": "> We can skip the test for Python < 3.10. Alternatively, we pin pgmpy to an earlier version.\n\n+1"
+    },
+    {
+      "author": "zaristei",
+      "created_at": "2025-04-03T20:44:58Z",
+      "body": "Here's my fix:\nhttps://github.com/pyg-team/pytorch_geometric/pull/10165"
+    }
+  ]
+}

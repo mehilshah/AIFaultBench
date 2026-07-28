@@ -1,0 +1,65 @@
+{
+  "owner": "facebookresearch",
+  "repo": "detectron2",
+  "number": 856,
+  "html_url": "https://github.com/facebookresearch/detectron2/issues/856",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "AttributeError: 'PolygonMasks' object has no attribute 'tensor'",
+  "author": "TengFeiHan0",
+  "created_at": "2020-02-12T12:17:33Z",
+  "updated_at": "2020-02-14T06:09:00Z",
+  "closed_at": "2020-02-13T22:15:33Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.42,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:05.558640+00:00",
+  "comments": [
+    {
+      "author": "ppwwyyxx",
+      "created_at": "2020-02-12T17:52:38Z",
+      "body": "thanks, this is a bug. However the device for `PolygonMasks` should always be `torch.device('cpu')` so you can use it instead."
+    },
+    {
+      "author": "TengFeiHan0",
+      "created_at": "2020-02-14T05:09:47Z",
+      "body": "@ppwwyyxx  I'm so sorry to trouble you again and leave a comment on a closed issue. \r\nwhy the device for `PolygonMasks` should always be `torch.device('cpu')`? if possible, could you give me some cues? if `PolygonMasks` is not a tensor, the following operations, such as `permute()`, `mask.shape`, become meaningless.  how to solve the new arising problem? probably `BitMasks` is an alternative for `PolygonMasks`?"
+    },
+    {
+      "author": "ppwwyyxx",
+      "created_at": "2020-02-14T05:53:01Z",
+      "body": "`.device` is just to provide a similar interface to tensor/BitMasks - although it's not a tensor - so that the same code that uses `.device` can work on all three common types of mask representation."
+    },
+    {
+      "author": "TengFeiHan0",
+      "created_at": "2020-02-14T06:05:02Z",
+      "body": "@ppwwyyxx \r\nif `mask `is an object of PolygonMasks, what I want to do is acquire its shape, like `n, h, w = mask.shape`  then I got an error `'PolygonMasks' object has no attribute 'shape'`, which means shape operation for  `PolygonMasks `is prohibited. So where am I wrong? thank you in advance. "
+    },
+    {
+      "author": "ppwwyyxx",
+      "created_at": "2020-02-14T06:08:59Z",
+      "body": "There is no `shape` attribute.\r\nIf you want to get the BitMask representation of a PolygonMask, you need https://detectron2.readthedocs.io/modules/structures.html#detectron2.structures.BitMasks.from_polygon_masks"
+    }
+  ]
+}

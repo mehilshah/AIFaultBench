@@ -1,0 +1,51 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7942,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7942",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG][DeepCompile] DeepCompile fails on Qwen1.5-MoE-A2.7B-Chat with `RuntimeError: 'weight' must be 2-D` (LLaMA works in the same environment)",
+  "author": "zuoyanzhang",
+  "created_at": "2026-03-31T16:14:14Z",
+  "updated_at": "2026-07-01T02:03:01Z",
+  "closed_at": "2026-07-01T02:03:01Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 91.41,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:19.558425+00:00",
+  "comments": [
+    {
+      "author": "zuoyanzhang",
+      "created_at": "2026-04-01T09:51:02Z",
+      "body": "Thanks. I have one question about DeepCompile support for MoE models.\n\nSince MoE involves dynamic routing, top-k expert selection, and sparse dispatch/gather rather than a standard dense MLP path, does DeepCompile use any MoE-specific handling under torch.compile?\n\nFor the MoE results reported in the paper (e.g. Mixtral), was there any special treatment for the router / expert path, or are MoE models expected to compile through the same flow as dense models?"
+    },
+    {
+      "author": "eternalNight",
+      "created_at": "2026-04-16T02:39:08Z",
+      "body": "I recently met the same issue on another model (qwen3.5-vl). The root cause in my case was that `self.embed_tokens(input_ids)` was followed by a graph break in a loop body in the same method, making torch dynamo skipping the whole method. During execution that method ran in eager mode **without** parameter gathering because DeepCompile had disabled it. As a result the `weight` was always shareded with a shape of `[0]`, leading to the error.\n\nTo confirm, you can enable dynamo logs by:\n\n```python\nimport logging, torch\ntorch._logging.set_logs(dynamo=logging.INFO, graph_breaks=True)\ntorch._dynamo.config.verbose = True\n```\n\nand search for the following pattern in the logs:\n\n```\nSkipping frame because there is a graph break in a for/while loop\ntorch.compile intentionally decided to skip the frame xxx (/path/to/source line xxx) and fall back to eager.\n```\n\nFixing that would require modifying the model implementation. In my case I need to separate the break-causing loop into a subroutine to work it around, e.g.\n\n```python\n#####\n# Before\n#####\n\ndef fast_pos_embed_interpolate(...):\n    # The dynamic-data-dependent loop here\n    ...\n    pos_embeds = self.pos_embed(...)\n\n#####\n# After\n#####\n\ndef fn(...):\n    # The dynamic-data-dependent loop here\n\ndef fast_pos_embed_interpolate(...):\n    xxx = fn(...)\n    ...\n    pos_embeds = self.pos_embed(...)\n```\n\n@zuoyanzhang For your case, you may first try a more recent version of transformers which seems to have the qwen2-moe model code simplified."
+    }
+  ]
+}

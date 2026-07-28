@@ -1,0 +1,105 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2616,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2616",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Torch compile slower + NaNs",
+  "author": "conceptofmind",
+  "created_at": "2025-11-25T15:26:45Z",
+  "updated_at": "2025-11-26T00:24:05Z",
+  "closed_at": "2025-11-25T17:33:11Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 13,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.09,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:47.700234+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-11-25T17:29:43Z",
+      "body": "torchcompile is faster based on my benchmark script\n\nw/ torch.compile\n```\n{\n    \"model\": \"tiny_vit_21m_224\",\n    \"infer_samples_per_sec\": 8539.36,\n    \"infer_step_time\": 29.97,\n    \"infer_batch_size\": 256,\n    \"infer_img_size\": 224,\n    \"train_samples_per_sec\": 2005.02,\n    \"train_step_time\": 127.517,\n    \"train_batch_size\": 256,\n    \"train_img_size\": 224,\n    \"param_count\": 33.22\n}\n```\n\nwithout torch.compile\n```\n{\n    \"model\": \"tiny_vit_21m_224\",\n    \"infer_samples_per_sec\": 5223.06,\n    \"infer_step_time\": 49.0,\n    \"infer_batch_size\": 256,\n    \"infer_img_size\": 224,\n    \"train_samples_per_sec\": 1554.02,\n    \"train_step_time\": 164.429,\n    \"train_batch_size\": 256,\n    \"train_img_size\": 224,\n    \"param_count\": 33.22\n}\n```\n\nAnd simple fine-tune on resisc45 yielded same results w/ and w/o torch.compile... I don't use fullgraph=True though by default, but if there's a difference there it's not a timm issue, it's a torch issue. I used PyTorch 2.9.1. I had numerous issues w/ torch.compile + AMP (though usually also with DDP) on PyTorch 2.8 and 2.7 that don't exist in 2.5 and 2.9.x.\n\nresisc 45 fine-tune w/ same pretrained model:  \n\n```\n    {\n        \"epoch\": 26,\n        \"train\": {\n            \"loss\": 0.8903554677963257\n        },\n        \"validation\": {\n            \"loss\": 0.17265534437838054,\n            \"top1\": 96.87301598927331,\n            \"top5\": 99.93650793650794\n        }\n    },\n    {\n        \"epoch\": 30,\n        \"train\": {\n            \"loss\": 0.8818761110305786\n        },\n        \"validation\": {\n            \"loss\": 0.17137674462227595,\n            \"top1\": 96.92063494001115,\n            \"top5\": 99.93650793650794\n        }\n    }\n```\nI don't see any indication there is a problem with the `timm` model though"
+    },
+    {
+      "author": "conceptofmind",
+      "created_at": "2025-11-25T17:33:11Z",
+      "body": "> torchcompile is faster based on my benchmark script\n> \n> w/ torch.compile\n> \n> ```\n> {\n>     \"model\": \"tiny_vit_21m_224\",\n>     \"infer_samples_per_sec\": 8539.36,\n>     \"infer_step_time\": 29.97,\n>     \"infer_batch_size\": 256,\n>     \"infer_img_size\": 224,\n>     \"train_samples_per_sec\": 2005.02,\n>     \"train_step_time\": 127.517,\n>     \"train_batch_size\": 256,\n>     \"train_img_size\": 224,\n>     \"param_count\": 33.22\n> }\n> ```\n> \n> without torch.compile\n> \n> ```\n> {\n>     \"model\": \"tiny_vit_21m_224\",\n>     \"infer_samples_per_sec\": 5223.06,\n>     \"infer_step_time\": 49.0,\n>     \"infer_batch_size\": 256,\n>     \"infer_img_size\": 224,\n>     \"train_samples_per_sec\": 1554.02,\n>     \"train_step_time\": 164.429,\n>     \"train_batch_size\": 256,\n>     \"train_img_size\": 224,\n>     \"param_count\": 33.22\n> }\n> ```\n> \n> And simple fine-tune on resisc45 yielded same results w/ and w/o torch.compile... I don't use fullgraph=True though by default, but if there's a difference there it's not a timm issue, it's a torch issue. I used PyTorch 2.9.1. I had numerous issues w/ torch.compile + AMP (though usually also with DDP) on PyTorch 2.8 and 2.7 that don't exist in 2.5 and 2.9.x.\n> \n> resisc 45 fine-tune w/ same pretrained model:\n> \n> ```\n>     {\n>         \"epoch\": 26,\n>         \"train\": {\n>             \"loss\": 0.8903554677963257\n>         },\n>         \"validation\": {\n>             \"loss\": 0.17265534437838054,\n>             \"top1\": 96.87301598927331,\n>             \"top5\": 99.93650793650794\n>         }\n>     },\n>     {\n>         \"epoch\": 30,\n>         \"train\": {\n>             \"loss\": 0.8818761110305786\n>         },\n>         \"validation\": {\n>             \"loss\": 0.17137674462227595,\n>             \"top1\": 96.92063494001115,\n>             \"top5\": 99.93650793650794\n>         }\n>     }\n> ```\n> I don't see any indication there is a problem with the `timm` model though\n> ```\n\nI am currently using Torch 2.9. I will open an issue on PyTorch. \n\nThanks!"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-11-25T17:38:13Z",
+      "body": "@conceptofmind 2.9 and 2.9.1 have both been okay for me, so I'd try compile fullgraph=False and if it's still problematic, possibly a torch.compile problem to report to them... also worth trying amp in bfloat16 and float16 to see if a difference, sometimes the casting or kernels used can differ ... though you'll need the loss scaler with float16 amp dtype."
+    },
+    {
+      "author": "conceptofmind",
+      "created_at": "2025-11-25T17:39:13Z",
+      "body": "> [@conceptofmind](https://github.com/conceptofmind) 2.9 and 2.9.1 have both been okay for me, so I'd try compile fullgraph=False and if it's still problematic, possibly a torch.compile problem to report to them... also worth trying amp in bfloat16 and float16 to see if a difference, sometimes the casting or kernels used can differ ... though you'll need the loss scaler with float16 amp dtype.\n\nYes, I was looking to avoid needing to use the grad scalar and tune fp16. I will test with fullgraph=False right now and report the result."
+    },
+    {
+      "author": "conceptofmind",
+      "created_at": "2025-11-25T17:45:10Z",
+      "body": "> [@conceptofmind](https://github.com/conceptofmind) 2.9 and 2.9.1 have both been okay for me, so I'd try compile fullgraph=False and if it's still problematic, possibly a torch.compile problem to report to them... also worth trying amp in bfloat16 and float16 to see if a difference, sometimes the casting or kernels used can differ ... though you'll need the loss scaler with float16 amp dtype.\n\n```python\nmodel = torch.compile(model=model, fullgraph=False, backend=\"inductor\", mode=\"max-autotune\")\n```\nLooks like I am still getting NaN with this\n```\nEpoch [1/10], Batch [1], Loss: 0.7023\nEpoch [1/10], Batch [11], Loss: nan\nEpoch [1/10], Batch [21], Loss: nan\nEpoch [1/10], Batch [31], Loss: nan\nEpoch [1/10], Batch [41], Loss: nan\nEpoch [1/10], Batch [51], Loss: nan\nEpoch [1/10], Batch [61], Loss: nan\nEpoch [1/10], Batch [71], Loss: nan\nEpoch [1/10], Batch [81], Loss: nan\nEpoch [1/10], Batch [91], Loss: nan\nEpoch [1/10], Batch [101], Loss: nan\nEpoch [1/10], Batch [111], Loss: nan\nEpoch [1/10], Batch [121], Loss: nan\nEpoch [1/10], Batch [131], Loss: nan\nEpoch [1/10], Batch [141], Loss: nan\nEpoch [1/10], Batch [151], Loss: nan\nEpoch [1/10], Batch [161], Loss: nan\nEpoch [1/10], Batch [171], Loss: nan\nEpoch [1/10], Batch [181], Loss: nan\nEpoch [1/10], Batch [191], Loss: nan\nEpoch [1/10], Batch [201], Loss: nan\nEpoch [1/10], Batch [211], Loss: nan\nEpoch [1/10], Batch [221], Loss: nan\nEpoch [1/10], Batch [231], Loss: nan\nEpoch [1/10], Batch [241], Loss: nan\nEpoch [1/10], Batch [251], Loss: nan\nEpoch [1/10], Batch [261], Loss: nan\nEpoch [1/10], Batch [271], Loss: nan\nEpoch [1/10], Batch [281], Loss: nan\nEpoch [1/10], Batch [291], Loss: nan\nEpoch [1/10], Batch [301], Loss: nan\nEpoch [1/10], Batch [311], Loss: nan\nTraining time: 57.9248671875 seconds\n```"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-11-25T17:58:25Z",
+      "body": "@conceptofmind max-autotune also works fine for my fine-tune test, but boy does that ever take a while. I might also be worth trying a fresh environment incase triton is in a bad state or anything else is amiss. Also, torch.compile can subtly alter numerics so if you're close to instability with thoes hparams and your dataset/loss setup, might push it over. Try a really low LR to see if it works? "
+    },
+    {
+      "author": "conceptofmind",
+      "created_at": "2025-11-25T18:01:00Z",
+      "body": "> [@conceptofmind](https://github.com/conceptofmind) max-autotune also works fine for my fine-tune test, but boy does that ever take a while. I might also be worth trying a fresh environment incase triton is in a bad state or anything else is amiss. Also, torch.compile can subtly alter numerics so if you're close to instability with thoes hparams and your dataset/loss setup, might push it over. Try a really low LR to see if it works?\n\nHaha, it definitely takes quite a long time with max-autone. Makes debugging iterations lengthy. I will try without it max-autotune for a bit. I tested with 3e-5, but I will lower it even more."
+    },
+    {
+      "author": "conceptofmind",
+      "created_at": "2025-11-25T18:34:36Z",
+      "body": "> [@conceptofmind](https://github.com/conceptofmind) max-autotune also works fine for my fine-tune test, but boy does that ever take a while. I might also be worth trying a fresh environment incase triton is in a bad state or anything else is amiss. Also, torch.compile can subtly alter numerics so if you're close to instability with thoes hparams and your dataset/loss setup, might push it over. Try a really low LR to see if it works?\n\nOk, so setting a really low lr rate, such as 3e-6, did get rid of NaN, although compiling with warmup is still slower.\n\nCompile:\n```\nEpoch [1/10], Batch [1], Loss: 0.6971\nEpoch [1/10], Batch [11], Loss: 0.6948\nEpoch [1/10], Batch [21], Loss: 0.6940\nEpoch [1/10], Batch [31], Loss: 0.6887\nEpoch [1/10], Batch [41], Loss: 0.6966\nEpoch [1/10], Batch [51], Loss: 0.6815\nEpoch [1/10], Batch [61], Loss: 0.6812\nEpoch [1/10], Batch [71], Loss: 0.6824\nEpoch [1/10], Batch [81], Loss: 0.6895\nEpoch [1/10], Batch [91], Loss: 0.6718\nEpoch [1/10], Batch [101], Loss: 0.6659\nEpoch [1/10], Batch [111], Loss: 0.6621\nEpoch [1/10], Batch [121], Loss: 0.6602\nEpoch [1/10], Batch [131], Loss: 0.6621\nEpoch [1/10], Batch [141], Loss: 0.6550\nEpoch [1/10], Batch [151], Loss: 0.6624\nEpoch [1/10], Batch [161], Loss: 0.6551\nEpoch [1/10], Batch [171], Loss: 0.6446\nEpoch [1/10], Batch [181], Loss: 0.6423\nEpoch [1/10], Batch [191], Loss: 0.6416\nEpoch [1/10], Batch [201], Loss: 0.6442\nEpoch [1/10], Batch [211], Loss: 0.6277\nEpoch [1/10], Batch [221], Loss: 0.6314\nEpoch [1/10], Batch [231], Loss: 0.6248\nEpoch [1/10], Batch [241], Loss: 0.6316\nEpoch [1/10], Batch [251], Loss: 0.6383\nEpoch [1/10], Batch [261], Loss: 0.6162\nEpoch [1/10], Batch [271], Loss: 0.6080\nEpoch [1/10], Batch [281], Loss: 0.6124\nEpoch [1/10], Batch [291], Loss: 0.5983\nEpoch [1/10], Batch [301], Loss: 0.5996\nEpoch [1/10], Batch [311], Loss: 0.5931\nTraining time: 89.0371796875 seconds\n```\nEager:\n```\nEpoch [1/10], Batch [1], Loss: 0.6967\nEpoch [1/10], Batch [11], Loss: 0.6958\nEpoch [1/10], Batch [21], Loss: 0.6835\nEpoch [1/10], Batch [31], Loss: 0.6969\nEpoch [1/10], Batch [41], Loss: 0.6751\nEpoch [1/10], Batch [51], Loss: 0.6888\nEpoch [1/10], Batch [61], Loss: 0.6745\nEpoch [1/10], Batch [71], Loss: 0.6798\nEpoch [1/10], Batch [81], Loss: 0.6770\nEpoch [1/10], Batch [91], Loss: 0.6674\nEpoch [1/10], Batch [101], Loss: 0.6734\nEpoch [1/10], Batch [111], Loss: 0.6690\nEpoch [1/10], Batch [121], Loss: 0.6585\nEpoch [1/10], Batch [131], Loss: 0.6557\nEpoch [1/10], Batch [141], Loss: 0.6607\nEpoch [1/10], Batch [151], Loss: 0.6666\nEpoch [1/10], Batch [161], Loss: 0.6472\nEpoch [1/10], Batch [171], Loss: 0.6470\nEpoch [1/10], Batch [181], Loss: 0.6501\nEpoch [1/10], Batch [191], Loss: 0.6459\nEpoch [1/10], Batch [201], Loss: 0.6319\nEpoch [1/10], Batch [211], Loss: 0.6240\nEpoch [1/10], Batch [221], Loss: 0.6256\nEpoch [1/10], Batch [231], Loss: 0.6244\nEpoch [1/10], Batch [241], Loss: 0.6226\nEpoch [1/10], Batch [251], Loss: 0.6240\nEpoch [1/10], Batch [261], Loss: 0.6258\nEpoch [1/10], Batch [271], Loss: 0.6185\nEpoch [1/10], Batch [281], Loss: 0.6005\nEpoch [1/10], Batch [291], Loss: 0.5985\nEpoch [1/10], Batch [301], Loss: 0.6035\nEpoch [1/10], Batch [311], Loss: 0.5812\nTraining time: 72.2601171875 seconds\n```\nAlso, I do not have instability without compiling.\n\nI will try to get input from PyTorch on this.\n\nThanks again"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-11-25T19:14:03Z",
+      "body": "@conceptofmind if your dataset size isn't % 128 == 0 it will trigger a compile on the last batch, since you're timing the whole epoch and not steps... "
+    },
+    {
+      "author": "conceptofmind",
+      "created_at": "2025-11-25T19:19:00Z",
+      "body": "> [@conceptofmind](https://github.com/conceptofmind) if your dataset size isn't % 128 == 0 it will trigger a compile on the last batch, since you're timing the whole epoch and not steps...\n\nDataset should be % 128 == 0.\n\nI had tested multiple different warmups and I think that was actually causing the issue for some reason.\n\nCompiled\n```\nEpoch [3/10], Batch [1], Loss: 0.0728\nEpoch [3/10], Batch [11], Loss: 0.0842\nEpoch [3/10], Batch [21], Loss: 0.1078\nEpoch [3/10], Batch [31], Loss: 0.0571\nEpoch [3/10], Batch [41], Loss: 0.0507\nEpoch [3/10], Batch [51], Loss: 0.0417\nEpoch [3/10], Batch [61], Loss: 0.0503\nEpoch [3/10], Batch [71], Loss: 0.0341\nEpoch [3/10], Batch [81], Loss: 0.0468\nEpoch [3/10], Batch [91], Loss: 0.0542\nEpoch [3/10], Batch [101], Loss: 0.0335\nEpoch [3/10], Batch [111], Loss: 0.0472\nEpoch [3/10], Batch [121], Loss: 0.0395\nEpoch [3/10], Batch [131], Loss: 0.0945\nEpoch [3/10], Batch [141], Loss: 0.0724\nEpoch [3/10], Batch [151], Loss: 0.0634\nEpoch [3/10], Batch [161], Loss: 0.0684\nEpoch [3/10], Batch [171], Loss: 0.0331\nEpoch [3/10], Batch [181], Loss: 0.0312\nEpoch [3/10], Batch [191], Loss: 0.0774\nEpoch [3/10], Batch [201], Loss: 0.0525\nEpoch [3/10], Batch [211], Loss: 0.0482\nEpoch [3/10], Batch [221], Loss: 0.0668\nEpoch [3/10], Batch [231], Loss: 0.0517\nEpoch [3/10], Batch [241], Loss: 0.0376\nEpoch [3/10], Batch [251], Loss: 0.0842\nEpoch [3/10], Batch [261], Loss: 0.0764\nEpoch [3/10], Batch [271], Loss: 0.0597\nEpoch [3/10], Batch [281], Loss: 0.0348\nEpoch [3/10], Batch [291], Loss: 0.0368\nEpoch [3/10], Batch [301], Loss: 0.0543\nEpoch [3/10], Batch [311], Loss: 0.0551\nTraining time: 186.9889375 seconds\n```\nEager:\n```\nEpoch [3/10], Batch [1], Loss: 0.0099\nEpoch [3/10], Batch [11], Loss: 0.0184\nEpoch [3/10], Batch [21], Loss: 0.0122\nEpoch [3/10], Batch [31], Loss: 0.0152\nEpoch [3/10], Batch [41], Loss: 0.0092\nEpoch [3/10], Batch [51], Loss: 0.0096\nEpoch [3/10], Batch [61], Loss: 0.0185\nEpoch [3/10], Batch [71], Loss: 0.0131\nEpoch [3/10], Batch [81], Loss: 0.0171\nEpoch [3/10], Batch [91], Loss: 0.0301\nEpoch [3/10], Batch [101], Loss: 0.0083\nEpoch [3/10], Batch [111], Loss: 0.0085\nEpoch [3/10], Batch [121], Loss: 0.0254\nEpoch [3/10], Batch [131], Loss: 0.0135\nEpoch [3/10], Batch [141], Loss: 0.0093\nEpoch [3/10], Batch [151], Loss: 0.0057\nEpoch [3/10], Batch [161], Loss: 0.0877\nEpoch [3/10], Batch [171], Loss: 0.0085\nEpoch [3/10], Batch [181], Loss: 0.0143\nEpoch [3/10], Batch [191], Loss: 0.0119\nEpoch [3/10], Batch [201], Loss: 0.0068\nEpoch [3/10], Batch [211], Loss: 0.0300\nEpoch [3/10], Batch [221], Loss: 0.0062\nEpoch [3/10], Batch [231], Loss: 0.0083\nEpoch [3/10], Batch [241], Loss: 0.0072\nEpoch [3/10], Batch [251], Loss: 0.0057\nEpoch [3/10], Batch [261], Loss: 0.0060\nEpoch [3/10], Batch [271], Loss: 0.0051\nEpoch [3/10], Batch [281], Loss: 0.0082\nEpoch [3/10], Batch [291], Loss: 0.0138\nEpoch [3/10], Batch [301], Loss: 0.0054\nEpoch [3/10], Batch [311], Loss: 0.0053\nTraining time: 214.61921875 seconds\n```\nI dropped the warmup entirely and just started training for more epochs, and I am now seeing a speedup with compile at 2+ epochs. \n\nfullgraph=True and the learning rate at 3e-4 also works.\n\nReduce-overhead and max-autotune causes NaNs still though even when reducing learning rate."
+    },
+    {
+      "author": "conceptofmind",
+      "created_at": "2025-11-25T20:03:48Z",
+      "body": "One additional thing I just tested as well was compiling the full train step:\n```python\ndef train_step(inputs, labels):\n    optimizer.zero_grad(set_to_none=True)\n    with torch.amp.autocast(device_type=\"cuda\", dtype=torch.bfloat16):\n        pred = model(inputs)\n        loss = criterion(pred, labels)\n    loss.backward()\n    optimizer.step()\n    return loss\n\ntrain_step = torch.compile(train_step)\n```\nBut that did not lead to any meaningful speed improvements"
+    },
+    {
+      "author": "conceptofmind",
+      "created_at": "2025-11-25T23:24:55Z",
+      "body": "I went back and grabbed the median step times for compiling the train step vs no-compile for each epoch:\n\nCompile:\n```\ncompile median: 0.16088575744628905\ncompile median: 0.1622879638671875\ncompile median: 0.160785400390625\n```\nNo-compile:\n```\nmedian: 0.2156326141357422\nmedian: 0.22183116149902343\nmedian: 0.21719859313964843\n```\nInteresting if I increase batch size to 256 I get NaNs as well."
+    },
+    {
+      "author": "conceptofmind",
+      "created_at": "2025-11-26T00:24:05Z",
+      "body": "Hmm so using the grad scaler works: https://github.com/pytorch/pytorch/issues/169082#issuecomment-3578171495"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "owner": "DLR-RM",
+  "repo": "stable-baselines3",
+  "number": 1900,
+  "html_url": "https://github.com/DLR-RM/stable-baselines3/issues/1900",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: if learning_rate function uses special types, they can cause torch.load to fail when weights_only=True",
+  "author": "markscsmith",
+  "created_at": "2024-04-19T01:11:06Z",
+  "updated_at": "2024-04-22T08:04:02Z",
+  "closed_at": "2024-04-22T08:04:02Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.29,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:19.918849+00:00",
+  "comments": [
+    {
+      "author": "markscsmith",
+      "created_at": "2024-04-19T01:16:37Z",
+      "body": "See #1852 for details on the upstream reason in pytorch this is needed"
+    },
+    {
+      "author": "araffin",
+      "created_at": "2024-04-19T10:15:18Z",
+      "body": "For reference, this is not a bug per se (the return type of a lr schedule should be float, not `np.ndarray`) but it is annoying for users/error message should be improved anyway."
+    },
+    {
+      "author": "markscsmith",
+      "created_at": "2024-04-19T13:25:05Z",
+      "body": "Oh! My bad! Should I recategorize as enhancement? Thank you for being so patient with my noob mistakes :)"
+    },
+    {
+      "author": "araffin",
+      "created_at": "2024-04-19T13:47:35Z",
+      "body": "> Oh! My bad! Should I recategorize as enhancement? Thank you for being so patient with my noob mistakes :)\r\n\r\nthis is fine, no worry, I just wanted to comment in case someone else finds the issue."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 43159,
+  "html_url": "https://github.com/huggingface/transformers/issues/43159",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "opt-125m is missing weight for embed and lm_head when use_safetensors=True",
+  "author": "xin3he",
+  "created_at": "2026-01-08T01:32:04Z",
+  "updated_at": "2026-01-12T05:44:14Z",
+  "closed_at": "2026-01-12T05:44:13Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 4.18,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:17.050045+00:00",
+  "comments": [
+    {
+      "author": "ArthurZucker",
+      "created_at": "2026-01-08T09:48:31Z",
+      "body": "Hey! can you try on `v5.0.0rc2` please? "
+    },
+    {
+      "author": "xin3he",
+      "created_at": "2026-01-12T05:44:13Z",
+      "body": "It's resolved, thank you @ArthurZucker "
+    }
+  ]
+}

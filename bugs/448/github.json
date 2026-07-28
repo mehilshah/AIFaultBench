@@ -1,0 +1,51 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 38497,
+  "html_url": "https://github.com/jax-ml/jax/issues/38497",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Pallas] interpret=True silently drops intermediate block writes (outputs NaN) when tiling last dimension with >=3 blocks",
+  "author": "ShinapriLN",
+  "created_at": "2026-06-16T12:02:19Z",
+  "updated_at": "2026-06-16T16:58:17Z",
+  "closed_at": "2026-06-16T16:58:17Z",
+  "labels": [
+    "bug",
+    "type:Bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.21,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:35.785391+00:00",
+  "comments": [
+    {
+      "author": "vfdev-5",
+      "created_at": "2026-06-16T15:21:12Z",
+      "body": "@ShinapriLN I think the problem you see is related to incorrect BlockSpecs for input and output. You implement in the element mode, but they should be in block mode: https://docs.jax.dev/en/latest/pallas/grid_blockspec.html#the-element-indexing-mode\n\n```diff\n- index_map=lambda i, j: (i, j * block_size),\n+ index_map=lambda i, j: (i, j),\n```\n\n\nFor example, the copy kernel with less trivial input shows exactly what we expect:\n```python\nimport os\nos.environ[\"JAX_PLATFORMS\"] = \"cpu\"\n\nimport jax\nimport jax.numpy as jnp\nimport jax.experimental.pallas as pl\n\n\ndef copy_kernel(x_ref, out_ref):\n    \"\"\"Trivial kernel \u2014 copies input to output. No computation.\"\"\"\n    out_ref[...] = x_ref[...]\n\ndef run_copy_test(shape, block_size, label):\n    \"\"\"Run the trivial copy kernel and check for NaN.\"\"\"\n    N, C = shape\n    n_blocks = C // block_size\n\n    dtype = jnp.float32\n    x = jnp.arange(N * C, dtype=dtype).reshape(shape)\n\n    out = pl.pallas_call(\n        copy_kernel,\n        out_shape=jax.ShapeDtypeStruct(shape, dtype),\n        grid=(N, n_blocks),\n        in_specs=[pl.BlockSpec(\n            index_map=lambda i, j: (i, j),\n            block_shape=(1, block_size),\n        )],\n        out_specs=pl.BlockSpec(\n            index_map=lambda i, j: (i, j),\n            block_shape=(1, block_size),\n        ),\n        interpret=True,\n    )(x)\n\n    has_nan = bool(jnp.isnan(out).any())\n    nan_count = int(jnp.isnan(out).sum()) if has_nan else 0\n    status = f\"\u2717 NaN ({nan_count}/{out.size} elements)\" if has_nan else \"\u2713 OK\"\n    print(f\"  {label:<50s} blocks={n_blocks:<3d} {status}\")\n    print(f\"{out[0, 125:125 + 10]=}\")\n    return out\n\n\ndef main():\n    block_size = 128\n    for n_blocks in [1, 2, 3, 4, 8]:\n        C = block_size * n_blocks\n        out = run_copy_test((1, C), block_size, f\"shape=(1, {C})\")\n        assert (out == jnp.arange(C, dtype=jnp.float32).reshape((1, -1))).all()\n\n\nif __name__ == \"__main__\":\n    main()\n```\n\n\nI haven't checked other kernels, but suppose that there is a similar problem"
+    },
+    {
+      "author": "ShinapriLN",
+      "created_at": "2026-06-16T16:58:17Z",
+      "body": "@vfdev-5 Ah, I misunderstood how index_map works \ud83d\ude14 \n\nThank you so much for the quick catch and the explanation with the script.\n\nClosing this issue. Thanks again for your time"
+    }
+  ]
+}

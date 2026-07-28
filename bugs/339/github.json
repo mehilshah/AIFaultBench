@@ -1,0 +1,50 @@
+{
+  "owner": "facebookresearch",
+  "repo": "detectron2",
+  "number": 3227,
+  "html_url": "https://github.com/facebookresearch/detectron2/issues/3227",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Bug report: R-CNN inference using the pre-computed proposals.",
+  "author": "voidrank",
+  "created_at": "2021-07-07T04:25:49Z",
+  "updated_at": "2021-07-08T22:55:34Z",
+  "closed_at": "2021-07-08T22:55:34Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.77,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:49.225685+00:00",
+  "comments": [
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2021-07-07T04:26:06Z",
+      "body": "You've chosen to report an unexpected problem or bug. Unless you already know the root cause of it, please include details about it by filling the [issue template](https://github.com/facebookresearch/detectron2/issues/new/choose).\nThe following information is missing: \"Instructions To Reproduce the Issue and __Full__ Logs\"; \"Your Environment\"; "
+    },
+    {
+      "author": "ppwwyyxx",
+      "created_at": "2021-07-08T22:55:34Z",
+      "body": "should be fixed by https://github.com/facebookresearch/detectron2/commit/6e9dedacbe46816e0ec806e4fa7e975ece3306dd"
+    }
+  ]
+}

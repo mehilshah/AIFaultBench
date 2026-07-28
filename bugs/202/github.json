@@ -1,0 +1,60 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 1719,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/1719",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Divergence checking does not maintain time-reversibility",
+  "author": "howsiyu",
+  "created_at": "2024-01-12T12:12:53Z",
+  "updated_at": "2024-06-30T12:50:39Z",
+  "closed_at": "2024-06-30T12:50:01Z",
+  "labels": [
+    "wontfix"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 170.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:26.059627+00:00",
+  "comments": [
+    {
+      "author": "fehiepsi",
+      "created_at": "2024-01-12T16:04:04Z",
+      "body": "I guess when a divergence happens, we will ignore the trajectory and diagnose the model to find the issue. So I don't think we need to worry about the time-reversibility here."
+    },
+    {
+      "author": "howsiyu",
+      "created_at": "2024-01-12T16:46:10Z",
+      "body": "> when a divergence happens, we will ignore the trajectory and diagnose the model to find the issue. \r\n\r\nIf that's the case, shouldn't numpyro stop immedately once it encounters a divergence post-warmup?"
+    },
+    {
+      "author": "martinjankowiak",
+      "created_at": "2024-01-12T17:00:27Z",
+      "body": "maybe numpyro should stop immediately because floating point errors violate time-reversibility ; )"
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2024-06-30T12:50:38Z",
+      "body": "Closed because I don't think we should make an action here. Thanks for raising the issue, @howsiyu!"
+    }
+  ]
+}

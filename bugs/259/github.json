@@ -1,0 +1,40 @@
+{
+  "owner": "sdv-dev",
+  "repo": "SDV",
+  "number": 2473,
+  "html_url": "https://github.com/sdv-dev/SDV/issues/2473",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "PARSynthesizer crashes during sample if there was an all-null column in the input data",
+  "author": "npatki",
+  "created_at": "2025-04-18T14:25:12Z",
+  "updated_at": "2025-07-18T16:55:18Z",
+  "closed_at": "2025-07-18T16:55:18Z",
+  "labels": [
+    "bug",
+    "data:sequential"
+  ],
+  "milestone": "1.25.0",
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 91.1,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:51.018252+00:00",
+  "comments": []
+}

@@ -1,0 +1,43 @@
+{
+  "owner": "lucidrains",
+  "repo": "vit-pytorch",
+  "number": 279,
+  "html_url": "https://github.com/lucidrains/vit-pytorch/issues/279",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "vit_pytorch -> cross_vit.py(mistake)",
+  "author": "RufusRubin",
+  "created_at": "2023-09-10T16:01:53Z",
+  "updated_at": "2023-09-10T16:33:28Z",
+  "closed_at": "2023-09-10T16:33:28Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.02,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:23.036064+00:00",
+  "comments": [
+    {
+      "author": "lucidrains",
+      "created_at": "2023-09-10T16:33:17Z",
+      "body": "@RufusRubin thanks!"
+    }
+  ]
+}

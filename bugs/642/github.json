@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 1998,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/1998",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "scan over discrete latent variables causes tracer leak",
+  "author": "fehiepsi",
+  "created_at": "2025-03-06T21:28:43Z",
+  "updated_at": "2025-08-28T15:58:32Z",
+  "closed_at": "2025-08-28T15:58:32Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 174.77,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:37:22.175334+00:00",
+  "comments": [
+    {
+      "author": "fehiepsi",
+      "created_at": "2025-03-07T17:18:07Z",
+      "body": "The reason seems to be caused by this line\nhttps://github.com/pyro-ppl/numpyro/blob/b7667062c067b87bb9450205a57227ae872fa91a/numpyro/contrib/funsor/discrete.py#L59\n\nwhere the stateful adjoint tape is not compatible with jax scan.\n\nSwitching back to lazy interpretations seems to fix the leakage but it makes some tests failing.\n```diff\n-    with funsor.adjoint.AdjointTape() as tape:\n+    with funsor.interpretations.lazy:\n         with block(), enum(first_available_dim=first_available_dim):\n             log_prob, model_tr, log_measures = _enum_log_density(\n                 model, args, kwargs, {}, sum_op, prod_op\n             )\n \n     with approx:\n-        approx_factors = tape.adjoint(sum_op, prod_op, log_prob)\n+        approx_factors = funsor.adjoint.adjoint(sum_op, prod_op, log_prob)\n```"
+    },
+    {
+      "author": "pscicluna",
+      "created_at": "2025-06-10T09:49:28Z",
+      "body": "I wondered what the status on this is - I'm trying to do SVI with discrete latents, and I think the errors I'm getting (tracer leaks that make it impossible to run) come from this bug. I guess I have 3 questions:\nAm I right to think that the fixes in https://github.com/pyro-ppl/numpyro/pull/2002 deal with this problem, or is it actually https://github.com/pyro-ppl/numpyro/issues/1999? \nIs the fork in a state where it's reasonable to install from and use it? \nAnd is there anything I could do to help you get the PR over the line?"
+    }
+  ]
+}

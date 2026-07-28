@@ -1,0 +1,45 @@
+{
+  "owner": "tensorflow",
+  "repo": "datasets",
+  "number": 5310,
+  "html_url": "https://github.com/tensorflow/datasets/issues/5310",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "TFBertModel: InvalidArgumentError.__init__() missing 2 required positional arguments: 'op' and 'message'",
+  "author": "tomigee",
+  "created_at": "2024-03-08T20:04:37Z",
+  "updated_at": "2024-03-10T00:07:30Z",
+  "closed_at": "2024-03-10T00:07:29Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.17,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:51.109215+00:00",
+  "comments": [
+    {
+      "author": "tomigee",
+      "created_at": "2024-03-10T00:07:29Z",
+      "body": "My mistake...I created this issue in the wrong repo. Closing it now."
+    }
+  ]
+}

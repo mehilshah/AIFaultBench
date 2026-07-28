@@ -1,0 +1,46 @@
+{
+  "owner": "facebookresearch",
+  "repo": "fairseq",
+  "number": 4622,
+  "html_url": "https://github.com/facebookresearch/fairseq/issues/4622",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Uninitialised bias parameters in RelPositionMultiHeadedAttention",
+  "author": "sanchit-gandhi",
+  "created_at": "2022-08-01T11:29:42Z",
+  "updated_at": "2022-08-01T17:08:29Z",
+  "closed_at": "2022-08-01T17:08:29Z",
+  "labels": [
+    "bug",
+    "needs triage"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.24,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:29.784988+00:00",
+  "comments": [
+    {
+      "author": "sravyapopuri388",
+      "created_at": "2022-08-01T17:06:58Z",
+      "body": "Hi Sanchit, thanks for identifying the issue and fixing it. "
+    }
+  ]
+}

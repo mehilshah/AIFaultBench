@@ -1,0 +1,60 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 1200,
+  "html_url": "https://github.com/huggingface/accelerate/issues/1200",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`prepare` returns `AcceleratedScheduler` only if python version != 3.8 in `torch==2.0`",
+  "author": "younesbelkada",
+  "created_at": "2023-03-16T11:50:44Z",
+  "updated_at": "2023-03-16T14:34:30Z",
+  "closed_at": "2023-03-16T14:34:30Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.11,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:32.820898+00:00",
+  "comments": [
+    {
+      "author": "younesbelkada",
+      "created_at": "2023-03-16T11:57:55Z",
+      "body": "After digging a bit, it seems that the check [here](https://github.com/huggingface/accelerate/blob/e4620984f8f2d3b91585f7d8c03f8c57cd453f50/src/accelerate/accelerator.py#L975)\r\n```python\r\nelif isinstance(obj, LRScheduler):\r\n```\r\nReturns `False` only for python=3.8 and torch==2.0"
+    },
+    {
+      "author": "muellerzr",
+      "created_at": "2023-03-16T13:35:02Z",
+      "body": "@younesbelkada I'm not seeing this.\r\n\r\n```python\r\nimport torch\r\nimport torch.nn as nn\r\nfrom torch.optim.lr_scheduler import LinearLR\r\n\r\nfrom accelerate import Accelerator\r\n\r\naccelerator = Accelerator()\r\n\r\ndummy_model = nn.Linear(1, 1)\r\ndummy_optimizer = torch.optim.Adam(dummy_model.parameters(), 1.41e-5)\r\n\r\nscheduler = LinearLR(dummy_optimizer, 1.41e-5)\r\n\r\ndummy_model, dummy_optimizer, scheduler = accelerator.prepare(dummy_model, dummy_optimizer, scheduler)\r\nprint(hasattr(scheduler, \"scheduler\"))\r\n```\r\n\r\nAccelerate env:\r\n\r\n```\r\nCopy-and-paste the text below in your GitHub issue\r\n\r\n- `Accelerate` version: 0.17.1\r\n- Platform: Linux-5.15.0-58-generic-x86_64-with-glibc2.17\r\n- Python version: 3.8.16\r\n- Numpy version: 1.23.0\r\n- PyTorch version (GPU?): 2.0.0+cu117 (True)\r\n- `Accelerate` default config:\r\n        Not found\r\n```\r\n\r\nJust ran via `python test.py`"
+    },
+    {
+      "author": "muellerzr",
+      "created_at": "2023-03-16T13:53:45Z",
+      "body": "Can you tell me more about your system? (`accelerate env` should suffice)"
+    },
+    {
+      "author": "younesbelkada",
+      "created_at": "2023-03-16T14:34:27Z",
+      "body": "argfh sorry, I had `accelerate==0.16` installed on that env and that explains why it was failing, everything seems to working fine now on the `trl` CIs! Thanks a lot for double checking @muellerzr ! "
+    }
+  ]
+}

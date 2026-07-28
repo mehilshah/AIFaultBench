@@ -1,0 +1,60 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 46846,
+  "html_url": "https://github.com/huggingface/transformers/issues/46846",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Qwen3.5] Missing `linear_attn` entries in `base_model_tp_plan` causes OOM and shape error at TP>1",
+  "author": "tengomucho",
+  "created_at": "2026-06-23T13:29:27Z",
+  "updated_at": "2026-07-03T13:59:02Z",
+  "closed_at": "2026-07-03T13:59:02Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 10.02,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:24.358914+00:00",
+  "comments": [
+    {
+      "author": "vasqu",
+      "created_at": "2026-06-23T14:05:10Z",
+      "body": "Not looking too deeply into this yet but can we not do\n```py\nbase_model_tp_plan = {\n    # ... existing self_attn and mlp entries unchanged ...\n    \"layers.*.linear_attn.in_proj_qkv\": \"colwise\",\n    \"layers.*.linear_attn.in_proj_z\":   \"colwise\",\n    \"layers.*.linear_attn.in_proj_b\":   \"colwise\",\n    \"layers.*.linear_attn.in_proj_a\":   \"colwise\",\n    \"layers.*.linear_attn.conv1d\":   \"colwise_conv\",  # TODO: need to check on which dim the conv needs to be sharded \n    \"layers.*.linear_attn.out_proj\":    \"rowwise\",\n}\n```\nCurrently the code is not suited for this but in theory it should work. We still have `num_heads * head_dim` which should be properly shardable. The biggest issue is probably https://github.com/huggingface/transformers/blob/5bbed98a97f1d3b3ef5e15936a126e719c98573a/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L504-L512\nbut other than that, the code already looks \"TP friendly\". "
+    },
+    {
+      "author": "tengomucho",
+      "created_at": "2026-06-24T16:25:31Z",
+      "body": "Thanks for taking a look @vasqu. The colwise/colwise_conv/rowwise approach is the right direction for actually sharding computation end-to-end through the GDA block, not just sharding weights and gathering at the boundary.\n\nI went with colwise_gather_output because the current forward pass has three spots that would break with plain colwise:\n\n1. torch.split at uses absolute channel counts:\n```python\nquery, key, value = torch.split(mixed_qkv, [self.key_dim, self.key_dim, self.value_dim], dim=-1)\n```\n2. With colwise on in_proj_qkv, mixed_qkv after the conv has conv_dim/TP channels, but the split sums to conv_dim. It'd need [key_dim//TP, key_dim//TP, value_dim//TP], same range you flagged.\n3. dt_bias and A_log are replicated params of size num_v_heads, but in_proj_a with colwise produces a of size num_v_heads/TP:\n```python\ng = -self.A_log.float().exp() * F.softplus(a.float() + self.dt_bias)\n```\n4. Shape mismatch on the addition. These would need to be sliced per-rank.\n5. colwise_conv doesn't exist yet AFAIK.\n\ncolwise_gather_output sidesteps all three by gathering before the conv, so the rest of the forward sees full-size tensors and needs no changes. It works today at the cost of each rank running the full conv+GDA rather than a sharded version."
+    },
+    {
+      "author": "vasqu",
+      "created_at": "2026-06-24T16:48:29Z",
+      "body": "Very valid points. Trying to summarize some points together because they are closely related\n- `1. + 2. + 5.` Agree this is what I also flagged, some portions of the code are not TP friendly written, mainly the split (but that's not too bad to fix imo). The conv dim ofc also needs to be split to account for the new ranges; this does not exist and was only an idea - it should probably readjust the dimension on which we slice.\n- `3.` This one I missed actually and would need bigger changes because afaik we only operate on nn.Modules so far. \n- `4.` Relates to 3. I think(?) because this won't match anymore\n\nI guess we can still get the benefit of avoiding hosting the full weights but we are far from efficient \ud83d\ude13 can you check #46847 in that case"
+    },
+    {
+      "author": "tengomucho",
+      "created_at": "2026-06-26T15:06:39Z",
+      "body": "Yes @vasqu I agree with you that a `colwise_conv` implementation would be a better solution, but I just approved #46847 because it solves the problem right now. \nI think we should merge that and think about a `colwise_conv` implementation in a separate issue. "
+    }
+  ]
+}

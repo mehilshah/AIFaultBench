@@ -1,0 +1,61 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21677,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21677",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "FLOPs numbers are inconsistent",
+  "author": "dsuess",
+  "created_at": "2026-04-20T04:15:01Z",
+  "updated_at": "2026-06-08T16:40:31Z",
+  "closed_at": "2026-06-08T16:40:31Z",
+  "labels": [
+    "bug",
+    "ver: 2.7.x"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 49.52,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:33.919373+00:00",
+  "comments": [
+    {
+      "author": "gaurav0107",
+      "created_at": "2026-04-21T18:57:50Z",
+      "body": "I'd like to work on this. The fix standardizes all Hopper entries to dense (without structured sparsity) per-GPU values, matching the existing H100 SXM/PCIe convention. I'll have a PR ready shortly."
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-04-22T09:55:37Z",
+      "body": "Hi @dsuess, thanks for raising this.\n\nSince most workloads today are still dense, it\u2019s more intuitive to standardize on reporting **dense FLOPs**. In cases where specs only provide sparse FLOPs (which is common for Tensor Core numbers), we can approximate dense performance as:\n\n```\ndense_flops \u2248 sparse_flops / 2\n```\n\nassuming 2:4 structured sparsity.\n\nFor documenting this behavior, the main ambiguity shows up in **`MFU (Model FLOP Utilization)`**. To make this explicit and user-controlled, one simple approach could be to extend `Throughput` with:\n\n```python\nusing_sparse_model: Optional[bool] = None  # User intent\nsparse_cuda_acceleration_factor: float = 2.0  # Default for 2:4 sparsity\n```\n\nBehavior:\n\n* If `using_sparse_model is None`, we issue a `rank_zero_warn(\"MFU assumes dense model FLOPs (no sparsity acceleration). Set 'using_sparse_model=True' for mfu to use sparse flops.\")`\n* If `using_sparse_model=True`, we scale FLOPs using `sparse_cuda_acceleration_factor`.\n* If `False`, we use dense FLOPs directly.\n\nThis keeps the default safe while still allowing users with sparsity-aware workloads to opt in explicitly.\n\nCurious what you think, especially if you see edge cases where this assumption might break down.\n"
+    },
+    {
+      "author": "dsuess",
+      "created_at": "2026-04-23T00:54:39Z",
+      "body": "@deependujha sounds like a plan! I don't think structured sparsity is sth you'd regularly encounter during training, so defaulting to dense is the way to go IMO"
+    },
+    {
+      "author": "reallyticsai",
+      "created_at": "2026-04-26T08:50:16Z",
+      "body": "I've encountered similar issues with FLOPs inconsistencies when working with different GPU architectures in our production deployments. We've had to standardize on dense FLOPs for our models to avoid confusion and ensure consistency across our infrastructure. Here are a few points that might help:\n\n- **Standardize FLOPs Calculation**: I'd recommend standardizing on dense FLOPs for all GPU types. This approach provides a consistent baseline for performance comparisons.\n- **Documentation**: Clearly document the FLOPs calculation method in the codebase and any relevant documentation. This transparency helps users understand the performance metrics they're seeing.\n- **Use PyTorch Profiler**: For more accurate FLOPs measurement, consider integrating PyTorch's built-in profiler. It provides detailed insights into model performance and can help verify the FLOPs calculations.\n- **Benchmarking**: Run benchmarks on both H100 and H200 GPUs using a standardized dataset and model. This will give you empirical data to support the decision to standardize on dense FLOPs."
+    }
+  ]
+}

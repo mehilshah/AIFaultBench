@@ -1,0 +1,71 @@
+{
+  "owner": "facebookresearch",
+  "repo": "fairseq",
+  "number": 5242,
+  "html_url": "https://github.com/facebookresearch/fairseq/issues/5242",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "MMS - Forced Alignment: log_probs shapes problem",
+  "author": "codemurt",
+  "created_at": "2023-07-09T05:39:48Z",
+  "updated_at": "2023-09-08T05:13:33Z",
+  "closed_at": "2023-09-08T05:13:33Z",
+  "labels": [
+    "bug",
+    "needs triage"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 60.98,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:23.416957+00:00",
+  "comments": [
+    {
+      "author": "skanda1005",
+      "created_at": "2023-07-11T11:37:44Z",
+      "body": "I am facing the same issue. Have you found any solution to this issue?\r\n\r\nThanks!"
+    },
+    {
+      "author": "codemurt",
+      "created_at": "2023-07-11T11:42:01Z",
+      "body": "@skanda1005, using `pip install --pre torchaudio==2.1.0.dev20230627+cu118 --index-url https://download.pytorch.org/whl/nightly/cu118` instead of `pip install --pre torchaudio --index-url https://download.pytorch.org/whl/nightly/cu118` fixed the issue for me. \r\n\r\nI found this solution from [here](https://github.com/facebookresearch/fairseq/issues/5248)."
+    },
+    {
+      "author": "skanda1005",
+      "created_at": "2023-07-11T11:49:47Z",
+      "body": "Thanks a lot! Worked for me as well!"
+    },
+    {
+      "author": "qunash",
+      "created_at": "2023-08-25T11:51:14Z",
+      "body": "> @skanda1005, using `pip install --pre torchaudio==2.1.0.dev20230627+cu118 --index-url https://download.pytorch.org/whl/nightly/cu118` instead of `pip install --pre torchaudio --index-url https://download.pytorch.org/whl/nightly/cu118` fixed the issue for me.\r\n> \r\n> I found this solution from [here](https://github.com/facebookresearch/fairseq/issues/5248).\r\n\r\nI installed this version and now `torchaudio.load` does not work. None of the nightly builds seem to work, it's either this `log_probs must be 3-D` error or `torchaudio.load` not working. Sigh."
+    },
+    {
+      "author": "pbrusco",
+      "created_at": "2023-08-31T14:28:31Z",
+      "body": "Same here. torchaudio==2.1.0.dev20230627+cu118 was available last week. Any chance we can get that version from any other source?\r\n\r\nThanks!\r\n\r\n"
+    },
+    {
+      "author": "vineelpratap",
+      "created_at": "2023-09-07T18:26:29Z",
+      "body": "Fixed in https://github.com/facebookresearch/fairseq/pull/5317."
+    }
+  ]
+}

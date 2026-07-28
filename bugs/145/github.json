@@ -1,0 +1,58 @@
+{
+  "owner": "huggingface",
+  "repo": "sentence-transformers",
+  "number": 3175,
+  "html_url": "https://github.com/huggingface/sentence-transformers/issues/3175",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`StaticEmbedding.from_distillation(\"BAAI/bge-base-en-v1.5\", device=\"cuda\")` not producing similarity results from docstring",
+  "author": "thomasht86",
+  "created_at": "2025-01-17T07:47:08Z",
+  "updated_at": "2025-01-17T13:49:12Z",
+  "closed_at": "2025-01-17T13:49:12Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 2,
+    "+1": 2,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.25,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:58.958291+00:00",
+  "comments": [
+    {
+      "author": "tomaarsen",
+      "created_at": "2025-01-17T11:02:55Z",
+      "body": "Hello!\n\nHmm, I'm able to reproduce the 0.5375, and I'm unable to get the 0.9177 now, even with older versions of ST and M2V. I have no clue how I once managed to get that value.\n\ncc @Pringled @stephantul do either of you have any idea how I might have gotten 0.9177? \n\n- Tom Aarsen"
+    },
+    {
+      "author": "Pringled",
+      "created_at": "2025-01-17T11:19:57Z",
+      "body": "Hey! Strange, I also get `0.5375`, with older versions as well. I also tried using bge-base directly (`SentenceTransformer(\"BAAI/bge-base-en-v1.5\")`) but that gives `0.7500`. I also tried some of the other models we had around that time, but none seem to reproduce `0.9177`. One interesting note: the new default model (`minishlab/potion-base-8M`) gets `0.7157` for this example, much closer to the original model's result, so if you do decide to update the docs, it might be nice to switch the example model there as well."
+    },
+    {
+      "author": "thomasht86",
+      "created_at": "2025-01-17T11:51:36Z",
+      "body": "I see. Thanks for quick response. \nFeel free to close the issue if/when example is updated, and I'll look into `minishlab/potion-base-8M`. "
+    },
+    {
+      "author": "tomaarsen",
+      "created_at": "2025-01-17T12:59:48Z",
+      "body": "Here are the currently interesting Static Embedding models:\n* All Model2Vec models: https://huggingface.co/models?library=model2vec. The Potion line is generally the strongest.\n* https://huggingface.co/sentence-transformers/static-similarity-mrl-multilingual-v1\n* https://huggingface.co/sentence-transformers/static-retrieval-mrl-en-v1\n\nSee the new Static Embeddings blogpost for more details on the latter two: https://huggingface.co/blog/static-embeddings\n\n---\n\n- Tom Aarsen"
+    }
+  ]
+}

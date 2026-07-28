@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2463,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2463",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Significant Accuracy Drop After Converting ViT-S Transformer from .pth to ONNX (~7%)",
+  "author": "Hung6779",
+  "created_at": "2025-03-31T04:18:04Z",
+  "updated_at": "2025-03-31T15:06:14Z",
+  "closed_at": "2025-03-31T15:06:12Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.45,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:22.419168+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-03-31T15:06:12Z",
+      "body": "@Hung6779 you need to set mean & std % crop pct via command line arg when validating onnx exported models as the pretrained cfg is no longer available, that one will use 0.5 / 0.5 not imagenet defaults"
+    }
+  ]
+}

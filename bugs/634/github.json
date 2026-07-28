@@ -1,0 +1,140 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 46693,
+  "html_url": "https://github.com/huggingface/transformers/issues/46693",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Performance regression with FA2 and long-context generation after 5.2.0",
+  "author": "andreasgoulas",
+  "created_at": "2026-06-16T14:21:31Z",
+  "updated_at": "2026-07-10T14:04:16Z",
+  "closed_at": "2026-07-10T14:04:16Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 20,
+  "reactions": {
+    "total_count": 1,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 1
+  },
+  "resolution_days": 23.99,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:37:08.235168+00:00",
+  "comments": [
+    {
+      "author": "zucchini-nlp",
+      "created_at": "2026-06-16T17:45:44Z",
+      "body": "will take a look tomorrow, can confirm there is a small diff (I got ~200sec and ~190sec on avg per release tag)"
+    },
+    {
+      "author": "vasqu",
+      "created_at": "2026-06-16T19:23:07Z",
+      "body": "#46696 is the wrong fix but it still might have found the underlying perf regression(?), just as a heads up\n\nWe might need to cache the compiled state "
+    },
+    {
+      "author": "zucchini-nlp",
+      "created_at": "2026-06-17T09:53:29Z",
+      "body": "Looks like it was caused by https://github.com/huggingface/transformers/pull/42435. @vasqu could you take a look, checking out to the commit before that PR brings back the performance"
+    },
+    {
+      "author": "vasqu",
+      "created_at": "2026-06-17T12:24:09Z",
+      "body": "Yea lemme check what happened. Feel like the is_tracing call is too expensive it seems"
+    },
+    {
+      "author": "andreasgoulas",
+      "created_at": "2026-06-22T13:16:29Z",
+      "body": "@vasqu It seems that patching `is_tracing` in import_utils.py to always return False does not significantly impact the generation latency (tested on 5.4.0). So, this is probably not the root cause."
+    },
+    {
+      "author": "andreasgoulas",
+      "created_at": "2026-06-22T13:44:59Z",
+      "body": "According to my measurements, `flash_varlen_fn` is significantly more expensive on 5.4.0 vs 5.2.0 (240us vs 140us - excluding the kwargs preparation code). This is quite strange since the inputs and the flash-attn implementation should be identical across the two versions. @vasqu "
+    },
+    {
+      "author": "vasqu",
+      "created_at": "2026-06-22T17:03:06Z",
+      "body": "This is indeed super weird, the tracing call was just my intuition tbh. I haven't had time to properly investigate yet sadly, if you revert the flash attention stuff in the forward, do we still get the same perf then?"
+    },
+    {
+      "author": "vasqu",
+      "created_at": "2026-06-22T17:03:31Z",
+      "body": "So revert the PR only for checking kwargs and the associated main forward"
+    },
+    {
+      "author": "andreasgoulas",
+      "created_at": "2026-06-24T11:37:55Z",
+      "body": "@vasqu After reverting the PR line-by-line, I think I found the root cause: removing the `.item()` call from max_seqlen_in_batch in `_get_unpad_data` somehow causes the next `_index_first_axis` calls to trigger this performance regression. It is not clear to me how this is possible - it could be the case that there is a memory leak or a hidden memcpy. A straightforward fix would be to re-introduce the `item()` call there, but I think that this issue requires a more careful investigation."
+    },
+    {
+      "author": "vasqu",
+      "created_at": "2026-06-24T15:54:19Z",
+      "body": "Ok wow that is really unexpected \ud83d\ude2e if you add a .item call before calling the index fn, everything is fine? Is there any difference between native FA2 and kernels FA2? `uv pip install kernels`\n\nBecause the native FA2 fn and the kernels ones should be slightly different "
+    },
+    {
+      "author": "andreasgoulas",
+      "created_at": "2026-06-26T21:45:04Z",
+      "body": "Yes, adding `max_seqlen_in_batch_k = max_seqlen_in_batch_k.item()` before the 2 index calls resolves the issue, at least on an NVIDIA RTX 6000 PRO. I also tested an RTX 4090 but the performance gap was not that significant there. ~Installing kernels==0.14.1 did not significantly affect the measured latency.~ @vasqu "
+    },
+    {
+      "author": "andreasgoulas",
+      "created_at": "2026-06-26T21:52:30Z",
+      "body": "Using the FA2 implementation from kernels, I can observe a small performance gain but the performance regression is still there."
+    },
+    {
+      "author": "vasqu",
+      "created_at": "2026-06-29T13:37:22Z",
+      "body": "That's super weird. So it seems to be GPU specific? I'm not sure whether it makes sense as general fix then, i.e. always call .item as it does have its own repercussions \ud83d\ude13 We can at least open a draft PR if you are open to it @andreasgoulas\n\n@zucchini-nlp you also measured the latency, which GPU did you use? "
+    },
+    {
+      "author": "zucchini-nlp",
+      "created_at": "2026-06-29T13:55:09Z",
+      "body": "I check on the dgx with kernels FA, @vasqu"
+    },
+    {
+      "author": "andreasgoulas",
+      "created_at": "2026-07-02T07:14:52Z",
+      "body": "Yes, I will submit a draft PR reverting this specific change. I wouldn't say it is GPU-specific, but depending on the GPU the effect may be  more or less significant."
+    },
+    {
+      "author": "andreasgoulas",
+      "created_at": "2026-07-07T10:35:51Z",
+      "body": "@vasqu I have submitted a PR that fixes this particular issue. Applying this patch on 5.4.0 fixes the regression completely. However, the timings on the latest version differ and, therefore, I marked it as draft while I investigate."
+    },
+    {
+      "author": "vasqu",
+      "created_at": "2026-07-07T11:06:46Z",
+      "body": "Awesome, thanks a lot for all your detailed work on this, really appreciate it!"
+    },
+    {
+      "author": "ammmanism",
+      "created_at": "2026-07-09T15:23:11Z",
+      "body": "@andreasgoulas @vasqu @zucchini-nlp \u2013 first of all, huge thanks for the deep debugging work here. The bisection down to the `.item()` removal in `_get_unpad_data` is a fantastic catch, and the draft PR (#47134) already proves the primary fix works on RTX 6000 Pro.\n\nHowever, as @andreasgoulas  pointed out, timings on `main` **still** differ from the 5.2.0 baseline even with that patch applied \u2013 meaning there\u2019s at least one secondary contributor stacked on top.\n\nI have a clear roadmap to get this issue **fully resolved and safely merged**, and I\u2019d like to take ownership of it:\n\n### My immediate action plan if assigned:\n\n1. **Validate the primary fix thoroughly**  \n   - Run the `.item()` re\u2011addition across multiple GPUs (RTX 6000 Pro, RTX 4090, A100) to confirm parity with 5.2.0.  \n   - Measure the exact overhead introduced by the device\u2011tensor path vs. Python scalar.\n\n2. **Deep\u2011profile the root mechanism** (don\u2019t just revert blindly)  \n   - Use `torch.profiler` / `nsys` to compare both paths.  \n   - Pinpoint whether the regression comes from:\n     - a different kernel dispatch path inside `_index_first_axis` / `index_select`,  \n     - repeated implicit synchronisations, or  \n     - async kernel queue build\u2011up.  \n   - Document the findings in the PR so future refactors don\u2019t reintroduce the same trap.\n\n3. **Hunt down the residual perf delta** (the unfinished business)  \n   - With the `.item()` fix applied, bisect the remaining commits between 5.2.0 and current `main` that touch `modeling_flash_attention_utils.py` and the cache classes.  \n   - Prime suspects: other removed `.item()`/`.cpu()` calls in the same refactor (#42435), or subtle changes to the `kwargs`\u2011building path for the FA2 call \u2013 the reporter already ruled out `is_tracing`, but I\u2019ll systematically verify.\n\n4. **Make the fix safe for `torch.compile` / graph capture**  \n   - The original removal in #42435 was likely motivated by avoiding host\u2011device syncs under compilation.  \n   - I\u2019ll guard the `.item()` call with `torch.compiler.is_compiling()` so we get the performance fix in eager mode without breaking compiled graphs.\n\n5. **Add a regression benchmark**  \n   - Add a long\u2011context FA2 latency smoke test (or at least a documented perf script) to prevent this from regressing again \u2013 ideally gated in CI or added to the manual perf\u2011check docs.\n\nI\u2019ve already reviewed #47134 and #46696 (closed) to avoid duplication. I\u2019m confident I can move #47134 out of draft, fix the remaining regression, and land this properly.\n\n**Could one of you please assign this issue to me?** I\u2019ll start by pushing an updated version of #47134 with the `compile`\u2011safe guard and the profiling results attached.\n\nLooking forward to closing this one out "
+    },
+    {
+      "author": "ammmanism",
+      "created_at": "2026-07-10T13:26:16Z",
+      "body": "Opened a clean PR scoped to just the fix: #47247 (closed #47215 which had unrelated commits mixed in).\n@andreasgoulas \u2014 since #47134 already has your validated fix and profiling notes, I don't want to duplicate effort or create merge conflicts. Happy to close #47247 in favor of your PR, or rebase my compile-guard + benchmark additions on top of your branch \u2014 whatever's easiest for you. Let me know which you'd prefer."
+    },
+    {
+      "author": "ammmanism",
+      "created_at": "2026-07-10T13:31:56Z",
+      "body": "Closing this out \u2014 #47134 was merged and resolves the regression. Thanks @andreasgoulas for the root-cause work and @vasqu for the review."
+    }
+  ]
+}

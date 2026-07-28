@@ -1,0 +1,50 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 47303,
+  "html_url": "https://github.com/vllm-project/vllm/issues/47303",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: Triton block quantized (e.g. MXFP4) MoE kernels producing NaNs due to OOB reads on scale values",
+  "author": "yzong-rh",
+  "created_at": "2026-07-01T15:21:34Z",
+  "updated_at": "2026-07-07T22:57:29Z",
+  "closed_at": "2026-07-07T22:51:24Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 6.31,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:45.899626+00:00",
+  "comments": [
+    {
+      "author": "yzong-rh",
+      "created_at": "2026-07-07T03:19:04Z",
+      "body": "Update: \n\nThe specific issue is fixed on Triton main but has not yet made it into a release. Updating the vLLM side to use the new kernels once they release will require some work however since the new kernels have slightly different interface.\n\nA temporary solution could be to patch `convert_layout` to pad and zero out and pad the scale values."
+    },
+    {
+      "author": "yzong-rh",
+      "created_at": "2026-07-07T22:57:29Z",
+      "body": "Patched. To be cleaned up once Triton v.3.8.0+ kernels are released and used."
+    }
+  ]
+}

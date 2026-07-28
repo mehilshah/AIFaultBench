@@ -1,0 +1,50 @@
+{
+  "owner": "clearml",
+  "repo": "clearml",
+  "number": 1268,
+  "html_url": "https://github.com/clearml/clearml/issues/1268",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Error when calling classes through Fire",
+  "author": "tvelovraf",
+  "created_at": "2024-05-17T14:35:28Z",
+  "updated_at": "2024-06-06T10:29:25Z",
+  "closed_at": "2024-06-06T10:29:25Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 19.83,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:13.963043+00:00",
+  "comments": [
+    {
+      "author": "eugen-ajechiloae-clearml",
+      "created_at": "2024-05-20T09:22:55Z",
+      "body": "Hi @tvelovraf ! I believe that fire made some changes that broke our integration. We will try to fix this asap. In the meantime, you could consider downgrading fire to an older version"
+    },
+    {
+      "author": "tvelovraf",
+      "created_at": "2024-05-20T10:16:43Z",
+      "body": "Hi @eugen-ajechiloae-clearml! I've tried to use several older fire versions (from 0.5.0 till 0.2.0 backwards) and all of them throw the same error. Only version 0.1.3 (didn't tried even older ones) doesn't throw an error but it seems to not support functionality of calling classes that I want\r\n\r\n\r\n"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "owner": "adapter-hub",
+  "repo": "adapters",
+  "number": 748,
+  "html_url": "https://github.com/adapter-hub/adapters/issues/748",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Huggingface-hub 0.26.0 causes ImportError 'url_to_filename' from 'huggingface_hub.file_download' when import 'LoRAConfig'",
+  "author": "sybrenjansen",
+  "created_at": "2024-10-21T07:41:30Z",
+  "updated_at": "2024-10-26T10:09:21Z",
+  "closed_at": "2024-10-26T10:09:21Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 3,
+    "+1": 2,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 1
+  },
+  "resolution_days": 5.1,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:57.527186+00:00",
+  "comments": [
+    {
+      "author": "14H034160212",
+      "created_at": "2024-10-22T02:34:01Z",
+      "body": "I met this issue as well. After huggingface-hub 0.26.0, the `url_to_filename` has been removed. The relative code in the utils.py should be updated.\r\nhttps://github.com/huggingface/huggingface_hub/releases"
+    },
+    {
+      "author": "lenglaender",
+      "created_at": "2024-10-22T21:21:36Z",
+      "body": "Thanks for reporting this critical bug. We will look into this ASAP.\r\n\r\n**Quick fix:** Don't use huggingface_hub version 0.26 or higher. Install the latest compatible release via:  `pip install huggingface-hub==0.25`"
+    },
+    {
+      "author": "lenglaender",
+      "created_at": "2024-10-23T22:57:56Z",
+      "body": "Should be fixed once #750 is merged."
+    }
+  ]
+}

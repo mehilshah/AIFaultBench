@@ -1,0 +1,39 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 37991,
+  "html_url": "https://github.com/jax-ml/jax/issues/37991",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`jnp.cumsum(x, dtype=bool)` produces wrong values for integer input",
+  "author": "AjBrown89",
+  "created_at": "2026-05-26T23:12:47Z",
+  "updated_at": "2026-05-28T18:22:46Z",
+  "closed_at": "2026-05-28T18:22:46Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.8,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:45.062484+00:00",
+  "comments": []
+}

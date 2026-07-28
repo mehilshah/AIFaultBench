@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 3143,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/3143",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Trouble Calling MCMC Multiple Times within Same Script",
+  "author": "mlpotter",
+  "created_at": "2022-10-11T22:00:53Z",
+  "updated_at": "2022-10-20T13:04:01Z",
+  "closed_at": "2022-10-20T13:03:06Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 8.63,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:06.464845+00:00",
+  "comments": [
+    {
+      "author": "GStechschulte",
+      "created_at": "2022-10-20T07:32:48Z",
+      "body": "Hey @mlpotter, this is interesting. I know you said script, but just to make sure, you are running this class within a Python script (the main program being executed) and **not** a Jupyter Notebook correct? \r\n\r\nI had a similar problem, though not the same, when running MCMC with $> 1$ chains in a Jupyter Notebook. My error was also being thrown in the `multiprocessing` directory, albeit, with the `spawn.py` file. Here's the [link](https://forum.pyro.ai/t/attribute-error-when-setting-number-of-chains-greater-than-1-in-mcmc/4652) to my problem on the Pyro forum."
+    },
+    {
+      "author": "mlpotter",
+      "created_at": "2022-10-20T13:02:58Z",
+      "body": "The main program being executed is not a Jupyter Notebook. I am importing into a script like main.py. \r\n\r\nI resolved the threadlock error by adding in main.py file `if __name__ == \"__main__\":`.\r\n\r\nWhen running the same script in Windows, I received a pickling error that commonly appears in this issue boards with this code \r\n\r\n```\r\n def fit(self,X_train,X_val,y_train,y_val,t1_train,t1_val,t2_train,t2_val):\r\n        self.nuts_kernel = NUTS(self.model)\r\n\r\n        self.mcmc = MCMC(self.nuts_kernel,\r\n                         num_chains=self.num_chains,\r\n                         num_samples=self.number_of_samples,\r\n                         warmup_steps=self.burn_in_samples,mp_context='spawn')\r\n\r\n        trace = poutine.trace(self.model).get_trace(X_train,t1_train,t2_train,y_train)\r\n        trace.compute_log_prob()\r\n        print(trace.format_shapes())\r\n\r\n        self.mcmc.run(X_train, t1_train, t2_train, y_train)\r\n```\r\n\r\n> Traceback (most recent call last):\r\n>   File \"C:\\Users\\lpott\\Desktop\\MCMC_Survival_Analysis\\main_mcmc.py\", line 19, in <module>\r\n>     clf.fit(X_train,None,y_train,None,t1_train,None,t2_train,None)\r\n>   File \"C:\\Users\\lpott\\Desktop\\MCMC_Survival_Analysis\\models.py\", line 98, in fit\r\n>     self.mcmc.run(X_train, t1_train, t2_train, y_train)\r\n>   File \"C:\\Users\\lpott\\anaconda3\\envs\\DYAN\\lib\\site-packages\\pyro\\poutine\\messenger.py\", line 12, in _context_wrap\r\n>     return fn(*args, **kwargs)\r\n>   File \"C:\\Users\\lpott\\anaconda3\\envs\\DYAN\\lib\\site-packages\\pyro\\infer\\mcmc\\api.py\", line 563, in run\r\n>     for x, chain_id in self.sampler.run(*args, **kwargs):\r\n>   File \"C:\\Users\\lpott\\anaconda3\\envs\\DYAN\\lib\\site-packages\\pyro\\infer\\mcmc\\api.py\", line 333, in run\r\n>     w.start()\r\n>   File \"C:\\Users\\lpott\\anaconda3\\envs\\DYAN\\lib\\multiprocessing\\process.py\", line 121, in start\r\n>     self._popen = self._Popen(self)\r\n>   File \"C:\\Users\\lpott\\anaconda3\\envs\\DYAN\\lib\\multiprocessing\\context.py\", line 224, in _Popen\r\n>     return _default_context.get_context().Process._Popen(process_obj)\r\n>   File \"C:\\Users\\lpott\\anaconda3\\envs\\DYAN\\lib\\multiprocessing\\context.py\", line 327, in _Popen\r\n>     return Popen(process_obj)\r\n>   File \"C:\\Users\\lpott\\anaconda3\\envs\\DYAN\\lib\\multiprocessing\\popen_spawn_win32.py\", line 93, in __init__\r\n>     reduction.dump(process_obj, to_child)\r\n>   File \"C:\\Users\\lpott\\anaconda3\\envs\\DYAN\\lib\\multiprocessing\\reduction.py\", line 60, in dump\r\n>     ForkingPickler(file, protocol).dump(obj)\r\n> TypeError: cannot pickle 'module' object\r\n\r\nBut was able to resolve it by removing self assignments and adding a self assignment at the end of fit.\r\n\r\n```\r\ndef fit(self,X_train,X_val,y_train,y_val,t1_train,t1_val,t2_train,t2_val):\r\n        nuts_kernel = NUTS(self.model) \r\n\r\n        mcmc = MCMC(nuts_kernel, \r\n                         num_chains=self.num_chains,\r\n                         num_samples=self.number_of_samples,\r\n                         warmup_steps=self.burn_in_samples,mp_context='spawn')\r\n\r\n        trace = poutine.trace(self.model).get_trace(X_train,t1_train,t2_train,y_train)\r\n        trace.compute_log_prob()\r\n        print(trace.format_shapes())\r\n\r\n        mcmc.run(X_train, t1_train, t2_train, y_train) \r\n        self.mcmc = mcmc # making the self statement at end after mcmc run does not give error\r\n```\r\n"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2022,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2022",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "random_nnx_module (and potentially random_eqx_module) cant handle models with list layers",
+  "author": "kylejcaron",
+  "created_at": "2025-04-23T17:55:31Z",
+  "updated_at": "2025-04-27T03:27:52Z",
+  "closed_at": "2025-04-27T03:27:52Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.4,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:24.502600+00:00",
+  "comments": [
+    {
+      "author": "kylejcaron",
+      "created_at": "2025-04-23T17:55:51Z",
+      "body": "I think I'll have time this week to open up a PR for this\n\ncc @juanitorduz "
+    },
+    {
+      "author": "juanitorduz",
+      "created_at": "2025-04-23T18:04:04Z",
+      "body": "> I think I'll have time this week to open up a PR for this\n> \n> cc [@juanitorduz](https://github.com/juanitorduz)\n\nThank you!"
+    }
+  ]
+}

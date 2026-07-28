@@ -1,0 +1,55 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 1713,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/1713",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "AutoContinuous/funsor bug?",
+  "author": "amifalk",
+  "created_at": "2024-01-05T02:25:38Z",
+  "updated_at": "2024-05-12T23:56:02Z",
+  "closed_at": "2024-05-12T23:56:02Z",
+  "labels": [
+    "warnings & errors"
+  ],
+  "milestone": "0.15",
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 128.9,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:24.653849+00:00",
+  "comments": [
+    {
+      "author": "fehiepsi",
+      "created_at": "2024-01-05T16:01:40Z",
+      "body": "Hi @amifalk, AutoContinuous does not work with enumerated models. We should raise a better error message for this."
+    },
+    {
+      "author": "amifalk",
+      "created_at": "2024-01-05T18:15:55Z",
+      "body": "Is there a way to add this functionality (even if only for a subset of models), or is it a limitation of numpyro?"
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2024-01-05T21:36:21Z",
+      "body": "Yes, it's the limitation of the blackbox one. It would be much easier to write custom guides for your models."
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 13864,
+  "html_url": "https://github.com/huggingface/diffusers/issues/13864",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "AttributeError: 'Cosmos2_5_PredictBasePipeline' object has no attribute 'check_text_safety'",
+  "author": "Tortoise17",
+  "created_at": "2026-06-04T08:04:23Z",
+  "updated_at": "2026-06-05T09:33:42Z",
+  "closed_at": "2026-06-05T09:16:43Z",
+  "labels": [
+    "bug",
+    "pipelines"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.05,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:28.700774+00:00",
+  "comments": [
+    {
+      "author": "akshan-main",
+      "created_at": "2026-06-04T16:53:45Z",
+      "body": "Hey so you're passing a whole Cosmos2_5_PredictBasePipeline as `safety_checker`, but it expects a `CosmosSafetyChecker` and that's why `check_text_safety` is missing (note the \"Expected types for safety_checker\u2026 got \u2026Pipeline\" warning in your log). Either drop the `safety_checker=` arg so it builds one automatically, or pass `CosmosSafetyChecker(...)` from `cosmos_guardrail` (which you've already imported). \n\nFor fully offline use you'll probably want the guardrail weights cached locally.\n"
+    },
+    {
+      "author": "Tortoise17",
+      "created_at": "2026-06-05T07:13:50Z",
+      "body": "@akshan-main  Thank you. I have dropped `safety_checker` from script like below.:\n```\n\n`import os\nimport torch\n\n# 1. Enforce Hugging Face libraries to execute strictly offline\nos.environ[\"HF_HUB_OFFLINE\"] = \"1\"\nos.environ[\"TRANSFORMERS_OFFLINE\"] = \"1\"\n\nfrom diffusers import Cosmos2_5_PredictBasePipeline\nfrom cosmos_guardrail import CosmosSafetyChecker\nfrom diffusers.utils import export_to_video\n\n# Define relative or absolute path strings \nmodel_id = \"./Cosmos-Predict2.5-2B/diffusers/base/post-trained\"\nlocal_safety_checker_path = \"./Cosmos-Predict2.5-2B/diffusers/base/post-trained/Cosmos-1.0-Guardrail\"\n\nprint(\"\u23f3 Loading safety checker components from local storage...\")\n# 2. Extract and load the guardrail explicitly from disk\n#safety_checker = Cosmos2_5_PredictBasePipeline.from_pretrained(\n#    model_id, \n#    torch_dtype=torch.bfloat16,\n#    local_files_only=True  # Blocks token checks / remote downloads\n#)\n\nprint(\"\u23f3 Spawning Main World Generation Pipeline...\")\n# 3. Inject the prepared checker directly into the model initializer\npipe = Cosmos2_5_PredictBasePipeline.from_pretrained(\n    model_id, \n    torch_dtype=torch.bfloat16,\n    local_files_only=True\n)\npipe.to(\"cuda\")\n\nprompt = \"As the red light shifts to green, the red bus at the intersection begins to move forward...\"\nnegative_prompt = \"The video captures a series of frames showing ugly scenes...\"\n\noutput = pipe(\n    image=None,\n    video=None,\n    prompt=prompt,\n    negative_prompt=negative_prompt,\n    num_frames=93,\n    generator=torch.Generator().manual_seed(1),\n).frames[0]\n\nexport_to_video(output, \"text2world.mp4\", fps=16)\nprint(\"\u2705 Generation Complete!\")\n```\n\n\n\nand now error is \n```\n\nFile \"/test.py\", line 41, in <module>\n    output = pipe(\n             ^^^^^\n  File \"/envs/video/lib/python3.12/site-packages/torch/utils/_contextlib.py\", line 124, in decorate_context\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/envs/video/lib/python3.12/site-packages/diffusers/pipelines/cosmos/pipeline_cosmos2_5_predict.py\", line 665, in __call__\n    device = self._execution_device\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/envs/video/lib/python3.12/site-packages/diffusers/configuration_utils.py\", line 176, in __getattr__\n    raise AttributeError(f\"'{type(self).__name__}' object has no attribute '{name}'\")\nAttributeError: 'Cosmos2_5_PredictBasePipeline' object has no attribute '_execution_device\n```\n\nWould you be kind to hint me or edit the script with `safety_checker` and without `safety_checker `as this is first time I am trying to merge something like this and really this is very interesting to me. Your kind help is highly appreciated. \n"
+    },
+    {
+      "author": "Tortoise17",
+      "created_at": "2026-06-05T09:16:40Z",
+      "body": "@akshan-main  finally fixed it. I hope that what I fixed is also adopting the `guardrail `properly. But will ask again if something I got stuck. THank you so much for great help. "
+    },
+    {
+      "author": "akshan-main",
+      "created_at": "2026-06-05T09:33:42Z",
+      "body": "glad to hear that!"
+    }
+  ]
+}

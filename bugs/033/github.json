@@ -1,0 +1,58 @@
+{
+  "owner": "NVIDIA",
+  "repo": "DeepLearningExamples",
+  "number": 1250,
+  "html_url": "https://github.com/NVIDIA/DeepLearningExamples/issues/1250",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[SE3Transformer/pytorch] Multiplication error in the ConvSE3",
+  "author": "Siyeong-Lee",
+  "created_at": "2023-01-18T11:13:40Z",
+  "updated_at": "2023-01-19T01:06:21Z",
+  "closed_at": "2023-01-18T14:55:48Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.15,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:05.218575+00:00",
+  "comments": [
+    {
+      "author": "milesial",
+      "created_at": "2023-01-18T11:26:49Z",
+      "body": "What are you trying to achieve? The 6th feature you are extracting here is the proton number, which is an invariant scalar (1D). Here you are passing this scalar as a type-1 feature which is for 3D vectors, and the model expects a 3D vector so it errors as it should.\r\n\r\nMultiple input types are supported if they are defined correctly"
+    },
+    {
+      "author": "Siyeong-Lee",
+      "created_at": "2023-01-18T14:55:48Z",
+      "body": "@milesial Thank you for quick reply. \r\n\r\nYou're right.  I lacked understanding of the original paper.  \r\n\r\nMy purpose is to break the symmetric in the +z direction in pointcloud classification (SE3-transformer +z in the SE3-transformer work).     \r\nI thought this idea would be implemented through a method similar to the way mentioned above.\r\n\r\nEven if the meaning is wrong in the QM9 dataset, I wanted to make sure that the SE3-transformer works normally by making the shape of the input the same.\r\n\r\nYour comment made me think deeply about this work. Thank you.\r\n\r\n"
+    },
+    {
+      "author": "milesial",
+      "created_at": "2023-01-18T15:27:31Z",
+      "body": "Yes, for point cloud experiments using +z, I suggest data loading code like this:\r\n\r\n```\r\nG = dgl.transform.knn_graph(points, self.num_neighbors + 1)\r\nG = dgl.transform.remove_self_loop(G)\r\nsrc, dst = G.edges()\r\nabsolute_z = points[:, -1]\r\n\r\n# position relative to neighbors\r\nrelative_pos = points[src] - points[dst]\r\nrelative_z = relative_pos[:, -1].clone()\r\nrelative_pos_no_z = relative_pos.clone()\r\nrelative_pos_no_z[:, -1] = 0\r\nfeat = torch.stack([relative_pos, relative_pos_no_z], dim=1)\r\nedge_feats = {'0': relative_z[..., None, None], '1': feat}\r\nnode_feats = {'0': absolute_z[..., None, None]}\r\nG.edata['rel_pos'] = points[dst] - points[src]\r\n\r\nreturn G, node_feats, edge_feats, label\r\n```\r\n\r\nWith the model defined with:\r\n```\r\nfiber_in=Fiber({0: 1}),\r\nfiber_edge=Fiber({0: 1, 1: 2}),\r\n```\r\n\r\nThat way you have two 3D edge features: one vector and one vector with z=0. You also have one 1D edge feature: the relative z component. You have one 1D node feature: the absolute z component.\r\n\r\nYou can find more insight in this discussion about ScanObjectNN https://github.com/FabianFuchsML/se3-transformer-public/issues/13"
+    },
+    {
+      "author": "Siyeong-Lee",
+      "created_at": "2023-01-19T01:06:21Z",
+      "body": "Thank you for the detailed answers. Following your advice, I will refer to the issue you mentioned.\r\n\r\n"
+    }
+  ]
+}

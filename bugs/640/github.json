@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2392,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2392",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] disable all data augmentation results in unexpected cropping",
+  "author": "shunmian",
+  "created_at": "2025-01-05T19:05:16Z",
+  "updated_at": "2025-01-05T22:12:57Z",
+  "closed_at": "2025-01-05T22:12:57Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.13,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:37:19.375684+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-01-05T22:11:54Z",
+      "body": "@shunmian that's not augmentation, that's expected cropping. The transforms output a constant image size, it defaults to square unless you provide a different size tuple. You input a non-square image it resizes the shortest size to 224 and then crops center to output 224 x 224. Not sure what else you would expect, this is the default preprocessing expected for most models. Note the scale/ratio args are for training random resize & crop and don't impact things when is_training=False.\r\n\r\nIf you want the whole image you can specificy `crop_mode='squash'`, but it will distort aspect, or `crop_mode=border` and it will add borders (letterboxing) to achieve target size.\r\n\r\n\r\n"
+    }
+  ]
+}

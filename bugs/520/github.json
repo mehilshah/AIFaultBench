@@ -1,0 +1,45 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 38101,
+  "html_url": "https://github.com/jax-ml/jax/issues/38101",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`jax.jit + jax.vmap composition`: jit(vmap(f))(x) != vmap(f)(x) for `relu \u2192 square \u2192 sqrt_abs` at float32.max",
+  "author": "JamesDLance",
+  "created_at": "2026-06-01T17:40:07Z",
+  "updated_at": "2026-06-01T18:33:34Z",
+  "closed_at": "2026-06-01T18:29:42Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:22.931483+00:00",
+  "comments": [
+    {
+      "author": "jakevdp",
+      "created_at": "2026-06-01T18:29:42Z",
+      "body": "Hi - in general `jax.jit` does not promise bitwise equivalence of floating point operations compared to the eagerly-evaluated versions. Normal floating point arithmetic rules apply (i.e. different ways of expressing the \"same\" computation will result in different rounding errors). As such, I think this is working as expected."
+    }
+  ]
+}

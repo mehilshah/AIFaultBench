@@ -1,0 +1,60 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2181,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2181",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Cast rate to float when constructing Poisson to ensure consistent log prob behavior",
+  "author": "dylanhmorris",
+  "created_at": "2026-05-02T22:10:26Z",
+  "updated_at": "2026-05-06T10:44:05Z",
+  "closed_at": "2026-05-06T10:44:05Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 2,
+    "+1": 2,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.52,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:17.405364+00:00",
+  "comments": [
+    {
+      "author": "Qazalbash",
+      "created_at": "2026-05-03T00:20:28Z",
+      "body": "Hi @dylanhmorris, I have proposed a fix. Please see #2182."
+    },
+    {
+      "author": "Qazalbash",
+      "created_at": "2026-05-03T09:09:36Z",
+      "body": "Interesting behaviour when validation is on!\n\n```python\nIn [1]: import numpyro.distributions as dist\n\nIn [2]: int_rate = dist.Poisson(2, validate_args=True)\n\nIn [3]: float_rate = dist.Poisson(2., validate_args=True)\n\nIn [4]: int_rate.log_prob(2)\nOut[4]: Array(-1.306853, dtype=float32)\n\nIn [5]: float_rate.log_prob(2)\nOut[5]: Array(-1.306853, dtype=float32)\n\nIn [6]: int_rate.log_prob(1.999999)\n<ipython-input-6-37287a8a65a9>:1: UserWarning: Out-of-support values provided to log prob method. The value argument should be within the support.\n  int_rate.log_prob(1.999999)\nOut[6]: Array(-inf, dtype=float32)\n\nIn [7]: float_rate.log_prob(1.999999)\n<ipython-input-7-119894d57215>:1: UserWarning: Out-of-support values provided to log prob method. The value argument should be within the support.\n  float_rate.log_prob(1.999999)\nOut[7]: Array(-inf, dtype=float32)\n```\n\n@dylanhmorris, we can avoid the issue by enabling the validation \ud83d\ude04."
+    },
+    {
+      "author": "dylanhmorris",
+      "created_at": "2026-05-03T14:15:45Z",
+      "body": "Good point! I still think it's worth changing the behavior to ensure things work more predictably with `validate_args=False`, but I defer to others."
+    },
+    {
+      "author": "tillahoffmann",
+      "created_at": "2026-05-06T03:44:00Z",
+      "body": "This is an interesting one. I agree that we should probably cast to the appropriate dtype for the constraint of the parameter because the behavior can be surprising. E.g., passing an int covariance matrix to a multivariate normal leaves the passed parameter as int, but the Cholesky decomposition has floating dtype.\n\n```python\nIn [1]: from numpyro import distributions as dists\n        from jax import numpy as jnp\n\nIn [2]: def get_args(dist):\n   ...:     return {key: getattr(dist, key, None) for key in dist.arg_constraints}\n   ...: \n\nIn [10]: get_args(dists.MultivariateNormal(0, jnp.ones((1, 1), dtype=int)))\nOut[10]: \n{'loc': array([0]),\n 'covariance_matrix': Array([[1]], dtype=int32),\n 'precision_matrix': Array([[1.]], dtype=float32),\n 'scale_tril': Array([[1.]], dtype=float32)}\n```\n\nLikewise, if we pass the precision matrix as int, it stays as int, but the cov matrix is float.\n\n```python\nIn [11]: get_args(dists.MultivariateNormal(0, precision_matrix=jnp.ones((1, 1), dtype=int)))\nOut[11]: \n{'loc': array([0]),\n 'covariance_matrix': Array([[1.]], dtype=float32),\n 'precision_matrix': Array([[1]], dtype=int32),\n 'scale_tril': Array([[1.]], dtype=float32)}\n```\n\nI think we can derive the dtype unambiguously from the constraint?"
+    }
+  ]
+}

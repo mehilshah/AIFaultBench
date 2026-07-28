@@ -1,0 +1,43 @@
+{
+  "owner": "labmlai",
+  "repo": "annotated_deep_learning_paper_implementations",
+  "number": 244,
+  "html_url": "https://github.com/labmlai/annotated_deep_learning_paper_implementations/issues/244",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Bug in rotary positional embedding ",
+  "author": "scv11",
+  "created_at": "2024-02-20T02:06:05Z",
+  "updated_at": "2024-06-20T07:24:24Z",
+  "closed_at": "2024-06-20T07:24:24Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 121.22,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:12.762743+00:00",
+  "comments": [
+    {
+      "author": "vpj",
+      "created_at": "2024-06-20T07:24:24Z",
+      "body": "Fixed it here https://github.com/labmlai/annotated_deep_learning_paper_implementations/commit/2236f6383ce66bb25f1880512a4ad0ec8f37514a\r\n\r\nSorry for the delay"
+    }
+  ]
+}

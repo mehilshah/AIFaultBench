@@ -1,0 +1,96 @@
+{
+  "owner": "PythonOT",
+  "repo": "POT",
+  "number": 229,
+  "html_url": "https://github.com/PythonOT/POT/issues/229",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Numerical issue of ot.emd with large entries",
+  "author": "tlacombe",
+  "created_at": "2021-04-01T14:09:50Z",
+  "updated_at": "2025-08-13T14:38:26Z",
+  "closed_at": "2025-08-13T14:38:26Z",
+  "labels": [
+    "bug",
+    "help wanted"
+  ],
+  "milestone": null,
+  "comments_count": 11,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1595.02,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:30.548752+00:00",
+  "comments": [
+    {
+      "author": "ncourty",
+      "created_at": "2021-04-01T21:39:55Z",
+      "body": "Hi theo, thanks for reporting this bug. I suspect there is an overflow somewhere in the solver, it will be hard to identify. Here is a quick fixup, if it suits your need. Normalizing M by dividing it by its maximum value does not change the solution and it behaves more consistently:\r\n`P = ot.emd(a=a, b=b, M=M/M.max(), numItermax=2000000)`\r\nwill produce the desired output."
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2021-04-02T09:27:42Z",
+      "body": "Should we normalize like that the M matrix inside emd then?\r\n\r\nThis is weird because it seemed to me that when using np.inf in the M matrix the exact solver works very well.  \r\n\r\n"
+    },
+    {
+      "author": "mglisse",
+      "created_at": "2021-04-05T19:55:02Z",
+      "body": "Note that compiling network_simplex_simple.h with a positive DEBUG_LVL does not work (`niter` is probably supposed to be `iter_number`)."
+    },
+    {
+      "author": "tlacombe",
+      "created_at": "2021-04-19T08:51:48Z",
+      "body": "@ncourty I may be missing something but I tried the same code using normalization in the `ot.emd` but this didn't solve the issue.\r\nI still get the same (non-optimal) transport plan as the one obtained without normalization. \r\nI tried replacing `1e32` values by `np.inf` as suggested by @rflamary , but this does not work in my example at least : the returned transport plan does not satisfy the marginal constraints. \r\n\r\nI also tried using `ot.emd2` directly, the output seems consistent with doing `np.sum(np.multiply(...))` : using `M` or `M/M.max()` yields the same result, using `M_inf` yields `NaN`. \r\n\r\nCode to reproduce (updated version of the previous code):\r\n```\r\nimport numpy as np\r\nimport ot\r\n\r\nM = np.array(\r\n    [\r\n        [2.50275352e02, 3.74653218e02, 2.41352736e03, 1.00000000e32, 1.51751540e-03],\r\n        [2.13082030e02, 3.28812836e02, 2.29487946e03, 1.00000000e32, 1.37109800e-01],\r\n        [1.97333083e02, 3.09175848e02, 2.24250550e03, 1.00000000e32, 2.46506283e00],\r\n        [1.00000000e32, 1.00000000e32, 1.00000000e32, 5.26223432e00, 2.50000000e31],\r\n        [3.84690152e01, 8.09465684e01, 3.33064175e02, 2.50000000e31, 0.00000000e00],\r\n    ]\r\n)\r\n\r\nM_inf = np.array(\r\n    [\r\n        [2.50275352e02, 3.74653218e02, 2.41352736e03, np.inf, 1.51751540e-03],\r\n        [2.13082030e02, 3.28812836e02, 2.29487946e03, np.inf, 1.37109800e-01],\r\n        [1.97333083e02, 3.09175848e02, 2.24250550e03, np.inf, 2.46506283e00],\r\n        [np.inf, np.inf, np.inf, 5.26223432e00, np.inf],\r\n        [3.84690152e01, 8.09465684e01, 3.33064175e02, np.inf, 0.00000000e00],\r\n    ]\r\n)\r\n\r\n\r\na = np.array([0.125, 0.125, 0.125, 0.125, 0.5])\r\nb = np.array([0.125, 0.125, 0.125, 0.125, 0.5])\r\n\r\n### POT transport plans\r\nP = ot.emd(a=a, b=b, M=M, numItermax=2000000)\r\nP2 = ot.emd(a=a, b=b, M=M/M.max(), numItermax=2000000)\r\nP_inf = ot.emd(a=a,b=b, M=M_inf, numItermax=2000000)\r\n\r\n### POT cost computed directly\r\npotc = ot.emd2(a=a, b=b, M=M)\r\nprint('cost by pot.emd2 directly:', potc)\r\npotc2 = ot.emd2(a=a,b=b, M=M/M.max()) * M.max()\r\nprint(\"cost by pot.emd2 using M/M.max():\", potc2)\r\npotc_inf = ot.emd2(a=a,b=b, M=M_inf)\r\nprint(\"cost by pot.emd2 using M_inf:\", potc_inf)\r\n\r\n### My transport plan\r\nQ = np.array(\r\n    [\r\n        [0, 0, 0, 0, 0.125],\r\n        [0, 0, 0, 0, 0.125],\r\n        [0, 0, 0, 0, 0.125],\r\n        [0, 0, 0, 0.125, 0],\r\n        [0.125, 0.125, 0.125, 0, 0.125],\r\n    ]\r\n)\r\nassert (P.sum(axis=0) == a).all()\r\nassert (P.sum(axis=1) == b).all()\r\nassert (Q.sum(axis=0) == a).all()\r\nassert (Q.sum(axis=1) == b).all()\r\n### P_inf does not satisfy the marginal constraints\r\n#assert(P_inf.sum(axis=0) == a).all()\r\n#assert(P_inf.sum(axis=1) == b).all()\r\n\r\nprint(\"*****\")\r\nprint(\"my cost matrix:\\n\", Q)\r\nprint(\"POT transport plan:\\n\", P)\r\nprint(\"POT transport plan with M_inf:\", P_inf)\r\nprint(\"*****\")\r\nprint(\"POT cost:\", np.sum(np.multiply(P, M)))\r\nprint(\"POT cost after normalization\", np.sum(np.multiply(P2, M)))\r\nprint(\"my cost:\", np.sum(np.multiply(Q, M)))\r\n```\r\nOutput: \r\n```\r\ncost by pot.emd2 directly: 354.43787279000003\r\ncost by pot.emd2 using M/M.max(): 354.43787279000003\r\ncost by pot.emd2 using M_inf: nan\r\n*****\r\nmy cost matrix:\r\n [[0.    0.    0.    0.    0.125]\r\n [0.    0.    0.    0.    0.125]\r\n [0.    0.    0.    0.    0.125]\r\n [0.    0.    0.    0.125 0.   ]\r\n [0.125 0.125 0.125 0.    0.125]]\r\nPOT transport plan:\r\n [[0.    0.125 0.    0.    0.   ]\r\n [0.125 0.    0.    0.    0.   ]\r\n [0.    0.    0.125 0.    0.   ]\r\n [0.    0.    0.    0.125 0.   ]\r\n [0.    0.    0.    0.    0.5  ]]\r\nPOT transport plan with M_inf: [[0.    0.    0.    0.    0.   ]\r\n [0.    0.    0.    0.    0.   ]\r\n [0.    0.    0.    0.    0.   ]\r\n [0.    0.    0.    0.125 0.   ]\r\n [0.    0.    0.    0.    0.5  ]]\r\n*****\r\nPOT cost: 354.43787279000003\r\nPOT cost after normalization 354.43787279000003\r\nmy cost: 57.54321038317501\r\n```"
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2021-04-21T11:32:28Z",
+      "body": "interesting bug, i will try to reproduce it on my machine and get back to you."
+    },
+    {
+      "author": "mglisse",
+      "created_at": "2021-04-21T17:12:42Z",
+      "body": "A bit simplified\r\n```python\r\nimport numpy as np\r\nimport ot\r\n\r\nz = 1e16\r\nM = np.array([[1, z, 0], [1, z, 0], [z, 0, z], [0, z, 0]])\r\n\r\nb = np.array([1, 1, 3])\r\na = np.array([1, 1, 1, 2])\r\nP = ot.emd(a=a, b=b, M=M)\r\nQ = np.array([[0, 0, 1], [0, 0, 1], [0, 1, 0], [1, 0, 1]])\r\nassert (P.sum(axis=0) == b).all()\r\nassert (P.sum(axis=1) == a).all()\r\nassert (Q.sum(axis=0) == b).all()\r\nassert (Q.sum(axis=1) == a).all()\r\nprint(\"my cost matrix:\\n\", Q)\r\nprint(\"POT matrix:\\n\", P)\r\nprint(\"POT cost:\", np.sum(np.multiply(P, M)))\r\nprint(\"my cost:\", np.sum(np.multiply(Q, M)))\r\n```\r\n> my cost matrix:\r\n [[0 0 1]\r\n [0 0 1]\r\n [0 1 0]\r\n [1 0 1]]\r\nPOT matrix:\r\n [[1. 0. 0.]\r\n [0. 0. 1.]\r\n [0. 1. 0.]\r\n [0. 0. 2.]]\r\nPOT cost: 1.0\r\nmy cost: 0.0\r\n\r\nCould be related to EPSILON or the precision of `double` indeed, since 1e16 is roughly the limit where it starts failing."
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2021-04-22T07:40:04Z",
+      "body": "yes that's it good catch! basically we cannot solve the problem precisely if there exist two values different values in m such that m_1+_2=m_1 due to numerical precision.\r\n\r\nI dont' think we can say it is a bug or something we can solve if it is due to the numerical precision for float64.\r\n\r\nMaybe we can add a warning when the dynamic in M is too large. Note that if you want to forbid a link you just need to set its value to M.max()*1.0001 or something like that instead of a very large value, it will not change the solution or the value.\r\n\r\nAgain thank you for reporting this weird behavior.\r\n\r\n"
+    },
+    {
+      "author": "mglisse",
+      "created_at": "2021-04-22T19:17:59Z",
+      "body": "> yes that's it good catch! basically we cannot solve the problem precisely if there exist two values different values in m such that m_1+_2=m_1 due to numerical precision.\r\n> \r\n> I dont' think we can say it is a bug or something we can solve if it is due to the numerical precision for float64.\r\n\r\nWell, it isn't impossible. If m_1 is not used in the optimal plan, it is possible to compute the optimal plan without relying on something like `m_1+m_2-m_1==m_2`. As you mentioned in a previous comment, even a cost of +inf could work (the fact that it can currently output something that isn't even a transport plan is a bit alarming). Depending on the algorithm, arranging the computations to be robust like that can be trivial or very complicated and costly, and the question is whether it is worth the trouble. Maybe it isn't here...\r\n\r\n> Maybe we can add a warning when the dynamic in M is too large. Note that if you want to forbid a link you just need to set its value to M.max()*1.0001 or something like that instead of a very large value, it will not change the solution or the value.\r\n\r\nJust around the max of the other values may not be sufficient to forbid a link, it could still be used to transport a small mass in the optimal plan.\r\nWe will handle truly infinite values separately in Gudhi (it is currently officially unsupported), so hopefully our users won't be tempted to simulate infinity with large values..."
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2021-04-23T08:42:05Z",
+      "body": "POT exact OT solver is a wrapper around the C++ LEMON solver and we modifying it is out of what we can do. In addition, it might require some kind of testings at each iteration that could greatly decrease the performance. \r\n\r\nAbout the max value, I think it is sufficient if the dynamic in M is limited (below 1e14 for instance) adding a cost that is bigger than all the other would prevent any mass on the link because the solver is a Network simplex and the solution will always be on a face of the polytop and under the dynamic condition this face can be improved if there is mass on the largest values of M.\r\n"
+    },
+    {
+      "author": "mglisse",
+      "created_at": "2021-04-23T09:29:01Z",
+      "body": "> POT exact OT solver is a wrapper around the C++ LEMON solver and we modifying it is out of what we can do.\r\n\r\nok, thanks.\r\n\r\n> In addition, it might require some kind of testings at each iteration that could greatly decrease the performance.\r\n\r\nYes, although since I am not familiar with the algorithm I have no idea how large the cost would be.\r\n\r\n> About the max value, I think it is sufficient if the dynamic in M is limited (below 1e14 for instance) adding a cost that is bigger than all the other would prevent any mass on the link because the solver is a Network simplex and the solution will always be on a face of the polytop and under the dynamic condition this face can be improved if there is mass on the largest values of M.\r\n\r\n`emd(a=[],b=[],M=[[1,10,10],[10,1,10],[10,10,18]])` outputs a diagonal matrix, which in particular puts some mass on the 18, I need something strictly larger than 19 so it outputs a different plan. So \"bigger than all the other\" isn't quite sufficient, more like bigger than a path that can replace this link, or to be safe maybe bigger than the sum of the other costs."
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2021-04-23T12:06:44Z",
+      "body": "you are right good example"
+    }
+  ]
+}

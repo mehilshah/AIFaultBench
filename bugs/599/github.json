@@ -1,0 +1,51 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7711,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7711",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] OSError: MPI environment variables are not set.",
+  "author": "Mulbetty",
+  "created_at": "2025-12-03T06:12:41Z",
+  "updated_at": "2025-12-30T10:44:32Z",
+  "closed_at": "2025-12-30T10:44:32Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 27.19,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:14.773333+00:00",
+  "comments": [
+    {
+      "author": "sfc-gh-truwase",
+      "created_at": "2025-12-08T16:24:55Z",
+      "body": "@Mulbetty thanks for raising this issue. I think you are right that the assertion introduced by #6979 is problematic. I don't use `mpi` so I have limited experience. But from my brief research, it seems the relevant env vars (e.g., `OMPI_COMM_WORLD_LOCAL_RANK`) ought to be set by `mpirun`. This means these env vars are not required to exist [here](https://github.com/deepspeedai/DeepSpeed/blob/e0a6bb510bf77f5f5b3907da2a76786abe74eef1/deepspeed/launcher/multinode_runner.py#L159) before `mpirun` is invoked.\n\nCommenting out `self._setup_mpi_environment()` as you suggest solves the issue on my side. Perhaps commenting out the assertion is the safer fix here. I will like to get your thoughts. \n\n@jeffra @sfc-gh-mwyatt any thoughts?"
+    },
+    {
+      "author": "nathon-lee",
+      "created_at": "2025-12-30T06:47:36Z",
+      "body": "\"Hi @sfc-gh-truwase , I hope you're doing well. I saw your comments on issue #7711 regarding the MPI environment variables assertion problem. I'm working on a fix for this issue and would appreciate your insights on the best approach. From your comment, it seems like commenting out the assertion or moving it to a later stage would be the right solution. Would you be able to review my proposed fix when it's ready?\""
+    }
+  ]
+}

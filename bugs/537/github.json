@@ -1,0 +1,55 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2481,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2481",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Trouble encountered when using timm.create_model()",
+  "author": "Qiqee",
+  "created_at": "2025-05-04T13:58:13Z",
+  "updated_at": "2025-05-05T04:24:49Z",
+  "closed_at": "2025-05-05T01:07:28Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.46,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:46.642080+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-05-05T01:07:14Z",
+      "body": "@Qiqee nothing to do with create_model, different weights behave / fine-tune differently ... the `resnet34.tv_in1k` will match the original torchvision resnet (it is the same model) \n\nhttps://github.com/huggingface/pytorch-image-models/discussions/2462"
+    },
+    {
+      "author": "Qiqee",
+      "created_at": "2025-05-05T03:02:17Z",
+      "body": "@rwightman Thank you very much for taking the time to help me with this! I've been thinking about why the training outcomes vary significantly despite using the same model\u2014could there be other factors at training, perhaps related to the code or implementation details? I'd really appreciate your insights on this!"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-05-05T04:24:48Z",
+      "body": "@Qiqee same model, different weights, different weights behave differently. The linked issue shows 7 different weights for the exact resnet34 model and a few related ones... try them for you application."
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "owner": "tensorflow",
+  "repo": "datasets",
+  "number": 5397,
+  "html_url": "https://github.com/tensorflow/datasets/issues/5397",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "NonMatchingChecksumError while loading the dataset plant_leaves",
+  "author": "ajinkyakulkarni9",
+  "created_at": "2024-05-06T02:43:56Z",
+  "updated_at": "2024-05-08T18:41:01Z",
+  "closed_at": "2024-05-08T13:59:18Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.47,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:52.523787+00:00",
+  "comments": [
+    {
+      "author": "ccl-core",
+      "created_at": "2024-05-08T13:59:18Z",
+      "body": "Hi @Coolcoder45 , thank you for reporting this issue!\r\nhttps://github.com/tensorflow/datasets/pull/5402 should have solved the problem."
+    },
+    {
+      "author": "ajinkyakulkarni9",
+      "created_at": "2024-05-08T17:55:57Z",
+      "body": "The issue is not resolved really. \r\n\r\nDownloading and preparing dataset 6.81 GiB (download: 6.81 GiB, generated: Unknown size, total: 6.81 GiB) to /root/tensorflow_datasets/plant_leaves/0.1.0...\r\nDl\u2007Completed...:\u2007100%\r\n\u20071/1\u2007[04:14<00:00,\u2007254.64s/\u2007url]\r\nDl\u2007Size...:\u2007100%\r\n\u20076718/6718\u2007[04:14<00:00,\u200726.72\u2007MiB/s]\r\n---------------------------------------------------------------------------\r\nNonMatchingChecksumError                  Traceback (most recent call last)\r\n[<ipython-input-2-d88d46497437>](https://localhost:8080/#) in <cell line: 2>()\r\n      1 import tensorflow_datasets as tfds\r\n----> 2 plant_leaves = tfds.load('plant_leaves', split='train', shuffle_files=True)\r\n\r\n19 frames\r\n[/usr/local/lib/python3.10/dist-packages/tensorflow_datasets/core/download/download_manager.py](https://localhost:8080/#) in _validate_checksums(url, path, computed_url_info, expected_url_info, force_checksums_validation)\r\n    807         'https://www.tensorflow.org/datasets/overview#fixing_nonmatchingchecksumerror'\r\n    808     )\r\n--> 809     raise NonMatchingChecksumError(msg)\r\n    810 \r\n    811 \r\n\r\nNonMatchingChecksumError: Artifact https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/hb74ynkjcn-1.zip, downloaded to /root/tensorflow_datasets/downloads/prod-dcd-data-cach-zipf.s3.eu-west-1_hb74-7eUGweNz0kFlLHivgq48u6VAv9FcAcWkR3ENYp3T4kw.zip.tmp.94f9c49818634545bbe7eedaa90e775d/hb74ynkjcn-1.zip, has wrong checksum:\r\n* Expected: UrlInfo(size=6.56 GiB, checksum='63db271e5d24d09d12b35189642ff04378c407fc31b4f26225ebc406223baaa4', filename='hb74ynkjcn-1.zip')\r\n* Got: UrlInfo(size=6.56 GiB, checksum='cd6e9f088fd73810520e03c1dff3ceb026cef3b83fc9860958de65f16577ca19', filename='hb74ynkjcn-1.zip')\r\nTo debug, see: https://www.tensorflow.org/datasets/overview#fixing_nonmatchingchecksumerror"
+    },
+    {
+      "author": "ccl-core",
+      "created_at": "2024-05-08T18:41:00Z",
+      "body": "Are you sure you are picking up the latest change?\r\n\r\nThe PR 5402 will be automatically included in tomorrow's tfds-nightly (and will get in tfds once a new version is released)."
+    }
+  ]
+}

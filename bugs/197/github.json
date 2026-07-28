@@ -1,0 +1,43 @@
+{
+  "owner": "Project-MONAI",
+  "repo": "MONAI",
+  "number": 8602,
+  "html_url": "https://github.com/Project-MONAI/MONAI/issues/8602",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "DiceMetric: `mean_batch` and `mean_channel` reduction modes appear to be swapped",
+  "author": "gauthamk02",
+  "created_at": "2025-10-25T14:55:54Z",
+  "updated_at": "2025-10-28T02:37:28Z",
+  "closed_at": "2025-10-28T02:37:28Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.49,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:18.606866+00:00",
+  "comments": [
+    {
+      "author": "KumoLiu",
+      "created_at": "2025-10-28T02:37:21Z",
+      "body": "Hi @gauthamk02, thanks for reporting this.\nIn this repo, we have defined `MEAN_BATCH` to calculate the average across the batch dimension, and `MEAN_CHANNEL` to calculate the average across the channel dimension.\nhttps://github.com/Project-MONAI/MONAI/blob/69f3dd26ed2a65e89ae89d951bb16f2dcb4d7c5d/monai/metrics/utils.py#L113\n\nhttps://github.com/Project-MONAI/MONAI/blob/69f3dd26ed2a65e89ae89d951bb16f2dcb4d7c5d/monai/metrics/utils.py#L119"
+    }
+  ]
+}

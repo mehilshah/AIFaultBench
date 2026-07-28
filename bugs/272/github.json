@@ -1,0 +1,55 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 48700,
+  "html_url": "https://github.com/vllm-project/vllm/issues/48700",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: EAGLE speculative decoding crashes for multimodal wrapper architectures \u2014 load_eagle_model resolves lm_head from target_model instead of target_language_model",
+  "author": "benmcconaghy-art",
+  "created_at": "2026-07-15T06:24:38Z",
+  "updated_at": "2026-07-16T22:46:52Z",
+  "closed_at": "2026-07-16T22:46:52Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 2,
+    "+1": 2,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.68,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:10.111081+00:00",
+  "comments": [
+    {
+      "author": "nightcityblade",
+      "created_at": "2026-07-16T15:16:22Z",
+      "body": "Hi, I'd like to work on this. I'll submit a PR shortly."
+    },
+    {
+      "author": "nightcityblade",
+      "created_at": "2026-07-16T15:22:29Z",
+      "body": "The current main branch already contains this fix from merged PR #47914 (commit 0d12618e98ff): get_target_lm_head() now checks target_language_model.lm_head before the top-level fallback. There is no remaining focused code change to make here, so I am stepping back and unclaiming the issue."
+    },
+    {
+      "author": "benmcconaghy-art",
+      "created_at": "2026-07-16T22:46:52Z",
+      "body": "Thanks @nightcityblade for having a look at this. Can confirm independently \u2014 pulled the current `main` branch source for `load_eagle_model`/`get_target_lm_head` directly (raw file, not just the PR description) and it resolves `lm_head` via `target_language_model` before falling back to the top-level model, which covers the `Mistral3ForConditionalGeneration` case from this report. Verified working in production against our original repro as well, via an equivalent local patch applied to 0.25.1 in the meantime.\n\nClosing as resolved on `main`. For anyone hitting this on a release prior to whichever version first ships the fix: the one-line workaround is patching `load_eagle_model` in `vllm/v1/worker/gpu/spec_decode/eagle/utils.py` to fall back through `target_language_model.lm_head` \u2014 see the repro/root-cause above for the exact mechanism."
+    }
+  ]
+}

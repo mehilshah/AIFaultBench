@@ -1,0 +1,52 @@
+{
+  "owner": "DLR-RM",
+  "repo": "stable-baselines3",
+  "number": 2119,
+  "html_url": "https://github.com/DLR-RM/stable-baselines3/issues/2119",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: Action clip wrapper",
+  "author": "suargi",
+  "created_at": "2025-04-17T21:51:50Z",
+  "updated_at": "2025-04-18T00:47:29Z",
+  "closed_at": "2025-04-17T23:05:20Z",
+  "labels": [
+    "bug",
+    "more information needed",
+    "openai gym"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.05,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:22.840287+00:00",
+  "comments": [
+    {
+      "author": "suargi",
+      "created_at": "2025-04-17T22:28:49Z",
+      "body": "This behavior is not related to SB3 but to Gymansium. And it is the expected behavior - not an issue at all. I should have checked it befroe opening the issue here. Sorry."
+    },
+    {
+      "author": "suargi",
+      "created_at": "2025-04-17T22:59:33Z",
+      "body": "In Gymnasium one can access the original space by using the unwrapped attribute.\nIn SB3 one can do `envs.get_attr(\"unwrapped\")[0].action_space` to have access to the original action space, at least when using SubprocVecEnv."
+    }
+  ]
+}

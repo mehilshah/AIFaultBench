@@ -1,0 +1,43 @@
+{
+  "owner": "lucidrains",
+  "repo": "vit-pytorch",
+  "number": 311,
+  "html_url": "https://github.com/lucidrains/vit-pytorch/issues/311",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Validation accuracy higher than training accuracy",
+  "author": "yoder460",
+  "created_at": "2024-05-15T16:47:53Z",
+  "updated_at": "2024-06-06T17:43:06Z",
+  "closed_at": "2024-06-06T17:43:06Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 22.04,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:18.779413+00:00",
+  "comments": [
+    {
+      "author": "yoder460",
+      "created_at": "2024-06-06T17:43:06Z",
+      "body": "Update: if this is occurring for anyone else, it's to do with torch's random image augmentation on the train data. I got these results using RandomResizedCrop and RandomHorizontalFlip like in the example code. This also occurs when using the same transforms on a torch CNN (the example above in red was keras). Without image augmentation, the training accuracy far exceeds validation accuracy, but performance is diminished. It's nothing VIT-specific, just torch."
+    }
+  ]
+}

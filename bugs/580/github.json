@@ -1,0 +1,46 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 9899,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/9899",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Run failed when `train_without_ext_pred=True` in `glem` example",
+  "author": "xnuohz",
+  "created_at": "2024-12-27T17:14:41Z",
+  "updated_at": "2025-01-07T19:19:57Z",
+  "closed_at": "2025-01-07T19:19:57Z",
+  "labels": [
+    "bug",
+    "example"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 1,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 1,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 11.09,
+  "fix": {
+    "closing_commit": "cb424a6e40fb56477129d893cbd949cd5ab14ec0",
+    "linked_prs": [],
+    "best_guess_fix_commit": "cb424a6e40fb56477129d893cbd949cd5ab14ec0",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:35:47.747604+00:00",
+  "comments": [
+    {
+      "author": "xnuohz",
+      "created_at": "2024-12-29T12:16:54Z",
+      "body": "```\r\nBest GNN validation acc: 0.5960267123057821,LM validation acc: 0.6519681868519078\r\n============================\r\nTraceback (most recent call last):\r\n  File \"/home/ubuntu/Projects/pytorch_geometric/examples/llm/glem.py\", line 443, in <module>\r\n    main(args)\r\n  File \"/home/ubuntu/Projects/pytorch_geometric/examples/llm/glem.py\", line 377, in main\r\n    test_preds = model.inference(em_phase, test_loader, verbose=verbose)\r\n  File \"/home/ubuntu/Softwares/anaconda3/envs/pyg-dev/lib/python3.9/site-packages/torch/utils/_contextlib.py\", line 116, in decorate_context\r\n    return func(*args, **kwargs)\r\n  File \"/home/ubuntu/Projects/pytorch_geometric/torch_geometric/nn/models/glem.py\", line 291, in inference\r\n    out = self.inference_lm(data_loader, verbose)\r\n  File \"/home/ubuntu/Softwares/anaconda3/envs/pyg-dev/lib/python3.9/site-packages/torch/utils/_contextlib.py\", line 116, in decorate_context\r\n    return func(*args, **kwargs)\r\n  File \"/home/ubuntu/Projects/pytorch_geometric/torch_geometric/nn/models/glem.py\", line 312, in inference_lm\r\n    inputs = {k: v.to(self.device) for k, v in batch['input'].items()}\r\n  File \"/home/ubuntu/Projects/pytorch_geometric/torch_geometric/data/data.py\", line 577, in __getitem__\r\n    return self._store[key]\r\n  File \"/home/ubuntu/Projects/pytorch_geometric/torch_geometric/data/storage.py\", line 118, in __getitem__\r\n    return self._mapping[key]\r\nKeyError: 'input'\r\n```"
+    }
+  ]
+}

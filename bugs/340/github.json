@@ -1,0 +1,39 @@
+{
+  "owner": "pytorch",
+  "repo": "rl",
+  "number": 3804,
+  "html_url": "https://github.com/pytorch/rl/issues/3804",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Evaluator.evaluate(weights=nn.Module) destroys nn.Module.state_dict()",
+  "author": "loren5555",
+  "created_at": "2026-05-30T11:26:14Z",
+  "updated_at": "2026-06-03T14:23:37Z",
+  "closed_at": "2026-06-03T14:23:37Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 4.12,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:50.639183+00:00",
+  "comments": []
+}

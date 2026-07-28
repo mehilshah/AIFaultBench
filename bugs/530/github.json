@@ -1,0 +1,45 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 38100,
+  "html_url": "https://github.com/jax-ml/jax/issues/38100",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`jax.jit + jnp.log2 + jnp.exp2`: jit(log2(exp2(x))) hides exp2 overflow \u2014 XLA rewrites log2(exp2(x)) to x",
+  "author": "JamesDLance",
+  "created_at": "2026-06-01T17:39:24Z",
+  "updated_at": "2026-06-01T18:33:36Z",
+  "closed_at": "2026-06-01T18:29:38Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:35.547964+00:00",
+  "comments": [
+    {
+      "author": "jakevdp",
+      "created_at": "2026-06-01T18:29:38Z",
+      "body": "Hi - in general `jax.jit` does not promise bitwise equivalence of floating point operations compared to the eagerly-evaluated versions. Normal floating point arithmetic rules apply (i.e. different ways of expressing the \"same\" computation will result in different rounding errors). As such, I think this is working as expected."
+    }
+  ]
+}

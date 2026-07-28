@@ -1,0 +1,95 @@
+{
+  "owner": "huggingface",
+  "repo": "peft",
+  "number": 1999,
+  "html_url": "https://github.com/huggingface/peft/issues/1999",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Lora initialisation with olora and pissa not working with quantisation.",
+  "author": "Haakooto",
+  "created_at": "2024-08-09T12:46:46Z",
+  "updated_at": "2024-12-02T10:38:23Z",
+  "closed_at": "2024-09-03T12:08:26Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 11,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 24.97,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:45.977056+00:00",
+  "comments": [
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2024-08-09T15:00:31Z",
+      "body": "Thanks a lot for reporting. OLoRA should work with quantization, but as your reproducer shows, there is something amiss. \r\n\r\nInterestingly, when using the [OLoRA example script](https://github.com/huggingface/peft/blob/main/examples/olora_finetuning/olora_finetuning.py) (which is not all that different), it _can_ work with quantization, but not with all models it seems. E.g.:\r\n\r\n- `python examples/olora_finetuning/olora_finetuning.py --base_model \"facebook/opt-125m\" --quantize` runs\r\n- `python examples/olora_finetuning/olora_finetuning.py --base_model \"TinyLlama/TinyLlama-1.1B-Chat-v1.0\" --quantize` errors:\r\n\r\n```                                                                                                                                                                                                                                             | 0/124 [00:00<?, ?it/s]Traceback (most recent call last):\r\n  File \"/home/name/work/forks/peft/examples/olora_finetuning/olora_finetuning.py\", line 166, in <module>\r\n    train(\r\n  File \"/home/name/work/forks/peft/examples/olora_finetuning/olora_finetuning.py\", line 130, in train\r\n    trainer.train()\r\n  File \"/home/name/work/clones/transformers/src/transformers/trainer.py\", line 1945, in train\r\n    return inner_training_loop(\r\n           ^^^^^^^^^^^^^^^^^^^^\r\n  File \"/home/name/work/clones/transformers/src/transformers/trainer.py\", line 2286, in _inner_training_loop\r\n    tr_loss_step = self.training_step(model, inputs)\r\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n[...]\r\n\r\n  File \"/home/name/work/forks/peft/src/peft/tuners/lora/bnb.py\", line 467, in forward\r\n    result = self.base_layer(x, *args, **kwargs)\r\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"/home/name/anaconda3/envs/peft/lib/python3.11/site-packages/torch/nn/modules/module.py\", line 1553, in _wrapped_call_impl\r\n    return self._call_impl(*args, **kwargs)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"/home/name/anaconda3/envs/peft/lib/python3.11/site-packages/torch/nn/modules/module.py\", line 1562, in _call_impl\r\n    return forward_call(*args, **kwargs)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"/home/name/anaconda3/envs/peft/lib/python3.11/site-packages/accelerate/hooks.py\", line 169, in new_forward\r\n    output = module._old_forward(*args, **kwargs)\r\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"/home/name/anaconda3/envs/peft/lib/python3.11/site-packages/bitsandbytes/nn/modules.py\", line 477, in forward\r\n    out = bnb.matmul_4bit(x, self.weight.t(), bias=bias, quant_state=self.weight.quant_state)\r\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"/home/name/anaconda3/envs/peft/lib/python3.11/site-packages/bitsandbytes/autograd/_functions.py\", line 579, in matmul_4bit\r\n    return MatMul4Bit.apply(A, B, out, bias, quant_state)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"/home/name/anaconda3/envs/peft/lib/python3.11/site-packages/torch/autograd/function.py\", line 574, in apply\r\n    return super().apply(*args, **kwargs)  # type: ignore[misc]\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"/home/name/anaconda3/envs/peft/lib/python3.11/site-packages/bitsandbytes/autograd/_functions.py\", line 509, in forward\r\n    output = torch.nn.functional.linear(A, F.dequantize_4bit(B, quant_state).to(A.dtype).t(), bias)\r\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nRuntimeError: mat1 and mat2 shapes cannot be multiplied (4096x2048 and 256x2048)\r\n  0%|              \r\n```\r\n\r\nI didn't have time to investigate yet, will probably have time next week. Pinging @tokenizer-decode "
+    },
+    {
+      "author": "buyukakyuz",
+      "created_at": "2024-08-11T15:52:20Z",
+      "body": "Weird. We don't do anything model specific, we rely on PEFT's quantization. It should be related to that."
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2024-08-12T11:33:52Z",
+      "body": "I did some further research, though unfortunately I still haven't found the solution.\r\n\r\nOne difference that I spotted between the scripts is the usage of `bnb_4bit_quant_storage`, but even when removed, there is still an error.\r\n\r\nDidding deeper, it appears that something goes wrong during the dequantization step:\r\n\r\nhttps://github.com/huggingface/peft/blob/41c274ecac6247a63e3b10f8536904f3ead82213/src/peft/utils/integrations.py#L89\r\n\r\nThe output is a 2048x2048 shaped float tensor. However, I think it should be a float tensor of shape 2097152x1 because bnb uses flat tensors (and 2097152 == 2048**2 / 2). For reference, I checked the [LoftQ implementation](https://github.com/huggingface/peft/blob/41c274ecac6247a63e3b10f8536904f3ead82213/src/peft/utils/loftq_utils.py#L224) and there I get exactly this flat shape. It is unclear to me why the shapes are different, even though both code paths call `bnb.functional.dequantize_4bit(weight.data, weight.quant_state)`. I checked the `quant_state` too but AFAICT it's the same between the two.\r\n\r\nAnyway, because of the wrong shape, we assign an incorrectly shaped (and all zeros) tensor as the new bnb weight here:\r\n\r\nhttps://github.com/huggingface/peft/blob/41c274ecac6247a63e3b10f8536904f3ead82213/src/peft/tuners/lora/layer.py#L189\r\n\r\nwhich is most likely the reason for the shape error later during forward.\r\n\r\nWhen I have time to further investigate, I'll let you know. If any of you have an idea what I'm missing, please let me know."
+    },
+    {
+      "author": "Haakooto",
+      "created_at": "2024-08-15T13:11:57Z",
+      "body": "I poked around in the olora_init-function in `peft/src/peft/tuners/lora/layer.py`. As @BenjaminBossan mentions, the difference between my script and the olora-example script is the `bnb_4bit_quant_storage`-flag in the BitsAndBytesConfig. Both scripts crash because of shape-mismatch, both with `bnb_4bit_quant_storage=None` (default) and with `bnb_4bit_quant_storage=torch.bfloat16` (which I used because of [this page](https://huggingface.co/docs/bitsandbytes/main/en/fsdp_qlora)).\r\n\r\nHowever, the relevant shapes are different. As can be seen in the tracebacks posted by me and @BenjaminBossan, with `bnb_4bit_quant_storage=torch.bfloat16`, mat2 has size (1x1), while with `bnb_4bit_quant_storage=None`, it has size (NxM). This is because olora_init does not identify the Linear4bit-instance as quantised as the only check for this is its dtype, which is bfloat16, causing the original weights not to be dequantised before computing the QR-decomposition.\r\n\r\nWhile this does not shed light on the ultimate issue, this is another bug."
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2024-08-16T12:39:07Z",
+      "body": "Thanks for the further investigation @Haakooto. I have a tentative solution in #2011, it would be great if you could test it. I consider this WIP as I'm uncertain if the way the PR fixes the issue is optimal."
+    },
+    {
+      "author": "Haakooto",
+      "created_at": "2024-08-20T13:08:28Z",
+      "body": "Finally had a chance to look at it now. This does indeed work. I noticed the solution only covers olora, not pissa. It was straight forward to copy the code that fix the issue over. Though if further improvements are comming, as you say, this is not urgent. Thank you! "
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2024-08-20T14:53:54Z",
+      "body": "Thanks @Haakooto for testing, this is good to know. Let's focus on OLoRA for now and deal with PiSSA later.\r\n\r\nI discovered a bug in the PR as it didn't correctly deal with 8bit bnb, but that should now also be fixed."
+    },
+    {
+      "author": "44670",
+      "created_at": "2024-08-30T11:11:18Z",
+      "body": "I have also met this issue with bnb+olora"
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2024-08-30T11:36:33Z",
+      "body": "@44670 The PR is still not merged, but you could install from the `https://github.com/BenjaminBossan/peft/tree/fix-olora-bnb` branch if you want to test it right now."
+    },
+    {
+      "author": "hoang1645",
+      "created_at": "2024-12-01T16:14:39Z",
+      "body": "I encountered the same issue using `lora_init_weights=\"loftq\"`."
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2024-12-02T10:38:21Z",
+      "body": "@hoang1645 Could you please provide a reproducer and the full error message?"
+    }
+  ]
+}

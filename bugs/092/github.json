@@ -1,0 +1,48 @@
+{
+  "owner": "lucidrains",
+  "repo": "x-transformers",
+  "number": 263,
+  "html_url": "https://github.com/lucidrains/x-transformers/issues/263",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Decoder logits are NaN when cross-attention context is all padding",
+  "author": "giorgioskij",
+  "created_at": "2024-08-03T10:11:34Z",
+  "updated_at": "2024-08-04T12:44:27Z",
+  "closed_at": "2024-08-04T12:44:26Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.11,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:35.554426+00:00",
+  "comments": [
+    {
+      "author": "lucidrains",
+      "created_at": "2024-08-03T12:11:25Z",
+      "body": "@giorgioskij hey Giorgio! do you want to try 1.32.0 and see if that lines up with what you expect?"
+    },
+    {
+      "author": "giorgioskij",
+      "created_at": "2024-08-04T12:44:26Z",
+      "body": "Thank you for the quick reply @lucidrains. Yes, indeed it works as expected. I was pinned to 1.26.x since the removal of layernorm biases in 1.27.0 would break my checkpoints, so that's why I had not tested on the latest release. \r\n\r\nFrom a quick look at the code it seems to me that this is the main logic responsible for this new behavior, so that outputs for samples that have no conditioning are zero-filled just before returning.\r\n```\r\nif exists(row_is_entirely_masked) and row_is_entirely_masked.any():\r\n    out = out.masked_fill(row_is_entirely_masked[..., None], 0.)\r\n```\r\n"
+    }
+  ]
+}

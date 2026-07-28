@@ -1,0 +1,51 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 13920,
+  "html_url": "https://github.com/huggingface/diffusers/issues/13920",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Ideogram4: `Ideogram4MRoPE` breaks under `torch.autocast`: all image positions collapse, producing flat single-color images",
+  "author": "dxqb",
+  "created_at": "2026-06-11T09:36:36Z",
+  "updated_at": "2026-06-19T22:02:32Z",
+  "closed_at": "2026-06-19T22:02:32Z",
+  "labels": [
+    "bug",
+    "models"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 8.52,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:38.890777+00:00",
+  "comments": [
+    {
+      "author": "bghira",
+      "created_at": "2026-06-11T11:13:11Z",
+      "body": "amazing, thank you! i ran out of patience searching."
+    },
+    {
+      "author": "dxqb",
+      "created_at": "2026-06-11T11:18:01Z",
+      "body": "> amazing, thank you! i ran out of patience searching.\n\nit was 40 minutes of Fable 5. They are advertising it for hard tasks, so this was me testing it. It ran several end-to-end ablations of comparing the OneTrainer sampling pipeline to the diffusers pipeline until it narrowed it down to autocasting."
+    }
+  ]
+}

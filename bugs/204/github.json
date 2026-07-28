@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2077,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2077",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "get_dependencies does not behave as expected with eqx_module",
+  "author": "rayisaacalan",
+  "created_at": "2025-09-30T14:37:46Z",
+  "updated_at": "2025-10-10T19:06:36Z",
+  "closed_at": "2025-10-10T19:06:36Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 10.19,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:28.868637+00:00",
+  "comments": [
+    {
+      "author": "rayisaacalan",
+      "created_at": "2025-09-30T14:56:39Z",
+      "body": "This appears to be related to #2064 (same behavior with both get_dependencies and get_model_relations) due to how eqx_module defines its parameters with a lambda callable:\n\nhttps://github.com/pyro-ppl/numpyro/blob/fb14da77654035cefd438c86062c24db8eb3befe/numpyro/contrib/module.py#L616\n\nrather than a literal value like in the nnx_module:\n\nhttps://github.com/pyro-ppl/numpyro/blob/fb14da77654035cefd438c86062c24db8eb3befe/numpyro/contrib/module.py#L481"
+    },
+    {
+      "author": "juanitorduz",
+      "created_at": "2025-09-30T20:58:02Z",
+      "body": "Thanks! I submitted a patch in https://github.com/pyro-ppl/numpyro/pull/2078"
+    }
+  ]
+}

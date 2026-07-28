@@ -1,0 +1,45 @@
+{
+  "owner": "Trusted-AI",
+  "repo": "adversarial-robustness-toolbox",
+  "number": 2473,
+  "html_url": "https://github.com/Trusted-AI/adversarial-robustness-toolbox/issues/2473",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Semantic version checking in some modules/tests do not account for epoch, pre/post-release, or development release segments",
+  "author": "lockwoodar",
+  "created_at": "2024-07-24T18:00:35Z",
+  "updated_at": "2024-10-02T21:10:37Z",
+  "closed_at": "2024-10-02T21:10:36Z",
+  "labels": [
+    "improvement"
+  ],
+  "milestone": "ART 1.18.2",
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 70.13,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:58.313347+00:00",
+  "comments": [
+    {
+      "author": "beat-buesser",
+      "created_at": "2024-07-24T19:44:47Z",
+      "body": "Hi @lockwoodar Thank you very much! We will include this issue in the next patch release ART 1.18.2"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "owner": "influxdata",
+  "repo": "influxdb-client-python",
+  "number": 603,
+  "html_url": "https://github.com/influxdata/influxdb-client-python/issues/603",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Replace deprecated call to `datetime.utcfromtimestamp`",
+  "author": "cdce8p",
+  "created_at": "2023-08-20T12:48:13Z",
+  "updated_at": "2024-06-26T13:00:11Z",
+  "closed_at": "2024-06-26T13:00:01Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": "1.45.0",
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 311.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:20.181356+00:00",
+  "comments": [
+    {
+      "author": "bednar",
+      "created_at": "2023-08-21T09:21:44Z",
+      "body": "Hi @cdce8p,\r\n\r\nthanks for using our client.\r\n\r\nIs this something you would be willing to help with? All PR is welcome and we will be happy to review your submission.\r\n\r\nRegards"
+    },
+    {
+      "author": "cdce8p",
+      "created_at": "2023-08-21T23:20:53Z",
+      "body": "Hi @bednar, Thanks for the reply! Usually I would be happy to open a PR for it. Please understand though, that I'm not willing to sign a CLA just for a one line change. Feel free to use my suggestion from above to contribute it yourself, though."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "owner": "marimo-team",
+  "repo": "marimo",
+  "number": 7898,
+  "html_url": "https://github.com/marimo-team/marimo/issues/7898",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "pylsp WebSocket endpoint ignores --base-url argument behind reverse proxy",
+  "author": "DataVoyage",
+  "created_at": "2026-01-19T19:09:38Z",
+  "updated_at": "2026-01-22T18:05:16Z",
+  "closed_at": "2026-01-22T18:05:16Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.96,
+  "fix": {
+    "closing_commit": "fc5e6fedef9b3dd5328677631c37a2268360f402",
+    "linked_prs": [],
+    "best_guess_fix_commit": "fc5e6fedef9b3dd5328677631c37a2268360f402",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:26:00.617541+00:00",
+  "comments": [
+    {
+      "author": "Light2Dark",
+      "created_at": "2026-01-20T09:38:59Z",
+      "body": "That makes sense to me, and thanks for the investigation. Any thoughts @mscolnick?\nedit: looks like we are looking into it :)"
+    },
+    {
+      "author": "mscolnick",
+      "created_at": "2026-01-20T19:54:12Z",
+      "body": "Thanks for raising this - i have a fix here: https://github.com/marimo-team/marimo/pull/7909"
+    }
+  ]
+}

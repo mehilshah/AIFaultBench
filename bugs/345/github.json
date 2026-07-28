@@ -1,0 +1,50 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 38969,
+  "html_url": "https://github.com/jax-ml/jax/issues/38969",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "_SubParsersAction.__init__() got an unexpected keyword argument 'required'",
+  "author": "kiefernforst",
+  "created_at": "2026-07-07T15:32:05Z",
+  "updated_at": "2026-07-14T16:39:46Z",
+  "closed_at": "2026-07-14T16:39:46Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 7.05,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:57.627215+00:00",
+  "comments": [
+    {
+      "author": "mattjj",
+      "created_at": "2026-07-12T20:40:08Z",
+      "body": "I think we dropped support for Python 3.10 after jax==0.6.2, so this is an unsupported configuration (see [deprecation](http://localhost:8000/deprecation.html)).\n\n@hawkinsp WDYT of #39001, even though this is unsupported? It's hard for me to guess the complexity cost here."
+    },
+    {
+      "author": "hawkinsp",
+      "created_at": "2026-07-14T16:39:46Z",
+      "body": "I think we shouldn't do this. The whole point of having a deprecation policy is that we do not need or accept code to support Python versions older than our cutoff (Python 3.11 at present)."
+    }
+  ]
+}

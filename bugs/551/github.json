@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2026,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2026",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Is the documentation of MatrixNormal wrong that it expects lower cholesky of correlation matrix?",
+  "author": "mochar",
+  "created_at": "2025-05-08T23:21:06Z",
+  "updated_at": "2025-05-09T01:18:42Z",
+  "closed_at": "2025-05-09T01:18:41Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.08,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:06.148548+00:00",
+  "comments": [
+    {
+      "author": "fehiepsi",
+      "created_at": "2025-05-09T00:47:14Z",
+      "body": "Yes, I think we should call them covariance matrices. Could you submit the fix?"
+    },
+    {
+      "author": "mochar",
+      "created_at": "2025-05-09T01:18:41Z",
+      "body": "https://github.com/pyro-ppl/numpyro/pull/2027\n\nFirst time doing a pull request, hope its correct!"
+    }
+  ]
+}

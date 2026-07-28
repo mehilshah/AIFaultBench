@@ -1,0 +1,72 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-io",
+  "number": 1747,
+  "html_url": "https://github.com/keras-team/keras-io/issues/1747",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Keras_NLP Getting Started Tutorial: Mixed Precision Error; AttributeError: 'LossScaleOptimizerV3'",
+  "author": "kmirijan",
+  "created_at": "2024-01-31T22:20:22Z",
+  "updated_at": "2024-03-01T01:45:35Z",
+  "closed_at": "2024-03-01T01:45:20Z",
+  "labels": [
+    "stale",
+    "stat:awaiting response from contributor",
+    "type:bug"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 29.14,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:36.514942+00:00",
+  "comments": [
+    {
+      "author": "sachinprasadhs",
+      "created_at": "2024-01-31T23:36:25Z",
+      "body": "Hi, Thanks for reporting the issue.\r\n\r\nSince we have migrated Keras to support multi backend framework which is Keras 3.\r\n\r\nMake sure you have keras 3 and install all the dependency packages in the below mentioned order to run the example .\r\n\r\n```\r\n!pip install tf-keras\r\n!pip install tensorflow-text\r\n!pip install -q --upgrade keras-nlp\r\n!pip install -q --upgrade keras  # Upgrade to Keras 3.\r\n```\r\n\r\nHere is the working Gist for reference [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/gist/sachinprasadhs/cf93dfa3fbf168d60fa1ea6a673c1aaa/getting_started.ipynb)"
+    },
+    {
+      "author": "kmirijan",
+      "created_at": "2024-02-01T00:36:47Z",
+      "body": "Ok, that seemed to work. But I did run into this error during the upgrade of keras to 3.0.4\r\n\r\nERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\r\ntensorflow 2.15.0.post1 requires keras<2.16,>=2.15.0, but you have keras 3.0.4 which is incompatible.\r\n\r\nI don't really know why this error popped up. It doesn't seem to make sense for keras 3 to be incompatible with the newest stable version of tensorflow that I am using, 2.15.0.  Especially since the notebook works on my machine now. "
+    },
+    {
+      "author": "sachinprasadhs",
+      "created_at": "2024-02-01T18:48:00Z",
+      "body": "if you're installing using requirement.txt file, usually you will end up with this error, since Tensorflow 2.15 installs Keras 2.15 and there will be conflict to this when you install Keras 3.\r\nThe solution for this is to install these conflicting packages separately, first install TensorFlow, later install Keras 3."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-02-16T01:44:04Z",
+      "body": "This issue is stale because it has been open for 14 days with no activity. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-03-01T01:45:20Z",
+      "body": "This issue was closed because it has been inactive for 28 days. Please reopen if you'd like to work on this further."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-03-01T01:45:34Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdHag0RVFS7UXzZkKcsFCKOcX8raCupKK9RHSlYxp5U8lSJbQ/viewform?entry.492125872=Yes&entry.243948740=https://github.com/keras-team/keras-io/issues/1747\"> Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdHag0RVFS7UXzZkKcsFCKOcX8raCupKK9RHSlYxp5U8lSJbQ/viewform?entry.492125872=No&entry.243948740=https://github.com/keras-team/keras-io/issues/1747\"> No</a>\n"
+    }
+  ]
+}

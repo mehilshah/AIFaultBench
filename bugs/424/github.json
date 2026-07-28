@@ -1,0 +1,40 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7830,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7830",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG]AttributeError in ZeRO-3 with gradient_checkpointing: 'NoneType' object has no attribute 'next_functions' (DeepSpeed 0.18.5)",
+  "author": "Hylbcxs",
+  "created_at": "2026-02-05T06:53:58Z",
+  "updated_at": "2026-03-01T20:27:43Z",
+  "closed_at": "2026-03-01T20:27:43Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 24.57,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:59.540806+00:00",
+  "comments": []
+}

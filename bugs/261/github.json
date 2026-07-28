@@ -1,0 +1,60 @@
+{
+  "owner": "stanfordnlp",
+  "repo": "stanza",
+  "number": 1423,
+  "html_url": "https://github.com/stanfordnlp/stanza/issues/1423",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Portuguese model mistakenly splits URLs into their own sentences",
+  "author": "busdriverbuddha",
+  "created_at": "2024-09-20T13:40:08Z",
+  "updated_at": "2024-12-23T07:29:29Z",
+  "closed_at": "2024-12-23T07:29:29Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 93.74,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:53.852729+00:00",
+  "comments": [
+    {
+      "author": "AngledLuffa",
+      "created_at": "2024-09-20T15:42:05Z",
+      "body": "We use a regex for URL which allows certain patterns:\r\n\r\nhttps://github.com/stanfordnlp/stanza/blob/539760cdc5a903de23895db46e5d7c2e1f8f251b/stanza/models/tokenization/utils.py#L198\r\n\r\nThe issue you're finding is that it accepts `www.example.com`, but doesn't accept `example.com` w/o the `www.`  I suppose it would make sense to add `example.com` and `example.com.TLD` to the stuff it accepts.  Those are unlikely to be false positives"
+    },
+    {
+      "author": "AngledLuffa",
+      "created_at": "2024-09-20T22:44:39Z",
+      "body": "https://github.com/stanfordnlp/stanza/commit/4421213eccde591a4852295208cdbc17e1f65a1c"
+    },
+    {
+      "author": "busdriverbuddha",
+      "created_at": "2024-09-22T16:58:36Z",
+      "body": "Ahh, I see! Might I recommend adding some other common suffixes like .org, .net, and .gov?"
+    },
+    {
+      "author": "AngledLuffa",
+      "created_at": "2024-12-23T07:29:07Z",
+      "body": "This should be fixed in the latest release"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21804,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21804",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "SIGSEGV (Segmentation Fault) when saving checkpoints with FSDP on CPU",
+  "author": "zhixiangli",
+  "created_at": "2026-07-04T15:09:35Z",
+  "updated_at": "2026-07-13T08:24:34Z",
+  "closed_at": "2026-07-13T08:24:34Z",
+  "labels": [
+    "bug",
+    "fabric",
+    "strategy: fsdp",
+    "pl",
+    "ver: 2.6.x",
+    "ver: 2.7.x"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 8.72,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:28.856248+00:00",
+  "comments": [
+    {
+      "author": "zhixiangli",
+      "created_at": "2026-07-09T01:15:07Z",
+      "body": "Hey @deependujha, just bumping this in case it slipped through the notification noise. No rush, just wanted to see if you've had a chance to check it out."
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "owner": "lucidrains",
+  "repo": "PaLM-rlhf-pytorch",
+  "number": 46,
+  "html_url": "https://github.com/lucidrains/PaLM-rlhf-pytorch/issues/46",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "norm.gamma not used during backprop ",
+  "author": "conceptofmind",
+  "created_at": "2023-04-05T03:50:20Z",
+  "updated_at": "2023-04-05T14:29:04Z",
+  "closed_at": "2023-04-05T14:29:04Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.44,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:38.370275+00:00",
+  "comments": [
+    {
+      "author": "conceptofmind",
+      "created_at": "2023-04-05T04:16:47Z",
+      "body": "@dmahan93 noticed that embeds are not fed to logits. This may be the issue.\r\n\r\nLogits takes in x:\r\n```python\r\n        # final norm\r\n\r\n        embeds = self.norm(x)\r\n\r\n        if return_only_embedding:\r\n            return embeds\r\n\r\n        # to logits\r\n\r\n        logits = self.to_logits(x)\r\n```\r\nShould it be logits takes in embeds?\r\n```python\r\n        # final norm\r\n\r\n        embeds = self.norm(x)\r\n\r\n        if return_only_embedding:\r\n            return embeds\r\n\r\n        # to logits\r\n\r\n        logits = self.to_logits(embeds)\r\n```\r\nThank you,\r\n\r\nEnrico"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2023-04-05T14:29:01Z",
+      "body": "@conceptofmind @dmahan93 oh yes, thanks for catching this! put in [a quick fix](https://github.com/lucidrains/PaLM-rlhf-pytorch/commit/e624afd8860d6df8f7a429dbe518a2fd40b4cc34)"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "owner": "sdv-dev",
+  "repo": "SDV",
+  "number": 2711,
+  "html_url": "https://github.com/sdv-dev/SDV/issues/2711",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "HMA sampling raises a pandas FutureWarning: Downcasting object dtype arrays",
+  "author": "R-Palazzo",
+  "created_at": "2025-10-08T08:43:34Z",
+  "updated_at": "2025-10-27T16:26:34Z",
+  "closed_at": "2025-10-27T16:26:33Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": "1.29.0",
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 19.32,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:45.933868+00:00",
+  "comments": []
+}

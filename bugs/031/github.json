@@ -1,0 +1,45 @@
+{
+  "owner": "NVIDIA",
+  "repo": "DeepLearningExamples",
+  "number": 1268,
+  "html_url": "https://github.com/NVIDIA/DeepLearningExamples/issues/1268",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Resnet50/Classification] Error(s) in loading state_dict when using pretrained weights",
+  "author": "zeyuanyin",
+  "created_at": "2023-02-25T18:25:27Z",
+  "updated_at": "2023-06-02T16:07:33Z",
+  "closed_at": "2023-06-02T16:07:33Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 96.9,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:02.141526+00:00",
+  "comments": [
+    {
+      "author": "zeyuanyin",
+      "created_at": "2023-02-25T18:42:33Z",
+      "body": "When using `--pretrained`, it works well.\r\n\r\n`python ./main.py --arch=resnet50 --evaluate --epochs=1 --pretrained -b=256 /home/data/imagenet/`\r\n\r\nThe pretrained models are in the same link address."
+    }
+  ]
+}

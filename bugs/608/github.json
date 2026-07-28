@@ -1,0 +1,55 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 46710,
+  "html_url": "https://github.com/huggingface/transformers/issues/46710",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Accuracy regression in DeepSeek-R1-Distill-Llama-8B after upgrading Transformers from 4.55 to 5.9",
+  "author": "xiaowangintel",
+  "created_at": "2026-06-17T07:08:17Z",
+  "updated_at": "2026-06-23T02:26:33Z",
+  "closed_at": "2026-06-23T02:26:33Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 5.8,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:27.826499+00:00",
+  "comments": [
+    {
+      "author": "xiaowangintel",
+      "created_at": "2026-06-17T07:09:50Z",
+      "body": "The tokenizer_config.json of DeepSeek-R1-Distill-Llama-8B specifies LlamaTokenizerFast. However, in Transformers 5.9, the definition file for LlamaTokenizerFast was removed, causing the tokenizer to fall back to LlamaTokenizer by default. Will there be any future updates or maintenance for DeepSeek-R1-Distill-Llama-8B?"
+    },
+    {
+      "author": "itazap",
+      "created_at": "2026-06-17T09:19:24Z",
+      "body": "will be fixed by https://github.com/huggingface/transformers/pull/46091 will comment soon when its merged"
+    },
+    {
+      "author": "xiaowangintel",
+      "created_at": "2026-06-23T02:26:33Z",
+      "body": "Closing the issue, as the problem has already been fixed."
+    }
+  ]
+}

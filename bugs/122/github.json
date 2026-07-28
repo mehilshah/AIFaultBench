@@ -1,0 +1,56 @@
+{
+  "owner": "DLR-RM",
+  "repo": "stable-baselines3",
+  "number": 1928,
+  "html_url": "https://github.com/DLR-RM/stable-baselines3/issues/1928",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: Manually setting net_arch=None causes crash when loading model",
+  "author": "jak3122",
+  "created_at": "2024-05-17T17:32:12Z",
+  "updated_at": "2024-06-05T15:27:41Z",
+  "closed_at": "2024-06-05T15:27:41Z",
+  "labels": [
+    "bug",
+    "help wanted"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 18.91,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:21.274359+00:00",
+  "comments": [
+    {
+      "author": "araffin",
+      "created_at": "2024-05-17T18:26:32Z",
+      "body": "Hello,\r\nwhy do you want to set `net_arch=None`?\r\n"
+    },
+    {
+      "author": "jak3122",
+      "created_at": "2024-05-17T20:04:56Z",
+      "body": "In my training script I have CLI args, including an optional `net_arch` arg:\r\n```python\r\nnet_arch: Tuple[int, ...] | None = None\r\n```\r\nWhich I then pass to the sb3 model:\r\n```python\r\nmodel = PPO(\r\n    policy_type,\r\n    env,\r\n    policy_kwargs=dict(\r\n        net_arch=args.net_arch,\r\n        ...\r\n    )\r\n)\r\n```\r\nSince the documentation says that `net_arch` can be `None`, I would expect this to work, and have `None` indicate the default `net_arch`, which it does, except for loading the saved model.\r\n\r\nI also realize it's possible to just omit `net_arch` from `policy_kwargs` instead, like this:\r\n```python\r\npolicy_kwargs = dict()\r\nif args.net_arch is not None:\r\n    policy_kwargs[\"net_arch\"] = args.net_arch\r\nmodel = PPO(\r\n    policy_type,\r\n    env,\r\n    policy_kwargs=policy_kwargs\r\n)\r\n```\r\nBut then for anyone like me who happens to save a model with `net_arch` manually set to `None`, then the model will not load."
+    },
+    {
+      "author": "araffin",
+      "created_at": "2024-05-21T20:46:49Z",
+      "body": "> Since the documentation says that net_arch can be None, I would expect this to work, and have None indicate the default net_arch, which it does, except for loading the saved mode\r\n\r\nI would be happy to receive a PR that solves this issue =)\r\n\r\nAlthough in your case, I would indeed recommend not populating the `net_arch` instead of passing `None`."
+    }
+  ]
+}

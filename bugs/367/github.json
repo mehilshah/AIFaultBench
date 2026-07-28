@@ -1,0 +1,130 @@
+{
+  "owner": "huggingface",
+  "repo": "peft",
+  "number": 868,
+  "html_url": "https://github.com/huggingface/peft/issues/868",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "merge_and_unload issue?",
+  "author": "Remmet577",
+  "created_at": "2023-08-27T03:16:29Z",
+  "updated_at": "2023-11-21T10:28:40Z",
+  "closed_at": "2023-11-20T09:30:20Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 18,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 85.26,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:33.418714+00:00",
+  "comments": [
+    {
+      "author": "zhurui-xiaozhuzaizai",
+      "created_at": "2023-09-01T09:23:54Z",
+      "body": "i meet the same issue.\r\nwhen i merge lora to llama model, and the save it .the model size is smaller than before"
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2023-09-01T12:47:09Z",
+      "body": "I think the issue is that the layers that are on \"meta\" device are not properly handled in this case. Their weights are not loaded and the lora weights are also just on meta device. The result you see probably only contains the weights that were actually loaded, missing all the meta device weights.\r\n\r\nHonestly, I'm not completely sure how best to handle this situation. Maybe @pacman100 or @younesbelkada have a good idea."
+    },
+    {
+      "author": "zhurui-xiaozhuzaizai",
+      "created_at": "2023-09-07T09:20:48Z",
+      "body": "@BenjaminBossan ,yes.\r\nwhen i checked. i find that some weight load on cpu , some on gpu . and the cpu weight is the meta device weights.\r\nhow should i change the meta device to cpu or GPU ?"
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2023-09-07T12:06:19Z",
+      "body": "Sorry, I'm really not sure what a solution would look like here. The reason why the weights are on meta device is that they needed to be offloaded for lack of memory, so it's not as simple as just loading everything. Hopefully one of the others can shine some light on this."
+    },
+    {
+      "author": "xhwang22",
+      "created_at": "2023-09-18T19:05:20Z",
+      "body": "This issue may occur when the GPU is occupied by other processes. device=\"auto\" may not be able to load models into GPUs, so try to ensure that device is free or set device=\"cpu\" instead."
+    },
+    {
+      "author": "indiejoseph",
+      "created_at": "2023-09-24T09:24:23Z",
+      "body": "I've encountered this issue, the model was trained and merge with the same GPU(3090 24GB), VRAM is sufficient for lora training and inferencing, but after merged i got this issue"
+    },
+    {
+      "author": "lukasld",
+      "created_at": "2023-09-24T19:18:49Z",
+      "body": "> This issue may occur when the GPU is occupied by other processes. device=\"auto\" may not be able to load models into GPUs, so try to ensure that device is free or set device=\"cpu\" instead.\r\n\r\nSetting `device_map=\"cpu\"` from `auto` sovled the issue for me"
+    },
+    {
+      "author": "younesbelkada",
+      "created_at": "2023-09-25T12:52:02Z",
+      "body": "I think that merge and unload is not supported for models that are offloaded into disk / cpu as accelerate puts the offloaded weights on the meta device. This is a bug we should look into"
+    },
+    {
+      "author": "xiaobai52HZ",
+      "created_at": "2023-10-17T10:28:24Z",
+      "body": "how to merge ptuning model?"
+    },
+    {
+      "author": "younesbelkada",
+      "created_at": "2023-10-18T21:39:23Z",
+      "body": "Hi @xiaobai52HZ I think that sadly currently merging p-tuning models is not supported. cc @pacman100 @BenjaminBossan "
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2023-10-18T21:46:06Z",
+      "body": "Indeed."
+    },
+    {
+      "author": "chiragjn",
+      "created_at": "2023-10-19T06:01:35Z",
+      "body": "Can we add boolean arguments to infer device map to disable all off-loading? \r\nI still want the benefits of using multiple GPUs but raise an error if the weights cannot fit with GPUs alone"
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2023-10-23T11:15:45Z",
+      "body": "> Can we add boolean arguments to infer device map to disable all off-loading?\r\n\r\nOffloading is not performed by PEFT. If you want to have this feature, please consider opening an issue in accelerate."
+    },
+    {
+      "author": "krzysiekpodk",
+      "created_at": "2023-10-25T18:06:07Z",
+      "body": "> This issue may occur when the GPU is occupied by other processes. device=\"auto\" may not be able to load models into GPUs, so try to ensure that device is free or set device=\"cpu\" instead.\r\n\r\nThis fixed the issue for me as well"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-11-19T15:03:59Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\n"
+    },
+    {
+      "author": "younesbelkada",
+      "created_at": "2023-11-20T09:30:21Z",
+      "body": "Closing this issue ! Feel free to re-open in case you think your concerns are not being addressed"
+    },
+    {
+      "author": "SuperBruceJia",
+      "created_at": "2023-11-21T05:30:37Z",
+      "body": "Still facing the problem: \r\n```python\r\ntrainer.train()\r\n\r\n# Save the adapter\r\ntrainer.save_model(saver_dir + '/adapter')\r\n\r\n# Retrieve the model\r\nmodel = trainer.model.base_model\r\n\r\n# Loading the adapter\r\nmodel = PeftModel.from_pretrained(model, saver_dir + '/adapter', torch_dtype=torch.float16, device_map=\"auto\")\r\n  \r\n# Merge the base model and the adapter\r\nmodel = model.merge_and_unload()\r\n\r\n# Save the overall model\r\nmodel.save_pretrained(saver_dir)\r\n```\r\n\r\nIt seems that the base model will be saved without the LoRA adapter. \r\n```yaml\r\n{\r\n  \"_name_or_path\": \"meta-llama/Llama-2-7b-hf\",\r\n  \"architectures\": [\r\n    \"LlamaModel\"\r\n  ],\r\n  \"attention_bias\": false,\r\n  \"bos_token_id\": 1,\r\n  \"eos_token_id\": 2,\r\n  \"hidden_act\": \"silu\",\r\n  \"hidden_size\": 4096,\r\n  \"initializer_range\": 0.02,\r\n  \"intermediate_size\": 11008,\r\n  \"max_position_embeddings\": 4096,\r\n  \"model_type\": \"llama\",\r\n  \"num_attention_heads\": 32,\r\n  \"num_hidden_layers\": 32,\r\n  \"num_key_value_heads\": 32,\r\n  \"pad_token_id\": 2,\r\n  \"pretraining_tp\": 1,\r\n  \"rms_norm_eps\": 1e-05,\r\n  \"rope_scaling\": null,\r\n  \"rope_theta\": 10000.0,\r\n  \"tie_word_embeddings\": false,\r\n  \"torch_dtype\": \"float16\",\r\n  \"transformers_version\": \"4.34.0\",\r\n  \"use_cache\": true,\r\n  \"vocab_size\": 32001\r\n}\r\n```"
+    },
+    {
+      "author": "younesbelkada",
+      "created_at": "2023-11-21T10:28:39Z",
+      "body": "This is expected @indiejoseph \r\nIf you call `merge_and_unload()` it will merge lora adapters into the base model, unload the lora layers and return the base transformers model."
+    }
+  ]
+}

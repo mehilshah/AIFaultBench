@@ -1,0 +1,56 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 11058,
+  "html_url": "https://github.com/tensorflow/models/issues/11058",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "argument `num_of_examples` of function `show_batch` is never used",
+  "author": "giuseta",
+  "created_at": "2023-07-24T09:10:34Z",
+  "updated_at": "2023-08-08T18:38:08Z",
+  "closed_at": "2023-08-08T18:36:44Z",
+  "labels": [
+    "type:bug",
+    "models:official"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 15.39,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:36.371668+00:00",
+  "comments": [
+    {
+      "author": "laxmareddyp",
+      "created_at": "2023-08-02T18:51:02Z",
+      "body": "Hi @giuseta ,\r\n\r\nThanks for noticing it and we will raise the PR for the same.\r\n\r\nThanks."
+    },
+    {
+      "author": "laxmareddyp",
+      "created_at": "2023-08-08T18:36:44Z",
+      "body": "Hi @giuseta,\r\n\r\nThe changes are now reflecting in the [codebase](https://github.com/tensorflow/models/commit/c0e009d203e71ec0c1d7f7c32b7e62bd4d5dc614).\r\n\r\nClosing this as completed.\r\n\r\nThanks"
+    },
+    {
+      "author": "google-ml-butler[bot]",
+      "created_at": "2023-08-08T18:36:46Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=Yes&entry.2137816233=https://github.com/tensorflow/models/issues/11058\">Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=No&entry.2137816233=https://github.com/tensorflow/models/issues/11058\">No</a>\n"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "owner": "flairNLP",
+  "repo": "flair",
+  "number": 3489,
+  "html_url": "https://github.com/flairNLP/flair/issues/3489",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: TextRegressor breaks due to unrelated labels",
+  "author": "sheldon-roberts",
+  "created_at": "2024-07-03T23:34:03Z",
+  "updated_at": "2024-07-04T14:58:26Z",
+  "closed_at": "2024-07-04T14:58:26Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.64,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:34.571730+00:00",
+  "comments": []
+}

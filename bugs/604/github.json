@@ -1,0 +1,60 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 2870,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/2870",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "guide.quantiles() shape issue",
+  "author": "fonnesbeck",
+  "created_at": "2021-06-11T18:25:05Z",
+  "updated_at": "2021-06-12T00:47:37Z",
+  "closed_at": "2021-06-12T00:47:37Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.27,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:22.134284+00:00",
+  "comments": [
+    {
+      "author": "fritzo",
+      "created_at": "2021-06-11T18:40:03Z",
+      "body": "Hi @fonnesbeck it looks like this is a bug in the model. To fix locally I believe you can fix the indexing, something like this:\r\n```diff\r\n  def model(data, params):\r\n      # initialize data\r\n      J = data[\"J\"]\r\n      N = data[\"N\"]\r\n      county = data[\"county\"].long() - 1\r\n      y = data[\"y\"]\r\n      sigma_eta =  pyro.sample(\"sigma_eta\", dist.Uniform(0., 100.))\r\n      sigma_y =  pyro.sample(\"sigma_y\", dist.Uniform(0., 100.))\r\n      mu =  pyro.sample(\"mu\", dist.Normal(0., 1.))\r\n      with pyro.plate(\"J\", J):\r\n          eta =  pyro.sample(\"eta\", dist.Normal(0., sigma_eta))\r\n      with pyro.plate(\"data\", N):\r\n-         y_hat = 0.1 * mu + eta[county]\r\n+         y_hat = 0.1 * mu + eta[..., county]  # or something like this\r\n          y =  pyro.sample(\"y\", dist.Normal(y_hat, sigma_y), obs=y)\r\n```\r\nThe issues is that during quantiles (or any other multiple-sample method), `eta` is batched, and the naive `eta[county]` indexes into the wrong dimension."
+    },
+    {
+      "author": "martinjankowiak",
+      "created_at": "2021-06-11T18:43:48Z",
+      "body": "that's what i thought at first too but i don't think that's actually it since `quantiles` doesn't actually run the `model` afaik..."
+    },
+    {
+      "author": "fonnesbeck",
+      "created_at": "2021-06-11T19:30:46Z",
+      "body": "My guess was that it was something deeper, but its just a guess. I've been building Pyro models for the past 6 weeks or so and I can only recall one occasion where `quantiles` worked without this error. Of course, I may be constructing all of my models incorrectly ..."
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2021-06-11T19:41:23Z",
+      "body": "I think it is a bug. The line\r\n```\r\n--> 580             site_quantiles_values = dist.Normal(site_loc, site_scale).icdf(site_quantiles)\r\n```\r\nassumes that quantiles is a scalar. I'll add a fix for it."
+    }
+  ]
+}

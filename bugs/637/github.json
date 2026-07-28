@@ -1,0 +1,65 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 898,
+  "html_url": "https://github.com/huggingface/accelerate/issues/898",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`accelerate test` fails with `'Namespace' object has no attribute 'use_cpu'`",
+  "author": "PaulKovalov",
+  "created_at": "2022-12-01T11:43:16Z",
+  "updated_at": "2023-02-20T15:06:12Z",
+  "closed_at": "2023-02-20T15:06:12Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 81.14,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:37:13.479866+00:00",
+  "comments": [
+    {
+      "author": "muellerzr",
+      "created_at": "2022-12-01T15:09:15Z",
+      "body": "Hi @PaulKovalov, could you try again installing from github? i.e.:\r\n\r\n```bash\r\npip install git+https://github.com/huggingface/accelerate\r\n```\r\n\r\nAnd potentially also could you copy the entire contents of your `default_config.yaml` file as well? "
+    },
+    {
+      "author": "strasserpatrick",
+      "created_at": "2022-12-25T00:21:56Z",
+      "body": "I am also dealing with the same bug while running `accelerate launch`.\r\n\r\nMy config file (created by interactive cli):\r\n```yaml\r\nbase_job_name: accelerate-sagemaker-1\r\ncompute_environment: AMAZON_SAGEMAKER\r\ndistributed_type: 'NO'\r\ndynamo_backend: 'NO'\r\nec2_instance_type: ml.t3.2xlarge\r\ngpu_ids: all\r\niam_role_name: accelerate_sagemaker_execution_role\r\nimage_uri: null\r\nmixed_precision: 'no'\r\nnum_machines: 1\r\nprofile: default\r\npy_version: py38\r\npytorch_version: 1.10.2\r\nregion: eu-central-1\r\nsagemaker_inputs_file: null\r\nsagemaker_metrics_file: null\r\ntransformers_version: 4.17.0\r\nuse_cpu: false\r\n```\r\n\r\nError message:\r\n```\r\naccelerate test --config_file .accelerate-config.yaml\r\n\r\nRunning:  accelerate-launch --config_file=.accelerate-config.yaml /Users/patricks/Workspace/comikizer/.venv/lib/python3.10/site-packages/accelerate/test_utils/scripts/test_script.py\r\nstderr: Traceback (most recent call last):\r\nstderr:   File \"/Users/patricks/Workspace/comikizer/.venv/bin/accelerate-launch\", line 8, in <module>\r\nstderr:     sys.exit(main())\r\nstderr:   File \"/Users/patricks/Workspace/comikizer/.venv/lib/python3.10/site-packages/accelerate/commands/launch.py\", line 1110, in main\r\nstderr:     launch_command(args)\r\nstderr:   File \"/Users/patricks/Workspace/comikizer/.venv/lib/python3.10/site-packages/accelerate/commands/launch.py\", line 1071, in launch_command\r\nstderr:     if args.use_cpu and args.num_processes > 1:\r\nstderr: AttributeError: 'Namespace' object has no attribute 'use_cpu'\r\nTraceback (most recent call last):\r\n  File \"/Users/patricks/Workspace/comikizer/.venv/bin/accelerate\", line 8, in <module>\r\n    sys.exit(main())\r\n  File \"/Users/patricks/Workspace/comikizer/.venv/lib/python3.10/site-packages/accelerate/commands/accelerate_cli.py\", line 45, in main\r\n    args.func(args)\r\n  File \"/Users/patricks/Workspace/comikizer/.venv/lib/python3.10/site-packages/accelerate/commands/test.py\", line 52, in test_command\r\n    result = execute_subprocess_async(cmd, env=os.environ.copy())\r\n  File \"/Users/patricks/Workspace/comikizer/.venv/lib/python3.10/site-packages/accelerate/test_utils/testing.py\", line 328, in execute_subprocess_async\r\n    raise RuntimeError(\r\nRuntimeError: 'accelerate-launch --config_file=.accelerate-config.yaml /Users/patricks/Workspace/comikizer/.venv/lib/python3.10/site-packages/accelerate/test_utils/scripts/test_script.py' failed with returncode 1\r\n```\r\n\r\nAccelerate: 0.15.0\r\nPython: 3.10"
+    },
+    {
+      "author": "muellerzr",
+      "created_at": "2023-01-18T15:23:00Z",
+      "body": "This seems to be the same as https://github.com/huggingface/accelerate/issues/980#issuecomment-1386618169"
+    },
+    {
+      "author": "ChenchaoZhao",
+      "created_at": "2023-01-18T16:56:13Z",
+      "body": "Thanks @muellerzr same issue here https://github.com/huggingface/accelerate/issues/980"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-02-12T15:06:00Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\nPlease note that issues that do not follow the [contributing guidelines](https://github.com/huggingface/accelerate/blob/main/CONTRIBUTING.md) are likely to be ignored."
+    }
+  ]
+}

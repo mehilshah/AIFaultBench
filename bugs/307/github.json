@@ -1,0 +1,39 @@
+{
+  "owner": "facebookresearch",
+  "repo": "detectron2",
+  "number": 3486,
+  "html_url": "https://github.com/facebookresearch/detectron2/issues/3486",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "instance_mode=ColorMode.IMAGE_BW does not work as expected in Detectron2 Tutorial",
+  "author": "RyanMarten",
+  "created_at": "2021-09-15T20:25:56Z",
+  "updated_at": "2021-09-16T01:43:46Z",
+  "closed_at": "2021-09-16T01:43:46Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.22,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:02.020300+00:00",
+  "comments": []
+}

@@ -1,0 +1,55 @@
+{
+  "owner": "huggingface",
+  "repo": "peft",
+  "number": 850,
+  "html_url": "https://github.com/huggingface/peft/issues/850",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Bug when loading modules_to_save and disabling adapters",
+  "author": "BenjaminBossan",
+  "created_at": "2023-08-22T13:04:02Z",
+  "updated_at": "2023-10-14T15:03:38Z",
+  "closed_at": "2023-10-14T15:03:38Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 53.08,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:55.765239+00:00",
+  "comments": [
+    {
+      "author": "rotuna",
+      "created_at": "2023-08-28T15:26:51Z",
+      "body": "Hi @BenjaminBossan ,\r\nIf this is not high priority, I'd like to take a stab at it. \r\n\r\nI'm a new contributor to the library, could you guide me?\r\n\r\nThanks!"
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2023-08-28T15:45:47Z",
+      "body": "Thanks for volunteering to take this task.\r\n\r\nBefore working on it, we would first need to decide how to tackle this issue. The obvious solution is to save the original weights but a big disadvantage would be that we need to store extra weights which for many users are completely irrelevant. Maybe that's not worth the effort. Perhaps there can be another way, like just raising an error or so. For this reason, let's wait for a consensus about the best solution with the other maintainers before proceeding."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-09-22T15:03:38Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\n"
+    }
+  ]
+}

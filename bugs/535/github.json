@@ -1,0 +1,40 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7741,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7741",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] DecoupledCheckpointEngine hangs indefinitely due to missing timeouts and process health checks",
+  "author": "Rakshit-gen",
+  "created_at": "2025-12-20T13:33:29Z",
+  "updated_at": "2025-12-22T15:25:33Z",
+  "closed_at": "2025-12-22T15:25:33Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.08,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:42.517430+00:00",
+  "comments": []
+}

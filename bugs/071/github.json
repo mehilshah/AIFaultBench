@@ -1,0 +1,48 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeedExamples",
+  "number": 934,
+  "html_url": "https://github.com/deepspeedai/DeepSpeedExamples/issues/934",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "No module named 'transformers.deepspeed'",
+  "author": "TianyuJIAA",
+  "created_at": "2024-10-26T11:18:33Z",
+  "updated_at": "2024-10-29T23:01:08Z",
+  "closed_at": "2024-10-29T23:01:07Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.49,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:06.325870+00:00",
+  "comments": [
+    {
+      "author": "zhulu-bot",
+      "created_at": "2024-10-28T09:17:44Z",
+      "body": "pip install transformers==4.37.2\nI solved the problem by changing the version"
+    },
+    {
+      "author": "loadams",
+      "created_at": "2024-10-29T23:01:07Z",
+      "body": "Hi @TianyuJIAA - We've merged the PR that resolves this here: https://github.com/microsoft/DeepSpeedExamples/pull/872\n\nPlease try again with the latest DeepSpeedExamples code.  \n\nPlease comment if you need any more help and we can re-open the issue."
+    }
+  ]
+}

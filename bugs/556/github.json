@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 46821,
+  "html_url": "https://github.com/huggingface/transformers/issues/46821",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[TimesFM 2.5]:`window_size` argument raises `AttributeError`",
+  "author": "kanenorman",
+  "created_at": "2026-06-22T17:14:08Z",
+  "updated_at": "2026-07-16T13:33:09Z",
+  "closed_at": "2026-07-16T13:33:09Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 23.85,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:13.508650+00:00",
+  "comments": [
+    {
+      "author": "kanenorman",
+      "created_at": "2026-07-16T04:28:02Z",
+      "body": "Hi @kashif! I noticed you self-assigned this. Are you still planning to work on it, or would you be open to me opening a PR?"
+    },
+    {
+      "author": "vasqu",
+      "created_at": "2026-07-16T13:12:18Z",
+      "body": "Fix is in #47363"
+    }
+  ]
+}

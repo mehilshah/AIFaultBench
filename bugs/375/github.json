@@ -1,0 +1,45 @@
+{
+  "owner": "jax-ml",
+  "repo": "jax",
+  "number": 38634,
+  "html_url": "https://github.com/jax-ml/jax/issues/38634",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "jax.scipy.special.gammaln returns inf for smallest positive subnormal float32 input",
+  "author": "ALinrunrun",
+  "created_at": "2026-06-21T17:34:52Z",
+  "updated_at": "2026-06-22T02:22:19Z",
+  "closed_at": "2026-06-22T02:22:15Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.37,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:45.364673+00:00",
+  "comments": [
+    {
+      "author": "jakevdp",
+      "created_at": "2026-06-22T02:22:15Z",
+      "body": "Thanks \u2013 this is working as expected. XLA uses flush-to-zero semantics for subnormal values (see https://docs.jax.dev/en/latest/notebooks/Common_Gotchas_in_JAX.html#miscellaneous-divergences-from-numpy) and `gammaln(0.0)` correctly evaluates to `inf`."
+    }
+  ]
+}

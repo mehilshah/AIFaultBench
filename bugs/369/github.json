@@ -1,0 +1,60 @@
+{
+  "owner": "facebookresearch",
+  "repo": "detectron2",
+  "number": 2154,
+  "html_url": "https://github.com/facebookresearch/detectron2/issues/2154",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Incorrect results from pairwise_iou_rotated",
+  "author": "qiank10",
+  "created_at": "2020-10-20T18:43:47Z",
+  "updated_at": "2020-10-24T09:32:41Z",
+  "closed_at": "2020-10-24T09:32:41Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.62,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:36.601007+00:00",
+  "comments": [
+    {
+      "author": "ppwwyyxx",
+      "created_at": "2020-10-21T03:47:53Z",
+      "body": "Thanks for the report! @SuperIRabbit looks like a floating point issue in kernels. Are you able to take a look?"
+    },
+    {
+      "author": "alekseynp",
+      "created_at": "2020-10-22T15:33:07Z",
+      "body": "As linked by above, I raised a duplicate issue. Honestly I still can't believe that someone else found this same issue only days before. I can say that this is not a new issue, as I found it in a fork that branched approximately 6 months ago."
+    },
+    {
+      "author": "SuperIRabbit",
+      "created_at": "2020-10-22T15:55:13Z",
+      "body": "Thanks for the examples - will look into this!"
+    },
+    {
+      "author": "ppwwyyxx",
+      "created_at": "2020-10-24T09:32:40Z",
+      "body": "fixed by https://github.com/facebookresearch/detectron2/pull/2178"
+    }
+  ]
+}

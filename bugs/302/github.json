@@ -1,0 +1,90 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 3487,
+  "html_url": "https://github.com/huggingface/accelerate/issues/3487",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "FSDP2 Unwrap model, still has dtensors as weights",
+  "author": "kiansierra",
+  "created_at": "2025-04-05T18:22:31Z",
+  "updated_at": "2025-06-03T15:08:27Z",
+  "closed_at": "2025-06-03T15:08:27Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 10,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 58.87,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:54.384294+00:00",
+  "comments": [
+    {
+      "author": "kiansierra",
+      "created_at": "2025-04-05T21:22:01Z",
+      "body": "The below seems to be a hack, to manage to save to safetensors.\n\n```py\n...\ntrainer.train()\nfrom torch.distributed.tensor import DTensor\n\nstate_dict = model.state_dict()\nfor key, value in state_dict.items():\n    if isinstance(value, DTensor):\n        state_dict[key] = value.to_local()\naccelerator.wait_for_everyone()\nmodel.save_pretrained(training_args.output_dir, state_dict=state_dict)\n```"
+    },
+    {
+      "author": "SunMarc",
+      "created_at": "2025-04-07T13:49:07Z",
+      "body": "cc @S1ro1 "
+    },
+    {
+      "author": "S1ro1",
+      "created_at": "2025-04-07T14:06:21Z",
+      "body": "@kiansierra This is still a WIP, for now you can use `accelerator.save_state` to save the model. I'll update you when I fix this, it's related to `FSDP2` not having full state dict, but having to implement it ourselves.\n"
+    },
+    {
+      "author": "Craigacp",
+      "created_at": "2025-05-01T20:10:54Z",
+      "body": "> The below seems to be a hack, to manage to save to safetensors.\n> \n> ```python\n> trainer.train()\n> from torch.distributed.tensor import DTensor\n> \n> state_dict = model.state_dict()\n> for key, value in state_dict.items():\n>     if isinstance(value, DTensor):\n>         state_dict[key] = value.to_local()\n> accelerator.wait_for_everyone()\n> model.save_pretrained(training_args.output_dir, state_dict=state_dict)\n>```\n\nThis doesn't work as `value.to_local()` gives you the local shard not the full tensor. Using `value.full_tensor()` gives the full state dict back, but then if it's too big to fit on the GPU there are issues. Not sure if there's a way to offload only a single copy of the state dict to the CPU, I can see how to dump 1 per GPU, but I'd rather not materialize 280GB * 8 copies if it can be avoided."
+    },
+    {
+      "author": "S1ro1",
+      "created_at": "2025-05-01T20:18:36Z",
+      "body": "This is very much in WIP, but there's a PR to support DTensors in `save_pretrained` which I'm pretty sure minimises the memory usage as much as possible: https://github.com/huggingface/transformers/pull/37919\n\nIt relies on another pr in Huggingface_hub but we're working on getting it as effective as possible @Craigacp \n\nAlso you can use `torch.distributed.checkpoint.get_state_dict` as here: https://github.com/huggingface/accelerate/commit/8fb073536a1e1607d7fb6262051e5712c8cec705 to get it, though I was getting some issues with it"
+    },
+    {
+      "author": "Craigacp",
+      "created_at": "2025-05-01T20:25:40Z",
+      "body": "Yeah,`get_state_dict` wasn't working for me either, I was hitting the invalid storage error. I've got a workaround to not materialize it `n` times on the CPU which I'm currently testing out.\n\nFixing `save_pretrained` to work with DTensors will be nice, I'll keep an eye out for when that lands."
+    },
+    {
+      "author": "Craigacp",
+      "created_at": "2025-05-01T20:43:16Z",
+      "body": "This works for me:\n```python\nfrom torch.distributed.checkpoint.state_dict import get_state_dict\n\nstate_dict, _ = get_state_dict(model, [])\n# Coalesce the full state dict\nfor key, value in state_dict.items():\n    if isinstance(value, DTensor):\n        # materialize full tensor on each GPU\n        local_full_value = value.full_tensor()\n    else:\n        local_full_value = value\n    if accelerator.process_index == 0:\n        # to avoid materializing the full model on CPU once per GPU we discard it if we're not the main process\n        state_dict[key] = local_full_value.cpu()\naccelerator.wait_for_everyone()\nif accelerator.process_index == 0:\n    model.save_pretrained(output_dir, state_dict, is_main_process=True)\naccelerator.wait_for_everyone()\n```"
+    },
+    {
+      "author": "S1ro1",
+      "created_at": "2025-05-01T20:50:27Z",
+      "body": "You can use options as described [here](https://pytorch.org/docs/stable/distributed.checkpoint.html#torch.distributed.checkpoint.state_dict.StateDictOptions) to do this torch native way, it is gonna be upstreamed to `accelerate` in `get_state_dict` when I figure out why it sometimes hangs when using cpu_offload=True."
+    },
+    {
+      "author": "Craigacp",
+      "created_at": "2025-05-01T21:01:46Z",
+      "body": "Yeah, I need CPU offloading to work consistently, so when that bug gets figured out I'll go back to using the options as for the time being the code I posted is behaving itself."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2025-05-26T15:07:58Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\nPlease note that issues that do not follow the [contributing guidelines](https://github.com/huggingface/accelerate/blob/main/CONTRIBUTING.md) are likely to be ignored."
+    }
+  ]
+}

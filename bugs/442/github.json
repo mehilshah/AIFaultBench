@@ -1,0 +1,65 @@
+{
+  "owner": "facebookresearch",
+  "repo": "detectron2",
+  "number": 642,
+  "html_url": "https://github.com/facebookresearch/detectron2/issues/642",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[baseline] [reproducibility] Problem to reproduce the baseline in Model Zoo ",
+  "author": "ZekunZh",
+  "created_at": "2020-01-07T10:09:57Z",
+  "updated_at": "2020-01-14T17:34:54Z",
+  "closed_at": "2020-01-07T10:16:32Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 4,
+    "+1": 4,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.0,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:27.236466+00:00",
+  "comments": [
+    {
+      "author": "ppwwyyxx",
+      "created_at": "2020-01-07T10:16:32Z",
+      "body": "There is a bug introduced in Dec 19 that affects accuracy, fixed in fd14855ad6c36b2881d6199cad59831473cb1a33 at the same day but after your commit\r\n\r\nI rerun all the R50-FPN-1x baselines on Dec 31 and they are reproduced."
+    },
+    {
+      "author": "ppwwyyxx",
+      "created_at": "2020-01-07T10:20:52Z",
+      "body": "We retrain our models regularly, but certainly not as frequent as every commit, so bugs can sometimes happen but will eventually be found. Let us know if you still have trouble reproducing the results using latest code."
+    },
+    {
+      "author": "ppwwyyxx",
+      "created_at": "2020-01-07T10:28:49Z",
+      "body": "Sorry for the confusion and I'll add a section in docs to keep track of historical bugs."
+    },
+    {
+      "author": "ZekunZh",
+      "created_at": "2020-01-07T10:40:32Z",
+      "body": "Great ! Thanks for your quick response ! @ppwwyyxx "
+    },
+    {
+      "author": "ZekunZh",
+      "created_at": "2020-01-08T09:07:36Z",
+      "body": "Yes, using the lastest code (commit 5e2a6f) works for me ! Thanks again for your help @ppwwyyxx "
+    }
+  ]
+}

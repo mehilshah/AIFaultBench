@@ -1,0 +1,56 @@
+{
+  "owner": "facebookresearch",
+  "repo": "fairseq",
+  "number": 5130,
+  "html_url": "https://github.com/facebookresearch/fairseq/issues/5130",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "ModuleNotFoundError: No module named 'commons'",
+  "author": "padmalcom",
+  "created_at": "2023-05-23T12:57:49Z",
+  "updated_at": "2023-05-24T09:12:01Z",
+  "closed_at": "2023-05-24T09:12:01Z",
+  "labels": [
+    "bug",
+    "needs triage"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.84,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:18.695999+00:00",
+  "comments": [
+    {
+      "author": "epk2112",
+      "created_at": "2023-05-23T19:05:28Z",
+      "body": "### How to Transcribe Audio to text (Google Colab Version)\ud83d\udc47\r\n\r\n### Step 1: Clone the Fairseq Git Repo\r\n\r\n```\r\nimport os\r\n\r\n!git clone https://github.com/pytorch/fairseq\r\n\r\n# Get the current working directory\r\ncurrent_dir = os.getcwd()\r\n\r\n# Create the directory paths\r\naudio_samples_dir = os.path.join(current_dir, \"audio_samples\")\r\ntemp_dir = os.path.join(current_dir, \"temp_dir\")\r\n\r\n# Create the directories if they don't exist\r\nos.makedirs(audio_samples_dir, exist_ok=True)\r\nos.makedirs(temp_dir, exist_ok=True)\r\n\r\n\r\n# Change current working directory\r\nos.chdir('fairseq')\r\n\r\n!pwd\r\n```\r\n### Step 2: Install requirements and build\r\nBe patient, takes some minutes\r\n\r\n```!pip install --editable ./ ```\r\n\r\n### Step 3: Install Tensor Board\r\n```!pip install tensorboardX```\r\n\r\n### Step 4: Download your preferred model\r\nUn-comment to download any. If you're not using Google Colab pro then use a smaller model to avoid memory outrage\r\n```\r\n# # MMS-1B:FL102 model - 102 Languages - FLEURS Dataset\r\n# !wget -P ./models_new 'https://dl.fbaipublicfiles.com/mms/asr/mms1b_fl102.pt'\r\n\r\n# # MMS-1B:L1107 - 1107 Languages - MMS-lab Dataset\r\n# !wget -P ./models_new 'https://dl.fbaipublicfiles.com/mms/asr/mms1b_l1107.pt'\r\n\r\n# MMS-1B-all - 1162 Languages - MMS-lab + FLEURS + CV + VP + MLS\r\n!wget -P ./models_new 'https://dl.fbaipublicfiles.com/mms/asr/mms1b_all.pt'\r\n```\r\n\r\n### Step 5: Upload your audio(s)\r\nCreate a folder on path '/content/audio_samples/'  and upload your .wav audio files that you need to transcribe\r\ne.g. '/content/audio_samples/small_trim4.wav'\r\n**Note:** You need to make sure that the audio data you are using has a sample rate of 16000\r\nYou can easily do this with FFMPEG like the example below that converts .mp3 file to .wav and fixing the audio sample rate\r\n```\r\nffmpeg -i .\\small_trim4.mp3 -ar 16000 .\\wav_formats\\small_trim4.wav\r\n```\r\n\r\n\r\n### Step 6: Run Inference and transcribe your audio(s)\r\nTakes some time for long audios\r\n```\r\nimport os\r\n\r\nos.environ[\"TMPDIR\"] = '/content/temp_dir'\r\nos.environ[\"PYTHONPATH\"] = \".\"\r\nos.environ[\"PREFIX\"] = \"INFER\"\r\nos.environ[\"HYDRA_FULL_ERROR\"] = \"1\"\r\nos.environ[\"USER\"] = \"micro\"\r\n\r\n!python examples/mms/asr/infer/mms_infer.py --model \"/content/fairseq/models_new/mms1b_all.pt\" --lang \"swh\" --audio \"/content/audio_samples/small_trim4.wav\"\r\n```\r\n\r\nAfter this you'll get your preffered transcription\r\nI have this Collab Example in my GitHub Repo\ud83d\udc49 [fairseq_meta_mms_Google_Colab_implementation](https://github.com/epk2112/fairseq_meta_mms_Google_Colab_implementation)\r\n\r\n\r\n\r\n"
+    },
+    {
+      "author": "chevalierNoir",
+      "created_at": "2023-05-23T23:09:24Z",
+      "body": "@padmalcom Please make sure you installed [vits](https://github.com/jaywalnut310/vits) and do:`PYTHONPATH=$PYTHONPATH:/path/to/vits python infer.py ....`."
+    },
+    {
+      "author": "padmalcom",
+      "created_at": "2023-05-24T09:11:33Z",
+      "body": "@chevalierNoir Thank you, I was missing vits."
+    }
+  ]
+}

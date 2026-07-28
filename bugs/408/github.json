@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 1546,
+  "html_url": "https://github.com/huggingface/accelerate/issues/1546",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "accelerator.log(...) silently does nothing when logging a torch.Tensor to TensorBoard",
+  "author": "psobot",
+  "created_at": "2023-06-06T19:58:51Z",
+  "updated_at": "2023-06-09T16:57:43Z",
+  "closed_at": "2023-06-09T16:50:30Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 2,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 1
+  },
+  "resolution_days": 2.87,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:35.395713+00:00",
+  "comments": [
+    {
+      "author": "psobot",
+      "created_at": "2023-06-09T16:51:21Z",
+      "body": "Thank you @muellerzr and @sgugger!"
+    },
+    {
+      "author": "muellerzr",
+      "created_at": "2023-06-09T16:57:43Z",
+      "body": "Np @psobot, nice bug report! Install with `git+https://github.com/huggingface/accelerate` to try it out :) "
+    }
+  ]
+}

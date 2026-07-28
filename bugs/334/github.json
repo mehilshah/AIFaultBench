@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 3485,
+  "html_url": "https://github.com/huggingface/accelerate/issues/3485",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`PartialState` `split_between_processes` resulting in duplicated output with `padding=True`",
+  "author": "zcakzhuu",
+  "created_at": "2025-04-04T21:29:08Z",
+  "updated_at": "2025-05-14T15:07:49Z",
+  "closed_at": "2025-05-14T15:07:49Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 39.74,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:41.529917+00:00",
+  "comments": [
+    {
+      "author": "SunMarc",
+      "created_at": "2025-04-07T13:52:30Z",
+      "body": "Thanks for this nice report @zcakzhuu! Would you like to open a PR to address this issue and add a test to make sure that all edge cases are handled ? "
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2025-05-05T15:07:43Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\nPlease note that issues that do not follow the [contributing guidelines](https://github.com/huggingface/accelerate/blob/main/CONTRIBUTING.md) are likely to be ignored."
+    }
+  ]
+}

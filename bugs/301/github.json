@@ -1,0 +1,57 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21778,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21778",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "FSDPStrategy  fails on CPU with  RuntimeError: FSDP needs a non-CPU accelerator device  when validation is bypassed",
+  "author": "zhixiangli",
+  "created_at": "2026-06-27T16:10:26Z",
+  "updated_at": "2026-07-02T11:42:37Z",
+  "closed_at": "2026-07-02T11:42:37Z",
+  "labels": [
+    "bug",
+    "ver: 2.5.x",
+    "ver: 2.6.x"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 4.81,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:52.932533+00:00",
+  "comments": [
+    {
+      "author": "deependujha",
+      "created_at": "2026-06-28T14:24:54Z",
+      "body": "Thanks for digging into this. The root cause is right: `root_device.index` is `None` on CPU, and torch \u2265 2.5 trips the \"non-CPU accelerator\" guard on that.\n\nMy hesitation is whether this is a path we should support. FSDP-on-CPU is gated above the strategy (accelerator blocks it, and FSDP requires `FSDPPrecision`), so there's no supported entry point where `parallel_devices` is `[cpu]`. The repro only reaches `_setup_model` by manually setting `_parallel_devices`/`_lightning_module`/`_process_group`, which reconstructs a state the framework never produces.\n\nWorth noting too: `setup_environment` already encodes the opposite convention for CPU:\n\n```python\nkwargs[\"device_id\"] = self.root_device if self.root_device.type != \"cpu\" else None\n```\n\ni.e. CPU \u2192 `None`. This PR flips that at the wrap call sites, so the same check would mean \"pass `None`\" in one place and \"pass the device\" in another.\n\nOn the test, since FSDP can't really run on CPU, mocking `FullyShardedDataParallel` is the only option, but that also means it only verifies the argument gets forwarded, for a config we otherwise reject. I can't think of anything meaningful that this lets us test\"\n\nMy read is this should probably be closed as we don't have any concrete reason to support `FSDP-on-CPU`. Happy to be corrected if there's a use case I'm missing."
+    },
+    {
+      "author": "zhixiangli",
+      "created_at": "2026-06-29T01:08:57Z",
+      "body": "Thanks @deependujha \u2014 fair challenge, and the use case you're asking about is exactly why I filed this.\n\n### The Use Case: CPU-Only Macrobenchmarking of Sharded-Checkpoint I/O\n\nWe are benchmarking the FSDP `state_dict_type=\"sharded\"` checkpoint path against GCS (Google Cloud Storage) at an ~8B parameter scale. \n\nThe primary metric under test is the **storage write/read pattern**: every rank writes its own shard concurrently to the same checkpoint directory. This simulates a realistic FSDP @ 8B write pattern, which DDP (which uses rank-0-only full writes) never exercises. \n\nWe deliberately run this on a CPU-only fleet (using the `gloo` backend) because we are measuring object-storage I/O, not GPU compute. Since the `training_step` never actually forwards through the model, FSDP only touches the large parameters during initialization (sharding) and checkpointing. Pinning expensive GPUs to a pure storage-I/O benchmark would be highly wasteful and significantly harder to schedule in CI.\n\n---\n\n### The Workaround Today (Without This Fix)\n\nTo support this CPU-only benchmarking, we use a downstream `FSDPStrategy` subclass that bypasses the high-level GPU-only guards. However, because `root_device.index` is `None` on CPU, our subclass is forced to transiently monkeypatch `torch.distributed.fsdp.FullyShardedDataParallel` to rewrite `device_id=None` to `torch.device(\"cpu\")` around the wrap call:\n\n```python\nclass _CpuDeviceFSDP(orig_cls):\n    def __init__(self, *args, **kwargs):\n        if kwargs.get(\"device_id\") is None:\n            kwargs[\"device_id\"] = torch.device(\"cpu\")\n        super().__init__(*args, **kwargs)\n```\n\nWhile this works, it reaches into PyTorch internals and patches a module attribute that Lightning imports inside `_setup_model`. This is exactly the kind of fragile hack that this one-line upstream fix eliminates, allowing downstreams to cleanly extend `FSDPStrategy` for specialized testing/benchmarking.\n\n---\n\n### Addressing the \"Inconsistent Convention\"\n\nI don't believe this introduces an inconsistent convention. The two `device_id` values feed into different PyTorch APIs with distinct contracts:\n\n1. **`setup_environment` / `_setup_distributed`** -> `torch.distributed.init_process_group(device_id=...)`\n   * Here, CPU correctly maps to `None` (adhering to the `c10d`/`gloo` contract).\n2. **`setup_module` / `_setup_model`** -> `FullyShardedDataParallel(device_id=...)`\n   * Here, PyTorch $\\ge$ 2.5 rejects `None` on CPU and requires an explicit `torch.device(\"cpu\")` to bypass the accelerator-detection guard.\n\nThus, using `None` in one place and the explicit device object in the other is necessary for each call to honor its respective PyTorch API contract. This PR does not alter the `setup_environment` convention.\n\n---\n\n### The Test Case\n\nWhile mocking `FullyShardedDataParallel` only verifies argument forwarding, that is precisely the regression we need to prevent. The bug is that **Lightning passes FSDP a `device_id` that PyTorch rejects on CPU**. \n\nAsserting that the forwarded value is `torch.device(\"cpu\")` on CPU (and the integer index on GPU) pins exactly this contract. The GPU path remains entirely unchanged, as the ternary operator only branches when the device type is `\"cpu\"`.\n\n---\n\n### Conclusion\n\nLanding this fix allows downstream projects to drop fragile monkeypatches, enables cheaper CI/CD execution for checkpoint testing and storage-I/O benchmarking, and makes it easier to identify and implement further improvements in checkpointing performance."
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-06-29T02:19:55Z",
+      "body": "Thanks @zhixiangli for the correction, you're right & it's not the inconsistency I initially thought.\n\nThat said, I still view this as a downstream extension scenario rather than an expansion of Lightning's supported CPU-FSDP surface; the sharded-checkpoint write pattern you're measuring lives in the checkpoint/save path, not in `FullyShardedDataParallel.__init__`. So I don't think this establishes FSDP-on-CPU as a supported target.\n\nWhere I've come around: as a robustness fix, it's a one-line change, near-zero maintenance, the GPU path is untouched (the branch only fires on `cpu`), and it aligns `device_id` with what torch \u22652.5 expects.\n\nOn that narrow basis, I'm fine with it, not as a statement that CPU is supported, but so a guard-bypassing subclass doesn't have to monkeypatch torch internals.\n\nA short comment at the call site, noting CPU isn't a supported FSDP path (the branch only exists to honor the torch \u22652.5 contract), would keep future readers from reading support into it."
+    }
+  ]
+}

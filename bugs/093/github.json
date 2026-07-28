@@ -1,0 +1,78 @@
+{
+  "owner": "lucidrains",
+  "repo": "x-transformers",
+  "number": 228,
+  "html_url": "https://github.com/lucidrains/x-transformers/issues/228",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "attn_num_mem_kv > 0 and attn_one_kv_head = True error",
+  "author": "pfeatherstone",
+  "created_at": "2024-01-16T15:51:50Z",
+  "updated_at": "2024-01-16T15:59:46Z",
+  "closed_at": "2024-01-16T15:59:46Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 8,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:36.891757+00:00",
+  "comments": [
+    {
+      "author": "lucidrains",
+      "created_at": "2024-01-16T15:55:35Z",
+      "body": "@pfeatherstone ah nice catch\r\n\r\ncorrected"
+    },
+    {
+      "author": "pfeatherstone",
+      "created_at": "2024-01-16T15:55:40Z",
+      "body": "The first fix is:\r\n\r\nhttps://github.com/lucidrains/x-transformers/blob/029ec31957a86dbfaa4a9865f0f23403ef31e4aa/x_transformers/x_transformers.py#L789-L792\r\n\r\n```\r\nself.num_mem_kv = num_mem_kv\r\n        if num_mem_kv > 0:\r\n            self.mem_k = nn.Parameter(torch.randn(kv_heads, num_mem_kv, dim_head))\r\n            self.mem_v = nn.Parameter(torch.randn(kv_heads, num_mem_kv, dim_head))\r\n```"
+    },
+    {
+      "author": "pfeatherstone",
+      "created_at": "2024-01-16T15:55:57Z",
+      "body": "Not so fast"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-01-16T15:56:23Z",
+      "body": "@pfeatherstone there's another issue?"
+    },
+    {
+      "author": "pfeatherstone",
+      "created_at": "2024-01-16T15:56:44Z",
+      "body": "it fails at https://github.com/lucidrains/x-transformers/blob/029ec31957a86dbfaa4a9865f0f23403ef31e4aa/x_transformers/attend.py#L135"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-01-16T15:57:09Z",
+      "body": "weird, let me try your example, runs for me"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-01-16T15:58:11Z",
+      "body": "oh i see, it is an issue with flash attention"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-01-16T15:59:46Z",
+      "body": "ok, fixed for real, thanks for reporting"
+    }
+  ]
+}

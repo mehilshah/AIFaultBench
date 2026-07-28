@@ -1,0 +1,42 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 13717,
+  "html_url": "https://github.com/huggingface/diffusers/issues/13717",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "checkpoint. Make sure all LoRA param names contain `'lora'` substring.",
+  "author": "xalteropsx",
+  "created_at": "2026-05-11T09:28:27Z",
+  "updated_at": "2026-05-11T09:53:00Z",
+  "closed_at": "2026-05-11T09:53:00Z",
+  "labels": [
+    "bug",
+    "needs-code-example",
+    "lora",
+    "pipelines"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.02,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:56.034401+00:00",
+  "comments": []
+}

@@ -1,0 +1,50 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-io",
+  "number": 1840,
+  "html_url": "https://github.com/keras-team/keras-io/issues/1840",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "TypeError: Sampler.__call__() got an unexpected keyword argument 'end_token_id'",
+  "author": "okyanusoz",
+  "created_at": "2024-04-21T18:48:25Z",
+  "updated_at": "2024-05-01T05:18:11Z",
+  "closed_at": "2024-05-01T05:17:53Z",
+  "labels": [
+    "type:bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 9.44,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:33.075735+00:00",
+  "comments": [
+    {
+      "author": "Tylman-M",
+      "created_at": "2024-04-28T21:35:58Z",
+      "body": "This is how I fixed it for my code. I highly suspect there's a better way to fix this, but in short three things needed to be fixed:\r\n\r\n1. Change 'end_token_id' to 'stop_token_ids'\r\n2. Wrap the token id argument in a list\r\n3. add '.to_tensor()' to the encoder input tokens'\r\n\r\n\r\n\r\n(Note, I extended mine from Spanish only to French, so my encoders are named \"fr_...\" instead of \"spa_\")\r\n```\r\ndef decode_sequences(input_sentences):\r\n    batch_size = 1\r\n\r\n    # Tokenize the encoder input.\r\n    encoder_input_tokens = ops.convert_to_tensor(eng_tokenizer(input_sentences))\r\n    if len(encoder_input_tokens[0]) < MAX_SEQUENCE_LENGTH:\r\n        pads = ops.full((1, MAX_SEQUENCE_LENGTH - len(encoder_input_tokens[0])), 0)\r\n        #encoder_input_tokens = ops.concatenate([encoder_input_tokens.to_tensor(), pads], 1) # <-- Original\r\n        encoder_input_tokens = ops.concatenate([encoder_input_tokens.to_tensor(), pads], 1) # <-- Add \".to_tensor()\" at the base of this\r\n\r\n    # Define a function that outputs the next token's probability given the\r\n    # input sequence.\r\n    def next(prompt, cache, index):\r\n        logits = transformer([encoder_input_tokens, prompt])[:, index - 1, :]\r\n        # Ignore hidden states for now; only needed for contrastive search.\r\n        hidden_states = None\r\n        return logits, hidden_states, cache\r\n\r\n    # Build a prompt of length 40 with a start token and padding tokens.\r\n    length = 40\r\n    start = ops.full((batch_size, 1), fr_tokenizer.token_to_id(\"[START]\"))\r\n    pad = ops.full((batch_size, length - 1), fr_tokenizer.token_to_id(\"[PAD]\"))\r\n    prompt = ops.concatenate((start, pad), axis=-1)\r\n\r\n    generated_tokens = nlp.samplers.GreedySampler()(\r\n        next,\r\n        prompt,\r\n        # end_token_id = fr_tokenizer.token_to_id(\"[END]\") #<-- Original\r\n        stop_token_ids=[fr_tokenizer.token_to_id(\"[END]\")], #<-- Change argument name and wrap in list\r\n        index=1,  # Start sampling after start token.\r\n    )\r\n    generated_sentences = fr_tokenizer.detokenize(generated_tokens)\r\n    return generated_sentences\r\n```"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-05-01T05:18:10Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdHag0RVFS7UXzZkKcsFCKOcX8raCupKK9RHSlYxp5U8lSJbQ/viewform?entry.492125872=Yes&entry.243948740=https://github.com/keras-team/keras-io/issues/1840\"> Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdHag0RVFS7UXzZkKcsFCKOcX8raCupKK9RHSlYxp5U8lSJbQ/viewform?entry.492125872=No&entry.243948740=https://github.com/keras-team/keras-io/issues/1840\"> No</a>\n"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 46988,
+  "html_url": "https://github.com/vllm-project/vllm/issues/46988",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: Gemma4 video prompt expansion / timestamps mismatch vs Transformers `Gemma4Processor`",
+  "author": "hjh0119",
+  "created_at": "2026-06-29T03:53:23Z",
+  "updated_at": "2026-06-30T20:43:44Z",
+  "closed_at": "2026-06-30T20:43:44Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.7,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:16.226484+00:00",
+  "comments": [
+    {
+      "author": "hclsys",
+      "created_at": "2026-06-29T05:37:46Z",
+      "body": "think the gap is at gemma4_mm.py:617-618 \u2014 when the loader doesn't pass frames_indices it falls back to list(range(len(frames))), i.e. the post-sampling positions [0,1,2,...], so idx/fps truncates everything to ~00:00. transformers uses the original-video indices from torchcodec sampling, so frame 2 lands near 3s \u2192 00:03. does vllm's video metadata actually carry the real sampled indices on the original timeline, or just the frame count? if it's only the count, that fallback can't reconstruct the right timestamps. looking into it."
+    }
+  ]
+}

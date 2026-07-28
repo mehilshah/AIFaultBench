@@ -1,0 +1,45 @@
+{
+  "owner": "exaloop",
+  "repo": "codon",
+  "number": 506,
+  "html_url": "https://github.com/exaloop/codon/issues/506",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Argument unpacking with `*` not supported",
+  "author": "akleemans",
+  "created_at": "2023-12-08T08:19:42Z",
+  "updated_at": "2024-01-29T19:41:37Z",
+  "closed_at": "2024-01-29T19:41:31Z",
+  "labels": [
+    "wontfix"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 52.47,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:27.212920+00:00",
+  "comments": [
+    {
+      "author": "inumanag",
+      "created_at": "2024-01-29T19:41:31Z",
+      "body": "You cannot unpack lists in Codon, unfortunately, as list length is not known at compile time; you can only unpack tuples. You need to either cast list to tuple or have an arbitrary way to pass lists to functions.\r\n\r\nThis limitation won't go away; it is intrinsic to Codon's static compilation approach."
+    }
+  ]
+}

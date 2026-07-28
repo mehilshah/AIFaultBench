@@ -1,0 +1,60 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2174,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2174",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "JAX 0.10.0 breaks NumPyro",
+  "author": "miguelbiron",
+  "created_at": "2026-04-16T21:40:58Z",
+  "updated_at": "2026-05-02T10:06:59Z",
+  "closed_at": "2026-05-02T10:06:59Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 15.52,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:41.201190+00:00",
+  "comments": [
+    {
+      "author": "miguelbiron",
+      "created_at": "2026-04-16T21:48:07Z",
+      "body": "This is the commit that removed the function https://github.com/jax-ml/jax/commit/5d3868da4db8220cfe921047de43267e914a5da2"
+    },
+    {
+      "author": "Qazalbash",
+      "created_at": "2026-04-17T06:10:19Z",
+      "body": "Hi @miguelbiron, thanks for the report. A fix has already been proposed, please see #2173."
+    },
+    {
+      "author": "miguelbiron",
+      "created_at": "2026-04-17T13:29:20Z",
+      "body": "Thanks @Qazalbash !"
+    },
+    {
+      "author": "Dr-yangyangzhang",
+      "created_at": "2026-04-22T15:48:02Z",
+      "body": "Same here. Currently downgrade jax to jax==0.9.2 is the solution."
+    }
+  ]
+}

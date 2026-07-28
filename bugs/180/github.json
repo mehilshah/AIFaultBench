@@ -1,0 +1,67 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 20628,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/20628",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`LightningCLI` fails to recognize custom `Callback` due to mixed import styles",
+  "author": "tonyzamyatin",
+  "created_at": "2025-03-08T14:21:10Z",
+  "updated_at": "2025-09-23T05:49:45Z",
+  "closed_at": "2025-09-23T05:49:45Z",
+  "labels": [
+    "bug",
+    "callback",
+    "ver: 2.5.x"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 198.64,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:51.340141+00:00",
+  "comments": [
+    {
+      "author": "oseymour",
+      "created_at": "2025-03-18T16:27:20Z",
+      "body": "I'm encountering the same issue on v2.5.0.post0. Let me know if you want code to reproduce! It's basically the same as what @tonyzamyatin has already shared though.\n\n\nEDIT: For people who don't want to wait for a fix, I was originally importing Callback as `from pytorch_lightning.callbacks import Callback`. Changed this to `from lightning.pytorch.callbacks import Callback` and no longer get an error."
+    },
+    {
+      "author": "mauvilsa",
+      "created_at": "2025-04-27T07:11:33Z",
+      "body": "I agree that if someone makes the mistake of mixing imports, the error should show the `You passed ... Please switch to a single import style`. Otherwise it is difficult to know what to fix. Though, I would suggest to change the issue title. The problem is not related to `LightningCLI`. And failing to recognize custom callbacks when imports are mixed is the expected behavior. The actual problem is the confusing error message."
+    },
+    {
+      "author": "mauvilsa",
+      "created_at": "2025-08-18T18:52:14Z",
+      "body": "As I explained in my previous comment, this is not really related to `LightningCLI`."
+    },
+    {
+      "author": "littlebullGit",
+      "created_at": "2025-09-19T15:54:38Z",
+      "body": "## The reported issue stems from how callbacks are passed to [LightningCLI]src/lightning/pytorch/cli.py's `trainer_defaults` parameter. This did not seems an issue for the mix imports. \n@tonyzamyatin @mauvilsa @oseymour @SkafteNicki \n\n### Root Cause\nThe `callbacks` parameter in `trainer_defaults` expects **instances** of callbacks (e.g., `[MyCallback()]`), not the class itself (`[MyCallback]`). \n\n### Testing Results\nBelow is a test script to verify this behavior across different PyTorch Lightning versions (2.5.0 and 2.8.0). \n```python\n# Test 1: Passing callback class - THIS WILL FAIL (expected)\ntry:\n    cli = MyCLI(\n        BoringModel,\n        BoringDataModule,\n        trainer_defaults={\n            \"callbacks\": [MyCallback],  # Passing class (incorrect)\n            \"max_epochs\": 1,\n        },\n        run=False\n    )\n    print(\"Test 1 PASSED: Successfully created CLI with callback class\")\nexcept Exception as e:\n    print(f\"Test 1 FAILED: {type(e).__name__}: {str(e)}\")\n\n# Test 2: Passing callback instance - THIS WILL PASS\ntry:\n    cli = MyCLI(\n        BoringModel,\n        BoringDataModule,\n        trainer_defaults={\n            \"callbacks\": [MyCallback()],  # Passing instance (correct)\n            \"max_epochs\": 1,\n        },\n        run=False\n    )\n    print(\"Test 2 PASSED: Successfully created CLI with callback instance\")\nexcept Exception as e:\n    print(f\"Test 2 FAILED: {type(e).__name__}: {str(e)}\")\n```\n```output\nTest 1 FAILED: ValueError: Expected a parent\nTest 2 PASSED: Successfully created CLI with callback instance\n\n```\n"
+    },
+    {
+      "author": "SkafteNicki",
+      "created_at": "2025-09-23T05:49:45Z",
+      "body": "@littlebullGit thanks for your report on this issue. Makes total sense why this error is raised. I think we can close this issue now. In summary:\n* Do not mix import styles in lightning\n* When passing callbacks to `trainer_defaults` the callbacks needs to be instances of callbacks and not classes"
+    }
+  ]
+}

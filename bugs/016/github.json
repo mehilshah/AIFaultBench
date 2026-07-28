@@ -1,0 +1,103 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 11042,
+  "html_url": "https://github.com/tensorflow/models/issues/11042",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Tensorflow2 Multi worker mirrored strategy is not scaling for GPUS ",
+  "author": "sowmya04101998",
+  "created_at": "2023-07-07T07:13:51Z",
+  "updated_at": "2023-08-04T01:50:35Z",
+  "closed_at": "2023-08-04T01:50:33Z",
+  "labels": [
+    "stat:awaiting response",
+    "type:bug",
+    "models:official",
+    "stale"
+  ],
+  "milestone": null,
+  "comments_count": 12,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 27.78,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:38.023244+00:00",
+  "comments": [
+    {
+      "author": "laxmareddyp",
+      "created_at": "2023-07-11T20:49:41Z",
+      "body": "Hi @luotigerlsx,\r\n\r\nCan you please check this in your free time.\r\n\r\nThanks."
+    },
+    {
+      "author": "laxmareddyp",
+      "created_at": "2023-07-11T21:57:16Z",
+      "body": "Hi @sowmya04101998,\r\n\r\nCould you please use the latest official [trainer.py](https://github.com/tensorflow/models/blob/master/official/vision/train.py) for image calssification instead of legacy codebase.\r\n\r\nThanks."
+    },
+    {
+      "author": "sowmya04101998",
+      "created_at": "2023-07-12T09:17:08Z",
+      "body": "I am unable to run the multiworker mirrored strategy using the trainer.py on multiple gpus on multi node environment , is the code already implemented in this ?  , please provide the steps to run the same . \r\n\r\nthanks "
+    },
+    {
+      "author": "laxmareddyp",
+      "created_at": "2023-07-14T18:43:46Z",
+      "body": "Hi @sowmya04101998 ,\r\n\r\nSame as legacy code you can configure the yaml file and pass it to the trainer.py. For image_classification experiment you can run as below.\r\npython3\r\npython3 official/vision/train.py \\\r\n\u00a0 \u00a0 --experiment=image_classification\\\r\n\u00a0 \u00a0 --mode=train_and_eval\\\r\n\u00a0 \u00a0 --model_dir=/tmp/trained_model/ \\\r\n\u00a0 \u00a0 --config_file=pramas.yaml\r\n\r\nparams.yaml file should have configuration for multi-worker gpu that you have configured and proper architecture that your model is going to be trained on. For example take a look at this [config](https://github.com/tensorflow/models/blob/master/official/vision/configs/experiments/image_classification/imagenet_mobilenetv2_gpu.yaml) file which is for gpu mirrored strategy. If you still cannot run train.py ,Please share the error so that we can look into it further. I hope this helps to get some insight to train the model.\r\n\r\n"
+    },
+    {
+      "author": "sowmya04101998",
+      "created_at": "2023-07-15T07:36:33Z",
+      "body": "![image](https://github.com/tensorflow/models/assets/133966292/abef0dde-6375-435d-815e-ef7ec092cad6)\r\n"
+    },
+    {
+      "author": "sowmya04101998",
+      "created_at": "2023-07-15T07:39:17Z",
+      "body": "i dont see any example config files for multiworker mirrored strategy which is what im working on  , also does this strategy scale well , i see a lot of scaling issues been raised "
+    },
+    {
+      "author": "laxmareddyp",
+      "created_at": "2023-07-18T19:13:20Z",
+      "body": "Hi @sowmya04101998,\r\n\r\nI guess you are cloning repo and trying to use train.py and also have installed pip install tf-models-official==2.11.0 which doesn't have latest code changes of git clone. So if you are using cloned repo make sure to follow this process.\r\n\r\nconsider this as nightly because you are using latest master branch\r\nbash\r\n$ git clone -q https://github.com/tensorflow/models.git\r\n$ pip install -q -U tensorflow==2.13.0\r\n$ pip install -q -U tensorflow_datasets\r\n$ pip install -q --user -r models/official/requirements.txt\r\n$ pip install -q -U tensorflow-text\r\nPip install official models which doesn't require you to clone repo for using official code.\r\nbash\r\n$ pip install -U tf-models-official\r\n\r\nfollow one of the above not both.\r\n\r\n\r\nNow train the model as done in the [notebook](https://colab.research.google.com/gist/sineeli/e52ecd82a10d82f4955ef7f333ab6b3c/-11042.ipynb):\r\n\r\n\r\nI have downgraded pip because latest release of Cython having some issue while install tf-models-official. Notebook only showcases single GPU but it can be used for single machine multi gpu. But to use multi-machine multi gpu, the yaml file configuration will be different, rest of the steps should be same.\r\n\r\nThis notebook shows how to train the model using official.vision.train file or else you can train without using train.py file way which is explained in the notebook here:\r\n\r\n[Image Classification Example](https://www.tensorflow.org/tfmodels/vision/image_classification)\r\n[Object Detection Example](https://www.tensorflow.org/tfmodels/vision/object_detection)\r\n\r\nthis notebooks will help you to train end to end with latest official code. Please let us know if this helps you understand.\r\n\r\n"
+    },
+    {
+      "author": "sowmya04101998",
+      "created_at": "2023-07-20T05:58:23Z",
+      "body": "hi @laxmareddyp ,\r\nI was able to run the following code \r\n**https://github.com/tensorflow/models/blob/master/official/legacy/image_classification/classifier_trainer.py**\r\non single-gpu, single node multi-gpu and multi node multi gpu , however i saw that the throughput given by single-node multi-gpu was better than single-gpu , but the numbers I got for mutli-node mutli-gpu was much lesser than single node multi gpu , what is the reason for this behavior? is it because of communication overhead?\r\n Also the throughput samples are shown in both the node terminal and slightly vary , does the model display the throughput of each gpu separately ? how am i supposed to read the throughput?\r\n\r\nI executed the https://github.com/tensorflow/models/blob/master/official/legacy/image_classification/resnet/resnet_ctl_imagenet_main.py code as well , in this case multi-node multi gpu numbers was less than the single gpu numbers which is why I'm trying alternate code that scales well .\r\n\r\nSo please give me the steps to run this specific code\r\nhttps://github.com/NVIDIA/DeepLearningExamples/tree/master/TensorFlow/Classification/ConvNets/main.py for multi-node multi-gpu .\r\n\r\nI have executed the latest code with TensorFlow  2.13 version itself and was still facing the **TypeError: run_experiment() got an unexpected keyword argument 'enable_async_checkpointing'** error . guide me on this \r\n"
+    },
+    {
+      "author": "laxmareddyp",
+      "created_at": "2023-07-20T18:20:49Z",
+      "body": "Hi @sowmya04101998,\r\n\r\nWould you mind trying to create the environment I provided in the notebook above and running it? This environment uses the latest tf-models-officials code, instead of the legacy code you are currently using. We do not support the legacy code base, and we encourage everyone to use the latest official code.\r\n\r\nTo create the environment as described in the notebook and utilize the latest tf-models-official code, Before installing tf-models-official, please make sure to install the specific version 5.3.1 of PyYAML. There have been some reported issues with the latest release version of PyYAML, so it's essential to use version 5.3.1.\r\n\r\nYou can install PyYAML version 5.3.1 with the following command: `pip install PyYAML==5.3.1`\r\n\r\nOnce you have installed PyYAML version 5.3.1, you can proceed to install the latest version of tf-models-official using the following command:`pip install tf-models-official`\r\n\r\nIf you follow the setup above, it should not throw any errors, as we expect.\r\n\r\nThanks."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-07-28T01:45:33Z",
+      "body": "This issue has been marked stale because it has no recent activity since 7 days. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-08-04T01:50:32Z",
+      "body": "This issue was closed due to lack of activity after being marked stale for past 7 days."
+    },
+    {
+      "author": "google-ml-butler[bot]",
+      "created_at": "2023-08-04T01:50:35Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=Yes&entry.2137816233=https://github.com/tensorflow/models/issues/11042\">Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=No&entry.2137816233=https://github.com/tensorflow/models/issues/11042\">No</a>\n"
+    }
+  ]
+}

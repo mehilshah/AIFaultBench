@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "peft",
+  "number": 2184,
+  "html_url": "https://github.com/huggingface/peft/issues/2184",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "PiSSA Updates Base Model Weights Silently",
+  "author": "njbrake",
+  "created_at": "2024-10-28T15:59:02Z",
+  "updated_at": "2024-10-30T09:16:39Z",
+  "closed_at": "2024-10-30T09:16:39Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.72,
+  "fix": {
+    "closing_commit": "ff6dd9ed7f42f2c7e312ea4e7c13539d2c312944",
+    "linked_prs": [],
+    "best_guess_fix_commit": "ff6dd9ed7f42f2c7e312ea4e7c13539d2c312944",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:29:22.731560+00:00",
+  "comments": [
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2024-10-28T16:41:11Z",
+      "body": "Hey, thanks for opening the issue. I \"stole\" it for PEFT as it's more a PEFT issue :)\r\n\r\nThe problem you describe is indeed accurate. This is why we added a way to convert a PiSSA adapter to a normal LoRA adapter: https://github.com/fxmeng/peft/tree/main/examples/pissa_finetuning#convert-pissa-to-lora. Could you please check out if this solves the issue for you?\r\n\r\nApart from that, we can still think about giving some type of warning if the situation occurs, but I'm not completely sure how to detect this reliably, I'd have to think about it.\r\n"
+    },
+    {
+      "author": "njbrake",
+      "created_at": "2024-10-28T23:34:20Z",
+      "body": "Thanks! I think the main thing is that it would be good to warn a user if an adapter isn't compatible. I had to figure it out via a lot of debugging because there were no warnings, just all the sudden one of my adapters (the non Pissa one) started outputting gibberish and it wasn't clear why. We use adapters under the assumption that they operate independent of each other when you swap between them. "
+    }
+  ]
+}

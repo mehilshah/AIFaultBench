@@ -1,0 +1,62 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-io",
+  "number": 1703,
+  "html_url": "https://github.com/keras-team/keras-io/issues/1703",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "neural_machine_translation_with_keras_nlp Example test script segmentation fault",
+  "author": "hansk0812",
+  "created_at": "2024-01-02T05:12:13Z",
+  "updated_at": "2024-05-31T01:47:27Z",
+  "closed_at": "2024-05-31T01:47:10Z",
+  "labels": [
+    "stale",
+    "stat:awaiting response from contributor",
+    "type:bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 149.86,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:39.915850+00:00",
+  "comments": [
+    {
+      "author": "sachinprasadhs",
+      "created_at": "2024-05-02T23:34:13Z",
+      "body": "The tutorial has been updated by replacing the deprecated arguments in `GreedySampler`, please test it with the updated tutorial and let us know if you still face any error https://keras.io/examples/nlp/neural_machine_translation_with_keras_nlp/"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-05-17T01:45:49Z",
+      "body": "This issue is stale because it has been open for 14 days with no activity. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-05-31T01:47:09Z",
+      "body": "This issue was closed because it has been inactive for 28 days. Please reopen if you'd like to work on this further."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-05-31T01:47:27Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdHag0RVFS7UXzZkKcsFCKOcX8raCupKK9RHSlYxp5U8lSJbQ/viewform?entry.492125872=Yes&entry.243948740=https://github.com/keras-team/keras-io/issues/1703\"> Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdHag0RVFS7UXzZkKcsFCKOcX8raCupKK9RHSlYxp5U8lSJbQ/viewform?entry.492125872=No&entry.243948740=https://github.com/keras-team/keras-io/issues/1703\"> No</a>\n"
+    }
+  ]
+}

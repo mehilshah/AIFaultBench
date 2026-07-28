@@ -1,0 +1,43 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeedExamples",
+  "number": 924,
+  "html_url": "https://github.com/deepspeedai/DeepSpeedExamples/issues/924",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "AttributeError\uff1a 'DeepSpeedEngine' object has no attribute 'model'\uff0c",
+  "author": "lovychen",
+  "created_at": "2024-09-01T04:47:52Z",
+  "updated_at": "2024-10-29T23:02:45Z",
+  "closed_at": "2024-10-29T23:02:45Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 58.76,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:07.731151+00:00",
+  "comments": [
+    {
+      "author": "lovychen",
+      "created_at": "2024-09-01T06:20:42Z",
+      "body": "it  works for me , set model.model to model.module ; \r\nline : print_throughput(model.module, args, end - start,args.global_rank)"
+    }
+  ]
+}

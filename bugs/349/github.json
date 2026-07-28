@@ -1,0 +1,87 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 3140,
+  "html_url": "https://github.com/huggingface/accelerate/issues/3140",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "save_state() fails when using DeepSpeed with multiple models where some models are frozen some are being trained",
+  "author": "enesmsahin",
+  "created_at": "2024-10-03T14:16:47Z",
+  "updated_at": "2025-11-07T05:47:56Z",
+  "closed_at": "2024-11-28T15:07:20Z",
+  "labels": [
+    "bug",
+    "contributions-welcome",
+    "deepspeed"
+  ],
+  "milestone": null,
+  "comments_count": 9,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 56.04,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:03.514840+00:00",
+  "comments": [
+    {
+      "author": "muellerzr",
+      "created_at": "2024-10-07T13:36:32Z",
+      "body": "Thanks, definitely will try and take a look at it!"
+    },
+    {
+      "author": "enesmsahin",
+      "created_at": "2024-10-08T18:46:39Z",
+      "body": "`load_state()` also fails when resuming from a checkpoint:\r\n```\r\n[rank3]:   File \"/opt/conda/envs/flux_cn/lib/python3.10/site-packages/deepspeed/runtime/state_dict_factory.py\", line 168, in check_ckpt_list\r\n[rank3]:     assert len(self.ckpt_list) > 0\r\n```\r\n\r\nI am currently circumventing the issues by wrapping the `load_state()` & `save_state()` calls as follows:\r\n```python\r\nacc_models = accelerator._models\r\naccelerator._models = [model for model in acc_models if model.checkpoint_engine is not None]\r\n#\u00a0<load_state() or save_state() here>\r\naccelerator._models = acc_models\r\n```"
+    },
+    {
+      "author": "LinB203",
+      "created_at": "2024-10-27T09:58:37Z",
+      "body": "same question. "
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-11-20T15:07:02Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\nPlease note that issues that do not follow the [contributing guidelines](https://github.com/huggingface/accelerate/blob/main/CONTRIBUTING.md) are likely to be ignored."
+    },
+    {
+      "author": "enesmsahin",
+      "created_at": "2024-11-28T15:08:34Z",
+      "body": "."
+    },
+    {
+      "author": "rangehow",
+      "created_at": "2024-12-13T11:48:24Z",
+      "body": "same question met in the same scripts, we need to reopen this issue I guess"
+    },
+    {
+      "author": "rangehow",
+      "created_at": "2025-01-08T10:49:08Z",
+      "body": "> Thanks, definitely will try and take a look at it!\r\n\r\nThe issue still exists, and the code that reproduces the problem is even the official example  (it doesn't save, but once saving is added, the issue occurs).\r\n\r\n"
+    },
+    {
+      "author": "LecterF",
+      "created_at": "2025-03-25T04:35:12Z",
+      "body": "Same question. Issue still exists."
+    },
+    {
+      "author": "Borntowarn",
+      "created_at": "2025-11-07T05:47:56Z",
+      "body": "+1\nCan't save state in LoRA training with accelerate+deepspeed"
+    }
+  ]
+}

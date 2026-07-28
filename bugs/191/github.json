@@ -1,0 +1,120 @@
+{
+  "owner": "NVIDIA",
+  "repo": "apex",
+  "number": 1823,
+  "html_url": "https://github.com/NVIDIA/apex/issues/1823",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Setting up Apex and get this error: ModuleNotFoundError: No module named 'torch'",
+  "author": "Mayolov",
+  "created_at": "2024-07-29T19:45:49Z",
+  "updated_at": "2025-06-16T08:34:26Z",
+  "closed_at": "2024-07-30T14:40:29Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 16,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.79,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:10.266849+00:00",
+  "comments": [
+    {
+      "author": "Coding-Zuo",
+      "created_at": "2024-07-30T11:20:52Z",
+      "body": "+1"
+    },
+    {
+      "author": "Coding-Zuo",
+      "created_at": "2024-07-30T11:33:59Z",
+      "body": "I have the same issue. Thanks for posting and could you let me know if you got a solution yet?"
+    },
+    {
+      "author": "Mayolov",
+      "created_at": "2024-07-30T14:40:29Z",
+      "body": "> I have the same issue. Thanks for posting and could you let me know if you got a solution yet?\r\n\r\nHey this command worked for me `python3 setup.py install` . I still have yet to start training, but my program was able to read Apex as a module finally."
+    },
+    {
+      "author": "JianboTang",
+      "created_at": "2024-07-31T12:42:06Z",
+      "body": "I encounter this problem, too~"
+    },
+    {
+      "author": "Bender-L",
+      "created_at": "2024-08-05T07:46:36Z",
+      "body": "> I encounter this problem, too~\r\n\r\nHello, have you solved this problem?"
+    },
+    {
+      "author": "tengjn",
+      "created_at": "2024-08-12T07:03:30Z",
+      "body": "+1"
+    },
+    {
+      "author": "Mayolov",
+      "created_at": "2024-08-13T21:54:19Z",
+      "body": "Heres a couple posts that I followed. I specifically remember downloading the non master branch and following these steps to get it to start working. Try either\r\nhttps://github.com/NVIDIA/apex/issues/1737#issuecomment-1762662648\r\nhttps://github.com/NVIDIA/apex/issues/1594#issuecomment-1822218819"
+    },
+    {
+      "author": "AleenahK",
+      "created_at": "2024-08-18T22:40:46Z",
+      "body": "I am facing the same issue. Please help!"
+    },
+    {
+      "author": "mirrorboat",
+      "created_at": "2024-10-22T10:43:28Z",
+      "body": "https://github.com/NVIDIA/apex/issues/1748#issuecomment-1928910265\nThis may help"
+    },
+    {
+      "author": "khwengXU",
+      "created_at": "2024-11-01T12:09:50Z",
+      "body": "I add \"sudo\" in my command, and it works."
+    },
+    {
+      "author": "cccpocker",
+      "created_at": "2024-12-27T17:13:54Z",
+      "body": "This not work for me. when in apex local repo, i could see apex in pip list otherwise  will not show in apex.\n![Image](https://github.com/user-attachments/assets/1fedf7c6-d6bc-42a0-a6dd-9da480bbdd4d)\n"
+    },
+    {
+      "author": "AMV-HK",
+      "created_at": "2025-01-08T22:55:11Z",
+      "body": "python3 setup.py install => this worked for me"
+    },
+    {
+      "author": "XiaoXE",
+      "created_at": "2025-02-13T16:05:17Z",
+      "body": "python setup.py install ==> works for me"
+    },
+    {
+      "author": "raotnameh",
+      "created_at": "2025-02-19T12:09:49Z",
+      "body": "--no-build-isolation add this option. \n\n``\npip install -v --no-build-isolation --disable-pip-version-check --no-cache-dir --global-option=\"--cpp_ext\" --global-option=\"--cuda_ext\" ./\n``"
+    },
+    {
+      "author": "29233",
+      "created_at": "2025-02-20T03:04:32Z",
+      "body": "> --no-build-isolation add this option.\n> \n> `pip install -v --no-build-isolation --disable-pip-version-check --no-cache-dir --global-option=\"--cpp_ext\" --global-option=\"--cuda_ext\" ./`\n\nthis works for me, thank you"
+    },
+    {
+      "author": "YuhanLeeeee",
+      "created_at": "2025-06-16T08:34:26Z",
+      "body": "> --no-build-isolation add this option.\n> \n> `pip install -v --no-build-isolation --disable-pip-version-check --no-cache-dir --global-option=\"--cpp_ext\" --global-option=\"--cuda_ext\" ./`\n\nworks for me, thanks!!"
+    }
+  ]
+}

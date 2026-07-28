@@ -1,0 +1,46 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 14103,
+  "html_url": "https://github.com/huggingface/diffusers/issues/14103",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Custom AttentionProcessor lost/fallback occurring after forward pass",
+  "author": "abdullahejazjanjua",
+  "created_at": "2026-07-01T18:50:03Z",
+  "updated_at": "2026-07-01T19:20:01Z",
+  "closed_at": "2026-07-01T19:14:40Z",
+  "labels": [
+    "bug",
+    "models"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.02,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:38.450218+00:00",
+  "comments": [
+    {
+      "author": "abdullahejazjanjua",
+      "created_at": "2026-07-01T19:14:37Z",
+      "body": "I'm closing this issue because I have identified that this is the intended behavior. In my custom processor, I was wrapping the `LoRAAttnProcessor2_0` class. Since the `LoRAAttnProcessor2_0` class contains a destructive reassignment. It replaces `attn.processor` with `AttnProcessor2_0` during its first `__call__`, my wrapper was effectively \"self-destructing\" after the first forward pass.\n\nI suggest adding a warning or `logger.info` in `LoRAAttnProcessor2_0` to inform users when this internal overwrite occurs, as it can be very difficult to debug -- I am happy to open a PR to add this logging if you think it would be a helpful addition to the library.\n\nThanks."
+    }
+  ]
+}

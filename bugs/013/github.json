@@ -1,0 +1,73 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 11087,
+  "html_url": "https://github.com/tensorflow/models/issues/11087",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Matplotlib pyplot not working on a python 3.10 conda environment (Fixed, but unsure how fix works)",
+  "author": "realharryhero",
+  "created_at": "2023-09-16T15:09:56Z",
+  "updated_at": "2024-12-27T01:59:51Z",
+  "closed_at": "2024-12-27T01:59:48Z",
+  "labels": [
+    "stat:awaiting response",
+    "type:bug",
+    "models:official",
+    "stale"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 467.45,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:32.698706+00:00",
+  "comments": [
+    {
+      "author": "ChandniJha630",
+      "created_at": "2023-10-01T16:20:49Z",
+      "body": "Assign me this issue I would love to contribute"
+    },
+    {
+      "author": "3zhang",
+      "created_at": "2024-07-22T03:49:53Z",
+      "body": "Not a complete fix but a workaround:\r\nRun matplotlib inline immediately **after** tensorflow_models imported:\r\n````\r\nimport tensorflow_models as tfm\r\n%matplotlib inline\r\n````\r\nThen every time you use plt to plot, make sure to add plt.show() at the end like:\r\n````\r\nplt.plot([1,2,3])\r\nplt.show()\r\n````\r\nplt.show() is necessary to let the plot show up.\r\n \r\n"
+    },
+    {
+      "author": "bharatjetti",
+      "created_at": "2024-12-11T06:16:24Z",
+      "body": "Hi @realharryhero \r\n\r\nGlad that you found a fix, I have reproduced the issue,in this case when we are using matplotlib in notebook, the backend doesn't have GUI to display the plots, so that is the reason we need to explicitly get backends like `Qt5Agg` or  `TkAgg`,  as mentioned by @3zhang magic function like `%matplotlib inline` also does the job. While using complex libraries like TensorFlow which have multi threaded optimized computations can sometimes conflict the backend so if we follow the correct import order, we can avoid this issue. Here is the screenshot.\r\n<img width=\"838\" alt=\"Screenshot 2024-12-11 at 11 45 31\u202fAM\" src=\"https://github.com/user-attachments/assets/7c6df451-4438-4c14-8d79-1d447595a62f\">\r\n"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-12-19T02:03:45Z",
+      "body": "This issue has been marked stale because it has no recent activity since 7 days. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-12-27T01:59:48Z",
+      "body": "This issue was closed due to lack of activity after being marked stale for past 7 days."
+    },
+    {
+      "author": "google-ml-butler[bot]",
+      "created_at": "2024-12-27T01:59:50Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=Yes&entry.2137816233=https://github.com/tensorflow/models/issues/11087\">Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=No&entry.2137816233=https://github.com/tensorflow/models/issues/11087\">No</a>\n"
+    }
+  ]
+}

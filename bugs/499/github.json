@@ -1,0 +1,73 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21561,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21561",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "CUDA issue when using ddp_notebook on Kaggle",
+  "author": "Chilliwiddit",
+  "created_at": "2026-03-01T18:31:15Z",
+  "updated_at": "2026-03-04T08:54:38Z",
+  "closed_at": "2026-03-03T19:18:05Z",
+  "labels": [
+    "bug",
+    "distributed",
+    "strategy: ddp",
+    "ver: 2.5.x"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:51.386884+00:00",
+  "comments": [
+    {
+      "author": "deependujha",
+      "created_at": "2026-03-02T12:08:22Z",
+      "body": "Hi @Chilliwiddit, when instantiating `Llama finetuner`, cuda is initialized in main process resulting in bad cuda fork.\n\nEspecially the line:\n\n```python\nclass LlamaFineTuner(pl.LightningModule):\n    def __init__(self):\n        \n        pl.seed_everything(42)\n\n        super(LlamaFineTuner, self).__init__()\n        print(f\"Llama finetuner 1: {torch.cuda.is_initialized()=}\")\n        \n        # this initializes cuda in main process resulting in error\n        base_model = AutoModelForCausalLM.from_pretrained(\n            model_name,\n            #device_map={\"\": 0},\n            low_cpu_mem_usage=True,\n            dtype=torch.float16\n        )\n```\n\nI verified by this simply adding bunch of statements: `print(f\"IDENTIFIER: {torch.cuda.is_initialized()=}\")`.\n\nkaggle: https://www.kaggle.com/code/deependujha/lightning-issue-21561-code\n\nA side note, have you tried [lightning studios](https://lightning.ai/)? It gives you more control over the runtime environment and lets you scale from consumer GPUs (like T4) to A100, H100, B200, etc., and much more feature rich.\n\nI don't have much experience with `AutoModelForCausalLM`, but will give it a shot quickly to suggest a fix.\n\n\nThanks."
+    },
+    {
+      "author": "bhimrazy",
+      "created_at": "2026-03-03T09:16:19Z",
+      "body": "Hi,\nAlso, you may want to check the official Lightning docs regarding multi-GPU usage in notebooks. This might be relevant in your case:  https://lightning.ai/docs/pytorch/stable/common/notebooks.html#multi-gpu-limitations"
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-03-03T09:30:39Z",
+      "body": "Let\u2019s delay AutoModelForCausalLM instantiation until cuda is safe to be used.\n\nhttps://lightning.ai/docs/pytorch/stable/advanced/model_parallel/fsdp.html#speed-up-model-initialization\n\nhttps://lightning.ai/docs/pytorch/stable/advanced/model_init.html"
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-03-03T10:27:35Z",
+      "body": "hi @Chilliwiddit, you just need to move model instantiation code inside `def configure_model(self):`.\n\n```python\nclass LlamaFineTuner(pl.LightningModule):\n    def __init__(self):\n        pl.seed_everything(42)\n        super(LlamaFineTuner, self).__init__()\n\n    def configure_model(self):\n        # create all your layers here\n        base_model = AutoModelForCausalLM.from_pretrained(\n            model_name,\n            #device_map={\"\": 0},\n            low_cpu_mem_usage=True,\n            dtype=torch.float16\n        )\n        self.model = get_peft_model(base_model, lora_config)\n        self.tokenizer = AutoTokenizer.from_pretrained(model_name)\n        ...\n```\n\nIt's given OOM on T4 2 & 4 gpus. On L4 with 2 gpus, it worked fine.\nhttps://lightning.ai/lightning-ai/oss-litgpt/studios/yearling-copper-xr62/code?source=copylink\n\n<img width=\"951\" height=\"415\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/20d33d81-48cd-4c89-953b-c4fd24eae2bd\" />"
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-03-03T19:18:05Z",
+      "body": "Closing the issue, as the suggested fix works fine. But, feel free to ping or reopen if you encounter issues."
+    },
+    {
+      "author": "Chilliwiddit",
+      "created_at": "2026-03-04T08:54:38Z",
+      "body": "> Closing the issue, as the suggested fix works fine. But, feel free to ping or reopen if you encounter issues.\n\nThanks for the help! Will do"
+    }
+  ]
+}

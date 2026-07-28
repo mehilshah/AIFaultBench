@@ -1,0 +1,70 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 42762,
+  "html_url": "https://github.com/huggingface/transformers/issues/42762",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Generation config merging logic prevents explicit override of model-specific defaults back to global defaults",
+  "author": "albertvillanova",
+  "created_at": "2025-12-10T08:11:35Z",
+  "updated_at": "2026-01-12T08:12:20Z",
+  "closed_at": "2026-01-12T08:12:20Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 33.0,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:08.012060+00:00",
+  "comments": [
+    {
+      "author": "zucchini-nlp",
+      "created_at": "2025-12-10T10:03:47Z",
+      "body": "Yep, the merging logic was not perfect and we had no better option at the time while keeping backwards compatibility. I am removing the whole \"merging\" in https://github.com/huggingface/transformers/pull/42702 and instead changing the defaults to `None`. That way we don't have to guess if a value of `1` is from defaults or explicitly set by users\n"
+    },
+    {
+      "author": "qgallouedec",
+      "created_at": "2025-12-10T19:34:27Z",
+      "body": "I would like to escalate on this issue, which I think is very important. RL training is very sensitive to sampling parameters, especially temperature, which is set to 1.0 by default. In the past, we have had some fairly visible shit storm because of this kind of silent problem:\n\nhttps://x.com/kalomaze/status/1926751357983154606\n\nLet's try to merge it quickly \ud83d\ude4f"
+    },
+    {
+      "author": "zucchini-nlp",
+      "created_at": "2025-12-11T12:24:32Z",
+      "body": "Btw, it will go in v5 as the PR is quite breaking. I don't see a way to fix it so we can add in patch release. There are too many edge cases with default values"
+    },
+    {
+      "author": "albertvillanova",
+      "created_at": "2025-12-11T14:47:56Z",
+      "body": "Thanks a lot, @zucchini-nlp! \ud83e\udd17 \nWe are working on a fix in TRL for previous transformers versions:\n- https://github.com/huggingface/trl/pull/4647"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2026-01-10T08:02:41Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\nPlease note that issues that do not follow the [contributing guidelines](https://github.com/huggingface/transformers/blob/main/CONTRIBUTING.md) are likely to be ignored."
+    },
+    {
+      "author": "zucchini-nlp",
+      "created_at": "2026-01-12T08:12:20Z",
+      "body": "Was fixed in https://github.com/huggingface/transformers/pull/42702, closing as resolved!"
+    }
+  ]
+}

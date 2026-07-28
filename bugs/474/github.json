@@ -1,0 +1,56 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 3172,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/3172",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Metaclass conflict while importing AutoGuideList with PyTorch nightly",
+  "author": "saitcakmak",
+  "created_at": "2023-01-12T17:21:05Z",
+  "updated_at": "2023-01-12T23:05:05Z",
+  "closed_at": "2023-01-12T22:16:01Z",
+  "labels": [
+    "bug",
+    "high priority"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 4,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 3
+  },
+  "resolution_days": 0.2,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:14.797096+00:00",
+  "comments": [
+    {
+      "author": "saitcakmak",
+      "created_at": "2023-01-12T22:16:01Z",
+      "body": "https://github.com/pytorch/pytorch/pull/89135 is being reverted. The issue should go away with next nightly build."
+    },
+    {
+      "author": "albanD",
+      "created_at": "2023-01-12T22:17:04Z",
+      "body": "Sorry about that!"
+    },
+    {
+      "author": "aslvrstn",
+      "created_at": "2023-01-12T23:05:05Z",
+      "body": "GAH, sorry about that. Thank you for catching this so quickly!"
+    }
+  ]
+}

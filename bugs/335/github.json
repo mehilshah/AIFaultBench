@@ -1,0 +1,71 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7925,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7925",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] SuperOfflload does not work on single GPU",
+  "author": "arminzhu",
+  "created_at": "2026-03-27T12:09:11Z",
+  "updated_at": "2026-03-29T00:08:27Z",
+  "closed_at": "2026-03-29T00:08:27Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.5,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:42.994765+00:00",
+  "comments": [
+    {
+      "author": "arminzhu",
+      "created_at": "2026-03-28T06:38:29Z",
+      "body": "@xylian86 Any possible to fix it?"
+    },
+    {
+      "author": "xylian86",
+      "created_at": "2026-03-28T06:42:34Z",
+      "body": "@arminzhu Hi, could you try the PR https://github.com/deepspeedai/DeepSpeed/pull/7906? We recently made a revision to the SuperOffload codebase, and this PR will be merged soon."
+    },
+    {
+      "author": "arminzhu",
+      "created_at": "2026-03-28T06:46:49Z",
+      "body": "@xylian86 OK. I will try. Maybe there will be a opportunity to collaborate in the future, haha"
+    },
+    {
+      "author": "arminzhu",
+      "created_at": "2026-03-28T06:50:14Z",
+      "body": "@xylian86 Oh, I forgot to ask, can `ratio` be `1.0`?"
+    },
+    {
+      "author": "xylian86",
+      "created_at": "2026-03-28T16:15:09Z",
+      "body": "@arminzhu It should support any ratio. If you run into any issues when setting it to 1.0, please let me know."
+    },
+    {
+      "author": "xylian86",
+      "created_at": "2026-03-29T00:08:27Z",
+      "body": "@arminzhu Close the issue for now, and feel free to reopen it if you encounter any issues."
+    }
+  ]
+}

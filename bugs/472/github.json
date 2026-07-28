@@ -1,0 +1,55 @@
+{
+  "owner": "pytorch",
+  "repo": "rl",
+  "number": 3463,
+  "html_url": "https://github.com/pytorch/rl/issues/3463",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug] Replay buffer is not thread-safe for concurrent extend() + sample()",
+  "author": "vmoens",
+  "created_at": "2026-02-06T18:26:12Z",
+  "updated_at": "2026-04-11T09:26:54Z",
+  "closed_at": "2026-02-27T21:33:37Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 21.13,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:11.899509+00:00",
+  "comments": [
+    {
+      "author": "erfanBohloul",
+      "created_at": "2026-02-26T16:45:50Z",
+      "body": "Hi @vmoens,\nI'm looking into this issue as a first time contributor. is this issue still open?\nI tried to reproduce the problem on CPU. I used a script very close to the example. I removed the time.sleep from the writer loop to maximize thread contention. I ran the test up to 200_000 iterations.\nI tested on three environments: MacOS M2 (python 3.14), Ubuntu 24 (python 3.12) and kaggle notebook. I used torchrl 0.11.1 everywhere. \nUnfortunately, I was unable to trigger any visible data corruption, page faults, or crashes across dozens of runs.\nDid anyone manage to see the bug happen more easily? Or maybe a fix is already in progress in a newer commit?"
+    },
+    {
+      "author": "vmoens",
+      "created_at": "2026-02-27T21:33:37Z",
+      "body": "Hello! Could be that it's safe after all!\nThanks for wanting to help, if you're looking for ideas please let me know!"
+    },
+    {
+      "author": "erfanBohloul",
+      "created_at": "2026-04-11T09:26:54Z",
+      "body": "Hi Vincent!\r\nThank you for trusting my comment and closing the issue. it means a lot to\r\nme!\r\nI apologize for the 40-day gap in my response. Unfortunately, just a few\r\nhours after your message, a conflict broke out in my region which resulted\r\nin an Internet blackout. I am safe but my connectivity is still quite\r\nrestricted. which why I'm replying via email right now.  I'm actively\r\nlooking for methods to bypass these restrictions.\r\nI'm still very interested in contributing to TorchRL and would love to hear\r\nyour ideas. if you can point me forward an open issue, a bug, or a module\r\nthat needs better testing or refactoring, I would be happy to work on it. I\r\ncan pull the neccesary code whenever i get a connection window.\r\n\r\nThank you again for your time and attention!\r\n\r\nOn Sat, Feb 28, 2026 at 1:03\u202fAM Vincent Moens ***@***.***>\r\nwrote:\r\n\r\n> *vmoens* left a comment (pytorch/rl#3463)\r\n> <https://github.com/pytorch/rl/issues/3463#issuecomment-3975191719>\r\n>\r\n> Hello! Could be that it's safe after all!\r\n> Thanks for wanting to help, if you're looking for ideas please let me know!\r\n>\r\n> \u2014\r\n> Reply to this email directly, view it on GitHub\r\n> <https://github.com/pytorch/rl/issues/3463#issuecomment-3975191719>, or\r\n> unsubscribe\r\n> <https://github.com/notifications/unsubscribe-auth/ASJGMV6RLZK3H23AQHRTIK34OCZ4PAVCNFSM6AAAAACUII5ZY6VHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHMZTSNZVGE4TCNZRHE>\r\n> .\r\n> You are receiving this because you commented.Message ID:\r\n> ***@***.***>\r\n>\r\n"
+    }
+  ]
+}

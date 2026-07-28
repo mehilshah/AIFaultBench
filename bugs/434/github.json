@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 46932,
+  "html_url": "https://github.com/huggingface/transformers/issues/46932",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Gemma4] Fix dtype casting for quantized vision/audio embedders (same as #46904)",
+  "author": "sharmax-vikas",
+  "created_at": "2026-06-27T12:12:13Z",
+  "updated_at": "2026-07-03T12:21:54Z",
+  "closed_at": "2026-07-03T12:21:54Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 6.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:15.072567+00:00",
+  "comments": [
+    {
+      "author": "zucchini-nlp",
+      "created_at": "2026-06-29T10:25:21Z",
+      "body": "Shouldn't be needed, we have `to(dtype)` all over vision-only model and it is mostly on input Conv proj, and afaik quant libs don't really target conv layers, The Gemma4 was more of a odd case since it is an encoder-less MLLM"
+    }
+  ]
+}

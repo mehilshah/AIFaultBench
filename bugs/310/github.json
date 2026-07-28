@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 3341,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/3341",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Using PyroModule with torch.nn.ModueList fails for nested modules",
+  "author": "MartinBubel",
+  "created_at": "2024-03-17T08:37:05Z",
+  "updated_at": "2024-03-18T07:08:00Z",
+  "closed_at": "2024-03-17T23:40:01Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.63,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:06.320013+00:00",
+  "comments": [
+    {
+      "author": "fritzo",
+      "created_at": "2024-03-17T15:59:41Z",
+      "body": "@MartinBubel this is indeed a subtle issue. Do you have a sense how prevalent slice indexing is in the main torch codebase and in user codebases?"
+    },
+    {
+      "author": "MartinBubel",
+      "created_at": "2024-03-18T07:06:53Z",
+      "body": "quick follow up to your @fritzo question above: I don't think slice-inedexing is a very common use case. Also, the line that causes the loss of the parent-module's `_.pyro_name` is necessary from a torch-context, and replacing it with the `torch.nn.ModuleList` contructor, as in this PR is not an option for general `torch`, as noted [here](https://github.com/pytorch/pytorch/issues/121008#issuecomment-1985953665). I guess with the fix applied in the PR, we should be safe for `pyro` use cases."
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2410,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2410",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG]the input of swin_transformer",
+  "author": "duxiying0369",
+  "created_at": "2025-01-16T10:17:03Z",
+  "updated_at": "2025-01-16T16:50:12Z",
+  "closed_at": "2025-01-16T16:50:12Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.27,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:36.800254+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-01-16T16:50:04Z",
+      "body": "There are a few ways to do it, you can do it at model creation time and it will resize the pretrained weights as it creates the model. Or you can do it after creation via .set_input_size() and it adapts the current model state. However, at any one time you can only support one image size, the position embedding sizes change with image and window sizing.\n\n```\nmm = timm.create_model('swin_base_patch4_window7_224', pretrained=True, img_size=512, strict_img_size=False, global_pool='', num_classes=0)\noo = mm(torch.randn(2, 3, 516, 516))\nprint(oo.shape)\ntorch.Size([2, 17, 17, 1024])\n\nmm = timm.create_model('swin_base_patch4_window7_224', pretrained=True, img_size=512, global_pool='', num_classes=0)\noo = mm(torch.randn(2, 3, 512, 512))\nprint(oo.shape)\ntorch.Size([2, 16, 16, 1024])\n\nmm = timm.create_model('swinv2_cr_small_ns_224.sw_in1k', pretrained=True,global_pool='', num_classes=0)\nmm.set_input_size(img_size=512)\noo = mm(torch.randn(2, 3, 512, 512))\nprint(oo.shape)\ntorch.Size([2, 768, 16, 16])\n```"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "owner": "patrick-kidger",
+  "repo": "jaxtyping",
+  "number": 249,
+  "html_url": "https://github.com/patrick-kidger/jaxtyping/issues/249",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Summarising tensors during TypeCheckError rather than printing them in full",
+  "author": "christopher-beckham",
+  "created_at": "2024-09-20T17:45:17Z",
+  "updated_at": "2024-09-21T19:31:13Z",
+  "closed_at": "2024-09-21T19:31:13Z",
+  "labels": [
+    "question"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.07,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:18.389291+00:00",
+  "comments": [
+    {
+      "author": "patrick-kidger",
+      "created_at": "2024-09-21T09:34:53Z",
+      "body": "Thanks for the suggestion! Right now we do actually currently do this if you have [Equinox](https://github.com/patrick-kidger/equinox) installed, in which case we use its pretty-printing facilities to render tensors as e.g. `f32[2,4]`.\r\n\r\nCutting that (implicit) dependency is on the roadmap. I've now written a standalone pretty-printing library for this purpose; I expect to open-source that and have jaxtyping+Equinox(+two other not-yet-released projects) all depend on it."
+    },
+    {
+      "author": "christopher-beckham",
+      "created_at": "2024-09-21T19:31:13Z",
+      "body": "Hi Patrick, thanks for pointing this out. :) Yes the pprint now seems seems sufficient. I'll close the issue."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 47418,
+  "html_url": "https://github.com/vllm-project/vllm/issues/47418",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: The spe function of the DeepSeek-v4-flash-DSpark model fails to run",
+  "author": "Rozwel-dx",
+  "created_at": "2026-07-02T09:41:55Z",
+  "updated_at": "2026-07-06T06:47:25Z",
+  "closed_at": "2026-07-06T06:47:25Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.88,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:01.101172+00:00",
+  "comments": [
+    {
+      "author": "d3nb",
+      "created_at": "2026-07-02T18:19:23Z",
+      "body": "Root cause + one-line fix (reproduced on vLLM `main` @ `09663abde`, DeepSeek-V4-Flash-DSpark, 4\u00d7B300 with `--data-parallel-size 4 --enable-expert-parallel`, so it's **not** TP/GPU-specific):\n\n`vllm/v1/worker/gpu/spec_decode/dspark/speculator.py:86` accesses `model.draft_id_to_target_id` **unconditionally**:\n\n```python\nif self.draft_logits is not None and model.draft_id_to_target_id is not None:\n```\n\nBut `DSparkDeepseekV4ForCausalLM` never defines `draft_id_to_target_id` \u2014 that attribute is only set on the reduced-draft-vocab speculators (e.g. the Qwen3/GLM DSpark speculators from #47093). For the native V4 DSpark checkpoint (same draft/target vocab, no remapping) the attribute is absent \u2192 `AttributeError: 'DSparkDeepseekV4ForCausalLM' object has no attribute 'draft_id_to_target_id'`, right after `DSpark draft model loaded: 96 params`.\n\nOne-line fix \u2014 guard with `getattr` (V4 has no reduced draft vocab, so the whole `d2t` scatter block should just be skipped):\n\n```python\nif self.draft_logits is not None and getattr(model, \"draft_id_to_target_id\", None) is not None:\n```\n\nWith this, V4-Flash-DSpark boots and serves correctly; we measure ~2.5\u00d7 single-user decode speedup vs no-spec on B300. Happy to open a PR if useful.\n"
+    },
+    {
+      "author": "benchislett",
+      "created_at": "2026-07-03T18:12:40Z",
+      "body": "@mgoin"
+    }
+  ]
+}

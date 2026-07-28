@@ -1,0 +1,55 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 47387,
+  "html_url": "https://github.com/vllm-project/vllm/issues/47387",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: WSL2: RuntimeError: UVA is not available on RTX 4050 Laptop GPU (vLLM 0.24.0, CUDA 13.0)",
+  "author": "grvwrk",
+  "created_at": "2026-07-02T04:42:45Z",
+  "updated_at": "2026-07-05T08:59:56Z",
+  "closed_at": "2026-07-05T08:59:56Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.18,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:22.959012+00:00",
+  "comments": [
+    {
+      "author": "SmartAI",
+      "created_at": "2026-07-03T22:17:06Z",
+      "body": "Traced this. On WSL2, `is_pin_memory_available()` returns `VLLM_WSL2_ENABLE_PIN_MEMORY`, which defaults to 0 (`vllm/platforms/cuda.py`, made opt-in in #41496 because pinned memory has overhead on small tensors under WSL2). That makes `is_uva_available()` false \u2014 and the V2 model runner, now the default, hard-requires UVA buffers at init (`vllm/v1/worker/gpu/buffer_utils.py:47`, exactly your traceback). Same root cause as #47292.\n\nRunner selection already falls back to V1 when Triton is missing, so I'll open a PR doing the same when UVA isn't available, plus a clearer error when V2 is explicitly forced.\n\nIn the meantime `VLLM_WSL2_ENABLE_PIN_MEMORY=1` should let you keep the V2 runner \u2014 could you check whether that works on your setup?\n"
+    },
+    {
+      "author": "elaugaste",
+      "created_at": "2026-07-05T03:50:04Z",
+      "body": "> In the meantime `VLLM_WSL2_ENABLE_PIN_MEMORY=1` should let you keep the V2 runner \u2014 could you check whether that works on your setup?\n\nI had the same problem. I checked, VLLM_WSL2_ENABLE_PIN_MEMORY=1 allows using the V2 model runner (v0.24) with WSL2.  Thanks"
+    },
+    {
+      "author": "grvwrk",
+      "created_at": "2026-07-05T08:59:56Z",
+      "body": "> VLLM_WSL2_ENABLE_PIN_MEMORY=1 should let you keep the V2 runner \u2014 could you check whether that works on your setup?\n\n@SmartAI , yep that works ! thanks ."
+    }
+  ]
+}

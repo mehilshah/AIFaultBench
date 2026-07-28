@@ -1,0 +1,58 @@
+{
+  "owner": "lark-parser",
+  "repo": "lark",
+  "number": 1434,
+  "html_url": "https://github.com/lark-parser/lark/issues/1434",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Inconsistent parse results from simple ambiguous grammar",
+  "author": "mcarpenter",
+  "created_at": "2024-06-30T12:50:00Z",
+  "updated_at": "2024-07-01T20:34:01Z",
+  "closed_at": "2024-06-30T20:54:50Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.34,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:45.504297+00:00",
+  "comments": [
+    {
+      "author": "MegaIng",
+      "created_at": "2024-06-30T12:56:17Z",
+      "body": "Does this still happen with the latest master? (`pip install git+https://github.com/lark-parser/lark`)"
+    },
+    {
+      "author": "mcarpenter",
+      "created_at": "2024-06-30T13:01:02Z",
+      "body": "Yes, it does still happen. (`pip list` reports 1.2.0, I still get two different results).\r\n\r\nI also see discussion https://github.com/lark-parser/lark/discussions/1288 and setting environment variable `PYTHONHASHSEED=0` does indeed yield consistent results (the second of those presented above). Similarly increasing the priority to `quantifier.2` also fixes it for me."
+    },
+    {
+      "author": "erezsh",
+      "created_at": "2024-06-30T20:55:38Z",
+      "body": "@mcarpenter Try the latest master again. (you might need to uninstall lark first)"
+    },
+    {
+      "author": "mcarpenter",
+      "created_at": "2024-07-01T20:34:00Z",
+      "body": "That got it, thanks."
+    }
+  ]
+}

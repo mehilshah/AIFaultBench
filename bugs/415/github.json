@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2088,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2088",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Beta with concentration1=1 gives nan log_prob at value=0",
+  "author": "miguelbiron",
+  "created_at": "2025-10-25T00:51:40Z",
+  "updated_at": "2025-11-28T11:10:39Z",
+  "closed_at": "2025-11-28T11:10:39Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 34.43,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:45.820622+00:00",
+  "comments": [
+    {
+      "author": "juanitorduz",
+      "created_at": "2025-10-27T12:22:49Z",
+      "body": "Hi! I suggest a fix in https://github.com/pyro-ppl/numpyro/pull/2089"
+    },
+    {
+      "author": "miguelbiron",
+      "created_at": "2025-10-27T14:32:20Z",
+      "body": "Awesome!"
+    }
+  ]
+}

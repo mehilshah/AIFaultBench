@@ -1,0 +1,50 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-io",
+  "number": 1555,
+  "html_url": "https://github.com/keras-team/keras-io/issues/1555",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "The version of Keras in Fine-tuning Stable Diffusion example",
+  "author": "Mingbo-Lee",
+  "created_at": "2023-10-25T09:51:11Z",
+  "updated_at": "2023-11-17T20:32:37Z",
+  "closed_at": "2023-11-17T20:32:37Z",
+  "labels": [
+    "type:bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 23.45,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:49.965325+00:00",
+  "comments": [
+    {
+      "author": "sachinprasadhs",
+      "created_at": "2023-10-25T23:26:59Z",
+      "body": "Hi, \r\nThanks for reporting the issue.\r\nIt is not suggested to downgrade the Keras version when newer version is available.\r\nI was able to identify the root cause, I will go ahead and create a PR. "
+    },
+    {
+      "author": "Mingbo-Lee",
+      "created_at": "2023-10-26T03:13:59Z",
+      "body": "Thank you for your reply!"
+    }
+  ]
+}

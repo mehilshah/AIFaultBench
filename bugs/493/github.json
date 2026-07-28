@@ -1,0 +1,55 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 3156,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/3156",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug] Infinite loop in `HMC._find_reasonable_step_size`",
+  "author": "saitcakmak",
+  "created_at": "2022-11-21T20:34:23Z",
+  "updated_at": "2022-11-22T19:02:50Z",
+  "closed_at": "2022-11-22T19:02:50Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.94,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:42.685064+00:00",
+  "comments": [
+    {
+      "author": "fritzo",
+      "created_at": "2022-11-21T21:47:24Z",
+      "body": "Thanks for the detailed report @saitcakmak.  What do you think should be ideal behavior here?  Hanging is certainly bad, but stepsize=1e-100 seems bad also.  Maybe we should raise a `ValueError` to surface problem early?"
+    },
+    {
+      "author": "fritzo",
+      "created_at": "2022-11-22T16:14:53Z",
+      "body": "I'm trying to push another release out today or tomorrow, so I'll just add lower and upper bounds say 1e-10 < step_size < 1e10.  Please LMK if you want different thresholds in the release.\r\n\r\nhttps://github.com/pyro-ppl/pyro/pull/3157"
+    },
+    {
+      "author": "saitcakmak",
+      "created_at": "2022-11-22T18:00:28Z",
+      "body": "Thanks for the quick patch @fritzo! I am not sure what an ideal solution here would look like. Raising an error is also a good option. I don't have a preference either way, as long as it doesn't hang :)\r\n\r\nI ran our (BoTorch) unit tests as a quick check and the step size doesn't seem to get below 1e-10. In one other instance, I've seen the step size starting from 4.5e-16 and increasing a bit from there. \r\n<img width=\"373\" alt=\"Screen Shot 2022-11-22 at 9 56 23 AM\" src=\"https://user-images.githubusercontent.com/9263852/203386837-b388dc21-d80b-496d-baf8-c20882f9de48.png\">\r\nThis is from the same setup that produced the hanging behavior reported above. FWIW, the covariance matrix here is almost singular (half of the time, it would just raise a LinAlgError in Cholesky). So, that could possibly explain the small step size, but I am just speculating here.\r\n"
+    }
+  ]
+}

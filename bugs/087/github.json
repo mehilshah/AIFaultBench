@@ -1,0 +1,43 @@
+{
+  "owner": "lucidrains",
+  "repo": "x-transformers",
+  "number": 298,
+  "html_url": "https://github.com/lucidrains/x-transformers/issues/298",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug] Custom alibi position fails for flash attention",
+  "author": "Aceticia",
+  "created_at": "2024-11-29T19:12:49Z",
+  "updated_at": "2024-11-29T20:23:30Z",
+  "closed_at": "2024-11-29T20:23:30Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.05,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:28.493052+00:00",
+  "comments": [
+    {
+      "author": "lucidrains",
+      "created_at": "2024-11-29T19:32:21Z",
+      "body": "haha yes indeed, my bad \r\n\r\nI'm off for the holidays and will be back mid next week\r\n\r\nIf you want to attempt a PR for this, by all means!"
+    }
+  ]
+}

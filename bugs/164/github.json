@@ -1,0 +1,39 @@
+{
+  "owner": "kornia",
+  "repo": "kornia",
+  "number": 1396,
+  "html_url": "https://github.com/kornia/kornia/issues/1396",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Gradients from Boxes3D.to_tensor aren't accurate",
+  "author": "hal-314",
+  "created_at": "2021-10-16T15:23:12Z",
+  "updated_at": "2025-12-29T21:18:30Z",
+  "closed_at": "2025-12-29T21:18:29Z",
+  "labels": [
+    "help wanted"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1535.25,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:27.604779+00:00",
+  "comments": []
+}

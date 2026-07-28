@@ -1,0 +1,81 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 3877,
+  "html_url": "https://github.com/huggingface/accelerate/issues/3877",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Gradient accumulation gives worse results when using DeepSpeed ZeRO 2",
+  "author": "swyoon",
+  "created_at": "2025-12-05T22:44:04Z",
+  "updated_at": "2026-02-08T15:10:22Z",
+  "closed_at": "2026-02-08T15:10:22Z",
+  "labels": [
+    "bug",
+    "contributions-welcome"
+  ],
+  "milestone": null,
+  "comments_count": 8,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 64.68,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:07.000380+00:00",
+  "comments": [
+    {
+      "author": "SunMarc",
+      "created_at": "2025-12-08T15:41:23Z",
+      "body": "Thanks for the report @swyoon, this is indeed quite strange as it doesn't happen with z1 or z3. cc @kashif @stas00 for viz"
+    },
+    {
+      "author": "kashif",
+      "created_at": "2025-12-09T17:38:49Z",
+      "body": "@swyoon  can you check with the changes in #3880 \n"
+    },
+    {
+      "author": "stas00",
+      "created_at": "2025-12-11T21:33:00Z",
+      "body": "Kashif is working on it here https://github.com/huggingface/accelerate/issues/3877\n\nIf you can please try his PR and let us know if the problem goes away, @swyoon "
+    },
+    {
+      "author": "kashif",
+      "created_at": "2025-12-12T14:50:41Z",
+      "body": "@swyoon  can we confirm that the issue is with all zero 1, 2, and 3? I couldnt figure out why it could be just 2"
+    },
+    {
+      "author": "swyoon",
+      "created_at": "2025-12-13T16:50:53Z",
+      "body": "@kashif  Thank you very much for looking into this issue. At least in the above example, it was only zero 2. However, maybe different trainers gives different behaviors.\nShould I try this commit in deepspeed? https://github.com/deepspeedai/DeepSpeed/commit/d568375e5bd50e4e5fd5e4c011e7be5982ecd528"
+    },
+    {
+      "author": "SunMarc",
+      "created_at": "2025-12-15T11:17:17Z",
+      "body": "> Should I try this commit in deepspeed? https://github.com/deepspeedai/DeepSpeed/commit/d568375e5bd50e4e5fd5e4c011e7be5982ecd528\n\nPlease try this commit ! "
+    },
+    {
+      "author": "swyoon",
+      "created_at": "2026-01-06T14:24:46Z",
+      "body": "Dear @kashif @SunMarc ,\n\nSorry to getting back to you so late. \nI tried with the new commit and it seems like the issue that I reported is gone now! Thanks a lot!\n\nAs you can see in the figure, now the gradient norms are exactly the same.\n\n<img width=\"438\" height=\"294\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/93b9c5fc-d1de-419f-8af3-e7e40897f0b9\" />\n\nI will check if this version also fixes the issue that I originally faced as well. But this will take some time.\n\nWhat would be the next step?"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2026-01-30T15:15:42Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\nPlease note that issues that do not follow the [contributing guidelines](https://github.com/huggingface/accelerate/blob/main/CONTRIBUTING.md) are likely to be ignored."
+    }
+  ]
+}

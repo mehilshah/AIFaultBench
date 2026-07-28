@@ -1,0 +1,56 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7718,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7718",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG]Incorrect gradient computation in ZeRO-2 with DeepSpeed \u2265 0.17.6",
+  "author": "wxhcore",
+  "created_at": "2025-12-09T03:08:17Z",
+  "updated_at": "2025-12-19T18:01:07Z",
+  "closed_at": "2025-12-19T18:01:07Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 10.62,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:56.285336+00:00",
+  "comments": [
+    {
+      "author": "tohtana",
+      "created_at": "2025-12-09T07:52:53Z",
+      "body": "Hi @wxhcore \nThank you for reporting. It seems #7665 ([commit](https://github.com/deepspeedai/DeepSpeed/pull/7665/commits/a8f15a02143440cc413fe7dd91a9c7cc390acc56)) fixed this issue, but it is not included in the release. Can you try master branch?\n\n@sfc-gh-truwase Can we release the patch soon? This bug is serious. "
+    },
+    {
+      "author": "wxhcore",
+      "created_at": "2025-12-09T11:31:09Z",
+      "body": "Thank you for your advice!\nI have pulled the latest code from the `master` branch and conducted tests using DeepSpeed version `0.18.3+6eb98aaf` with ZeRO-2.  The test results are as follows:\n\n```\nstep: 1/96 | loss: 1.4401 | lr: 5.56e-06 | grad_norm: 4.7373 | epoch: 0.03\nstep: 2/96 | loss: 1.3686 | lr: 1.11e-05 | grad_norm: 3.9810 | epoch: 0.06\nstep: 3/96 | loss: 1.7664 | lr: 1.67e-05 | grad_norm: 6.0319 | epoch: 0.09\nstep: 4/96 | loss: 1.8631 | lr: 2.22e-05 | grad_norm: 3.9356 | epoch: 0.12\n```\n\nAs can be seen, the results on the current `master` branch are **entirely consistent** with the training behavior of ZeRO-2 under earlier DeepSpeed versions (< 0.17.6).  This indicates that the issue has been fixed in `master`.\n\nWe look forward to the official patch release containing this fix as soon as possible!"
+    },
+    {
+      "author": "tohtana",
+      "created_at": "2025-12-09T23:01:57Z",
+      "body": "Hi @wxhcore, we just released v0.18.3 including the fix."
+    }
+  ]
+}

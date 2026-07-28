@@ -1,0 +1,50 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 10548,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/10548",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Graclus hangs indefinitely on GPU",
+  "author": "vertumnal",
+  "created_at": "2025-12-08T04:10:06Z",
+  "updated_at": "2026-01-05T18:58:37Z",
+  "closed_at": "2026-01-05T18:58:37Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 28.62,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:10.680349+00:00",
+  "comments": [
+    {
+      "author": "vertumnal",
+      "created_at": "2025-12-09T00:46:05Z",
+      "body": "Some NaN losses while using PyG's GCN layer led me to discover that it doesn't work with negative edge weights. This made me think something similar could be happening with Graclus and \u2014 yep! The issue is resolved here by calling ```edge_attr = edge_attr.abs()``` before doing the forward pass.\n\nIt would be nice to have a validity check or short warning for the GCN and Graclus."
+    },
+    {
+      "author": "puririshi98",
+      "created_at": "2026-01-05T18:58:37Z",
+      "body": "feel free to submit a PR to add such a warning, ping me on pyg.org slack since i dont get notifications on github(or my email would explode)"
+    }
+  ]
+}

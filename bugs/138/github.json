@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2244,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2244",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "convnext_tiny model produces outputs that are dependent on the batch size",
+  "author": "Avishka-Perera",
+  "created_at": "2024-07-31T11:29:36Z",
+  "updated_at": "2024-07-31T15:44:41Z",
+  "closed_at": "2024-07-31T15:44:41Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.18,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:44.859030+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2024-07-31T15:44:41Z",
+      "body": "@Avishka-Perera it's expected PyTorch behaviour, nothing specific to timm or the model either, similar discussion here https://github.com/huggingface/pytorch-image-models/discussions/1509 "
+    }
+  ]
+}

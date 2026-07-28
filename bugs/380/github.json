@@ -1,0 +1,86 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7885,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7885",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Training with Zero-2 slow down a lot from v0.18.4 to v0.18.5",
+  "author": "jue-jue-zi",
+  "created_at": "2026-03-04T09:51:28Z",
+  "updated_at": "2026-03-06T04:45:32Z",
+  "closed_at": "2026-03-05T20:54:19Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 9,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.46,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:52.811097+00:00",
+  "comments": [
+    {
+      "author": "tohtana",
+      "created_at": "2026-03-04T19:25:45Z",
+      "body": "Hi @jue-jue-zi ,\nThank you for the report! Can you share the model and hyperparameters (batch size and sequence length)?"
+    },
+    {
+      "author": "tohtana",
+      "created_at": "2026-03-04T22:21:05Z",
+      "body": "Hi @jue-jue-zi,\nI was able to reproduce the slow down and opened a PR #7886 (Fixed) to address it.\nCan you try this fix?"
+    },
+    {
+      "author": "jue-jue-zi",
+      "created_at": "2026-03-05T02:02:56Z",
+      "body": "Hi, @tohtana \nThanks for the PRs. Is this meant to follow up on #7886 or #7882?"
+    },
+    {
+      "author": "tohtana",
+      "created_at": "2026-03-05T02:18:04Z",
+      "body": "@jue-jue-zi Sorry, I meant #7886 (fixed the comment)"
+    },
+    {
+      "author": "jue-jue-zi",
+      "created_at": "2026-03-05T03:23:37Z",
+      "body": "@tohtana I checkout v0.18.6 and cherry-pick e1b99f7^..afa45cd (#7886). It works!\n\n<img width=\"766\" height=\"394\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/6f877f21-6d30-4523-aa1f-2d4ce66d6942\" />\n\n<img width=\"749\" height=\"383\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/c00a25bd-85bf-4233-ba1f-b268aefe7542\" />"
+    },
+    {
+      "author": "tohtana",
+      "created_at": "2026-03-05T06:12:47Z",
+      "body": "Thank you @jue-jue-zi! We will merge and release it asap."
+    },
+    {
+      "author": "tohtana",
+      "created_at": "2026-03-05T20:54:20Z",
+      "body": "v0.18.7 was released and it should fix the issue. Let me close this. We appreciate you reporting this issue! @jue-jue-zi "
+    },
+    {
+      "author": "jue-jue-zi",
+      "created_at": "2026-03-06T04:20:09Z",
+      "body": "@tohtana Thanks for your contributions. After upgrading to v0.18.7, it seems that zero0 is slower than zero1 / zero2 for single machine training?\n\n<img width=\"772\" height=\"402\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/7a652eda-d1f6-4555-a111-61900e02b1c9\" />"
+    },
+    {
+      "author": "tohtana",
+      "created_at": "2026-03-06T04:45:32Z",
+      "body": "@jue-jue-zi In theory, ZeRO-1 has more overhead than ZeRO-0, but in my experience, DeepSpeed hasn't focused much on the ZeRO-0 path. There might still be some underlying inefficiencies there."
+    }
+  ]
+}

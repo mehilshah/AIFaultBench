@@ -1,0 +1,42 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21450,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21450",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Throughput monitor spamming `flops_per_batch` missing warning",
+  "author": "michaelvay",
+  "created_at": "2025-12-25T13:58:06Z",
+  "updated_at": "2026-01-14T09:33:47Z",
+  "closed_at": "2026-01-14T09:33:47Z",
+  "labels": [
+    "bug",
+    "callback",
+    "callback: throughput",
+    "ver: 2.5.x"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 19.82,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:11.911963+00:00",
+  "comments": []
+}

@@ -1,0 +1,60 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 48592,
+  "html_url": "https://github.com/vllm-project/vllm/issues/48592",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: v0.25.0 torchcodec not compatible with cu129 wheel",
+  "author": "VikramRangarajan",
+  "created_at": "2026-07-14T08:53:09Z",
+  "updated_at": "2026-07-15T06:40:12Z",
+  "closed_at": "2026-07-15T06:40:12Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 1,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 1,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.91,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:33.776997+00:00",
+  "comments": [
+    {
+      "author": "VikramRangarajan",
+      "created_at": "2026-07-14T09:00:50Z",
+      "body": "Accidentally posted the wrong traceback, now fixed"
+    },
+    {
+      "author": "elinacse",
+      "created_at": "2026-07-14T14:54:20Z",
+      "body": "@VikramRangarajan Can I take it up ?"
+    },
+    {
+      "author": "elinacse",
+      "created_at": "2026-07-14T15:21:16Z",
+      "body": "@VikramRangarajan \nLooks like it's already fixed on main, just not in the release you're pinned to.\n\nThe crash happens because vllm/multimodal/video.py only caught ImportError around the torchcodec.decoders.VideoDecoder import. torchcodec raises a RuntimeError (not ImportError) when it can't load its native lib due to a CUDA mismatch, so it wasn't being caught and it took the whole process down at import time.\n\n#47888 fixed this back on 2026-07-08 by widening the except to (ImportError, RuntimeError), so now a broken torchcodec install just falls back to a placeholder instead of crashing vllm serve. If you actually try to use the torchcodec backend it'll still fail with a proper error message, but it won't nuke startup anymore.\n\nProblem is that fix merged after the v0.25.0 branch cut, so v0.25.0 doesn't have it. It is in v0.25.1 though (released today). Your pyproject.toml has vllm==0.24.0 pinned via wheels.vllm.ai, which is from before the fix even existed, so that lines up.\n\nBumping to vllm>=0.25.1 should get rid of the crash even though torchcodec still doesn't ship a cu129 wheel.\n\nThanks ,\nElina "
+    },
+    {
+      "author": "VikramRangarajan",
+      "created_at": "2026-07-15T06:40:12Z",
+      "body": "Oh that's great, thanks for letting me know. I will mark as closed.\n\n-Vikram"
+    }
+  ]
+}

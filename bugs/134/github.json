@@ -1,0 +1,55 @@
+{
+  "owner": "flairNLP",
+  "repo": "flair",
+  "number": 3684,
+  "html_url": "https://github.com/flairNLP/flair/issues/3684",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: ImportError: cannot import name 'WIKINER_FRENCH' from 'flair.datasets'",
+  "author": "jpmallette",
+  "created_at": "2025-08-11T14:30:18Z",
+  "updated_at": "2025-08-13T12:58:28Z",
+  "closed_at": "2025-08-13T10:08:05Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.82,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:38.792794+00:00",
+  "comments": [
+    {
+      "author": "stefan-it",
+      "created_at": "2025-08-12T11:36:30Z",
+      "body": "Hi @jpmallette ,\n\nthanks for reporting that! As part of some refactoring a while ago, the new dataset class is called `NER_MULTI_WIKINER` and the French part can be loaded with:\n\n```\nfrom flair.datasets import NER_MULTI_WIKINER\n\ncorpus = NER_MULTI_WIKINER(languages=\"fr\")\nprint(corpus)\n```\n\nThis will output:\n\n```\nMultiCorpus: 107128 train + 11903 dev + 13226 test sentences\n - ColumnCorpus Corpus: 107128 train + 11903 dev + 13226 test sentences - /home/stefan/.flair/datasets/ner_multi_wikiner/fr\n```\n\nThese numbers do match with the training log of that `ner-french` model: https://huggingface.co/flair/ner-french/blob/main/training.log#L32-L33\n\nI submitted a PR for the model card [here](https://huggingface.co/flair/ner-french/discussions/2), cc @alanakbik for review :)\n"
+    },
+    {
+      "author": "alanakbik",
+      "created_at": "2025-08-13T10:08:05Z",
+      "body": "Thanks a lot @stefan-it! Just merged your PR!"
+    },
+    {
+      "author": "jpmallette",
+      "created_at": "2025-08-13T12:58:28Z",
+      "body": "Awesome, thanks to @stefan-it @alanakbik for your prompt reply!"
+    }
+  ]
+}

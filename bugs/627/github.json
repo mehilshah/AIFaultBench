@@ -1,0 +1,75 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2407,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2407",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] FileNotFoundError from checkpoint_saver.py.",
+  "author": "meg-huggingface",
+  "created_at": "2025-01-14T21:31:19Z",
+  "updated_at": "2025-01-24T18:24:11Z",
+  "closed_at": "2025-01-24T18:24:11Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 9.87,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:56.212411+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-01-14T21:47:32Z",
+      "body": "@meg-huggingface humm, that's odd. I was just monkeying around with the saver to allow it to work on filesystems that don't support hardlinks. However I tested on single node, multi node local drive. I tested Google colab saving to local storage and saving to mounted Google Drive. No issues.\n\nSo it's running in HF Spaces? I've actually never tried that. I feel this might be related to filesystem, permissions related to that environment. Where there any other preceeding logs about failures? Can you list the contents of the experiment output folders from the Space? Is there enough free space?"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-01-14T21:56:20Z",
+      "body": "it is related to my change too, since it used to work, the question is why... \n\nhttps://github.com/huggingface/pytorch-image-models/commit/deb9895600ae9c1e169be1ce254dac9fb4d7eca5\n\nMost of the change was related to reverting back to copy if hardlinks cannot be used. However I did change the use of os.rename -> os.replace .. though on linux OS that shouldn't have changed things, and is more appropriate for Windows I believe"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-01-14T22:14:19Z",
+      "body": "Also, this isn't trying to delete an old file, at least that callstack is indicating it's during the save & swap part. So to avoid corrupting the previous 'last' checkpoint saved if there was a crash or out of space at the wrong moment, the new checkpoint is first saved to a the `temp.pth.tar`. Then, assuming that didn't throw, it's supposed to rename that temp file to `last.pth.tar`. It should then go on to hard link that to a numbered `checkpoint-{epoch}.pth.tar` and possibly `best.pth.tar`\n\nSo, it's failing at a weird spot. It's suggesting that the save to temp failed and the file doesn't exist right after the save returned, or that somehow the mechanics of os.rename vs os.replace are different and one either supressed the error, avoided a race, or was embued with magic powers. I used to use os.rename to move temp -> last, now use os.replace."
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-01-14T23:20:32Z",
+      "body": "@meg-huggingface I tried the following, created a 4xL40S space w/ a Docker Jupyter Notebook config, went to the shell and in the default app folder ran:\n\n```\npip3 install torch torchvision torchaudio\ngit clone https://github.com/huggingface/pytorch-image-models\ncd pytorch-image-models\npip install -r requirements.txt\npip install datasets wandb\n<wandb login>\n./distributed_train.sh 4 --dataset hfds/timm/mini-imagenet --log-wandb --experiment ImageNetTraining-0.1-test --model seresnet34 --sched cosine --epochs 30 --warmup-epochs 5 --lr 0.4 --reprob 0.5 --remode pixel --batch-size 256 --amp -j 4 --sched-on-updates --warmup-prefix --num-classes 100\n```\n\nIt ran to completion, saver was using hardlinks, saved checkpoints look correct. The dataset change shouldn't have any impact. \n\nNote on my arg differences. For backward compat reasons I didn't update some scheduler related config defaults that have different 'best practice' values now... I prefer to run with `--sched-on-updates --warmup-prefix` to update scheduler with each optimizer step (instead of once per epoch), and avoid a discontinuity at the transitions from warmup -> decay stage and decay stage -> cooldown/end.\n\nI did release a new timm version (1.0.13) recently that includes the checkpoint saving update. Is it possible the train.py script on your space is out of sync with the lib version being used? Though I checked to try and prevent that being an issue with the changes made... \n\n```terminal\n~/app/pytorch-image-models$ ls output/train/ImageNetTraining-0.1-test/ -ltri\ntotal 2018120\n5906643511 -rw-r--r-- 1 user user      2609 Jan 15 00:08 args.yaml\n5906644672 -rw-r--r-- 1 user user 172211426 Jan 15 00:14 checkpoint-25.pth.tar\n5906644673 -rw-r--r-- 1 user user 172211426 Jan 15 00:14 checkpoint-26.pth.tar\n5906644677 -rw-r--r-- 1 user user 172211426 Jan 15 00:15 checkpoint-27.pth.tar\n5906644675 -rw-r--r-- 1 user user 172211426 Jan 15 00:15 checkpoint-28.pth.tar\n5906644674 -rw-r--r-- 1 user user 172211426 Jan 15 00:15 checkpoint-29.pth.tar\n5906644676 -rw-r--r-- 1 user user 172211426 Jan 15 00:15 checkpoint-30.pth.tar\n5906644679 -rw-r--r-- 1 user user 172211426 Jan 15 00:15 checkpoint-31.pth.tar\n5906643515 -rw-r--r-- 1 user user 172211426 Jan 15 00:16 checkpoint-32.pth.tar\n5906644678 -rw-r--r-- 1 user user 172211426 Jan 15 00:16 checkpoint-33.pth.tar\n5906643513 -rw-r--r-- 1 user user      3399 Jan 15 00:16 summary.csv\n5906643519 -rw-r--r-- 3 user user 172211426 Jan 15 00:16 model_best.pth.tar\n5906643519 -rw-r--r-- 3 user user 172211426 Jan 15 00:16 last.pth.tar\n5906643519 -rw-r--r-- 3 user user 172211426 Jan 15 00:16 checkpoint-34.pth.tar\n```"
+    },
+    {
+      "author": "meg-huggingface",
+      "created_at": "2025-01-15T02:32:15Z",
+      "body": "Thanks so much. After reading this, I tried another version of my data and everything ran to completion, no problem (with the checkpoints & naming being handled appropriately). \nI'm wondering if there was a temporary issue on Spaces, and it was just a strange coincidence that it corresponded to what you had been working on.\nI'm now trying to rerun with the same version of the data that caused the error for this example, and will circle back with the update."
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-01-15T04:10:41Z",
+      "body": "@meg-huggingface k, sounds good..  behaviour really shouldn't depend on the dataset.\n\nPossible that it was a filesystem hiccup, loss of consistency (the first write wasn't seen by the subsequent rename/replace). That shouldn't happen for a normal filesystem, but crazy cloud storage architectures, possibly under load or abnormal circumstances? Also possible that there's a corner case when out of space where an error isn't logged/propagated on a failed write...\n\nFYI when I was fiddling with timm in Spaces for first time I noticed that the CPU power is a bit on the weak side for image preprocessing. It might benefit from Pillow-SIMD so created a fork of the jupyterlab space with some updates\n* Python 3.12\n* Uninstall pillow, build & install pillow-simd\n* Pre-install timm, wandb, datasets (though can still checkout from git obv)\n\nhttps://huggingface.co/spaces/rwightman/jupyterlab-timm\n"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-01-21T17:23:12Z",
+      "body": "@meg-huggingface have you run into this again? can be closed?"
+    }
+  ]
+}

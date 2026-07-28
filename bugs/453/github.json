@@ -1,0 +1,46 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7811,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7811",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] ZeRO-3: zero.GatheredParameters([multiple params], modifier_rank=None) + in-place slice touch triggers assert not param.ds_active_sub_modules in free_param()",
+  "author": "griffinstalha",
+  "created_at": "2026-01-24T08:04:37Z",
+  "updated_at": "2026-01-28T00:29:14Z",
+  "closed_at": "2026-01-28T00:29:14Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.68,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:44.503068+00:00",
+  "comments": [
+    {
+      "author": "tohtana",
+      "created_at": "2026-01-26T07:59:37Z",
+      "body": "Thank you @griffinstalha, good catch! I improved the error handling in #7817. Please feel free to share your feedback."
+    }
+  ]
+}

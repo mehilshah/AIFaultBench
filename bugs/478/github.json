@@ -1,0 +1,39 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 46897,
+  "html_url": "https://github.com/huggingface/transformers/issues/46897",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Florence2 training-loss double-shift bug (same pattern as Moonshine #46784)",
+  "author": "sharmax-vikas",
+  "created_at": "2026-06-25T19:24:39Z",
+  "updated_at": "2026-06-29T10:51:17Z",
+  "closed_at": "2026-06-29T10:51:17Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.64,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:20.229544+00:00",
+  "comments": []
+}

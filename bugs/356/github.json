@@ -1,0 +1,65 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2130,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2130",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "InverseWishart not found",
+  "author": "x-tabdeveloping",
+  "created_at": "2026-01-28T14:48:08Z",
+  "updated_at": "2026-01-31T12:43:05Z",
+  "closed_at": "2026-01-31T12:43:05Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.91,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:15.168393+00:00",
+  "comments": [
+    {
+      "author": "Qazalbash",
+      "created_at": "2026-01-29T08:09:18Z",
+      "body": "Inverse Wishart distribution (#2103) was introduced after the 0.19.0 release (#2060). The latest documentation is of current HEAD. If you want to use it through a release then wait until 0.20.0 release (#2128), otherwise use [nightly](https://num.pyro.ai/en/latest/getting_started.html#installation)."
+    },
+    {
+      "author": "x-tabdeveloping",
+      "created_at": "2026-01-29T09:26:22Z",
+      "body": "Ah, alright, I was suspecting that that might be the case. Do you have a rough estimate for when 0.20.0 is out?"
+    },
+    {
+      "author": "Qazalbash",
+      "created_at": "2026-01-29T12:26:00Z",
+      "body": "We are facing some issues related to CI (see #2128); otherwise, it is ready for release."
+    },
+    {
+      "author": "Qazalbash",
+      "created_at": "2026-01-30T17:11:20Z",
+      "body": "@x-tabdeveloping [numpyro-0.20.0](https://github.com/pyro-ppl/numpyro/releases/tag/0.20.0) is out now. Please feel free to close this issue."
+    },
+    {
+      "author": "x-tabdeveloping",
+      "created_at": "2026-01-31T12:43:05Z",
+      "body": "Thanks! Awesome!"
+    }
+  ]
+}

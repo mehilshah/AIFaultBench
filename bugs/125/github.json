@@ -1,0 +1,48 @@
+{
+  "owner": "DLR-RM",
+  "repo": "stable-baselines3",
+  "number": 2175,
+  "html_url": "https://github.com/DLR-RM/stable-baselines3/issues/2175",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "duplicate",
+  "title": "[Bug]: collect_rollouts allows num_timesteps to exceed total_timesteps",
+  "author": "ShiraWild",
+  "created_at": "2025-09-10T15:42:24Z",
+  "updated_at": "2025-09-10T15:51:25Z",
+  "closed_at": "2025-09-10T15:51:20Z",
+  "labels": [
+    "bug",
+    "duplicate",
+    "RTFM",
+    "check the checklist"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:25.760861+00:00",
+  "comments": [
+    {
+      "author": "araffin",
+      "created_at": "2025-09-10T15:51:20Z",
+      "body": "Duplicate of https://github.com/DLR-RM/stable-baselines3/issues/1150\nIn the documentation since https://github.com/DLR-RM/stable-baselines3/pull/2133"
+    }
+  ]
+}

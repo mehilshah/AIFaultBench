@@ -1,0 +1,53 @@
+{
+  "owner": "huggingface",
+  "repo": "sentence-transformers",
+  "number": 3468,
+  "html_url": "https://github.com/huggingface/sentence-transformers/issues/3468",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "TypeError when evaluating similarity model on A100 GPUs using EmbeddingSimilarityEvaluator (works on CPU)",
+  "author": "joaograndotto",
+  "created_at": "2025-07-25T14:54:42Z",
+  "updated_at": "2025-07-25T16:15:54Z",
+  "closed_at": "2025-07-25T16:14:55Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.06,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:03.311847+00:00",
+  "comments": [
+    {
+      "author": "tomaarsen",
+      "created_at": "2025-07-25T15:39:54Z",
+      "body": "Hello!\n\nI believe this is a recent issue caused by the `datasets` v4.0 release, which was resolved in #3455. You can avoid this issue in one of two ways:\n* Use the `master` version of Sentence Transformers: `pip install git+https://UKPLab/sentence-transformers.git`\n* Don't use `datasets` v4.0: `pip install -U datasets<4.0`\n\nIf you give one of these a try, feel free to let me know if it works for you.\n\n- Tom Aarsen"
+    },
+    {
+      "author": "joaograndotto",
+      "created_at": "2025-07-25T16:14:55Z",
+      "body": " @tomaarsen  It worked, I made both changes and it worked, thank you very much! "
+    },
+    {
+      "author": "tomaarsen",
+      "created_at": "2025-07-25T16:15:54Z",
+      "body": "Awesome, glad to hear it! I'll bring out a release soon so that others don't have to install from source or downgrade packages anymore.\n\n- Tom Aarsen"
+    }
+  ]
+}

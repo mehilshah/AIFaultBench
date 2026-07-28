@@ -1,0 +1,60 @@
+{
+  "owner": "facebookresearch",
+  "repo": "detectron2",
+  "number": 1207,
+  "html_url": "https://github.com/facebookresearch/detectron2/issues/1207",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Incorrect output from pairwise_iou_rotated",
+  "author": "alekseynp",
+  "created_at": "2020-04-13T22:55:59Z",
+  "updated_at": "2020-04-15T21:03:03Z",
+  "closed_at": "2020-04-15T21:03:03Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.92,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:58.822162+00:00",
+  "comments": [
+    {
+      "author": "alekseynp",
+      "created_at": "2020-04-13T23:06:54Z",
+      "body": "CPU too\r\n```python\r\n# tensor([[0.2655]])\r\nprint(pairwise_iou_rotated(RotatedBoxes(boxes1.cpu()), RotatedBoxes(boxes2.cpu())))\r\n```"
+    },
+    {
+      "author": "alekseynp",
+      "created_at": "2020-04-14T18:54:15Z",
+      "body": "Reversing the rotation directions to `37.0` and `46.0`\r\n```python\r\ntensor([[0.]], device='cuda:0')\r\n```\r\n![out](https://user-images.githubusercontent.com/4382608/79262771-a76d7380-7e46-11ea-8913-f58729098050.png)\r\n"
+    },
+    {
+      "author": "SuperIRabbit",
+      "created_at": "2020-04-15T06:43:08Z",
+      "body": "Thanks a lot for the report and the example! \r\nA simplified test case would be\r\nboxes1 = torch.tensor([[3, 3, 8, 2, -45.0]], device=device)\r\nboxes2 = torch.tensor([[6, 0, 8, 2, -45.0]], device=device)\r\n(the expected ious should be 0)\r\nWe have found the bug related to xywha to 4-pts conversion for rotated box, and a fix is on the way."
+    },
+    {
+      "author": "alekseynp",
+      "created_at": "2020-04-15T15:45:45Z",
+      "body": "Yes, I think `get_rotated_vertices` has its CW/CCW rotation direction mixed up.\r\nAs a quick hack I negated the angles in `single_box_iou_rotated` on lines 324 and 329 and I got dramatically better results in training.\r\nProbably `get_rotated_vertices` is fixed by flipping the sign in front of all the `sinTheta2`?\r\n\r\nGiven that my val MAP just went from 78 to 84, this is important for people working with rotated boxes."
+    }
+  ]
+}

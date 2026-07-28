@@ -1,0 +1,45 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 9959,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/9959",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[``DistNeighborLoader``]TypeError: cannot unpack non-iterable NoneType object",
+  "author": "Yukun-Cui",
+  "created_at": "2025-01-18T14:03:33Z",
+  "updated_at": "2025-08-27T16:42:45Z",
+  "closed_at": "2025-08-27T16:42:45Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 221.11,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:10.584057+00:00",
+  "comments": [
+    {
+      "author": "puririshi98",
+      "created_at": "2025-08-27T16:42:45Z",
+      "body": "Use cugraph, try the nvidia  PyG containers https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg/tags\nwe are deprecating torch_Geom.dist since intel no longer supports it and it has always had issues\nhttps://github.com/pyg-team/pytorch_geometric/pull/10411"
+    }
+  ]
+}

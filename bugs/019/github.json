@@ -1,0 +1,103 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 11018,
+  "html_url": "https://github.com/tensorflow/models/issues/11018",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "import tensorflow_models as tfm",
+  "author": "andysingal",
+  "created_at": "2023-06-11T15:51:30Z",
+  "updated_at": "2023-07-01T02:10:43Z",
+  "closed_at": "2023-07-01T02:10:41Z",
+  "labels": [
+    "stat:awaiting response",
+    "type:bug",
+    "models:official",
+    "stale"
+  ],
+  "milestone": null,
+  "comments_count": 12,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 19.43,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:42.974036+00:00",
+  "comments": [
+    {
+      "author": "Dante-Berth",
+      "created_at": "2023-06-11T21:02:21Z",
+      "body": "I had the same error , you cannot use it because the directory does not exist but you have to check in your lib directory if the directory official exists, if it is  the case you are able to import the layers such as Bert...   Just import  official.nlp as nlp.\r\nIn my case tensorflow_models was not created however official which is the tensorflow garden repository was created.  Just check what you have and you will be able to know if it caused by the installation."
+    },
+    {
+      "author": "andysingal",
+      "created_at": "2023-06-12T08:10:15Z",
+      "body": "> \r\n\r\nThanks alot, i guess the page needs to be deprecated if it not in use. Thanks Again!!"
+    },
+    {
+      "author": "laxmareddyp",
+      "created_at": "2023-06-12T18:12:01Z",
+      "body": "\r\nHi @andysingal,\r\n\r\nTo help resolve the issue more efficiently, could you kindly provide a code snippet that replicates the problem you're experiencing?\r\n\r\n Thank you!\r\n\r\n"
+    },
+    {
+      "author": "Dante-Berth",
+      "created_at": "2023-06-12T20:43:52Z",
+      "body": "Yesterday, i created a new env with Python 3.11.3 and install the latest version of tf and tensorflow garden ( the framework) but got exactly the same error than the author. As i said, tensorflow_model is a missing directory which was available in the previous versions. My new error is AttributeError: module 'keras.api._v2.keras.mixed_precision' has no attribute 'experimental' ( error is caused by theofficial\\nlp\\keras_nlp\\layers\\transformer_encoder_block.py\", line 162, in build. I did not test my solution is to downgrade tensorflow and tensorflow garden. The authors was right the version is deprecated for the latest version of tensorflow (2.12>).\r\n\r\nI share you the version of my tf packages related :\r\nkeras                         2.12.0\r\nkeras-nightly                 2.14.0.dev2023061107\r\ntensorflow                    2.12.0\r\ntensorflow-addons             0.20.0\r\ntensorflow-datasets           4.9.2\r\ntensorflow-estimator          2.12.0\r\ntensorflow-hub                0.13.0\r\ntensorflow-intel              2.12.0\r\ntensorflow-io-gcs-filesystem  0.31.0\r\ntensorflow-metadata           1.13.1\r\ntensorflow-model-optimization 0.7.5\r\ntf-estimator-nightly          2.14.0.dev2023060108\r\ntf-models-nightly             2.4.0.dev20210111\r\ntf-models-no-deps             2.11.2\r\ntf-models-official            2.5.1\r\ntf-nightly                    2.14.0.dev20230610\r\ntf_nightly_intel              2.14.0.dev20230610\r\ntf-slim                       1.1.0"
+    },
+    {
+      "author": "andysingal",
+      "created_at": "2023-06-13T02:01:48Z",
+      "body": "> Yesterday, i created a new env with Python 3.11.3 and install the latest version of tf and tensorflow garden ( the framework) but got exactly the same error than the author. As i said, tensorflow_model is a missing directory which was available in the previous versions. My new error is AttributeError: module 'keras.api._v2.keras.mixed_precision' has no attribute 'experimental' ( error is caused by theofficial\\nlp\\keras_nlp\\layers\\transformer_encoder_block.py\", line 162, in build. I did not test my solution is to downgrade tensorflow and tensorflow garden. The authors was right the version is deprecated for the latest version of tensorflow (2.12>).\r\n> \r\n> I share you the version of my tf packages related : keras 2.12.0 keras-nightly 2.14.0.dev2023061107 tensorflow 2.12.0 tensorflow-addons 0.20.0 tensorflow-datasets 4.9.2 tensorflow-estimator 2.12.0 tensorflow-hub 0.13.0 tensorflow-intel 2.12.0 tensorflow-io-gcs-filesystem 0.31.0 tensorflow-metadata 1.13.1 tensorflow-model-optimization 0.7.5 tf-estimator-nightly 2.14.0.dev2023060108 tf-models-nightly 2.4.0.dev20210111 tf-models-no-deps 2.11.2 tf-models-official 2.5.1 tf-nightly 2.14.0.dev20230610 tf_nightly_intel 2.14.0.dev20230610 tf-slim 1.1.0\r\n\r\nThanks, [laxmareddyp](https://github.com/laxmareddyp) i hope Dan example is suffice for your query"
+    },
+    {
+      "author": "laxmareddyp",
+      "created_at": "2023-06-13T17:56:18Z",
+      "body": "Hi @andysingal ,\r\n\r\nI have installed `tf-models-official` version `2.12.0` successfully in [Colab](https://colab.sandbox.google.com/gist/sineeli/5beca77dfc6adf7767a3aee68d50c728/11018.ipynb) and can `import tensorflow_models as tfm` without encountering any errors. If you need any assistance or if there are specific steps or information I should know to help you further, please let me know, and I'll be glad to assist you."
+    },
+    {
+      "author": "Dante-Berth",
+      "created_at": "2023-06-13T18:55:16Z",
+      "body": "Hi @laxmareddyp , i tried what you have done, i recreated a env. From a new environement would you share us your command lines. I tried to reinstall it from scratch thanks to your command line in the notebook. However i had another mistake which was not caused by the tensorflow library. Could you share a protocol to us ? And I also installed tf-models-nightly which caused the error. Do you install tensorflow before tensorflow garden ? "
+    },
+    {
+      "author": "laxmareddyp",
+      "created_at": "2023-06-15T18:08:34Z",
+      "body": "Hi @Dante-Berth,\r\n\r\nInstalling `tf-models-official` will also install the latest version of TensorFlow by default, eliminating the need for a separate TensorFlow installation.\r\n\r\nRegarding using `tf-models-official` and `tf-models-nightly` at the same time, conflicts may arise when trying to install both packages simultaneously. This is because they can have overlapping dependencies or conflicting version requirements. It's recommended to choose one package based on your specific requirements and stick to it.\r\n\r\nIf you decide to use `tf-models-nightly` , you can install it and be mindful of potential conflicts if you have other TensorFlow-related packages installed in your environment.\r\n\r\nThanks"
+    },
+    {
+      "author": "Dante-Berth",
+      "created_at": "2023-06-16T20:10:28Z",
+      "body": "> Hi @Dante-Berth,\r\n> \r\n> Installing `tf-models-official` will also install the latest version of TensorFlow by default, eliminating the need for a separate TensorFlow installation.\r\n> \r\n> Regarding using `tf-models-official` and `tf-models-nightly` at the same time, conflicts may arise when trying to install both packages simultaneously. This is because they can have overlapping dependencies or conflicting version requirements. It's recommended to choose one package based on your specific requirements and stick to it.\r\n> \r\n> If you decide to use `tf-models-nightly` , you can install it and be mindful of potential conflicts if you have other TensorFlow-related packages installed in your environment.\r\n> \r\n> Thanks\r\n\r\nUnfortuntately, i had unexpected errors such as the version of tensorflow-text which could not be installed (may be caused my version of python). Thanks you for your answers but i do not need the library, i used to the library for Transformers. But in my case, i need to create custom transformers. I just need Tensorflow.\r\n\r\nThanks you for your help."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-06-24T02:05:50Z",
+      "body": "This issue has been marked stale because it has no recent activity since 7 days. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-07-01T02:10:40Z",
+      "body": "This issue was closed due to lack of activity after being marked stale for past 7 days."
+    },
+    {
+      "author": "google-ml-butler[bot]",
+      "created_at": "2023-07-01T02:10:43Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=Yes&entry.2137816233=https://github.com/tensorflow/models/issues/11018\">Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=No&entry.2137816233=https://github.com/tensorflow/models/issues/11018\">No</a>\n"
+    }
+  ]
+}

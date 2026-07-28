@@ -1,0 +1,43 @@
+{
+  "owner": "matterport",
+  "repo": "Mask_RCNN",
+  "number": 3050,
+  "html_url": "https://github.com/matterport/Mask_RCNN/issues/3050",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Problem with demo.ipynb (model = modellib.MaskRCNN(mode=\"inference\", model_dir=MODEL_DIR, config=config) ",
+  "author": "Kumararaja-M",
+  "created_at": "2024-08-23T12:59:22Z",
+  "updated_at": "2024-08-27T04:15:08Z",
+  "closed_at": "2024-08-27T04:15:08Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.64,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:13.455376+00:00",
+  "comments": [
+    {
+      "author": "hsbj6275",
+      "created_at": "2024-08-26T13:37:16Z",
+      "body": "same problem as you "
+    }
+  ]
+}

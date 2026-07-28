@@ -1,0 +1,48 @@
+{
+  "owner": "huggingface",
+  "repo": "sentence-transformers",
+  "number": 3262,
+  "html_url": "https://github.com/huggingface/sentence-transformers/issues/3262",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "SentenceTransfomer tokenizer result is not consistent with tokenize reuslt in encode",
+  "author": "swordow",
+  "created_at": "2025-03-10T05:41:15Z",
+  "updated_at": "2025-03-26T01:46:01Z",
+  "closed_at": "2025-03-26T01:46:00Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 15.84,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:00.352281+00:00",
+  "comments": [
+    {
+      "author": "tomaarsen",
+      "created_at": "2025-03-19T14:10:23Z",
+      "body": "Hello!\n\nIndeed, the Transformer module will strip inputs from whitespace at the start and end. I think this is indeed the cause of the discrepancy that you're seeing. I wish I could remove this and defer this kind of functionality to the `transformers` tokenizer, but removing this line would (slightly) break backwards compatibility: I don't want to push updates that change the outputs of the same `model.encode(\"blabla\")`.\n\n- Tom Aarsen"
+    },
+    {
+      "author": "swordow",
+      "created_at": "2025-03-26T01:46:00Z",
+      "body": "> Hello!\n> \n> Indeed, the Transformer module will strip inputs from whitespace at the start and end. I think this is indeed the cause of the discrepancy that you're seeing. I wish I could remove this and defer this kind of functionality to the `transformers` tokenizer, but removing this line would (slightly) break backwards compatibility: I don't want to push updates that change the outputs of the same `model.encode(\"blabla\")`.\n> \n> * Tom Aarsen\n\nOk\uff0ci got it\uff0c i could update it in local branch now~"
+    }
+  ]
+}

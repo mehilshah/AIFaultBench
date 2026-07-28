@@ -1,0 +1,46 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 13517,
+  "html_url": "https://github.com/tensorflow/models/issues/13517",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "ModuleNotFoundError: No module named 'tensorflow.conrtib' with TensorFlow 2.x",
+  "author": "IMmercato",
+  "created_at": "2025-01-02T19:27:55Z",
+  "updated_at": "2025-01-08T06:15:28Z",
+  "closed_at": "2025-01-05T18:57:15Z",
+  "labels": [
+    "type:docs",
+    "models:official"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.98,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:14.576481+00:00",
+  "comments": [
+    {
+      "author": "IMmercato",
+      "created_at": "2025-01-05T18:57:15Z",
+      "body": "I resolved it updating tf_slim"
+    }
+  ]
+}

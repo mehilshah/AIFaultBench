@@ -1,0 +1,55 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 47050,
+  "html_url": "https://github.com/huggingface/transformers/issues/47050",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "CanineModel fp16 ONNX export fails with dtype mismatch in attention (expected scalar type Float but found Half)",
+  "author": "sgpublic",
+  "created_at": "2026-07-04T03:12:04Z",
+  "updated_at": "2026-07-06T13:43:47Z",
+  "closed_at": "2026-07-06T13:43:47Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.44,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:07.915184+00:00",
+  "comments": [
+    {
+      "author": "123RohitVarshit",
+      "created_at": "2026-07-04T16:01:12Z",
+      "body": "I was able to reproduce this independently on a fresh checkout of `v5.12.1` using PyTorch 2.11.0+cu128, ONNX Runtime 1.23.2, CUDA 12.8, on a Tesla T4 - a different PyTorch version and GPU than the original report (PyTorch 2.9, RTX 5060), so this doesn't appear to be hardware- or version-specific.\n\n## Root cause of the first failure\n\nI instrumented both `CanineSelfAttention.forward()` and `_create_3d_attention_mask_from_input_mask()` with dtype prints. Here's what I observed:\n\n- After `model.half()`, `query_layer`, `key_layer`, and `value_layer` are all `float16`.\n- `_create_3d_attention_mask_from_input_mask()` always creates a `float32` mask, regardless of model dtype:\n  ```python\n  to_mask = torch.reshape(to_mask, (batch_size, 1, to_seq_length)).float()\n  broadcast_ones = torch.ones(\n      size=(batch_size, from_seq_length, 1),\n      dtype=torch.float32,\n      device=to_mask.device,\n  )\n  mask = broadcast_ones * to_mask\n  ```\n- In `CanineSelfAttention.forward()`, adding this `float32` mask to `attention_scores` (`float16`) promotes `attention_scores` to `float32`.\n- Consequently, `attention_probs` (after softmax) is also `float32`, while `value_layer` remains `float16`.\n- The subsequent\n  ```python\n  context_layer = torch.matmul(attention_probs, value_layer)\n  ```\n  fails with:\n  ```\n  RuntimeError: expected scalar type Float but found Half\n  ```\n  which matches the original report.\n\nThis path is specific to the shallow character encoders (`initial_char_encoder` / `final_char_encoder`). The deep encoder uses `create_bidirectional_mask()`, which is already dtype-aware and doesn't hit this issue.\n\n## Debugging experiment (not a proposed fix)\n\nI inserted:\n```python\nattention_mask = attention_mask.to(attention_scores.dtype)\n```\nimmediately before:\n```python\nattention_scores = attention_scores + attention_mask\n```\nThis keeps the attention computation entirely in `float16`, and export proceeds past the original failure.\n\nI'm unsure whether the correct fix is:\n- making `_create_3d_attention_mask_from_input_mask()` construct the mask in the model's dtype directly, or\n- having `CanineSelfAttention` defensively cast any incoming mask to `attention_scores.dtype`.\n\nHappy to submit a PR for whichever approach is preferred.\n\n## Second issue\n\nAfter the dtype mismatch is resolved, export progresses further but then fails inside `_repeat_molecules()` with:\n```\nRuntimeError: Expected all tensors to be on the same device, but got index is on cpu, different from other tensors on cuda:0\n```\nI haven't fully investigated this yet, so I don't want to claim a root cause prematurely - my current guess is that a shape-derived value gets traced as a CPU tensor during ONNX export and later interacts with a CUDA tensor in `torch.repeat_interleave`, but that's unconfirmed.\n\n## Summary\n\nThere appear to be at least two independent FP16 ONNX export issues in `CanineModel`:\n1. a confirmed dtype promotion caused by the 3D attention mask in the shallow encoders, and\n2. a separate, not-yet-diagnosed device-placement issue in `_repeat_molecules()` that becomes visible once the first is fixed.\n\nLet me know if a PR addressing the mask issue is welcome on its own, or if you'd prefer both resolved together."
+    },
+    {
+      "author": "sgpublic",
+      "created_at": "2026-07-05T00:39:24Z",
+      "body": "Hi @123RohitVarshit , thanks for trying to reproduce this.\n\nI realized that the issue is not actually specific to CUDA. The underlying problem is the fp16 dtype mismatch during ONNX export, and it can also be reproduced on CPU.\n\nI\u2019ve updated the issue title and description to remove the unnecessary CUDA-specific wording and keep the report focused on the actual problem.\n\nSorry for the confusion."
+    },
+    {
+      "author": "lcheng321",
+      "created_at": "2026-07-05T07:02:42Z",
+      "body": "Fixed in https://github.com/huggingface/transformers/pull/47083."
+    }
+  ]
+}

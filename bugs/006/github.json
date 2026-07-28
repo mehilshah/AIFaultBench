@@ -1,0 +1,83 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 11134,
+  "html_url": "https://github.com/tensorflow/models/issues/11134",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "WARNING:tensorflow:Gradients do not exist for variables...when minimizing the loss.",
+  "author": "nikgarhwal",
+  "created_at": "2023-12-22T13:05:43Z",
+  "updated_at": "2024-07-04T09:56:37Z",
+  "closed_at": "2024-01-27T01:44:33Z",
+  "labels": [
+    "stat:awaiting response",
+    "type:support",
+    "models:research",
+    "stale"
+  ],
+  "milestone": null,
+  "comments_count": 8,
+  "reactions": {
+    "total_count": 1,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 1
+  },
+  "resolution_days": 35.53,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:21.719931+00:00",
+  "comments": [
+    {
+      "author": "laxmareddyp",
+      "created_at": "2024-01-03T20:02:07Z",
+      "body": "Hi @nikgarhwal,\r\n\r\nTo assist you more efficiently, could you please share a code sample or a link to a Google Colab notebook that reproduces the issue you're experiencing? Additionally, it would be helpful to know whether you are using the official TensorFlow Model Garden repository or a research-based one.\r\n\r\nThanks."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-01-11T01:47:24Z",
+      "body": "This issue has been marked stale because it has no recent activity since 7 days. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "nikgarhwal",
+      "created_at": "2024-01-11T05:35:26Z",
+      "body": "I\u2019m using the efficient diet d1 model from the official tf2 model zoo repository. But I tried to configure the model by tuning the parameters. \r\n\r\nHere\u2019s the colab file link:\r\n\r\nhttps://colab.research.google.com/drive/1suzuFZrXo97x-91u1RM86VQ0jjo1f0gi?usp=share_link\r\n\r\nHere\u2019s my configured pipeline link, that I\u2019m using to train the model : \r\n\r\nhttps://drive.google.com/file/d/1-XWY4Uc6OKWrOTu5TCrBpMxw6EVlplpt/view?usp=share_link"
+    },
+    {
+      "author": "laxmareddyp",
+      "created_at": "2024-01-11T16:15:59Z",
+      "body": "Hi @nikgarhwal ,\r\n\r\nI strongly suggest utilizing the [TensorFlow Official Model Garden](https://github.com/tensorflow/models/tree/master/official/vision#table-of-contents) to circumvent issues related to outdated code commonly found in research codebases. Unlike the research repositories, the [Official Model Garden](https://www.tensorflow.org/tfmodels) is consistently updated and aligned with the latest changes in TensorFlow and other libraries and there are lot of API's are available that you can define a training experiment using Python commands in the [TensorFlow Model library](https://www.tensorflow.org/api_docs/python/tfm/core).We have developed several [Notebook examples like object detection ](https://www.tensorflow.org/tfmodels/vision/object_detection)that illustrate how to train models from the ground up.\r\n\r\nThanks."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-01-19T01:47:41Z",
+      "body": "This issue has been marked stale because it has no recent activity since 7 days. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-01-27T01:44:32Z",
+      "body": "This issue was closed due to lack of activity after being marked stale for past 7 days."
+    },
+    {
+      "author": "google-ml-butler[bot]",
+      "created_at": "2024-01-27T01:44:35Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=Yes&entry.2137816233=https://github.com/tensorflow/models/issues/11134\">Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=No&entry.2137816233=https://github.com/tensorflow/models/issues/11134\">No</a>\n"
+    },
+    {
+      "author": "shivam-bme",
+      "created_at": "2024-07-04T09:56:36Z",
+      "body": "Hi @laxmareddyp \r\ni were using tensorflow model garden repositry for model developement and along with tensorflow 2.0 object detection api tutorial i also modified suggested change in pipeline.config file , your your assistantance here is model configuration file \r\n\r\n\r\n\"model {\r\n  ssd {\r\n    num_classes: 1\r\n    image_resizer {\r\n      keep_aspect_ratio_resizer {\r\n        min_dimension: 1024\r\n        max_dimension: 1024\r\n        pad_to_max_dimension:true\r\n      }\r\n    }\r\n    feature_extractor {\r\n      type: \"ssd_efficientnet-b4_bifpn_keras\"\r\n      conv_hyperparams {\r\n        regularizer {\r\n          l2_regularizer {\r\n            weight: 3.9999998989515007e-05\r\n          }\r\n        }\r\n        initializer {\r\n          truncated_normal_initializer {\r\n            mean: 0.0\r\n            stddev: 0.029999999329447746\r\n          }\r\n        }\r\n        activation: SWISH\r\n        batch_norm {\r\n          decay: 0.9900000095367432\r\n          scale: true\r\n          epsilon: 0.0010000000474974513\r\n        }\r\n        force_use_bias: true\r\n      }\r\n      bifpn {\r\n        min_level: 3\r\n        max_level: 7\r\n        num_iterations: 7\r\n        num_filters: 224\r\n      }\r\n    }\r\n    box_coder {\r\n      faster_rcnn_box_coder {\r\n        y_scale: 1.0\r\n        x_scale: 1.0\r\n        height_scale: 1.0\r\n        width_scale: 1.0\r\n      }\r\n    }\r\n    matcher {\r\n      argmax_matcher {\r\n        matched_threshold: 0.5\r\n        unmatched_threshold: 0.5\r\n        ignore_thresholds: false\r\n        negatives_lower_than_unmatched: true\r\n        force_match_for_each_row: true\r\n        use_matmul_gather: true\r\n      }\r\n    }\r\n    similarity_calculator {\r\n      iou_similarity {\r\n      }\r\n    }\r\n    box_predictor {\r\n      weight_shared_convolutional_box_predictor {\r\n        conv_hyperparams {\r\n          regularizer {\r\n            l2_regularizer {\r\n              weight: 3.9999998989515007e-05\r\n            }\r\n          }\r\n          initializer {\r\n            random_normal_initializer {\r\n              mean: 0.0\r\n              stddev: 0.009999999776482582\r\n            }\r\n          }\r\n          activation: SWISH\r\n          batch_norm {\r\n            decay: 0.9900000095367432\r\n            scale: true\r\n            epsilon: 0.0010000000474974513\r\n          }\r\n          force_use_bias: true\r\n        }\r\n        depth: 224\r\n        num_layers_before_predictor: 4\r\n        kernel_size: 3\r\n        class_prediction_bias_init: -4.599999904632568\r\n        use_depthwise: true\r\n      }\r\n    }\r\n    anchor_generator {\r\n      multiscale_anchor_generator {\r\n        min_level: 3\r\n        max_level: 7\r\n        anchor_scale: 4.0\r\n        aspect_ratios: 1.0\r\n        aspect_ratios: 2.0\r\n        aspect_ratios: 0.5\r\n        scales_per_octave: 3\r\n      }\r\n    }\r\n    post_processing {\r\n      batch_non_max_suppression {\r\n        score_threshold: 9.99999993922529e-09\r\n        iou_threshold: 0.5\r\n        max_detections_per_class: 100\r\n        max_total_detections: 100\r\n      }\r\n      score_converter: SIGMOID\r\n    }\r\n    normalize_loss_by_num_matches: true\r\n    loss {\r\n      localization_loss {\r\n        weighted_smooth_l1 {\r\n        }\r\n      }\r\n      classification_loss {\r\n        weighted_sigmoid_focal {\r\n          gamma: 1.5\r\n          alpha: 0.25\r\n        }\r\n      }\r\n      classification_weight: 1.0\r\n      localization_weight: 1.0\r\n    }\r\n    encode_background_as_zeros: true\r\n    normalize_loc_loss_by_codesize: true\r\n    inplace_batchnorm_update: true\r\n    freeze_batchnorm: false\r\n    add_background_class: false\r\n  }\r\n}\r\ntrain_config {\r\n  batch_size: 16\r\n  data_augmentation_options {\r\n    random_horizontal_flip {\r\n    }\r\n  }\r\n  data_augmentation_options {\r\n    random_scale_crop_and_pad_to_square {\r\n      output_size: 1024\r\n      scale_min: 0.10000000149011612\r\n      scale_max: 2.0\r\n    }\r\n  }\r\n  sync_replicas: true\r\n  optimizer {\r\n    momentum_optimizer {\r\n      learning_rate {\r\n        cosine_decay_learning_rate {\r\n          learning_rate_base: 0.07999999821186066\r\n          total_steps: 30000\r\n          warmup_learning_rate: 0.0010000000474974513\r\n          warmup_steps: 2500\r\n        }\r\n      }\r\n      momentum_optimizer_value: 0.8999999761581421\r\n    }\r\n    use_moving_average: false\r\n    \r\n  }\r\n  fine_tune_checkpoint: \"/home/shivam_singh/models/workspace/training_demo/pre-trained_models/efficientdet_d4_coco17_tpu-32/checkpoint/ckpt-0\"\r\n  num_steps: 3000\r\n  startup_delay_steps: 0.0\r\n  replicas_to_aggregate: 8\r\n  max_number_of_boxes: 100\r\n  unpad_groundtruth_tensors: false\r\n  fine_tune_checkpoint_type: \"detection\"\r\n  use_bfloat16: false\r\n  fine_tune_checkpoint_version: V2\r\n}\r\ntrain_input_reader: {\r\n  label_map_path: \"/home/shivam_singh/models/workspace/training_demo/annotations/label_map.pbtxt\"\r\n  tf_record_input_reader {\r\n    input_path: \"/media/shivam_singh/New Volume/DownloadsMain/dataset_node21/cxr_images/original_data/tfrecords/test.record\"\r\n  }\r\n}\r\n\r\neval_config: {\r\n  metrics_set: \"coco_detection_metrics\"\r\n  use_moving_averages: false\r\n  batch_size: 1;\r\n}\r\n\r\neval_input_reader: {\r\n  label_map_path: \"/home/shivam_singh/models/workspace/training_demo/annotations/label_map.pbtxt\"\r\n  shuffle: false\r\n  num_epochs: 1\r\n  tf_record_input_reader {\r\n    input_path: \"/media/shivam_singh/New Volume/DownloadsMain/dataset_node21/cxr_images/original_data/tfrecords/test.record\"\r\n  }\r\n}\" "
+    }
+  ]
+}

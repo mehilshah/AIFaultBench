@@ -1,0 +1,50 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2132,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2132",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Sampling ~10\u00d7 slower when using same MCMC object after warmup() vs creating new MCMC with num_warmup=0",
+  "author": "gaetanoscandariato",
+  "created_at": "2026-02-02T11:39:04Z",
+  "updated_at": "2026-02-03T23:17:16Z",
+  "closed_at": "2026-02-03T23:17:15Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.48,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:52.071212+00:00",
+  "comments": [
+    {
+      "author": "gaetanoscandariato",
+      "created_at": "2026-02-02T16:27:38Z",
+      "body": "Hi,\n\nafter running some human-intelligence extra tests, I found the problem and here is the artifical-intelligence produced summary:\n\n-------\n- Problem: Restarting by creating a new `MCMC(..., num_warmup=0, init_params=...)` *does not* transfer the adapted mass matrix and step size. Only parameter positions are restored. This can produce very fast-looking but *invalid* sampling (high divergence / posterior corruption).\n- Root cause: The tuned sampler state is stored in `mcmc.last_state` (contains the adapted mass matrix and step size). `init_params` only sets parameter positions and thus is insufficient for a proper restart.\n\nMinimal reproduction\n--------------------\n1. Run warmup + sampling on `mcmc = MCMC(NUTS(...))`:\n   - `mcmc.warmup(key, ...); mcmc.run(key, ...); last_state = mcmc.last_state`\n2. Approach A (problematic):\n   - `m2 = MCMC(NUTS(...), num_warmup=0)`\n   - `m2.run(key, ..., init_params=last_samples)` \u2192 yields many divergences and artificially high it/s (samples are mostly rejected).\n3. Approach B (correct):\n   - `m2 = MCMC(NUTS(...), num_warmup=0)`\n   - `m2.post_warmup_state = last_state; m2._warmup_state = last_state`\n   - `m2.run(key, ...)` \u2192 normal behaviour (low divergences, proper ESS/rhat).\n\nWhat we changed\n-------------------------\n- Save `mcmc.last_state` in checkpoints (pickles) under the key `'mcmc_last_state'` (intermediate + final saves).\n- On restart, if `mcmc_last_state` is present, restore it into `mcmc.post_warmup_state` and `mcmc._warmup_state` *before* the first run/batch.\n- Added tests verifying both the bad behavior (init_params only \u2192 100% divergences) and the correct restart behavior when state is restored.\n\n\nSuggested fixes and NumPyro improvements\n---------------------------------------\n1. Public API for state serialization: provide official helpers to save/restore HMC/NUTS state (mass matrix, step size, adapt info).\n2. `MCMC` initialization option for a prior warmup state, e.g. `MCMC(..., initial_state=previous_state)`, or explicit `mcmc.load_state(state)`.\n3. Document clearly that `init_params` does *not* include tuning/adaptation state and warn users about unsafe restarts.\n4. Provide convenience helpers `mcmc.save_state(path)` / `mcmc.load_state(path)` or analogous utility functions.\n5. Consider emitting a warning/error when `num_warmup=0` is used with `init_params` but no sampler state is present.\n6. Add diagnostics to highlight suspiciously high iteration rates after restart that coincide with high divergence rates.\n\nWhy this matters\n-----------------\nUsers restarting runs with `init_params` (assuming it fully restores sampler state) can unknowingly obtain fast yet invalid sampling and misleading performance numbers. Making the adaptation state explicit and easily restorable avoids silent misuse.\n\nIf helpful, I can open a concise issue in the NumPyro repository with the repro script and tests attached, or prepare a prototype PR adding `save_state/load_state` helpers.\n\nThanks for looking into this.\n"
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2026-02-03T23:17:15Z",
+      "body": "Thanks @gaetanoscandariato! Pls checkout https://num.pyro.ai/en/latest/mcmc.html#numpyro.infer.mcmc.MCMC.post_warmup_state doc for the usage."
+    }
+  ]
+}

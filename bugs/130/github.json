@@ -1,0 +1,50 @@
+{
+  "owner": "facebookresearch",
+  "repo": "xformers",
+  "number": 1185,
+  "html_url": "https://github.com/facebookresearch/xformers/issues/1185",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Incorrect implementation of `BlockDiagonalCausalMask.to(..)`",
+  "author": "vineelwf",
+  "created_at": "2024-12-26T05:53:25Z",
+  "updated_at": "2024-12-27T14:11:59Z",
+  "closed_at": "2024-12-27T12:19:38Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.27,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:33.164878+00:00",
+  "comments": [
+    {
+      "author": "danthe3rd",
+      "created_at": "2024-12-27T09:40:35Z",
+      "body": "Hi,\r\nThanks for reporting this bug. Will push a fix within a few days"
+    },
+    {
+      "author": "danthe3rd",
+      "created_at": "2024-12-27T14:11:57Z",
+      "body": "Fixed in https://github.com/facebookresearch/xformers/commit/a8746f3bb3bab42aa6064b5e4ee9ba80ce0a2bcf"
+    }
+  ]
+}

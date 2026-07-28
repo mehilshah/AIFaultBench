@@ -1,0 +1,66 @@
+{
+  "owner": "stanfordnlp",
+  "repo": "stanza",
+  "number": 1366,
+  "html_url": "https://github.com/stanfordnlp/stanza/issues/1366",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "If a word does not have a POS (specifically xpos) value what should I do?",
+  "author": "gabriellestein",
+  "created_at": "2024-03-13T00:58:17Z",
+  "updated_at": "2024-04-20T18:58:50Z",
+  "closed_at": "2024-04-20T18:58:49Z",
+  "labels": [
+    "question",
+    "fixed on dev"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 38.75,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:49.700764+00:00",
+  "comments": [
+    {
+      "author": "AngledLuffa",
+      "created_at": "2024-03-13T03:11:19Z",
+      "body": "This is kinda funny.  The tokenizer has misinterpreted `Johanna` to be similar to tokens such as `wanna` and `gonna`, which get split into `want to` and `going to`.  I suppose in this case it would be `Johan to`?  Obviously this is incorrect, and I will add a sentence or two to the training data to hopefully fix it up.\r\n\r\nTo answer the question regarding not having an `xpos`, the tokens which are split into multiple word pieces are included in the `to_dict()` result like this.  Those macro tokens don't have POS because they are composed of multiple words, so for example `want to` both have their own POS in the above example.  You can skip them if they have an ID which isn't a single integer, or you can iterate over just the word pieces with `doc.sentences[i].words()`\r\n\r\nGoing through the English words ending with \"nna\", here are some broken examples:\r\n\r\n```\r\nMy favorite actress is Joanna Lumley\r\nI used a burnt sienna crayon to color in the picture\r\nA large goanna bit my arm\r\nSomeone I know wears a bandanna every time he goes dancing\r\nLegend tells us belladonna killed Socrates\r\nMs. Bumbry was never afraid to inhabit the primadonna role offstage\r\nUnlike most fish, channa can leave the water for a short period of time\r\nApparently Madonna loathes hydrangeas\r\nThe savanna has many lions\r\nI got a henna tattoo of my Chinese name\r\nThe Israelites survived on manna during the Exodus\r\nThat restaurant has excellent panna cotta\r\nNanna is an Icelandic singer\r\n```\r\n\r\nCorrectly not split:\r\n\r\n```\r\nI accidentally touched Jennifer's antenna and she accused me of sexual harassment\r\nThe common platanna is invasive in the US\r\nThe music at the feiseanna was energizing\r\nGloria, hosanna in excelsis\r\nThe Duenna is an opera in three acts\r\nI have not read Anna Karenina\r\nA pinna is a fern leaf\r\nOne set of Islamic traditions is the sunna\r\nYou were supposed to take ONE senna, not ten.  Now who's going to clean up all this ...\r\n```\r\n\r\n\r\nCorrectly split, but the lemmatizer gets it wrong - presumably no training data available - \r\n\r\n```\r\nDinna light that candle!\r\n```\r\n\r\nshould split to \"do not\"\r\n\r\nThen there's the ambiguous case of `canna`, which is either a lily or Scotty saying \"I canna change the laws of physics!\"\r\n\r\nHeh, THREE Star Trek references in one github response.  I'm becoming more efficient!"
+    },
+    {
+      "author": "gabriellestein",
+      "created_at": "2024-03-13T10:17:27Z",
+      "body": "Thank you for the quick response. That fixed my issue!\r\n`if not instanceof(word[\u2018id\u2019], int):`\r\nI\u2019m not too concerned about incorrect lemmatizations for my application but that thank you for updating the training set, that will surely help someone down the road!\r\nI wish I had a clever Star Trek response but embarrassingly I\u2019ve never seen a Star Trek movie. So just imagine I said something very witty. "
+    },
+    {
+      "author": "AngledLuffa",
+      "created_at": "2024-03-13T16:51:49Z",
+      "body": "Without knowing your particular application, I would be surprised if it's happy with `Johanna` being broken into two pieces and then possibly not given an `NNP` tag.  However, updating the training set with a few examples of `-nna` makes it not split for most of the cases listed above.  Weirdly, it still splits for `henna`..."
+    },
+    {
+      "author": "AngledLuffa",
+      "created_at": "2024-03-13T22:22:18Z",
+      "body": "Alright, I added a few more sentences with henna to the training data until it stopped splitting that word for no reason.  The new models should be automatically downloaded by v1.8.1\r\n\r\n```\r\n>>> print(\"{:C}\".format(pipe(\"Johanna said she's gonna get a henna tattoo\")))\r\n# text = Johanna said she's gonna get a henna tattoo\r\n# sent_id = 0\r\n1       Johanna _       _       _       _       0       _       _       start_char=0|end_char=7\r\n2       said    _       _       _       _       1       _       _       start_char=8|end_char=12\r\n3-4     she's   _       _       _       _       _       _       _       start_char=13|end_char=18\r\n3       she     _       _       _       _       2       _       _       start_char=13|end_char=16\r\n4       's      _       _       _       _       3       _       _       start_char=16|end_char=18\r\n5-6     gonna   _       _       _       _       _       _       _       start_char=19|end_char=24\r\n5       gon     _       _       _       _       4       _       _       start_char=19|end_char=22\r\n6       na      _       _       _       _       5       _       _       start_char=22|end_char=24\r\n7       get     _       _       _       _       6       _       _       start_char=25|end_char=28\r\n8       a       _       _       _       _       7       _       _       start_char=29|end_char=30\r\n9       henna   _       _       _       _       8       _       _       start_char=31|end_char=36\r\n10      tattoo  _       _       _       _       9       _       _       start_char=37|end_char=43|SpaceAfter=No\r\n```"
+    },
+    {
+      "author": "AngledLuffa",
+      "created_at": "2024-04-20T18:58:49Z",
+      "body": "This is now part of the 1.8.2 release"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "owner": "lucidrains",
+  "repo": "vector-quantize-pytorch",
+  "number": 191,
+  "html_url": "https://github.com/lucidrains/vector-quantize-pytorch/issues/191",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "In ResidualSimVQ: return_loss is not defined",
+  "author": "zaptrem",
+  "created_at": "2025-02-03T07:11:09Z",
+  "updated_at": "2025-02-03T19:14:58Z",
+  "closed_at": "2025-02-03T19:14:47Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 8,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.5,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:49.591437+00:00",
+  "comments": [
+    {
+      "author": "lucidrains",
+      "created_at": "2025-02-03T13:24:40Z",
+      "body": "@zaptrem hey Ryan, thanks for the catch, should be fixed\n\nyou seeing something with sim vq? how's the music autoencoder stuff going?"
+    },
+    {
+      "author": "zaptrem",
+      "created_at": "2025-02-03T18:32:58Z",
+      "body": "> [@zaptrem](https://github.com/zaptrem) hey Ryan, thanks for the catch, should be fixed\n> \n> you seeing something with sim vq? how's the music autoencoder stuff going?\n\nOur continuous one is great, check out the staff picks [here](https://sonauto.ai/) to listen to a diffusion model trained on it.\n\nI'm interested in trying out a token model, now. Compared to baseline RVQ implementation from DAC FSQ, LFQ, and SimVQ underperform at the same codebook size (1024) and codebook count (9). However, SimVQ underperforms the least. I'm interested in using these to massively scale up the codebook size to match modern image tokenizers.\n\n\nSee mel loss over first hour or so here. Worst by far is LFQ (red), followed by FSQ (light green), followed by SimVQ (purple) and baseline (dark green). I haven't tried rotation trick nor scaling code count yet. \n\n![Image](https://github.com/user-attachments/assets/2e2efb92-6e32-4dce-87f6-c3b5d61a5b97)\n\n\n\nSimVQ paper implies LFQ/FSQ underperforming normal RVQ at smaller codebook sizes is a known issue? \n\n![Image](https://github.com/user-attachments/assets/1ba404a2-2135-4452-a57c-b35f215d9150)"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2025-02-03T18:37:38Z",
+      "body": "@zaptrem hehe very nice, you've made a lot of progress since you last reached out\n\nthat's really interesting, have you tried regular RVQ with the new rotation trick from Chris Fifty? oh just noticed you said you haven't. you definitely should, it is a rotary embedding level paper."
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2025-02-03T18:41:40Z",
+      "body": "agreed with your observations for LFQ. don't hear many great things about it, but FSQ, with some tuning, you can get good results. i think there's a new [audio codec](https://stability-ai.github.io/stable-codec-demo/) out of Stability.ai that used it, as is a growing number of other [papers](https://arxiv.org/abs/2411.13683)"
+    },
+    {
+      "author": "zaptrem",
+      "created_at": "2025-02-03T18:43:50Z",
+      "body": "> [@zaptrem](https://github.com/zaptrem) hehe very nice, you've made a lot of progress since you last reached out\n> \n> that's really interesting, have you tried regular RVQ with the new rotation trick from Chris Fifty? oh just noticed you said you haven't. you definitely should, it is a rotary embedding level paper.\n\nI'll try that next, though I think tokens don't have a shot of even coming close to our continuous model in audio quality without OOM larger codebooks (which I've heard vanilla RVQ has issues with) or a significantly stronger generator (ours is already pretty strong and I'd like to avoid fighting the GAN stability beast again if possible).\n\n\nI saw Stable Codec but they only use one codebook whereas I want to use multiple to let us keep higher spatial compression ratios. Also, they use some semantic distillation stuff which probably won't work well for music where the non-speech stuff is just as important. Have you seen good results with Residual FSQ?"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2025-02-03T18:48:27Z",
+      "body": "@zaptrem yea let's chat offline for the street talk (reach out to me over Signal)\n\nlet me try to reproduce and fix that shape inconsistency issue with quantize dropout later this evening"
+    },
+    {
+      "author": "zaptrem",
+      "created_at": "2025-02-03T18:56:26Z",
+      "body": "> @zaptrem yea let's chat offline for the street talk (reach out to me over Signal)\n> \n> let me try to reproduce and fix that shape inconsistency issue with quantize dropout later this evening\n\nSounds good. My signal is https://1ty.me/AB6v5s"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2025-02-03T19:14:47Z",
+      "body": "@zaptrem nice, yea, just [shoot me a message](https://lucidrains.github.io/) and i'll get back to you tomorrow morning\n\nthink the quantize dropout issue should be resolved for residual sim vq"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2691,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2691",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] The behaviour of `param_groups_layer_decay()` towards `requires_grad==False` parameters",
+  "author": "sjiang95",
+  "created_at": "2026-04-09T03:46:26Z",
+  "updated_at": "2026-04-22T03:31:54Z",
+  "closed_at": "2026-04-22T03:31:54Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 12.99,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:36.874286+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2026-04-09T16:07:22Z",
+      "body": "@sjiang95 so, I think I understand the issue but I believe this is the way it should be re consistency of behaviour and difficulty of implementation. \n\nI feel it makes most sense that the same 'groups' of params are assigned to the same lr scale regardless of which params are (externally) marked `requires_grad=False` by the user.\n\nIn the case you show, you marked all params of a group `requires_grad=False`. But it'd also be trivial to set a subset, like all norm layers, what then? The complexity of tracking partial/full state across groups and then adjusting at a group level, etc just seems to be overly complicated and likely more confusing for must users. \n\nIn the typical use case of layer-wise LR decay the point is to focus on training the model towards the head and, if anything, have parts of the model near the stem/trunk frozen. So this also runs counter to the typical use case...  so in this exceptional case, I think the behaviour is reasonable? \n\nDoes that make sense?\n\nIf any adjustment is to be made, maybe an addition to the API to set the 'anchor' or 'last group id' for the decay so in the case it's at the end we could say lr_scale 1.0 is applied at N-1. Dealing with any middle case would IMHO be not worth the effort.\n"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2026-04-09T18:22:09Z",
+      "body": "This would be my proposal\n\n```\n  layer_max = num_layers - 1\n  effective_layer_max = layer_max - layer_decay_offset\n  layer_scales = [\n      max(min_scale, layer_decay ** max(0, effective_layer_max - i))\n      for i in range(num_layers)\n  ]\n```\n\n  So with layer ids 0..3 and layer_decay=0.9:\n\n  - layer_decay_offset=0 -> [0.729, 0.81, 0.9, 1.0]\n  - layer_decay_offset=1 -> [0.81, 0.9, 1.0, 1.0]\n  - layer_decay_offset=-1 -> [0.6561, 0.729, 0.81, 0.9]\n\n"
+    },
+    {
+      "author": "sjiang95",
+      "created_at": "2026-04-13T02:28:08Z",
+      "body": "@rwightman , I finally solved this by implementing a customized callable `group_matcher()`.\n\nIndeed\n\n> but I believe this is the way it should be re consistency of behaviour and difficulty of implementation.\n\nThe lr decay mechanism is hard to be implemented in a general way to be compatible with arbitrary model architecture.\n\n============================================================================\n\nTo anyone who is confused by how to implement a special param group parser,\n\nbesides the above-mentioned dict of re, another choice is to implement and return a callable with signature `foo(name: str)` by `group_matcher()`\n\nhttps://github.com/huggingface/pytorch-image-models/blob/c769a585e0915c58fd7bb92f2355377aab7fc0e0/timm/models/_manipulate.py#L110-L114\n\nFor example,\n\nhttps://github.com/huggingface/pytorch-image-models/blob/c769a585e0915c58fd7bb92f2355377aab7fc0e0/timm/models/cait.py#L351-L365"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2026-04-14T16:20:10Z",
+      "body": "@sjiang95 I'd actually forgotten that I implemented a callable option for group_matcher, that does give a LOT of flexibility to override and get exactly what you want re dynamic grouping... "
+    },
+    {
+      "author": "sjiang95",
+      "created_at": "2026-04-15T00:35:23Z",
+      "body": "You've done a really nice job!"
+    }
+  ]
+}

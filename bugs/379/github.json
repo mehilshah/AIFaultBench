@@ -1,0 +1,61 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 1598,
+  "html_url": "https://github.com/huggingface/accelerate/issues/1598",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`device_map={\"\": \"cuda\"}` raises `Can't pickle <function Embedding.forward` when using multiprocessing, while loading with PyTorch context `with torch.device(\"cuda\"):` goes fine",
+  "author": "fxmarty",
+  "created_at": "2023-06-16T06:13:08Z",
+  "updated_at": "2023-08-26T04:32:44Z",
+  "closed_at": "2023-07-17T09:07:22Z",
+  "labels": [
+    "bug",
+    "GPU"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 31.12,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:51.115981+00:00",
+  "comments": [
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-07-16T15:06:03Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\nPlease note that issues that do not follow the [contributing guidelines](https://github.com/huggingface/accelerate/blob/main/CONTRIBUTING.md) are likely to be ignored."
+    },
+    {
+      "author": "fxmarty",
+      "created_at": "2023-07-17T09:07:22Z",
+      "body": "looks fixed"
+    },
+    {
+      "author": "bpevangelista",
+      "created_at": "2023-08-26T03:42:13Z",
+      "body": "It appears I'm hitting the same if I call \"torch.save(model, xxx)\" after loading. Works fine if I don't pass \"device_map\".\r\n\r\naccelerate             0.22.0\r\ntorch                     2.0.1"
+    },
+    {
+      "author": "muellerzr",
+      "created_at": "2023-08-26T04:32:44Z",
+      "body": "@bpevangelista can you provide a full reproducer please?"
+    }
+  ]
+}

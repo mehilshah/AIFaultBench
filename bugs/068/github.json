@@ -1,0 +1,70 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-io",
+  "number": 1475,
+  "html_url": "https://github.com/keras-team/keras-io/issues/1475",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Efficient Object Detection with YOLOV8 and KerasCV training issue",
+  "author": "Paryavi",
+  "created_at": "2023-08-09T03:48:54Z",
+  "updated_at": "2025-03-03T11:10:13Z",
+  "closed_at": "2023-09-14T21:51:25Z",
+  "labels": [
+    "type:bug"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 2,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 2
+  },
+  "resolution_days": 36.75,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:01.690668+00:00",
+  "comments": [
+    {
+      "author": "Paryavi",
+      "created_at": "2023-08-09T03:55:04Z",
+      "body": "Colab AI suggests this;\r\n\r\nColab AI\r\nThe error is coming from the keras_cv.metrics.object_detection.box_coco_metrics module. The _box_concat function is expecting two tensors with the same shape, but the shapes of the tensors in your input are not the same. The first tensor has a shape of [4, 2, 4], while the second tensor has a shape of [4, 1, 4].\r\n\r\nTo fix this error, you need to make sure that the two tensors have the same shape. One way to do this is to use the tf.expand_dims function to add a new dimension to the second tensor. For example, you could use the following code:\r\n\r\n \r\ntf.expand_dims(val_ds, axis=1)\r\n[Use code with caution](https://g.co/legal/generative-code)\r\nThis will add a new dimension to the second tensor, making it have the same shape as the first tensor. Once you have done this, you should be able to run the yolo.fit function without any errors."
+    },
+    {
+      "author": "meinternational",
+      "created_at": "2023-09-12T21:20:00Z",
+      "body": "You can avoid the problem by not using `RaggedTensorSpec` for `'boxes'` and `'classes'`. Therefore, replace:\r\n```python\r\ndef dict_to_tuple(inputs):\r\n    return inputs[\"images\"], inputs[\"bounding_boxes\"]\r\n````\r\nwith (or similar):\r\n```python\r\ndef dict_to_tuple(inputs):\r\n    return inputs[\"images\"], bounding_box.to_dense(\r\n        inputs[\"bounding_boxes\"], max_boxes=32\r\n    )\r\n```\r\nin the example code: https://keras.io/examples/vision/yolov8/"
+    },
+    {
+      "author": "GaelMusoya",
+      "created_at": "2023-09-14T09:50:42Z",
+      "body": "I had the same problem, in my case all I had to do it manually find corrupted images in my dataset an delete them. I tried writing the script for finding them, but it was not that good with other type of corruption that are visible only when viewing the image"
+    },
+    {
+      "author": "Paryavi",
+      "created_at": "2023-09-14T21:50:10Z",
+      "body": "Thanks, guys for the tips, I did same as I explained in a different thread;\r\nso to solve the problem I did not use ragged tensor also I used PyCOCOCallback;\r\nhttps://github.com/keras-team/keras-cv/issues/2025#issuecomment-1698399022"
+    },
+    {
+      "author": "timoffenhaeusser",
+      "created_at": "2024-01-26T09:22:54Z",
+      "body": "This helped me a lot! I had the same issue and I solved it by changing the ```dict_to_tuple``` function like @meinternational said. For ```max_boxes=``` I just used the number of boxes every one of my images has (In my case all images have the exact same number of boxes/objects). \r\n\r\nAnd then I just needed to do ```pip install pycocotools```.\r\n\r\nAnd problem was solved."
+    },
+    {
+      "author": "Jordan-Karangala",
+      "created_at": "2025-03-03T11:10:12Z",
+      "body": "> You can avoid the problem by not using `RaggedTensorSpec` for `'boxes'` and `'classes'`. Therefore, replace:\n> \n> def dict_to_tuple(inputs):\n>     return inputs[\"images\"], inputs[\"bounding_boxes\"]\n> with (or similar):\n> \n> def dict_to_tuple(inputs):\n>     return inputs[\"images\"], bounding_box.to_dense(\n>         inputs[\"bounding_boxes\"], max_boxes=32\n>     )\n> in the example code: https://keras.io/examples/vision/yolov8/\n\nThank you very much, I had the similar issue which is resolved by replacing with the new function.\n\nThank you."
+    }
+  ]
+}

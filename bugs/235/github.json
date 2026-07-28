@@ -1,0 +1,50 @@
+{
+  "owner": "patrick-kidger",
+  "repo": "equinox",
+  "number": 791,
+  "html_url": "https://github.com/patrick-kidger/equinox/issues/791",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Calling eqx.Module method invokes user defined __getattr__",
+  "author": "yuzu-ido",
+  "created_at": "2024-07-24T23:01:06Z",
+  "updated_at": "2024-08-01T23:52:51Z",
+  "closed_at": "2024-08-01T23:52:51Z",
+  "labels": [
+    "question"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 8.04,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:14.626853+00:00",
+  "comments": [
+    {
+      "author": "patrick-kidger",
+      "created_at": "2024-07-31T15:02:51Z",
+      "body": "So as a general Python thing (unrelated to JAX or Equinox) it's usually inadvisible to have a wildcard `__getattr__` that attempts to handle everything. It's pretty common for any code you interact with try to try doing something like:\r\n```python\r\nif hasattr(your_obj, \"__some_magic_method__\"):\r\n    your_obj.__some_magic_method__(...)\r\n```\r\nwhich will give unexpected behaviour here!\r\n\r\nIn this case you're running afoul of exactly this kind of thing in Equinox: we check for `__name__` and `__qualname__` attributes at various points internally (along with several other special attributes) to be sure that we can forward them appropriately e.g. across flattening+unflattening.\r\n\r\nThe best fix here would be to check the value of `name` in your `__getattr__`, and only handle the ones you know you want to handle.\r\n\r\nAn alternative would be to handle this case in particular by doing:\r\n```python\r\nif name in (\"__name__\", \"__qualname__\"):\r\n    raise AttributeError\r\n```"
+    },
+    {
+      "author": "yuzu-ido",
+      "created_at": "2024-08-01T23:52:51Z",
+      "body": "Thanks for the response. There's quite a lot of `name` I'd want to handle, so the alternative option sounds like a plan. My temporary fix was to copy and paste the ~10 line helper function into` __getattr__` directly but that seems cleaner."
+    }
+  ]
+}

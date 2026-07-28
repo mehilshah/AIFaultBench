@@ -1,0 +1,46 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21429,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21429",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "TypeError: 'numpy.float64' object cannot be interpreted as an integer",
+  "author": "Vanillaholic",
+  "created_at": "2025-12-18T06:49:52Z",
+  "updated_at": "2025-12-18T08:15:41Z",
+  "closed_at": "2025-12-18T08:15:41Z",
+  "labels": [
+    "bug",
+    "3rd party"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.06,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:49.880371+00:00",
+  "comments": [
+    {
+      "author": "bhimrazy",
+      "created_at": "2025-12-18T08:15:41Z",
+      "body": "Hi @Vanillaholic, this seems to be an issue in the Asteroid library: https://github.com/asteroid-team/asteroid/pull/696\n\nIt looks like the fix hasn\u2019t been released yet, so you may need to install Asteroid directly from their source repository."
+    }
+  ]
+}

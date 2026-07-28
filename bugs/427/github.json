@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2593,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2593",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] AttributeError: 'RotaryEmbeddingDinoV3' object has no attribute 'update_feat_shape'",
+  "author": "ananthu-aniraj",
+  "created_at": "2025-10-03T11:18:59Z",
+  "updated_at": "2025-10-03T15:13:45Z",
+  "closed_at": "2025-10-03T15:13:45Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.16,
+  "fix": {
+    "closing_commit": "ef00378dcb319fb6b7d52fb91b296723b727c4d5",
+    "linked_prs": [],
+    "best_guess_fix_commit": "ef00378dcb319fb6b7d52fb91b296723b727c4d5",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:32:04.051543+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-10-03T14:07:15Z",
+      "body": "Curious why you are calling set input size there, dynamic image size is\r\nenabled by default for dinov3 so it will accept 512 images without the\r\ncall. But I should fix that for a no-op regardless\r\n\r\nOn Fri, Oct 3, 2025, 4:19\u202fAM Ananthu Aniraj ***@***.***>\r\nwrote:\r\n\r\n> Assigned #2593\r\n> <https://github.com/huggingface/pytorch-image-models/issues/2593> to\r\n> @rwightman <https://github.com/rwightman>.\r\n>\r\n> \u2014\r\n> Reply to this email directly, view it on GitHub\r\n> <https://github.com/huggingface/pytorch-image-models/issues/2593#event-20079309467>,\r\n> or unsubscribe\r\n> <https://github.com/notifications/unsubscribe-auth/ABLQICDWNQDCK323TXLSEKT3VZLTRAVCNFSM6AAAAACIGJP2UKVHI2DSMVQWIX3LMV45UABCJFZXG5LFIV3GK3TUJZXXI2LGNFRWC5DJN5XDWMRQGA3TSMZQHE2DMNY>\r\n> .\r\n> You are receiving this because you were assigned.Message ID:\r\n> <huggingface/pytorch-image-models/issue/2593/issue_event/20079309467@\r\n> github.com>\r\n>\r\n"
+    }
+  ]
+}

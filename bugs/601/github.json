@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2447,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2447",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] KeyError when using models from huggingface",
+  "author": "caojiaolong",
+  "created_at": "2025-03-01T20:33:45Z",
+  "updated_at": "2025-03-01T21:44:20Z",
+  "closed_at": "2025-03-01T21:44:20Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.05,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:17.591032+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-03-01T21:44:10Z",
+      "body": "@caojiaolong that's a transformers only model, will not work with timm. `timm` actually has a LOT more (and better) mobilenet weights than transformers so suggest looking in the timm or (or via the library)\n\nThe closest `timm` models to that one are\n`mobilenetv2_100.ra_in1k`\n`mobilenetv2_110d.ra_in1k`\n\nhttps://huggingface.co/models?sort=downloads&search=timm+mobilenet\n\n```\nfor m in timm.list_pretrained('*mobilenet*'):\n    print(m)\n    \nmobilenet_edgetpu_v2_m.ra4_e3600_r224_in1k\nmobilenetv1_100.ra4_e3600_r224_in1k\nmobilenetv1_100h.ra4_e3600_r224_in1k\nmobilenetv1_125.ra4_e3600_r224_in1k\nmobilenetv2_050.lamb_in1k\nmobilenetv2_100.ra_in1k\nmobilenetv2_110d.ra_in1k\nmobilenetv2_120d.ra_in1k\nmobilenetv2_140.ra_in1k\nmobilenetv3_large_100.miil_in21k\nmobilenetv3_large_100.miil_in21k_ft_in1k\nmobilenetv3_large_100.ra4_e3600_r224_in1k\nmobilenetv3_large_100.ra_in1k\nmobilenetv3_large_150d.ra4_e3600_r256_in1k\nmobilenetv3_rw.rmsp_in1k\nmobilenetv3_small_050.lamb_in1k\nmobilenetv3_small_075.lamb_in1k\nmobilenetv3_small_100.lamb_in1k\nmobilenetv4_conv_aa_large.e230_r384_in12k\nmobilenetv4_conv_aa_large.e230_r384_in12k_ft_in1k\nmobilenetv4_conv_aa_large.e230_r448_in12k_ft_in1k\nmobilenetv4_conv_aa_large.e600_r384_in1k\nmobilenetv4_conv_blur_medium.e500_r224_in1k\nmobilenetv4_conv_large.e500_r256_in1k\nmobilenetv4_conv_large.e600_r384_in1k\nmobilenetv4_conv_medium.e180_ad_r384_in12k\nmobilenetv4_conv_medium.e180_r384_in12k\nmobilenetv4_conv_medium.e250_r384_in12k\nmobilenetv4_conv_medium.e250_r384_in12k_ft_in1k\nmobilenetv4_conv_medium.e500_r224_in1k\nmobilenetv4_conv_medium.e500_r256_in1k\nmobilenetv4_conv_small.e1200_r224_in1k\nmobilenetv4_conv_small.e2400_r224_in1k\nmobilenetv4_conv_small.e3600_r256_in1k\nmobilenetv4_conv_small_050.e3000_r224_in1k\nmobilenetv4_hybrid_large.e600_r384_in1k\nmobilenetv4_hybrid_large.ix_e600_r384_in1k\nmobilenetv4_hybrid_medium.e200_r256_in12k\nmobilenetv4_hybrid_medium.e200_r256_in12k_ft_in1k\nmobilenetv4_hybrid_medium.e500_r224_in1k\nmobilenetv4_hybrid_medium.ix_e550_r256_in1k\nmobilenetv4_hybrid_medium.ix_e550_r384_in1k\ntf_mobilenetv3_large_075.in1k\ntf_mobilenetv3_large_100.in1k\ntf_mobilenetv3_large_minimal_100.in1k\ntf_mobilenetv3_small_075.in1k\ntf_mobilenetv3_small_100.in1k\ntf_mobilenetv3_small_minimal_100.in1k\n```"
+    }
+  ]
+}

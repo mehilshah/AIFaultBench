@@ -1,0 +1,66 @@
+{
+  "owner": "PythonOT",
+  "repo": "POT",
+  "number": 691,
+  "html_url": "https://github.com/PythonOT/POT/issues/691",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`ot.unbalanced.sinkhorn_knopp_unbalanced` change between `POT==0.9.4`  and `POT==0.9.5`. ",
+  "author": "atong01",
+  "created_at": "2024-11-17T12:37:16Z",
+  "updated_at": "2024-11-27T10:22:12Z",
+  "closed_at": "2024-11-27T10:22:11Z",
+  "labels": [
+    "bug",
+    "help wanted"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 9.91,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:32.105844+00:00",
+  "comments": [
+    {
+      "author": "clbonet",
+      "created_at": "2024-11-17T13:04:58Z",
+      "body": "Hi,\r\nThe default behavior is now with the KL regularization instead of the entropy. If you add `reg_type=\"entropy\"`, you should recover the result of the 0.9.4 version.\r\n\r\n```\r\n>>> import ot\r\n>>> a = [0.5, 0.5]\r\n>>> b = [0.5, 0.5]\r\n>>> M = [[0, 1], [1, 0]]\r\n>>> ot.unbalanced.sinkhorn_knopp_unbalanced(a, b, M, 1, 1, reg_type=\"entropy\")\r\narray([[0.51122814, 0.18807032],\r\n       [0.18807032, 0.51122814]])\r\n```"
+    },
+    {
+      "author": "atong01",
+      "created_at": "2024-11-17T13:13:27Z",
+      "body": "Hi Cl\u00e9ment,\r\n\r\nThank you! May I ask why this changed and / or why it is preferred?\r\n\r\nI don't really have a preference but this seems to change (somewhat significantly?) a number of my projects and it would be nice to know what I should be using.\r\n\r\nThanks,\r\nAlex"
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2024-11-18T07:48:25Z",
+      "body": "The entropy has a weird impact that it will promote creation of mass which for unbalanced is  a bit counter intuitive. For instance the mass of the plan can be greater than the mass of each of the marginals... It was not the standard in any of the unalanced papers to the bets of my knowledge and we originally implemented is to have similar regularization than sinkhorn paper but it wa sprobably a bad idea.\r\n\r\nWhen using the KL you shrink toward the rank one plan (of mass 1 if both marginals sum to 1) so there is no creation of mass.  \r\n\r\nI am sorry if it breaks things, we usually promote stability in POT (and API is stable) and should have added a warning for the release. We will be more careful next time.\r\n\r\n"
+    },
+    {
+      "author": "atong01",
+      "created_at": "2024-11-18T12:20:28Z",
+      "body": "Thank you for the explanation R\u00e9mi!\n\nSeems like a better default indeed. Agreed, I would have preferred a warning, but thanks for the upgrade :)"
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2024-11-27T10:22:11Z",
+      "body": "I updated the doc, closing this issue"
+    }
+  ]
+}

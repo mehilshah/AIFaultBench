@@ -1,0 +1,75 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 1207,
+  "html_url": "https://github.com/huggingface/accelerate/issues/1207",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "unwrap function not support 'torch._dynamo.eval_frame.OptimizedModule'",
+  "author": "Rapisurazurite",
+  "created_at": "2023-03-17T17:06:14Z",
+  "updated_at": "2023-07-25T10:24:45Z",
+  "closed_at": "2023-04-25T15:06:34Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 38.92,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:04.631483+00:00",
+  "comments": [
+    {
+      "author": "muellerzr",
+      "created_at": "2023-03-17T17:39:34Z",
+      "body": "cc @sgugger or I can look next week"
+    },
+    {
+      "author": "sgugger",
+      "created_at": "2023-03-17T18:00:18Z",
+      "body": "Not even sure if the API exists in PyTorch. Will ask."
+    },
+    {
+      "author": "pacman100",
+      "created_at": "2023-03-17T18:58:49Z",
+      "body": "As per the docs, `model.state_dict()` should work as expected for saving the model which wouldn't need unwrapping the model."
+    },
+    {
+      "author": "sgugger",
+      "created_at": "2023-03-17T19:09:01Z",
+      "body": "True but this method is also used to put the model back in its original state (it can remove the mixed precision wrappers for instance)."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-04-17T15:06:13Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\nPlease note that issues that do not follow the [contributing guidelines](https://github.com/huggingface/accelerate/blob/main/CONTRIBUTING.md) are likely to be ignored."
+    },
+    {
+      "author": "csarron",
+      "created_at": "2023-05-04T21:01:55Z",
+      "body": "this will break the code like `generated_tokens = accelerator.unwrap_model(model).generate(batch)`, it gave errors like: 'DistributedDataParallel' object has no attribute 'generate', see https://github.com/huggingface/transformers/issues/18974.\r\n\r\nI'm able to bypass the issue by setting the dynamo_backend to no\r\n`accelerate launch --dynamo_backend=no`\r\n\r\nis there any update on the issue, or it can only be fixed in PyTorch not Accelerate lib"
+    },
+    {
+      "author": "ross-Hr",
+      "created_at": "2023-07-25T10:24:45Z",
+      "body": "I also face the bug"
+    }
+  ]
+}

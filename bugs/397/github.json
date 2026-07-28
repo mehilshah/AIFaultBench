@@ -1,0 +1,60 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2600,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2600",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] A random number seed was set up, but the experimental results could not be reproduced.",
+  "author": "Nathan33907",
+  "created_at": "2025-10-21T15:46:15Z",
+  "updated_at": "2025-10-22T03:35:30Z",
+  "closed_at": "2025-10-21T16:14:34Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.02,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:19.137444+00:00",
+  "comments": [
+    {
+      "author": "Nathan33907",
+      "created_at": "2025-10-21T15:48:35Z",
+      "body": "In the above code, only the model changes each time, while the other utility functions remain unchanged."
+    },
+    {
+      "author": "Nathan33907",
+      "created_at": "2025-10-21T15:52:28Z",
+      "body": "Another BUG is that when saving the PNG of the obfuscation matrix, an error will be reported, saying that there is no such folder. But I already know the reason for this, because the model file of vit contains vitgoogle\\ Vit-base... This will be escaped into the \"vitgoogle\" folder after string concatenation. If this folder does not exist at this time, an error will be reported. I wonder if this has any impact?"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-10-21T16:14:34Z",
+      "body": "@Nathan33907 first, you're not even using timm here, so wrong library\n\nsecond there is really not much point in going down this rabbit hole, in timm at least I have made some reasonable efforts to set the seeds correctly, but it's very challenging to have exact reproducibility in most situations as many ops themselves aren't deterministic, or if they can be, will be reduced in performance and require specific overrides to enable. JAX might be a better choice if you are attempting this. Though I have been relatively happy with the reproducibility in timm with defaults, it's not exact but it's pretty consistent run to run with the same seed on most models."
+    },
+    {
+      "author": "Nathan33907",
+      "created_at": "2025-10-22T03:35:30Z",
+      "body": "Thank you for your reply. I have solved this problem today.\nAs for what you said about not using the timm package, that's my mistake. I'm a novice in this field, and I learned that the Tranformers package can be used firstly, so I didn't use the timm package.\nI found that using the CPU can reproduce the experiment, while using the GPU requires some improvements to the random number seed setting function. The specific code is as follows:\n```python\ndef set_seed(seed):\n    os.environ[\"CUBLAS_WORKSPACE_CONFIG\"] = \":4096:8\"  # control the randomness of cuBLAS\n    os.environ[\"PYTHONHASHSEED\"] = str(seed)\n    random.seed(seed)\n    np.random.seed(seed)\n    torch.manual_seed(seed)\n    torch.cuda.manual_seed(seed)\n    torch.cuda.manual_seed_all(seed)\n    torch.backends.cudnn.benchmark = False\n    torch.backends.cudnn.deterministic = True\n    torch.use_deterministic_algorithms(True)  # force PyTorch to use deterministic algorithms\n``` \nThe detailed reason is that the parallel softmax/reduction used in self-attention in ViT may have non-determinism, or some parallel architectures of the GPU may cause deviations in floating-point operations. Through the above methods, I was able to reproduce my experiments. However, as you said, there may still be minor differences in each experiment, even though at present, in terms of accuracy and loss, the four decimal places seem reproducible.\nFinally, I sincerely thank you again for your reply. At the same time, I hope this post can be helpful to those in need.\nBest wishes."
+    }
+  ]
+}

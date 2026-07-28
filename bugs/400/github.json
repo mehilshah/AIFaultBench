@@ -1,0 +1,45 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2093,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2093",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Continuous uniform density gives density >0 outside of support",
+  "author": "mhinne",
+  "created_at": "2025-11-04T15:30:40Z",
+  "updated_at": "2025-12-01T15:56:44Z",
+  "closed_at": "2025-12-01T15:56:44Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 27.02,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:23.524021+00:00",
+  "comments": [
+    {
+      "author": "Qazalbash",
+      "created_at": "2025-11-05T13:27:24Z",
+      "body": "How about passing `True` in `validate_args`? Seems to work.\n\n```python\nIn [1]: from jax import numpy as jnp\n\nIn [2]: import numpyro.distributions as dist\n\nIn [3]: assert jnp.exp(dist.Uniform(0.0, 5.0, validate_args=True).log_prob(7.0)) == 0.0\n<ipython-input-3-22ff8a7ff08b>:1: UserWarning: Out-of-support values provided to log prob method. The value argument should be within the support.\n  assert jnp.exp(dist.Uniform(0.0, 5.0, validate_args=True).log_prob(7.0)) == 0.0\n```\n\nor globally enabling the validation.\n\n```python\nIn [1]: from jax import numpy as jnp\n\nIn [2]: import numpyro.distributions as dist\n\nIn [3]: from numpyro.distributions.distribution import enable_validation\n\nIn [4]: enable_validation()\n\nIn [5]: assert jnp.exp(dist.Uniform(0.0, 5.0).log_prob(7.0)) == 0.0\n<ipython-input-5-b14190ad5565>:1: UserWarning: Out-of-support values provided to log prob method. The value argument should be within the support.\n  assert jnp.exp(dist.Uniform(0.0, 5.0).log_prob(7.0)) == 0.0\n```"
+    }
+  ]
+}

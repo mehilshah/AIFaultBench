@@ -1,0 +1,55 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 46909,
+  "html_url": "https://github.com/huggingface/transformers/issues/46909",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "broken documentation example for DIA",
+  "author": "Carotterap",
+  "created_at": "2026-06-26T08:12:30Z",
+  "updated_at": "2026-06-26T18:22:10Z",
+  "closed_at": "2026-06-26T18:01:27Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.41,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:37.222622+00:00",
+  "comments": [
+    {
+      "author": "Ankita7033",
+      "created_at": "2026-06-26T10:19:20Z",
+      "body": "I'd like to fix this. The example has three issues: inputs = ...().to(model.device) references model before it's defined, torch_device is never defined, and device_map=\"auto\" is passed to .to() (it's a from_pretrained argument, not a .to() argument). I'll correct the example so model is created first with device_map=\"auto\" in from_pretrained, then move inputs to model.device. PR incoming."
+    },
+    {
+      "author": "vasqu",
+      "created_at": "2026-06-26T17:46:00Z",
+      "body": "Yep the docs are broken, it was done in #45608 (where you can also see that torch device was removed as variable etc) - claude did not well on this \ud83d\ude22 \n\nFixing in #46923 and attributed you @Ankita7033 (you opened the PR on your own fork, not our repo so added you as co author since it's the same idea as I had)"
+    },
+    {
+      "author": "Ankita7033",
+      "created_at": "2026-06-26T18:22:10Z",
+      "body": "Thanks @vasqu, glad the fix is landing in #46923 \u2014 and thanks for the co-attribution! Closing this since it's now resolved."
+    }
+  ]
+}

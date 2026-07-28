@@ -1,0 +1,50 @@
+{
+  "owner": "sdv-dev",
+  "repo": "SDV",
+  "number": 2823,
+  "html_url": "https://github.com/sdv-dev/SDV/issues/2823",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Metadata composite keys] Typo in error message for invalid primary keys",
+  "author": "frances-h",
+  "created_at": "2026-02-25T15:08:33Z",
+  "updated_at": "2026-03-19T17:51:18Z",
+  "closed_at": "2026-03-19T17:51:18Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": "1.35.0",
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 22.11,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:48.524057+00:00",
+  "comments": [
+    {
+      "author": "nightcityblade",
+      "created_at": "2026-02-25T16:18:47Z",
+      "body": "Hi, I'd like to work on this. I'll submit a PR shortly."
+    },
+    {
+      "author": "nightcityblade",
+      "created_at": "2026-02-25T16:20:49Z",
+      "body": "After investigating, I'm unable to reproduce the exact error message described. The code at `single_table.py:792` seems to produce a flat list, not a nested one. I'll step back from this issue \u2014 it may require a specific SDV version to reproduce."
+    }
+  ]
+}

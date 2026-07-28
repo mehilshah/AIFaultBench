@@ -1,0 +1,53 @@
+{
+  "owner": "lucidrains",
+  "repo": "x-transformers",
+  "number": 273,
+  "html_url": "https://github.com/lucidrains/x-transformers/issues/273",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "encoder.to_logits.weight doesn't update",
+  "author": "guillaumeguy",
+  "created_at": "2024-09-17T15:43:21Z",
+  "updated_at": "2024-09-17T16:35:16Z",
+  "closed_at": "2024-09-17T16:28:18Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:32.723273+00:00",
+  "comments": [
+    {
+      "author": "lucidrains",
+      "created_at": "2024-09-17T16:15:46Z",
+      "body": "@guillaumeguy ah yes, that shouldn't be there\r\n\r\ncould you try 1.35.2?"
+    },
+    {
+      "author": "guillaumeguy",
+      "created_at": "2024-09-17T16:28:18Z",
+      "body": "Works great! Thank you for the quick turnaround! "
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-09-17T16:35:15Z",
+      "body": "@guillaumeguy you are one of the few using a full encoder decoder transformer\r\n\r\nhow are you using it?"
+    }
+  ]
+}

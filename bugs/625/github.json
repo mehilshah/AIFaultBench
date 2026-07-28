@@ -1,0 +1,71 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7708,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7708",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] None grad triggers exception in the backward hook",
+  "author": "eternalNight",
+  "created_at": "2025-11-28T10:07:30Z",
+  "updated_at": "2025-12-12T06:39:29Z",
+  "closed_at": "2025-12-12T06:39:29Z",
+  "labels": [
+    "bug",
+    "training"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 13.86,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:52.948579+00:00",
+  "comments": [
+    {
+      "author": "eternalNight",
+      "created_at": "2025-11-28T10:08:30Z",
+      "body": "@tohtana Any idea if this two-grad phenomenon is expected? If so, should we add a None check at the beginning of `_backward_prologue_per_tensor`?"
+    },
+    {
+      "author": "tohtana",
+      "created_at": "2025-11-28T11:25:40Z",
+      "body": "Thank you for reporting, @eternalNight!\nI didn't expect the case. Do you think we can simply skip the scaling when the given value is None?"
+    },
+    {
+      "author": "eternalNight",
+      "created_at": "2025-11-29T01:21:29Z",
+      "body": "> Thank you for reporting, [@eternalNight](https://github.com/eternalNight)! I didn't expect the case. Do you think we can simply skip the scaling when the given value is None?\n\n@tohtana I'll investigate why there is a second grad in the compiled backward graph to see if it is safe to skip `None` grads."
+    },
+    {
+      "author": "eternalNight",
+      "created_at": "2025-12-05T09:42:56Z",
+      "body": "@tohtana Here's the story:\n\n1. Llama2 returns a `CausalLMOutputWithPast` (which extends `dict`) which contains a loss tensor (of size 1) and a logits tensor. Deepspeed registers the backward hook on that object, and thus hooks both tensors.\n2. Only when DeepCompile is enabled, the backward hooks of both tensors are called, and the hook on logits is called with a `None` grad, probably because it is not scalar.\n\nThe hook on logits is not called at all without DeepCompile, regardless of whether torch compile is applied or not. Somehow autograd remembers both tensors and calls their backward hooks before running the backward compile pass.\n\nAs `None` grads is caused by non-scalar tensors, I think it is safe to simply skip them in the hook. What do you think?"
+    },
+    {
+      "author": "tohtana",
+      "created_at": "2025-12-12T00:19:45Z",
+      "body": "Thank you @eternalNight for your investigation! Yes, let's simply skip the none grad in the grad. Can you open a PR for it?"
+    },
+    {
+      "author": "tohtana",
+      "created_at": "2025-12-12T04:21:40Z",
+      "body": "@eternalNight Sorry, as I also wanted to run Llama models, I opened #7725. Can you review it? I confirmed it works with Llama-3 7B."
+    }
+  ]
+}

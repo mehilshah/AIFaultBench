@@ -1,0 +1,56 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-io",
+  "number": 1665,
+  "html_url": "https://github.com/keras-team/keras-io/issues/1665",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[example/nlp] neural_machine_translation_with_transforme does not run successfuly. ",
+  "author": "Mingbo-Lee",
+  "created_at": "2023-12-01T03:35:24Z",
+  "updated_at": "2023-12-05T02:05:04Z",
+  "closed_at": "2023-12-05T02:05:04Z",
+  "labels": [
+    "stat:awaiting response from contributor",
+    "type:bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.94,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:43.124587+00:00",
+  "comments": [
+    {
+      "author": "sachinprasadhs",
+      "created_at": "2023-12-01T20:03:43Z",
+      "body": "Hi, Thanks for reporting the issue.\r\n\r\nThe tutorial works on `Keras 3`, colab has precompiled `Keras 2`, till colab comes with precompiled Keras 3,, you need to install it before importing.\r\n\r\n`!pip install keras==3.0.0` fixes the issue."
+    },
+    {
+      "author": "Mingbo-Lee",
+      "created_at": "2023-12-04T07:13:46Z",
+      "body": "Thank you for your suggestion.  I run this script in my local environment successfully based keras3.  What'more,  I also run this tutorial in Colab successfuuly by add a code cell `!pip install keras==3.0.0`"
+    },
+    {
+      "author": "sachinprasadhs",
+      "created_at": "2023-12-04T19:37:12Z",
+      "body": "Thanks for confirming, could you please close the issue as well."
+    }
+  ]
+}

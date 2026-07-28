@@ -1,0 +1,71 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-io",
+  "number": 1593,
+  "html_url": "https://github.com/keras-team/keras-io/issues/1593",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Error when fitting the model",
+  "author": "Arwa-97",
+  "created_at": "2023-11-09T19:47:58Z",
+  "updated_at": "2023-11-10T23:34:46Z",
+  "closed_at": "2023-11-10T23:34:46Z",
+  "labels": [
+    "stat:awaiting response from contributor",
+    "type:bug"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.16,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:46.731990+00:00",
+  "comments": [
+    {
+      "author": "sachinprasadhs",
+      "created_at": "2023-11-09T23:30:30Z",
+      "body": "Could you please provide sample reproducible code to replicate the reported behavior. Thanks!"
+    },
+    {
+      "author": "Arwa-97",
+      "created_at": "2023-11-10T08:06:52Z",
+      "body": "@sachinprasadhs \r\nhere's [colab](https://drive.google.com/file/d/1aNCggY7xGM5Xkse5AcFT3KbR7LSQ7ZbN/view?usp=sharing)"
+    },
+    {
+      "author": "sachinprasadhs",
+      "created_at": "2023-11-10T19:38:54Z",
+      "body": "I have an pending PR which needs to be merged, \r\n\r\ntill then could you please apply the changes mentioned in this PR https://github.com/keras-team/keras-io/pull/1556/files#diff-b530d40b01726b3faad1e31c89f0046a4322fac5944abbc97f239a22f43e934a and let us know the outcome. Thanks!"
+    },
+    {
+      "author": "Arwa-97",
+      "created_at": "2023-11-10T20:19:40Z",
+      "body": "Thank you for your respond.\r\nNow I'm getting the following error after I applied the changes from the PR you provided.\r\n\r\n[colab](https://drive.google.com/file/d/1aNCggY7xGM5Xkse5AcFT3KbR7LSQ7ZbN/view?usp=sharing)\r\n\r\nWARNING:tensorflow:From /usr/local/lib/python3.10/dist-packages/tensorflow/python/util/deprecation.py:660: calling map_fn_v2 (from tensorflow.python.ops.map_fn) with dtype is deprecated and will be removed in a future version.\r\nInstructions for updating:\r\nUse fn_output_signature instead\r\n---------------------------------------------------------------------------\r\nResourceExhaustedError                    Traceback (most recent call last)\r\n[<ipython-input-11-621bb3a51dce>](https://localhost:8080/#) in <cell line: 9>()\r\n      7     mode=\"min\",\r\n      8 )\r\n----> 9 diffusion_ft_trainer.fit(training_dataset, epochs=epochs, callbacks=[ckpt_callback])\r\n\r\n1 frames\r\n[/usr/local/lib/python3.10/dist-packages/tensorflow/python/eager/execute.py](https://localhost:8080/#) in quick_execute(op_name, num_outputs, inputs, attrs, ctx, name)\r\n     58         for t in inputs\r\n     59     ]\r\n---> 60     tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,\r\n     61                                         inputs, attrs, num_outputs)\r\n     62   except core._NotOkStatusException as e:\r\n\r\nResourceExhaustedError: Graph execution error:\r\n\r\nDetected at node model/resnet_block/group_normalization/weighted_moments/weighted_input_sum defined at (most recent call last):\r\n  File \"/usr/lib/python3.10/runpy.py\", line 196, in _run_module_as_main\r\n\r\n  File \"/usr/lib/python3.10/runpy.py\", line 86, in _run_code\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/colab_kernel_launcher.py\", line 37, in <module>\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/traitlets/config/application.py\", line 992, in launch_instance\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/ipykernel/kernelapp.py\", line 619, in start\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/tornado/platform/asyncio.py\", line 195, in start\r\n\r\n  File \"/usr/lib/python3.10/asyncio/base_events.py\", line 603, in run_forever\r\n\r\n  File \"/usr/lib/python3.10/asyncio/base_events.py\", line 1909, in _run_once\r\n\r\n  File \"/usr/lib/python3.10/asyncio/events.py\", line 80, in _run\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/tornado/ioloop.py\", line 685, in <lambda>\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/tornado/ioloop.py\", line 738, in _run_callback\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/tornado/gen.py\", line 825, in inner\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/tornado/gen.py\", line 786, in run\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/ipykernel/kernelbase.py\", line 361, in process_one\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/tornado/gen.py\", line 234, in wrapper\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/ipykernel/kernelbase.py\", line 261, in dispatch_shell\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/tornado/gen.py\", line 234, in wrapper\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/ipykernel/kernelbase.py\", line 539, in execute_request\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/tornado/gen.py\", line 234, in wrapper\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/ipykernel/ipkernel.py\", line 302, in do_execute\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/ipykernel/zmqshell.py\", line 539, in run_cell\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/IPython/core/interactiveshell.py\", line 2975, in run_cell\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/IPython/core/interactiveshell.py\", line 3030, in _run_cell\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/IPython/core/async_helpers.py\", line 78, in _pseudo_sync_runner\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/IPython/core/interactiveshell.py\", line 3257, in run_cell_async\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/IPython/core/interactiveshell.py\", line 3473, in run_ast_nodes\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/IPython/core/interactiveshell.py\", line 3553, in run_code\r\n\r\n  File \"<ipython-input-11-621bb3a51dce>\", line 9, in <cell line: 9>\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/utils/traceback_utils.py\", line 65, in error_handler\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/engine/training.py\", line 1783, in fit\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/engine/training.py\", line 1377, in train_function\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/engine/training.py\", line 1360, in step_function\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/engine/training.py\", line 1349, in run_step\r\n\r\n  File \"<ipython-input-9-c61c5f80faa2>\", line 31, in train_step\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/utils/traceback_utils.py\", line 65, in error_handler\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/engine/training.py\", line 589, in __call__\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/utils/traceback_utils.py\", line 65, in error_handler\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/engine/base_layer.py\", line 1149, in __call__\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/utils/traceback_utils.py\", line 96, in error_handler\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/engine/functional.py\", line 515, in call\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/engine/functional.py\", line 672, in _run_internal_graph\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/utils/traceback_utils.py\", line 65, in error_handler\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/engine/base_layer.py\", line 1149, in __call__\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/utils/traceback_utils.py\", line 96, in error_handler\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras_cv/models/stable_diffusion/__internal__/layers/resnet_block.py\", line 38, in call\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/utils/traceback_utils.py\", line 65, in error_handler\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/engine/base_layer.py\", line 1149, in __call__\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/utils/traceback_utils.py\", line 96, in error_handler\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/layers/normalization/group_normalization.py\", line 182, in call\r\n\r\n  File \"/usr/local/lib/python3.10/dist-packages/keras/src/layers/normalization/group_normalization.py\", line 214, in _apply_normalization\r\n\r\nOOM when allocating tensor with shape[4,32,65536,4] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc\r\n\t [[{{node model/resnet_block/group_normalization/weighted_moments/weighted_input_sum}}]]\r\nHint: If you want to see a list of allocated tensors when OOM happens, add report_tensor_allocations_upon_oom to RunOptions for current allocation info. This isn't available when running in Eager mode.\r\n [Op:__inference_train_function_242822]"
+    },
+    {
+      "author": "sachinprasadhs",
+      "created_at": "2023-11-10T21:12:53Z",
+      "body": "This OOM error is due to the system GPU memory availability, as mentioned in the tutorial, make sure you have 24-30 GB GPU memory to run this example. "
+    },
+    {
+      "author": "Arwa-97",
+      "created_at": "2023-11-10T23:34:46Z",
+      "body": "Thank you so much!"
+    }
+  ]
+}

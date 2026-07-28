@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2663,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2663",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Deprecation of `@torch.jit.interface`",
+  "author": "mscheltienne",
+  "created_at": "2026-02-06T17:22:36Z",
+  "updated_at": "2026-02-07T08:35:12Z",
+  "closed_at": "2026-02-06T20:37:33Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.14,
+  "fix": {
+    "closing_commit": "bdab30b0eb1055cceb2f288c55084bb7f5dec693",
+    "linked_prs": [],
+    "best_guess_fix_commit": "bdab30b0eb1055cceb2f288c55084bb7f5dec693",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:29:24.212367+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2026-02-06T18:09:57Z",
+      "body": "@mscheltienne is torch.jit.interface the only deprecation warning? there are quite a few other torch.jit calls... all of torch.jit is going to be deprecated at some point, not really clear if this is happening a bit at a time..."
+    },
+    {
+      "author": "mscheltienne",
+      "created_at": "2026-02-07T08:35:12Z",
+      "body": "It was the only warning that popped up in our CIs.Thanks for the quick fix!"
+    }
+  ]
+}

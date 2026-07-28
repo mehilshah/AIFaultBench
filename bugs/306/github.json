@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2682,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2682",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] `AttentionPool2d` produces non-deterministic outputs when `num_classes=0`",
+  "author": "karray",
+  "created_at": "2026-03-13T15:37:19Z",
+  "updated_at": "2026-03-13T20:05:07Z",
+  "closed_at": "2026-03-13T20:05:07Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.19,
+  "fix": {
+    "closing_commit": "3e8def86c480733a355eab96b6475918bc24d801",
+    "linked_prs": [],
+    "best_guess_fix_commit": "3e8def86c480733a355eab96b6475918bc24d801",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:29:00.619318+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2026-03-13T17:55:19Z",
+      "body": "@karray I just noticed your PR but already had in the works that fixed some adjacent issues with the latent attention pool, and added tests coverage for the issues... "
+    }
+  ]
+}

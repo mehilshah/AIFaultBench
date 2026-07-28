@@ -1,0 +1,60 @@
+{
+  "owner": "stanfordnlp",
+  "repo": "stanza",
+  "number": 1357,
+  "html_url": "https://github.com/stanfordnlp/stanza/issues/1357",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Biomedical Stanza models error during loading pos -  KeyError: 'bert_finetune'",
+  "author": "mh-n",
+  "created_at": "2024-02-29T22:04:09Z",
+  "updated_at": "2024-03-03T22:09:04Z",
+  "closed_at": "2024-03-03T22:09:04Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.0,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:48.194357+00:00",
+  "comments": [
+    {
+      "author": "AngledLuffa",
+      "created_at": "2024-03-01T03:55:23Z",
+      "body": "Yikes, that's not good.  I just added a fix to the dev branch.  I can push that fix at a new version 1.8.1 either later tonight or tomorrow"
+    },
+    {
+      "author": "AngledLuffa",
+      "created_at": "2024-03-01T06:46:03Z",
+      "body": "This should now be fixed in v1.8.1"
+    },
+    {
+      "author": "AngledLuffa",
+      "created_at": "2024-03-03T21:40:38Z",
+      "body": "Fixed?"
+    },
+    {
+      "author": "mh-n",
+      "created_at": "2024-03-03T22:09:01Z",
+      "body": "Sorry for the delay! Just got to check and looks good on my end now. Thanks!"
+    }
+  ]
+}

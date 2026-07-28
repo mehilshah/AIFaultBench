@@ -1,0 +1,95 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 1183,
+  "html_url": "https://github.com/huggingface/accelerate/issues/1183",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "main_process_first and local_main_process_first seem to not work when using the `flush` argument on print()",
+  "author": "984881878",
+  "created_at": "2023-03-12T09:09:34Z",
+  "updated_at": "2023-05-17T15:06:29Z",
+  "closed_at": "2023-05-17T15:06:29Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 11,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 66.25,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:12.662468+00:00",
+  "comments": [
+    {
+      "author": "muellerzr",
+      "created_at": "2023-03-12T13:17:42Z",
+      "body": "@984881878 does it work with accelerate==0.16.0?"
+    },
+    {
+      "author": "984881878",
+      "created_at": "2023-03-12T13:29:31Z",
+      "body": "> @984881878 does it work with accelerate==0.16.0?\r\n\r\nYes, it gets trouble after I upgrade accelerate to 0.17.0.\r\nWhen I downgrade accelerate to 0.16.0, the snippets above output:\r\n'''\r\n0 True\r\n23 False \r\nFalse\r\n1 False\r\n'''\r\n'''\r\n0 True\r\n1 False\r\n2 False\r\n3 False\r\n'''\r\n'''\r\n0 True\r\n3 False\r\n1 False\r\n2 False\r\n'''\r\n\r\nmy env now is:\r\n'''\r\n- `Accelerate` version: 0.16.0\r\n- Platform: Linux-4.15.0-45-generic-x86_64-with-glibc2.27\r\n- Python version: 3.9.7\r\n- Numpy version: 1.21.5\r\n- PyTorch version (GPU?): 1.13.1 (True)\r\n- `Accelerate` default config:\r\n        - compute_environment: LOCAL_MACHINE\r\n        - distributed_type: MULTI_GPU\r\n        - mixed_precision: fp16\r\n        - use_cpu: False\r\n        - dynamo_backend: NO\r\n        - num_processes: 4\r\n        - machine_rank: 0\r\n        - num_machines: 1\r\n        - gpu_ids: all\r\n        - rdzv_backend: static\r\n        - same_network: True\r\n        - main_training_function: main\r\n        - deepspeed_config: {}\r\n        - fsdp_config: {}\r\n        - megatron_lm_config: {}\r\n        - downcast_bf16: no\r\n'''"
+    },
+    {
+      "author": "muellerzr",
+      "created_at": "2023-03-12T22:13:47Z",
+      "body": "@984881878 the issue involves `flush=True`, so as a temporary \"fix\" just don't use `flush=True`. When trying with flush I was noticing it took quite a long time to print in the old version, I'll try and see what exactly could be the difference now. \r\n\r\nAnd you can then manually flush as well and have it work. Such that:\r\n```python\r\nfrom accelerate import Accelerator\r\nimport sys\r\n\r\naccelerator = Accelerator()\r\n\r\nwith accelerator.main_process_first():\r\n    print(f'Process: {accelerator.process_index}, {accelerator.is_main_process}')\r\n    sys.stdout.flush()\r\n```"
+    },
+    {
+      "author": "984881878",
+      "created_at": "2023-03-13T03:35:12Z",
+      "body": "> @984881878 the issue involves `flush=True`, so as a temporary \"fix\" just don't use `flush=True`. When trying with flush I was noticing it took quite a long time to print in the old version, I'll try and see what exactly could be the difference now.\r\n> \r\n> And you can then manually flush as well and have it work. Such that:\r\n> \r\n> ```python\r\n> from accelerate import Accelerator\r\n> import sys\r\n> \r\n> accelerator = Accelerator()\r\n> \r\n> with accelerator.main_process_first():\r\n>     print(f'Process: {accelerator.process_index}, {accelerator.is_main_process}')\r\n>     sys.stdout.flush()\r\n> ```\r\n\r\nI tried manually flush the out buffer as you said, but it still did not work as I expected. \ud83d\ude02\ud83d\ude02\ud83d\ude02"
+    },
+    {
+      "author": "muellerzr",
+      "created_at": "2023-03-13T05:45:08Z",
+      "body": "Sorry to hear that did not work for you, it worked for me hence the suggestion. I'll look into this this week."
+    },
+    {
+      "author": "984881878",
+      "created_at": "2023-03-17T09:42:17Z",
+      "body": "> Sorry to hear that did not work for you, it worked for me hence the suggestion. I'll look into this this week.\r\n\r\n```python\r\nimport os\r\nfrom accelerate import Accelerator\r\naccelerator = Accelerator()\r\nwith accelerator.local_main_process_first():\r\n    os.makedirs('tmp', exist_ok=not accelerator.is_local_main_process)\r\n```\r\nDoes this work on your machine? It didn't work on my machine anyway."
+    },
+    {
+      "author": "muellerzr",
+      "created_at": "2023-04-13T14:50:48Z",
+      "body": "@984881878 this will probably be fixed via https://github.com/huggingface/accelerate/pull/1304"
+    },
+    {
+      "author": "984881878",
+      "created_at": "2023-04-15T08:49:57Z",
+      "body": "> @984881878 this will probably be fixed via #1304\r\n\r\nHi, it seems not to be fixed yet, though I installed the latest dev version of Accelerate."
+    },
+    {
+      "author": "muellerzr",
+      "created_at": "2023-04-15T13:17:38Z",
+      "body": "It's not on dev, it's in their PR. So you would need to try via:\r\n\r\n`pip install git+https://github.com/flukeskywalker/accelerate@fix-1303-main_proces_first`"
+    },
+    {
+      "author": "984881878",
+      "created_at": "2023-04-15T13:27:20Z",
+      "body": "@muellerzr Thanks for your reminder. But it still doesn't work for me."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-05-09T15:06:09Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\nPlease note that issues that do not follow the [contributing guidelines](https://github.com/huggingface/accelerate/blob/main/CONTRIBUTING.md) are likely to be ignored."
+    }
+  ]
+}

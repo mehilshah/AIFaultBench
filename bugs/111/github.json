@@ -1,0 +1,50 @@
+{
+  "owner": "ahmedfgad",
+  "repo": "GeneticAlgorithmPython",
+  "number": 335,
+  "html_url": "https://github.com/ahmedfgad/GeneticAlgorithmPython/issues/335",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`init_range_low` is not adhered to in recent release",
+  "author": "cathaloruaidh",
+  "created_at": "2025-07-10T09:32:14Z",
+  "updated_at": "2025-07-11T08:55:02Z",
+  "closed_at": "2025-07-11T08:55:02Z",
+  "labels": [
+    "help wanted"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.97,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:04.500834+00:00",
+  "comments": [
+    {
+      "author": "ahmedfgad",
+      "created_at": "2025-07-10T22:39:46Z",
+      "body": "In version 3.4.0, the mutation was applied by:\n1. Generating a random mutation value.\n2. Changing the data type of the random value and rounding it if necessary. \n3. Summing the gene value to the random value.\n4. Changing the data type again.\n\nFor example:\n1. The random value is sampled be default from the -1 to 1 range. \n2. If the random value is 0.5 and you used the `int` data type, then it changes to 0.\n3. The new random value 0 is added to the gene value. If the gene value is 0 or 1, then it keeps the same value.\n\nNote that the values are sampled from the -1 to 1 range. It might happen that the random value is -1. In this case, -1 is added to 0 and the new gene value will be `-1` which is outside the `init_range_low` to `init_range_high` range. You were just lucky.\n\nIn version 3.5.0, the behaviour changed to:\n1. Generate a random mutation value.\n2. Summing the gene value to the random value.\n3. Changing the data type of the random value and rounding it if necessary. \n\nFor example:\n1. The random value could be -1.\n2. The random value -1 is added to the gene value (e.g. 0) and the result is -1.\n3. The data type of the new gene value -1 is changed. The new value keeps -1.\n\nIf the gene value is -1 and you again sampled a random value of -1, then the new gene value becomes -2. The process repeats to increase the magnitude of the gene value until it reaches the values you found such as -14.\n\nThis is the new working code. Instead of using `init_range_low` to `init_range_high`, just use the `gene_space` parameter.\n```python\nimport pygad\nimport numpy\nimport scipy\n\ndef fitness_func(ga_instance, solution, solution_idx):\n\tfitness = numpy.sum(solution[0::2]) - numpy.sum(solution[1::2])\n\treturn fitness\n\nfitness_function = fitness_func\nnum_generations = 2\nnum_parents_mating = 10\n\nsol_per_pop = 100\nnum_genes = 20\n\ngene_type=int\n# init_range_low = 0\n# init_range_high = 2\ngene_space = [0, 1]\n\nparent_selection_type = \"sss\"\nkeep_parents = 10\n\ncrossover_type = \"scattered\"\nmutation_type = \"random\"\nmutation_percent_genes = 100 / num_genes\n\nga_instance = pygad.GA(num_generations=num_generations,\nnum_parents_mating=num_parents_mating,\nfitness_func=fitness_function,\nsol_per_pop=sol_per_pop,\nnum_genes=num_genes,\ngene_type=gene_type,\n# init_range_low=init_range_low,\n# init_range_high=init_range_high,\ngene_space=gene_space,\nparent_selection_type=parent_selection_type,\nkeep_parents=keep_parents,\ncrossover_type=crossover_type,\nmutation_type=mutation_type,\nmutation_percent_genes=mutation_percent_genes)\n\nga_instance.run()\n\nsolution, solution_fitness, solution_idx = ga_instance.best_solution()\nprint(\"Parameters of the best solution : {solution}\".format(solution=solution))\nprint(\"Fitness value of the best solution = {solution_fitness}\".format(solution_fitness=solution_fitness))\n\nprediction = numpy.sum(solution[0::2]) - numpy.sum(solution[1::2])\nprint(\"Predicted output based on the best solution : {prediction}\".format(prediction=prediction))\n```"
+    },
+    {
+      "author": "cathaloruaidh",
+      "created_at": "2025-07-11T08:54:47Z",
+      "body": "Hi @ahmedfgad,\n\nThat's great, thanks for the clarification! \n\nCathal"
+    }
+  ]
+}

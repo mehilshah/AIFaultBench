@@ -1,0 +1,65 @@
+{
+  "owner": "cornellius-gp",
+  "repo": "gpytorch",
+  "number": 2604,
+  "html_url": "https://github.com/cornellius-gp/gpytorch/issues/2604",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug] Models not JIT traceable/exportable to TorchScript after Fantasization",
+  "author": "SaiAakash",
+  "created_at": "2024-11-08T23:13:42Z",
+  "updated_at": "2025-01-25T17:14:11Z",
+  "closed_at": "2025-01-25T17:14:11Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 77.75,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:16.932958+00:00",
+  "comments": [
+    {
+      "author": "Balandat",
+      "created_at": "2024-11-09T02:26:41Z",
+      "body": "> Detaching this value from the computational graph in the same line, solves the issue because now this matrix is a gradient-free tensor and the model can be JIT traced. I can make a PR with this fix if that's helpful.\r\n\r\nWhat if we want to differentiate some downstream computation of the fantasized model w.r.t. the training inputs (or the fantasy location)? Detaching this always would prevent that? I guess we could detach this when trying to JIT this instead? "
+    },
+    {
+      "author": "jacobrgardner",
+      "created_at": "2024-11-09T15:04:06Z",
+      "body": "We already have a `trace_mode` setting that indicates the model is being called with the intention of computing traceable caches (that should be detached). This should be fixable I think by just detaching if that setting is on."
+    },
+    {
+      "author": "SaiAakash",
+      "created_at": "2024-11-09T15:14:20Z",
+      "body": "@jacobrgardner yes I think that's correct. It's just a bug that the `new_covar_cache` is not detached since in the usual (unfantasized) case the `precomputed_cache` [in this line](https://github.com/cornellius-gp/gpytorch/blob/d501c284d05a1186868dc3fb20e0fa6ad32d32ac/gpytorch/models/exact_prediction_strategies.py#L407) is always detached.\r\n\r\nSo, I think it should work if we can just detach `new_covar_cache` before actually adding it to the cache in `get_fantasy_strategy` method."
+    },
+    {
+      "author": "SaiAakash",
+      "created_at": "2024-11-09T17:58:48Z",
+      "body": "@Balandat @jacobrgardner thanks for your inputs on this. I have added a PR with this fix in #2605 . Please let me know if you have any comments on that."
+    },
+    {
+      "author": "SaiAakash",
+      "created_at": "2025-01-25T17:14:11Z",
+      "body": "Closing this since #2605 has now been merged."
+    }
+  ]
+}

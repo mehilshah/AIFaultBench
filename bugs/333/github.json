@@ -1,0 +1,51 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21740,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21740",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "On enforcing immutable tags",
+  "author": "GaetanLepage",
+  "created_at": "2026-05-22T18:30:33Z",
+  "updated_at": "2026-05-29T10:23:17Z",
+  "closed_at": "2026-05-29T10:06:00Z",
+  "labels": [
+    "bug",
+    "ver: 2.6.x"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 6.65,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:39.989851+00:00",
+  "comments": [
+    {
+      "author": "deependujha",
+      "created_at": "2026-05-29T10:06:00Z",
+      "body": "Hi @GaetanLepage, thank you for raising this and for your work maintaining the nixpkgs package.\n\nWe've confirmed that the `2.6.4` tag was indeed force-pushed. This was possibly due to a mistake where the original release PR (#21701) was incorrectly targeted at `release/2.6.x` instead of `release/stable`. PR #21727 corrected this, which resulted in the tag being updated to point to the right commit.\n\nAlso worth noting, we've just released `2.6.5` (tag `2.6.5`, commit `be98784`), which is a clean tag with no such issues. You may want to update your nixpkgs package to this version.\n\nhttps://github.com/Lightning-AI/pytorch-lightning/releases/tag/2.6.5\n\nAs there's no further actionable item here, I'll go ahead and close this issue. Thanks again for flagging it!"
+    },
+    {
+      "author": "GaetanLepage",
+      "created_at": "2026-05-29T10:23:17Z",
+      "body": "Thanks for the reply!\n\nFYI, you can toggle \"Immutable releases\" in your repository settings, which will prevent this mishap from happening again:\n\n<img width=\"2509\" height=\"1112\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/b77d59eb-8b11-45ac-8012-915582e571bc\" />\n\nThanks also for mentioning 2.6.5, I've opened a PR to update our package:\nhttps://github.com/NixOS/nixpkgs/pull/525131\n\nCheers!\n\n"
+    }
+  ]
+}

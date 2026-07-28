@@ -1,0 +1,83 @@
+{
+  "owner": "pytorch",
+  "repo": "examples",
+  "number": 1134,
+  "html_url": "https://github.com/pytorch/examples/issues/1134",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "AttributeError: module 'torch.backends' has no attribute 'mps'",
+  "author": "ravijo",
+  "created_at": "2023-04-13T03:52:58Z",
+  "updated_at": "2024-04-30T05:37:06Z",
+  "closed_at": "2023-04-25T04:44:01Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 9,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 12.04,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:58.878354+00:00",
+  "comments": [
+    {
+      "author": "Ansor-ZJJ",
+      "created_at": "2023-04-17T13:39:18Z",
+      "body": "I also encountered the same problem. I annotated the 'mps' code and then set to use multiple Gpus. \"model = torch.nn.DataParallel allel(model). But I don't know what's the difference between this and single-node multi-GPU training mode\r\n\r\n\r\n```\r\n    if not torch.cuda.is_available() and not torch.backends.mps.is_available():\r\n        print('using CPU, this will be slow')\r\n    elif args.distributed:\r\n        # For multiprocessing distributed, DistributedDataParallel constructor\r\n        # should always set the single device scope, otherwise,\r\n        # DistributedDataParallel will use all available devices.\r\n        if torch.cuda.is_available():\r\n            if args.gpu is not None:\r\n                torch.cuda.set_device(args.gpu)\r\n                model.cuda(args.gpu)\r\n                # When using a single GPU per process and per\r\n                # DistributedDataParallel, we need to divide the batch size\r\n                # ourselves based on the total number of GPUs of the current node.\r\n                args.batch_size = int(args.batch_size / ngpus_per_node)\r\n                args.workers = int((args.workers + ngpus_per_node - 1) / ngpus_per_node)\r\n                model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.gpu])\r\n            else:\r\n                model.cuda()\r\n                # DistributedDataParallel will divide and allocate batch_size to all\r\n                # available GPUs if device_ids are not set\r\n                model = torch.nn.parallel.DistributedDataParallel(model)\r\n    elif args.gpu is not None and torch.cuda.is_available():\r\n        torch.cuda.set_device(args.gpu)\r\n        model = model.cuda(args.gpu)\r\n    # elif torch.backends.mps.is_available():\r\n    #     device = torch.device(\"mps\")\r\n    #     model = model.to(device)\r\n    else:\r\n        # DataParallel will divide and allocate batch_size to all available GPUs\r\n        if args.arch.startswith('alexnet') or args.arch.startswith('vgg'):\r\n            model.features = torch.nn.DataParallel(model.features)\r\n            model.cuda()\r\n        else:\r\n            model = torch.nn.DataParallel(model).cuda()\r\n\r\n\r\n    if torch.cuda.is_available():\r\n        if args.gpu:\r\n            device = torch.device('cuda:{}'.format(args.gpu))\r\n        else:\r\n            device = torch.device(\"cuda\")\r\n    # elif torch.backends.mps.is_available():\r\n    #     device = torch.device(\"mps\")\r\n    else:\r\n        device = torch.device(\"cpu\")\r\n    # define loss function (criterion), optimizer, and learning rate scheduler\r\n\r\n```\r\n"
+    },
+    {
+      "author": "msaroufim",
+      "created_at": "2023-04-25T04:35:37Z",
+      "body": "@ravijo your PyTorch version is quite old, might be best to upgrade"
+    },
+    {
+      "author": "rmib200",
+      "created_at": "2023-12-22T21:29:41Z",
+      "body": "I am having the same issue but I am on Windows. My Torch version is 2.1.2"
+    },
+    {
+      "author": "ravijo",
+      "created_at": "2023-12-24T02:17:30Z",
+      "body": "@rmib200 \r\nI forgot the details already, but can you please upgrade your PyTorch and check it please?"
+    },
+    {
+      "author": "bowen480",
+      "created_at": "2024-03-13T11:56:07Z",
+      "body": "> @ravijo your PyTorch version is quite old, might be best to upgrade\r\n\r\ndo you solve this problem?\r\n"
+    },
+    {
+      "author": "ravijo",
+      "created_at": "2024-03-13T14:11:26Z",
+      "body": "@bowen480 \r\nYes, I upgraded PyTorch to get rid of this error."
+    },
+    {
+      "author": "287400117",
+      "created_at": "2024-04-30T03:39:41Z",
+      "body": "> @bowen480 Yes, I upgraded PyTorch to get rid of this error.\r\n\r\nI am having the same issue\uff0cwhich PyTorch version you upgraded?"
+    },
+    {
+      "author": "ravijo",
+      "created_at": "2024-04-30T03:51:54Z",
+      "body": "@287400117 It's been over a year, and I unfortunately don't remember the PyTorch version. My apologies"
+    },
+    {
+      "author": "287400117",
+      "created_at": "2024-04-30T05:37:05Z",
+      "body": "> @287400117 It's been over a year, and I unfortunately don't remember the PyTorch version. My apologies\r\n\r\nthank you for replay\uff0cMy issue was resolved after upgrading to pytorch 1.13.1"
+    }
+  ]
+}

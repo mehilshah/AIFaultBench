@@ -1,0 +1,45 @@
+{
+  "owner": "sdv-dev",
+  "repo": "SDV",
+  "number": 2839,
+  "html_url": "https://github.com/sdv-dev/SDV/issues/2839",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Metadata visualization shows table key not relationship key for relationships",
+  "author": "frances-h",
+  "created_at": "2026-03-09T03:49:57Z",
+  "updated_at": "2026-03-18T14:11:43Z",
+  "closed_at": "2026-03-18T14:11:43Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": "1.35.0",
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 9.43,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:42.470656+00:00",
+  "comments": [
+    {
+      "author": "npatki",
+      "created_at": "2026-03-09T17:52:53Z",
+      "body": "### Expected Behavior\nIn the above case, we expect that the edge should be listed as `fk --> other` instead of what it currently is labeled (`fk -- pk`). This edge should be based on what the `'relationships'` section of the metadata has.\n\nNote that within the parent table, the primary key should remain as `pk`. That should be based on what the `'tables'` part of the metadata has.\n\nSo we expect that the visualization should showcase the discrepancy (the edge would be marked differently than the primary key in the table)."
+    }
+  ]
+}

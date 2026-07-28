@@ -1,0 +1,65 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2613,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2613",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] ROCm 7.0 compatibility issue with Attention2d modules",
+  "author": "EmilienM",
+  "created_at": "2025-11-25T01:19:15Z",
+  "updated_at": "2025-12-02T16:57:31Z",
+  "closed_at": "2025-12-02T16:57:31Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 7.65,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:10.821928+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-11-25T01:25:01Z",
+      "body": "@EmilienM thanks for the detailed explanation, understand the issue. But as you point out, non-contiguous tensors are common in vision arch and this is a vision arch, so shouldn't this be a ROCm bug? AFAIK anything operations that *requires* contiguous inputs and doesn't have the necessary handling themselvse is a bug no? There are some cases where you get a faster codepath if they are contigous but can't think of one where you'd expect or accept an error.. hrm.\n\n"
+    },
+    {
+      "author": "EmilienM",
+      "created_at": "2025-11-25T02:59:07Z",
+      "body": "> [@EmilienM](https://github.com/EmilienM) thanks for the detailed explanation, understand the issue. But as you point out, non-contiguous tensors are common in vision arch and this is a vision arch, so shouldn't this be a ROCm bug? AFAIK anything operations that _requires_ contiguous inputs and doesn't have the necessary handling themselvse is a bug no? There are some cases where you get a faster codepath if they are contigous but can't think of one where you'd expect or accept an error.. hrm.\n\nyou're right, it's an issue in ROCm bug, I'll report it tomorrow. My PR could be a temporary workaround for an upstream bug, not a permanent solution, if you'd accept it."
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-11-25T03:25:45Z",
+      "body": "@EmilienM I'll take a look tomorow, my main concern is that adding contiguous calls can negatively impact performance in situations where it isn't required, as it forces a mem copy for kernels that may not need it... I've definitely fiddled with that situation wrt to the LayerNorm impl and it could improve a few specific cases and make others worse.\n\nAlso, I don't have any AMD hardware/setups handy (asked them a long long time ago and they weren't very helpful, heh). So I'll just be checking perf regressions on CPU / CUDA"
+    },
+    {
+      "author": "EmilienM",
+      "created_at": "2025-11-25T17:04:08Z",
+      "body": "ROCm issue: https://github.com/ROCm/ROCm/issues/5694"
+    },
+    {
+      "author": "rwightman",
+      "created_at": "2025-12-02T16:57:31Z",
+      "body": "Appears fixed on more recent ROCm versions so will close here"
+    }
+  ]
+}

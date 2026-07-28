@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 42913,
+  "html_url": "https://github.com/huggingface/transformers/issues/42913",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Unexpected tokenizer behavior difference from v4 to v5",
+  "author": "awni",
+  "created_at": "2025-12-16T22:14:01Z",
+  "updated_at": "2026-01-25T08:02:25Z",
+  "closed_at": "2026-01-25T08:02:25Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 39.41,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:11.092598+00:00",
+  "comments": [
+    {
+      "author": "apaniukov",
+      "created_at": "2025-12-18T10:56:16Z",
+      "body": "Hi, I got the same issue: https://github.com/huggingface/transformers/issues/42898"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2026-01-16T08:02:24Z",
+      "body": "This issue has been automatically marked as stale because it has not had recent activity. If you think this still needs to be addressed please comment on this thread.\n\nPlease note that issues that do not follow the [contributing guidelines](https://github.com/huggingface/transformers/blob/main/CONTRIBUTING.md) are likely to be ignored."
+    }
+  ]
+}

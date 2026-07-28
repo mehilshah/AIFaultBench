@@ -1,0 +1,50 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 9933,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/9933",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "RuntimeError: CUDA error: an illegal memory access was encountered",
+  "author": "Riki123666",
+  "created_at": "2025-01-11T09:38:16Z",
+  "updated_at": "2025-03-13T22:21:25Z",
+  "closed_at": "2025-03-13T22:21:24Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 61.53,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:29.188864+00:00",
+  "comments": [
+    {
+      "author": "puririshi98",
+      "created_at": "2025-02-13T00:47:15Z",
+      "body": "try the nvidia pyg container, and let me know how it goes, i can helpo debug if it persists there\nhttps://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg"
+    },
+    {
+      "author": "puririshi98",
+      "created_at": "2025-03-13T22:21:24Z",
+      "body": "closing for now, re-open if failure reproduces using nvidia's container"
+    }
+  ]
+}

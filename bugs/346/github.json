@@ -1,0 +1,60 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 47116,
+  "html_url": "https://github.com/huggingface/transformers/issues/47116",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Streaming Pipeline Regression in Transformers v5",
+  "author": "davidmezzetti",
+  "created_at": "2026-07-06T19:56:06Z",
+  "updated_at": "2026-07-09T12:00:58Z",
+  "closed_at": "2026-07-09T12:00:58Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.67,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:59.098214+00:00",
+  "comments": [
+    {
+      "author": "ojasvi24-coder",
+      "created_at": "2026-07-07T00:47:08Z",
+      "body": "I would love to work on this if it's still open!"
+    },
+    {
+      "author": "Sammy-Dabbas",
+      "created_at": "2026-07-07T01:26:14Z",
+      "body": "I looked into this and I think I have a fix ready, pending your go-ahead to open a PR.\n\nRoot cause: the `inputs = list(inputs)` in `Pipeline.__call__` was added in the v5 chat template change (#42326) so it could read `inputs[0]` to detect chat-style inputs. Generators are not subscriptable, so it materializes the whole thing just to peek at the first element, and on a large or streaming generator that forces the entire stream into memory and OOMs. In v4 there was no such conversion; generators would fall through to the existing lazy `get_iterator` / `PipelineIterator` path.\n\nThe fix i have peeks only the first item with `next()`. If it is a chat message, materialize just that single bounded conversation as a `Chat`. Otherwise it  reattach the peeked item to the generator and let it stream through the existing lazy iterator path, so a large generator is never fully materialized. Im avoiding just dropping `GeneratorType` from the container types which is the workaround in the issue, since that silently breaks single-chat-as-generator detection. I have a regression test asserting the generator input is not materialized, and it passes locally.\n\n\nI also see @ojasvi24-coder offered to take this. Either way, I'm glad to help get this fixed. If you'd like me to open the PR I can do that right away,"
+    },
+    {
+      "author": "Rocketknight1",
+      "created_at": "2026-07-07T13:58:36Z",
+      "body": "Yes, I think this problem is real, and will get annoying on large inputs! I opened the PR myself since a lot of this is my code, and there were a few other vestigial bits in there that needed a refresh."
+    },
+    {
+      "author": "davidmezzetti",
+      "created_at": "2026-07-07T14:06:30Z",
+      "body": "Thank you for the quick PR!"
+    }
+  ]
+}

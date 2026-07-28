@@ -1,0 +1,75 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 3263,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/3263",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Cannot run CEVAE model with GPU",
+  "author": "xiaogangzhu",
+  "created_at": "2023-08-22T02:40:01Z",
+  "updated_at": "2023-08-25T14:53:35Z",
+  "closed_at": "2023-08-25T14:53:34Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.51,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:25.095273+00:00",
+  "comments": [
+    {
+      "author": "fritzo",
+      "created_at": "2023-08-22T14:12:07Z",
+      "body": "Hmm, a quick workaround might be to `torch.set_default_device('cuda')`"
+    },
+    {
+      "author": "xiaogangzhu",
+      "created_at": "2023-08-23T07:44:51Z",
+      "body": "Not working too"
+    },
+    {
+      "author": "martinjankowiak",
+      "created_at": "2023-08-23T15:37:22Z",
+      "body": "works for me on the dev branch. what versions of pyro/torch are you using?\r\n\r\n```\r\npython examples/cvae/main.py --cuda\r\nNN Epoch 0 train    :   9%|\u2588\u2588\u258b                             | 40/469 [00:03<00:15, 27.54it/s, early_stop_count=0, loss=178.30]\r\n```\r\nthis is with torch==1.13.0+cu116"
+    },
+    {
+      "author": "xiaogangzhu",
+      "created_at": "2023-08-24T02:55:26Z",
+      "body": "Hi, I also use the dev branch but the model is cevae not cvae, the file is at /examples/contrib/cevae/synthetic.py"
+    },
+    {
+      "author": "martinjankowiak",
+      "created_at": "2023-08-24T15:10:11Z",
+      "body": "@xiaogangzhu ok i can reproduce your issue and [this PR](https://github.com/pyro-ppl/pyro/pull/3264) seems to fix it\r\n\r\nthis looks like a pytorch issue because the docstrings of `DataLoader` do not seem to suggest that passing a `generator` like this is required. might be worth checking with pytorch if this is a known issue and/or if it's been fixed in later versions"
+    },
+    {
+      "author": "xiaogangzhu",
+      "created_at": "2023-08-25T08:25:38Z",
+      "body": "Hi, I saw the fixed in Dataloader function\r\n```\r\n dataloader = DataLoader(\r\n            dataset,\r\n            batch_size=batch_size,\r\n            shuffle=True,\r\n            generator=torch.Generator(device=x.device),\r\n        )\r\n```\r\nThanks very much! But another problem is that when I am running the script I cannot set num_workers to improve my data loading speed just like what I usually do in pytorch. Is there any way to fix this?"
+    },
+    {
+      "author": "martinjankowiak",
+      "created_at": "2023-08-25T14:53:34Z",
+      "body": "@xiaogangzhu this is meant to be an example pyro script not full service software with every conceivable functionality. if you want to add new features to support your use case you'll need to fork the script. \r\n\r\nthanks for reporting the GPU issue!"
+    }
+  ]
+}

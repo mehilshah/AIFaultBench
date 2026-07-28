@@ -1,0 +1,56 @@
+{
+  "owner": "deepspeedai",
+  "repo": "DeepSpeed",
+  "number": 7837,
+  "html_url": "https://github.com/deepspeedai/DeepSpeed/issues/7837",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Gradient norm abnormally increases when training with ZeRO-0",
+  "author": "wxhcore",
+  "created_at": "2026-02-09T14:33:15Z",
+  "updated_at": "2026-02-12T17:04:52Z",
+  "closed_at": "2026-02-12T17:04:52Z",
+  "labels": [
+    "bug",
+    "compression"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.11,
+  "fix": {
+    "closing_commit": "1752c2ab64e789341af6a15bb4af8466edad7c22",
+    "linked_prs": [],
+    "best_guess_fix_commit": "1752c2ab64e789341af6a15bb4af8466edad7c22",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:31:14.212720+00:00",
+  "comments": [
+    {
+      "author": "wxhcore",
+      "created_at": "2026-02-09T14:53:17Z",
+      "body": "Hi @tohtana,\n\nI'd like to sync with you about a potential issue I just encountered today while testing my own project, [BumbleCore](https://github.com/wxhcore/bumblecore)\u2014a training framework that implements the training loop manually and relies directly on DeepSpeed at a low level.\n\nDuring testing, I noticed **some unexpected behavior under ZeRO-0 mode**. However, considering that ZeRO-0 is essentially equivalent to standard DDP\u2014and given that the community rarely uses or tests ZeRO-0 specifically (most either use plain DDP or go straight to ZeRO-2/3)\u2014there\u2019s very limited validation around it.\n\nAs I\u2019m currently short on time and unable to thoroughly investigate whether this stems from a DeepSpeed bug, a misconfiguration, or an oversight in my own integration, I wanted to proactively share this with you. Would you be able to help assess whether **this might be a noteworthy underlying issue**?\n\nThanks so much!"
+    },
+    {
+      "author": "tohtana",
+      "created_at": "2026-02-10T04:03:33Z",
+      "body": "Hi @wxhcore, thank you for reporting! Yes, the code actually had an issue. #7839 should address it."
+    },
+    {
+      "author": "wxhcore",
+      "created_at": "2026-02-10T10:59:46Z",
+      "body": "> \u4f60\u597d[@wxhcore](https://github.com/wxhcore)\u611f\u8c22\u60a8\u7684\u53cd\u9988\uff01\u662f\u7684\uff0c\u4ee3\u7801\u786e\u5b9e\u5b58\u5728\u95ee\u9898\u3002[#7839](https://github.com/deepspeedai/DeepSpeed/pull/7839)\u5e94\u8be5\u53ef\u4ee5\u89e3\u51b3\u8fd9\u4e2a\u95ee\u9898\u3002\n\nI'm glad this was indeed a bug, thank you so much for fixing it!"
+    }
+  ]
+}

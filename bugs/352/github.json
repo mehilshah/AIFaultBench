@@ -1,0 +1,60 @@
+{
+  "owner": "huggingface",
+  "repo": "peft",
+  "number": 1938,
+  "html_url": "https://github.com/huggingface/peft/issues/1938",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Check if `past_key_values` is provided when using prefix_tuning in peft_model",
+  "author": "Nidhogg-lyz",
+  "created_at": "2024-07-19T06:21:04Z",
+  "updated_at": "2024-07-22T15:23:46Z",
+  "closed_at": "2024-07-22T15:23:46Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.38,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:09.288898+00:00",
+  "comments": [
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2024-07-22T09:30:44Z",
+      "body": "Thanks for reporting this error. Indeed it sounds like it should not be too hard to fix. Do you have a code snippet that I can use to reproduce the error?"
+    },
+    {
+      "author": "Nidhogg-lyz",
+      "created_at": "2024-07-22T09:49:52Z",
+      "body": "@BenjaminBossan This is a simple script for reproduction:\r\n```\r\nimport requests\r\nfrom PIL import Image\r\n\r\nimport torch\r\nfrom transformers import AutoProcessor, LlavaForConditionalGeneration, LlamaForCausalLM\r\n\r\nmodel_id = \"llava-hf/llava-1.5-7b-hf\"\r\nprompt = \"USER: <image>\\nWhat are these?\\nASSISTANT:\"\r\nimage_file = \"http://images.cocodataset.org/val2017/000000039769.jpg\"\r\n\r\n# prepare model and inputs\r\nmodel = LlavaForConditionalGeneration.from_pretrained(\r\n    model_id, \r\n    torch_dtype=torch.float16, \r\n    low_cpu_mem_usage=True, \r\n)\r\nprocessor = AutoProcessor.from_pretrained(model_id)\r\nraw_image = Image.open(requests.get(image_file, stream=True).raw)\r\ninputs = processor(prompt, raw_image, return_tensors='pt').to(torch.float16)\r\n\r\n# get peft model\r\nfrom peft import PrefixTuningConfig, get_peft_model\r\npeft_config = PrefixTuningConfig(task_type=\"CAUSAL_LM\", num_virtual_tokens=20)\r\nmodel.language_model = get_peft_model(model.language_model, peft_config)\r\n\r\noutput = model(**inputs, output_hidden_states = True)\r\n```\r\n\r\nBtw, to find the exact cause of the error, you may need to check `forward` function of llava, in `transformers/models/llava/modeling_llava.py`, `class LlavaForConditionalGeneration` line 476.\r\nI tried the method I mentioned in the original issue and it works fine for me :)"
+    },
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2024-07-22T12:03:06Z",
+      "body": "Thanks for providing this example, I could replicate the error. If you want to create the PR to fix this, I'd be happy to accept it.\r\n\r\nFor this, let's adopt your example as a unit test for this bug. We can substitute the quite big llava model by this tiny variation, which is sufficient to cover the bug: `model_id = \"trl-internal-testing/tiny-random-LlavaForConditionalGeneration\"`."
+    },
+    {
+      "author": "Nidhogg-lyz",
+      "created_at": "2024-07-22T15:23:46Z",
+      "body": "To minimize the effect on other codes, I simply check if the `past_key_values` already in `kwargs` and pop it. If there's any potential issues please let me know and I'm glad to participate in this."
+    }
+  ]
+}

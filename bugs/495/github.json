@@ -1,0 +1,56 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 10024,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/10024",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "PGExplainer: RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cpu and cuda:0!",
+  "author": "giuseppeantoniomotisi",
+  "created_at": "2025-02-12T16:38:04Z",
+  "updated_at": "2025-04-24T05:59:39Z",
+  "closed_at": "2025-02-13T00:36:09Z",
+  "labels": [
+    "bug",
+    "explain"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.33,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:45.495841+00:00",
+  "comments": [
+    {
+      "author": "giuseppeantoniomotisi",
+      "created_at": "2025-02-12T17:56:18Z",
+      "body": "I resolved the issue by using `explainer.algorithm.to(device)`, but the loss remains stuck at 1.34, and the edge_mask is a zero matrix. I also tried using GNNExplainer, but encountered dimensionality issues when working with SAGPooling. Any idea?"
+    },
+    {
+      "author": "puririshi98",
+      "created_at": "2025-02-13T00:36:09Z",
+      "body": "could you open a seperate issue, the title no longer reflects your current issue"
+    },
+    {
+      "author": "ZhuWenxuan123code",
+      "created_at": "2025-04-24T05:59:39Z",
+      "body": "> I resolved the issue by using `explainer.algorithm.to(device)`, but the loss remains stuck at 1.34, and the edge_mask is a zero matrix. I also tried using GNNExplainer, but encountered dimensionality issues when working with SAGPooling. Any idea?\n\nI also encountered the same problem. do you solve the problem?"
+    }
+  ]
+}

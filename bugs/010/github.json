@@ -1,0 +1,78 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 11117,
+  "html_url": "https://github.com/tensorflow/models/issues/11117",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Validation loss always equals zero for Instance/Semantic Segmentation with Model Garden",
+  "author": "luiz-felipe-moreira",
+  "created_at": "2023-11-22T15:28:05Z",
+  "updated_at": "2025-01-04T01:58:24Z",
+  "closed_at": "2025-01-04T01:58:22Z",
+  "labels": [
+    "stat:awaiting response",
+    "type:bug",
+    "models:official",
+    "stale"
+  ],
+  "milestone": null,
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 408.44,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:26.892820+00:00",
+  "comments": [
+    {
+      "author": "laxmareddyp",
+      "created_at": "2024-01-03T19:09:04Z",
+      "body": "Hi @luiz-felipe-moreira,\r\n\r\nSorry for the delay in response, We are looking into this issue and will let you know once it is updated from our side.\r\n\r\nThanks."
+    },
+    {
+      "author": "laxmareddyp",
+      "created_at": "2024-01-23T22:14:34Z",
+      "body": "Hi @luiz-felipe-moreira ,\r\n\r\nCould you please check this [gist](https://colab.sandbox.google.com/gist/sineeli/a8a2c38546a7ad4402408826fffb6d2d/semantic_segmentation.ipynb) in which  `exp_config.task.validation_data.resize_eval_groundtruth = True` set this variable to true to enable validation on validation data for semantic segmentation and also pass this variable `eval_summary_manager=summary_manager.maybe_build_eval_summary_manager(\r\n              params=exp_config, model_dir=model_dir)` while training as evaluation results has image data . For instance segmentation the validation loss kept intentionally as zero.\r\n\r\nThanks."
+    },
+    {
+      "author": "luiz-felipe-moreira",
+      "created_at": "2024-01-24T14:50:15Z",
+      "body": "Hi @laxmareddyp,\r\n\r\nThanks for you response.\r\nI can't understand why the validation loss is kept intentionally as zero for instance segmentation. I think that tracking the value of the validation loss is necessary. \r\nFor example, it's important to compare the graph of the validation loss with the graph of the training loss in order to recognize model overfitting. When you check the graphs in tensorboard, all graphs are shown perfectly, except for the validation loss graph."
+    },
+    {
+      "author": "bharatjetti",
+      "created_at": "2024-12-19T09:11:26Z",
+      "body": "Hi @luiz-felipe-moreira \r\nIn the tutorial for [Semantic segmentation](https://www.tensorflow.org/tfmodels/vision/semantic_segmentation#train_and_evaluate) I tried to run the notebook with latest TensorFlow version. I changed the code to get updated version of dataset and updated few api's to enable validation loss tracking. It is working. Please find the gist [here](https://colab.research.google.com/gist/bharatjetti/5d0bfc5902537d5ffe12ca86de151f74/semantic_segmentation.ipynb#scrollTo=WASJZ3gUH8ni).\r\n"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-12-28T01:58:00Z",
+      "body": "This issue has been marked stale because it has no recent activity since 7 days. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2025-01-04T01:58:22Z",
+      "body": "This issue was closed due to lack of activity after being marked stale for past 7 days."
+    },
+    {
+      "author": "google-ml-butler[bot]",
+      "created_at": "2025-01-04T01:58:24Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=Yes&entry.2137816233=https://github.com/tensorflow/models/issues/11117\">Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=No&entry.2137816233=https://github.com/tensorflow/models/issues/11117\">No</a>\n"
+    }
+  ]
+}

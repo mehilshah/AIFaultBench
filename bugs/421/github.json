@@ -1,0 +1,41 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 13967,
+  "html_url": "https://github.com/huggingface/diffusers/issues/13967",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Can't use `load_lora_weights()` on `ErnieImageModularPipeline`",
+  "author": "SamuelTallet",
+  "created_at": "2026-06-15T20:11:23Z",
+  "updated_at": "2026-06-16T00:53:57Z",
+  "closed_at": "2026-06-16T00:53:57Z",
+  "labels": [
+    "bug",
+    "lora",
+    "modular-pipelines"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.2,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:54.542680+00:00",
+  "comments": []
+}

@@ -1,0 +1,45 @@
+{
+  "owner": "pyg-team",
+  "repo": "pytorch_geometric",
+  "number": 9829,
+  "html_url": "https://github.com/pyg-team/pytorch_geometric/issues/9829",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Issue with inferring batch size when using PyTorch Lightning",
+  "author": "georgeani",
+  "created_at": "2024-12-07T19:07:00Z",
+  "updated_at": "2024-12-09T09:40:59Z",
+  "closed_at": "2024-12-09T09:40:59Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.61,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:43.707504+00:00",
+  "comments": [
+    {
+      "author": "georgeani",
+      "created_at": "2024-12-09T09:40:59Z",
+      "body": "I found the issue, it is with my code. The `self.log('val_loss', loss)` should be `self.log('val_loss', loss, batch_size=batch_size)`."
+    }
+  ]
+}

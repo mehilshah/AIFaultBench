@@ -1,0 +1,39 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 3430,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/3430",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Serializing an easyguide corrupts it",
+  "author": "BenZickel",
+  "created_at": "2025-04-09T22:33:04Z",
+  "updated_at": "2025-04-14T13:23:25Z",
+  "closed_at": "2025-04-14T13:23:25Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 4.62,
+  "fix": {
+    "closing_commit": "147b357e3020930dc96440cfc67426813f3725d6",
+    "linked_prs": [],
+    "best_guess_fix_commit": "147b357e3020930dc96440cfc67426813f3725d6",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:28:18.824184+00:00",
+  "comments": []
+}

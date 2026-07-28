@@ -1,0 +1,100 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 1753,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/1753",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "tracer error in blocked AutoGuide",
+  "author": "amifalk",
+  "created_at": "2024-02-29T22:11:09Z",
+  "updated_at": "2024-03-23T15:32:28Z",
+  "closed_at": "2024-03-23T15:32:28Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 12,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 22.72,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:24.275776+00:00",
+  "comments": [
+    {
+      "author": "fehiepsi",
+      "created_at": "2024-03-01T21:50:54Z",
+      "body": "Hi @amifalk, those autoguides are not designed to be composed with vmap after the construction because it needs initialization (to inspect the model and generate something like prototype_trace etc.). Something like this will work\r\n```\r\ndef init(...):\r\n    guide = AutoDelta(...)\r\n    return guide.init(...)\r\n\r\ninit_state = jax.vmap(init)(...)\r\n```"
+    },
+    {
+      "author": "amifalk",
+      "created_at": "2024-03-01T22:24:19Z",
+      "body": "I think there's still an issue here. When `svi.init` is called, it initializes both the model and the guide for the first time, which should set up the prototype trace. Batched model fitting works with AutoGuides if I `vmap` the SVI methods in all cases except when there is both a deterministic site and the guide is based on a blocked model.\r\n\r\nThe suggested approach yields the same error as before (though AutoGuides are not registered as pytrees so they cannot be returned after calling vmap).\r\n\r\n ```python\r\ndef guide_init(rng_seed):\r\n    guide = AutoDelta(block(seed(model, rng_seed=rng_seed), hide=['b']))\r\n    seed(guide, rng_seed=rng_seed)()\r\n    \r\n    return \r\n\r\nkeys = random.split(random.PRNGKey(0))\r\njax.vmap(guide_init)(keys) # this works\r\n\r\ndef guide_init_deterministic(rng_seed):\r\n    guide = AutoDelta(block(seed(model_w_deterministic, rng_seed=rng_seed), hide=['b']))\r\n    seed(guide, rng_seed=rng_seed)()\r\n    \r\n    return \r\n\r\nkeys = random.split(random.PRNGKey(0))\r\njax.vmap(guide_init_deterministic)(keys) # tracer error\r\n```\r\n\r\n"
+    },
+    {
+      "author": "amifalk",
+      "created_at": "2024-03-02T03:56:38Z",
+      "body": "@fehiepsi I've traced the source to this [while loop](https://github.com/pyro-ppl/numpyro/blob/f997da20638fd130c5e581bfff699e05b9b0d033/numpyro/infer/util.py#L433). If I set `_DISABLE_CONTROL_FLOW_PRIM = True`, vmapping the svi.init method works. However, vmapping the guide initialization yields a new error in the while loop: \r\n\r\n```TracerBoolConversionError: Attempted boolean conversion of traced array with shape bool[]..\r\nThis BatchTracer with object id 140305711093520 was created on line:\r\n  /home/ami/venvs/jax/lib/python3.11/site-packages/numpyro/infer/util.py:357:15 (find_valid_initial_params.<locals>.cond_fn)\r\nSee https://jax.readthedocs.io/en/latest/errors.html#jax.errors.TracerBoolConversionError\r\n```\r\n\r\n"
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2024-03-02T13:13:27Z",
+      "body": "If we use Python while loop, then the condition needs to be a Python value like True or False. having a jax object there won't work. What is your usage case by the way?"
+    },
+    {
+      "author": "amifalk",
+      "created_at": "2024-03-02T13:31:50Z",
+      "body": "I have a blocked model with a deterministic site that I'm trying to perform some simulation studies on. I want to see how variations in the structure of the dataset / model hyperparameters affect the performance, and I also want to be able to select the best result over multiple initializations. It's very slow to do this sequentially (for a small grid of hyperparams it took around 40 minutes), but after vmapping/pmapping with GPU I can get the entire grid to run in parallel. In my case it reduced the fitting time to 7 seconds. \r\n\r\nUnfortunately, if I try to vmap the blocked model with deterministic sites present, it throws this error, so I have to instead recompute the deterministic sites at the end of model fitting. \r\n\r\nIn my case, I need to block the model to define an AutoGuide that is compatible with enumeration (blocking out the enumerated sites), but this would likely also be a problem for people using AutoGuideList.\r\n"
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2024-03-03T18:01:13Z",
+      "body": "I think you can do something like\r\n```python\r\ndef run_svi(...):\r\n    svi = ...\r\n    svi_result = svi.run(...)\r\n    return svi_result\r\n\r\nsvi_results = vmap(run_svi)(...)\r\n```"
+    },
+    {
+      "author": "amifalk",
+      "created_at": "2024-03-03T18:29:01Z",
+      "body": "Unfortunately this still seems to throw the same tracer error.\r\n\r\n```python\r\ndef run_svi(key):\r\n    optimizer = numpyro.optim.Adam(step_size=.01)\r\n    guide = AutoDelta(block(seed(model, rng_seed=0), hide=['b']))\r\n    svi = SVI(model, guide, optimizer, loss=Trace_ELBO())\r\n\r\n    return svi.run(key, 100, progress_bar=False)\r\n\r\ndef run_svi_deterministic(key):\r\n    optimizer = numpyro.optim.Adam(step_size=.01)\r\n    guide = AutoDelta(block(seed(model_w_deterministic, rng_seed=0), hide=['b']))\r\n    svi = SVI(model, guide, optimizer, loss=Trace_ELBO())\r\n\r\n    return svi.run(key, 100, progress_bar=False)\r\n\r\nkeys = random.split(random.PRNGKey(0), 2)\r\n\r\njax.vmap(run_svi)(keys) # works\r\njax.vmap(run_svi_deterministic)(keys) # tracer error from the while loop in find_valid_initial_params\r\n```"
+    },
+    {
+      "author": "amifalk",
+      "created_at": "2024-03-03T19:00:54Z",
+      "body": "Can we make it so that AutoGuides only collect non-enumerated model sample sites? This wouldn't fix the problem for all blocked models, but it would make collecting deterministic sites possible under batched svi for my use-case. \r\n\r\nI think this would only have to be a one-liner change [here-ish](https://github.com/pyro-ppl/numpyro/blob/7769a32df065fcd3bdf8b59964ced9578379e021/numpyro/infer/autoguide.py#L179) where we just ignore sample sites in the prototype trace that have `site['infer'].get('enumerate') == True`. That would also make the syntax for defining AutoGuides for enumerated models much simpler, e.g. just ```AutoGuide(model)```, instead of \r\n```AutoGuide(block(seed(model, rng_seed=0), hide=[\"enumerated_site_1\", \"enumerated_site_2\", ...]))```\r\n\r\n"
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2024-03-12T01:24:43Z",
+      "body": "Thanks @amifalk! There is indeed leakage here with the seed handler. I haven't been able to figure out why yet. Posting here for reference\r\n\r\n```python\r\nimport numpyro\r\nimport numpyro.distributions as dist\r\nimport jax\r\n\r\ndef model():\r\n    return numpyro.sample('a', dist.Normal(0, 1))    \r\n\r\ndef run(key):\r\n    return numpyro.infer.util.initialize_model(key, numpyro.handlers.seed(model, rng_seed=0))[0]\r\n\r\nwith jax.checking_leaks():\r\n    jax.jit(run)(jax.random.PRNGKey(0))\r\n```"
+    },
+    {
+      "author": "amifalk",
+      "created_at": "2024-03-12T03:48:47Z",
+      "body": "@fehiepsi With that example, I was able to narrow the source of the bug further - thanks! The while loop of `_find_valid_params` closes over the seeded model, but it also traces the model during its calls to `potential_fn`. I think the fact that the trace is seeing a rng key from the global call to `seed` is causing the error. Here's a minimal example.  \r\n\r\n```python\r\nimport numpyro\r\nimport numpyro.distributions as dist\r\nimport jax\r\n\r\ndef model():\r\n    return numpyro.sample('a', dist.Normal(0, 1))    \r\n\r\ndef run(key):\r\n    seeded = numpyro.handlers.seed(model, rng_seed=0)\r\n\r\n    def cond_fn(state):\r\n        i, num = state\r\n        return i < 10 \r\n\r\n    def body_fn(state):\r\n        i, num = state\r\n        \r\n        numpyro.handlers.trace(seeded).get_trace() # this references the global rng values in a jitted context\r\n        # equivalently num = numpyro.handlers.trace(seeded).get_trace()['a']['value'] will raise an error        \r\n        return (i + 1, num)\r\n\r\n    return jax.lax.while_loop(cond_fn, body_fn, (0, 0))\r\n    \r\nwith jax.checking_leaks():\r\n    jax.jit(run)(jax.random.PRNGKey(0))\r\n```\r\nYou can also verify this by replacing `potential_fn` in `numpyro.infer.util.find_valid_initial_params` with a placeholder that just returns a constant number."
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2024-03-12T23:06:01Z",
+      "body": "I think we figured it out. thanks for the examples!\r\n\r\nseed(model) is an instance of a `seed` class which has mutable state. A fix for it is to close the seeded model into a function like\r\n```\r\ndef seeded_model(*args, **kwargs):\r\n    return seed(model, rng_seed=random.PRNGKey(0))(*args, **kwargs)\r\n```\r\nThis way each time we call the model, a new instance of the seed handler will be created. Could you check if it works for your usage case? I'll think of a long term solution (maybe improve docstring for this)."
+    },
+    {
+      "author": "amifalk",
+      "created_at": "2024-03-13T15:48:46Z",
+      "body": "Yes, this fixed it! Not sure if there's any interest in adding to NumPyro, but here's the pattern for batching SVI: https://gist.github.com/amifalk/eb377a243b046105dc00beda79441b22"
+    }
+  ]
+}

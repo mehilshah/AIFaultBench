@@ -1,0 +1,51 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 13691,
+  "html_url": "https://github.com/huggingface/diffusers/issues/13691",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Security] Incomplete Fix for CVE-2026-44513: community Pipeline Branch Bypasses trust_remote_code Check",
+  "author": "icysun",
+  "created_at": "2026-05-07T12:12:21Z",
+  "updated_at": "2026-05-13T10:44:12Z",
+  "closed_at": "2026-05-13T10:44:12Z",
+  "labels": [
+    "bug",
+    "pipelines"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 5.94,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:51.874620+00:00",
+  "comments": [
+    {
+      "author": "hlky",
+      "created_at": "2026-05-07T19:31:27Z",
+      "body": "@icysun This behavior was chosen after review. It will only load from `diffusers/community-pipelines-mirror` which is a mirror of [code already in diffusers repo](https://github.com/huggingface/diffusers/tree/main/examples/community). This also prevents name squatting attacks of Hub repos with similar names to community pipelines; if you see a code sample with `custom_pipeline=...` that is supposed to be a verified community pipeline then you can be sure it won't execute remote code as any truly remote code via `custom_pipeline` would require `trust_remote_code=True`."
+    },
+    {
+      "author": "DN6",
+      "created_at": "2026-05-13T10:44:12Z",
+      "body": "Closing since this has been discussed in https://github.com/huggingface/diffusers/pull/13448/changes#r3113668418 and is expected behaviour.  Pipelines in `diffusers/community-pipelines-mirror` are trusted. "
+    }
+  ]
+}

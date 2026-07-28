@@ -1,0 +1,47 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21036,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21036",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "LightningModule.save_hyperparameters crash on dataclass with non-init fields",
+  "author": "QuentinSoubeyranAqemia",
+  "created_at": "2025-08-06T13:31:27Z",
+  "updated_at": "2025-08-12T15:16:23Z",
+  "closed_at": "2025-08-12T15:16:23Z",
+  "labels": [
+    "bug",
+    "needs triage",
+    "ver: 2.5.x"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 6.07,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:54.397770+00:00",
+  "comments": [
+    {
+      "author": "QuentinSoubeyranAqemia",
+      "created_at": "2025-08-12T08:01:24Z",
+      "body": "For a better description of the actual use-base, see [this comment](https://github.com/Lightning-AI/pytorch-lightning/pull/21051#issuecomment-3174704303) in the PR.\nThe minimal reproducible example above is minimal and contrived and does not reflect actual use-case."
+    }
+  ]
+}

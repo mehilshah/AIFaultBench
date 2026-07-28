@@ -1,0 +1,60 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 1196,
+  "html_url": "https://github.com/huggingface/accelerate/issues/1196",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "AttributeError: 'ClusterConfig' object has no attribute 'tpu_cluster' on ",
+  "author": "Beomi",
+  "created_at": "2023-03-15T08:00:01Z",
+  "updated_at": "2023-03-19T03:53:38Z",
+  "closed_at": "2023-03-18T12:15:54Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.18,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:52.881734+00:00",
+  "comments": [
+    {
+      "author": "muellerzr",
+      "created_at": "2023-03-15T11:54:26Z",
+      "body": "Thanks @Beomi, can you try again with `pip install git+https://github.com/huggingface/accelerate@fix-tpu-cli`? I think that fixed it. "
+    },
+    {
+      "author": "Beomi",
+      "created_at": "2023-03-18T06:18:54Z",
+      "body": "> Thanks @Beomi, can you try again with `pip install git+https://github.com/huggingface/accelerate@fix-tpu-cli`? I think that fixed it.\r\n\r\nI'll check soon!\r\nThanks for your reply \ud83d\ude04"
+    },
+    {
+      "author": "Beomi",
+      "created_at": "2023-03-18T12:15:54Z",
+      "body": "@muellerzr I've tested it, and it works like a charm. Thanks for your PR!"
+    },
+    {
+      "author": "Beomi",
+      "created_at": "2023-03-19T03:53:38Z",
+      "body": "Fixed at #1202"
+    }
+  ]
+}

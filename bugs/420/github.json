@@ -1,0 +1,85 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 46962,
+  "html_url": "https://github.com/huggingface/transformers/issues/46962",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Qwen3] `create_masks_for_generate` return type change after #41251",
+  "author": "hoshibara",
+  "created_at": "2026-06-29T15:03:41Z",
+  "updated_at": "2026-07-06T07:28:40Z",
+  "closed_at": "2026-07-06T07:28:40Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 9,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 6.68,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:53.025549+00:00",
+  "comments": [
+    {
+      "author": "Rocketknight1",
+      "created_at": "2026-06-30T11:37:52Z",
+      "body": "cc @arthurzucker since it's your PR!"
+    },
+    {
+      "author": "sywangyi",
+      "created_at": "2026-07-02T01:00:38Z",
+      "body": "@kaixuanliu "
+    },
+    {
+      "author": "Cyrilvallez",
+      "created_at": "2026-07-02T03:12:35Z",
+      "body": "Hey, thanks for the issue @hoshibara! Indeed, since xpu may return None for the mask during prefill, this is a new issue. However, all other models without `layer_types`, i.e. for which the mask is always a single Tensor or None, have this issue since a very long time... I'm investigating the best fix to detect such cases! \nI don't have xpu device available, but is the difference in speed so big for the prefill?"
+    },
+    {
+      "author": "Cyrilvallez",
+      "created_at": "2026-07-02T03:51:01Z",
+      "body": "I'm very surprised here in general, as skipping the mask for the prefill will necessarily lead to recompilation on the first decode token, which in my experience would lead to worst perfs than having a full mask on the prefill as well.\nAlso, how is it even possible that the prefill is correct without a mask, given that for StaticCache, the k/v that will be returned are longer than the query tokens, meaning the attention outputs computed will NOT be equivalent (due to the softmax). Do you somehow rescale the output of QK^T to remove the effect of padding? @sywangyi @kaixuanliu "
+    },
+    {
+      "author": "hoshibara",
+      "created_at": "2026-07-02T05:38:28Z",
+      "body": "> Hey, thanks for the issue [@hoshibara](https://github.com/hoshibara)! Indeed, since xpu may return None for the mask during prefill, this is a new issue. However, all other models without `layer_types`, i.e. for which the mask is always a single Tensor or None, have this issue since a very long time... I'm investigating the best fix to detect such cases! I don't have xpu device available, but is the difference in speed so big for the prefill?\n\nIn our tests, a tensor mask will take 30% performance regression in end-to-end prefill latency during `model.generate`."
+    },
+    {
+      "author": "kaixuanliu",
+      "created_at": "2026-07-02T05:56:09Z",
+      "body": "Hi @Cyrilvallez , I summarize several points:\n\n1. No matter on XPU or on CUDA with StaticCache, prefill and decode are normally compiled as two separate graphs. StaticCache makes the KV cache storage shape stable, but the prefill step still has query length > 1 while decode has query length = 1, and the attention-mask path may also differ. Therefore, if prefill skips the mask and decode uses a 4D mask, this does not stay in a single compiled graph; decode gets its own graph/compilation, so the recompilation is inevitable. \n2. With the default dynamic cache, transformers are expected to pass attention_mask=None in the common no-padding cases and rely on PyTorch SDPA\u2019s is_causal=True. This lets XPU dispatch to the optimized/flash attention path. The update in https://github.com/huggingface/transformers/pull/41251 violated this expectation and lead to XPU dispatch attention to another path , which caused the performance regression\n3. For prefill where q_len == kv_len, no matter dynamic cache or static cache, it follows point 2 as well\n4. When using StaticCache, decode stage will correctly create a bool mask of shape (batch, 1, 1, max_cache_len), which will guarantee the correctness.\nHope this can answer your doubts. And I will submit a PR to fix the issue.\n"
+    },
+    {
+      "author": "Cyrilvallez",
+      "created_at": "2026-07-02T06:56:06Z",
+      "body": "Hey! Yes sorry, we actually never compile the prefill so we don't have the problem of recompilation lol, I forgot for a second. \nHowever, the change here is only reflected for StaticCache anyway, not DynamicCache, as otherwise the mask is never prepared in advance by `generate`, so it would never have been a dict before and now not anymore. \n\nFor StaticCache, during prefill we never have q_len == kv_len, because the k/v are padded to the max_len. Which is why I asked about the maths, because then the softmax will make the results different. However, with `is_causal=True`, it actually works because the padding is not reflected anymore, so a None mask is indeed correct. It will however work only and only if the Cache is fully empty, and will mathematically silently fail if the prefill is used with a non-empty Cache, as would be the case for example with some prefix caching or something (you call `generate` with an existing non-empty Cache and some new prefill tokens). This is because `is_causal` uses upper-left matrix, and not lower right by default. So this fast path is a bit brittle and should be restrained anyway"
+    },
+    {
+      "author": "kaixuanliu",
+      "created_at": "2026-07-02T07:49:02Z",
+      "body": "Ah yes, sorry my phrasing was not precise enough, what I meant with `q_len == kv_len` here was that the effective valid token range is the prompt length during prefill stage. So the issue here is mainly the contract change for Qwen3's prepared mask path: with StaticCache, `generate()` used to pass a dict like `{\"full_attention\": None}`. After the early return, it passes bare `None`, so `Qwen3Model.forward` treats the mask as not precomputed and calls `create_causal_mask()` again. That second call may materialize a full 4D mask, which preserves correctness but causes the XPU performance regression."
+    },
+    {
+      "author": "hoshibara",
+      "created_at": "2026-07-06T07:28:40Z",
+      "body": "Fixed.\nThanks for you PR!!"
+    }
+  ]
+}

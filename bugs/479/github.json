@@ -1,0 +1,48 @@
+{
+  "owner": "huggingface",
+  "repo": "diffusers",
+  "number": 13866,
+  "html_url": "https://github.com/huggingface/diffusers/issues/13866",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "flux2-klein lora train\uff0cbug",
+  "author": "lspze",
+  "created_at": "2026-06-04T12:38:44Z",
+  "updated_at": "2026-06-12T03:05:13Z",
+  "closed_at": "2026-06-12T03:05:13Z",
+  "labels": [
+    "bug",
+    "needs-code-example",
+    "lora",
+    "pipelines"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 7.6,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:21.550316+00:00",
+  "comments": [
+    {
+      "author": "Zhu1116",
+      "created_at": "2026-06-04T13:04:49Z",
+      "body": "\u786e\u5b9e\uff0c\u6211\u4e5f\u53d1\u73b0\u8fd9\u4e2a\u95ee\u9898\uff0c\u4f46\u662fPR\u8fd8\u6ca1\u5904\u7406"
+    }
+  ]
+}

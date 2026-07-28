@@ -1,0 +1,57 @@
+{
+  "owner": "PythonOT",
+  "repo": "POT",
+  "number": 712,
+  "html_url": "https://github.com/PythonOT/POT/issues/712",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "ot.dist with metric='minkowski' always gives p=1 despite setting it to other values",
+  "author": "luchungi",
+  "created_at": "2025-01-08T03:15:56Z",
+  "updated_at": "2025-01-08T08:34:42Z",
+  "closed_at": "2025-01-08T08:34:41Z",
+  "labels": [
+    "bug",
+    "help wanted",
+    "ot.utils"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.22,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:26:33.611910+00:00",
+  "comments": [
+    {
+      "author": "rflamary",
+      "created_at": "2025-01-08T07:11:22Z",
+      "body": "Oups this is not OK. We will look into it. Feel free to propose a fix in PR if you find where the problem is."
+    },
+    {
+      "author": "rflamary",
+      "created_at": "2025-01-08T07:13:48Z",
+      "body": "Ho but on tre other hand,  the minkowski in 1d is always the same because it is (|.|^p)^{1/p} which is absolute value. Note that square euclidian is |.|^2 that is why it is different. Could you check that it returns different distances in 2D please?"
+    },
+    {
+      "author": "luchungi",
+      "created_at": "2025-01-08T08:34:42Z",
+      "body": "Ah of course! Silly me.. It all works fine. I will close this."
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-io",
+  "number": 1489,
+  "html_url": "https://github.com/keras-team/keras-io/issues/1489",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Timeseries Forecast error",
+  "author": "pg8000",
+  "created_at": "2023-08-15T11:21:45Z",
+  "updated_at": "2023-09-13T01:44:38Z",
+  "closed_at": "2023-09-13T01:44:38Z",
+  "labels": [
+    "stale",
+    "stat:awaiting response from contributor",
+    "type:bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 28.6,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:03.395099+00:00",
+  "comments": [
+    {
+      "author": "sachinprasadhs",
+      "created_at": "2023-08-15T18:28:25Z",
+      "body": "Hi,\r\n\r\nThanks for reporting the issue.\r\n\r\nI was able to run the example successfully on Google colab with CPU, here is the [Gist](https://gist.github.com/sachinprasadhs/55c9c24a04fb7a2117ebcd501cb04b68) attached for reference. \r\n\r\nThe issue might be with the Tensorflow version or improper installation.\r\n\r\nCould you please upgrade to the latest Tensorflow version 2.13 in a new virtual env with below configurations and let us know the outcome.\r\n\r\n<h4 id=\"cpu\" data-text=\"CPU\" role=\"presentation\" style=\"box-sizing: inherit; margin: 0px 0px 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-variant-numeric: ; font-variant-east-asian: ; font-variant-alternates: ; font-weight: ; font-stretch: ; font-size: 16px; line-height: ; font-family: Roboto, &quot;Noto Sans&quot;, &quot;Noto Sans JP&quot;, &quot;Noto Sans KR&quot;, &quot;Noto Naskh Arabic&quot;, &quot;Noto Sans Thai&quot;, &quot;Noto Sans Hebrew&quot;, &quot;Noto Sans Bengali&quot;, sans-serif; font-optical-sizing: ; font-kerning: ; font-feature-settings: ; font-variation-settings: ; letter-spacing: normal; overflow: hidden; text-overflow: ellipsis; margin-inline-end: -40px; padding-inline-end: 40px; color: rgb(32, 33, 36); orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\"><span class=\"devsite-heading\" role=\"heading\" aria-level=\"4\" style=\"box-sizing: inherit;\">CPU</span><button type=\"button\" class=\"devsite-heading-link button-flat material-icons\" aria-label=\"Copy link to this section: CPU\" data-title=\"Copy link to this section: CPU\" data-id=\"cpu\" style=\"box-sizing: border-box; appearance: none; background: 0px center; border: 0px; border-radius: var(--devsite-button-border-radius,2px); box-shadow: none; color: var(--devsite-icon-color,var(--devsite-secondary-text-color)); cursor: pointer; display: inline-block; font-style: normal; font-variant-ligatures: ; font-variant-caps: ; font-variant-numeric: ; font-variant-east-asian: ; font-variant-alternates: ; font-weight: normal; font-stretch: ; font-size: 24px; font-family: &quot;Material Icons&quot;; font-optical-sizing: ; font-kerning: ; font-feature-settings: &quot;liga&quot;; font-variation-settings: ; height: 24px; letter-spacing: normal; line-height: 1; margin: var(--devsite-button-margin,0); margin-inline-end: var(--devsite-button-margin-x-end); max-width: var(--devsite-button-max-width,none); min-width: 36px; outline: 0px; overflow: hidden; padding: 0px 8px; text-align: center; text-decoration: none; text-overflow: ellipsis; text-transform: none; transition: background-color 0.2s ease 0s, border 0.2s ease 0s, box-shadow 0.2s ease 0s; vertical-align: bottom; white-space: nowrap; width: var(--devsite-button-width,auto); overflow-wrap: normal; direction: ltr; -webkit-font-smoothing: antialiased; opacity: 0;\"></button></h4><div class=\"devsite-table-wrapper\" style=\"box-sizing: inherit; margin: var(--devsite-table-margin,16px 0); padding: 0px; overflow: auto; color: rgb(32, 33, 36); font-family: Roboto, &quot;Noto Sans&quot;, &quot;Noto Sans JP&quot;, &quot;Noto Sans KR&quot;, &quot;Noto Naskh Arabic&quot;, &quot;Noto Sans Thai&quot;, &quot;Noto Sans Hebrew&quot;, &quot;Noto Sans Bengali&quot;, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">\r\n\r\nVersion | Python version | Compiler | Build tools\r\n-- | -- | -- | --\r\ntensorflow-2.13.0 | 3.8-3.11 | Clang 16.0.0 | Bazel 5.3.0\r\n\r\n</div>\r\n\r\n"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-08-30T01:44:13Z",
+      "body": "This issue is stale because it has been open for 14 days with no activity. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2023-09-13T01:44:38Z",
+      "body": "This issue was closed because it has been inactive for 28 days. Please reopen if you'd like to work on this further."
+    }
+  ]
+}

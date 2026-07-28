@@ -1,0 +1,60 @@
+{
+  "owner": "pytorch",
+  "repo": "rl",
+  "number": 3315,
+  "html_url": "https://github.com/pytorch/rl/issues/3315",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "MultiAgentNetBase duplicates the agent dimensions when in centralized mode",
+  "author": "Gilnore",
+  "created_at": "2026-01-10T11:21:52Z",
+  "updated_at": "2026-01-12T13:05:26Z",
+  "closed_at": "2026-01-12T13:04:23Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.07,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:16.956799+00:00",
+  "comments": [
+    {
+      "author": "Xmaster6y",
+      "created_at": "2026-01-12T11:01:22Z",
+      "body": "Hey, \nWhat do you mean by \"old pytorch neural net\"?\nOtherwise, did you have a look at how it's done in `MultiAgentMLP`? It is based on `MLP`, a basic `torch` net class."
+    },
+    {
+      "author": "Gilnore",
+      "created_at": "2026-01-12T12:49:52Z",
+      "body": "> Hey, What do you mean by \"old pytorch neural net\"? Otherwise, did you have a look at how it's done in `MultiAgentMLP`? It is based on `MLP`, a basic `torch` net class.\n\nThe words were \u201cregular old PyTorch neural network\u201d. By which I mean any default torch.nn.module. \n\nI read the implementation in the multi-agent MLP, it seems that it went and flattened the input along some dimensions before feeding into the multi-agent base under central mode. \n\nIs it something that must be done for any multi-agent framework under central mode?"
+    },
+    {
+      "author": "Gilnore",
+      "created_at": "2026-01-12T12:57:08Z",
+      "body": "I gave the multi-agent MLP another read through, it seems to just flattened the agents dimension into the features dimensions. Would this cause problems? Under centralized, all agents are able to observe all the states and respond, would they just all return the same output? If so how would this differ from a single agent system?"
+    },
+    {
+      "author": "Gilnore",
+      "created_at": "2026-01-12T13:04:23Z",
+      "body": "I\u2019ve realized it is likely not a bug.  I\u2019ve been trying out the multi-agent ppo guide, and I was a little confused on what the purpose of using multiple agents would be, of parameters are shared and centralized is true."
+    }
+  ]
+}

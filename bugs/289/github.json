@@ -1,0 +1,55 @@
+{
+  "owner": "huggingface",
+  "repo": "peft",
+  "number": 2477,
+  "html_url": "https://github.com/huggingface/peft/issues/2477",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Bug with 'PromptEncoderConfig' in Newer Versions of PEFT",
+  "author": "nikiduki",
+  "created_at": "2025-04-02T13:52:18Z",
+  "updated_at": "2025-04-17T10:25:07Z",
+  "closed_at": "2025-04-17T10:25:07Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 1,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 1
+  },
+  "resolution_days": 14.86,
+  "fix": {
+    "closing_commit": "36160a5c0058585b402251d7b4134697d562f699",
+    "linked_prs": [],
+    "best_guess_fix_commit": "36160a5c0058585b402251d7b4134697d562f699",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:28:35.379604+00:00",
+  "comments": [
+    {
+      "author": "BenjaminBossan",
+      "created_at": "2025-04-02T14:18:59Z",
+      "body": "Thanks for the report, this is indeed a regression.\n\n@githubnemo Before the change, we have used `model.modules_to_save`, now `peft_config.modules_to_save`. Should we go back to the former?"
+    },
+    {
+      "author": "githubnemo",
+      "created_at": "2025-04-07T15:39:14Z",
+      "body": "AFAICS this was done in ed3c82866ab3fb6c3d1db44e11e66887a49a6142 to fix #2206 and should not be reverted. Instead, we should probably just check if the config has a `modules_to_save` key. Maybe #2481 will fix this."
+    },
+    {
+      "author": "githubnemo",
+      "created_at": "2025-04-15T15:30:50Z",
+      "body": "We released v0.15.2 from a patch branch as a quickfix for this. #2481 is still open but should be ready soon as well :)"
+    }
+  ]
+}

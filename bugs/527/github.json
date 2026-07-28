@@ -1,0 +1,70 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 3061,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/3061",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Issue while importing netcal library",
+  "author": "rajat-tech-002",
+  "created_at": "2022-04-01T13:07:12Z",
+  "updated_at": "2023-04-29T16:49:17Z",
+  "closed_at": "2023-04-29T16:49:17Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 393.15,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:31.541503+00:00",
+  "comments": [
+    {
+      "author": "fritzo",
+      "created_at": "2022-04-01T13:53:52Z",
+      "body": "Hi @rajat-tech-002 can you please print your torch and pyro versions, or just paste the result of `pip freeze`? My guess is a version mismatch."
+    },
+    {
+      "author": "rajat-tech-002",
+      "created_at": "2022-04-04T05:26:09Z",
+      "body": "@fritzo , Sure\r\nOutput of pip freeze:\r\nabsl-py==0.11.0\r\nalabaster==0.7.12\r\napex==0.1\r\nargon2-cffi==20.1.0\r\nascii-graph==1.5.1\r\nasync-generator==1.10\r\nattrs @ file:///tmp/build/80754af9/attrs_1600298409949/work\r\naudioread==2.1.9\r\nBabel==2.8.0\r\nbackcall==0.2.0\r\nbeautifulsoup4 @ file:///tmp/build/80754af9/beautifulsoup4_1601924105527/work\r\nbleach==3.2.1\r\nblis==0.4.1\r\nboto3==1.16.11\r\nbotocore==1.19.11\r\nbrotlipy==0.7.0\r\ncached-property==1.5.2\r\ncatalogue==1.0.0\r\ncertifi==2020.6.20\r\ncffi @ file:///tmp/build/80754af9/cffi_1600699165083/work\r\nchardet==3.0.4\r\nclick==7.1.2\r\ncodecov==2.1.10\r\nconda==4.9.1\r\nconda-build==3.20.5\r\nconda-package-handling @ file:///tmp/build/80754af9/conda-package-handling_1603018143336/work\r\ncoverage==5.3\r\ncryptography @ file:///tmp/build/80754af9/cryptography_1601047419573/work\r\ncxxfilt==0.2.2\r\ncycler==0.10.0\r\ncymem==2.0.3\r\nCython==0.28.4\r\ndataclasses==0.7\r\nDataProperty==0.50.0\r\ndecorator==4.4.2\r\ndefusedxml==0.6.0\r\nDLLogger @ git+git://github.com/NVIDIA/dllogger.git@26a0f8f1958de2c0c460925ff6102a4d2486d6cc\r\ndocutils==0.16\r\nentrypoints==0.3\r\nfilelock==3.0.12\r\nflake8==3.7.9\r\nFlask==1.1.2\r\nfuture==0.18.2\r\nglob2==0.7\r\ngrpcio==1.33.2\r\nh5py==3.0.0\r\nhtml2text==2020.1.16\r\nhypothesis==4.50.8\r\nidna==2.9\r\nimageio==2.9.0\r\nimagesize==1.2.0\r\nimportlib-metadata @ file:///tmp/build/80754af9/importlib-metadata_1602276842396/work\r\ninflect==4.1.0\r\niniconfig==1.1.1\r\nipdb==0.13.4\r\nipykernel==5.3.4\r\nipython @ file:///tmp/build/80754af9/ipython_1593447367857/work\r\nipython-genutils==0.2.0\r\nitsdangerous==1.1.0\r\njedi @ file:///tmp/build/80754af9/jedi_1598371618777/work\r\nJinja2==2.11.2\r\njmespath==0.10.0\r\njoblib==0.17.0\r\njson5==0.9.5\r\njsonschema==3.0.2\r\njupyter-client==6.1.7\r\njupyter-core==4.6.3\r\njupyter-tensorboard==0.2.0\r\njupyterlab==1.2.14\r\njupyterlab-pygments==0.1.2\r\njupyterlab-server==1.2.0\r\njupytext==1.6.0\r\nkiwisolver==1.3.1\r\nlibarchive-c==2.9\r\nlibrosa==0.6.3\r\nllvmlite==0.28.0\r\nlmdb==1.0.0\r\nMarkdown==3.3.3\r\nmarkdown-it-py==0.5.6\r\nMarkupSafe==1.1.1\r\nmaskrcnn-benchmark @ file:///opt/pytorch/examples/maskrcnn/pytorch\r\nmatplotlib==3.3.2\r\nmbstrdecoder==1.0.0\r\nmccabe==0.6.1\r\nmistune==0.8.4\r\nmlperf-compliance==0.0.10\r\nmock==4.0.2\r\nmsgfy==0.1.0\r\nmurmurhash==1.0.2\r\nnbclient==0.5.1\r\nnbconvert==6.0.7\r\nnbformat==5.0.8\r\nnest-asyncio==1.4.2\r\nnetworkx==2.0\r\nnltk==3.5\r\nnotebook==6.1.4\r\nnumba==0.43.1\r\nnumpy @ file:///tmp/build/80754af9/numpy_and_numpy_base_1603483703303/work\r\nnvidia-dali-cuda110==0.27.0\r\nnvidia-pyprof @ git+https://github.com/NVIDIA/PyProf@c679342a21b1600a8a63e805b1a0b7198f449b74\r\nnvidia-tensorboard @ file:///nvidia/opt/tensorboard_install/nvidia_tensorboard-1.15.0%2Bnv20.11-py3-none-any.whl\r\nnvidia-tensorboard-plugin-dlprof @ file:///nvidia/opt/tensorboard_install/nvidia_tensorboard_plugin_dlprof-0.9-py3-none-any.whl\r\nonnx @ file:///opt/pytorch/pytorch/third_party/onnx\r\nonnxruntime==1.5.2\r\nopencv-python==3.4.1.15\r\npackaging==20.4\r\npandas==0.24.2\r\npandocfilters==1.4.3\r\nparso==0.7.0\r\npathvalidate==2.3.0\r\npexpect==4.8.0\r\npickleshare==0.7.5\r\nPillow-SIMD @ file:///tmp/pillow-simd\r\npkginfo==1.6.0\r\nplac @ file:///tmp/build/80754af9/plac_1594261902054/work\r\npluggy==0.13.1\r\npolygraphy==0.20.13\r\npreshed==3.0.2\r\nprogressbar==2.5\r\nprometheus-client==0.8.0\r\nprompt-toolkit @ file:///tmp/build/80754af9/prompt-toolkit_1602688806899/work\r\nprotobuf==3.13.0\r\npsutil @ file:///tmp/build/80754af9/psutil_1598370257337/work\r\nptyprocess==0.6.0\r\npy==1.9.0\r\npybind11==2.6.0\r\npycocotools @ git+https://github.com/nvidia/cocoapi.git@6ac4a93058202603f36fd1ce47228e7d81119e5a#subdirectory=PythonAPI\r\npycodestyle==2.5.0\r\npycosat==0.6.3\r\npycparser==2.20\r\npydot==1.4.1\r\npyflakes==2.1.1\r\nPygments @ file:///tmp/build/80754af9/pygments_1600458456400/work\r\npynvml==8.0.4\r\npyOpenSSL @ file:///tmp/build/80754af9/pyopenssl_1594392929924/work\r\npyparsing==2.4.7\r\npyrsistent @ file:///tmp/build/80754af9/pyrsistent_1600141725711/work\r\nPySocks==1.7.1\r\npytablewriter==0.47.0\r\npytest==6.1.2\r\npytest-cov==2.10.1\r\npytest-pythonpath==0.7.3\r\npython-dateutil==2.8.1\r\npython-hostlist==1.21\r\npython-nvd3==0.15.0\r\npython-slugify==4.0.1\r\npytorch-transformers==1.1.0\r\npytz==2020.1\r\nPyWavelets==1.1.1\r\nPyYAML==5.3.1\r\npyzmq==19.0.2\r\nregex==2020.10.28\r\nrequests @ file:///tmp/build/80754af9/requests_1592841827918/work\r\nresampy==0.2.2\r\nrevtok @ git+git://github.com/jekbradbury/revtok.git@f1998b72a941d1e5f9578a66dc1c20b01913caab\r\nruamel-yaml==0.15.87\r\ns3transfer==0.3.3\r\nsacrebleu==1.2.10\r\nsacremoses==0.0.35\r\nscikit-image==0.15.0\r\nscikit-learn==0.23.2\r\nscipy @ file:///tmp/build/80754af9/scipy_1597686635649/work\r\nSend2Trash==1.5.0\r\nsentencepiece==0.1.94\r\nsix==1.15.0\r\nsnowballstemmer==2.0.0\r\nSoundFile==0.10.3.post1\r\nsoupsieve==2.0.1\r\nsox==1.4.1\r\nspacy @ file:///tmp/build/80754af9/spacy_1600554229564/work\r\nSphinx==3.3.0\r\nsphinx-rtd-theme==0.5.0\r\nsphinxcontrib-applehelp==1.0.2\r\nsphinxcontrib-devhelp==1.0.2\r\nsphinxcontrib-htmlhelp==1.0.3\r\nsphinxcontrib-jsmath==1.0.1\r\nsphinxcontrib-qthelp==1.0.3\r\nsphinxcontrib-serializinghtml==1.1.4\r\nsrsly==1.0.2\r\nSSD @ file:///opt/pytorch/examples/ssd\r\nsubword-nmt @ git+git://github.com/rsennrich/subword-nmt.git@48ba99e657591c329e0003f0c6e32e493fa959ef\r\ntabledata==1.1.3\r\ntabulate==0.8.7\r\ntensorboard @ file:///nvidia/opt/tensorboard_install/tensorboard-shim\r\ntensorrt==7.2.1.6\r\nterminado==0.9.1\r\ntestpath==0.4.4\r\ntext-unidecode==1.3\r\nthinc @ file:///tmp/build/80754af9/thinc_1594251955397/work\r\nthreadpoolctl==2.1.0\r\ntoml==0.10.2\r\ntorch==1.8.0a0+17f8c32\r\ntorchtext @ file:///opt/pytorch/text\r\ntorchvision @ file:///opt/pytorch/vision\r\ntornado==6.1\r\ntqdm==4.31.1\r\ntraitlets==4.3.3\r\ntypepy==1.1.1\r\ntyping==3.7.4.3\r\ntyping-extensions==3.7.4.3\r\nUnidecode==1.1.1\r\nurllib3 @ file:///tmp/build/80754af9/urllib3_1603305693037/work\r\nwasabi @ file:///tmp/build/80754af9/wasabi_1599244993840/work\r\nwcwidth @ file:///tmp/build/80754af9/wcwidth_1593447189090/work\r\nwebencodings==0.5.1\r\nWerkzeug==1.0.1\r\nwrapt==1.10.11\r\nyacs==0.1.8\r\nzipp @ file:///tmp/build/80754af9/zipp_1604001098328/work"
+    },
+    {
+      "author": "dilaragokay",
+      "created_at": "2022-04-25T14:16:25Z",
+      "body": "I have seen the same error when I upgraded pytorch and ran `import pyro` afterward. To solve this, the first thing I tried was uninstalling and installing pyro. Running\r\n```\r\npip uninstall pyro-ppl\r\npip install pyro-ppl\r\n```\r\nshowed\r\n```\r\nERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts. torchvision 0.11.3 requires torch==1.10.2, but you have torch 1.11.0 which is incompatible.\r\n```\r\nEventually, I solved it by uninstalling both pytorch and pyro, then installing them again."
+    },
+    {
+      "author": "fritzo",
+      "created_at": "2022-04-25T15:18:55Z",
+      "body": "Hi @dilaragokay, I think you'll need to fix the pyro package name\r\n```diff\r\n- pip install pyro\r\n+ pip install pyro-ppl\r\n```"
+    },
+    {
+      "author": "dilaragokay",
+      "created_at": "2022-04-25T20:41:17Z",
+      "body": "> Hi @dilaragokay, I think you'll need to fix the pyro package name\r\n> \r\n> ```diff\r\n> - pip install pyro\r\n> + pip install pyro-ppl\r\n> ```\r\n\r\nExactly, thanks. I have edited the comment accordingly."
+    },
+    {
+      "author": "fritzo",
+      "created_at": "2022-04-25T21:40:24Z",
+      "body": "@rajat-tech-002 you are using `torch==1.8.0a0+17f8c32` which is too old for your Pyro version. I'd recommend updating your versions\r\n```sh\r\npip install -U torch torchvision pyro-ppl\r\n```"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "owner": "keras-team",
+  "repo": "keras-io",
+  "number": 1443,
+  "html_url": "https://github.com/keras-team/keras-io/issues/1443",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "converting NER model with transformer into tflite",
+  "author": "mhyeonsoo",
+  "created_at": "2023-07-18T05:17:25Z",
+  "updated_at": "2024-07-09T01:50:10Z",
+  "closed_at": "2024-07-09T01:49:54Z",
+  "labels": [
+    "stale",
+    "stat:awaiting response from contributor",
+    "type:bug"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 356.86,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:22:55.181183+00:00",
+  "comments": [
+    {
+      "author": "alankelly",
+      "created_at": "2023-07-24T08:16:04Z",
+      "body": "Have you tried resizing the input tensor? https://www.tensorflow.org/api_docs/python/tf/lite/Interpreter#resize_tensor_input"
+    },
+    {
+      "author": "mhyeonsoo",
+      "created_at": "2023-07-26T04:13:39Z",
+      "body": "@alankelly \r\nyes, I've tried to resize the input tensor as \r\n```python\r\ninterpreter.resize_tensor_input(0, [sample_input, 1, 1])\r\n```\r\nbecause the model input was [1,1], but it returns the error\r\n```\r\nsetting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (3,) + inhomogeneous part.\r\n```"
+    },
+    {
+      "author": "grasskin",
+      "created_at": "2023-07-27T16:55:28Z",
+      "body": "Hi @mhyeonsoo, could you try to reshape your input to [1,-1] instead of [1,1]?\r\n\r\n`sample_input = tf.reshape(sample_input, shape=[1, -1])`"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-06-25T01:48:34Z",
+      "body": "This issue is stale because it has been open for 14 days with no activity. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-07-09T01:49:54Z",
+      "body": "This issue was closed because it has been inactive for 28 days. Please reopen if you'd like to work on this further."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-07-09T01:50:09Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdHag0RVFS7UXzZkKcsFCKOcX8raCupKK9RHSlYxp5U8lSJbQ/viewform?entry.492125872=Yes&entry.243948740=https://github.com/keras-team/keras-io/issues/1443\"> Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSdHag0RVFS7UXzZkKcsFCKOcX8raCupKK9RHSlYxp5U8lSJbQ/viewform?entry.492125872=No&entry.243948740=https://github.com/keras-team/keras-io/issues/1443\"> No</a>\n"
+    }
+  ]
+}

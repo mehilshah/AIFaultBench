@@ -1,0 +1,56 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21703,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21703",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Bug: explicit dataloader iterator `_shutdown_workers()` call causes lightning to crash when pytorch ignores the error",
+  "author": "michaelvay",
+  "created_at": "2026-05-07T19:24:44Z",
+  "updated_at": "2026-06-01T11:32:36Z",
+  "closed_at": "2026-06-01T11:30:38Z",
+  "labels": [
+    "bug",
+    "ver: 2.6.x"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 24.67,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:02.022504+00:00",
+  "comments": [
+    {
+      "author": "michaelvay",
+      "created_at": "2026-05-07T20:25:40Z",
+      "body": "Do you mind if I go ahead and open a PR for that?"
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-05-09T11:48:47Z",
+      "body": "hi @michaelvay, sure, go ahead. I've verified the issue, and the fix looks good to me. Thanks for doing the research and findings."
+    },
+    {
+      "author": "reallyticsai",
+      "created_at": "2026-05-14T10:06:46Z",
+      "body": "This issue stems from calling `_shutdown_workers()` directly, which can trigger the underlying PyTorch race condition, especially with large tensors and persistent workers. In production, we've seen similar crashes where PyTorch's internal cleanup via `__del__` suppresses errors, but explicit calls re-expose them, leading to non-zero exit codes. A practical workaround is to patch or override the shutdown routine to catch and suppress exceptions, aligning with PyTorch\u2019s default behavior. Alternatively, you could modify Lightning to conditionally skip `_shutdown_workers()` when running in scenarios similar to your use case. Also, check if upgrading to the latest Lightning version or PyTorch release helps, as there have been ongoing fixes around worker cleanup and shutdown sequences."
+    }
+  ]
+}

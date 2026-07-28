@@ -1,0 +1,63 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 11206,
+  "html_url": "https://github.com/tensorflow/models/issues/11206",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "ImportError: cannot import name 'tensor' from 'tensorflow.python.framework'",
+  "author": "Hathamwang",
+  "created_at": "2024-05-10T02:37:31Z",
+  "updated_at": "2024-06-27T01:49:34Z",
+  "closed_at": "2024-06-27T01:49:26Z",
+  "labels": [
+    "stat:awaiting response",
+    "type:support",
+    "models:official",
+    "stale"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 47.97,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:19.966248+00:00",
+  "comments": [
+    {
+      "author": "laxmareddyp",
+      "created_at": "2024-06-11T21:37:17Z",
+      "body": "Hi @Hathamwang ,\r\n\r\nFirst of all sorry for the late response.Basically these issues occur due to the compatibility issues between TensorFlow and other installed packages. Please check `TensorFlow` version and `tf-models-official ` [requirement.txt ](https://github.com/tensorflow/models/blob/master/official/requirements.txt) file for compatible versions. If possible try to create a new virtual environments and just install tf-models-official package it will automatically downloads the compatible TensorFlow version and other packages.\r\n\r\nThanks."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-06-19T01:49:35Z",
+      "body": "This issue has been marked stale because it has no recent activity since 7 days. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-06-27T01:49:26Z",
+      "body": "This issue was closed due to lack of activity after being marked stale for past 7 days."
+    },
+    {
+      "author": "google-ml-butler[bot]",
+      "created_at": "2024-06-27T01:49:33Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=Yes&entry.2137816233=https://github.com/tensorflow/models/issues/11206\">Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=No&entry.2137816233=https://github.com/tensorflow/models/issues/11206\">No</a>\n"
+    }
+  ]
+}

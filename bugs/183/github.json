@@ -1,0 +1,45 @@
+{
+  "owner": "linkedin",
+  "repo": "Liger-Kernel",
+  "number": 488,
+  "html_url": "https://github.com/linkedin/Liger-Kernel/issues/488",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "LigerFusedLinearCrossEntropyFunction does not support reduction=None",
+  "author": "Xiang-cd",
+  "created_at": "2024-12-18T17:03:51Z",
+  "updated_at": "2024-12-28T02:29:37Z",
+  "closed_at": "2024-12-28T02:29:37Z",
+  "labels": [
+    "good first issue"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 9.39,
+  "fix": {
+    "closing_commit": "9875488be7e5e654671e91126cf4fc49449a329c",
+    "linked_prs": [],
+    "best_guess_fix_commit": "9875488be7e5e654671e91126cf4fc49449a329c",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:25:55.963416+00:00",
+  "comments": [
+    {
+      "author": "Tcc0403",
+      "created_at": "2024-12-21T01:15:24Z",
+      "body": "https://github.com/linkedin/Liger-Kernel/blob/15a2f58f06b1972d9d23ad898608398df7a421b0/src/liger_kernel/ops/fused_linear_cross_entropy.py#L136\n\nIt should be easily fixed by removing torch.sum() if reduction is \"none\". Similar to what LigerCrossEntropy does."
+    }
+  ]
+}

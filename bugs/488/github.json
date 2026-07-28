@@ -1,0 +1,50 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 47239,
+  "html_url": "https://github.com/vllm-project/vllm/issues/47239",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug][Model Runner V2]: [Bug] GLM-5.2 shows low aa_lcr accuracy and large TPOT fluctuations on B300",
+  "author": "chaunceyjiang",
+  "created_at": "2026-07-01T03:01:21Z",
+  "updated_at": "2026-07-09T13:26:29Z",
+  "closed_at": "2026-07-09T13:26:29Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 3,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 1,
+    "eyes": 1
+  },
+  "resolution_days": 8.43,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:35.530386+00:00",
+  "comments": [
+    {
+      "author": "Saurav-Gupta-9741",
+      "created_at": "2026-07-01T19:17:12Z",
+      "body": "Hi @chaunceyjiang Sir,\n\nThank you for reporting this! I am very interested in taking this issue on and diving into the V2 Model Runner logic to fix these latency spikes and accuracy drops for GLM-5.2.\n\nProposed Debugging Strategy: My initial thought is that this could be a state leakage or stale data issue during the CUDA Graph capture, or potentially an issue with how the Key-Value (KV) cache pointers/attention metadata are being passed to the attention backend during V2's multi-step execution. I plan to first isolate the issue by testing with enforce_eager=True to determine if it is strictly tied to the CUDA graph capture, and then trace the tensor outputs layer-by-layer between V1 and V2 to find where they diverge.\n\nQuick Question on Hardware: I will be doing my debugging and reproduction on an NVIDIA A30 (Ampere) GPU cluster. Since you mentioned your tests were conducted on a B300, do you suspect this might be a hardware/architecture-specific Triton kernel bug? Or do you believe this is a broader V2 logic/graph capture issue that I will be able to successfully reproduce and fix on my Ampere setup?\n\nIf you believe the A30 will be sufficient to reproduce the bug, I would love to officially pick this up and get started! Looking forward to your response."
+    },
+    {
+      "author": "WoosukKwon",
+      "created_at": "2026-07-02T04:06:18Z",
+      "body": "@chaunceyjiang My claude proposed #47381 and two others. Can you please give it a try?"
+    }
+  ]
+}

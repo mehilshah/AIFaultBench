@@ -1,0 +1,68 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 11133,
+  "html_url": "https://github.com/tensorflow/models/issues/11133",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`AttributeError: 'DetectionFromImageModule' object has no attribute 'outputs'",
+  "author": "nataliameira",
+  "created_at": "2023-12-21T16:28:12Z",
+  "updated_at": "2024-02-06T19:32:29Z",
+  "closed_at": "2024-01-20T01:46:56Z",
+  "labels": [
+    "stat:awaiting response",
+    "type:support",
+    "models:research",
+    "stale"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 29.39,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:25.128145+00:00",
+  "comments": [
+    {
+      "author": "laxmareddyp",
+      "created_at": "2024-01-03T20:04:15Z",
+      "body": "Hi @nataliameira ,\r\n\r\nTo assist you more efficiently, could you please share a code sample or a link to a Google Colab notebook that reproduces the issue you're experiencing? Additionally, it would be helpful to know whether you are using the official TensorFlow Model Garden repository or a research-based one.\r\n\r\nThanks."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-01-11T01:47:25Z",
+      "body": "This issue has been marked stale because it has no recent activity since 7 days. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-01-20T01:46:55Z",
+      "body": "This issue was closed due to lack of activity after being marked stale for past 7 days."
+    },
+    {
+      "author": "google-ml-butler[bot]",
+      "created_at": "2024-01-20T01:46:59Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=Yes&entry.2137816233=https://github.com/tensorflow/models/issues/11133\">Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=No&entry.2137816233=https://github.com/tensorflow/models/issues/11133\">No</a>\n"
+    },
+    {
+      "author": "nataliameira",
+      "created_at": "2024-02-06T19:32:28Z",
+      "body": "> Hi @nataliameira ,\r\n> \r\n> To assist you more efficiently, could you please share a code sample or a link to a Google Colab notebook that reproduces the issue you're experiencing? Additionally, it would be helpful to know whether you are using the official TensorFlow Model Garden repository or a research-based one.\r\n> \r\n> Thanks.\r\n\r\nHi, I used the official repository.\r\n\r\nI resolved this issue by just reinstalling everything again.\r\n\r\nThanks!"
+    }
+  ]
+}

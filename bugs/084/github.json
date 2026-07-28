@@ -1,0 +1,48 @@
+{
+  "owner": "lucidrains",
+  "repo": "vit-pytorch",
+  "number": 257,
+  "html_url": "https://github.com/lucidrains/vit-pytorch/issues/257",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Why the accuracy rate to 100% using its examples' dataset",
+  "author": "zx-fxs",
+  "created_at": "2023-03-03T12:26:52Z",
+  "updated_at": "2023-03-23T02:34:47Z",
+  "closed_at": "2023-03-23T02:29:06Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 19.58,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:24.332764+00:00",
+  "comments": [
+    {
+      "author": "imsaumil",
+      "created_at": "2023-03-22T19:00:15Z",
+      "body": "Was anyone able to figure it out ? - I am getting the same results."
+    },
+    {
+      "author": "zx-fxs",
+      "created_at": "2023-03-23T02:34:16Z",
+      "body": "> Was anyone able to figure it out ? - I am getting the same results.\r\n\r\nThe accuracy rate to 100% is my own mistake.Maybe this way can help you.\r\nThe label should be \u201ctrain//dog\" no \u201ddog\u201c in this code.\r\n`\r\nclass CatsDogsDataset(Dataset):\r\n    def __init__(self, file_list, transform=None):\r\n        self.file_list = file_list\r\n        self.transform = transform\r\n\r\n    def __len__(self):\r\n        self.filelength = len(self.file_list)\r\n        return self.filelength\r\n\r\n    def __getitem__(self, idx):\r\n        img_path = self.file_list[idx]\r\n        img = Image.open(img_path)\r\n        img_transformed = self.transform(img)\r\n\r\n        label = img_path.split(\"/\")[-1].split(\".\")[0]\r\n        label = 1 if label == \"train\\\\dog\" else 0\r\n\r\n        return img_transformed, label`\r\n"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "owner": "lucidrains",
+  "repo": "x-transformers",
+  "number": 271,
+  "html_url": "https://github.com/lucidrains/x-transformers/issues/271",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Potential bug in `model.generate` ",
+  "author": "guillaumeguy",
+  "created_at": "2024-09-12T00:34:25Z",
+  "updated_at": "2024-09-12T14:06:36Z",
+  "closed_at": "2024-09-12T14:06:16Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 2,
+    "+1": 2,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.56,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:34.187725+00:00",
+  "comments": [
+    {
+      "author": "guillaumeguy",
+      "created_at": "2024-09-12T00:58:11Z",
+      "body": "The trick that I found was to:\r\n\r\nin the model constructor, pass ` dec_max_seq_len = ENC_SEQ_LEN + 1` and, in `model.generate` , pass `seq_len=DEC_SEQ_LEN`. That will work\r\n"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-09-12T01:47:09Z",
+      "body": "@guillaumeguy hey Guillaume! thanks for reporting this!\r\n\r\ncould you try the latest version and see if it resolves it on your end?"
+    },
+    {
+      "author": "guillaumeguy",
+      "created_at": "2024-09-12T13:48:30Z",
+      "body": "Now I'm getting this error (same example):\r\n```AssertionError: the network cannot use cached key values when decoding outside the max sequence length. most likely because you are using absolute positional embedding. you can switch to rotary embeddings to resolve this issue```.\r\n\r\n\r\n\r\n> @guillaumeguy hey Guillaume! thanks for reporting this!\r\n> \r\n> could you try the latest version and see if it resolves it on your end?\r\n\r\n"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-09-12T14:00:48Z",
+      "body": "@guillaumeguy think you can figure it out from that error message?"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-09-12T14:06:16Z",
+      "body": "@guillaumeguy i'll give you some time to figure it out, it'll be educational even if you are a software engineer dabbling with deep learning\r\n\r\nemail me for the solution if you can't"
+    }
+  ]
+}

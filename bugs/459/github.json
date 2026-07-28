@@ -1,0 +1,55 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2064,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2064",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "get_model_relations fails when parameters are set with lambda functions",
+  "author": "mochar",
+  "created_at": "2025-08-21T20:39:44Z",
+  "updated_at": "2025-10-10T01:41:37Z",
+  "closed_at": "2025-10-10T01:41:37Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 49.21,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:32:53.201189+00:00",
+  "comments": [
+    {
+      "author": "tillahoffmann",
+      "created_at": "2025-08-21T22:36:01Z",
+      "body": "[`param`](https://num.pyro.ai/en/stable/primitives.html#numpyro.primitives.param) expects the second argument to be `init_value`, i.e., a literal value instead of a callable that returns a value.\n\nDoes this work for you?\n\n```python\nnumpyro.param('p', 1.)\n```"
+    },
+    {
+      "author": "mochar",
+      "created_at": "2025-08-21T22:42:10Z",
+      "body": "That works. However `param` can also be supplied a callable that recieves a jax key, which I use to initialize my parameters. See https://github.com/pyro-ppl/numpyro/blob/ddbd0b876d3cf07d457683d520f00c85f0cc0bb8/numpyro/primitives.py#L252"
+    },
+    {
+      "author": "tillahoffmann",
+      "created_at": "2025-08-21T23:09:48Z",
+      "body": "Yes, apologies. Looks like we may need further exceptions in how the trace elements are handled."
+    }
+  ]
+}

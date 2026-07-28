@@ -1,0 +1,65 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 46981,
+  "html_url": "https://github.com/huggingface/transformers/issues/46981",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "AutoProcessor.from_pretrained retries HTTP 429 responses multiple times for every config file when using HF_ENDPOINT",
+  "author": "peacefulotter",
+  "created_at": "2026-06-30T14:27:18Z",
+  "updated_at": "2026-07-09T02:31:36Z",
+  "closed_at": "2026-07-09T02:31:36Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 8.5,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:31.105208+00:00",
+  "comments": [
+    {
+      "author": "AnkitNakhawa",
+      "created_at": "2026-07-01T06:45:23Z",
+      "body": "I've been looking into this and would love to contribute a fix! I reproduced the behavior locally with a mock server and traced it to the interaction between Transformers' optional-file probing and `huggingface_hub`'s retry logic.\n\nSharing my findings below. If the approach looks good to maintainers, I'm happy to open a PR in the appropriate repository.\n\n## Investigation & Reproduction\n\n### What's happening\n\nWhen `AutoProcessor.from_pretrained()` is called, Transformers may sequentially probe several processor and tokenizer configuration files, including:\n\n- `config.json`\n- `processor_config.json`\n- `tokenizer_config.json`\n- `tokenizer.json`\n- `special_tokens_map.json`\n- `vocab.json`\n\nEach probe eventually calls `hf_hub_download()` from `huggingface_hub`.\n\nIn `huggingface_hub >= 1.x`, the internal `http_backoff()` function includes HTTP `429` in its default retry status-code list:\n\n```python\n# huggingface_hub/utils/_http.py\n_DEFAULT_RETRY_ON_STATUS_CODES = (408, 429, 500, 502, 503, 504)\n```\n\nThe current implementation supports Hugging Face's `RateLimit` headers and can use the reset value provided there. However, it does not appear to support the standard `Retry-After` header.\n\nAs a result, when a custom `HF_ENDPOINT` proxy returns:\n\n```http\nHTTP/1.1 429 Too Many Requests\nRetry-After: 1\n```\n\nwithout Hugging Face-style `RateLimit` headers, `http_backoff()` falls back to its exponential retry schedule:\n\n```text\n1s -> 2s -> 4s -> 8s -> 8s\n```\n\nThis produces roughly 23 seconds of waiting for each independent file probe.\n\nBecause the optional files are requested independently and sequentially, the delay can multiply across the loading process:\n\n```text\n6 files x 23 seconds = approximately 138 seconds\n```\n\nThese are primarily metadata `HEAD` requests, so the client may spend more than two minutes retrying without downloading any file content.\n\n### Reproduction\n\nI used a local mock server that returned the following response for every request:\n\n```http\nHTTP/1.1 429 Too Many Requests\nRetry-After: 1\n```\n\nRepresentative output for one file:\n\n```text\n--- Fetching config.json ---\n\nHEAD /facebook/dinov2-base/resolve/main/config.json\n\nHTTP Error 429 thrown while requesting HEAD .../config.json\nRetrying in 1s [Retry 1/5].\n\nHEAD /facebook/dinov2-base/resolve/main/config.json\nRetrying in 2s [Retry 2/5].\n\nHEAD /facebook/dinov2-base/resolve/main/config.json\nRetrying in 4s [Retry 3/5].\n\nHEAD /facebook/dinov2-base/resolve/main/config.json\nRetrying in 8s [Retry 4/5].\n\nHEAD /facebook/dinov2-base/resolve/main/config.json\nRetrying in 8s [Retry 5/5].\n\nHEAD /facebook/dinov2-base/resolve/main/config.json\n-> LocalEntryNotFoundError after approximately 23 seconds\n```\n\nThe same retry pattern occurred for each independently probed file:\n\n| File | Approximate delay |\n|---|---:|\n| `config.json` | 23s |\n| `processor_config.json` | 23s |\n| `tokenizer_config.json` | 23s |\n| `tokenizer.json` | 23s |\n| `special_tokens_map.json` | 23s |\n| `vocab.json` | 23s |\n\nFinal result:\n\n```text\nTotal wall-clock time: approximately 138 seconds\n```\n\nThe server returned `Retry-After: 1` on every response, but because it did not return the Hugging Face-specific `RateLimit` headers, the client used exponential backoff instead.\n\n## Root Cause\n\nI found two related behaviors.\n\n### 1. `Retry-After` is not used by `http_backoff()`\n\n`http_backoff()` can use the reset value from Hugging Face's `RateLimit` response headers, but it does not currently fall back to the standard `Retry-After` header.\n\nThis is already tracked in:\n\n- huggingface/huggingface_hub#2360 - `http_backoff` does not respect `Retry-After` headers on 429 requests\n\nThat issue has been open since July 2024 and does not currently appear to have an associated PR. A maintainer suggested an adapter-based implementation there at the time.\n\n### 2. Callers cannot distinguish a 429 through a typed exception\n\nAfter the retry sequence is exhausted, `hf_raise_for_status()` raises an `HfHubHTTPError` whose message includes the `429 Too Many Requests` response.\n\nHowever, there is no dedicated `RateLimitError` subclass.\n\nThis means higher-level callers such as Transformers' `cached_files()` cannot catch rate limiting separately from other hub HTTP failures. The loading process can therefore continue to probe the remaining optional files, with each file independently going through the same retry sequence.\n\n## Possible Fixes\n\n### Option A - Honor `Retry-After` in `http_backoff()`\n\nThis is already tracked in huggingface/huggingface_hub#2360.\n\nSupporting `Retry-After` would improve the waiting behavior for custom endpoints and proxies that use the standard header rather than Hugging Face's `RateLimit` headers.\n\nIn the reproduction above, respecting `Retry-After: 1` would reduce the retry delay for each file from approximately 23 seconds to approximately 5 seconds.\n\nI'm happy to pick up that existing issue if maintainers agree with the current direction.\n\n### Option B - Add a typed `RateLimitError`\n\nA dedicated exception could look conceptually like:\n\n```python\nclass RateLimitError(HfHubHTTPError):\n    pass\n```\n\nand be raised for HTTP `429` responses after the configured retry sequence is exhausted.\n\nTransformers could then distinguish rate limiting from an ordinary missing optional file and stop probing the remaining files after the first file's retry sequence fails.\n\nThis would address the fan-out problem, although it would likely require coordinated changes in both `huggingface_hub` and Transformers.\n\n### Option C - Implement both\n\nMy initial preference would be:\n\n1. Add standard `Retry-After` support in `huggingface_hub`.\n2. Expose exhausted HTTP `429` responses through a typed exception.\n3. Allow Transformers to stop probing additional optional files once rate limiting has been confirmed.\n\nThe first change reduces the cost of each retry sequence, while the typed exception allows higher-level callers to avoid repeating that sequence across multiple optional files.\n\n## Questions Before Opening a PR\n\n1. Should the initial work happen in `huggingface_hub`, beginning with the existing `Retry-After` issue?\n2. Would maintainers be open to a dedicated `RateLimitError` subclass for exhausted `429` responses?\n3. If such an exception is added, should Transformers propagate it immediately rather than continuing to probe optional files?\n4. Would you prefer these to be handled as separate PRs, with the `huggingface_hub` behavior addressed first?\n\nI'm happy to open a PR in the appropriate repository based on the preferred scope.\n"
+    },
+    {
+      "author": "peacefulotter",
+      "created_at": "2026-07-01T07:20:29Z",
+      "body": "Awesome findings, thanks. \n\nAdditionally, I have discovered that after reloading my ipython kernel and running the code, `hugginface_hub` initally returns a 404 error after looking for `https://my_proxy/.../facebook/dino../processor_config.json`. \n\nThere is indeed no `processor_config.json` for dinov3, but I feel like hf shouldn't yield an error here. \n\nRunning the same code again hits me with the original 429 issue.\n\nMight be two separate issues here.. "
+    },
+    {
+      "author": "peacefulotter",
+      "created_at": "2026-07-07T13:27:30Z",
+      "body": "@Cyrilvallez any news ? \n\nI have noticed a similar weird behavior happens when force_download = true, something is definitely wrong in how arguments are processed "
+    },
+    {
+      "author": "Cyrilvallez",
+      "created_at": "2026-07-08T09:07:11Z",
+      "body": "cc @Wauplin maybe? To be fair, I did not read all the super long ai comments, so may be more Transformers related"
+    },
+    {
+      "author": "Wauplin",
+      "created_at": "2026-07-08T11:56:28Z",
+      "body": "> 1. Retry-After is not used by http_backoff()\n\nwe've recently shipped https://github.com/huggingface/huggingface_hub/pull/4460 in latest release (1.22.0) which I think should mitigate this issue. If the server rate limits the client, we try our best to retry in a correct way.\n\nNote that the best solution so far is to not use proxy at all, and pass a token to be authenticated with the Hub (I know it's not always possible but worth mentioning)"
+    }
+  ]
+}

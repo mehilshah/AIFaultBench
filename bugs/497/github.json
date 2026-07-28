@@ -1,0 +1,71 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 46858,
+  "html_url": "https://github.com/huggingface/transformers/issues/46858",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "_prefill: cache.get_seq_length() returns device tensor, breaks slice arithmetic for static cache + torch.compile on non-CUDA backends",
+  "author": "silicon-dispatch-100",
+  "created_at": "2026-06-24T06:33:39Z",
+  "updated_at": "2026-06-25T12:42:46Z",
+  "closed_at": "2026-06-25T12:42:34Z",
+  "labels": [
+    "bug",
+    "Code agent slop"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.26,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:48.334141+00:00",
+  "comments": [
+    {
+      "author": "zucchini-nlp",
+      "created_at": "2026-06-24T10:25:01Z",
+      "body": "Couldn't reproduce it on gpu or on cpu using the below script\n\nAlso worth mentioning, that to get compiled generation it is recommended to pass `cache_implementation = \"static\"` to generate call. (`model.generate(inputs), cache_implementation = \"static\"`). That will use fullgraph compiled forward for decoding when shapes are all static, and keeps the prefill run with non-compiled model\n\n\n```python\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\nimport torch\n\nmodel = AutoModelForCausalLM.from_pretrained(\"gpt2\")\nmodel.generation_config.cache_implementation = \"static\"\nmodel.forward = torch.compile(model.forward, backend=\"inductor\")\n\ntokenizer = AutoTokenizer.from_pretrained(\"gpt2\")\ninput_ids = tokenizer(\"Hello world\", return_tensors=\"pt\").input_ids\n\noutput1 = model.generate(input_ids, max_new_tokens=1, do_sample=False)\n\ntorch._dynamo.reset()\noutput2 = model.generate(input_ids, max_new_tokens=1, do_sample=False)\n\n```"
+    },
+    {
+      "author": "silicon-dispatch-100",
+      "created_at": "2026-06-24T11:13:25Z",
+      "body": "> Couldn't reproduce it on gpu or on cpu using the below script\n> \n> Also worth mentioning, that to get compiled generation it is recommended to pass `cache_implementation = \"static\"` to generate call. (`model.generate(inputs), cache_implementation = \"static\"`). That will use fullgraph compiled forward for decoding when shapes are all static, and keeps the prefill run with non-compiled model\n> \n> from transformers import AutoModelForCausalLM, AutoTokenizer\n> import torch\n> \n> model = AutoModelForCausalLM.from_pretrained(\"gpt2\")\n> model.generation_config.cache_implementation = \"static\"\n> model.forward = torch.compile(model.forward, backend=\"inductor\")\n> \n> tokenizer = AutoTokenizer.from_pretrained(\"gpt2\")\n> input_ids = tokenizer(\"Hello world\", return_tensors=\"pt\").input_ids\n> \n> output1 = model.generate(input_ids, max_new_tokens=1, do_sample=False)\n> \n> torch._dynamo.reset()\n> output2 = model.generate(input_ids, max_new_tokens=1, do_sample=False)\n\nThanks for looking into this!\n\n  The `torch._dynamo.reset()` between calls masks the issue \u2014 it clears all compiled\n  graphs, so the second call compiles from scratch (fresh state). In production\n  (LLM serving with multiple requests), you wouldn't reset dynamo between every\n  generate() call \u2014 that defeats the purpose of compilation.\n\n  Here's the reproduction WITHOUT `torch._dynamo.reset()`:\n\n  ```python\n  from transformers import AutoModelForCausalLM, AutoTokenizer\n  import torch\n\n  model = AutoModelForCausalLM.from_pretrained(\"gpt2\")\n  model.generation_config.cache_implementation = \"static\"\n  model.forward = torch.compile(model.forward, backend=\"inductor\")\n\n  tokenizer = AutoTokenizer.from_pretrained(\"gpt2\")\n  input_ids = tokenizer(\"Hello world\", return_tensors=\"pt\").input_ids\n\n  # First call works\n  output1 = model.generate(input_ids, max_new_tokens=1, do_sample=False)\n  print(\"First call OK:\", output1.shape)\n\n  # Second call WITHOUT torch._dynamo.reset() \u2014 should crash\n  output2 = model.generate(input_ids, max_new_tokens=1, do_sample=False)\n  print(\"Second call OK:\", output2.shape)\n\n  The key issue is the generation_config.cache_implementation = \"static\" pattern\n  (setting on config, not passing to generate). This tells generate() to REUSE the\n  static cache across calls. On the second call:\n\n  1. cache.get_seq_length() returns self.cumulative_length which is torch.tensor([N])\n  (a device tensor \u2014 see cache_utils.py line 383: \"Very important that it's a tensor\n  here, to avoid recompiling\")\n  2. _prefill computes: next_sequence_length = input_ids.shape[1] - tensor([N])\n  3. This produces a tensor (not int), which breaks the slice at line 532:\n  input_ids[:, -next_sequence_length:]\n\n  Regarding passing cache_implementation to generate() directly \u2014 yes that may\n  avoid the issue by creating fresh cache each call. But the generation_config\n  pattern is also documented and used for cache reuse across calls (multi-turn chat\n  scenarios). Both patterns should work correctly.\n\n  Could you try the reproduction above without torch._dynamo.reset()?\n"
+    },
+    {
+      "author": "zucchini-nlp",
+      "created_at": "2026-06-24T11:18:24Z",
+      "body": "Yeah, still no success when I don't reset dynamo every time. I see you are using `transformers version: 5.5.3`, so could you install the latest and try again? I suppose it was fixed at some point\n\nIf it doesn't work, lmk and I will try a different machine, though I assume it is not a hardware issue"
+    },
+    {
+      "author": "Rocketknight1",
+      "created_at": "2026-06-24T11:35:57Z",
+      "body": "I think this overlaps a lot with the recently-merged #46802, which might explain why it's fixed on `main` now."
+    },
+    {
+      "author": "silicon-dispatch-100",
+      "created_at": "2026-06-25T04:22:19Z",
+      "body": "  Note: I'm aware that masking_utils.py keeps get_seq_length() as a tensor\n  (reshaped to 0-dim) to avoid graph breaks. However, in _prefill(), the code\n  runs OUTSIDE the compiled model.forward region \u2014 it's orchestration logic that\n  prepares inputs before calling the compiled forward. So int() conversion via\n  .item() won't cause graph breaks here.\n\n  The slice operation at line 532:\n    input_ids[:, -next_sequence_length:]\n  requires a Python int \u2014 tensor-as-slice-index doesn't work correctly.\n  Unlike masking_utils.py (where tensor arithmetic is fine), _prefill needs\n  the actual int value for Python slice syntax.\n\n  The key distinction:\n  - masking_utils.py: Uses q_offset in tensor operations \u2192 keep as tensor (no graph break)\n  - _prefill: Uses past_length in Python slice syntax \u2192 must be int (slicing doesn't accept tensors)"
+    },
+    {
+      "author": "Rocketknight1",
+      "created_at": "2026-06-25T12:42:34Z",
+      "body": "We're just talking to a code agent here, and I'm not convinced the bug is even real. Begone!"
+    }
+  ]
+}

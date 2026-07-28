@@ -1,0 +1,65 @@
+{
+  "owner": "kornia",
+  "repo": "kornia",
+  "number": 2121,
+  "html_url": "https://github.com/kornia/kornia/issues/2121",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Weird Behavior of PadTo and poor documentation",
+  "author": "Optimox",
+  "created_at": "2022-12-30T18:46:34Z",
+  "updated_at": "2025-12-29T21:34:57Z",
+  "closed_at": "2025-12-29T21:34:57Z",
+  "labels": [
+    "help wanted"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1095.12,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:25:28.983076+00:00",
+  "comments": [
+    {
+      "author": "johnnv1",
+      "created_at": "2022-12-30T19:17:11Z",
+      "body": "Thanks for the report, I will update the docs\r\n\r\nmy interpretation is that they have different behaviors, I think the most appropriate here would be to add as an extra option or even as a new augmentation. As a side note, this function \"just\" uses `torch.nn.functional.pad`.\r\n\r\ncc: @shijianjian "
+    },
+    {
+      "author": "Optimox",
+      "created_at": "2022-12-30T19:29:45Z",
+      "body": "Yes I agree that `PadTo` does not have to be similar to `PadIfNeeded` however returning the upper left corner without any warning of any form does not seem right to me.\r\n\r\nThe problem comes from this line : https://github.com/kornia/kornia/blob/3bf798ee6d5e1cfdb1dcca2fa7959e6acd3007b1/kornia/augmentation/_2d/geometric/pad.py#L68 which can create a negative `height_pad`. I actually find it strange that `torch.nn.functional.pad` accepts that.\r\n\r\nIf it can help here is a sketch of what I would expect from `PadIfNeeded` (please note that there is no correct docstring, the inverse_tranform is not implemented and I don't know what is wrong with apply transform method). Also I slightly changed the behavior of the padding to get a central image as it seems more natural to me to center the original image:\r\n\r\n```\r\nfrom typing import Any, Dict, Optional, Tuple, Union, cast\r\nfrom kornia.augmentation._2d.geometric.base import GeometricAugmentationBase2D\r\nfrom torch import Tensor\r\nimport torch\r\nclass PadIfNeeded(GeometricAugmentationBase2D):\r\n    r\"\"\"Pad the given sample to a specific size only if needed.\r\n    \"\"\"\r\n\r\n    def __init__(\r\n        self,\r\n        size: Tuple[int, int],\r\n        pad_mode: str = \"constant\",\r\n        pad_value: Union[int, float] = 0,\r\n        keepdim: bool = False,\r\n        return_transform: Optional[bool] = None,\r\n    ) -> None:\r\n        super().__init__(p=1.0, return_transform=return_transform, same_on_batch=True, p_batch=1.0, keepdim=keepdim)\r\n        self.flags = dict(size=size, pad_mode=pad_mode, pad_value=pad_value)\r\n\r\n    # REMARK: I don't know what those TODOs are but it's worth doing them:)\r\n    # TODO: It is incorrect to return identity\r\n    # TODO: Having a resampled version with ``warp_affine``\r\n    def compute_transformation(self, image: Tensor, params: Dict[str, Tensor], flags: Dict[str, Any]) -> Tensor:\r\n        return self.identity_matrix(image)\r\n\r\n    def apply_transform(\r\n        self, input: Tensor, params: Dict[str, Tensor], flags: Dict[str, Any], transform: Optional[Tensor] = None\r\n    ) -> Tensor:\r\n        _, _, height, width = input.shape\r\n\r\n        height_pad: int = max(flags[\"size\"][0] - height, 0)\r\n        width_pad: int = max(flags[\"size\"][1] - width, 0)\r\n        \r\n        # center the padding\r\n        left_width: int = width_pad // 2\r\n        right_width: int = width_pad - left_width\r\n            \r\n        top_height: int = height_pad // 2\r\n        bottom_height: int = height_pad - top_height\r\n            \r\n        return torch.nn.functional.pad(\r\n            input, [left_width, right_width, top_height, bottom_height], mode=flags[\"pad_mode\"], value=flags[\"pad_value\"]\r\n        )\r\n\r\n    def inverse_transform(\r\n        self,\r\n        input: Tensor,\r\n        flags: Dict[str, Any],\r\n        transform: Optional[Tensor] = None,\r\n        size: Optional[Tuple[int, int]] = None,\r\n    ) -> Tensor:\r\n        size = cast(Tuple[int, int], size)\r\n        raise NotImplementedError\r\n```"
+    },
+    {
+      "author": "johnnv1",
+      "created_at": "2022-12-30T20:38:16Z",
+      "body": "yep yep, i gotcha. As I said, to me it seems to be usual to guarantee the desired size, otherwise it can end up breaking aug pipelines or become verbose. In my view, I think it would be a case of just adding it as a note in the documentation. And if Jian thinks it's ok we could update it so that the padding is the same for all sides (for me is also the most natural scenario). "
+    },
+    {
+      "author": "shijianjian",
+      "created_at": "2022-12-30T20:56:57Z",
+      "body": "I think we do have padifneeded function in RandomCrop. \n\nI cannot fully recall the issue with PadTo, since we need to handle more conditions like the inverse, the augmentation chain, different data keys, and a chain of inverse, etc. As a result, we tended to only pad the right bottom sides.\n\nAny PRs are welcomed as long as it handles all conditions nicely. \n\nI agree that we should improve more regarding the documentation and tutorials. Like @johnnv1 did already. :)"
+    },
+    {
+      "author": "shijianjian",
+      "created_at": "2023-02-07T12:07:04Z",
+      "body": "I think the `PadTo` shall be updated if anyone interested.\r\n\r\nBasically, it shall be re-written with `NonRigidAugmentation` base class, then to define all the transformations (e.g. different data keys, inverses) by hand. "
+    }
+  ]
+}

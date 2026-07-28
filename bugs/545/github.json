@@ -1,0 +1,102 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21488,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21488",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`save_hyperparameters(ignore=...)` is not persistent across inheritance; ignored params reappear when base class also calls `save_hyperparameters`",
+  "author": "aditya0by0",
+  "created_at": "2026-01-14T20:21:41Z",
+  "updated_at": "2026-01-28T08:17:01Z",
+  "closed_at": "2026-01-28T08:17:01Z",
+  "labels": [
+    "bug",
+    "lightningmodule",
+    "ver: 2.5.x"
+  ],
+  "milestone": null,
+  "comments_count": 12,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 13.5,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:57.513214+00:00",
+  "comments": [
+    {
+      "author": "CodeVishal-17",
+      "created_at": "2026-01-15T13:49:29Z",
+      "body": "I\u2019ve opened a PR that fixes this by making `save_hyperparameters(ignore=...)` persistent across inheritance and adding a regression test.\n\nPR: #21489\n"
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-01-15T19:50:21Z",
+      "body": "Hi @aditya0by0, thanks for opening the issue. Also thanks @CodeVishal-17 for taking a look at it.\n\nThe fix imo is pretty simple:\n\nhttps://github.com/Lightning-AI/pytorch-lightning/blob/79a39c04d37434f2234d9b518a145854d7c1e642/src/lightning/pytorch/core/mixins/hparams_mixin.py#L123-L124\n\nwhen the function `save_hyperparameters()` is called, reset the previous hyperparameters.\n\n```python\ndef save_hyperparameters(\n        self,\n        *args: Any,\n        ignore: Optional[Union[Sequence[str], str]] = None,\n        frame: Optional[types.FrameType] = None,\n        logger: bool = True,\n    ) -> None:\n\n        # Reset hyperparameters before saving new ones\n        self.hparams.clear()\n        self._hparams.clear()\n\n       ... # as it is\n```\n\n> [!NOTE]\n> I'm in favour of: **`ignore` should not be persistent across inheritance, and the final child class should take absolute precedence**.\n\n```python\nimport lightning as L\n\nclass Base(L.LightningModule):\n    def __init__(self, a, b):\n        super().__init__()\n        self.save_hyperparameters()\n\nclass Child(Base):\n    def __init__(self, a, b, c):\n        super().__init__(a, b)\n        self.save_hyperparameters(ignore=\"b\")\n\ndef main():\n    model = Child(1, 2, 3)\n    print(model.hparams)\n\nif __name__ == \"__main__\":\n    main()\n\n```\n\nThoughts?"
+    },
+    {
+      "author": "aditya0by0",
+      "created_at": "2026-01-15T20:27:52Z",
+      "body": "\n\nYeah the approach looks clean, but the behavior would still be a bit inconsistent with how inheritance usually works or what user expects as flow of inheritance.\n\nIn your example, the child class will only ignore the parameters specified *at the child level*, while anything ignored in the base class is already lost and can\u2019t be reconsidered. That means you end up storing \u201ceverything except the child\u2019s ignored params\u201d, rather than having a clean, inheritance-aware override.\n\nConsider this case:\n\n* `Base` ignores parameter `\"a\"`\n* `Child` ignores parameter `\"b\"`\n\nFrom an inheritance perspective,  I\u2019d expect **only `\"c\"`** to be stored.\n\n@deependujha, I might wrong about what the user expects. Please correct me.\n"
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-01-15T20:55:43Z",
+      "body": "Hi @aditya0by0, I see the concern, but this is also where I\u2019m hesitant about making `ignore` persistent across inheritance.\n\n`If ignores from the base class are automatically carried forward, then derived classes lose the ability to re-introduce those hyperparameters`. \n- That effectively makes base-class behavior irreversible, which is at odds with normal inheritance semantics where the most-derived class should have final authority.\n\nIn other words, persistence solves one problem (child ignores being re-added) but introduces another: *`there\u2019s no way for a subclass to \u201cunsubscribe\u201d from what the base class chose to ignore`*.\n\n---\n\nMy mental model is that **`derived classes override base classes`**. \n- If a base class wants to provide a default ignore list, it can expose it as an attribute and let subclasses reuse or modify it explicitly.\n\n```python\nimport lightning as L\n\nclass Base(L.LightningModule):\n    def __init__(self, a, b):\n        super().__init__()\n        self.ignore_list = ['b']\n        self.save_hyperparameters(ignore=self.ignore_list)\n\nclass Child(Base):\n    def __init__(self, a, b, c):\n        super().__init__(a, b)\n        self.ignore_list.append('c')\n        self.save_hyperparameters(ignore=self.ignore_list)\n\ndef main():\n    model = Child(1, 2, 3)\n    print(model.hparams)\n\nif __name__ == \"__main__\":\n    main()\n```\n\nHappy to hear your thoughts, especially if there\u2019s a strong user expectation that ignores should compose transitively across inheritance."
+    },
+    {
+      "author": "aditya0by0",
+      "created_at": "2026-01-15T22:28:23Z",
+      "body": "@deependujha, Thanks for the clarification. \n\nStrongly agree with your below point that persisting ignore across inheritance makes base-class decisions irreversible. \n> In other words, persistence solves one problem (child ignores being re-added) but introduces another: _`there\u2019s no way for a subclass to \u201cunsubscribe\u201d from what the base class chose to ignore`_.\n\nAlso, thanks for the example to achieve the same with an ignore list. \n\nI will happy make the changes in my PR for you suggested approach. "
+    },
+    {
+      "author": "aditya0by0",
+      "created_at": "2026-01-15T23:35:46Z",
+      "body": "Clearing the `hparams` in each call of `save_hyperparameters` leads to failure of below testcase. Defaulted params in base class are not saved in `hparams`\n\n```python\n    class BaseBoringModel(BoringModel):\n        def __init__(self, arg1, arg2, arg3, arg4=100):\n            super().__init__()\n            self.save_hyperparameters(ignore=\"arg1\")\n\n    class LocalModel(BaseBoringModel):\n        def __init__(self, arg1, arg2, arg3):\n            super().__init__(arg1=arg1, arg2=arg2, arg3=arg3)\n            self.save_hyperparameters(ignore=ignore)\n\n    model = LocalModel(arg1=14, arg2=90, arg3=50)\n\n    assert model.hparams.arg4 == 100\n```"
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-01-16T08:39:49Z",
+      "body": "interesting. I made some updates from myside to check if it works. Let me know what do you think?"
+    },
+    {
+      "author": "aditya0by0",
+      "created_at": "2026-01-16T09:51:22Z",
+      "body": "I have updated the testcase, and the below scenario fails `arg5` is not stored in hparams. It is default param which  ignored in base class, but not in child class. \n\n``` python \n@pytest.mark.parametrize(\"ignore\", [\"arg2\", (\"arg2\", \"arg3\")])\ndef test_hparams_ignore_in_subclass_overrides_base(tmp_path, ignore):\n    \"\"\"Test that hyperparameters can be ignored when `save_hyperparameters` is called in both a base class and a\n    subclass, and that ignore rules defined in the subclass override hyperparameters saved by the base class.\"\"\"\n\n    class BaseBoringModel(BoringModel):\n        def __init__(self, arg1, arg2, arg3, arg4=100, arg5=66):\n            super().__init__()\n            self.save_hyperparameters(ignore=(\"arg1\", \"arg5\"))\n\n    class LocalModel(BaseBoringModel):\n        def __init__(self, arg1, arg2, arg3):\n            super().__init__(arg1=arg1, arg2=arg2, arg3=arg3)\n            self.save_hyperparameters(ignore=ignore)\n\n    model = LocalModel(arg1=14, arg2=90, arg3=50)\n\n    # `arg1` was ignored by the base class,\n    # but the subclass did not ignore it, so it should be present.\n    assert model.hparams.arg1 == 14\n    assert model.hparams.arg4 == 100\n    assert model.hparams.arg5 == 66\n    ignore_args = ignore if isinstance(ignore, (list, tuple)) else [ignore]\n    for arg in ignore_args:\n        assert arg not in model.hparams\n```"
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-01-16T09:54:09Z",
+      "body": "arg5 was never passed as a hyperparameter to the derived class. It is expected."
+    },
+    {
+      "author": "aditya0by0",
+      "created_at": "2026-01-16T10:05:47Z",
+      "body": "Thats true, but I would expected the arg5 will be saved in checkpoint as per lightning behaviour before the change in the PR. \nBut `arg5` doesnt't get stored in lightning checkpoint for the changes of our PR. If arg5 is not in hparams it doesn't get saved in checkpoint.\n\n````python\n    trainer = Trainer(default_root_dir=tmp_path, max_epochs=1, overfit_batches=0.5)\n    trainer.fit(model)\n\n    # make sure the raw checkpoint saved the properties\n    raw_checkpoint_path = _raw_checkpoint_path(trainer)\n    raw_checkpoint = torch.load(raw_checkpoint_path, weights_only=True)\n    assert LightningModule.CHECKPOINT_HYPER_PARAMS_KEY in raw_checkpoint\n    assert raw_checkpoint[LightningModule.CHECKPOINT_HYPER_PARAMS_KEY][\"arg1\"] == 14\n    assert raw_checkpoint[LightningModule.CHECKPOINT_HYPER_PARAMS_KEY][\"arg5\"] == 66\n```"
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-01-16T10:20:08Z",
+      "body": "can you please share the complete code for quickly verifying the existing behaviour @aditya0by0 "
+    },
+    {
+      "author": "aditya0by0",
+      "created_at": "2026-01-16T12:33:26Z",
+      "body": "> can you please share the complete code for quickly verifying the existing behaviour [@aditya0by0](https://github.com/aditya0by0)\n\nPlease check comment https://github.com/Lightning-AI/pytorch-lightning/pull/21490#issuecomment-3759819813"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "owner": "thu-ml",
+  "repo": "tianshou",
+  "number": 1272,
+  "html_url": "https://github.com/thu-ml/tianshou/issues/1272",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "FrameStack with ShmemVectorEnv does not update stacked observations",
+  "author": "heitor57",
+  "created_at": "2025-08-22T19:57:22Z",
+  "updated_at": "2025-09-06T15:22:08Z",
+  "closed_at": "2025-09-06T15:22:08Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 14.81,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:56.647654+00:00",
+  "comments": [
+    {
+      "author": "MischaPanch",
+      "created_at": "2025-08-24T22:00:05Z",
+      "body": "This is something weird with the gymnasium env. Tianshou has its own implementation of `FrameStack` in `tianshou.env.atari.atari_wrapper`, and with this version of `FrameStack` the error disappears.\n\nWhile we should investigate it, for now a simple fix is to just use tianshou's implementation"
+    },
+    {
+      "author": "MischaPanch",
+      "created_at": "2025-08-24T22:07:47Z",
+      "body": "Maybe related to the fact that gymnasium uses their own `LazyFrames` class for observations while tianshou's implementation just uses `np.stack`"
+    },
+    {
+      "author": "MischaPanch",
+      "created_at": "2025-08-24T22:34:05Z",
+      "body": "Pretty sure it's due to LazyFrames. The subproc module is full of assumptions, isinstance checks and whatnot, the dataflow is very implicit and everything is very poorly documented. It's old old code, before @opcode81 and I started to work on tianshou.\n\nHere a summary of the data flow and the problem caused by LazyFrames created with help of AI:\n\nHere\u2019s the data flow and why LazyFrames breaks with the shared-memory worker:\n\nData flow with share_memory=True\n- Buffer allocation (parent): Before starting the subprocess, the parent inspects the env\u2019s observation_space and allocates a shared-memory buffer (ShArray) that exactly matches the observation\u2019s dtype and shape. For FrameStack, that means a buffer sized for the stacked frames (e.g., [num_stack, H, W, C]).\n- Acting and writing (child/subprocess):\n  - On reset/step, the child computes the new observation and is supposed to write it into the shared buffer, then sends control data back through the pipe while replacing the observation payload with None.\n  - The write is done by an encoder that traverses the observation structure and, at the leaves, writes only if the leaf is a NumPy ndarray.\n- Reading (parent): Upon receiving the message (with None instead of the observation), the parent reconstructs the observation by reading from the shared-memory buffer.\n\nWhat goes wrong with LazyFrames\n- FrameStack returns a LazyFrames object, not a NumPy ndarray. It\u2019s array-like and converts to an ndarray via np.asarray or __array__, but it does not satisfy isinstance(x, np.ndarray).\n- The encoder\u2019s leaf check is strict: it only writes to shared memory when the observation leaf is a real ndarray. Since LazyFrames is not an ndarray, the encoder skips the write entirely.\n- The child still replaces the observation with None and signals completion. The parent then reads from the shared buffer expecting the \u201ccurrent\u201d observation, but the buffer was never updated:\n  - You read stale data (previous step/reset contents), uninitialized data, or zeros.\n  - This causes off-by-one or inconsistent obs/obs_next relationships and test failures.\n- Why np.stack \u201cfixes\u201d it: If you stack frames yourself with np.stack, you get a genuine ndarray. The encoder\u2019s isinstance check passes, the write occurs, and everything works as intended.\n\nSecondary considerations\n- Shape and dtype are not the root cause here. The buffer is pre-sized from observation_space, which FrameStack updates to the stacked shape and dtype. LazyFrames would convert to that shape/dtype correctly if it were coerced to an ndarray before writing.\n- The request\u2013response protocol avoids races, but it cannot prevent \u201cskipped write then decode\u201d when the type check filters out non-ndarray array-likes.\n\nConceptual fix\n- Ensure the child always materializes array-like observations (e.g., LazyFrames) to a NumPy array before writing to shared memory, e.g., by coercing with np.asarray at the encoder\u2019s leaves. This retains the zero-copy benefit for true ndarrays and makes LazyFrames compatible."
+    }
+  ]
+}

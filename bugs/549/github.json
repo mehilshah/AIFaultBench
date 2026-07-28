@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "pytorch-image-models",
+  "number": 2472,
+  "html_url": "https://github.com/huggingface/pytorch-image-models/issues/2472",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG]  Unable to export to ONNX due to torch.onnx._export being deprecated",
+  "author": "Snailed",
+  "created_at": "2025-04-15T12:15:47Z",
+  "updated_at": "2025-04-15T21:01:19Z",
+  "closed_at": "2025-04-15T21:01:19Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.36,
+  "fix": {
+    "closing_commit": "0cae8a4cd89f5d828d4bf2ec1d28ed7b8e5f67bc",
+    "linked_prs": [],
+    "best_guess_fix_commit": "0cae8a4cd89f5d828d4bf2ec1d28ed7b8e5f67bc",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-28T12:35:03.315071+00:00",
+  "comments": [
+    {
+      "author": "rwightman",
+      "created_at": "2025-04-15T19:11:07Z",
+      "body": "@Snailed fixed it, I was hoping they'd leave the old one in there as it provided a useful output that the export() does not, ah well... in any case once the PR linked above is merged should be fine, fixed a small issue with the image size input too."
+    }
+  ]
+}

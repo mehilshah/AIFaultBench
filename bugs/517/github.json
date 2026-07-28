@@ -1,0 +1,85 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "pyro",
+  "number": 3068,
+  "html_url": "https://github.com/pyro-ppl/pyro/issues/3068",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Memory leak using TraceEnum_ELBO",
+  "author": "gioelelm",
+  "created_at": "2022-04-14T14:11:42Z",
+  "updated_at": "2022-08-29T16:05:26Z",
+  "closed_at": "2022-08-29T16:05:26Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 9,
+  "reactions": {
+    "total_count": 2,
+    "+1": 2,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 137.08,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:34:18.405396+00:00",
+  "comments": [
+    {
+      "author": "fritzo",
+      "created_at": "2022-04-14T14:20:27Z",
+      "body": "@gioelelm could you check to see if #3069 fixes your issue?"
+    },
+    {
+      "author": "gioelelm",
+      "created_at": "2022-04-14T14:35:54Z",
+      "body": "Thank you for the quick attempt, but no it does not fix the problem. Neither the one without using `gc.collect()` nor the residual leak when garbage collecting."
+    },
+    {
+      "author": "fritzo",
+      "created_at": "2022-04-14T16:41:12Z",
+      "body": "Thanks for checking @gioelelm. I might have time in the next few weeks to dive deeper.  If you have time I can recommend some strategies (what I'd try):\r\n- get an idea of which tensors are leaking using [this trick](https://forum.pyro.ai/t/a-trick-to-debug-tensor-memory/556)\r\n- try to determine which objects might be holding references to the leaking tensors using something like\r\n    ```python\r\n    elbo = TraceEnum_ELBO()\r\n    optim = ClippedAdam(...)\r\n    svi = SVI(model, guide, optim, elbo)\r\n    for step in range(steps):\r\n        svi.step()\r\n        print(\"svi\", len(pickle.dumps(svi)))\r\n        print(\"elbo\", len(pickle.dumps(elbo)))\r\n        print(\"optim\", len(pickle.dumps(optim)))\r\n        print(\"param_store\", len(pickle.dumps(pyro.get_param_store()))\r\n   ```\r\n- See if this is a recent PyTorch bug by trying inference with different torch versions, say 1.11, 1.10, 1.9. 1.8. I'm pretty sure the GMM tutorial should still work with older PyTorch versions."
+    },
+    {
+      "author": "gioelelm",
+      "created_at": "2022-04-14T17:17:20Z",
+      "body": "Ok thanks! \r\n\r\nI will try the first two.\r\n\r\nRegarding the last point, since the code runs successfully anyways (provided the machine has enough memory). Don't you think that the bug could have gone unnoticed? Or you have some reason to exclude that. I am thinking at the fact that on one would have had to profile the memory usage of the program to figure that there was a problem."
+    },
+    {
+      "author": "fritzo",
+      "created_at": "2022-04-14T17:45:28Z",
+      "body": "> Don't you think that the bug could have gone unnoticed?\r\n\r\nIt could have, but `TraceEnum_ELBO` is pretty heavily used, and we've done a lot of memory profiling in the past. After working with Pyro and PyTorch for a few years, my posterior is 40% on a recent PyTorch regression, 40% on an edge case memory leak in Pyro that has never been noticed, and 20% on a recently introduced weird interaction between Pyro and PyTorch, so 60% chance this could be narrowed down by searching through PyTorch versions."
+    },
+    {
+      "author": "ordabayevy",
+      "created_at": "2022-04-14T17:59:04Z",
+      "body": "I have noticed a major GPU memory leak as well switching from PyTorch 1.10 to 1.11. Wasn't able to debug it and decided to stick to PyTorch 1.10.0 (and Pyro 1.8.0) for now.\r\n\r\nEdit: CUDA 11.6, Arch Linux"
+    },
+    {
+      "author": "fritzo",
+      "created_at": "2022-04-14T18:40:54Z",
+      "body": "Hmm maybe we should relax pytorch requirements and release to allow Pyro 1.8.2 to work with PyTorch 1.10. We'd need to do the same with Funsor. I think I was a little too eager dropping PyTorch 1.10 support, especially given colab still uses 1.10."
+    },
+    {
+      "author": "qinqian",
+      "created_at": "2022-04-27T02:22:32Z",
+      "body": "I have noticed a GPU memory leaks too with Pyro 1.8.1+06911dc and PyTorch 1.11.0. Downgrade to Pyro 1.6.0 and PyTorch 1.8.0 works normally. "
+    },
+    {
+      "author": "OlaRonning",
+      "created_at": "2022-04-28T09:25:24Z",
+      "body": "Downgrading, as @qinqian suggests, also resolves  #3014."
+    }
+  ]
+}

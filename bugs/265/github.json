@@ -1,0 +1,45 @@
+{
+  "owner": "unit8co",
+  "repo": "darts",
+  "number": 2652,
+  "html_url": "https://github.com/unit8co/darts/issues/2652",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] `lags_past_covariates` dict type breaks `lags_future_covariates` when `output_chunk_shift>0`",
+  "author": "kaarelkivisalu",
+  "created_at": "2025-01-23T14:29:03Z",
+  "updated_at": "2025-02-03T13:00:26Z",
+  "closed_at": "2025-01-31T12:25:18Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 7.91,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:59.579425+00:00",
+  "comments": [
+    {
+      "author": "authierj",
+      "created_at": "2025-01-27T16:31:43Z",
+      "body": "Hi @kaarelkivisalu,\n\nThanks for the MWE. I get the same error as you do.\n\nThe problem is that `lags_future_covariate` is not a component lag and should therefore not be handled at any point by `processed_component_lags`. I'll adjust the `if` statement in line 396 to take this case into account.\n\nThanks for pointing it out!"
+    }
+  ]
+}

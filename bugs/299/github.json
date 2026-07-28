@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 47277,
+  "html_url": "https://github.com/huggingface/transformers/issues/47277",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Bug: `pthread_cond_clockwait` error in Termux/Android because of `esaxx-rs`",
+  "author": "Manamama",
+  "created_at": "2026-07-12T15:58:35Z",
+  "updated_at": "2026-07-12T16:08:17Z",
+  "closed_at": "2026-07-12T16:08:17Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:28:49.819493+00:00",
+  "comments": [
+    {
+      "author": "Manamama",
+      "created_at": "2026-07-12T16:08:13Z",
+      "body": "Oh, it is tokenizers problem, so : https://github.com/huggingface/tokenizers/issues/1902#issue-3678757182 : my own tip there... "
+    }
+  ]
+}

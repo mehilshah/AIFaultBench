@@ -1,0 +1,68 @@
+{
+  "owner": "tensorflow",
+  "repo": "models",
+  "number": 10980,
+  "html_url": "https://github.com/tensorflow/models/issues/10980",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "RandAugment magnitude standard deviation is either 0 or 1",
+  "author": "Vandertic",
+  "created_at": "2023-04-15T12:44:32Z",
+  "updated_at": "2025-01-07T02:00:35Z",
+  "closed_at": "2025-01-07T02:00:31Z",
+  "labels": [
+    "stat:awaiting response",
+    "type:bug",
+    "models:official",
+    "stale"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 632.55,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:21:48.782350+00:00",
+  "comments": [
+    {
+      "author": "laxmareddyp",
+      "created_at": "2023-04-18T17:36:11Z",
+      "body": "Hi @fyangf,\r\n\r\nCould you please look into this issue in your free time.\r\n\r\nThanks."
+    },
+    {
+      "author": "LakshmiKalaKadali",
+      "created_at": "2024-12-23T05:32:32Z",
+      "body": "Hi @Vandertic,\r\n\r\nObserved the mentioned behavior and raised a PR #13509 by adding  `level_std* ` parameter to `tf.random.normal([], dtype=tf.float32)`, that  increases the randomness in the augmentation process.  Please track the PR. \r\n\r\nThank You"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2024-12-31T01:59:20Z",
+      "body": "This issue has been marked stale because it has no recent activity since 7 days. It will be closed if no further activity occurs. Thank you."
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2025-01-07T02:00:30Z",
+      "body": "This issue was closed due to lack of activity after being marked stale for past 7 days."
+    },
+    {
+      "author": "google-ml-butler[bot]",
+      "created_at": "2025-01-07T02:00:33Z",
+      "body": "Are you satisfied with the resolution of your issue?\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=Yes&entry.2137816233=https://github.com/tensorflow/models/issues/10980\">Yes</a>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSfaP12TRhd9xSxjXZjcZFNXPGk4kc1-qMdv3gc6bEP90vY1ew/viewform?entry.85265664=No&entry.2137816233=https://github.com/tensorflow/models/issues/10980\">No</a>\n"
+    }
+  ]
+}

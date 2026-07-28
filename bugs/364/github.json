@@ -1,0 +1,56 @@
+{
+  "owner": "huggingface",
+  "repo": "accelerate",
+  "number": 3087,
+  "html_url": "https://github.com/huggingface/accelerate/issues/3087",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`_get_named_parameters()` seems to have met a regression ",
+  "author": "sayakpaul",
+  "created_at": "2024-09-06T12:20:26Z",
+  "updated_at": "2024-09-07T02:49:02Z",
+  "closed_at": "2024-09-07T02:49:02Z",
+  "labels": [
+    "bug",
+    "big model inference"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.6,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:27.293153+00:00",
+  "comments": [
+    {
+      "author": "muellerzr",
+      "created_at": "2024-09-06T12:30:26Z",
+      "body": "Related: https://github.com/huggingface/accelerate/pull/3052"
+    },
+    {
+      "author": "SunMarc",
+      "created_at": "2024-09-06T16:31:23Z",
+      "body": "I've merged a PR to fix the issue ! LMK if this is fixed @sayakpaul "
+    },
+    {
+      "author": "sayakpaul",
+      "created_at": "2024-09-07T02:49:02Z",
+      "body": "Thanks @SunMarc! I can confirm that `pytest tests/models/autoencoders/test_models_vae.py::ConsistencyDecoderVAETests -k \"sharded\"` spits all green:\r\n\r\n<img width=\"1352\" alt=\"image\" src=\"https://github.com/user-attachments/assets/f9bc7c3a-85b2-4c18-966e-a2f8e4daca97\">\r\n"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 48124,
+  "html_url": "https://github.com/vllm-project/vllm/issues/48124",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: The deepseek_v2.py function misses the output activation values \u200b\u200bof the last layer when extracting hidden states.",
+  "author": "wsb853529465",
+  "created_at": "2026-07-09T12:28:52Z",
+  "updated_at": "2026-07-10T00:46:01Z",
+  "closed_at": "2026-07-10T00:46:01Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.51,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:29:44.456749+00:00",
+  "comments": [
+    {
+      "author": "VBS2004",
+      "created_at": "2026-07-09T16:33:27Z",
+      "body": "This looks already supported on main: the loop's pre-layer check is complemented by a post-loop capture right before the final norm \u2014 if self.end_layer in self.aux_hidden_state_layers: aux_hidden_states.append(hidden_states + residual) \u2014 so passing num_hidden_layers as a layer id yields the last layer's (pre-norm) output. This is documented in the Hidden State Extraction docs: https://docs.vllm.ai/en/latest/features/speculative_decoding/extract_hidden_states/ (\"It is possible to save the last-layer's output hidden states by passing num_hidden_layers as a layer id\"). Which vLLM version/commit are you on? Note the proposed idx + 1 change would shift the capture semantics for existing EAGLE3 layer ids, and appending after the last layer inside the loop can capture a sequence-parallel-sharded tensor under TP \u2014 the post-loop placement after the all-gather handles that."
+    }
+  ]
+}

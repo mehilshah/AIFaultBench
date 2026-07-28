@@ -1,0 +1,58 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21567,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21567",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "AccumulateGrad Warning",
+  "author": "guarin",
+  "created_at": "2026-03-05T13:57:44Z",
+  "updated_at": "2026-06-01T13:12:46Z",
+  "closed_at": "2026-06-01T13:12:46Z",
+  "labels": [
+    "bug",
+    "fabric",
+    "strategy: ddp",
+    "ver: 2.6.x"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 7,
+    "+1": 7,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 87.97,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:31.393116+00:00",
+  "comments": [
+    {
+      "author": "morestart",
+      "created_at": "2026-03-06T03:06:34Z",
+      "body": "The same issue also exists in torch 2.10.0+cu128 and lightning 2.6.1"
+    },
+    {
+      "author": "guarin",
+      "created_at": "2026-03-06T10:15:55Z",
+      "body": "Just noticed that this also happens without gradient accumulation. "
+    },
+    {
+      "author": "deependujha",
+      "created_at": "2026-05-28T10:09:01Z",
+      "body": "Hi @guarin @morestart, thanks for opening the issue.\nAfter digging into this, here's a full breakdown of what's happening and how the fix works.\n\n---\n\n### What's causing the warning\n\nThe warning itself states it cleanly: `[rank1]: UserWarning: The AccumulateGrad node's stream does not match the stream of the node that produced the incoming gradient.`\n\nThe warning fires inside `torch/csrc/autograd/input_buffer.cpp` when `opt_consumer_stream` (the stream the AccumulateGrad node was created on) doesn't match `opt_producer_stream` (the stream currently producing the incoming gradient).\n\nhttps://github.com/pytorch/pytorch/blob/c5d8d5e61e1ab44dcb85ad975b60009dece95c02/torch/csrc/autograd/input_buffer.cpp#L310-L324\n\nSince Fabric initialized DDP on a side-stream, the AccumulateGrad nodes were created on that side-stream. Normal forward/backward runs on the default stream, so every backward triggers the mismatch. `del loss` and `del output` don't help because DDP's C++ Reducer holds its own independent reference to these nodes, clearing Python-side references doesn't destroy them.\n\nhttps://github.com/Lightning-AI/pytorch-lightning/blob/932b7e3e76ea96481003ceacb13c3e8194f281d2/src/lightning/fabric/strategies/ddp.py#L124-L130\n\nThe key line in the warning explains it:\n\n> *\"This mismatch is caused by an AccumulateGrad node created prior to the current iteration being kept alive... or if you are using DDP, which will stash a reference to the node.\"*\n\n---\n\n### Why Fabric triggers it but plain PyTorch doesn't\n\nLooking at `setup_module` in `DDPStrategy`:\n\n```python\n# original code\nctx = torch.cuda.stream(torch.cuda.Stream())  # <-- new side-stream\nwith ctx:\n    return DistributedDataParallel(...)\n```\n\nFabric was initializing DDP on a **new non-default stream**. This was intentional, the PyTorch CUDA Graphs docs explicitly require DDP to be initialized on a side-stream for whole-network capture:\nhttps://docs.pytorch.org/docs/2.12/notes/cuda.html#id5\n\nBut in normal training (no CUDA graphs), all forward and backward passes run on the **default stream**. So every backward pass hits `AccumulateGrad` nodes that were registered on a different stream \u2192 warning.\n\nPlain PyTorch users call `DistributedDataParallel(model, ...)` directly with no stream context, so DDP initializes on the default stream and there's no mismatch.\n\n---\n\n### What I tried that didn't work\n\n- `del loss` after `fabric.backward(loss)`: no effect. The graph reference is held by DDP's C++ Reducer, not Python.\n- `del loss, output`: same, still fires.\n- `torch.cuda.stream(torch.cuda.default_stream())` around `fabric.setup()` in user code: no effect because Fabric defers the actual `DistributedDataParallel` construction to `setup_module`, which runs after the user's stream context has already exited.\n\n---\n\n### The fix\n\nUse `torch.cuda.is_current_stream_capturing()` to detect whether we're inside a CUDA graph capture at DDP initialization time, and branch accordingly:\n\n```python\ncapturing = torch.cuda.is_current_stream_capturing()\nif capturing:\n    # CUDA graph whole-network capture requires DDP on a side-stream.\n    # Stream mismatch is intentional here; suppress the warning.\n    ctx = torch.cuda.stream(torch.cuda.Stream())\n    torch.autograd.graph.set_warn_on_accumulate_grad_stream_mismatch(False)\nelse:\n    # Normal training: default stream prevents the AccumulateGrad mismatch.\n    ctx = torch.cuda.stream(torch.cuda.default_stream())\n```\n\nThis means:\n- Normal DDP training: no warning, correct behavior, no user action needed.\n- CUDA graph capture: side-stream preserved as required, warning suppressed since the mismatch is expected and benign in that context.\n\n---\n\n### Resources\n\n- PyTorch CUDA Graphs docs (why side-stream is needed for DDP + graph capture): https://docs.pytorch.org/docs/2.12/notes/cuda.html#id5\n- PyTorch AccumulateGrad stream check source: [torch/csrc/autograd/input_buffer.cpp](https://github.com/pytorch/pytorch/blob/c5d8d5e61e1ab44dcb85ad975b60009dece95c02/torch/csrc/autograd/input_buffer.cpp#L310-L324)"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "owner": "lucidrains",
+  "repo": "denoising-diffusion-pytorch",
+  "number": 292,
+  "html_url": "https://github.com/lucidrains/denoising-diffusion-pytorch/issues/292",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "learned_gaussian_diffusion issue",
+  "author": "shenzhu128",
+  "created_at": "2024-02-15T23:44:32Z",
+  "updated_at": "2024-02-16T16:13:44Z",
+  "closed_at": "2024-02-16T16:13:44Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.69,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:23:39.778986+00:00",
+  "comments": [
+    {
+      "author": "shenzhu128",
+      "created_at": "2024-02-15T23:48:44Z",
+      "body": "A temporary solution would be just changing the function signature to the following:\r\n```python\r\ndef model_predictions(self, x, t, x_self_cond=None, clip_x_start=False, rederive_pred_noise=False):\r\n```"
+    },
+    {
+      "author": "lucidrains",
+      "created_at": "2024-02-15T23:53:45Z",
+      "body": "@shenzhu128 hey Shen! thanks for catching this! put in a fix"
+    }
+  ]
+}

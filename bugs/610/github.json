@@ -1,0 +1,52 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21435,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21435",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "bf16-mixed causing issues with fused AdamW",
+  "author": "vsandwar-sumer",
+  "created_at": "2025-12-20T04:51:53Z",
+  "updated_at": "2026-07-14T05:06:25Z",
+  "closed_at": "2026-07-14T05:06:25Z",
+  "labels": [
+    "bug",
+    "precision: amp",
+    "ver: 2.5.x"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 206.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:36:30.912849+00:00",
+  "comments": [
+    {
+      "author": "vsandwar-sumer",
+      "created_at": "2025-12-20T04:56:09Z",
+      "body": "For any others with this issue a temp workaround I've found is disabling gradient_clip_val from your model.yaml and creating a custom callback without the protections as such\n\n```\nimport torch\nfrom lightning.pytorch import Callback, LightningModule, Trainer\n\n\nclass GradientClipper(Callback):\n    \"\"\"Clips gradients manually, bypassing Lightning's precision plugin check.\"\"\"\n\n    def __init__(self, clip_val: float = 1.0, clip_algorithm: str = \"norm\") -> None:\n        self.clip_val = clip_val\n        self.clip_algorithm = clip_algorithm\n\n    def on_before_optimizer_step(\n        self, trainer: Trainer, pl_module: LightningModule, optimizer: torch.optim.Optimizer\n    ) -> None:\n        if self.clip_val <= 0:\n            return\n\n        if self.clip_algorithm == \"norm\":\n            torch.nn.utils.clip_grad_norm_(pl_module.parameters(), self.clip_val)\n        elif self.clip_algorithm == \"value\":\n            torch.nn.utils.clip_grad_value_(pl_module.parameters(), self.clip_val)\n```"
+    },
+    {
+      "author": "vsandwar-sumer",
+      "created_at": "2025-12-20T05:09:26Z",
+      "body": "Created #21436 that implements above code fix."
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "owner": "Lightning-AI",
+  "repo": "pytorch-lightning",
+  "number": 21428,
+  "html_url": "https://github.com/Lightning-AI/pytorch-lightning/issues/21428",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Optimizer.step called after on_epoch_end",
+  "author": "RorryB",
+  "created_at": "2025-12-18T01:22:47Z",
+  "updated_at": "2025-12-30T15:42:47Z",
+  "closed_at": "2025-12-30T15:42:47Z",
+  "labels": [
+    "bug",
+    "optimizer",
+    "ver: 2.5.x"
+  ],
+  "milestone": null,
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 1,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 1
+  },
+  "resolution_days": 12.6,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:37:11.826349+00:00",
+  "comments": [
+    {
+      "author": "RorryB",
+      "created_at": "2025-12-18T01:24:23Z",
+      "body": "Just realized this also happens at epoch 0.  So optimizer.step() is called before any data is processed."
+    },
+    {
+      "author": "GdoongMathew",
+      "created_at": "2025-12-29T16:41:01Z",
+      "body": "Hi @RorryB , thanks for the report!\n\nFrom how the hooks are implemented the expected ordering is [`automatic_optimization.run (training_step + optimizer.step)`](https://github.com/Lightning-AI/pytorch-lightning/blob/862314360457fed35672ec9d0c6f5f1998a61eae/src/lightning/pytorch/loops/training_epoch_loop.py#L240) -> [`on_validation_epoch_end`](https://github.com/Lightning-AI/pytorch-lightning/blob/862314360457fed35672ec9d0c6f5f1998a61eae/src/lightning/pytorch/loops/training_epoch_loop.py#L285). Your log output appears to show the same ordering.\n\nCould you share a bit more about whats not working for you or what behavior you expect instead? "
+    },
+    {
+      "author": "RorryB",
+      "created_at": "2025-12-29T17:53:34Z",
+      "body": "Sure, so I would expect the ordering to be\n\n- Automatic_optimization.run\n    - training step\n    - optimizer step\n    - training step\n    - optimizer step\n    - ......\n    - training step\n    - optimizer step\n- on validation epoch end\n\nbut it looks like it is actually \n- Automatic_optimization.run\n    - optimizer step\n    - training step\n    - optimizer step\n    - training step\n    - ......\n    - training step\n- on validation epoch end\n- Next automatic optimizer.run\n    -  optimizer step\n\ni.e. an optimizer step is called before the first training step, which is also repeated on every training epoch.  and then each training epoch ends with a training step that does not have the optimizer.step actually called until the next training epoch.\n\nIt might not be coming through clearly from the log because the optimizer.step print is on the same line as the training bar.  But if you just look at the debugs without the training bar the order is:\n\nDEBUG: training_step start (batch 858)\nDEBUG: training_step end (batch 858)\nDEBUG: optimizer_step called (epoch 0, batch 859)\nDEBUG: training_step start (batch 859)\nDEBUG: training_step end (batch 859)\non_validation_epoch_end \nDEBUG: optimizer_step called (epoch 1, batch 0)\nDEBUG: training_step start (batch 0)\nDEBUG: training_step end (batch 0)"
+    },
+    {
+      "author": "GdoongMathew",
+      "created_at": "2025-12-29T18:17:57Z",
+      "body": "Thanks for the clarification. So this is actually an expected behavior caused by `lightning` utilizing the closure mechanism in torch optimizer. A reference could be found in this https://github.com/Lightning-AI/pytorch-lightning/pull/21120#issuecomment-3227587883 as well.\n\nBasically, `lightning` wraps the work from `training_step` through `on_before_optimizer_step` into one big closure function and passes that to `optimizer.step` argument. Optimizer would call that closure internally ([ref](https://github.com/pytorch/pytorch/blob/main/torch/optim/sgd.py#L114-L116)). That's why the logs can look like `optimizer.step` runs before `training_step`, but the training logic inside the closure is still executed before the actual parameter update."
+    },
+    {
+      "author": "RorryB",
+      "created_at": "2025-12-29T18:36:51Z",
+      "body": "Im not sure if I follow.  From your referenced comment:\n\n# closure function for optimizer\n            strategy.training_step()\n            \u2514\u2500\u2500 LightningModule.training_step()\n\n            callback.on_before_zero_grad()\n            LightningModule.on_before_zero_grad()\n            LightningModule.optimizer_zero_grad()\n            strategy.backward()\n            \u251c\u2500\u2500 callback.on_before_backward()\n            \u251c\u2500\u2500 LightningModule.on_before_backward()\n            \u251c\u2500\u2500 LightningModule.backward()\n            \u2502   \u2514\u2500\u2500 loss.backward()\n            \u251c\u2500\u2500 callback.on_after_backward()\n            \u2514\u2500\u2500 LightningModule.on_after_backward()\n\n            callback.on_before_optimizer_step()\n            LightningModule.on_before_optimizer_step()\n            LightningModule.configure_gradient_clipping()\n    \n            optimizer.step(closure)\n\nIt still looks like that (training_step through on_before_optimizer_step) is fully called before optimizer.step.  I don't understand why the logs would make it look like optimizer.step() is running first if it is not.  My actual use case where i found this is also more complex than just printing the logs and it was causing things to crash. I can try to add complexity to this minimum example to cause the same effect with more than just print statements."
+    },
+    {
+      "author": "GdoongMathew",
+      "created_at": "2025-12-30T02:39:54Z",
+      "body": "So, at a high level, the pseudo-code for the optimizer closure looks like this:\n\n```python\ndef closure():\n    LightningModule.training_step()\n    LightningModule.optimizer_zero_grad()\n    loss.backward()\n    LightningModule.on_before_optimizer_step()\n\noptimizer.step(closure=closure)\n```\n\nIf you add a debug print before and after the `optimizer.step`\n\n```python\nclass LightningMNISTClassifier(pl.LightningModule):\n    def optimizer_step(self, epoch, batch_idx, optimizer, optimizer_closure):\n        print(f\"DEBUG: optimizer_step called (epoch {epoch}, batch {batch_idx})\", flush=True)\n        optimizer.step(closure=optimizer_closure)    # --> The `training_step` is included in the `optimizer_closure` here\n        print(f\"DEBUG: optimizer_step called finished (epoch {epoch}, batch {batch_idx})\", flush=True)\n```\n\nThen you should see logs similar to the following:\n```text\nDEBUG: optimizer_step called (epoch 0, batch 858)\nDEBUG: training_step start (batch 858)\nDEBUG: training_step end (batch 858)\nDEBUG: optimizer_step called finished (epoch 0, batch 858)\n```\n which shows the training step is executed within the optimizer step via the provided closure, rather than being called separately afterward."
+    },
+    {
+      "author": "RorryB",
+      "created_at": "2025-12-30T15:42:47Z",
+      "body": "Awesome, thank you for this detailed explanation!  This helped me track down my bug.  I've never seen this step(closure) idea before.  \n\nFYI, and If anyone else looks at this later with the same problem, I have fairly complicated setup for my project that does some other stuff before the step().  My usual order without Lightning is training step -> zero grad -> other stuff -> optimizer step.  But closure was re ordering it to be other stuff -> training step -> zero grad -> optimizer step.  By taking this closure concept into account I was able to rearrange where my other stuff is running and get things in the right order.\n\nThanks again!"
+    }
+  ]
+}

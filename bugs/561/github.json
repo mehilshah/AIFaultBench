@@ -1,0 +1,50 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 47054,
+  "html_url": "https://github.com/vllm-project/vllm/issues/47054",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: CPUOffloading + enable_cross_layers_blocks + gptoss-120b",
+  "author": "varun-sundar-rabindranath",
+  "created_at": "2026-06-29T16:47:39Z",
+  "updated_at": "2026-07-11T03:22:40Z",
+  "closed_at": "2026-07-11T03:22:40Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 11.44,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:35:20.965066+00:00",
+  "comments": [
+    {
+      "author": "varun-sundar-rabindranath",
+      "created_at": "2026-06-29T16:48:04Z",
+      "body": "cc @tlrmchlsmth  @LucasWilkinson "
+    },
+    {
+      "author": "LucasWilkinson",
+      "created_at": "2026-07-01T17:09:24Z",
+      "body": "Note on duplicate check: #47056 is a conservative guard that avoids packed KV for FlashAttention. I am opening a smaller support fix instead: preserve the logical block dimension for packed HND KV views so FlashAttention can use packed cross-layer KV directly."
+    }
+  ]
+}

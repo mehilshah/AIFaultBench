@@ -1,0 +1,60 @@
+{
+  "owner": "pyro-ppl",
+  "repo": "numpyro",
+  "number": 2055,
+  "html_url": "https://github.com/pyro-ppl/numpyro/issues/2055",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Incompatibility with flax 0.11.0",
+  "author": "GaetanLepage",
+  "created_at": "2025-07-31T12:38:20Z",
+  "updated_at": "2025-08-04T19:55:57Z",
+  "closed_at": "2025-08-04T17:46:19Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 4.21,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:33:13.391627+00:00",
+  "comments": [
+    {
+      "author": "juanitorduz",
+      "created_at": "2025-08-01T11:42:22Z",
+      "body": "@fehiepsi do you have any tips on where to start looking? It is unclear to me where the fix is needed according to https://flax.readthedocs.io/en/latest/migrating/nnx_010_to_nnx_011.html#using-rngs-in-nnx-transforms . If I get a direction I can open a PR :)"
+    },
+    {
+      "author": "fehiepsi",
+      "created_at": "2025-08-04T15:17:17Z",
+      "body": "I'm not sure if this line is the issue? https://github.com/pyro-ppl/numpyro/blob/ab77747161bf0ccc817b743b76ec7ae7ba2f416c/test/contrib/test_module.py#L412\n\nIIUC, we need to set `nnx.Rngs(params=0, dropout=1)`"
+    },
+    {
+      "author": "juanitorduz",
+      "created_at": "2025-08-04T15:52:21Z",
+      "body": "> I'm not sure if this line is the issue?\n> \n> [numpyro/test/contrib/test_module.py](https://github.com/pyro-ppl/numpyro/blob/ab77747161bf0ccc817b743b76ec7ae7ba2f416c/test/contrib/test_module.py#L412)\n> \n> Line 412 in [ab77747](/pyro-ppl/numpyro/commit/ab77747161bf0ccc817b743b76ec7ae7ba2f416c)\n> \n>  net_module = Net(rngs=nnx.Rngs(params=rng_key)) \n> IIUC, we need to set `nnx.Rngs(params=0, dropout=1)`\n\nIndeed! Thank you! https://github.com/pyro-ppl/numpyro/pull/2057"
+    },
+    {
+      "author": "GaetanLepage",
+      "created_at": "2025-08-04T19:55:57Z",
+      "body": "Thanks!"
+    }
+  ]
+}

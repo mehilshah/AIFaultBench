@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "transformers",
+  "number": 47059,
+  "html_url": "https://github.com/huggingface/transformers/issues/47059",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "tests/cli fail with huggingface_hub 1.22.0: 'HFCliTyperGroup' object has no attribute '_add_completion':",
+  "author": "Madhav-000-s",
+  "created_at": "2026-07-04T08:56:14Z",
+  "updated_at": "2026-07-07T09:21:07Z",
+  "closed_at": "2026-07-07T09:21:07Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.02,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:30:46.761038+00:00",
+  "comments": [
+    {
+      "author": "dhruv7477",
+      "created_at": "2026-07-04T09:51:33Z",
+      "body": "Root-caused this. Since `huggingface_hub 1.22.0` (released 2026-07-03), `typer_factory` returns hub's own click command group (`HFCliTyperGroup`) instead of a `typer.Typer`.\n\nTwo distinct breakages:\n1. **The 6 CI failures**: `tests/cli/conftest.py` drives the app with `typer.testing.CliRunner`,\n   whose `invoke()` calls typer's `get_command()` and reads `._add_completion` \u2014 an attribute\n   only real `Typer` instances have \u2192 `AttributeError`. (`transformers env` works interactively\n   because direct invocation never goes through `get_command()`.)\n2. **A runtime bug behind it**: `serve`'s `--reasoning` declares its default as the enum member\n   `ReasoningMode.AUTO`; click validates defaults against the string choices and rejects it, so\n   `transformers serve` itself fails under hub 1.22.0 \u2014 not just the tests.\n\nFix for both in #47064: drive the app with `click.testing.CliRunner` (identical `invoke`\nsignature; the app is a genuine click group now) and default `--reasoning` to the enum's value.\n`tests/cli`: 6 failed \u2192 74 passed, 0 failed."
+    }
+  ]
+}

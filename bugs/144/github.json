@@ -1,0 +1,65 @@
+{
+  "owner": "huggingface",
+  "repo": "sentence-transformers",
+  "number": 3078,
+  "html_url": "https://github.com/huggingface/sentence-transformers/issues/3078",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`CrossEncoder` is not pushed to cuda until predict is called, even if cuda is specified as device.",
+  "author": "susnato",
+  "created_at": "2024-11-22T07:50:04Z",
+  "updated_at": "2024-12-02T11:52:09Z",
+  "closed_at": "2024-12-02T11:52:09Z",
+  "labels": [
+    "enhancement"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 10.17,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:24:57.476931+00:00",
+  "comments": [
+    {
+      "author": "pesuchin",
+      "created_at": "2024-11-27T05:01:45Z",
+      "body": "I\u2019m not sure of the intention behind this implementation, but I think it\u2019s because the following code within the fit function is where the data is first transferred to the GPU.\r\n\r\nhttps://github.com/UKPLab/sentence-transformers/blob/df6a8e8278b49e7ca01401f46799610106a7b640/sentence_transformers/cross_encoder/CrossEncoder.py#L235\r\n"
+    },
+    {
+      "author": "susnato",
+      "created_at": "2024-11-27T05:07:28Z",
+      "body": "yes, but until I call fit or predict my model is kept in the cpu, which is inconvenient IMO and also takes up the ram."
+    },
+    {
+      "author": "tomaarsen",
+      "created_at": "2024-11-27T10:34:18Z",
+      "body": "Hello!\r\n\r\nApologies for the delay.\r\nThis was a design decision made by my predecessor, it was also the case for Sentence Transformer models, but it has been updated there (See #2351) as I believe it's better to immediately move the model to the desired device.\r\n\r\nI'll fix this when I start updating cross-encoders soon, although I'm also open to a PR much like #2351 in the meantime.\r\n\r\n- Tom Aarsen"
+    },
+    {
+      "author": "susnato",
+      "created_at": "2024-11-27T10:43:32Z",
+      "body": "Hello @tomaarsen! \r\nthanks for the response!\r\n\r\nI would like to create the PR to fix this, could you please assign this to me?"
+    },
+    {
+      "author": "tomaarsen",
+      "created_at": "2024-11-27T10:55:27Z",
+      "body": "Gladly!"
+    }
+  ]
+}

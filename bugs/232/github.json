@@ -1,0 +1,43 @@
+{
+  "owner": "ourownstory",
+  "repo": "neural_prophet",
+  "number": 1567,
+  "html_url": "https://github.com/ourownstory/neural_prophet/issues/1567",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "null prediction when using future regressor and len(training set) == n_lags + n_forecasts",
+  "author": "adi250491",
+  "created_at": "2024-04-23T23:28:37Z",
+  "updated_at": "2024-06-21T05:47:43Z",
+  "closed_at": "2024-06-21T05:47:43Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 58.26,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:10.234748+00:00",
+  "comments": [
+    {
+      "author": "adi250491",
+      "created_at": "2024-05-30T20:28:40Z",
+      "body": "No activity on this repo? Is this project abandoned?"
+    }
+  ]
+}

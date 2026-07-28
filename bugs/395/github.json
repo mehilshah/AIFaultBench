@@ -1,0 +1,86 @@
+{
+  "owner": "vllm-project",
+  "repo": "vllm",
+  "number": 47836,
+  "html_url": "https://github.com/vllm-project/vllm/issues/47836",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: Loading Qwen GPTQ MoE model failed: IndexError: index 0 is out of bounds for dimension 0 with size 0",
+  "author": "hnhyzz",
+  "created_at": "2026-07-07T07:45:43Z",
+  "updated_at": "2026-07-08T06:23:37Z",
+  "closed_at": "2026-07-08T06:23:37Z",
+  "labels": [
+    "bug",
+    "rocm"
+  ],
+  "milestone": null,
+  "comments_count": 9,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.94,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:31:16.067535+00:00",
+  "comments": [
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2026-07-07T07:49:44Z",
+      "body": "CC @hongxiayang @tjtanaa @vllmellm for ROCm-related issue"
+    },
+    {
+      "author": "github-actions[bot]",
+      "created_at": "2026-07-07T07:49:46Z",
+      "body": "<!-- rocm-info-request -->\nHi @hnhyzz, thanks for reporting this ROCm issue!\n\nTo help us investigate, please make sure the following information is included:\n\n- [ ] A minimal reproducer (code snippet or script that triggers the issue)\n- [x] The full error message or traceback\n- [x] How you installed vLLM (Docker image name, pip install, or build from source steps)\n- [x] The command you used to launch vLLM (e.g., `vllm serve ...` or the Python script)\n- [x] Your GPU model and GFX architecture (e.g., MI300X / gfx942) \u2014 run `rocminfo | grep gfx`\n\nPlease provide any unchecked items above. This will help us reproduce and resolve the issue faster. Thank you!"
+    },
+    {
+      "author": "hammadkhaliq-del",
+      "created_at": "2026-07-07T07:54:29Z",
+      "body": "Hey @hnhyzz, I would like to work on this issue. is the issue still available?"
+    },
+    {
+      "author": "hnhyzz",
+      "created_at": "2026-07-07T07:57:14Z",
+      "body": "> Hey [@hnhyzz](https://github.com/hnhyzz), I would like to work on this issue. is the issue still available?\n\nSure. Any other info should I provide?"
+    },
+    {
+      "author": "hammadkhaliq-del",
+      "created_at": "2026-07-07T08:05:52Z",
+      "body": "I am currently looking at the codebase, if I need any info I would let you know"
+    },
+    {
+      "author": "hammadkhaliq-del",
+      "created_at": "2026-07-07T08:38:56Z",
+      "body": "Thanks for the detailed report and the full traceback, that made this easy to trace.\nThe crash happens in RoutedExperts.weight_loader in routed_experts.py, where it indexes into a parameter that has shape (0, ...) in dimension 0. That's almost certainly the w13_g_idx/w2_g_idx placeholder (or qzeros when has_zp=False) that MoeWNA16Method.create_weights deliberately creates as empty, since GPTQ doesn't actually use it. Normally there's a wrapped loader (moe_wna16_weight_loader) that's supposed to skip those names before they ever get indexed.\nI dug through the history and found a commit on vllm-project/vllm main, e7d0fcbc0 (July 1), that changes the call in load_weights from self.weight_loader(...) to param.weight_loader(...). That distinction matters here: param.weight_loader is what actually calls the wrapped, guarded loader; self.weight_loader calls the generic unwrapped one and skips the guard entirely. So if your build predates that commit, this would explain the crash pretty directly.\nThat said, I want to flag something rather than assume it: your version string is 0.1.dev18302+gdfe7b7bad, which points to commit dfe7b7bad (the g is just git's own prefix marker, not part of the hash). I can't find that commit anywhere in vllm-project/vllm's main history. Given you mentioned building with MI100/gfx908 support \"gated on,\" I suspect you're building from a fork or downstream branch rather than vanilla main, so I can't directly confirm whether it includes e7d0fcbc0 or not.\nWould you be able to confirm what repo/branch your Docker image is actually built from? And if you get a chance, testing against a fresh vllm-project/vllm main checkout (post July 1) would tell us pretty quickly whether this is already fixed upstream or whether there's still a real bug to chase down.\n\n<img width=\"776\" height=\"300\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/c89e5751-ab4f-47d0-aa34-9af177896e07\" />"
+    },
+    {
+      "author": "hnhyzz",
+      "created_at": "2026-07-07T10:39:57Z",
+      "body": "> Thanks for the detailed report and the full traceback, that made this easy to trace. The crash happens in RoutedExperts.weight_loader in routed_experts.py, where it indexes into a parameter that has shape (0, ...) in dimension 0. That's almost certainly the w13_g_idx/w2_g_idx placeholder (or qzeros when has_zp=False) that MoeWNA16Method.create_weights deliberately creates as empty, since GPTQ doesn't actually use it. Normally there's a wrapped loader (moe_wna16_weight_loader) that's supposed to skip those names before they ever get indexed. I dug through the history and found a commit on vllm-project/vllm main, [e7d0fcb](https://github.com/vllm-project/vllm/commit/e7d0fcbc0954382f10fb4c9cee1df6f3a16113e8) (July 1), that changes the call in load_weights from self.weight_loader(...) to param.weight_loader(...). That distinction matters here: param.weight_loader is what actually calls the wrapped, guarded loader; self.weight_loader calls the generic unwrapped one and skips the guard entirely. So if your build predates that commit, this would explain the crash pretty directly. That said, I want to flag something rather than assume it: your version string is 0.1.dev18302+gdfe7b7bad, which points to commit [dfe7b7b](https://github.com/vllm-project/vllm/commit/dfe7b7bad2a857878f9c42fa24d4f3516eeae70d) (the g is just git's own prefix marker, not part of the hash). I can't find that commit anywhere in vllm-project/vllm's main history. Given you mentioned building with MI100/gfx908 support \"gated on,\" I suspect you're building from a fork or downstream branch rather than vanilla main, so I can't directly confirm whether it includes [e7d0fcb](https://github.com/vllm-project/vllm/commit/e7d0fcbc0954382f10fb4c9cee1df6f3a16113e8) or not. Would you be able to confirm what repo/branch your Docker image is actually built from? And if you get a chance, testing against a fresh vllm-project/vllm main checkout (post July 1) would tell us pretty quickly whether this is already fixed upstream or whether there's still a real bug to chase down.\n> \n> <img alt=\"Image\" width=\"776\" height=\"300\" src=\"https://private-user-images.githubusercontent.com/137440059/618059273-c89e5751-ab4f-47d0-aa34-9af177896e07.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3ODM0MjA3OTYsIm5iZiI6MTc4MzQyMDQ5NiwicGF0aCI6Ii8xMzc0NDAwNTkvNjE4MDU5MjczLWM4OWU1NzUxLWFiNGYtNDdkMC1hYTM0LTlhZjE3Nzg5NmUwNy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwNzA3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDcwN1QxMDM0NTZaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1lYjYyODA4MjljN2MzYzE4ODk5NWI4YWM4ODAyZGFhOWNkZTczODViMzQyZjdhZGU1YTAxNWVmYjljN2E0NjJkJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZyZXNwb25zZS1jb250ZW50LXR5cGU9aW1hZ2UlMkZwbmcifQ.jpj3b7rFIYZEWrA4wk5UKzZv7eISm90GFJ46EF6-UUY\">\n\nI used my fork (https://github.com/hnhyzz/vllm) to build the docker. My fork merged the tag: https://github.com/vllm-project/vllm/commit/2929b78a227e2072db17fb92c157ab0b4adcd009 \n\nLet me merge the current main branch to see if ths bug still exists."
+    },
+    {
+      "author": "hnhyzz",
+      "created_at": "2026-07-07T11:09:43Z",
+      "body": "It works after I merge into the current main branch! Thanks a lot. BTW, how can that commit pass the test?"
+    },
+    {
+      "author": "hammadkhaliq-del",
+      "created_at": "2026-07-07T12:01:18Z",
+      "body": "> It works after I merge into the current main branch! Thanks a lot. BTW, how can that commit pass the test?\n\nI'm happy that it is fixed for you!\nAs for how it slipped past CI, I'm honestly not 100% sure, but my guess is it just needs a pretty specific setup to trigger: a GPTQ MoE checkpoint that falls back to WNA16 kernels, and one that actually ships g_idx (or qzeros when has_zp=False) weight files. If the existing MoE quant tests don't happen to cover that exact combo, the broken line would just sit there unused until someone loaded a real checkpoint shaped like yours.\nMight be worth a quick look at tests/quantization/ or tests/kernels/moe/ to see if that fallback + g_idx/qzeros case is actually tested. If not, adding one referencing this issue would be a nice way to make sure it doesn't come back.\nSince this turns out to already be fixed on main by e7d0fcbc0, I think this one can be closed. Thanks for jumping on the repro so quickly!"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "owner": "patrick-kidger",
+  "repo": "jaxtyping",
+  "number": 349,
+  "html_url": "https://github.com/patrick-kidger/jaxtyping/issues/349",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Optionals via PEP 604 unions fail to validate with typeguard 2.13.3",
+  "author": "brendancooley",
+  "created_at": "2025-09-30T18:49:55Z",
+  "updated_at": "2025-10-01T14:13:18Z",
+  "closed_at": "2025-10-01T13:45:44Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.79,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-28T12:27:19.866617+00:00",
+  "comments": [
+    {
+      "author": "patrick-kidger",
+      "created_at": "2025-10-01T13:48:39Z",
+      "body": "Thanks for the report! This is basically just because `|` (i.e. `types.UnionType`) came out after `typeguard==2.13.3` did, so quite understandably it doesn't know how to handle it \ud83d\ude01 \n\nAs a practical matter I've fixed this by including a monkey-patch in #350, i.e. the 0.3.3 release. :)"
+    },
+    {
+      "author": "brendancooley",
+      "created_at": "2025-10-01T14:13:18Z",
+      "body": "> Thanks for the report! This is basically just because `|` (i.e. `types.UnionType`) came out after `typeguard==2.13.3` did, so quite understandably it doesn't know how to handle it \ud83d\ude01 \n> \n> As a practical matter I've fixed this by including a monkey-patch in #350, i.e. the 0.3.3 release. :)\n\nAwesome -- thanks!"
+    }
+  ]
+}
