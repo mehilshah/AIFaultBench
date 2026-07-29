@@ -1,0 +1,2 @@
+EMITTED_TOOL_KEYS: name,description,inputSchema
+OBSERVED ParamValidationError: invalid tagged union toolConfig.tools[0] (raw Bedrock tool lacks toolSpec wrapper)

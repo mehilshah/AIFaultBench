@@ -1,0 +1,204 @@
+# recovered-from-issue: https://github.com/langchain-ai/langchain/issues/38717
+
+TITLE
+PIIMiddleware: PIIMatch not exported from public package, and docs use wrong field names for custom detectors
+
+BODY
+### Submission checklist
+
+- [x] This is a bug, not a usage question.
+- [x] I added a clear and descriptive title that summarizes this issue.
+- [x] I used the GitHub search to find a similar question and didn't find it.
+- [x] I am sure that this is a bug in LangChain rather than my code.
+- [x] The bug is not resolved by updating to the latest stable version of LangChain (or the specific integration package).
+- [x] This is not related to the langchain-community package.
+- [x] I posted a self-contained, minimal, reproducible example. A maintainer can copy it and run it AS IS.
+
+### Package (Required)
+
+- [x] langchain
+- [ ] langchain-openai
+- [ ] langchain-anthropic
+- [ ] langchain-classic
+- [ ] langchain-core
+- [ ] langchain-model-profiles
+- [ ] langchain-tests
+- [ ] langchain-text-splitters
+- [ ] langchain-chroma
+- [ ] langchain-deepseek
+- [ ] langchain-exa
+- [ ] langchain-fireworks
+- [ ] langchain-groq
+- [ ] langchain-huggingface
+- [ ] langchain-mistralai
+- [ ] langchain-nomic
+- [ ] langchain-ollama
+- [ ] langchain-openrouter
+- [ ] langchain-perplexity
+- [ ] langchain-qdrant
+- [ ] langchain-xai
+- [ ] Other / not sure / general
+
+### Related Issues / PRs
+
+#38716 
+
+### Reproduction Steps / Example Code (Python)
+
+```python
+# Problem 1: PIIMatch is NOT exported from the public package.
+# The docs tell users to write a custom detector returning PIIMatch-shaped
+# dicts, but the type itself cannot be imported publicly:
+from langchain.agents.middleware import PIIMatch
+# ImportError: cannot import name 'PIIMatch'
+# from 'langchain.agents.middleware'
+
+# The only working import is from the private, underscore-prefixed module:
+from langchain.agents.middleware._redaction import PIIMatch  # private API
+
+# Problem 2: The official docs example for custom detectors returns dicts
+# with "text"/"start"/"end", but the real PIIMatch TypedDict uses
+# "type"/"value"/"start"/"end" (see _redaction.py below).
+import re
+
+def detect_ssn(content: str) -> list[PIIMatch]:
+    """Custom detector following the docs example at
+    https://docs.langchain.com/oss/python/langchain/middleware/built-in
+    """
+    matches = []
+    for match in re.finditer(r"\d{3}-\d{2}-\d{4}", content):
+        ssn = match.group(0)
+        matches.append({
+            "text": ssn,            # docs say "text"  -> should be "value"
+            "start": match.start(),
+            "end": match.end(),
+            # "type" field is missing, but PIIMatch requires it
+        })
+    return matches
+
+# Source definition (libs/langchain/langchain/agents/middleware/_redaction.py):
+# class PIIMatch(TypedDict):
+#     type: str
+#     value: str
+#     start: int
+#     end: int
+
+# Built-in detectors confirm the real shape, e.g. detect_email:
+#   PIIMatch(type="email", value=match.group(), start=..., end=...)
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+# --- Problem 1: runtime ImportError ---
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ImportError: cannot import name 'PIIMatch' from 'langchain.agents.middleware'
+
+# --- Problem 2: type-checker error (Pyrefly) when following the docs example ---
+Argument `(content: str) -> list[dict[str, int | str]]` is not assignable to
+parameter `detector` with type `((str) -> list[PIIMatch]) | str | None` in
+function `langchain.agents.middleware.pii.PIIMiddleware.__init__`
+Pyrefly(bad-argument-type)
+
+Field `text` is present in `<anonymous>` and absent in `PIIMatch`
+Field `type` is required in `PIIMatch` but missing
+```
+
+### Description
+
+Two issues with PIIMiddleware custom detectors:
+
+1. PIIMatch (the return type required by the `detector` callable) is not
+   exported from the public `langchain.agents.middleware` package, even though
+   `pii.py` lists it in its own `__all__`. The package `__init__.py` only
+   re-exports PIIDetectionError and PIIMiddleware. Since custom detectors are
+   a documented public feature, users must import PIIMatch from the private
+   `_redaction` module, which is not intended public API.
+
+   Expected: `from langchain.agents.middleware import PIIMatch` should work.
+
+2. The custom-detector example on the docs page
+   (https://docs.langchain.com/oss/python/langchain/middleware/built-in,
+   "Custom PII types" -> "Method 3") returns dicts with "text"/"start"/"end",
+   but the actual PIIMatch TypedDict uses "type"/"value"/"start"/"end".
+   Following the docs as-is causes type-checker errors and, at runtime,
+   redaction strategies cannot find the matched `value`.
+
+   Expected: the docs example should use "type"/"value"/"start"/"end".
+
+Both issues are present in 1.2.12 and still present in the latest 1.3.11.
+
+### System Info
+
+>>> from langchain_core import sys_info
+... sys_info.print_sys_info()
+... 
+
+System Information
+------------------
+> OS:  Darwin
+> OS Version:  Darwin Kernel Version 24.6.0: Fri Feb 27 19:34:58 PST 2026; root:xnu-11417.140.69.709.8~1/RELEASE_ARM64_T8132
+> Python Version:  3.13.11 (main, Dec 17 2025, 20:55:16) [Clang 21.1.4 ]
+
+Package Information
+-------------------
+> langchain_core: 1.2.18
+> langchain: 1.2.12
+> langchain_community: 0.4.1
+> langsmith: 0.9.3
+> langchain_anthropic: 1.3.4
+> langchain_classic: 1.0.2
+> langchain_deepseek: 1.0.1
+> langchain_experimental: 0.4.1
+> langchain_mcp_adapters: 0.2.1
+> langchain_ollama: 1.0.1
+> langchain_openai: 1.1.11
+> langchain_openrouter: 0.1.0
+> langchain_tavily: 0.2.17
+> langchain_text_splitters: 1.1.1
+> langgraph_sdk: 0.3.9
+
+Optional packages not installed
+-------------------------------
+> deepagents
+> deepagents-cli
+
+Other Dependencies
+------------------
+> aiohttp: 3.12.14
+> anthropic: 0.84.0
+> anyio: 4.14.1
+> dataclasses-json: 0.6.7
+> distro: 1.9.0
+> httpx: 0.28.1
+> httpx-sse: 0.4.3
+> jsonpatch: 1.33
+> langgraph: 1.1.2
+> mcp: 1.27.0
+> numpy: 2.5.0
+> ollama: 0.6.2
+> openai: 2.26.0
+> openrouter: 0.7.11
+> opentelemetry-api: 1.43.0
+> orjson: 3.11.7
+> packaging: 26.2
+> pydantic: 2.12.5
+> pydantic-settings: 2.12.0
+> pytest: 9.0.3
+> pyyaml: 6.0.3
+> PyYAML: 6.0.3
+> requests: 2.32.5
+> requests-toolbelt: 1.0.0
+> rich: 14.3.3
+> sniffio: 1.3.1
+> sqlalchemy: 2.0.51
+> SQLAlchemy: 2.0.51
+> tenacity: 9.1.4
+> tiktoken: 0.13.0
+> typing-extensions: 4.15.0
+> uuid-utils: 0.16.2
+> websockets: 16.0
+> xxhash: 3.8.0
+> zstandard: 0.25.0
+>>>

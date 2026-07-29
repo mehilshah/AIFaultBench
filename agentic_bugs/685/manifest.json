@@ -1,0 +1,12 @@
+{
+  "bug_id": "685",
+  "bug_dir": "685",
+  "issue_url": "https://github.com/langchain-ai/langchain/issues/38717",
+  "commit_hash": "6e51a7e48bd61568fd6a58e98a5c9ecba615ee12",
+  "library_name": "langchain",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "langchain-ai/langchain@6e51a7e48bd61568fd6a58e98a5c9ecba615ee12",
+  "codebase_present": "false",
+  "standardized_dir": "../685"
+}

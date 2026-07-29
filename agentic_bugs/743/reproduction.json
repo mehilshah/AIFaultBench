@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exit status: 1.",
+    "`repro_stdout.log` contains: `OBSERVED: UnprocessableEntityError 422: assistant tool_calls payload omitted required content`.",
+    "`repro_stderr.log` reports `openai.UnprocessableEntityError` at `['body', 'messages', 2, 'content']`.",
+    "Final checkout verified at `9f2c5aa1be8f59ad830d253294ca84317f859b66`."
+  ],
+  "steps": [
+    "Cloned and restored the checkout to the pinned commit.",
+    "Installed pinned dependencies and editable local AutoGen packages in `.venv`.",
+    "Ran and captured the deterministic local-stub reproduction."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

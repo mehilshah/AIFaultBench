@@ -1,0 +1,46 @@
+{
+  "owner": "run-llama",
+  "repo": "llama_index",
+  "number": 21086,
+  "html_url": "https://github.com/run-llama/llama_index/issues/21086",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: Ollama does not respect the client's initialization",
+  "author": "josx",
+  "created_at": "2026-03-19T22:14:43Z",
+  "updated_at": "2026-05-01T22:06:37Z",
+  "closed_at": "2026-03-20T18:13:59Z",
+  "labels": [
+    "bug",
+    "triage"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.83,
+  "fix": {
+    "closing_commit": "c68f59c1a56f7d44e37a51ab7769ce5787f891a9",
+    "linked_prs": [],
+    "best_guess_fix_commit": "c68f59c1a56f7d44e37a51ab7769ce5787f891a9",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:05:43.405099+00:00",
+  "comments": [
+    {
+      "author": "dosubot[bot]",
+      "created_at": "2026-03-19T22:17:25Z",
+      "body": "<!-- Answer -->\nYou've found a confirmed bug! The issue is in the [client property implementation](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-integrations/llms/llama-index-llms-ollama/llama_index/llms/ollama/base.py#L185-L196) - while the `__init__` method accepts and stores your custom `async_client`, the properties always create **new** clients:\n\n```python\n@property\ndef client(self) -> Client:\n    if self._client is None:\n        self._client = Client(host=self.base_url, timeout=self.request_timeout)\n    return self._client\n```\n\nThe problem: you're passing an `AsyncClient`, but you're calling `llm.complete()` (sync), which uses `self.client` (the sync client property). Since you didn't pass a sync `client`, `self._client` is `None`, so it creates a new one without your headers.\n\nEven if you used async methods, there's still a catch: `get_context_window()` is called during `_model_kwargs` and it uses `self.client.show()` - triggering the sync client creation before your async client would ever be used.\n\n**Workaround**: Pass the **sync** `Client` with your headers:\n\n```python\nfrom llama_index.llms.ollama import Ollama\nfrom ollama import Client\n\nclient = Client(host=host, headers={\"Authorization\": \"Bearer MY_API_KEY\"})\nllm = Ollama(client=client, base_url=host, model=model)\n```\n\nThis should work because if `self._client` is not `None`, it returns your client instead of creating a new one.\n\n\n<!-- Dosu Comment Footer -->\n*To reply, just mention [@dosu](https://go.dosu.dev/dosubot?utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=reply-with-mention&utm_term=run-llama%2Fllama_index).*\n\n---\n\nDocs are dead. Just use [Dosu](https://dosu.dev?utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=static-docs-tagline&utm_term=run-llama%2Fllama_index).\n\n[![Leave Feedback](https://img.shields.io/badge/Leave%20Feedback-555555?style=flat)](https://app.dosu.dev/response-feedback?utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=static-docs-feedback&utm_term=run-llama%2Fllama_index&message_id=aa53a561-e6d3-43aa-87d1-461db9dad56b) [![Ask Dosu about llama_index](https://img.shields.io/badge/Ask%20Dosu%20about%20llama__index-2f7b3f?style=flat&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iODYiIGhlaWdodD0iODkiIHZpZXdCb3g9IjAgMCA4NiA4OSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNS4yOTIzNiAxMi43OTI4TDE3Ljc1OTMgNi42ODE4OFY3Mi41NjY3TDUuMjkyMzYgODQuMDYxOFYxMi43OTI4WiIgZmlsbD0iI0I0QkI5MSIvPjxwYXRoIGQ9Ik0xOC4yNTc1IDczLjExOTZMNTkuMTMyOSA3Mi43NDhMNTEuNzAxMSA4Mi40MDk1TDI5LjAzMzggODYuMjkxTDYuMjM5NjIgODUuMTU1NEwxOC4yNTc1IDczLjExOTZaIiBmaWxsPSIjNzc4NTYxIi8%2BPHBhdGggZD0iTTE3LjQ5MTYgMy43MzYzM0wzLjU4NTU3IDEyLjcwOTlWODMuNTc5MkMzLjU4NTU3IDg0Ljc1NDIgNC45ODU2MyA4NS4zNjUyIDUuODQ3MDUgODQuNTY2TDE5LjYyOTYgNzEuNzgwMSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSI2LjQyODQ0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bWFzayBpZD0iZG9zdS1kLWN1dG91dCIgZmlsbD0id2hpdGUiPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNNDAuNzA0IDAuNTE4MDY2SDE3LjA0MzlWNzYuMjIyMUg0MC43MDRINDIuNTgwNUg0Ny44MDEzQzY4LjcwNjQgNzYuMjIyMSA4NS42NTMzIDU5LjI3NTIgODUuNjUzMyAzOC4zNzAxQzg1LjY1MzMgMTcuNDY1IDY4LjcwNjMgMC41MTgwNjYgNDcuODAxMyAwLjUxODA2Nkg0Mi41ODA1SDQwLjcwNFoiLz48L21hc2s%2BPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00MC43MDQgMC41MTgwNjZIMTcuMDQzOVY3Ni4yMjIxSDQwLjcwNEg0Mi41ODA1SDQ3LjgwMTNDNjguNzA2NCA3Ni4yMjIxIDg1LjY1MzMgNTkuMjc1MiA4NS42NTMzIDM4LjM3MDFDODUuNjUzMyAxNy40NjUgNjguNzA2MyAwLjUxODA2NiA0Ny44MDEzIDAuNTE4MDY2SDQyLjU4MDVINDAuNzA0WiIgZmlsbD0iI0YzRjZGMSIvPjxwYXRoIGQ9Ik0xNy4wNDM5IDAuNTE4MDY2Vi02LjU3OTE5SDkuOTQ2NjlWMC41MTgwNjZIMTcuMDQzOVpNMTcuMDQzOSA3Ni4yMjIxSDkuOTQ2NjlWODMuMzE5NEgxNy4wNDM5Vjc2LjIyMjFaTTE3LjA0MzkgNy42MTUzMkg0MC43MDRWLTYuNTc5MTlIMTcuMDQzOVY3LjYxNTMyWk0yNC4xNDEyIDc2LjIyMjFWMC41MTgwNjZIOS45NDY2OVY3Ni4yMjIxSDI0LjE0MTJaTTQwLjcwNCA2OS4xMjQ5SDE3LjA0MzlWODMuMzE5NEg0MC43MDRWNjkuMTI0OVpNNDIuNTgwNSA2OS4xMjQ5SDQwLjcwNFY4My4zMTk0SDQyLjU4MDVWNjkuMTI0OVpNNDcuODAxMyA2OS4xMjQ5SDQyLjU4MDVWODMuMzE5NEg0Ny44MDEzVjY5LjEyNDlaTTc4LjU1NiAzOC4zNzAxQzc4LjU1NiA1NS4zNTU1IDY0Ljc4NjcgNjkuMTI0OSA0Ny44MDEzIDY5LjEyNDlWODMuMzE5NEM3Mi42MjYxIDgzLjMxOTQgOTIuNzUwNSA2My4xOTQ5IDkyLjc1MDUgMzguMzcwMUg3OC41NTZaTTQ3LjgwMTMgNy42MTUzMkM2NC43ODY2IDcuNjE1MzIgNzguNTU2IDIxLjM4NDcgNzguNTU2IDM4LjM3MDFIOTIuNzUwNUM5Mi43NTA1IDEzLjU0NTMgNzIuNjI2IC02LjU3OTE5IDQ3LjgwMTMgLTYuNTc5MTlWNy42MTUzMlpNNDIuNTgwNSA3LjYxNTMySDQ3LjgwMTNWLTYuNTc5MTlINDIuNTgwNVY3LjYxNTMyWk00MC43MDQgNy42MTUzMkg0Mi41ODA1Vi02LjU3OTE5SDQwLjcwNFY3LjYxNTMyWiIgZmlsbD0iYmxhY2siIG1hc2s9InVybCgjZG9zdS1kLWN1dG91dCkiLz48cGF0aCBkPSJNNjguOTIxNSAzNi4wMTM1QzY4LjkyMTUgMzYuMDEzNSA2NS43MzY5IDQ5LjQ3MzggNTEuNDIzMSA0OS40NzM4QzM3LjEwOTMgNDkuNDczOCAzMi41Nzg3IDM3LjM1OTYgMzIuNTc4NyAzNi4wMTM1IiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjcuNjkxNjEiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0wLjM0ODYzMyA4NS40OTQ2QzAuMzQ4NjMzIDg1LjQ5NDYgMjkuNDg1NiA4NS44MzA5IDM0LjgwOSA4NS42OThDNDQuODMzNyA4NS40NDc3IDUxLjI4NzIgODQuNDAyIDU3LjUyNjkgNzguOTcyNEM2Mi44MTI5IDc0LjM3MjcgNzUuMTM0MiA1OS42ODM2IDc1LjEzNDIgNTkuNjgzNiIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSI2LjE2NDgyIi8%2BPC9zdmc%2B)](https://github.dosu.com/run-llama/llama_index?utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=static-docs-ask-repo&utm_term=run-llama%2Fllama_index) [![Share Dosu with your team](https://img.shields.io/badge/Share%20Dosu%20with%20your%20team-1f6feb?style=flat)](https://app.dosu.dev/signup?referrer=openSource&source=github-footer&utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=static-docs-share-team&utm_term=run-llama%2Fllama_index)"
+    }
+  ]
+}

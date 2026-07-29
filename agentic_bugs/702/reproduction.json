@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`run_repro.sh` exited 1 after detecting the fault.",
+    "`repro_stdout.log` contains the expected `RestrictedWorkflowAccessError` for `urllib.request.Request.__mro_entries__`.",
+    "The final traceback shows `genai_prices` lazily importing `httpx2._models` under Temporal sandbox restrictions.",
+    "The final editable install uses pinned commit `e1691ea0247bb8ca09adc532e8b2f04eebc9ffe9`."
+  ],
+  "steps": [
+    "Cloned and restored the repository to the pinned commit.",
+    "Created `.venv` with exact dependency pins and installed the checkout editable.",
+    "Ran the deterministic, in-process Temporal sandbox reproduction and captured final logs.",
+    "Validated the required artifact files and reproduction JSON schema."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

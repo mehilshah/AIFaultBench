@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`repro_stdout.log` records `\\tmp\\openai-agents\\bin\\resolve-workspace-path-f8e24896b498 \\workspace \\workspace 1`.",
+    "`repro_stderr.log` ends with `AssertionError: BUG REPRODUCED: Windows backslashes make the Linux helper unfindable`.",
+    "Pinned checkout verified at `da82b2cd663ee263b206ce65179c26b598d61f73`."
+  ],
+  "steps": [
+    "Ran the supplied codebase setup script and completed the pinned checkout after its foreground full clone was interrupted.",
+    "Created `.venv`, installed exact pinned dependencies, and installed `codebase` editable.",
+    "Ran the deterministic no-network repro against the pinned sandbox validation method using Windows path semantics and a recording sandbox."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

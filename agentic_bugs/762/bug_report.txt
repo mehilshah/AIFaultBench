@@ -1,0 +1,99 @@
+# recovered-from-issue: https://github.com/pydantic/pydantic-ai/issues/5893
+
+TITLE
+`deps` arrives as a raw dict in the non-streaming model-request activity  `__annotations__` patched after `@activity.defn` already captured type hints
+
+BODY
+### Initial Checks
+
+- [x] I'm using the [latest version](https://github.com/pydantic/pydantic-ai/releases/latest) of Pydantic AI
+- [x] I've searched for my issue in [the issue tracker](https://github.com/pydantic/pydantic-ai/issues) before opening this issue
+
+### Description
+
+With `TemporalAgent(agent, provider_factory=...)` and a dataclass `deps_type`, the provider factory (and anything reading `run_context.deps` inside the **non-streaming** model-request activity) receives `deps` as a **raw
+  dict**, not the declared deps type:
+
+  ```
+  AttributeError: 'dict' object has no attribute 'tenant_id'
+  ```
+
+  Under the default retry policy the activity retries forever, so the workflow *hangs* rather than failing.
+
+  **Root cause.** In `durable_exec/temporal/_model.py` the two model activities patch the `deps` annotation in opposite orders relative to `@activity.defn`:
+
+  ```python
+  @activity.defn(name=f'{activity_name_prefix}__model_request')      # <- temporalio captures type hints HERE
+  async def request_activity(params: _RequestParams, deps: Any | None = None) -> ModelResponse:
+      ...
+  self.request_activity = request_activity
+  self.request_activity.__annotations__['deps'] = deps_type | None   # <- too late: no effect on payload conversion
+  ```
+
+  versus the streaming path, which does it correctly — and whose comment shows the ordering requirement was known:
+
+  ```python
+  async def request_stream_activity(params: _RequestParams, deps: AgentDepsT) -> ModelResponse:
+      ...
+  # Set type hint explicitly so that Temporal can take care of serialization and deserialization
+  request_stream_activity.__annotations__['deps'] = deps_type | None
+  self.request_stream_activity = activity.defn(name=f'{activity_name_prefix}__model_request_stream')(request_stream_activity)
+  ```
+
+  `temporalio`'s `@activity.defn` resolves the function's type hints at decoration time for payload conversion, so the late patch on `request_activity` changes `__annotations__` but not the captured `arg_types`.
+
+  **Suggested fix** (one-line reorder): patch annotations *before* decorating, exactly like the streaming path.
+
+  **Workaround we ship meanwhile:**
+  ```python
+  deps = run_context.deps
+  tenant_id = deps['tenant_id'] if isinstance(deps, dict) else deps.tenant_id
+  ```
+
+  Related observation: `TemporalProviderFactory` is typed as `Callable[[RunContext[None], str], Provider[Any]]` — the hardcoded `RunContext[None]` prevents typing a factory against the agent's real deps type; binding it to
+  `AgentDepsT` may be worth folding into the same change.
+
+### Minimal, Reproducible Example
+
+```Python
+from dataclasses import dataclass
+  from typing import Any
+
+  from pydantic_ai import Agent, RunContext
+  from pydantic_ai.durable_exec.temporal import TemporalAgent
+  from pydantic_ai.providers import Provider
+  from temporalio import activity
+
+
+  @dataclass
+  class MyDeps:
+      tenant_id: str
+
+
+  def provider_factory(run_context: RunContext[Any], provider_name: str) -> Provider[Any]:
+      # Under a real worker this raises: AttributeError: 'dict' object has no attribute 'tenant_id'
+      tenant_id = run_context.deps.tenant_id
+      raise NotImplementedError(tenant_id)
+
+
+  agent = Agent("test", name="repro", deps_type=MyDeps)
+  temporal_agent = TemporalAgent(agent, provider_factory=provider_factory)
+
+  tm = temporal_agent.model
+  print("patched annotation:", tm.request_activity.__annotations__["deps"])
+  # patched annotation: __main__.MyDeps | None          <- cosmetic only
+  print("captured (request):", activity._Definition.from_callable(tm.request_activity).arg_types)
+  # captured (request): [_RequestParams, typing.Any | None]   <- what the payload converter uses
+  print("captured (stream): ", activity._Definition.from_callable(tm.request_stream_activity).arg_types)
+  # captured (stream):  [_RequestParams, __main__.MyDeps | None]  <- streaming path is correct
+```
+
+### Logfire Trace
+
+_No response_
+
+### Python, Pydantic AI & LLM client version
+
+- Python: 3.12.3
+- Pydantic AI: 1.106.0 (bug verified identical in `main` as of 2026-06-12, so also 1.107.0)
+- LLM provider SDK: n/a — provider-independent; temporalio 1.27.2

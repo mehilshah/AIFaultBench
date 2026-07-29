@@ -1,0 +1,171 @@
+# recovered-from-issue: https://github.com/langchain-ai/langgraph/issues/6559
+
+TITLE
+@task checkpointing does not work with API server runtime-injected checkpointer
+
+BODY
+### Checked other resources
+
+- [x] This is a bug, not a usage question. For questions, please use the LangChain Forum (https://forum.langchain.com/).
+- [x] I added a clear and detailed title that summarizes the issue.
+- [x] I read what a minimal reproducible example is (https://stackoverflow.com/help/minimal-reproducible-example).
+- [x] I included a self-contained, minimal example that demonstrates the issue INCLUDING all the relevant imports. The code run AS IS to reproduce the issue.
+
+### Example Code
+
+```python
+from langgraph.graph import StateGraph, START, END
+from langgraph.func import task
+from langgraph.types import interrupt
+import random
+
+@task
+def non_deterministic_task():
+    """This should be cached on resume, but isn't with API server"""
+    return random.choice(["A", "B"])
+
+def my_node(state):
+    result = non_deterministic_task().result()  # Executes TWICE
+    user_input = interrupt(f"Confirm {result}?")
+    return {"result": result, "confirmed": user_input}
+
+builder = StateGraph(...)
+builder.add_node("process", my_node)
+# ... edges ...
+
+# This works locally:
+# graph = builder.compile(checkpointer=InMemorySaver())
+
+# But API server rejects this:
+# ValueError: Your graph includes a custom checkpointer...
+
+# So we must do:
+graph = builder.compile()  # No checkpointer
+# API server injects checkpointer at runtime
+# But @task checkpointing doesn't work!
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+File "<repo_path>/.venv/lib/python3.12/site-packages/langgraph_api/graph.py", line 545, in _graph_from_spec
+    raise ValueError(
+ValueError: Heads up! Your graph 'compiled_graph' from 'None' includes a custom checkpointer (type <class 'langgraph.checkpoint.memory.InMemorySaver'>). With LangGraph API, persistence is handled automatically by the platform, so providing a custom checkpointer (type <class 'langgraph.checkpoint.memory.InMemorySaver'>) here isn't necessary and will be ignored when deployed.
+To simplify your setup and use the built-in persistence, please remove the custom checkpointer (type <class 'langgraph.checkpoint.memory.InMemorySaver'>) from your graph definition. If you are looking to customize which postgres database to connect to, please set the POSTGRES_URI environment variable. See https://langchain-ai.github.io/langgraph/cloud/reference/env_var/#postgres_uri_custom for more details.
+```
+
+### Description
+
+## Summary
+
+The `@task` decorator's checkpointing mechanism does not work when deploying via LangGraph API server because task-level checkpointing requires a compile-time checkpointer, but the API server:
+1. Rejects custom checkpointers passed to `compile()`
+2. Injects its checkpointer at runtime
+
+This creates a silent failure where tasks re-execute on workflow resume, breaking durable execution guarantees.
+
+## Current Documentation
+
+The [Durable Execution docs](https://langchain-ai.github.io/langgraph/concepts/durable_execution/) state:
+
+> "You can use tasks from both the StateGraph (Graph API) and the Functional API."
+
+> "If a node contains multiple operations, you may find it easier to convert each operation into a task rather than refactor the operations into individual nodes."
+
+The [Persistence docs](https://langchain-ai.github.io/langgraph/concepts/persistence/) state:
+
+> "When using the LangGraph API, you don't need to implement or configure checkpointers manually - persistence is handled automatically by the platform."
+
+These statements together imply @task will work with API server checkpointing, but it doesn't.
+
+## Reproduction
+```python
+from langgraph.graph import StateGraph, START, END
+from langgraph.func import task
+from langgraph.types import interrupt
+import random
+
+@task
+def non_deterministic_task():
+    """This should be cached on resume, but isn't with API server"""
+    return random.choice(["A", "B"])
+
+def my_node(state):
+    result = non_deterministic_task().result()  # Executes TWICE
+    user_input = interrupt(f"Confirm {result}?")
+    return {"result": result, "confirmed": user_input}
+
+builder = StateGraph(...)
+builder.add_node("process", my_node)
+# ... edges ...
+
+# This works locally:
+# graph = builder.compile(checkpointer=MemorySaver())
+
+# But API server rejects this:
+# ValueError: Your graph includes a custom checkpointer...
+
+# So we must do:
+graph = builder.compile()  # No checkpointer
+# API server injects checkpointer at runtime
+# But @task checkpointing doesn't work!
+```
+
+## Root Cause (from source analysis)
+
+**langgraph/func/__init__.py** - `_TaskFunction` class:
+- Stores `func`, `retry_policy`, `cache_policy`
+- Does NOT store any checkpointer reference
+
+**langgraph/pregel/_runner.py** - `_call()` function:
+- Uses `schedule_task()` to check for cached task results
+- `schedule_task` loads previous writes from `Pregel.checkpointer`
+- If `Pregel.checkpointer = None` (compiled without checkpointer), task writes cannot be loaded
+- Task re-executes even if API server saved the writes via runtime checkpointer
+
+**The asymmetry:**
+| Operation | Checkpointer Source | Works with Runtime Injection? |
+|-----------|--------------------|-----------------------------|
+| Node state SAVE | Runtime config | ✅ Yes |
+| Node state LOAD | Runtime config | ✅ Yes |
+| Task result SAVE | put_writes (possibly runtime) | Maybe |
+| Task result LOAD | schedule_task → Pregel.checkpointer | ❌ No |
+
+## Expected Behavior
+
+One of:
+1. @task checkpointing works with runtime-injected checkpointer (feature)
+2. Documentation clearly states @task requires compile-time checkpointer and won't work with API server (docs fix)
+3. API server allows compile-time checkpointers for graphs using @task (feature)
+
+## Current Workarounds
+
+1. **Use separate nodes instead of @task** for non-deterministic operations
+2. **Use pure Functional API** (@entrypoint + @task) instead of StateGraph
+3. **Deploy custom server** that compiles with checkpointer
+
+## Related Issues
+
+- #5790 - `langgraph dev` ignores configured checkpointer
+
+## Environment
+
+- Deployment: LangGraph API Server / langgraph dev
+
+### System Info
+
+System Information
+------------------
+> OS:  Darwin
+> Python Version:  3.12.0
+
+Package Information
+-------------------
+> langchain_core: 1.1.0
+> langsmith: 0.4.53
+> langchain_cli: 0.0.37
+> langgraph_api: 0.4.48
+> langgraph_cli: 0.4.7
+> langgraph_runtime_inmem: 0.14.1
+> langgraph_sdk: 0.2.12
+> langserve: 0.3.3

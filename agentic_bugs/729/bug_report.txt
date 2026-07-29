@@ -1,0 +1,43 @@
+# recovered-from-issue: https://github.com/microsoft/semantic-kernel/issues/13298
+
+TITLE
+Python: Bug: Fix import path: microsoft.agents vs microsoft_agents
+
+BODY
+**Describe the bug**
+ImportError when trying to use CopilotStudioAgent. The semantic-kernel library imports from `microsoft.agents.copilotstudio.client` (with dots) but the actual package name is `microsoft_agents` (with underscores), causing an import failure.
+
+The problematic import statement in the code is:
+```python
+from microsoft.agents.copilotstudio.client import AgentType
+```
+
+But it should be:
+```python
+from microsoft_agents.copilotstudio.client import AgentType
+```
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Install semantic-kernel: `pip install semantic-kernel`
+2. Install the required dependencies: `pip install --extra-index-url https://test.pypi.org/simple microsoft-agents-core microsoft-agents-copilotstudio-client`
+3. Try to import CopilotStudioAgent: `from semantic_kernel.agents import CopilotStudioAgent`
+4. See ImportError: `ModuleNotFoundError: No module named 'microsoft'` or similar error
+
+**Expected behavior**
+The import should succeed and CopilotStudioAgent should be available for use as described in the official documentation.
+
+**Screenshots**
+N/A (can add the error traceback if needed)
+
+**Platform**
+ - Language: Python
+ - Source: pip package (semantic-kernel latest version)
+ - AI model: N/A (error occurs at import time, before any AI model interaction)
+ - IDE: N/A
+ - OS: Windows 11, Google Colab
+
+**Additional context**
+I followed the instructions from the official documentation: https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-types/copilot-studio-agent?pivots=programming-language-python
+
+The issue appears to be that the package is named `microsoft_agents` (with underscores) but the import statements throughout the codebase use `microsoft.agents` (with dots) which doesn't match Python's actual package naming.

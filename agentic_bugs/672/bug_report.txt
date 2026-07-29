@@ -1,0 +1,64 @@
+# recovered-from-issue: https://github.com/agno-agi/agno/issues/8644
+
+TITLE
+[Bug] Workflow._read_session() and Workflow.get_session() call async db.get_session() without await when using AsyncPostgresDb
+
+BODY
+### Description
+
+When a `Workflow` is configured with `AsyncPostgresDb`, the sync method `Workflow._read_session()` calls `self.db.get_session(...)` without `await`. On async DB backends this returns a coroutine, not a `WorkflowSession`.
+
+### Steps to Reproduce
+
+1. Create a `Workflow` with `db=AsyncPostgresDb(...)`.
+2. Run the workflow (sync `run()` or any code path that calls `get_session()` / `read_or_create_session()`).
+3. Observe warning and broken session load.
+
+### Agent Configuration (if applicable)
+
+_No response_
+
+### Expected Behavior
+
+When `self._has_async_db()` is true, sync helpers should either:
+
+1. Delegate to the async implementation (e.g. `_read_session` → `_aread_session` with proper await), or
+2. Raise a clear error telling callers to use `aget_session()` / `aread_or_create_session()`.
+
+At minimum, `_read_session()` should mirror the branching already present in `_aread_session()`.
+
+### Actual Behavior
+
+- `RuntimeWarning: coroutine 'AsyncPostgresDb.get_session' was never awaited`
+- Session load returns `None` (because `isinstance(coro, WorkflowSession)` is false)
+- Workflow session history may not load or persist correctly on code paths that use the sync helpers
+
+### Screenshots or Logs (if applicable)
+
+_No response_
+
+### Environment
+
+```markdown
+- Agno version: 2.6.20
+- Python: 3.13.9
+- OS: Windows 11
+```
+
+### Possible Solutions (optional)
+
+```python
+def _read_session(self, session_id: str, user_id: Optional[str] = None) -> Optional[WorkflowSession]:
+    if self._has_async_db():
+        import asyncio
+        return asyncio.run(self._aread_session(session_id=session_id, user_id=user_id))
+    ...
+```
+
+Or document that sync methods must not be used with async DBs and raise `RuntimeError` with a pointer to `aget_session()`.
+
+Note: if `_read_session` can be called from within a running event loop, `asyncio.run()` is not sufficient; callers in async contexts should use `_aread_session()` directly (which `_aload_or_create_session` already does).
+
+### Additional Context
+
+_No response_

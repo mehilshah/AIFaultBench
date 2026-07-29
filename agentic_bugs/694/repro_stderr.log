@@ -1,0 +1,33 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/694/repro.py", line 29, in <module>
+    refine._give_response_single("What is the capital of France?", "Paris.")
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/694/.venv/lib/python3.12/site-packages/llama_index/core/response_synthesizers/refine.py", line 241, in _give_response_single
+    program(
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/694/.venv/lib/python3.12/site-packages/llama_index_instrumentation/dispatcher.py", line 413, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/694/.venv/lib/python3.12/site-packages/llama_index/core/response_synthesizers/refine.py", line 77, in __call__
+    answer = self._llm.structured_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/694/.venv/lib/python3.12/site-packages/llama_index_instrumentation/dispatcher.py", line 413, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/694/.venv/lib/python3.12/site-packages/llama_index/core/llms/llm.py", line 360, in structured_predict
+    result = program(llm_kwargs=llm_kwargs, **prompt_args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/mock.py", line 1134, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/mock.py", line 1138, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/mock.py", line 1193, in _execute_mock_call
+    raise effect
+ValueError: LLM did not return any tool calls
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/694/repro.py", line 36, in <module>
+    raise AssertionError("BUG: Refine failed to catch ValueError") from error
+AssertionError: BUG: Refine failed to catch ValueError

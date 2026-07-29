@@ -1,0 +1,69 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/2073
+
+TITLE
+BUG: Can't import classes or methods from smolagents package
+
+BODY
+<!--
+Thank you for reporting a bug!
+Please provide as much detail as possible to help us identify and fix the issue.
+-->
+
+**Problem**
+When I install smolagents and try to import classes and methods I get:
+ `ImportError: cannot import name 'CodeAgent' from 'smolagents' (consider renaming '/home/blanky/Desktop/pydantic-ai/smolagents.py' if it has the same name as a library you intended to import)`
+
+**Steps to reproduce**
+Please provide a minimal, self-contained, and reproducible example of the bug.
+1.  uv add smolagents
+2.  Import codeagent from smolagent
+3.  run the code
+
+```python
+# Your code to reproduce the bug here
+from smolagents import CodeAgent, OpenAIServerModel
+
+model = OpenAIServerModel("gpt-4")
+agent = CodeAgent(model)
+agent.run(
+    "Write a Python function that takes a list of numbers and returns the sum of the squares of those numbers."
+)
+```
+
+**Traceback**
+```
+Traceback (most recent call last):
+  File "/home/blanky/Desktop/pydantic-ai/smolagents.py", line 1, in <module>
+    from smolagents import OpenAIServerModel, CodeAgent
+  File "/home/blanky/Desktop/pydantic-ai/smolagents.py", line 1, in <module>
+    from smolagents import OpenAIServerModel, CodeAgent
+ImportError: cannot import name 'OpenAIServerModel' from 'smolagents' (consider renaming '/home/blanky/Desktop/pydantic-ai/smolagents.py' if it has the same name as a library you intended to import)
+```
+
+
+**Expected behavior**
+Smolagents and other classes should have imported succesfully
+
+**Environment:**
+Please complete the following information:
+- OS: Linux
+- Python version: 3.13.11
+- Package version: 
+```Name: smolagents
+Version: 1.24.0
+Location: /home/blanky/Desktop/pydantic-ai/.venv/lib/python3.13/site-packages
+Requires: huggingface-hub, jinja2, pillow, python-dotenv, requests, rich
+Required-by:
+```
+
+**Additional context (optional)**
+Add any other context, screenshots, or links about the bug here.
+
+---
+
+### Checklist
+- [x] I have searched the existing issues and have not found a similar bug report.
+- [x] I have provided a minimal, reproducible example.
+- [x] I have provided the full traceback of the error.
+- [x] I have provided my environment details.
+- [x] I am willing to work on this issue and submit a pull request. (optional)

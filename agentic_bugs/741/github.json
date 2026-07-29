@@ -1,0 +1,40 @@
+{
+  "owner": "Arize-ai",
+  "repo": "phoenix",
+  "number": 13775,
+  "html_url": "https://github.com/Arize-ai/phoenix/issues/13775",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG]: phoenix-otel header parsing crashes on malformed header segments",
+  "author": "luochen211",
+  "created_at": "2026-06-16T15:23:04Z",
+  "updated_at": "2026-06-19T21:18:36Z",
+  "closed_at": "2026-06-19T21:18:36Z",
+  "labels": [
+    "bug",
+    "triage"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.25,
+  "fix": {
+    "closing_commit": "64d61feb4a23fe354b01a7299d1bbc8fd23ecfef",
+    "linked_prs": [],
+    "best_guess_fix_commit": "64d61feb4a23fe354b01a7299d1bbc8fd23ecfef",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:06:58.656523+00:00",
+  "comments": []
+}

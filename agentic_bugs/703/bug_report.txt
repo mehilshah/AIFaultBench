@@ -1,0 +1,94 @@
+# recovered-from-issue: https://github.com/pydantic/pydantic-ai/issues/6081
+
+TITLE
+Bedrock: an attachment (`DocumentUrl`/`ImageUrl`) merged into the same user message as a `tool_result` → Converse `ValidationException`
+
+BODY
+### Initial Checks
+
+- [x] I'm using the [latest version](https://github.com/pydantic/pydantic-ai/releases/latest) of Pydantic AI
+- [x] I've searched for my issue in [the issue tracker](https://github.com/pydantic/pydantic-ai/issues) before opening this issue
+
+### Description
+
+When a tool call's ToolReturnPart is the last message before a new user turn that carries an attachment (DocumentUrl / ImageUrl / BinaryContent), BedrockConverseModel merges them into a single Converse user message containing both a toolResult block and a document block. Anthropic Claude models on Bedrock reject it with a ValidationException whose wording is misleading — it reports a missing tool_result, but the tool_result is present; it's just co-located with an attachment:
+
+```
+botocore.errorfactory.ValidationException: An error occurred (ValidationException) when calling the Converse operation: The model returned the following errors: messages.N: `tool_use` ids were found without `tool_result` blocks immediately after: tooluse_xxx. Each `tool_use` block must have a corresponding `tool_result` block in the next message.
+```
+
+Cause. _clean_message_history merges consecutive ModelRequests and BedrockConverseModel._map_messages merges consecutive Bedrock user messages. A trailing ToolReturnPart request followed by an attachment-bearing UserPromptPart request therefore become one user message → content = [toolResult, text, document].
+
+Empirically the constraint is specifically attachment-next-to-tool-result:
+
+- [toolResult, text] → accepted
+- [toolResult, text, document] → rejected
+
+This shape arises naturally in multi-turn apps: the model ends a turn with a tool call, the tool result is the last message, then the user's next turn includes a file. It works on OpenAI (id-based, order-independent tool matching) but fails on Bedrock.
+
+Expected. The Bedrock adapter should not place an attachment block in the same Converse message as a tool_result — i.e. keep the attachment turn out of the merged tool_result message.
+
+Note: this "no tool_result + document in one message" rule is a model-level constraint and isn't documented in the AWS Converse API reference (the ContentBlock array schema permits the mix), which is likely why the adapter doesn't guard against it.
+
+### Minimal, Reproducible Example
+
+```Python
+import asyncio
+import os
+
+os.environ.setdefault("AWS_REGION", "us-east-1")
+
+from pydantic_ai import DocumentUrl
+from pydantic_ai.messages import (
+    ModelRequest,
+    ModelResponse,
+    UserPromptPart,
+    ToolCallPart,
+    ToolReturnPart,
+)
+from pydantic_ai.models import ModelRequestParameters
+from pydantic_ai.models.bedrock import BedrockConverseModel
+from pydantic_ai._agent_graph import _clean_message_history
+
+model = BedrockConverseModel("us.anthropic.claude-opus-4-6-v1")
+
+# A completed tool-call turn (the tool result is the last message),
+# followed by a new user turn that carries a document attachment.
+history = [
+    ModelRequest(parts=[UserPromptPart(content="show me my expenses")]),
+    ModelResponse(parts=[ToolCallPart(tool_name="get", args={}, tool_call_id="t1")]),
+    ModelRequest(parts=[ToolReturnPart(tool_name="get", content="ok", tool_call_id="t1")]),
+    ModelRequest(parts=[UserPromptPart(content=[
+        "what accounts are in this?",
+        DocumentUrl(url="s3://bucket/file.csv", media_type="text/csv"),
+    ])]),
+]
+
+
+async def main():
+    _system, messages = await model._map_messages(
+        _clean_message_history(history), ModelRequestParameters(), None
+    )
+    for i, msg in enumerate(messages):
+        print(i, msg["role"], [next(iter(block)) for block in msg["content"]])
+
+
+asyncio.run(main())
+
+# Output — the final user message co-locates a toolResult with a document:
+#   0 user ['text']
+#   1 assistant ['toolUse']
+#   2 user ['toolResult', 'text', 'document']
+# Sending this via client.converse(...) raises the ValidationException in the description.
+```
+
+### Logfire Trace
+
+_No response_
+
+### Python, Pydantic AI & LLM client version
+
+Python: 3.11.15
+pydantic-ai-slim: 1.60.0 (reproduced here; the responsible merge logic — _clean_message_history + Bedrock _map_messages consecutive-user merge — is unchanged on main/2.0)
+boto3: 1.43.0, botocore: 1.43.0
+Model: us.anthropic.claude-opus-4-6-v1 (Anthropic Claude on Amazon Bedrock)

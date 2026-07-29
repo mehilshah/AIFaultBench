@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/714/repro.py", line 44, in <module>
+    asyncio.run(reproduce())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/714/repro.py", line 40, in reproduce
+    await Graph.astep(MinimalGraph())
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/714/codebase/src/lfx/src/lfx/graph/graph/base.py", line 1454, in astep
+    vertex_build_result = await self.build_vertex(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/714/codebase/src/lfx/src/lfx/graph/graph/base.py", line 1565, in build_vertex
+    cached_vertex_dict = cached_result["result"]
+                         ~~~~~~~~~~~~~^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable

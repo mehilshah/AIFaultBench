@@ -1,0 +1,45 @@
+{
+  "owner": "browser-use",
+  "repo": "browser-use",
+  "number": 4676,
+  "html_url": "https://github.com/browser-use/browser-use/issues/4676",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug] AttributeError: items when using Custom OpenAI/DeepSeek models (Pydantic ConfigDict clash)",
+  "author": "ahmetselimince",
+  "created_at": "2026-04-14T10:50:33Z",
+  "updated_at": "2026-04-15T19:48:26Z",
+  "closed_at": "2026-04-15T19:48:26Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.37,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:22.578179+00:00",
+  "comments": [
+    {
+      "author": "laithrw",
+      "created_at": "2026-04-15T19:48:26Z",
+      "body": "Hey @ahmetselimince-web, this isn't a supported integration. Agent expects a browser_use.llm.BaseChatModel, not a raw LangChain ChatOpenAI subclass. You could instead use browser_use.ChatOpenAI(base_url=\"https://api.deepseek.com/v1\", model=\"deepseek-chat\", ...) directly (or ChatDeepSeek if you want the native wrapper). If you need LangChain specifically, there's the ChatLangchain adapter in examples/models/langchain."
+    }
+  ]
+}

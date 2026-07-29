@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/657/repro.py", line 47, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/657/repro.py", line 43, in main
+    model.invoke([system_message, HumanMessage("Say hi.")])
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/657/codebase/libs/core/langchain_core/language_models/chat_models.py", line 476, in invoke
+    self.generate_prompt(
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/657/codebase/libs/core/langchain_core/language_models/chat_models.py", line 1849, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/657/codebase/libs/core/langchain_core/language_models/chat_models.py", line 1656, in generate
+    self._generate_with_cache(
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/657/codebase/libs/core/langchain_core/language_models/chat_models.py", line 1994, in _generate_with_cache
+    result = self._generate(
+             ^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/657/codebase/libs/partners/anthropic/langchain_anthropic/chat_models.py", line 1934, in _generate
+    data = self._create(payload)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/657/codebase/libs/partners/anthropic/langchain_anthropic/chat_models.py", line 1566, in _create
+    return self._client.messages.create(**payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/657/repro.py", line 19, in create
+    raise AssertionError(
+AssertionError: Anthropic would reject this payload: system.0.id: Extra inputs are not permitted

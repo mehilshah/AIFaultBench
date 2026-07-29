@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at 2a41613f92cef0249e3b8950c24f8d66c9080641; its E2BExecutor calls `Sandbox(**kwargs)`.",
+    "Final `bash run_repro.sh` exit code: 1.",
+    "Final stdout: `OBSERVED BUG: SandboxBase.__init__() missing 5 required positional arguments`.",
+    "Installed relevant versions: e2b==2.0.0 and e2b-code-interpreter==2.0.0."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` to clone and check out the pinned commit.",
+    "Created `.venv` via `bash setup_env.sh` and installed the editable checkout plus pinned dependencies.",
+    "Ran `bash run_repro.sh`; it directly constructs E2BExecutor and asserts the reported TypeError before any LLM or network call."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

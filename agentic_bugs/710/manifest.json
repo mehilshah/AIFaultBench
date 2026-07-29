@@ -1,0 +1,12 @@
+{
+  "bug_id": "710",
+  "bug_dir": "710",
+  "issue_url": "https://github.com/camel-ai/camel/issues/3422",
+  "commit_hash": "e5883ec426afa9d2398f9c82d274ebed4cd25e98",
+  "library_name": "camel",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "camel-ai/camel@e5883ec426afa9d2398f9c82d274ebed4cd25e98",
+  "codebase_present": "false",
+  "standardized_dir": "../710"
+}

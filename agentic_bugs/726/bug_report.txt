@@ -1,0 +1,75 @@
+# recovered-from-issue: https://github.com/openai/openai-agents-python/issues/3315
+
+TITLE
+Generic dict output types are wrapped under response
+
+BODY
+### Please read this first
+
+- **Have you read the docs?** Yes. This concerns structured output schema generation.
+- **Have you searched for related issues?** Yes. No related issue or PR was found.
+
+### Describe the bug
+
+`AgentOutputSchema(dict[str, int], strict_json_schema=False)` is treated as a wrapped output type, while `AgentOutputSchema(dict, strict_json_schema=False)` is not wrapped. The generic dict schema therefore asks the model to return an object under `response` instead of returning the dict shape directly.
+
+Impact:
+
+- `output_type=dict[str, int]` has a different top-level JSON shape from `output_type=dict`.
+- A model returning the natural dict shape, such as `{"a": 1}`, fails validation.
+- The wrapper shape `{"response": {"a": 1}}` is accepted instead, even though the user requested a dict output type.
+
+Relevant edge cases considered:
+
+- Bare `dict` remains unwrapped.
+- Generic `dict[...]` should be unwrapped like bare `dict`.
+- Non-dict generic containers such as `list[str]` should remain wrapped.
+- This does not change strict JSON schema support for maps whose schema uses typed `additionalProperties`; it only fixes whether generic dict output is wrapped.
+
+### Debug information
+
+- Agents SDK version: upstream `main` at `bc3607ba`
+- Python version: Python 3.12.1
+
+### Repro steps
+
+Run this minimal script from a repository checkout.
+
+```python
+import json
+
+from agents.agent_output import AgentOutputSchema
+
+
+plain = AgentOutputSchema(dict, strict_json_schema=False)
+generic = AgentOutputSchema(dict[str, int], strict_json_schema=False)
+
+print(f"plain_wrapped: {plain._is_wrapped}")
+print(f"generic_wrapped: {generic._is_wrapped}")
+print("generic_schema:")
+print(json.dumps(generic.json_schema(), sort_keys=True))
+
+for payload in ('{"a": 1}', '{"response": {"a": 1}}'):
+    try:
+        print(f"{payload} -> {generic.validate_json(payload)!r}")
+    except Exception as exc:
+        print(f"{payload} -> {type(exc).__name__}: {exc}")
+```
+
+Actual result on upstream `main` at `bc3607ba`:
+
+```text
+plain_wrapped: False
+generic_wrapped: True
+generic_schema:
+{"properties": {"response": {"additionalProperties": {"type": "integer"}, "title": "Response", "type": "object"}}, "required": ["response"], "title": "OutputType", "type": "object"}
+{"a": 1} -> ModelBehaviorError: Invalid JSON when parsing {"a": 1} for TypeAdapter(OutputType); 1 validation error for OutputType
+response
+  Field required [type=missing, input_value={'a': 1}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+{"response": {"a": 1}} -> {'a': 1}
+```
+
+### Expected behavior
+
+Generic dict output types should be detected as dicts before the generic alias type check rejects them. `AgentOutputSchema(dict[str, int], strict_json_schema=False)` should not be wrapped, should expose a top-level dict schema, and should validate `{"a": 1}` directly.

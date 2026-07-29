@@ -1,0 +1,37 @@
+# recovered-from-issue: https://github.com/mem0ai/mem0/issues/5724
+
+TITLE
+bug(faiss): list() returns bare [] for uninitialized index, breaking the List[List[OutputData]] contract
+
+BODY
+### Component
+
+Vector Store / FAISS
+
+### Description
+
+`FAISS.list()` (`mem0/vector_stores/faiss.py`) returns a bare `[]` when the index is uninitialized (`self.index is None`), but returns the wrapped `[results]` (i.e. `List[List[OutputData]]`) on every other path.
+
+Callers rely on the wrapped contract and index the first element:
+
+```python
+# mem0/memory/main.py — delete_all()
+memories = self.vector_store.list(filters=filters)[0]
+```
+
+So on a fresh / not-yet-initialized FAISS store, `Memory.delete_all(...)` raises `IndexError: list index out of range` instead of cleanly deleting zero memories.
+
+This is the same `List[List[OutputData]]` contract bug class already recognized for other backends — e.g. MongoDB (#5691) and Pinecone's `list()` error path (#5701/#5706, which standardized on returning `[[]]`).
+
+### Steps to Reproduce
+
+```python
+from mem0.vector_stores.faiss import FAISS
+s = FAISS(collection_name="t", path="/tmp/t", distance_strategy="euclidean")
+s.index = None              # uninitialized index
+s.list(filters={"user_id": "alice"})[0]   # IndexError: list index out of range
+```
+
+### Expected
+
+`list()` returns `[[]]` (one level deep) on the uninitialized path, so `result[0]` is the empty memory list and `delete_all()` on an empty/fresh store is a no-op.

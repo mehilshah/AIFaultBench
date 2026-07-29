@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified: 859cb970631043c7d484ea9a778ad4b9f65383b3.",
+    "Final `bash run_repro.sh` exit code: 1.",
+    "Final stdout: `OBSERVED BUG: BrowserStateRequestEvent had no result; AssertionError: Root CDP client not initialized`.",
+    "Final stderr was empty."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and verified the pinned commit.",
+    "Created `.venv`, installed pinned dependencies, and installed `codebase` editable.",
+    "Ran the no-network CodeAgent reproduction with a recorded local model response.",
+    "Captured final logs and validated all required artifacts."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

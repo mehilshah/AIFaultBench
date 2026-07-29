@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout: 0501325e6c536a0693565bec99dde038cc5c4d20.",
+    "Final `bash run_repro.sh` exit status: 1.",
+    "`repro_stdout.log`: `BUG OBSERVED: streamed block and replay payload omit thinking: {'signature': 'offline-signature', 'type': 'thinking'}`.",
+    "`repro_stderr.log`: `AssertionError: empty thinking block loses required 'thinking' field`. "
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and completed the pinned checkout after its initial clone had no fetched commit.",
+    "Created `.venv`; installed pinned `anthropic==0.109.1` and `pydantic==2.12.5`, then editable checkout versions of `langchain-core` and `langchain-anthropic`.",
+    "Ran the deterministic offline stream-event reproduction and captured the final output logs.",
+    "Wrote all required benchmark files."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

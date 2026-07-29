@@ -1,0 +1,1 @@
+# No external dependencies are required; repro.py stubs the GitHub client and imports the pinned source file directly.

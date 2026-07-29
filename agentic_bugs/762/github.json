@@ -1,0 +1,48 @@
+{
+  "owner": "pydantic",
+  "repo": "pydantic-ai",
+  "number": 5893,
+  "html_url": "https://github.com/pydantic/pydantic-ai/issues/5893",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`deps` arrives as a raw dict in the non-streaming model-request activity  `__annotations__` patched after `@activity.defn` already captured type hints",
+  "author": "MelkiorS",
+  "created_at": "2026-06-11T20:36:34Z",
+  "updated_at": "2026-06-30T23:20:43Z",
+  "closed_at": "2026-06-30T23:20:43Z",
+  "labels": [
+    "bug",
+    "temporal",
+    "durable exec",
+    "pydanty:bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 19.11,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T14:00:47.271738+00:00",
+  "comments": [
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-06-11T20:41:33Z",
+      "body": "<!-- pydanty:status-comment:v1 -->\n\n### pydanty status\n\nRun `df_run_28e52e0d37d649dabf7d` started from the GitHub webhook, but the Dogfooding runtime\nfailed before pydanty completed the issue workflow.\n\n**Next step:** maintainer attention needed; rerun after fixing the runtime failure.\n\n<details>\n<summary>Failure detail</summary>\n\n```text\nagent exited non-zero: /home/pydanty/dogfooding/.venv/lib/python3.12/site-packages/pydantic_ai_harness/experimental/planning/__init__.py:7: HarnessExperimentalWarning: `pydantic_ai_harness.experimental.planning` is experimental: its API may change or be removed in any release, without a deprecation period.\n\nSilence all pydantic-ai-harness experimental warnings with:\n\n    import warnings\n    from pydantic_ai_harness.experimental import HarnessExperimentalWarning\n    warnings.filterwarnings('ignore', category=HarnessExperimentalWarning)\n\n  warn_experimental('planning')\n/home/pydanty/dogfooding/.venv/lib/python3.12/site-packages/pydantic_ai_harness/experimental/subagents/__init__.py:7: HarnessExperimentalWarning: `pydantic_ai_harness.experimental.subagents` is experimental: its API may change or be removed in any release, without a deprecation period.\n\nSilence all pydantic-ai-harness experimental warnings with:\n\n    import warnings\n    from pydantic_ai_harness.experimental import HarnessExperimentalWarning\n    warnings.filterwarnings('ignore', category=HarnessExperimentalWarning)\n\n  warn_experimental('subagents')\n/home/pydanty/dogfooding/.venv/lib/python3.12/site-packages/pydantic_ai_harness/experimental/compaction/__init__.py:16: HarnessExperimentalWarning: `pydantic_ai_harness.experimental.compaction` is experimental: its API may change or be removed in any release, without a deprecation period.\n\nSilence all pydantic-ai-harness experimental warnings with:\n\n    import warnings\n    from pydantic_ai_harness.experimental import HarnessExperimentalWarning\n    warnings.filterwarnings('ignore', category=HarnessExperimentalWarning)\n\n  warn_experimental('compaction')\n/home/pydanty/dogfooding/.venv/lib/python3.12/site-packages/pydantic_ai_harness/experimental/media/__init__.py:25:\n```\n\n</details>"
+    }
+  ]
+}

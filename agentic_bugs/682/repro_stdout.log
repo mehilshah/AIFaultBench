@@ -1,0 +1,1 @@
+BUG REPRODUCED: both Azure providers mutate caller content and raise AttributeError for multimodal lists

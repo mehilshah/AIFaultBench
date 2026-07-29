@@ -1,0 +1,34 @@
+# recovered-from-issue: https://github.com/mem0ai/mem0/issues/6258
+
+TITLE
+Chroma vector store silently downgrades unknown filter operators to equality
+
+BODY
+### Description
+
+`ChromaDB._generate_where_clause` (`mem0/vector_stores/chroma.py`) maps a set of known filter operators (`eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `contains`, `icontains`). Any operator outside that set falls into an `else` branch that silently rewrites the condition to equality:
+
+```python
+else:
+    # Unknown operator, treat as equality
+    chroma_condition[key] = {"$eq": val}
+```
+
+So a filter like `{"age": {"betwen": [10, 20]}}` (a typo, or an operator Chroma doesn't support) is silently turned into `{"age": {"$eq": [10, 20]}}`. The query then returns **wrong results with no signal to the caller** — no error, no warning.
+
+Other stores fail fast here: e.g. the Qdrant store raises `ValueError` on invalid operator usage. Chroma should do the same rather than returning silently-incorrect results.
+
+### Expected
+
+An unsupported operator should raise a clear `ValueError` naming the operator and field, instead of being downgraded to equality.
+
+### Repro
+
+```python
+from mem0.vector_stores.chroma import ChromaDB
+ChromaDB._generate_where_clause({"age": {"betwen": [10, 20]}})
+# currently: {"age": {"$eq": [10, 20]}}  (silently wrong)
+# expected: ValueError: Unsupported filter operator 'betwen' ...
+```
+
+I have a fix + test ready and will open a PR.

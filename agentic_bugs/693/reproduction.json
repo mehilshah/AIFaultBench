@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited 1 and wrote: `OBSERVED BUG: UnicodeEncodeError: 'charmap' codec can't encode characters in position 11-12: character maps to <undefined>` to `repro_stdout.log`.",
+    "Verified `llama-index-core==0.14.18` has `SimplePropertyGraphStore.persist` calling `fs.open(persist_path, \"w\")` with no encoding argument.",
+    "`pip check` reported `No broken requirements found`.",
+    "The attempted repository clone did not complete on this host; the issue-reported released package was used as permitted."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`.",
+    "Installed pinned `llama-index-core==0.14.18` and its exact locked dependencies in `.venv`.",
+    "Created `repro.py`, which stores a Chinese graph node through a local cp1252 filesystem double that deterministically emulates Windows' default text encoding.",
+    "Captured the final `bash run_repro.sh` output in `repro_stdout.log` and `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

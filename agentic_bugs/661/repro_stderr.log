@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/661/repro.py", line 23, in <module>
+    A2AClientConfig(endpoint="http://localhost:8888/.well-known/agent-card.json")
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/661/.venv/lib/python3.12/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/661/codebase/lib/crewai/src/crewai/a2a/config.py", line 53, in _get_default_update_config
+    from crewai.a2a.updates import StreamingConfig
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/661/codebase/lib/crewai/src/crewai/a2a/updates/__init__.py", line 12, in <module>
+    from crewai.a2a.updates.polling.handler import PollingHandler
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/661/codebase/lib/crewai/src/crewai/a2a/updates/polling/handler.py", line 11, in <module>
+    from a2a.client.errors import A2AClientHTTPError
+ImportError: cannot import name 'A2AClientHTTPError' from 'a2a.client.errors' (/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/661/.venv/lib/python3.12/site-packages/a2a/client/errors.py). Did you mean: 'A2AClientError'?

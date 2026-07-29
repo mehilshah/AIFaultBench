@@ -1,0 +1,57 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langchain",
+  "number": 38741,
+  "html_url": "https://github.com/langchain-ai/langchain/issues/38741",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Fireworks LLM: async _acall shows a bound-method repr instead of the API   response body (missing await)",
+  "author": "m-hamza9752",
+  "created_at": "2026-07-09T14:43:22Z",
+  "updated_at": "2026-07-11T12:08:57Z",
+  "closed_at": "2026-07-11T12:07:08Z",
+  "labels": [
+    "bug",
+    "fireworks",
+    "external"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.89,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:38:01.177575+00:00",
+  "comments": [
+    {
+      "author": "gitbalaji",
+      "created_at": "2026-07-09T15:00:05Z",
+      "body": "Hi, I'd like to work on this. Could a maintainer please assign it to me?"
+    },
+    {
+      "author": "mdrxy",
+      "created_at": "2026-07-09T16:19:31Z",
+      "body": "Thanks for the repro. One question on usage context: is there a reason you are using the legacy `Fireworks` text-completion LLM class here instead of `ChatFireworks`?\n\nFor modern Fireworks chat/instruct models, `ChatFireworks` is generally the preferred integration, while `Fireworks` targets the older completions-style `/completions` endpoint and string-prompt `LLM` interface.\n\nIt would be helpful to understand whether this came from:\n\n- direct application code using `Fireworks`\n- older `LLMChain` / string-prompt code\n- a completions-only Fireworks model\n- migration from older LangChain APIs\n- another library wrapping LangChain LLMs\n\nIf this is just chat/instruct usage, switching to `ChatFireworks` may be the better recommendation."
+    },
+    {
+      "author": "mdrxy",
+      "created_at": "2026-07-10T14:24:25Z",
+      "body": "@m-hamza9752 are you a LLM?"
+    }
+  ]
+}

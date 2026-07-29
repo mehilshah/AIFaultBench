@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at 0501325e6c536a0693565bec99dde038cc5c4d20.",
+    "Final captured stdout: \"OBSERVED BUG: bind_tools raised KeyError: 'parameters' for advisor_20260301\".",
+    "run_repro.sh exits with status 1; repro_stderr.log is empty."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh and fetched the pinned commit shallowly after the full clone transfer did not complete.",
+    "Created .venv, installed pinned dependencies, and installed local langchain-core and langchain-anthropic editable.",
+    "Ran bash run_repro.sh and captured stdout/stderr."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

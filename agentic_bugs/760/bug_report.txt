@@ -1,0 +1,99 @@
+# recovered-from-issue: https://github.com/pydantic/pydantic-ai/issues/6008
+
+TITLE
+[graph] map with downstream_join_id double-fires the join on a non-empty iterable
+
+BODY
+### Initial Checks
+
+- [x] I'm using the [latest version](https://github.com/pydantic/pydantic-ai/releases/latest) of Pydantic AI
+- [x] I've searched for my issue in [the issue tracker](https://github.com/pydantic/pydantic-ai/issues) before opening this issue
+
+### Description
+
+> **Disclaimer:** This issue was found by an AI agent (Claude Opus 4.8); I'm filing it on the agent's behalf and don't have deep pydantic-graph internals expertise to independently judge it. The evidence below is what the agent produced and ran. Please verify rather than take it at face value.
+
+With the beta/builder graph API, `add_mapping_edge(..., downstream_join_id=...)` makes the node downstream of the join fire **twice** when the mapped iterable is non-empty: once with the reducer's initial value, once with the actual reduced result. The empty initial-value emission wins, so the run returns the initial value instead of the reduced output — a silently wrong result.
+
+`downstream_join_id` is documented only as a safeguard for mapping an empty iterable, so on a non-empty iterable it should be a no-op. It isn't: the same graph with a plain `.map()` (no `downstream_join_id`) returns the correct reduced value in a single firing.
+
+**Observed** (full runnable script in the "Minimal, Reproducible Example" field below):
+
+```text
+run output  : []
+join emitted: [[], [1, 2, 3]]
+```
+
+`after_join` (the node wired after the join) runs twice — first with `[]`, then with `[1, 2, 3]` — and the run output is the empty one.
+
+The single line that causes it is `downstream_join_id=collect.id`. Replacing the mapping edge with a plain map and no `downstream_join_id`:
+
+```python
+g.add(g.edge_from(produce).map().to(identity))
+```
+
+gives the correct result, with `after_join` firing once:
+
+```text
+run output  : [1, 2, 3]
+join emitted: [[1, 2, 3]]
+```
+
+**Expected**
+
+With `downstream_join_id` set and a non-empty iterable, the join should fire once and emit the fully reduced list — run output `[1, 2, 3]`, `after_join` once. The basis for this isn't an assumption: the identical graph with a plain `.map()` already returns `[1, 2, 3]` in a single firing, and `downstream_join_id` is documented purely as an empty-iterable safeguard ("Specifying this ensures correct handling if you try to map an empty iterable."), so it should be a no-op when the iterable is non-empty.
+
+**Notes**
+
+- Empty-iterable behavior, for context: **with** `downstream_join_id`, mapping `[]` works correctly (one firing with `[]`). **Without** it, mapping `[]` raises `RuntimeError: Graph run completed, but no result was produced. This is either a bug in the graph or a bug in the graph runner.`. So the two are a lose-lose — the flag is required to survive an empty map but corrupts a non-empty one.
+- The `downstream_join_id` example in the docs only exercises the empty-iterable case; the non-empty + `downstream_join_id` combination appears untested.
+- Reproduces identically on 2.0.0b7 (latest beta) and 1.107.0 (latest stable); no agent or model call is involved.
+
+### Minimal, Reproducible Example
+
+```Python
+import asyncio
+from pydantic_graph import GraphBuilder, StepContext, reduce_list_append
+
+emitted: list[list[int]] = []  # what the join hands to the node after it
+
+g = GraphBuilder(output_type=list)
+
+@g.step
+async def produce(ctx: StepContext[None, None, None]) -> list[int]:
+    return [1, 2, 3]                          # non-empty input
+
+@g.step
+async def identity(ctx: StepContext[None, None, int]) -> int:
+    return ctx.inputs
+
+collect = g.join(reduce_list_append, initial_factory=list)
+
+@g.step
+async def after_join(ctx: StepContext[None, None, list]) -> list:
+    emitted.append(sorted(ctx.inputs))
+    return ctx.inputs
+
+g.add(g.edge_from(g.start_node).to(produce))
+g.add_mapping_edge(produce, identity, downstream_join_id=collect.id)
+g.add(
+    g.edge_from(identity).to(collect),
+    g.edge_from(collect).to(after_join),
+    g.edge_from(after_join).to(g.end_node),
+)
+graph = g.build()
+
+result = asyncio.run(graph.run())
+print("run output  :", result)      # expected [1, 2, 3], actual []
+print("join emitted:", emitted)      # expected [[1, 2, 3]], actual [[], [1, 2, 3]]
+```
+
+### Logfire Trace
+
+_No response_
+
+### Python, Pydantic AI & LLM client version
+
+- Python: 3.12.3
+- pydantic-graph: 2.0.0b7 (ships with pydantic-ai 2.0.0b7); reproduces identically on 1.107.0, the latest stable
+- LLM provider SDK: N/A — no model or provider is involved (pure pydantic-graph)

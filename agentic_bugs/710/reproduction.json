@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`git -C codebase rev-parse HEAD` returned `e5883ec426afa9d2398f9c82d274ebed4cd25e98`.",
+    "Final `bash run_repro.sh` exited with status 1 and stdout was `OBSERVED BUG: ChatAgent.__init__() got an unexpected keyword argument 'single_iteration'`.",
+    "Final stderr ended with `TypeError: ChatAgent.__init__() got an unexpected keyword argument 'single_iteration'`.",
+    "A clean `.venv` bootstrap imported CAMEL from `codebase/camel/__init__.py`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and verified the pinned commit.",
+    "Created the isolated environment with pinned dependencies and installed `codebase` in editable mode.",
+    "Verified `run_repro.sh` bootstraps a missing virtual environment.",
+    "Ran the offline constructor call and captured the final non-zero output in the required log files."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

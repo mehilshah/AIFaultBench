@@ -1,0 +1,50 @@
+{
+  "owner": "crewAIInc",
+  "repo": "crewAI",
+  "number": 5474,
+  "html_url": "https://github.com/crewAIInc/crewAI/issues/5474",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] MCP servers over 10 tools causes maximum recursion depth exceeded error",
+  "author": "KevyVo",
+  "created_at": "2026-04-15T18:43:49Z",
+  "updated_at": "2026-04-16T07:48:42Z",
+  "closed_at": "2026-04-15T21:03:02Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.1,
+  "fix": {
+    "closing_commit": "ae097937129ecc2ef7cf749300bacc6e70cb01f8",
+    "linked_prs": [],
+    "best_guess_fix_commit": "ae097937129ecc2ef7cf749300bacc6e70cb01f8",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T12:38:07.972773+00:00",
+  "comments": [
+    {
+      "author": "KevyVo",
+      "created_at": "2026-04-15T21:54:55Z",
+      "body": "@greysonlalonde Dam your are lighting fast! Thanks for the quick fix."
+    },
+    {
+      "author": "greysonlalonde",
+      "created_at": "2026-04-16T07:48:42Z",
+      "body": "> @greysonlalonde Dam your are lighting fast! Thanks for the quick fix.\n\nCheers \ud83d\ude01"
+    }
+  ]
+}

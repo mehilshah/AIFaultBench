@@ -1,0 +1,101 @@
+# recovered-from-issue: https://github.com/stanfordnlp/dspy/issues/9168
+
+TITLE
+[Bug] `dspy==3.1.0` with reasoning no longer guarantees a `list[str]` output from `dspy.BaseLM.__call__`, but GEPA assumes it and crashes
+
+BODY
+### What happened?
+
+The recent release of `dspy==3.1.0` significantly changes the output of a `dspy.LM` from a `str` to possibly a `dict[str, str]` for reasoning models, that includes two keys: "text" and "reasoning_output".
+
+Specifically, `gepa` expects a `str` here:
+https://github.com/gepa-ai/gepa/blob/1b5eff5133be1015210e0512953c25a4b85ad454/src/gepa/proposer/reflective_mutation/base.py#L48
+
+This happens for the OpenAI family of models, and many others.
+
+### Steps to reproduce
+
+Pre-requisites: `uv` and `uv python install 3.13`
+
+The following minimal example runs fine using `uv run --with dspy==3.0.4 example.py`:
+
+```python
+# /// script
+# requires-python = "~=3.13.0"
+# ///
+
+import os
+from typing import Optional
+
+import dspy
+from dspy.teleprompt.gepa.gepa_utils import (
+    DSPyTrace,
+    ScoreWithFeedback,
+)
+
+lm = dspy.LM(
+    model="openrouter/nvidia/nemotron-3-nano-30b-a3b:free",
+    api_key=os.environ["OPENROUTER_API_KEY"],
+    temperature=1.0,
+    cache=False,
+)
+dspy.configure(lm=lm)
+
+reflection_lm = dspy.LM(
+    model="openrouter/nvidia/nemotron-3-nano-30b-a3b:free",
+    api_key=os.environ["OPENROUTER_API_KEY"],
+    temperature=1.0,
+    cache=False,
+)
+
+class MySignature(dspy.Signature):
+    input: str = dspy.InputField()
+    output: str = dspy.OutputField()
+
+
+def metric(
+    gold: dspy.Example,
+    pred: dspy.Prediction,
+    trace: Optional[DSPyTrace] = None,
+    pred_name: Optional[str] = None,
+    pred_trace: Optional[DSPyTrace] = None,
+) -> float | ScoreWithFeedback:
+    return 0.0
+
+student = dspy.Predict(MySignature)
+
+gepa = dspy.GEPA(
+    metric=metric,
+    track_stats=True,
+    max_metric_calls=2,
+    reflection_lm=reflection_lm
+)
+trainset = [dspy.Example(input="input", output="output").with_inputs("input")]
+new_prog = gepa.compile(student, trainset=trainset, valset=trainset)
+```
+
+However, running `uv run --with dspy==3.1.0 example.py`.
+
+Loudly crashes with:
+```python
+  File "site-packages/gepa/proposer/reflective_mutation/reflective_mutation.py", line 131, in propose
+    new_texts = self.propose_new_texts(curr_prog, reflective_dataset, predictor_names_to_update)
+  File "site-packages/gepa/proposer/reflective_mutation/reflective_mutation.py", line 82, in propose_new_texts
+    new_texts[name] = InstructionProposalSignature.run(
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        lm=self.reflection_lm,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        },
+        ^^
+    )["new_instruction"]
+    ^
+  File "site-packages/gepa/proposer/reflective_mutation/base.py", line 48, in run
+    lm_out = lm(full_prompt).strip()
+             ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'dict' object has no attribute 'strip'
+```
+
+### DSPy version
+
+3.1.0

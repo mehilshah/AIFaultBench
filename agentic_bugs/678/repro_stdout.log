@@ -1,0 +1,1 @@
+OBSERVED BUG: ValidationException: The format of the value at messages.1.content.0.toolResult.content.0.json is invalid. Provide a json object for the field and try again.

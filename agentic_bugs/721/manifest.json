@@ -1,0 +1,12 @@
+{
+  "bug_id": "721",
+  "bug_dir": "721",
+  "issue_url": "https://github.com/browser-use/browser-use/issues/4269",
+  "commit_hash": "859cb970631043c7d484ea9a778ad4b9f65383b3",
+  "library_name": "browser-use",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "browser-use/browser-use@859cb970631043c7d484ea9a778ad4b9f65383b3",
+  "codebase_present": "false",
+  "standardized_dir": "../721"
+}

@@ -1,0 +1,182 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/1626
+
+TITLE
+BUG: @tool cannot correctly handle the body of some functions in remote Python executor
+
+BODY
+<!--
+Thank you for reporting a bug!
+Please provide as much detail as possible to help us identify and fix the issue.
+-->
+
+**Problem**
+When tool function defined as:
+
+```py
+@tool
+@other_decorator
+def my_func(...):
+    ...
+```
+
+or
+
+```py
+def long_signature(
+    arg1: int,
+    arg2: str = "default"
+) -> bool:
+    ...
+```
+
+, the `@tool` cannot extract the exact function body because it assumes that the decorator has only one line (`@ tool`) and the function signature has only one line (`def func():`). See:
+
+https://github.com/huggingface/smolagents/blob/808e0958701b3a5b39efe7e48355bb13c19cc9dd/src/smolagents/tools.py#L1021
+
+**Steps to reproduce**
+1. Write a function like above and use `@tool` to decorate
+2. Use remote Python executor to reach `get_source` util function.
+3. Run it.
+
+
+**Actual behavior and error logs**
+```text
+Traceback (most recent call last):
+  ... # some traceback are skipped
+  File "C:\Users\xxx\Desktop\xxx\backend\agent\src\smolagents\agents.py", line 425, in run
+    python_executor.send_tools({**self.tools, **self.managed_agents})
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xxx\Desktop\xxx\backend\agent\src\smolagents\remote_executors.py", line 59, in send_toolss
+    for pkg in tool.to_dict(allow_danger=True)["requirements"] # `allow_danger` is a small fix
+               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xxx\Desktop\xxx\backend\agent\src\smolagents\tools.py", line 233, in to_dict
+    forward_node = ast.parse(source_code)
+  File "C:\Users\xxx\AppData\Roaming\uv\python\cpython-3.13.2-windows-x86_64-none\Lib\ast.py", line 54, in parse
+
+    return compile(source, filename, mode, flags,
+                   _feature_version=feature_version, optimize=optimize)
+  File "<unknown>", line 2
+    text_prompt: str,
+                    ^
+SyntaxError: invalid syntax
+```
+
+The tool function looks like:
+```py
+@tool
+def ask_ai_multimodal(
+    text_prompt: str,
+    image_sources: Optional[List[str]] = None,
+    image_data: Optional[List[dict]] = None,
+) -> str:
+    ...
+```
+
+**Expected behavior**
+It should properly extract the function body without raising an error.
+
+**Environment:**
+Please complete the following information:
+- OS: Window 10
+- Python version: 3.13
+- Package version: smolagents 1.17.0, but with some small changes, also reproducible on 1.20.0
+
+**Additional context (optional)**:
+
+I'd added some logs to debug intermediate variables:
+
+```py
+    def to_dict(self, allow_danger: bool = False) -> dict:
+        """Returns a dictionary representing the tool"""
+        class_name = self.__class__.__name__
+        if type(self).__name__ == "SimpleTool":
+            # Check that imports are self-contained
+            source_code = get_source(self.forward).replace("@tool", "")
+            logger.debug("debug source_code...")
+            logger.debug(source_code)
+    ...
+```
+
+```py
+def get_source(obj) -> str:
+    """Get the source code of a class or callable object (e.g.: function, method).
+    First attempts to get the source code using `inspect.getsource`.
+    In a dynamic environment (e.g.: Jupyter, IPython), if this fails,
+    falls back to retrieving the source code from the current interactive shell session.
+
+    Args:
+        obj: A class or callable object (e.g.: function, method)
+
+    Returns:
+        str: The source code of the object, dedented and stripped
+
+    Raises:
+        TypeError: If object is not a class or callable
+        OSError: If source code cannot be retrieved from any source
+        ValueError: If source cannot be found in IPython history
+
+    Note:
+        TODO: handle Python standard REPL
+    """
+    import logging
+
+    logger = logging.getLogger(__name__)
+    logger.setLevel("DEBUG")
+
+    if not (isinstance(obj, type) or callable(obj)):
+        raise TypeError(f"Expected class or callable, got {type(obj)}")
+
+    inspect_error = None
+    logger.debug("get_source...")
+    try:
+        # Handle dynamically created classes
+        source = getattr(obj, "__source__", None) or inspect.getsource(obj)
+        logger.debug(f"source:\n{source}")
+        return dedent(source).strip()
+    ...
+```
+
+When I pass the tool function:
+
+```py
+@tool
+def ask_ai_multimodal(
+    text_prompt: str,
+    image_sources: Optional[List[str]] = None,
+    image_data: Optional[List[dict]] = None,
+) -> str:
+    ...
+```
+
+the log:
+```text
+DEBUG    [agent.src.smolagents.tools] tool_source:
+@tool
+def ask_ai_multimodal(
+    text_prompt: str,
+    image_sources: Optional[List[str]] = None,
+    image_data: Optional[List[dict]] = None,
+) -> str:
+    ...
+DEBUG    [agent.src.smolagents.tools] tool_source_body:
+    text_prompt: str,
+    image_sources: Optional[List[str]] = None,
+    image_data: Optional[List[dict]] = None,
+) -> str:
+    ...
+DEBUG    [agent.src.smolagents.tools] debug source_code...
+DEBUG    [agent.src.smolagents.tools] def forward(self, text_prompt: str, image_sources: Optional[List[str]] = None, image_data: Optional[List[dict]] = None) -> str:
+        text_prompt: str,
+        image_sources: Optional[List[str]] = None,
+        image_data: Optional[List[dict]] = None,
+    ) -> str:
+        ...
+```
+---
+
+### Checklist
+- [x] I have searched the existing issues and have not found a similar bug report.
+- [x] I have provided a minimal, reproducible example.
+- [x] I have provided the full traceback of the error.
+- [x] I have provided my environment details.
+- [x] I am willing to work on this issue and submit a pull request. (optional)

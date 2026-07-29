@@ -1,0 +1,95 @@
+# recovered-from-issue: https://github.com/langflow-ai/langflow/issues/11792
+
+TITLE
+make docker_build failing- ModuleNotFoundError: No module named 'hatchling.build'
+
+BODY
+### Bug Description
+
+`make docker_build` is failing with following error:
+
+```
+[1/2] STEP 7/21: COPY ./uv.lock /app/uv.lock
+--> 0b3006ce87fc
+[1/2] STEP 8/21: COPY ./README.md /app/README.md
+--> b6114eb396a6
+[1/2] STEP 9/21: COPY ./pyproject.toml /app/pyproject.toml
+--> d53e254de3e3
+[1/2] STEP 10/21: COPY ./src/backend/base/README.md /app/src/backend/base/README.md
+--> 91fd68256462
+[1/2] STEP 11/21: COPY ./src/backend/base/uv.lock /app/src/backend/base/uv.lock
+--> 6e944f84b06c
+[1/2] STEP 12/21: COPY ./src/backend/base/pyproject.toml /app/src/backend/base/pyproject.toml
+--> b87872bf151d
+[1/2] STEP 13/21: COPY ./src/lfx/README.md /app/src/lfx/README.md
+--> 2c5c1c63b58d
+[1/2] STEP 14/21: COPY ./src/lfx/pyproject.toml /app/src/lfx/pyproject.toml
+--> 7d60c13963cf
+[1/2] STEP 15/21: RUN --mount=type=cache,target=/root/.cache/uv     RUSTFLAGS='--cfg reqwest_unstable'     uv sync --frozen --no-install-project --no-editable --extra postgresql
+Using CPython 3.12.12 interpreter at: /usr/local/bin/python3
+Creating virtual environment at: .venv
+warning: The `extra-build-dependencies` option is experimental and may change without warning. Pass `--preview-features extra-build-dependencies` to disable this warning.
+   Building langflow-base @ file:///app/src/backend/base
+   Building lfx @ file:///app/src/lfx
+  × Failed to build `langflow-base @ file:///app/src/backend/base`
+  ├─▶ The build backend returned an error
+  ╰─▶ Call to `hatchling.build.build_wheel` failed (exit status: 1)
+
+      [stderr]
+      Traceback (most recent call last):
+        File "<string>", line 8, in <module>
+      ModuleNotFoundError: No module named 'hatchling.build'
+
+      hint: This error likely indicates that `langflow-base@0.8.0` depends
+      on `hatchling.build`, but doesn't declare it as a build dependency.
+      If `langflow-base` is a first-party package, consider adding
+      `hatchling.build` to its `build-system.requires`. Otherwise, either add
+      it to your `pyproject.toml` under:
+
+      [tool.uv.extra-build-dependencies]
+      langflow-base = ["hatchling.build"]
+
+      or `uv pip install hatchling.build` into the environment and re-run with
+      `--no-build-isolation`.
+  help: `langflow-base` was included because `langflow` (v1.8.0) depends on
+        `langflow-base`
+Error: building at STEP "RUN --mount=type=cache,target=/root/.cache/uv RUSTFLAGS='--cfg reqwest_unstable'     uv sync --frozen --no-install-project --no-editable --extra postgresql": while running runtime: exit status 1
+
+make: *** [dockerfile_build] Error 1
+```
+
+### Reproduction
+
+1. clone the repo
+2. `make init`
+3. `uv sync`
+4. `make docker_build`
+
+### Expected behavior
+
+Building local docker image should pass without any issues
+
+### Who can help?
+
+@italojohnny 
+@ogabrielluiz 
+
+### Operating System
+
+MacOS 26.3 Apple M1 Pro, Podman
+
+### Langflow Version
+
+main, 1.7.3, 1.6.8
+
+### Python Version
+
+3.12
+
+### Screenshot
+
+_No response_
+
+### Flow File
+
+_No response_

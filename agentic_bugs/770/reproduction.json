@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1 and printed `OBSERVED BUG: AttributeError: 'dict' object has no attribute 'role'`.",
+    "Captured traceback reaches `get_clean_message_list` at `role = message.role` on pinned commit `f3c122810a8a2065f24dcd306dfdd46e5d3fcd0d`.",
+    "A stub LiteLLM client was not reached, proving no provider/API request occurred."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and verified the pinned commit.",
+    "Created `.venv`, installed pinned dependencies, and installed `codebase` editable.",
+    "Wrote and ran the deterministic local reproducer.",
+    "Captured final stdout/stderr and validated scripts and JSON."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

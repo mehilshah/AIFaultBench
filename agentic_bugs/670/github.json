@@ -1,0 +1,55 @@
+{
+  "owner": "pydantic",
+  "repo": "pydantic-ai",
+  "number": 6415,
+  "html_url": "https://github.com/pydantic/pydantic-ai/issues/6415",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "repr() of message parts raises ValueError when a field holds a numpy array",
+  "author": "otiscuilei",
+  "created_at": "2026-07-10T06:26:53Z",
+  "updated_at": "2026-07-10T10:06:29Z",
+  "closed_at": "2026-07-10T10:06:29Z",
+  "labels": [
+    "bug",
+    "tools",
+    "fix",
+    "message history",
+    "pydanty:bug",
+    "p:3-mid"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.15,
+  "fix": {
+    "closing_commit": "f9922c68b7b2bb557cc9cb451e04f905688a9bf8",
+    "linked_prs": [],
+    "best_guess_fix_commit": "f9922c68b7b2bb557cc9cb451e04f905688a9bf8",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T12:38:21.114350+00:00",
+  "comments": [
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-07-10T06:27:36Z",
+      "body": "<!-- pydanty:status-comment:v1 -->\n\n## pydanty status: bug -- confirmed (high), signal 6/10 - p:3-mid\n\n**Why:** `repr()` should never raise. This bug crashes `repr(part)`, `print(result.all_messages())`, logging, and traceback formatting whenever a tool returns a numpy array or pandas object \u2014 a common case in data/analysis agents. It can turn an unrelated error into a confusing secondary crash during traceback formatting. The fix is in a shared helper used by many public message-part dataclasses, so all benefit from one change.\n**Evidence:** code_librarian confirmed the exact implementation of `dataclasses_no_defaults_repr` at _utils.py:541 \u2014 it uses `if f.repr and getattr(self, f.name) != f.default` with no try/except and no special handling for required fields. `ToolReturnPart.content` is a required field (`f.default is dataclasses.MISSING`), and `ToolReturnPart` inherits `__repr__ = _utils.dataclasses_no_defaults_repr` from `BaseToolReturnPart` (messages.py:1449). reproducer confirmed all three claims: (1) `repr(ToolReturnPart(tool_name='t', content=np.array([1,2,3])))` raises ValueError; (2) a pure-Python stand-in class with `__ne__` returning non-bool with exploding `__bool__` also triggers the crash \u2014 no numpy needed for tests; (3) `repr(ModelRequest(parts=[part]))` propagates the same crash. No existing tests for `dataclasses_no_defaults_repr` were found.\n**Playground:** https://play.pydantic.work/p/cPARTcJu\n**Next:** pr_ready -- Confirmed localized bug: `dataclasses_no_defaults_repr` crashes on non-bool `!=` results. Fix is narrow and backwards-compatible.\n\n<details>\n<summary>\ud83d\udcb0 Run usage: 692,447 tokens, 42 model requests (est. cost $0.2041)</summary>\n\n| Agent | Cost | Input | Output | Requests | Tool calls | Model |\n|---|--:|--:|--:|--:|--:|---|\n| `reproducer` | $0.1299 | 513,488 | 5,049 | 30 | 31 | kimi-k2.7-code-20260612 |\n| `pydanty-orchestrator` | $0.0594 | 104,886 | 4,484 | 7 | 9 | \u2014 |\n| `code_librarian` | $0.0148 | 61,848 | 2,692 | 5 | 7 | minimax-m3-20260531 |\n| **total** | **$0.2041** | **680,222** | **12,225** | **42** | **47** | |\n</details>"
+    },
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-07-10T06:53:32Z",
+      "body": "<!-- pydanty:runtime-failure -->\n\n### pydanty runtime failure\n\nRun `df_run_e480d5b86a1e413fbbbb` started from the GitHub webhook, but the Dogfooding runtime\nfailed before pydanty completed the workflow. The pydanty status comment above\n(if any) is from a completed run and still stands.\n\n**Next step:** maintainer attention needed; rerun after fixing the runtime failure.\n\n<details>\n<summary>Failure detail (tail)</summary>\n\n```text\nThe PR finisher run completed without opening a PR (tests inconclusive/blocked, or it stopped before `gh pr create`). No PR was opened -- re-run with `pydanty:retry-pr`, or the reconciliation watchdog will re-queue a finisher.\n```\n\n</details>"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/670/repro.py", line 26, in <module>
+    repr(part)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/670/codebase/pydantic_ai_slim/pydantic_ai/_utils.py", line 546, in dataclasses_no_defaults_repr
+    return f'{self.__class__.__qualname__}({", ".join(kv_pairs)})'
+                                            ^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/670/codebase/pydantic_ai_slim/pydantic_ai/_utils.py", line 544, in <genexpr>
+    f'{f.name}={getattr(self, f.name)!r}' for f in fields(self) if f.repr and getattr(self, f.name) != f.default
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/670/repro.py", line 9, in __bool__
+    raise ValueError('The truth value of an array with more than one element is ambiguous')
+ValueError: The truth value of an array with more than one element is ambiguous

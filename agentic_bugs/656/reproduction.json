@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout confirmed at 5882675788972894be68baa53c8a1d80e9815c3e.",
+    "Final stdout: `BUG REPRODUCED: raw placeholder user_name was not replaced; literal user_name would be typed.`",
+    "Final stderr contains the expected AssertionError describing the missing concrete tag example and unchanged placeholder."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh.",
+    "Created .venv and installed the editable checkout plus pydantic-settings==2.14.2.",
+    "Created and ran the deterministic no-network reproduction; captured final logs and validated artifacts."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

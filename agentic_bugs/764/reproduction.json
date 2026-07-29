@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Pinned checkout verified at 0a4dbc8c6c95d2576e180dccb04f2ae1f6ffa47f.",
+    "Final run exited 0 and printed: NOT REPRODUCED: uv 0.9.1 built langflow-base with a fresh isolated cache.",
+    "No stderr was emitted."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh and restored the required pinned checkout.",
+    "Created .venv and installed uv==0.9.1.",
+    "Ran run_repro.sh and captured its final stdout/stderr logs."
+  ],
+  "blocking_reason": "The reported ModuleNotFoundError depends on a corrupted uv/Podman build cache. With uv 0.9.1 and a fresh isolated cache, the pinned langflow-base source builds successfully, so the absent external corrupted cache state cannot be reproduced deterministically on this machine.",
+  "reproduction_command": "bash run_repro.sh"
+}

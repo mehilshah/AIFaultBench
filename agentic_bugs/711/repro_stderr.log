@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/711/repro.py", line 62, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/711/repro.py", line 51, in main
+    raise AssertionError(
+AssertionError: tool result was recorded without its preceding assistant tool_call

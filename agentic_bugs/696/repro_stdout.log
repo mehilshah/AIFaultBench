@@ -1,0 +1,1 @@
+OBSERVED BUG: async path called_sync=True called_async=False

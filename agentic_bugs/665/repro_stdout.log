@@ -1,0 +1,1 @@
+OBSERVED BUG: function.arguments is dict: {'agent_name': 'worker'}

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/680/repro.py", line 33, in <module>
+    list(
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/680/codebase/camel/agents/chat_agent.py", line 4460, in _process_stream_chunks_with_accumulator
+    self._update_token_usage_tracker(
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/680/codebase/camel/agents/chat_agent.py", line 3361, in _update_token_usage_tracker
+    tracker["completion_tokens"] += usage_dict.get("completion_tokens", 0)
+TypeError: unsupported operand type(s) for +=: 'int' and 'NoneType'

@@ -1,0 +1,1 @@
+# No third-party packages are needed: repro.py loads the pinned source with minimal in-process dependency stubs.

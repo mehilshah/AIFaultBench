@@ -1,0 +1,113 @@
+# recovered-from-issue: https://github.com/run-llama/llama_index/issues/21579
+
+TITLE
+[Bug]: Bedrock Converse streaming produces string `tool_kwargs` in `ToolCallBlock` instead of dict
+
+BODY
+### Bug Description
+
+The Bedrock Converse adapter's streaming methods (`stream_chat` and `astream_chat`) construct `ToolCallBlock` objects with `tool_kwargs` as a raw JSON **string** instead of a parsed **dict**. This breaks cross-provider workflows where chat history from a Bedrock streaming session is later consumed by another provider's adapter (e.g., Google GenAI), which expects `tool_kwargs` to be a `dict`.
+
+## Root Cause
+
+The AWS Bedrock Converse **streaming** API (`ConverseStream`) delivers tool use input via [`ToolUseBlockDelta.input`](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_ToolUseBlockDelta.html) as a **string** type. The adapter correctly concatenates these partial string chunks:
+
+```python
+# base.py, stream_chat / astream_chat
+current_tool_call["input"] += tool_use_delta["input"]
+```
+
+But when constructing `ToolCallBlock`, it passes the accumulated string directly without parsing:
+
+```python
+ToolCallBlock(
+    tool_kwargs=tool_call.get("input", {}),  # ← still a JSON string, not a dict
+    tool_name=tool_call.get("name", ""),
+    tool_call_id=tool_call.get("toolUseId"),
+)
+```
+
+This pattern appears at **6 locations** in `base.py` (lines 593, 649, 693, 877, 933, 978 in v0.14.9), all within the streaming code paths.
+
+### Why the non-streaming path works
+
+The non-streaming `Converse` API returns [`ToolUseBlock.input`](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_ToolUseBlock.html) as a JSON value, which boto3 deserializes to a Python `dict`. So the non-streaming `_get_content_and_tool_calls` method at line ~430 works correctly — `tool_usage.get("input", {})` is already a dict.
+
+### Internal inconsistency
+
+The adapter's own `get_tool_calls_from_response` method already defensively handles string `tool_kwargs`:
+
+```python
+if isinstance(tool_call.tool_kwargs, str):
+    try:
+        argument_dict = parse_partial_json(tool_call.tool_kwargs)
+    ...
+```
+
+This suggests the developers were aware that strings could appear, but the fix was applied at the consumption site rather than at the source.
+
+## Downstream Impact
+
+Adapters that receive `ToolCallBlock` with string `tool_kwargs` may fail. For example, the **Google GenAI adapter** (`llama_index/llms/google_genai/utils.py`) constructs:
+
+```python
+google.genai.types.FunctionCall(
+    name=block.tool_name,
+    args=cast(Dict[str, Any], block.tool_kwargs)  # ← Pydantic rejects strings
+)
+```
+
+This produces:
+```
+pydantic_core.ValidationError: 1 validation error for FunctionCall
+args
+  Input should be a valid dictionary [type=dict_type, input_value='{"document_id": "..."}', input_type=str]
+```
+
+Any workflow that persists chat history from a Bedrock streaming session and replays it through a different provider will hit this.
+
+## Suggested Fix
+
+Parse the accumulated JSON string into a dict when constructing `ToolCallBlock` in the streaming code paths. A minimal fix at each of the 6 construction sites:
+
+```python
+import json
+
+# Replace:
+tool_kwargs=tool_call.get("input", {})
+
+# With:
+tool_kwargs=json.loads(tool_call["input"]) if isinstance(tool_call.get("input"), str) else tool_call.get("input", {})
+```
+
+Alternatively, the parsing could happen once at the `contentBlockStop` event (when the tool use block is complete), converting `current_tool_call["input"]` from string to dict at that point before any `ToolCallBlock` is constructed with the final value.
+
+### Version
+
+`llama-index-llms-bedrock-converse` **0.14.9** (also confirmed still present on `main`).
+
+### Steps to Reproduce
+
+Adapters that receive `ToolCallBlock` with string `tool_kwargs` may fail. For example, the **Google GenAI adapter** (`llama_index/llms/google_genai/utils.py`) constructs:
+
+```python
+google.genai.types.FunctionCall(
+    name=block.tool_name,
+    args=cast(Dict[str, Any], block.tool_kwargs)  # ← Pydantic rejects strings
+)
+```
+
+This produces:
+```
+pydantic_core.ValidationError: 1 validation error for FunctionCall
+args
+  Input should be a valid dictionary [type=dict_type, input_value='{"document_id": "..."}', input_type=str]
+```
+
+Any workflow that persists chat history from a Bedrock streaming session and replays it through a different provider will hit this.
+
+### Relevant Logs/Tracebacks
+
+```shell
+
+```

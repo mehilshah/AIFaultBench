@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout HEAD: 06cfa27051837fd41830b79ac4338e7f4cf0edd9.",
+    "Fresh bootstrap and final `bash run_repro.sh` both exited with status 1.",
+    "stdout: `OBSERVED BUG: LocalPythonExecutor rejects range before send_tools: Code execution failed at line 'range(1)' due to: InterpreterError: Forbidden function evaluation: 'range' is not among the explicitly allowed tools or defined/imported in the preceding code`",
+    "`repro_stderr.log` is empty."
+  ],
+  "steps": [
+    "Read the issue report and maintainer comments.",
+    "Ran `bash setup_codebase.sh` to clone the pinned checkout.",
+    "Created the isolated environment with fully pinned dependencies and installed the checkout editable.",
+    "Ran a clean bootstrap check, then captured the final `run_repro.sh` output in the required logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

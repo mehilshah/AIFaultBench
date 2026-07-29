@@ -1,0 +1,1 @@
+BUG REPRODUCED: AIMessage tool_calls were dropped; ToolMessage raised TypeError: Got unknown type content='result' tool_call_id='call_1'

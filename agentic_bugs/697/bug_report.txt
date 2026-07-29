@@ -1,0 +1,163 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/1814
+
+TITLE
+BUG: LocalPythonExecutor unable to handle nested for loop
+
+BODY
+<!--
+Thank you for reporting a bug!
+Please provide as much detail as possible to help us identify and fix the issue.
+-->
+
+**Problem**
+A clear and concise description of what the bug is.
+I’m handling code that uses a nested for loop to assign key-value pairs for a dictionary. However, when i running the python code with LocalPythonExecutor, it raised the error  with `InterpreterError: The variable `e` is not defined.`
+
+**Steps to reproduce**
+Please provide a minimal, self-contained, and reproducible example of the bug.
+1.  You can reproduce it using the following code
+
+
+```python
+import inspect
+import os
+from smolagents.local_python_executor import LocalPythonExecutor
+import pandas as pd
+import builtins
+# --- Blocked function with stack info ---
+def _blocked(func_name, *args, **kwargs):
+    # Get the caller frame
+    stack = inspect.stack()
+    # stack[1] is the immediate caller
+    caller = stack[1]
+    filename = caller.filename
+    lineno = caller.lineno
+    return f"Blocked call to os.{func_name}() from {filename}, line {lineno}"
+
+# Patch dangerous OS functions
+for func_name in ["system", "popen", "execl", "execv", "execvp"]:
+    setattr(os, func_name, lambda *a, func_name=func_name, **kw: _blocked(func_name, *a, **kw))
+
+# Create executor
+executor = LocalPythonExecutor(["os",
+                                "pydantic",
+                                "argparse",
+                                "pandas",
+                                "dateutil.*",
+                                "datetime",
+                                "enum",
+                                "typing",
+                                "json",
+                                "posixpath"])
+
+executor.send_tools({
+    "print":builtins.print,
+    "super":builtins.super
+})
+
+# Sample code
+# with open ('sample.py','r') as f:
+#     code = f.read()
+code ="""
+from enum import Enum
+from typing import Dict,Tuple
+from pydantic import BaseModel, Field
+class ClassB(str, Enum):
+    valueA = "one"
+    valueB = "two"
+    valueC = "three"
+    
+class ClassC(str, Enum):
+    ABC = "ABC"
+    CBD = "CBD"
+    EFG = "EFG"
+    CHA = "CHA"
+    TUD = "TUF"
+    CDS = "CDS"
+    
+class ClassD(BaseModel):
+    name: ClassB = Field(description="one two three")
+    string_A: str = Field(description="efr")
+    
+class SampleClassA(BaseModel):
+    name: ClassC = Field(description="hff")
+    list_A: list[ClassD] = Field(description="sfd")
+    
+
+structureA = {
+    ClassC.ABC: SampleClassA(
+        name=ClassC.ABC,
+        list_A=[
+            ClassD(
+                name=ClassB.valueA,
+                string_A="vvv"
+            ),
+            ClassD(
+                name=ClassB.valueB,
+                string_A="sss"
+            ),
+            ClassD(
+                name=ClassB.valueC,
+                string_A="ddde"
+            )
+        ]
+    )
+}
+map: Dict[Tuple[str, str], str] = {
+    (s_name, e.name): e.string_A
+    for s_name, s_struct in structureA.items()
+    for e in s_struct.list_A
+}
+
+print(map)
+"""
+
+result = executor(code)
+print(result)
+
+```
+
+**Actual behavior and error logs**
+A clear and concise description of what actually happened. Please include the full traceback if an exception was raised.
+```shell
+Traceback (most recent call last):
+  File "/Users/victor/Desktop/Project/flask_app_demo/test.py", line 94, in <module>
+    result = executor(code)
+             ^^^^^^^^^^^^^^
+  File "/Users/victor/Desktop/Project/flask_app_demo/.test/lib/python3.11/site-packages/smolagents/local_python_executor.py", line 1693, in __call__
+    output, is_final_answer = evaluate_python_code(
+                              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/victor/Desktop/Project/flask_app_demo/.test/lib/python3.11/site-packages/smolagents/local_python_executor.py", line 1614, in evaluate_python_code
+    raise InterpreterError(
+smolagents.local_python_executor.InterpreterError: Code execution failed at line 'map: Dict[Tuple[str, str], str] = {
+    (s_name, e.name): e.string_A
+    for s_name, s_struct in structureA.items()
+    for e in s_struct.list_A
+}' due to: InterpreterError: The variable `e` is not defined.
+```
+
+**Expected behavior**
+It show print the following:
+
+```
+{(<ClassC.ABC: 'ABC'>, <ClassB.valueA: 'one'>): 'vvv', (<ClassC.ABC: 'ABC'>, <ClassB.valueB: 'two'>): 'sss', (<ClassC.ABC: 'ABC'>, <ClassB.valueC: 'three'>): 'ddde'}
+```
+
+**Environment:**
+I'm installing the smolagents by following command:
+```
+pip install git+https://github.com/huggingface/smolagents.git
+```
+
+```
+Name: smolagents
+Version: 1.23.0.dev0
+Summary: 🤗 smolagents: a barebones library for agents. Agents write python code to call tools or orchestrate other agents.
+Home-page: 
+Author: 
+Author-email: Aymeric Roucher <aymeric@hf.co>
+License: 
+Location: /Users/victor/Desktop/Project/flask_app_demo/.test/lib/python3.11/site-packages
+Requires: huggingface-hub, jinja2, pillow, python-dotenv, requests, rich
+Required-by: 
+```

@@ -1,0 +1,212 @@
+# recovered-from-issue: https://github.com/langchain-ai/langgraph/issues/6370
+
+TITLE
+LangGraph Server not propagating Runtime Context when using SendAPI
+
+BODY
+### Checked other resources
+
+- [x] This is a bug, not a usage question. For questions, please use the LangChain Forum (https://forum.langchain.com/).
+- [x] I added a clear and detailed title that summarizes the issue.
+- [x] I read what a minimal reproducible example is (https://stackoverflow.com/help/minimal-reproducible-example).
+- [x] I included a self-contained, minimal example that demonstrates the issue INCLUDING all the relevant imports. The code run AS IS to reproduce the issue.
+
+### Example Code
+
+```python
+from langgraph.graph import StateGraph, START, END
+from langgraph.runtime import Runtime
+from langgraph.types import Send
+from typing_extensions import TypedDict, Annotated
+import operator
+
+class OverallState(TypedDict):
+    subjects: list[str]
+    jokes: Annotated[list[str], operator.add]
+
+class NestedState(TypedDict):
+    subject: str
+
+class ContextSchema(TypedDict):
+    my_runtime_value: str
+
+def generate_topics(state: OverallState, runtime: Runtime[ContextSchema]):
+    return {"subjects": ["lions", "elephants", "penguins"]}
+
+def generate_joke(state: NestedState, runtime: Runtime[ContextSchema]):
+    if runtime.context is None:
+        raise RuntimeError("Runtime context is not available")
+    
+    joke_map = {
+        "lions": "Why don't lions like fast food? Because they can't catch it!",
+        "elephants": "Why don't elephants use computers? They're afraid of the mouse!",
+        "penguins": "Why don't penguins like talking to strangers at parties? Because they find it hard to break the ice."
+    }
+
+    return {"jokes": [joke_map[state["subject"]]]}
+
+def continue_to_jokes(state: OverallState):
+    return [Send("generate_joke", {"subject": s}) for s in state["subjects"]]
+
+builder = StateGraph(OverallState, context_schema=ContextSchema)
+builder.add_node("generate_topics", generate_topics)
+builder.add_node("generate_joke", generate_joke)
+builder.add_edge(START, "generate_topics")
+builder.add_conditional_edges("generate_topics", continue_to_jokes, ["generate_joke"])
+builder.add_edge("generate_joke", END)
+graph = builder.compile()
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+Traceback (most recent call last):
+  File ".../lib/python3.12/site-packages/langgraph_api/worker.py", line 142, in wrap_user_errors
+    await consume(
+  File ".../lib/python3.12/site-packages/langgraph_api/stream.py", line 516, in consume
+    raise e
+  File ".../lib/python3.12/site-packages/langgraph_api/stream.py", line 499, in consume
+    async for mode, payload in stream:
+  File ".../lib/python3.12/site-packages/langgraph_api/stream.py", line 384, in astream_state
+    event = await wait_if_not_done(anext(stream, sentinel), done)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".../lib/python3.12/site-packages/langgraph_api/asyncio.py", line 89, in wait_if_not_done
+    raise e.exceptions[0] from None
+  File ".../lib/python3.12/site-packages/langgraph/pregel/main.py", line 3000, in astream
+    async for _ in runner.atick(
+  File ".../lib/python3.12/site-packages/langgraph/pregel/_runner.py", line 410, in atick
+    _panic_or_proceed(
+  File ".../lib/python3.12/site-packages/langgraph/pregel/_runner.py", line 520, in _panic_or_proceed
+    raise exc
+  File ".../lib/python3.12/site-packages/langgraph/pregel/_retry.py", line 137, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".../lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 705, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".../lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 473, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".../lib/python3.12/site-packages/langchain_core/runnables/config.py", line 603, in run_in_executor
+    return await asyncio.get_running_loop().run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".../lib/python3.12/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".../lib/python3.12/site-packages/langchain_core/runnables/config.py", line 594, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File ".../graphs.py", line 30, in generate_joke
+    raise RuntimeError("Runtime context is not available")
+RuntimeError: Runtime context is not available
+During task with name 'generate_joke' and id '00c19a65-f8fb-ad84-4128-9e286501516b'
+```
+
+### Description
+
+I am trying to run a graph that uses the [map-reduce pattern](https://docs.langchain.com/oss/python/langgraph/use-graph-api#map-reduce-and-the-send-api) (with Send API) and a [runtime context](https://docs.langchain.com/oss/python/langgraph/use-graph-api#add-runtime-configuration) at the same time.
+
+This works perfectly fine when running the graph locally with `graph.invoke()`. The mapped node (`generate_joke`) does receive the runtime context.
+
+However, when adding the exact same graph to a `langgraph.json` as follows:
+```json
+{
+  "dependencies": ["./"],
+  "graphs": {
+    "test": "graphs.py:graph"
+  },
+  "env": "./.env"
+}
+```
+And running this graph from the server (I tried both starting the server with `langgraph-dev` and building it as a docker image), it seems the context is no-longer passed by the conditional edge into the mapped node (hence raising the error I set in `generate_joke`).
+
+### System Info
+
+System Information
+------------------
+> OS:  Darwin
+> OS Version:  Darwin Kernel Version 24.6.0: Mon Jul 14 11:29:54 PDT 2025; root:xnu-11417.140.69~1/RELEASE_ARM64_T8122
+> Python Version:  3.12.11 (main, Jul 29 2025, 20:45:17) [Clang 17.0.0 (clang-1700.0.13.5)]
+
+Package Information
+-------------------
+> langchain_core: 1.0.0
+> langchain: 1.0.2
+> langchain_community: 0.4
+> langsmith: 0.4.8
+> langchain_chroma: 1.0.0
+> langchain_classic: 1.0.0
+> langchain_openai: 1.0.1
+> langchain_text_splitters: 1.0.0
+> langgraph_api: 0.4.48
+> langgraph_cli: 0.4.4
+> langgraph_runtime_inmem: 0.14.1
+> langgraph_sdk: 0.2.6
+
+Optional packages not installed
+-------------------------------
+> langserve
+
+Other Dependencies
+------------------
+> aiohttp: 3.12.15
+> async-timeout: Installed. No version info available.
+> blockbuster: 1.5.25
+> chromadb: 1.2.2
+> click: 8.2.1
+> cloudpickle: 3.1.1
+> cryptography: 44.0.3
+> dataclasses-json: 0.6.7
+> grpcio: 1.76.0
+> grpcio-tools: 1.75.1
+> httpx: 0.28.1
+> httpx-sse: 0.4.1
+> jsonpatch: 1.33
+> jsonschema-rs: 0.29.1
+> langchain-anthropic: Installed. No version info available.
+> langchain-aws: Installed. No version info available.
+> langchain-deepseek: Installed. No version info available.
+> langchain-fireworks: Installed. No version info available.
+> langchain-google-genai: Installed. No version info available.
+> langchain-google-vertexai: Installed. No version info available.
+> langchain-groq: Installed. No version info available.
+> langchain-huggingface: Installed. No version info available.
+> langchain-mistralai: Installed. No version info available.
+> langchain-ollama: Installed. No version info available.
+> langchain-perplexity: Installed. No version info available.
+> langchain-together: Installed. No version info available.
+> langchain-xai: Installed. No version info available.
+> langgraph: 1.0.2
+> langgraph-checkpoint: 2.1.1
+> langsmith-pyo3: Installed. No version info available.
+> numpy: 1.26.4
+> openai: 2.6.1
+> openai-agents: Installed. No version info available.
+> opentelemetry-api: 1.38.0
+> opentelemetry-exporter-otlp-proto-http: 1.38.0
+> opentelemetry-sdk: 1.38.0
+> orjson: 3.11.1
+> packaging: 25.0
+> protobuf: 6.33.0
+> pydantic: 2.11.7
+> pydantic-settings: 2.10.1
+> pyjwt: 2.10.1
+> pytest: Installed. No version info available.
+> python-dotenv: 1.1.1
+> pyyaml: 6.0.2
+> PyYAML: 6.0.2
+> requests: 2.32.5
+> requests-toolbelt: 1.0.0
+> rich: 14.2.0
+> sqlalchemy: 2.0.41
+> SQLAlchemy: 2.0.41
+> sse-starlette: 2.1.3
+> starlette: 0.48.0
+> structlog: 25.4.0
+> tenacity: 9.1.2
+> tiktoken: 0.12.0
+> truststore: 0.10.4
+> typing-extensions: 4.14.1
+> uvicorn: 0.35.0
+> watchfiles: 1.1.0
+> zstandard: 0.23.0

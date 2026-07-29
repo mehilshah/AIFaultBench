@@ -1,0 +1,48 @@
+{
+  "owner": "Arize-ai",
+  "repo": "phoenix",
+  "number": 13934,
+  "html_url": "https://github.com/Arize-ai/phoenix/issues/13934",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[bug][playground] Bedrock raw tools missing toolSpec wrapper causes ParamValidationError",
+  "author": "kandakji",
+  "created_at": "2026-06-29T13:37:20Z",
+  "updated_at": "2026-07-01T21:43:24Z",
+  "closed_at": "2026-07-01T21:15:14Z",
+  "labels": [
+    "bug",
+    "triage",
+    "integration",
+    "c/playground"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.32,
+  "fix": {
+    "closing_commit": "b91b04630e2376f53bcf0dbe2498023e0c15d156",
+    "linked_prs": [],
+    "best_guess_fix_commit": "b91b04630e2376f53bcf0dbe2498023e0c15d156",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:06:53.810672+00:00",
+  "comments": [
+    {
+      "author": "mikeldking",
+      "created_at": "2026-07-01T21:43:24Z",
+      "body": "thanks for the detailed bug report. This should be out momentarily"
+    }
+  ]
+}

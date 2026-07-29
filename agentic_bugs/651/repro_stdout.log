@@ -1,0 +1,2 @@
+Replaying the agent's steps:                                                    
+OBSERVED BUG: TypeError: 'ChatMessage' object is not iterable

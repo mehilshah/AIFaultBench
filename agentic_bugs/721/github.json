@@ -1,0 +1,45 @@
+{
+  "owner": "browser-use",
+  "repo": "browser-use",
+  "number": 4269,
+  "html_url": "https://github.com/browser-use/browser-use/issues/4269",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Bug: CodeAgent \u2014 Persistent BrowserStateRequestEvent Failure with Root CDP client not initialized",
+  "author": "Yash-Ayu-Team",
+  "created_at": "2026-03-04T08:40:06Z",
+  "updated_at": "2026-03-22T21:30:44Z",
+  "closed_at": "2026-03-22T21:30:44Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 18.54,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:25.452749+00:00",
+  "comments": [
+    {
+      "author": "laithrw",
+      "created_at": "2026-03-22T21:30:44Z",
+      "body": "Closing \u2014 CodeAgent was removed from the codebase (commit 43b5e4ce). Please use the standard `Agent` class instead."
+    }
+  ]
+}

@@ -1,0 +1,226 @@
+# recovered-from-issue: https://github.com/langchain-ai/langchain/issues/39100
+
+TITLE
+ChatAnthropic: SystemMessage v1 content blocks are forwarded verbatim, so create_text_block()'s id causes 400 "system.0.id: Extra inputs are not permitted"
+
+BODY
+### Submission checklist
+
+- [x] This is a bug, not a usage question.
+- [x] I added a clear and descriptive title that summarizes this issue.
+- [x] I used the GitHub search to find a similar question and didn't find it.
+- [x] I am sure that this is a bug in LangChain rather than my code.
+- [x] The bug is not resolved by updating to the latest stable version of LangChain (or the specific integration package).
+- [x] This is not related to the langchain-community package.
+- [x] I posted a self-contained, minimal, reproducible example. A maintainer can copy it and run it AS IS.
+
+### Package (Required)
+
+- [ ] langchain
+- [ ] langchain-openai
+- [x] langchain-anthropic
+- [ ] langchain-classic
+- [ ] langchain-core
+- [ ] langchain-model-profiles
+- [ ] langchain-tests
+- [ ] langchain-text-splitters
+- [ ] langchain-chroma
+- [ ] langchain-deepseek
+- [ ] langchain-exa
+- [ ] langchain-fireworks
+- [ ] langchain-groq
+- [ ] langchain-huggingface
+- [ ] langchain-mistralai
+- [ ] langchain-nomic
+- [ ] langchain-ollama
+- [ ] langchain-openrouter
+- [ ] langchain-perplexity
+- [ ] langchain-qdrant
+- [ ] langchain-xai
+- [ ] Other / not sure / general
+
+### Related Issues / PRs
+
+_No response_
+
+### Reproduction Steps / Example Code (Python)
+
+```python
+from langchain_anthropic import ChatAnthropic
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages.content import create_text_block
+
+llm = ChatAnthropic(model_name="claude-haiku-4-5", output_version="v1", max_tokens=16)
+
+# create_text_block() mints an `id` (e.g. "lc_<uuid4>") on the block.
+system_message = SystemMessage(content_blocks=[create_text_block("You are a helpful assistant.")])
+print("system block:", system_message.content_blocks)
+# -> [{'type': 'text', 'text': 'You are a helpful assistant.', 'id': 'lc_fcd78d19-...'}]
+
+llm.invoke([system_message, HumanMessage("Say hi.")])  # raises BadRequestError
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+File "dev/scratch.py", line 12, in <module>
+    llm.invoke([system_message, HumanMessage("Say hi.")])  # raises BadRequestError
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "dev/.venv/lib/python3.13/site-packages/langchain_core/language_models/chat_models.py", line 476, in invoke
+    self.generate_prompt(
+    ~~~~~~~~~~~~~~~~~~~~^
+        [self._convert_input(input)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ).generations[0][0],
+    ^
+  File "dev/.venv/lib/python3.13/site-packages/langchain_core/language_models/chat_models.py", line 1849, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "dev/.venv/lib/python3.13/site-packages/langchain_core/language_models/chat_models.py", line 1656, in generate
+    self._generate_with_cache(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        m,
+        ^^
+    ...<2 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "dev/.venv/lib/python3.13/site-packages/langchain_core/language_models/chat_models.py", line 1994, in _generate_with_cache
+    result = self._generate(
+        messages, stop=stop, run_manager=run_manager, **kwargs
+    )
+  File "dev/.venv/lib/python3.13/site-packages/langchain_anthropic/chat_models.py", line 1936, in _generate
+    _handle_anthropic_bad_request(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "dev/.venv/lib/python3.13/site-packages/langchain_anthropic/chat_models.py", line 1934, in _generate
+    data = self._create(payload)
+  File "dev/.venv/lib/python3.13/site-packages/langchain_anthropic/chat_models.py", line 1566, in _create
+    return self._client.messages.create(**payload)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "dev/.venv/lib/python3.13/site-packages/anthropic/_utils/_utils.py", line 294, in wrapper
+    return func(*args, **kwargs)
+  File "dev/.venv/lib/python3.13/site-packages/anthropic/resources/messages/messages.py", line 1050, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/v1/messages",
+        ^^^^^^^^^^^^^^^
+    ...<30 lines>...
+        stream_cls=Stream[RawMessageStreamEvent],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "dev/.venv/lib/python3.13/site-packages/anthropic/_base_client.py", line 1536, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "dev/.venv/lib/python3.13/site-packages/anthropic/_base_client.py", line 1195, in request
+    raise self._make_status_error_from_response(response) from None
+anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'system.0.id: Extra inputs are not permitted'}, 'request_id': 'req_011CdTeonZ3LR63wS1aNv2XM'}
+```
+
+### Description
+
+`ChatAnthropic` handles `SystemMessage` content differently from every other message type, and the
+difference leaks a LangChain-internal field onto the wire.
+
+In [`langchain_anthropic.chat_models._format_messages`](https://github.com/langchain-ai/langchain/blob/76b4b2472a644acd399ddf3caa13242a2b289b02/libs/partners/anthropic/langchain_anthropic/chat_models.py#L490-L498), a system message with list content has its
+blocks passed straight through as dicts:
+
+```python
+if message.type == "system":
+    ...
+    if isinstance(message.content, list):
+        system = [
+            block if isinstance(block, dict) else {"type": "text", "text": block}
+            for block in message.content
+        ]
+```
+
+Every other message type falls through to the branch below, which **rebuilds** each block
+field-by-field and therefore drops keys Anthropic doesn't accept. The v1→native translation in
+`_get_request_payload` doesn't help either — it only runs for `AIMessage` with
+`response_metadata["output_version"] == "v1"`.
+
+Because `create_text_block()` (and the other `create_*_block` factories) mint an `id` via
+`ensure_id()`, any system message built from those factories — the natural way to build v1 content —
+sends `{"type": "text", "text": ..., "id": "lc_<uuid4>"}` in the `system` field, and the API rejects
+the unknown key.
+
+Other providers already discard the `id` on this path, so the behavior is Anthropic-specific:
+
+| Provider | system payload | `id` |
+| --- | --- | --- |
+| Anthropic | `[{'type': 'text', 'text': '...', 'id': 'lc_...'}]` | **leaks** |
+| Google (`_parse_chat_history`) | `parts=[Part(text='...')]` | dropped |
+| OpenAI (`_construct_responses_api_input`) | `[{'type': 'input_text', 'text': '...'}]` | dropped |
+
+A secondary effect: `ChatAnthropic.get_num_tokens_from_messages` passes system content through as
+the `system` kwarg too, so token counting against the same message fails for the same reason.
+
+Suggested fix: give system blocks the same field-level rebuild the non-system branch performs (or at
+minimum strip block `id`) so content produced by the `create_*_block` factories is accepted.
+
+### System Info
+
+System Information
+------------------
+> OS:  Darwin
+> OS Version:  Darwin Kernel Version 25.5.0: Tue Jun  9 22:28:24 PDT 2026; root:xnu-12377.121.10~1/RELEASE_ARM64_T6020
+> Python Version:  3.13.5 (main, Jul 23 2025, 00:18:28) [Clang 20.1.4 ]
+
+Package Information
+-------------------
+> langchain_core: 1.5.1
+> langchain: 1.3.11
+> langsmith: 0.9.7
+> langchain_anthropic: 1.5.2
+> langchain_google_genai: 4.2.6
+> langchain_mcp_adapters: 0.3.0
+> langchain_openai: 1.3.3
+> langchain_protocol: 0.0.18
+> langchain_text_splitters: 1.1.2
+> langchain_xai: 1.2.2
+> langgraph_sdk: 0.4.2
+
+Optional packages not installed
+-------------------------------
+> deepagents
+> deepagents-cli
+
+Other Dependencies
+------------------
+> aiohttp: 3.14.1
+> anthropic: 0.120.0
+> anyio: 4.8.0
+> cachetools: 7.1.4
+> distro: 1.9.0
+> filetype: 1.2.0
+> google-genai: 2.10.0
+> httpx: 0.28.1
+> jsonpatch: 1.33
+> langgraph: 1.2.7
+> mcp: 1.27.1
+> openai: 2.44.0
+> opentelemetry-api: 1.43.0
+> opentelemetry-exporter-otlp-proto-http: 1.43.0
+> opentelemetry-sdk: 1.43.0
+> orjson: 3.11.6
+> packaging: 24.2
+> pydantic: 2.13.4
+> pytest: 9.1.1
+> pyyaml: 6.0.3
+> requests: 2.33.0
+> requests-toolbelt: 1.0.0
+> rich: 14.2.0
+> sniffio: 1.3.1
+> tenacity: 8.5.0
+> tiktoken: 0.13.0
+> typing-extensions: 4.15.0
+> uuid-utils: 0.12.0
+> websockets: 15.0.1
+> wrapt: 1.16.0
+> xxhash: 3.5.0
+> zstandard: 0.23.0

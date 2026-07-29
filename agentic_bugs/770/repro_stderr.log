@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/770/repro.py", line 19, in <module>
+    LiteLLMModel(model_id="offline/fake", client=NoNetworkClient())(messages)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/770/codebase/src/smolagents/models.py", line 492, in __call__
+    return self.generate(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/770/codebase/src/smolagents/models.py", line 1141, in generate
+    completion_kwargs = self._prepare_completion_kwargs(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/770/codebase/src/smolagents/models.py", line 430, in _prepare_completion_kwargs
+    messages_as_dicts = get_clean_message_list(
+                        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/770/codebase/src/smolagents/models.py", line 291, in get_clean_message_list
+    role = message.role
+           ^^^^^^^^^^^^
+AttributeError: 'dict' object has no attribute 'role'

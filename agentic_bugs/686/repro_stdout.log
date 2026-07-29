@@ -1,0 +1,1 @@
+OBSERVED BUG: bind_tools raised KeyError: 'parameters' for advisor_20260301

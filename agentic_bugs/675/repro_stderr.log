@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/675/repro.py", line 51, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/675/repro.py", line 37, in main
+    adapter.propose_new_texts(
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/675/codebase/dspy/teleprompt/gepa/gepa_utils.py", line 148, in propose_new_texts
+    results[name] = InstructionProposalSignature.run(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/675/.venv/lib/python3.12/site-packages/gepa/proposer/reflective_mutation/base.py", line 48, in run
+    lm_out = lm(full_prompt).strip()
+             ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'dict' object has no attribute 'strip'

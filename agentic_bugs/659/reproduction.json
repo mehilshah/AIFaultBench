@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout restored and verified at d2f97191abc457954dff23ee1d9342516128ec01.",
+    "Installed langchain-openai==1.2.1, langchain-core==1.3.3, openai==2.34.0, pydantic==2.13.3, and httpx==0.28.1.",
+    "Final repro stdout: `OBSERVED ValidationError: reasoning + structured output parsed plain text as JSON`; stderr was empty. The runner exits 1 for the observed fault."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh, then fetched and checked out the pinned commit after the initial clone completed asynchronously.",
+    "Created .venv and installed requirements.txt.",
+    "Implemented a deterministic httpx MockTransport Responses API double and invoked ChatOpenAI.with_structured_output through the real parsing path.",
+    "Validated scripts/JSON and captured the final run in repro_stdout.log and repro_stderr.log."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

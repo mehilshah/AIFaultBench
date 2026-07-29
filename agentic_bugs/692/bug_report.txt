@@ -1,0 +1,269 @@
+# recovered-from-issue: https://github.com/langchain-ai/langgraph/issues/6655
+
+TITLE
+langgraph dev / Studio crash: get_graph() missing keyword-only arg is_for_execution
+
+BODY
+### Checked other resources
+
+- [x] This is a bug, not a usage question. For questions, please use the LangChain Forum (https://forum.langchain.com/).
+- [x] I added a clear and detailed title that summarizes the issue.
+- [x] I read what a minimal reproducible example is (https://stackoverflow.com/help/minimal-reproducible-example).
+- [x] I included a self-contained, minimal example that demonstrates the issue INCLUDING all the relevant imports. The code run AS IS to reproduce the issue.
+
+### Example Code
+
+```python
+"""LangGraph single-node graph template.
+
+Returns a predefined response. Replace logic and configuration as needed.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Any, Dict
+
+from langgraph.graph import StateGraph
+from langgraph.runtime import Runtime
+from typing_extensions import TypedDict
+
+
+class Context(TypedDict):
+    """Context parameters for the agent.
+
+    Set these when creating assistants OR when invoking the graph.
+    See: https://langchain-ai.github.io/langgraph/cloud/how-tos/configuration_cloud/
+    """
+
+    my_configurable_param: str
+
+
+@dataclass
+class State:
+    """Input state for the agent.
+
+    Defines the initial structure of incoming data.
+    See: https://langchain-ai.github.io/langgraph/concepts/low_level/#state
+    """
+
+    changeme: str = "example"
+
+
+async def call_model(state: State, runtime: Runtime[Context]) -> Dict[str, Any]:
+    """Process input and returns output.
+
+    Can use runtime context to alter behavior.
+    """
+    return {
+        "changeme": "output from call_model. "
+        f"Configured with {(runtime.context or {}).get('my_configurable_param')}"
+    }
+
+
+# Define the graph
+graph = (
+    StateGraph(State, context_schema=Context)
+    .add_node(call_model)
+    .add_edge("__start__", "call_model")
+    .compile(name="New Graph")
+)
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+2026-01-06T17:59:06.641667Z [error    ] POST /threads/a6818d01-b368-42aa-b7a6-e843cd90c616/history 500 3ms [langgraph_api.server] api_variant=local_dev langgraph_api_version=0.6.20 latency_ms=3 method=POST path=/threads/{thread_id}/history path_params={'thread_id': 'a6818d01-b368-42aa-b7a6-e843cd90c616'} proto=1.1 query_string= req_header={} request_id=fb7c6b3a-e828-4256-ae99-92bbcc5939e6 res_header={} route=/threads/{thread_id}/history status=500 thread_name=MainThread
+2026-01-06T17:59:06.642358Z [error    ] Exception in ASGI application
+ [uvicorn.error] api_variant=local_dev langgraph_api_version=0.6.20 thread_name=MainThread
+Traceback (most recent call last):
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jessicacardoso/.local/share/uv/python/cpython-3.12.11-macos-aarch64-none/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/langgraph_api/middleware/private_network.py", line 50, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/langgraph_api/middleware/http_logger.py", line 80, in __call__
+    raise exc
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/langgraph_api/middleware/http_logger.py", line 74, in __call__
+    await self.app(scope, inner_receive, inner_send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/langgraph_api/middleware/request_id.py", line 35, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/routing.py", line 462, in handle
+    await self.app(scope, receive, send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/langgraph_api/auth/middleware.py", line 49, in __call__
+    return await super().__call__(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/middleware/authentication.py", line 48, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/langgraph_api/route.py", line 158, in handle
+    return await super().handle(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/langgraph_api/route.py", line 53, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/langgraph_api/route.py", line 46, in app
+    response: ASGIApp = await func(request)
+                        ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/langgraph_runtime_inmem/retry.py", line 27, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/langgraph_api/api/threads.py", line 307, in get_thread_history_post
+    for c in await Threads.State.list(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jessicacardoso/Projects/langgraph-course/.venv/lib/python3.12/site-packages/langgraph_runtime_inmem/ops.py", line 1730, in list
+    async with get_graph(
+               ^^^^^^^^^^
+  File "/Users/jessicacardoso/.local/share/uv/python/cpython-3.12.11-macos-aarch64-none/lib/python3.12/contextlib.py", line 334, in helper
+    return _AsyncGeneratorContextManager(func, args, kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jessicacardoso/.local/share/uv/python/cpython-3.12.11-macos-aarch64-none/lib/python3.12/contextlib.py", line 105, in __init__
+    self.gen = func(*args, **kwds)
+               ^^^^^^^^^^^^^^^^^^^
+TypeError: get_graph() missing 1 required keyword-only argument: 'is_for_execution'
+```
+
+### Description
+
+### Description
+
+When running `langgraph dev` with the latest versions of `langgraph`,
+`langgraph-api`, and `langgraph-runtime-inmem`, the Studio crashes on any
+thread history or state inspection.
+
+### Expected behavior
+
+Studio should call `get_graph()` with the correct keyword-only arguments,
+or dependency versions should be aligned.
+
+### Actual behavior
+
+Studio calls `get_graph()` without `is_for_execution`, causing a runtime crash.
+
+
+### System Info
+
+System Information
+------------------
+> OS:  Darwin
+> OS Version:  Darwin Kernel Version 25.2.0: Tue Nov 18 21:08:48 PST 2025; root:xnu-12377.61.12~1/RELEASE_ARM64_T8132
+> Python Version:  3.12.11 (main, Aug 18 2025, 19:02:39) [Clang 20.1.4 ]
+
+Package Information
+-------------------
+> langchain_core: 1.2.6
+> langchain: 1.2.0
+> langchain_community: 0.4.1
+> langsmith: 0.6.0
+> langchain_chroma: 1.1.0
+> langchain_classic: 1.0.1
+> langchain_groq: 1.1.1
+> langchain_huggingface: 1.2.0
+> langchain_tavily: 0.2.16
+> langchain_text_splitters: 1.1.0
+> langgraph_api: 0.6.20
+> langgraph_cli: 0.4.11
+> langgraph_runtime_inmem: 0.21.0
+> langgraph_sdk: 0.3.1
+
+Optional packages not installed
+-------------------------------
+> langserve
+
+Other Dependencies
+------------------
+> aiohttp: 3.13.2
+> blockbuster: 1.5.26
+> chromadb: 1.4.0
+> click: 8.3.1
+> cloudpickle: 3.1.2
+> cryptography: 46.0.3
+> dataclasses-json: 0.6.7
+> groq: 0.37.1
+> grpcio: 1.76.0
+> grpcio-tools: 1.75.1
+> httpx: 0.28.1
+> httpx-sse: 0.4.3
+> huggingface-hub: 0.36.0
+> jsonpatch: 1.33
+> jsonschema-rs: 0.29.1
+> langgraph: 1.0.5
+> langgraph-checkpoint: 3.0.1
+> numpy: 2.4.0
+> opentelemetry-api: 1.39.1
+> opentelemetry-exporter-otlp-proto-http: 1.39.1
+> opentelemetry-sdk: 1.39.1
+> orjson: 3.11.5
+> packaging: 25.0
+> protobuf: 6.33.2
+> pydantic: 2.12.5
+> pydantic-settings: 2.12.0
+> pyjwt: 2.10.1
+> pytest: 9.0.2
+> python-dotenv: 1.2.1
+> pyyaml: 6.0.3
+> PyYAML: 6.0.3
+> requests: 2.32.5
+> requests-toolbelt: 1.0.0
+> rich: 14.2.0
+> sentence-transformers: 5.2.0
+> sqlalchemy: 2.0.45
+> SQLAlchemy: 2.0.45
+> sse-starlette: 2.1.3
+> starlette: 0.50.0
+> structlog: 25.5.0
+> tenacity: 9.1.2
+> tokenizers: 0.22.1
+> transformers: 4.57.3
+> truststore: 0.10.4
+> typing-extensions: 4.15.0
+> uuid-utils: 0.12.0
+> uvicorn: 0.40.0
+> watchfiles: 1.1.1
+> zstandard: 0.25.0

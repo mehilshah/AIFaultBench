@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited 1.",
+    "stdout: `BUG REPRODUCED: RuntimeError escaped failed sub-question`.",
+    "stderr ends with `RuntimeError: API rate limit exceeded` propagated from `_query_subq`."
+  ],
+  "steps": [
+    "Cloned and checked out `7d4436cac2fd0fe488c3330234abcca0310cbeae`.",
+    "Installed pinned dependencies and editable `llama-index-core==0.14.15` in `.venv`.",
+    "Ran the offline fake-query-engine reproduction and captured final logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

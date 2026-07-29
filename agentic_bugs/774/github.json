@@ -1,0 +1,45 @@
+{
+  "owner": "browser-use",
+  "repo": "browser-use",
+  "number": 4073,
+  "html_url": "https://github.com/browser-use/browser-use/issues/4073",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Browser Use doesn't works on Windows",
+  "author": "alexander-tempest",
+  "created_at": "2026-02-10T09:10:16Z",
+  "updated_at": "2026-03-01T17:00:22Z",
+  "closed_at": "2026-03-01T17:00:22Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 19.33,
+  "fix": {
+    "closing_commit": "cdcc58d966c3de71a6829ee7ccad546aa0a4e880",
+    "linked_prs": [],
+    "best_guess_fix_commit": "cdcc58d966c3de71a6829ee7ccad546aa0a4e880",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T14:44:36.456083+00:00",
+  "comments": [
+    {
+      "author": "Chase-Xuu",
+      "created_at": "2026-02-10T09:27:20Z",
+      "body": "I've identified and fixed this issue. PR incoming!\n\n**Root Cause:**\nThe default downloads path was hardcoded to use `/tmp` (line 435 in profile.py):\n```python\ndownloads_path = Path(f'/tmp/browser-use-downloads-{unique_id}')\n```\n\nOn Windows, `/tmp` doesn't exist as a standard path. When Python's `pathlib.Path` interprets `/tmp` on Windows, it becomes something like `\\tmp` under the current drive root, which typically doesn't exist and can't be created without admin privileges.\n\n**Fix:**\nReplaced the hardcoded `/tmp` with `tempfile.gettempdir()`, which returns the platform-appropriate temp directory:\n- **Linux/Mac:** `/tmp`\n- **Windows:** `C:\\Users\\<user>\\AppData\\Local\\Temp` (or equivalent)\n\nThis is consistent with how `user_data_dir` is already handled (using `tempfile.mkdtemp()`)."
+    }
+  ]
+}

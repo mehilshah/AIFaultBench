@@ -1,0 +1,137 @@
+# recovered-from-issue: https://github.com/modelcontextprotocol/python-sdk/issues/1708
+
+TITLE
+ClientSession for mcp sse_client throws httpx.ReadTimeout after session has been initialized in docker container
+
+BODY
+### Initial Checks
+
+- [x] I confirm that I'm using the latest version of MCP Python SDK
+- [x] I confirm that I searched for my issue in https://github.com/modelcontextprotocol/python-sdk/issues before opening this issue
+
+### Description
+
+We are implementing a FastAPI mcp client that uses an external sse server ```(http://localhost:9000/sse)```.  Form this code we created a dockerfile that runs into an httpx.ReadTimeout Exception
+Running the client from the docker image shows the following output:
+```
+      INFO   Started server process [276]
+      INFO   Waiting for application startup.
+🌀 Tâche d'initialisation MCP lancée en arrière-plan.
+🚀 Initialisation de la session MCP...
+      INFO   Application startup complete.
+SSE CLIENT passed
+ initialized – protocol version: meta=None protocolVersion='2024-11-05' capabilities=ServerCapabilities(experimental=None, logging=LoggingCapability(), prompts=PromptsCapability(listChanged=True), resources=ResourcesCapability(subscribe=False, listChanged=True), tools=ToolsCapability(listChanged=True), completions=CompletionsCapability()) serverInfo=Implementation(name='papylot-mcp-server', title=None, version='0.0.1', websiteUrl=None, icons=None) instructions=None
+✅ MCP session initialized.
+PING meta=None
+```
+After a couple of time a ```httpx.ReadTimeout``` will be shown.
+
+Full exception:
+```
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/site-packages/mcp/client/sse.py", line 73, in sse_reader
+    async for sse in event_source.aiter_sse():
+  File "/usr/local/lib/python3.12/site-packages/httpx_sse/_api.py", line 39, in aiter_sse
+    async for line in self._response.aiter_lines():
+  File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1031, in aiter_lines
+    async for text in self.aiter_text():
+  File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1018, in aiter_text
+    async for byte_content in self.aiter_bytes():
+  File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+    async for raw_bytes in self.aiter_raw():
+  File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+    async for raw_stream_bytes in self.stream:
+  File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+    async for chunk in self._stream:
+  File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 270, in __aiter__
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+```
+
+
+### Example Code
+
+```Python
+import os
+import re
+import json
+import asyncio
+import httpx
+from fastapi import FastAPI, Query
+from dotenv import load_dotenv
+from mcp import ClientSession
+from pydantic_ai import Agent
+# from groq import Groq
+from fastmcp import FastMCP
+from contextlib import asynccontextmanager
+from mcp.client.sse import sse_client
+
+async def init_mcp_background():
+      async with  sse_client("http://localhost:9000/sse") as (read, write):
+            async with ClientSession(read, write) as sess:
+                session = sess
+                await session.initialize()
+                print("✅ MCP session initialized.")
+
+                ping = await session.send_ping()
+                print("ping",ping)
+                
+                #print("info",info)
+                tools = await session.list_tools()
+                print("Available TOOLS", tools.tools)
+
+                # 🔁 Boucle qui garde la connexion active
+                while True:
+                    await asyncio.sleep(10) 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    asyncio.create_task(init_mcp_background())
+    print("🌀 Tâche d'initialisation MCP lancée en arrière-plan.")
+    yield
+
+app = FastAPI(lifespan=lifespan)
+    @app.get("/query")
+async def get_response(question: str = Query(..., description="La question de l'utilisateur")):
+    
+    return{"question", question}
+
+
+with the dockerfile for image creation:
+
+# syntax=docker/dockerfile:1
+## DOCKERFILE to containerize BACKEND ##
+FROM python:3.12-slim
+WORKDIR /app
+# copy requirements
+COPY ./requirements.txt /app/requirements.txt
+# install requirements
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
+# copy source code
+COPY .  /app
+# where are we
+RUN pwd
+# what do we have
+RUN ls -lR
+# run application
+CMD ["fastapi", "run", "API/api.py", "--proxy-headers", "--port", "8011"]
+```
+
+### Python & MCP Python SDK
+
+```Text
+For the dockerfile we are using: :3.12-slim
+and the requirement.txt is
+
+fastmcp==2.12.4
+mcp==1.16.0
+pydantic_ai==1.0.14
+python-dotenv==1.1.1
+fastapi-mcp==0.3.4
+fastapi[standard]>=0.115.12
+```

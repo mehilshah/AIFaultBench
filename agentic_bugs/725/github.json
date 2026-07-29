@@ -1,0 +1,39 @@
+{
+  "owner": "crewAIInc",
+  "repo": "crewAI",
+  "number": 5544,
+  "html_url": "https://github.com/crewAIInc/crewAI/issues/5544",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Checkpointing + guardrail retry incompatible with Pydantic outputs in Flow",
+  "author": "axelgbl",
+  "created_at": "2026-04-20T09:37:52Z",
+  "updated_at": "2026-04-20T17:59:44Z",
+  "closed_at": "2026-04-20T17:59:44Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.35,
+  "fix": {
+    "closing_commit": "01b84379409574e4bd8f292bd693bfd50375d77b",
+    "linked_prs": [],
+    "best_guess_fix_commit": "01b84379409574e4bd8f292bd693bfd50375d77b",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:06:32.251681+00:00",
+  "comments": []
+}

@@ -1,0 +1,151 @@
+# recovered-from-issue: https://github.com/agno-agi/agno/issues/8235
+
+TITLE
+[Bug] `AttributeError: 'TeamRunOutput' object has no attribute 'event'` in team SSE streaming
+
+BODY
+### Description
+
+When a `Team` streams a response through `AgentOS`, the SSE streaming crashes with `AttributeError` because `format_sse_event` accesses `event.event` but receives `TeamRunOutput` objects that have `.events` (plural) instead of `.event` (singular).
+
+## Root Cause
+
+Two-part type mismatch between what the team stream yields and what the SSE formatter expects.
+
+### Part 1: `format_sse_event` assumes `event.event` (singular string)
+
+```python
+# agno/os/utils.py:180-204
+def format_sse_event(event: Union[RunOutputEvent, TeamRunOutputEvent, WorkflowRunOutputEvent]) -> str:
+    event_type = event.event or "message"  # ← .event: str, exists on event objects
+    clean_json = event.to_json(separators=(",", ":"), indent=None)
+    return f"event: {event_type}\ndata: {clean_json}\n\n"
+```
+
+`TeamRunOutputEvent` objects (via `BaseTeamRunEvent`) have `.event: str` — e.g. `"TeamRunContent"`, `"TeamRunCompleted"`. But `TeamRunOutput` accumulator objects have `.events: Optional[List[...]]` — a list of past events, no `.event` string.
+
+### Part 2: Team router passes stream chunks to `format_sse_event` without filtering
+
+```python
+# agno/os/routers/teams/router.py:99-112
+run_response = team.arun(input=message, stream=True, stream_events=True, ...)
+async for run_response_chunk in run_response:
+    yield format_sse_event(run_response_chunk)  # ← no isinstance check
+```
+
+The type overload for `Team.arun(stream=True)` declares `AsyncIterator[Union[RunOutputEvent, TeamRunOutputEvent]]` — only individual event objects. But at runtime, internal delegation paths yield `TeamRunOutput` / `RunOutput` accumulator objects into the parent stream. The router trusts the type annotation and passes every chunk to `format_sse_event` unconditionally.
+
+### Why `TeamRunOutput` leaks into the stream
+
+When the team coordinator delegates to member agents (in any `TeamMode`), internal code paths like `_aroute_requirements_to_members_stream` call member agents with `yield_run_output=True`. These member responses can include `TeamRunOutput` (sub-team) or `RunOutput` (agent) objects. While some internal paths filter these out (e.g. `_arun_background_stream` at `_run.py:3340` does `if isinstance(event, TeamRunOutput): continue`), the regular `team_response_streamer` does not.
+
+### The background streamer already has the correct fix
+
+```python
+# agno/team/_run.py:3340 (inside _arun_background_stream)
+async for event in _arun_stream(...):
+    if isinstance(event, TeamRunOutput):  # ← filters out accumulator objects
+        continue
+    sse_data = format_sse_event_with_index(event, ...)
+    await sse_queue.put(sse_data)
+```
+
+This pattern should also be applied in the router's `team_response_streamer`.
+
+## Affected Code
+
+| File | Line | Issue |
+|---|---|---|
+| `agno/os/utils.py` | `format_sse_event` (L199) | Accesses `event.event` without handling `TeamRunOutput`/`RunOutput` |
+| `agno/os/routers/teams/router.py` | `team_response_streamer` (L112) | No `isinstance` check before calling `format_sse_event` |
+| `agno/os/routers/teams/router.py` | `team_continue_response_streamer` (L422) | Same — no `isinstance` check |
+
+### Steps to Reproduce
+
+1. Create a `Team` with any mode (`coordinate`, `route`, `tasks`) and member agents
+2. Stream via the AgentOS REST endpoint (triggers `team_response_streamer`)
+3. The coordinator delegates to a member agent
+4. `AttributeError` on the SSE stream
+
+### Agent Configuration (if applicable)
+
+_No response_
+
+### Expected Behavior
+
+SSE stream completes without errors. When the team coordinator delegates to member agents, only individual `TeamRunOutputEvent` / `RunOutputEvent` objects are yielded into the SSE stream. `TeamRunOutput` / `RunOutput` accumulator objects (which represent the final aggregated result, not stream events) are filtered out before reaching `format_sse_event`.
+
+
+### Actual Behavior
+
+```
+Traceback (most recent call last):
+  File "agno/os/routers/teams/router.py", line 112, in team_response_streamer
+    yield format_sse_event(run_response_chunk)
+  File "agno/os/utils.py", line 199, in format_sse_event
+    event_type = event.event or "message"
+                 ^^^^^^^^^^^
+AttributeError: 'TeamRunOutput' object has no attribute 'event'. Did you mean: 'events'?
+```
+
+
+### Screenshots or Logs (if applicable)
+
+_No response_
+
+### Environment
+
+```markdown
+agno 2.5.10, 2.6.9 (both affected)
+```
+
+### Possible Solutions (optional)
+
+### Option A — Patch `format_sse_event` to handle `TeamRunOutput`/`RunOutput` gracefully
+
+Minimal change, fixes all call sites at once:
+
+```python
+def format_sse_event(event):
+    try:
+        event_type = event.event or "message"
+    except AttributeError:
+        event_type = "message"
+    clean_json = event.to_json(separators=(",", ":"), indent=None)
+    return f"event: {event_type}\ndata: {clean_json}\n\n"
+```
+
+**Downside**: serializes `TeamRunOutput` as a pseudo SSE event — semantically wrong (client expects individual events, not an accumulator dump), and can produce very large SSE frames.
+
+### Option B — Filter `TeamRunOutput`/`RunOutput` in the router before `format_sse_event`
+
+Semantically correct, matches the existing pattern in `_arun_background_stream`:
+
+```python
+from agno.run.agent import RunOutput
+from agno.run.team import TeamRunOutput
+
+async def team_response_streamer(team, message, ...):
+    run_response = team.arun(input=message, stream=True, stream_events=True, ...)
+    async for run_response_chunk in run_response:
+        if isinstance(run_response_chunk, (TeamRunOutput, RunOutput)):
+            continue  # Skip accumulator objects — not SSE events
+        yield format_sse_event(run_response_chunk)
+```
+
+**Downside**: requires patching multiple router functions (`team_response_streamer`, `team_continue_response_streamer`, etc. — 6 call sites).
+
+### Recommended: Option B
+
+Option B is semantically correct and matches the proven pattern already used in `_arun_background_stream`. The `try/except` in Option A hides the real problem and sends meaningless data to the client.
+
+## Related Issues
+
+- agno-agi/agno#6443 — RemoteAgent as Team member causes error
+- agno-agi/agno#6446 — Fix: handle RunOutput objects in format_sse_event (closed/abandoned)
+- agno-agi/agno#6206 — RemoteTeam cannot be used as team member
+
+
+### Additional Context
+
+_No response_

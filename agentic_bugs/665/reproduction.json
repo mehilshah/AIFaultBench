@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`repro_stdout.log`: `OBSERVED BUG: function.arguments is dict: {'agent_name': 'worker'}`",
+    "`run_repro.sh` exited 1; stderr ends with `AssertionError: OpenAI Chat Completions requires function.arguments to be a JSON string`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; the full repository clone was impractically large, so used released issue-era packages `llama-index-core==0.14.8` and `llama-index-llms-openai==0.7.5`.",
+    "Created a dict-valued `ToolCallBlock` and converted it offline with `to_openai_message_dict`.",
+    "Ran `bash run_repro.sh` and captured the final stdout/stderr logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

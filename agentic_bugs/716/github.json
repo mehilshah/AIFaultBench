@@ -1,0 +1,45 @@
+{
+  "owner": "SWE-agent",
+  "repo": "SWE-agent",
+  "number": 1078,
+  "html_url": "https://github.com/SWE-agent/SWE-agent/issues/1078",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Open PR tool creates a token limit exceeded for PR body issue",
+  "author": "anjalirg-platflow",
+  "created_at": "2025-04-21T09:45:04Z",
+  "updated_at": "2025-05-04T17:01:36Z",
+  "closed_at": "2025-05-04T17:01:36Z",
+  "labels": [
+    "\ud83d\udc1b bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 13.3,
+  "fix": {
+    "closing_commit": "f7d5f26a2d0c7fa171a82e4b01e7f8efaea42b53",
+    "linked_prs": [],
+    "best_guess_fix_commit": "f7d5f26a2d0c7fa171a82e4b01e7f8efaea42b53",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:06:17.198102+00:00",
+  "comments": [
+    {
+      "author": "klieret",
+      "created_at": "2025-04-23T09:24:04Z",
+      "body": "Thanks for reporting this. Let me simply truncate the trajectory that we include in the PR body to some 50k characters"
+    }
+  ]
+}

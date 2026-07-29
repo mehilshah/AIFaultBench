@@ -1,0 +1,12 @@
+{
+  "bug_id": "738",
+  "bug_dir": "738",
+  "issue_url": "https://github.com/Arize-ai/phoenix/issues/13934",
+  "commit_hash": "7afa18317c18142d7eb772682bc9369b10cf0e2e",
+  "library_name": "phoenix",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "Arize-ai/phoenix@7afa18317c18142d7eb772682bc9369b10cf0e2e",
+  "codebase_present": "false",
+  "standardized_dir": "../738"
+}

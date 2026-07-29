@@ -1,0 +1,79 @@
+# recovered-from-issue: https://github.com/modelcontextprotocol/python-sdk/issues/1967
+
+TITLE
+ClosedResourceError During MCP Stateless Server Shutdown When Sending Log Messages
+
+BODY
+### Initial Checks
+
+- [x] I confirm that I'm using the latest version of MCP Python SDK
+- [x] I confirm that I searched for my issue in https://github.com/modelcontextprotocol/python-sdk/issues before opening this issue
+
+### Description
+
+I'm seeing occasional errors from our MCP server, which I think are a race condition during shutdown. 
+
+I think this is a similar but distinct issue to the race condition in #1190 and #1384 as this is during `send_log_message`
+
+I haven't been able to get a consistent reproduce yet, will update when I can.
+
+## Stack Trace
+
+```python
++ Exception Group Traceback (most recent call last):
+  |   File "/app/.venv/lib/python3.13/site-packages/mcp/server/streamable_http_manager.py", line 180, in run_stateless_server
+  |     await self.app.run(
+  |     ...<4 lines>...
+  |     )
+  |   File "/app/.venv/lib/python3.13/site-packages/fastmcp/server/low_level.py", line 202, in run
+  |     async with AsyncExitStack() as stack:
+  |                ~~~~~~~~~~~~~~^^
+  |   File "/usr/local/lib/python3.13/contextlib.py", line 768, in __aexit__
+  |     raise exc
+  |   File "/usr/local/lib/python3.13/contextlib.py", line 751, in __aexit__
+  |     cb_suppress = await cb(*exc_details)
+  |                   ^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/app/.venv/lib/python3.13/site-packages/mcp/shared/session.py", line 238, in __aexit__
+  |     return await self._task_group.__aexit__(exc_type, exc_val, exc_tb)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/app/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 783, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Exception Group Traceback (most recent call last):
+    |   File "/app/.venv/lib/python3.13/site-packages/fastmcp/server/low_level.py", line 214, in run
+    |     async with anyio.create_task_group() as tg:
+    |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+    |   File "/app/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 783, in __aexit__
+    |     raise BaseExceptionGroup(
+    |         "unhandled errors in a TaskGroup", self._exceptions
+    |     ) from None
+    | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+    +-+---------------- 1 ----------------
+      | Traceback (most recent call last):
+      |   File "/app/.venv/lib/python3.13/site-packages/mcp/server/lowlevel/server.py", line 694, in _handle_message
+      |     await session.send_log_message(
+      |     ...<3 lines>...
+      |     )
+      |   File "/app/.venv/lib/python3.13/site-packages/mcp/server/session.py", line 213, in send_log_message
+      |     await self.send_notification(
+      |     ...<10 lines>...
+      |     )
+      |   File "/app/.venv/lib/python3.13/site-packages/mcp/shared/session.py", line 335, in send_notification
+      |     await self._write_stream.send(session_message)
+      |   File "/app/.venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 249, in send
+      |     self.send_nowait(item)
+      |     ~~~~~~~~~~~~~~~~^^^^^^
+      |   File "/app/.venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 218, in send_nowait
+      |     raise ClosedResourceError
+      | anyio.ClosedResourceError
+      +------------------------------------
+```
+
+### Python & MCP Python SDK
+
+**MCP SDK Version**: 1.25.0
+via **fastmcp Version**: 2.14.4
+**Python Version**: 3.13.5

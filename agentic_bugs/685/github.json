@@ -1,0 +1,52 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langchain",
+  "number": 38717,
+  "html_url": "https://github.com/langchain-ai/langchain/issues/38717",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "PIIMiddleware: PIIMatch not exported from public package, and docs use wrong field names for custom detectors",
+  "author": "zzbazzzbaz",
+  "created_at": "2026-07-08T13:32:32Z",
+  "updated_at": "2026-07-08T14:19:06Z",
+  "closed_at": "2026-07-08T14:19:06Z",
+  "labels": [
+    "bug",
+    "langchain",
+    "external"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:05:26.191646+00:00",
+  "comments": [
+    {
+      "author": "gitbalaji",
+      "created_at": "2026-07-08T14:00:08Z",
+      "body": "Hi, I'd like to work on this. Could a maintainer please assign it to me?"
+    },
+    {
+      "author": "zzbazzzbaz",
+      "created_at": "2026-07-08T14:19:05Z",
+      "body": "Closing as duplicate of #38718 (same report submitted twice within seconds). Keeping #38718 open as the canonical issue.\n\n@gitbalaji noted interest in working on this \u2014 please re-post your interest on #38718 if you'd still like to take it."
+    }
+  ]
+}

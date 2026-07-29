@@ -1,0 +1,57 @@
+# recovered-from-issue: https://github.com/SWE-agent/SWE-agent/issues/1012
+
+TITLE
+UnicodeEncodeError in Python Logging: Handling Emojis with cp1252 Encoding Issue
+
+BODY
+I'm encountering a `UnicodeEncodeError` when logging messages containing emojis. The error occurs when attempting to encode characters like `\U0001f916` (🤖) using the `cp1252` encoding, which doesn't support these characters. This happens in the logging system while writing to the output stream.
+
+I've tested this with both OpenAI and OpenRouter models, but the issue persists. It seems to be related to how Python's logging module interacts with the system's encoding settings.
+
+To resolve this, I set the encoding to UTF-8 and ran the following command:
+
+```
+chcp 65001
+set PYTHONIOENCODING=utf-8
+python -m sweagent run --config=config/openrouter.yaml
+```
+
+However, I'm still encountering the same error.
+
+Has anyone else experienced this? Possible solutions might involve forcing UTF-8 encoding globally or modifying the logging handler.
+
+**Error message:**
+```
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Path\To\Anaconda3\envs\swe-agent\Lib\logging\__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+  File "C:\Path\To\Anaconda3\envs\swe-agent\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f916' in position 46: character maps to <undefined>
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Path\To\Project\SWE-agent\sweagent\__main__.py", line 4, in <module>
+    main()
+  File "C:\Path\To\Project\SWE-agent\sweagent\run\run.py", line 87, in main
+    run_single_main(remaining_args)
+  File "C:\Path\To\Project\SWE-agent\sweagent\run\run_single.py", line 213, in run_from_cli 
+    run_from_config(BasicCLI(RunSingleConfig, help_text=help_text).get_config(args))  # type: ignore
+  File "C:\Path\To\Project\SWE-agent\sweagent\run\run_single.py", line 203, in run_from_config
+    RunSingle.from_config(config).run()
+  File "C:\Path\To\Project\SWE-agent\sweagent\run\run_single.py", line 190, in run
+    result = self.agent.run(
+  File "C:\Path\To\Project\SWE-agent\sweagent\agent\agents.py", line 1207, in run
+    self.setup(env=env, problem_statement=problem_statement, output_dir=output_dir)
+  File "C:\Path\To\Project\SWE-agent\sweagent\agent\agents.py", line 553, in setup
+    self.add_instance_template_to_history(state=self.tools.get_state(self._env))
+  File "C:\Path\To\Project\SWE-agent\sweagent\agent\agents.py", line 708, in add_instance_template_to_history
+    self._add_templated_messages_to_history(templates, **state)  # type: ignore
+  File "C:\Path\To\Project\SWE-agent\sweagent\agent\agents.py", line 649, in _add_templated_messages_to_history
+    self.logger.info(f"🤖 MODEL INPUT\n{message}", extra={"highlighter": None})
+Message: '🤖 MODEL INPUT\n'
+Arguments: ()
+```
+
+Let me know if anyone has suggestions and thanks for your help!

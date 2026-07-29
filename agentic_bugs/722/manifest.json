@@ -1,0 +1,12 @@
+{
+  "bug_id": "722",
+  "bug_dir": "722",
+  "issue_url": "https://github.com/modelcontextprotocol/python-sdk/issues/2704",
+  "commit_hash": "3eb579948a4719d606d2adbd1f3f69371c9c0f48",
+  "library_name": "python-sdk",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "modelcontextprotocol/python-sdk@3eb579948a4719d606d2adbd1f3f69371c9c0f48",
+  "codebase_present": "false",
+  "standardized_dir": "../722"
+}

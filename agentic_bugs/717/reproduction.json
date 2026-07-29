@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "`repro_stdout.log` contains `OBSERVED BUG: UnicodeEncodeError for U+1F916 with cp1252 FileHandler`.",
+    "`repro_stderr.log` shows `UnicodeEncodeError: 'charmap' codec can't encode character '\\U0001f916'` from `encodings/cp1252.py`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and restored the checkout to `ec75580fe90f198bce2730e3642f33f5874f3357`.",
+    "Created `.venv` and installed pinned minimal dependencies.",
+    "Ran the offline reproduction against the pinned `add_file_handler` helper with a cp1252 default file-handler seam.",
+    "Captured the final non-zero run in the required log files."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

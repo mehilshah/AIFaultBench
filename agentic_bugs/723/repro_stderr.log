@@ -1,0 +1,34 @@
+Error in sse_reader
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/723/codebase/src/mcp/client/sse.py", line 73, in sse_reader
+    async for sse in event_source.aiter_sse():  # pragma: no branch
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/723/.venv/lib/python3.12/site-packages/httpx_sse/_api.py", line 42, in aiter_sse
+    async for line in lines:
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/723/.venv/lib/python3.12/site-packages/httpx_sse/_api.py", line 80, in _aiter_sse_lines
+    async for text in response.aiter_text():
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/723/.venv/lib/python3.12/site-packages/httpx/_models.py", line 1018, in aiter_text
+    async for byte_content in self.aiter_bytes():
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/723/.venv/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+    async for raw_bytes in self.aiter_raw():
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/723/.venv/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+    async for raw_stream_bytes in self.stream:
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/723/.venv/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+    async for chunk in self._stream:
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/723/repro.py", line 41, in __aiter__
+    raise httpx.ReadTimeout("scripted silent SSE stream")
+httpx.ReadTimeout: scripted silent SSE stream
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/723/repro.py", line 103, in <module>
+    asyncio.run(main())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/723/repro.py", line 99, in main
+    raise AssertionError("buggy SSE transport forwards httpx.ReadTimeout after initialization")
+AssertionError: buggy SSE transport forwards httpx.ReadTimeout after initialization

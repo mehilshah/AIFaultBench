@@ -1,0 +1,62 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langchain",
+  "number": 39100,
+  "html_url": "https://github.com/langchain-ai/langchain/issues/39100",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "ChatAnthropic: SystemMessage v1 content blocks are forwarded verbatim, so create_text_block()'s id causes 400 \"system.0.id: Extra inputs are not permitted\"",
+  "author": "jmbledsoe",
+  "created_at": "2026-07-28T02:29:34Z",
+  "updated_at": "2026-07-28T13:34:06Z",
+  "closed_at": "2026-07-28T13:34:06Z",
+  "labels": [
+    "bug",
+    "anthropic",
+    "external"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.46,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:37:59.591434+00:00",
+  "comments": [
+    {
+      "author": "jackjin1997",
+      "created_at": "2026-07-28T02:32:17Z",
+      "body": "I checked this against current `master`: `_format_messages` still passes dict-valued system blocks through unchanged, while text blocks for other roles are narrowed to Anthropic-supported fields. That accounts for both `invoke` and `count_tokens`, since both reuse the formatted system payload. A focused fix can normalize system text blocks while preserving supported fields such as `cache_control` and `citations`, with regressions for `_format_messages` and the token-count request. Could you assign this to me? I can take it on."
+    },
+    {
+      "author": "Mohith26",
+      "created_at": "2026-07-28T04:46:42Z",
+      "body": "I'd like to take this one. Approach: `_format_messages` already narrows human/assistant dict text blocks to the fields Anthropic accepts (`type`, `text`, `cache_control`, `citations`, plus dropping null citation `file_id`), but the system-message branch forwards blocks verbatim, which is how `create_text_block()`'s `lc_` id reaches the API. I'd extract that existing narrowing into a `_format_text_block()` helper and apply it to system text blocks, leaving non-text system blocks untouched. This also fixes `get_num_tokens_from_messages`, which goes through the same path.\n\nImplementation with unit tests (id stripped for `create_text_block`-built system messages, `cache_control` preserved; 241 unit tests passing, ruff clean) is ready on my fork: https://github.com/Mohith26/langchain/tree/fix/anthropic-system-block-extra-fields. Happy to open the PR once assigned."
+    },
+    {
+      "author": "Solaris-star",
+      "created_at": "2026-07-28T08:22:46Z",
+      "body": "I dug into this and have a fix ready (was in #39103 before the auto-close).\n\n**Root cause:** In `_format_messages` (chat_models.py), a `SystemMessage` built from `content_blocks` forwards each dict block verbatim:\n\n```python\nsystem = [\n    (block if isinstance(block, dict) else {\"type\": \"text\", \"text\": block})\n    for block in message.content\n]\n```\n\n`create_text_block()` mints an `id` (e.g. `\"lc_<uuid4>\"`) on the block, and that `id` reaches Anthropic's `system` parameter, which rejects it with `system.0.id: Extra inputs are not permitted`.\n\n**Proposed fix:** Allowlist the keys Anthropic accepts on a system text block \u2014 `type`, `text`, `cache_control`, `citations` \u2014 which is exactly the allowlist already used for text blocks in regular message content (chat_models.py:600-617). This drops the `id` while preserving `cache_control` and `citations`.\n\nI have this implemented with two unit tests (id stripped from a `create_text_block()` system block; `cache_control` preserved), both failing on the unfixed code and passing with the fix, and the full `test_chat_models.py` suite (148 tests) green. Happy to reopen the PR once assigned. Would this approach be acceptable?"
+    },
+    {
+      "author": "eslam-ahmed43",
+      "created_at": "2026-07-28T12:59:48Z",
+      "body": "Hi, I would like to work on this issue if it is still available. I will look into it and open a PR when ready."
+    }
+  ]
+}

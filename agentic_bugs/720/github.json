@@ -1,0 +1,50 @@
+{
+  "owner": "browser-use",
+  "repo": "browser-use",
+  "number": 4510,
+  "html_url": "https://github.com/browser-use/browser-use/issues/4510",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Bug: `action` field returned as JSON string instead of list when done-text contains newlines (Claude Sonnet)",
+  "author": "JNassar77",
+  "created_at": "2026-03-24T20:20:37Z",
+  "updated_at": "2026-03-25T23:20:52Z",
+  "closed_at": "2026-03-25T23:20:52Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.13,
+  "fix": {
+    "closing_commit": "098528c608adff5c5f228019cefcdf85d01f7b1a",
+    "linked_prs": [],
+    "best_guess_fix_commit": "098528c608adff5c5f228019cefcdf85d01f7b1a",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:06:24.028109+00:00",
+  "comments": [
+    {
+      "author": "JNassar77",
+      "created_at": "2026-03-24T20:22:26Z",
+      "body": "We found a workaround that fixes the issue completely.\n\nRoot cause: The action string contains literal newline characters (chr(10)) \ninside the JSON string value. These are not valid in JSON strings, so \njson.loads() fails with \"Expecting ',' delimiter\".\n\nFix applied in browser_use/llm/anthropic/chat.py, before model_validate():\n\n    if isinstance(_input, dict) and 'action' in _input and isinstance(_input['action'], str):\n        action_str = _input['action']\n        _parsed = False\n        # Stage 1: standard json.loads\n        try:\n            _input['action'] = json.loads(action_str)\n            _parsed = True\n        except (json.JSONDecodeError, TypeError):\n            pass\n        # Stage 2: escape literal control chars\n        if not _parsed:\n            try:\n                _BS = chr(92)\n                cleaned = action_str\n                cleaned = cleaned.replace(chr(10), _BS + 'n')\n                cleaned = cleaned.replace(chr(13), _BS + 'r')\n                cleaned = cleaned.replace(chr(9),  _BS + 't')\n                _input['action'] = json.loads(cleaned)\n                _parsed = True\n            except (json.JSONDecodeError, TypeError):\n                pass\n        # Stage 3: synthetic done action as last resort\n        if not _parsed:\n            import re as _re\n            _m = _re.search(r'\"done\"\\s*:\\s*\\{\\s*\"text\"\\s*:\\s*\"(.+)', action_str, _re.DOTALL)\n            raw_text = _m.group(1).rstrip('}' + chr(34) + ' ' + chr(9) + chr(10) + chr(13)) if _m else action_str\n            _input['action'] = [{'done': {'text': raw_text}}]\n\nAfter this fix: agent completes successfully, done action returns full result.\n"
+    },
+    {
+      "author": "majiayu000",
+      "created_at": "2026-03-25T16:35:33Z",
+      "body": "Hi, I've been looking into this and traced the root cause.\n\n**Proposed approach:** In browser_use/llm/anthropic/chat.py, before model_validate() is called, check if _input is a dict with an 'action' key whose value is a str. If so, sanitize the string by replacing literal newlines (\\n, \\r, \\t) with their escaped equivalents before passing to json.loads(). This prevents the 'Expecting , delimiter' parse failure when Claude Sonnet includes newlines in done-text within the action JSON string.\n\nI'll open a draft PR shortly. Happy to adjust based on your preference."
+    }
+  ]
+}

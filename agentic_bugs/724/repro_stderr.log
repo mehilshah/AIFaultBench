@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/724/repro.py", line 35, in <module>
+    runtime_state.model_dump(mode="json")
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/724/.venv/lib/python3.12/site-packages/pydantic/main.py", line 463, in model_dump
+    return self.__pydantic_serializer__.to_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.PydanticSerializationError: Unable to serialize unknown type: <class 'function'>

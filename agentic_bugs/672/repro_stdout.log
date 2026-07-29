@@ -1,0 +1,1 @@
+BUG REPRODUCED: Workflow.get_session returned None for an async stored session

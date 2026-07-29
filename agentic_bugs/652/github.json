@@ -1,0 +1,60 @@
+{
+  "owner": "stanfordnlp",
+  "repo": "dspy",
+  "number": 8965,
+  "html_url": "https://github.com/stanfordnlp/dspy/issues/8965",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug] `TypeError` when using `track_usage()` with Anthropic models that return `CacheCreation` objects",
+  "author": "enigma",
+  "created_at": "2025-10-24T09:11:08Z",
+  "updated_at": "2025-10-27T19:58:33Z",
+  "closed_at": "2025-10-27T19:58:33Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 1,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 1
+  },
+  "resolution_days": 3.45,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:37:49.246631+00:00",
+  "comments": [
+    {
+      "author": "TomeHirata",
+      "created_at": "2025-10-27T01:22:07Z",
+      "body": "Thanks you for the report! Will look into this."
+    },
+    {
+      "author": "TomeHirata",
+      "created_at": "2025-10-27T10:56:51Z",
+      "body": "@enigma Can you try this branch to see if the error is fixed?\nhttps://github.com/stanfordnlp/dspy/pull/8978"
+    },
+    {
+      "author": "enigma",
+      "created_at": "2025-10-27T11:17:36Z",
+      "body": "Thank you @TomeHirata - that fixed the issue:\n\n```bash\n$ gh pr checkout 8978  \n$ DSPY_CACHEDIR=./ignored/dspycache_$(date +%s).cache uv run --prerelease=allow repro_dspy_cache_bug.py                                  \n   Total usage: {'claude-sonnet-4-5-20250929': {'completion_tokens': 46, 'prompt_tokens': 332, 'total_tokens': 378, 'completion_tokens_details': 0, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0, 'text_tokens': 0, 'image_tokens': 0, 'cache_creation_tokens': 0, 'cache_creation_token_details': {'ephemeral_5m_input_tokens': 0, 'ephemeral_1h_input_tokens': 0}}, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}}\n\n============================================================\n\u2713 SUCCESS: Bug is fixed! The script completed without errors.\n```"
+    },
+    {
+      "author": "chenmoneygithub",
+      "created_at": "2025-10-27T19:58:33Z",
+      "body": "resolved by #8978 "
+    }
+  ]
+}

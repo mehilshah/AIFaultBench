@@ -1,0 +1,12 @@
+{
+  "bug_id": "666",
+  "bug_dir": "666",
+  "issue_url": "https://github.com/huggingface/smolagents/issues/2073",
+  "commit_hash": "5c684c18df01895832ed0e0caecb6896f72890da",
+  "library_name": "smolagents",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "huggingface/smolagents@5c684c18df01895832ed0e0caecb6896f72890da",
+  "codebase_present": "false",
+  "standardized_dir": "../666"
+}

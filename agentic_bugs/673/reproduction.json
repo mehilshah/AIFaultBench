@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout: 1a32f1651b0427ed8c70aa6123a5a93610d8c3d0.",
+    "Final stdout: `OBSERVED: TeamRunOutput reached the SSE formatter and triggered AttributeError`.",
+    "Final stderr contains `AttributeError: 'TeamRunOutput' object has no attribute 'event'. Did you mean: 'events'?` at `agno/os/utils.py:199`, called from `team_response_streamer`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and completed the pinned checkout.",
+    "Created `.venv`, installed pinned dependencies, and installed the local agno package editable.",
+    "Ran the offline stubbed Team SSE stream through `bash run_repro.sh`; its expected bug verdict exits 1 and logs were captured.",
+    "Validated all required files, executable bits, JSON, and checkout revision."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

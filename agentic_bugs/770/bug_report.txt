@@ -1,0 +1,106 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/1565
+
+TITLE
+BUG: Unable to get example code working
+
+BODY
+**Problem**
+Walking through the tutorial and unable to get the sample code working for both the TransformersModel and LiteLLM. I'm using version 1.20.0 and python 3.12. I am able to use Transformer models and LiteLLM independently. It seems I'm not formatting my input to the Smolagents model correctly but can't seem to finding anywhere in the document what the format should be
+
+
+LiteLLM SmolAgent example
+```python
+from smolagents import LiteLLMModel
+
+messages = [
+  {"role": "user", "content": [{"type": "text", "text": "Hello, how are you?"}]}
+]
+
+model = LiteLLMModel(model_id="gemini/gemini-2.5-flash")
+print(model(messages))
+```
+
+**Actual behavior and error logs**
+```shell
+AttributeError                            Traceback (most recent call last)
+Cell In[20], line 10
+      3 messages = [
+      4   {"role": "user", "content": [{"type": "text", "text": "Hello, how are you?"}]}
+      5 ]
+      7 model = LiteLLMModel(
+      8     model_id="gemini/gemini-2.5-flash",
+      9 requests_per_minute=60)
+---> 10 print(model(messages))
+
+File /opt/anaconda3/envs/agents/lib/python3.12/site-packages/smolagents/models.py:492, in Model.__call__(self, *args, **kwargs)
+    491 def __call__(self, *args, **kwargs):
+--> 492     return self.generate(*args, **kwargs)
+
+File /opt/anaconda3/envs/agents/lib/python3.12/site-packages/smolagents/models.py:1141, in LiteLLMModel.generate(self, messages, stop_sequences, response_format, tools_to_call_from, **kwargs)
+   1133 def generate(
+   1134     self,
+   1135     messages: list[ChatMessage],
+   (...)   1139     **kwargs,
+   1140 ) -> ChatMessage:
+-> 1141     completion_kwargs = self._prepare_completion_kwargs(
+   1142         messages=messages,
+   1143         stop_sequences=stop_sequences,
+   1144         response_format=response_format,
+...
+--> 291     role = message.role
+    292     if role not in MessageRole.roles():
+    293         raise ValueError(f"Incorrect role {role}, only {MessageRole.roles()} are supported for now.")
+
+AttributeError: 'dict' object has no attribute 'role'
+```
+
+TransformerModel Example
+
+
+```python
+from smolagents import TransformersModel
+
+model = TransformersModel(model_id="HuggingFaceTB/SmolLM-135M-Instruct")
+
+print(model([{"role": "user", "content": [{"type": "text", "text": "Ok!"}]}], stop_sequences=["great"]))
+```
+
+**Actual behavior and error logs**
+```shell
+---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+Cell In[21], line 5
+      1 from smolagents import TransformersModel
+      3 model = TransformersModel(model_id="HuggingFaceTB/SmolLM-135M-Instruct")
+----> 5 print(model([{"role": "user", "content": [{"type": "text", "text": "Ok!"}]}], stop_sequences=["great"]))
+
+File /opt/anaconda3/envs/agents/lib/python3.12/site-packages/smolagents/models.py:492, in Model.__call__(self, *args, **kwargs)
+    491 def __call__(self, *args, **kwargs):
+--> 492     return self.generate(*args, **kwargs)
+
+File /opt/anaconda3/envs/agents/lib/python3.12/site-packages/smolagents/models.py:950, in TransformersModel.generate(self, messages, stop_sequences, response_format, tools_to_call_from, **kwargs)
+    948 if response_format is not None:
+    949     raise ValueError("Transformers does not support structured outputs, use VLLMModel for this.")
+--> 950 generation_kwargs = self._prepare_completion_args(
+    951     messages=messages,
+    952     stop_sequences=stop_sequences,
+    953     tools_to_call_from=tools_to_call_from,
+    954     **kwargs,
+    955 )
+    956 count_prompt_tokens = generation_kwargs["inputs"].shape[1]  # type: ignore
+    957 out = self.model.generate(
+    958     **generation_kwargs,
+    959 )
+...
+--> 291     role = message.role
+    292     if role not in MessageRole.roles():
+    293         raise ValueError(f"Incorrect role {role}, only {MessageRole.roles()} are supported for now.")
+```
+
+---
+
+### Checklist
+- [X] I have searched the existing issues and have not found a similar bug report.
+- [X] I have provided a minimal, reproducible example.
+- [X] I have provided the full traceback of the error.
+- [X] I have provided my environment details.

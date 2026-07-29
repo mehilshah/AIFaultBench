@@ -1,0 +1,126 @@
+# recovered-from-issue: https://github.com/langchain-ai/langchain/issues/37912
+
+TITLE
+perplexity: _convert_message_to_dict drops AIMessage.tool_calls and raises on ToolMessage
+
+BODY
+### Submission checklist
+
+- [x] This is a bug, not a usage question.
+- [x] I added a clear and descriptive title that summarizes this issue.
+- [x] I used the GitHub search to find a similar question and didn't find it.
+- [x] I am sure that this is a bug in LangChain rather than my code.
+- [x] The bug is not resolved by updating to the latest stable version of LangChain (or the specific integration package).
+- [x] This is not related to the langchain-community package.
+- [x] I posted a self-contained, minimal, reproducible example. A maintainer can copy it and run it AS IS.
+
+### Package (Required)
+
+- [ ] langchain
+- [ ] langchain-openai
+- [ ] langchain-anthropic
+- [ ] langchain-classic
+- [ ] langchain-core
+- [ ] langchain-model-profiles
+- [ ] langchain-tests
+- [ ] langchain-text-splitters
+- [ ] langchain-chroma
+- [ ] langchain-deepseek
+- [ ] langchain-exa
+- [ ] langchain-fireworks
+- [ ] langchain-groq
+- [ ] langchain-huggingface
+- [ ] langchain-mistralai
+- [ ] langchain-nomic
+- [ ] langchain-ollama
+- [ ] langchain-openrouter
+- [x] langchain-perplexity
+- [ ] langchain-qdrant
+- [ ] langchain-xai
+- [ ] Other / not sure / general
+
+### Related Issues / PRs
+
+_No response_
+
+### Reproduction Steps / Example Code (Python)
+
+```python
+from langchain_perplexity import ChatPerplexity
+from langchain_core.messages import AIMessage, ToolMessage
+
+llm = ChatPerplexity(model="sonar", api_key="dummy")
+
+# 1) AIMessage.tool_calls are silently dropped on serialization:
+ai = AIMessage(
+    content="",
+    tool_calls=[{"id": "call_1", "name": "search", "args": {"q": "x"}, "type": "tool_call"}],
+)
+print(llm._convert_message_to_dict(ai))
+# -> {'role': 'assistant', 'content': ''}   # note: tool_calls is gone
+
+# 2) A ToolMessage cannot be serialized at all:
+llm._convert_message_to_dict(ToolMessage(content="result", tool_call_id="call_1"))
+# raises TypeError
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+TypeError: Got unknown type content='result' tool_call_id='call_1'
+  File ".../langchain_perplexity/chat_models.py", line 782, in _convert_message_to_dict
+    raise TypeError(f"Got unknown type {message}")
+```
+
+### Description
+
+`ChatPerplexity._convert_message_to_dict` (chat_models.py:772-783) only handles ChatMessage / SystemMessage / HumanMessage / AIMessage. It has no `ToolMessage` branch (falls through to `raise TypeError("Got unknown type ...")`), and its `AIMessage` branch builds `{"role": "assistant", "content": ...}` without serializing `.tool_calls`.
+
+The inverse path, `_convert_delta_to_message_chunk` (chat_models.py:947), already deserializes `role: "tool"` chunks into `ToolMessageChunk`. So the integration can receive tool messages but cannot send them. As a result, any `ToolMessage` round-tripped through `ChatPerplexity` -- a client-side tool-calling loop, or a shared message history across providers via `RunnableWithFallbacks` -- raises `TypeError` on the next turn, and an assistant turn's `tool_calls` are dropped.
+
+`langchain-openai`'s `_convert_message_to_dict` handles both cases (serializes `tool_calls`/`invalid_tool_calls`, sets `content` to None when tool_calls are present, and has a `tool`-role branch). The perplexity converter should match.
+
+### System Info
+
+System Information
+------------------
+> OS:  Darwin
+> OS Version:  Darwin Kernel Version 25.3.0: Wed Jan 28 20:54:38 PST 2026; root:xnu-12377.91.3~2/RELEASE_ARM64_T6050
+> Python Version:  3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]
+
+Package Information
+-------------------
+> langchain_core: 1.4.0
+> langsmith: 0.8.9
+> langchain_exa: 1.1.0
+> langchain_parallel: 0.4.0
+> langchain_perplexity: 1.3.1
+> langchain_protocol: 0.0.16
+> langgraph_sdk: 0.4.2
+
+Optional packages not installed
+-------------------------------
+> deepagents
+> deepagents-cli
+
+Other Dependencies
+------------------
+> exa-py: 1.16.2
+> httpx: 0.28.1
+> jsonpatch: 1.33
+> openai: 1.109.1
+> orjson: 3.11.9
+> packaging: 26.2
+> parallel-web: 0.5.1
+> perplexityai: 0.37.0
+> pydantic: 2.13.4
+> pytest: 9.0.3
+> pyyaml: 6.0.3
+> requests: 2.34.2
+> requests-toolbelt: 1.0.0
+> tenacity: 9.1.4
+> typing-extensions: 4.15.0
+> uuid-utils: 0.16.0
+> websockets: 15.0.1
+> xxhash: 3.7.0
+> zstandard: 0.25.0

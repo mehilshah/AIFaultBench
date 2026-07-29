@@ -1,0 +1,221 @@
+# recovered-from-issue: https://github.com/pydantic/pydantic-ai/issues/6025
+
+TITLE
+`new_messages()` includes the user `ModelRequest` on the first turn through UI adapters (Vercel AI / AG-UI) with `manage_system_prompt='server'`
+
+BODY
+## Initial Checks
+
+- [x] I'm using the latest version of Pydantic AI
+- [x] I've searched the issue tracker before opening this issue
+
+---
+
+## Description
+
+When running an agent through a UI adapter (`VercelAIAdapter` / AG-UI), `result.new_messages()` is **inconsistent between the first turn and follow-up turns**:
+
+- **First turn** (no prior history): `new_messages()` includes the user's `ModelRequest` (the `UserPromptPart`), i.e. `[ModelRequest, ModelResponse]`.
+- **Follow-up turns**: `new_messages()` correctly excludes the user `ModelRequest`, i.e. `[ModelResponse]` only.
+
+This contradicts the documented contract for `new_messages()` ([message-history docs](https://ai.pydantic.dev/message-history/)):
+
+> Messages provided via `message_history` are excluded — **including the trailing `ModelRequest` when resuming without a user prompt, even though the framework may stamp it with the current run's `run_id`.**
+
+The UI adapters always run in "resume without a user prompt" mode — they append the frontend messages (including the latest user message) to `message_history` and pass **no** separate user prompt (`ui/_adapter.py`, `run_stream_native`):
+
+```python
+frontend_messages = self.sanitize_messages(self.messages, ...)
+message_history = [*(message_history or []), *frontend_messages]
+...
+async with self.agent.run_stream_events(message_history=message_history, ...):
+```
+
+So per the docs the trailing user `ModelRequest` should be excluded from `new_messages()` on **every** turn, including the first. It is not on the first turn.
+
+### Why it matters
+
+Apps that persist `result.new_messages()` after each run (a very common pattern, and what the adapter's `AgentRunResultEvent` / `on_complete` hands you) end up **storing the first user message twice** — once via their own message persistence and once via the `ModelRequest` that leaks into `new_messages()` only on turn 1. The asymmetry makes this hard to diagnose because it disappears on every subsequent turn.
+
+### Expected vs actual
+
+| | Turn 1 `new_messages()` | Turn 2 `new_messages()` |
+|---|---|---|
+| **Expected** | `[ModelResponse]` | `[ModelResponse]` |
+| **Actual** | `[ModelRequest, ModelResponse]` ❌ | `[ModelResponse]` ✅ |
+
+This only happens with `manage_system_prompt='server'` (the adapter default), which auto-adds `ReinjectSystemPrompt(replace_existing=True)`. With `manage_system_prompt='client'` (no reinjection) both turns return `[ModelResponse]` and the asymmetry disappears — which points straight at the root cause.
+
+### Root cause
+
+The collision is in `_agent_graph._prepare_request` ordering vs the new-message boundary computation. Line numbers below are as of `v1.107.0`; the relevant logic is identical on `main`.
+
+1. `ReinjectSystemPrompt.before_model_request` rewrites the **first** `ModelRequest` via `replace(...)` (`capabilities/reinject_system_prompt.py`, `_prepend_to_first_request`):
+
+   ```python
+   messages[i] = replace(first_request, parts=[*sys_parts, *first_request.parts])
+   ```
+
+   This creates a **new object** with **changed `parts`**. On the first turn, the first request *is* the resumed trailing request.
+
+2. `_prepare_request` then stamps the (now reinjected) trailing request with the current `run_id` via `fill_run_metadata(messages[-1], run_id=...)`, captures `resumed_request = self.request` (the **original, pre-reinjection** object), and computes the boundary:
+
+   ```python
+   ctx.deps.new_message_index = _first_new_message_index(
+       messages, ctx.state.run_id, resumed_request=ctx.deps.resumed_request
+   )
+   ```
+
+3. `_first_new_message_index` tries to locate the resumed request:
+   - identity check `message is resumed_request` → fails (it was `replace`d),
+   - `_is_same_request` → fails because it compares full `parts` equality, and reinjection prepended a `SystemPromptPart`:
+     ```python
+     return (
+         message.parts == request.parts   # [SystemPromptPart, UserPromptPart] != [UserPromptPart]
+         and message.timestamp == request.timestamp
+         and message.instructions == request.instructions
+     )
+     ```
+   - falls back to `_first_run_id_index`, which finds the reinjected request carrying the current `run_id` and returns `0` → the user request is counted as "new".
+
+On follow-up turns, `_prepend_to_first_request` rewrites a **prior** turn's request, so the resumed (last) request object is untouched and the identity check matches → it's correctly excluded.
+
+`_is_same_request` was clearly designed to survive lost identity (its comment notes it intentionally ignores `run_id` because the resumed request may not have it set yet), but it does **not** survive a capability mutating `parts`, and the adapter's own default capability does exactly that.
+
+### Generalization (the real defect)
+
+System-prompt reinjection is just the most common, default-on trigger. The underlying defect is broader: **`new_messages()` leaks the inbound request whenever the trailing `ModelRequest` is rebuilt/replaced with any changed field (`parts`, `timestamp`, `instructions`, or `metadata`) before the boundary is computed** — defeating both the `is` identity check and the `_is_same_request` field-equality fallback, so the boundary falls back to `run_id`, which matches the inbound. This reproduces with **no system prompt and on any turn** — e.g. a history-processing capability that mutates the trailing request:
+
+```python
+def mutate_last(messages):
+    out = list(messages)
+    if out and isinstance(out[-1], ModelRequest):
+        out[-1] = replace(out[-1], metadata={"touched": True})  # any field change defeats the match
+    return out
+
+agent = Agent(model=..., instructions="...", history_processors=[mutate_last])
+r = await agent.run(message_history=[*prior_turn, ModelRequest(parts=[UserPromptPart("hi")])])
+# r.new_messages() wrongly includes the inbound ModelRequest
+```
+
+So the fix should harden the boundary detection itself, not only `ReinjectSystemPrompt`. (Verified on 1.107.0; also observed on 1.87.0.)
+
+### Full scenario matrix
+
+Deterministic probe (`FunctionModel`, no network), resume-without-prompt drive pattern. A row "LEAKS" if the new inbound user `ModelRequest` wrongly appears in `new_messages()`. Identical results on 1.107.0 and 1.87.0.
+
+| # | Config | Turn / shape | `new_messages()` | Result |
+|---|---|---|---|---|
+| A | `system_prompt=` | turn 1, text | `[inbound, response]` | **LEAK** |
+| B | `system_prompt=` | turn 2, text | `[response]` | ok |
+| C | `system_prompt=` | turn 2, tool-call | `[resp(toolcall), req(toolreturn), resp(text)]` | ok |
+| D | `instructions=` | turn 1, text | `[response]` | ok |
+| E | `instructions=` | turn 2, text | `[response]` | ok |
+| F | `instructions=` | turn 2, tool-call | `[resp(toolcall), req(toolreturn), resp(text)]` | ok |
+| G | `instructions=` | turn 2, client `SystemPromptPart` in inbound | `[inbound, response]` | **LEAK** |
+| H | `instructions=` | turn 2, history-processor mutates trailing req | `[inbound, response]` | **LEAK** |
+| I | `instructions=` | resume-of-dangling (two trailing requests) | `[response]` | ok |
+
+Takeaways: A is the default-on adapter trigger; G and H show the leak is **not** specific to system prompts or turn 1 — **any** rebuild of the trailing `ModelRequest` (changing `parts`/`timestamp`/`instructions`/`metadata`) before the boundary is computed triggers it. C/F confirm tool rounds are unaffected (`ToolReturnPart` rides in a `ModelRequest` and is correctly retained). I confirms consecutive trailing requests are merged and excluded.
+
+### Relationship to prior issues / fixes
+
+This is **not** a duplicate of the previously-fixed history-leak bug, but a closely related, still-open edge case:
+
+- **#4669** (`result.new_messages()` always includes user prompt from `message_history`) was fixed by **#4731** ("exclude resumed requests from `new_messages()` even with current `run_id`", merged 2026-04-17, released in v1.84.0). That fix added the identity + `_is_same_request` value-match guard described above.
+- The rejected alternative **#4739** explicitly anticipated the remaining hole, listing: *"Complete-replacement processor → falls through to `_first_run_id_index` (acceptable edge case, behaviour unchanged)."* It was deemed acceptable **because no built-in processor did complete replacement at the time.**
+- **#4087** then added `UIAdapter.manage_system_prompt` + the `ReinjectSystemPrompt` capability (merged 2026-04-23 — six days **after** #4731), which *does* complete-replacement (`_prepend_to_first_request` → `replace(...)`) **and is enabled by default** in adapters (`manage_system_prompt='server'`). The previously-"acceptable" edge case is now triggered on the **default adapter path, turn 1**. The two changes were never co-tested.
+- The docs already prescribe the invariant this breaks (`docs/message-history.md`): *"If you rebuild the trailing `ModelRequest`, preserve its `parts`, `timestamp`, `instructions`, and `metadata` so it can still be identified as prior context."* `ReinjectSystemPrompt` rebuilds it but changes `parts` — so the framework's own default capability violates its own documented contract.
+- Design context: **#3589** documents why the latest user message rides inside `message_history` for UI adapters in the first place.
+
+### Possible fix directions
+
+1. **Track the boundary by position, not by re-matching** — the resumed request's index is known before `before_model_request` mutates the list; compute `new_message_index` from that index instead of scanning for a possibly-rewritten object afterwards (most robust).
+2. **Make `_is_same_request` robust to reinjection** — compare ignoring leading `SystemPromptPart`s, so a prepended system prompt doesn't break the match.
+3. **Make `ReinjectSystemPrompt` honor the documented invariant** — preserve enough of the trailing request's identity (e.g. don't complete-replace the resumed request), per the `message-history.md` guidance above.
+
+Happy to open a PR.
+
+---
+
+## Minimal, Reproducible Example
+
+Reproduced with the built-in `TestModel` (no API key, no network). The script asserts the documented behaviour holds on turn 2 (passes) and on turn 1 (fails — demonstrating the bug).
+
+```python
+import asyncio
+
+from pydantic_ai import Agent
+from pydantic_ai.messages import ModelRequest, UserPromptPart
+from pydantic_ai.models.test import TestModel
+from pydantic_ai.run import AgentRunResultEvent
+from pydantic_ai.ui.vercel_ai import VercelAIAdapter
+from pydantic_ai.ui.vercel_ai.request_types import SubmitMessage, TextUIPart, UIMessage
+
+
+def user_msg(mid: str, text: str) -> UIMessage:
+    return UIMessage(id=mid, role="user", parts=[TextUIPart(text=text)])
+
+
+async def run_turn(agent, run_input, message_history):
+    adapter = VercelAIAdapter(agent=agent, run_input=run_input)
+    result = None
+    async for event in adapter.run_stream_native(message_history=message_history):
+        if isinstance(event, AgentRunResultEvent):
+            result = event.result
+    return result
+
+
+def includes_user_request(messages) -> bool:
+    return any(
+        isinstance(m, ModelRequest) and any(isinstance(p, UserPromptPart) for p in m.parts)
+        for m in messages
+    )
+
+
+async def main():
+    agent = Agent(model=TestModel(custom_output_text="hi"), system_prompt="You are helpful.")
+
+    # Turn 1: brand-new conversation, no server-side history.
+    r1 = await run_turn(agent, SubmitMessage(id="c", messages=[user_msg("u1", "hello")]), None)
+
+    # Turn 2: frontend sends only the new user message; server passes turn 1's messages as history.
+    r2 = await run_turn(agent, SubmitMessage(id="c", messages=[user_msg("u2", "thanks")]), r1.all_messages())
+
+    print("turn 1 new_messages:", [type(m).__name__ for m in r1.new_messages()])
+    print("turn 2 new_messages:", [type(m).__name__ for m in r2.new_messages()])
+
+    # Turn 2 matches the documented behaviour: trailing user ModelRequest excluded.
+    assert not includes_user_request(r2.new_messages())
+    # Turn 1 SHOULD behave the same, but it does not:
+    assert not includes_user_request(r1.new_messages()), (
+        "BUG: turn 1 new_messages() includes the user ModelRequest"
+    )
+
+
+asyncio.run(main())
+```
+
+Output:
+
+```
+turn 1 new_messages: ['ModelRequest', 'ModelResponse']
+turn 2 new_messages: ['ModelResponse']
+AssertionError: BUG: turn 1 new_messages() includes the user ModelRequest
+```
+
+---
+
+## Logfire Trace
+
+N/A — reproduced offline with `TestModel`.
+
+---
+
+## Python, Pydantic AI & LLM client version
+
+```
+- Python: 3.14.2
+- Pydantic AI: 1.107.0 (pydantic-ai-slim). The relevant logic (`_first_new_message_index`, `_is_same_request`, `_prepend_to_first_request`) is byte-identical on v1.107.0, v2.0.0, and current `main` — so this still reproduces on the latest. No open/merged PR addresses it.
+- LLM provider SDK: N/A — fully reproduced with the built-in `TestModel`/`FunctionModel`, no provider SDK or network needed.
+```

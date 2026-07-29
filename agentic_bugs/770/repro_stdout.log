@@ -1,0 +1,1 @@
+OBSERVED BUG: AttributeError: 'dict' object has no attribute 'role'

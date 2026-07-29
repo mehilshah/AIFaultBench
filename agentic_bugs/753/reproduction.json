@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified: a771a4f67e43bb5d2675972496a4e5c70f847052.",
+    "repro_stdout.log: `BUG OBSERVED: signature-only delta was dropped (expected 'signature-from-signature-only-delta', got '')`.",
+    "repro_stderr.log ends with `AssertionError: Bedrock Converse lost a signature-only reasoning delta`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and verified the pinned commit.",
+    "Created `.venv`, installed pinned dependencies, and installed editable checkout packages.",
+    "Ran a locally stubbed Bedrock stream with text then signature-only reasoning deltas."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

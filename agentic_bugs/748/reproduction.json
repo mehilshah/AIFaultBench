@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exit status: 1.",
+    "`repro_stdout.log` contains `OBSERVED: Command(goto='__end__') did not stop the agent loop`.",
+    "The fake model detects a second invocation after the terminal Command."
+  ],
+  "steps": [
+    "Read issue materials.",
+    "Used issue-era pinned package fallback after clone did not complete.",
+    "Installed dependencies and ran the offline repro."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

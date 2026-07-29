@@ -1,0 +1,172 @@
+# recovered-from-issue: https://github.com/microsoft/autogen/issues/6906
+
+TITLE
+`StreamableHttpMcpToolAdapter` incorrectly parses valid server schema, causing `TypeError`
+
+BODY
+### What happened?
+
+**Describe the bug**
+
+The `autogen_ext.tools.mcp.StreamableHttpMcpToolAdapter` fails to correctly process a valid JSON schema received from an MCP (Multi-Capability Protocol) server.
+
+When the adapter fetches a tool definition, it appears to incorrectly convert the `inputSchema` (which is a valid JSON schema dictionary) into a native Python `typing` object. This faulty object is then passed to the `AssistantAgent`. When the agent attempts to use the tool, the `OpenAIChatCompletionClient`'s internal `convert_tools` function receives this `typing` object instead of the expected dictionary, resulting in a `TypeError: Cannot instantiate typing.Union`.
+
+The issue is not with the MCP server, which provides a correct schema, but with the client-side adapter's parsing logic.
+
+**To Reproduce**
+
+Steps to reproduce the behavior:
+
+1.  **Create the MCP Echo Server.** This server correctly defines an `echo` tool and serves its schema via the MCP protocol. Save the following as `mcp_echo_tool.py`:
+
+    ```python
+    # mcp_echo_tool.py
+    """
+    FastMCP Echo Server with Logging
+    """
+    import logging
+    from mcp.server.fastmcp import FastMCP
+    
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s - %(levelname)s - %(message)s"
+    )
+    
+    # Create server
+    mcp = FastMCP("Echo Server")
+    
+    @mcp.tool()
+    def echo(text: str) -> str:
+        """Echo the input text"""
+        logging.info(f"ECHO TOOL CALLED with text: '{text}'")
+        return text
+    
+    if __name__ == "__main__":
+        logging.info("Starting Echo Server...")
+        mcp.run(transport="streamable-http")
+    ```
+
+2.  **Run the Server.**
+
+    ```bash
+    python mcp_echo_tool.py
+    ```
+
+3.  **Create and run the AutoGen Client.** This script connects to the server, attempts to use the `echo` tool, and fails.
+
+    ```python
+    # autogen_client.py
+    import asyncio
+    from autogen_agentchat.agents import AssistantAgent
+    from autogen_ext.models.openai import OpenAIChatCompletionClient
+    from autogen_ext.tools.mcp import StreamableHttpServerParams, StreamableHttpMcpToolAdapter
+    from autogen_agentchat.ui import Console
+    from autogen_core import CancellationToken
+
+    async def run_echo_example():
+        """Run the AutoGen MCP echo server example"""
+        
+        # Define the MCP echo server
+        server_params = StreamableHttpServerParams(
+            url="http://127.0.0.1:8000/mcp"
+        )
+        adapter = await StreamableHttpMcpToolAdapter.from_server_params(server_params, "echo")
+        
+        model_client = OpenAIChatCompletionClient(model="gpt-4o-mini")
+        
+        # Create assistant agent with MCP tools
+        agent = AssistantAgent(
+            name="echo_assistant",
+            model_client=model_client,
+            tools=[adapter],
+            system_message="You are a helpful assistant that can use the echo tool to repeat messages back to users."
+        )
+        
+        # Test the echo functionality
+        task = "Use the echo tool to say 'Hello, MCP World!'"
+
+        await Console(
+            agent.run_stream(task=task, cancellation_token=CancellationToken())
+        )
+        
+        await model_client.close()
+
+    if __name__ == "__main__":
+        asyncio.run(run_echo_example())
+
+    ```
+
+4.  **Observe the Output.** The client script will fail with the following traceback:
+
+    ```plaintext
+    Traceback (most recent call last):
+    File "/path/to/autogen_client.py", line 42, in <module>
+        asyncio.run(run_echo_example())
+    File "/opt/conda/lib/python3.12/asyncio/runners.py", line 194, in run
+        return runner.run(main)
+    ...
+    File "/opt/conda/lib/python3.12/site-packages/autogen_ext/models/openai/_openai_client.py", line 256, in convert_tools
+        ChatCompletionToolParam(
+    File "/opt/conda/lib/python3.12/typing.py", line 1184, in _BaseGenericAlias.__call__
+        result = self.__origin__(*args, **kwargs)
+    File "/opt/conda/lib/python3.12/typing.py", line 501, in _SpecialForm.__call__
+        raise TypeError(f"Cannot instantiate {self!r}")
+    TypeError: Cannot instantiate typing.Union
+    ```
+
+5.  **Supporting Evidence (Server Log).** The server log confirms it is sending a valid JSON schema to the client. The `inputSchema` key contains a correctly formatted dictionary.
+
+    ```plaintext
+    DEBUG - chunk: b'event: message\r\ndata: {"jsonrpc":"2.0","id":1,"result":{"tools":[{"name":"echo","description":"Echo the input text","inputSchema":{"properties":{"text":{"title":"Text","type":"string"}},"required":["text"],"title":"echoArguments","type":"object"},"outputSchema":{"properties":{"result":{"title":"Result","type":"string"}},"required":["result"],"title":"echoOutput","type":"object"}}]}}\r\n\r\n'
+    ```
+
+**Expected behavior**
+
+The `StreamableHttpMcpToolAdapter` should correctly parse the `inputSchema` dictionary from the server and preserve it as a dictionary in the tool definition passed to the agent. The agent should then be able to successfully format the tool for the OpenAI API and execute the `echo` function, printing the echoed message to the console without a `TypeError`.
+
+**Screenshots**
+
+Not applicable, as the code and text-based logs fully describe the issue.
+
+**Additional context**
+
+  - The investigation initially pointed towards a server-side issue, but the server logs confirm the server is behaving correctly.
+  - The issue is located in the client-side `StreamableHttpMcpToolAdapter` and how it handles the received schema.
+  - This was observed with Python 3.12 and recent versions of `autogen-agentchat` and `autogen-ext` libraries.
+
+### Which packages was the bug in?
+
+Python Extensions (autogen-ext)
+
+### AutoGen library version.
+
+Python 0.7.1
+
+### Other library version.
+
+_No response_
+
+### Model used
+
+gpt-4o-mini
+
+### Model provider
+
+None
+
+### Other model provider
+
+_No response_
+
+### Python version
+
+3.12
+
+### .NET version
+
+None
+
+### Operating system
+
+Ubuntu

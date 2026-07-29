@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`bash run_repro.sh` exited with status 1.",
+    "`repro_stdout.log`: `BUG REPRODUCED: context plus configurable is rejected with HTTP 400.`",
+    "`repro_stderr.log` ends with `AssertionError: buggy RemoteGraph request was rejected`.",
+    "The local stub verified the outgoing request had both `context` and `config.configurable` before returning the documented HTTP 400."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and confirmed checkout `5796ca9a0ad8ec53dbcf12fa9f1d671b826e5f1d`.",
+    "Created `.venv`, installed pinned dependencies, and installed `codebase/libs/langgraph` editable.",
+    "Wrote and ran `repro.py` through `bash run_repro.sh`; captured the final non-zero run in the required log files."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

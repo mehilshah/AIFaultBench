@@ -1,0 +1,46 @@
+{
+  "owner": "langflow-ai",
+  "repo": "langflow",
+  "number": 13764,
+  "html_url": "https://github.com/langflow-ai/langflow/issues/13764",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "RedisCache only accepts values that can be pickled",
+  "author": "codenprogressive",
+  "created_at": "2026-06-21T10:23:37Z",
+  "updated_at": "2026-06-23T23:55:00Z",
+  "closed_at": "2026-06-23T23:55:00Z",
+  "labels": [
+    "bug",
+    "jira"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 1,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 1
+  },
+  "resolution_days": 2.56,
+  "fix": {
+    "closing_commit": "7db4bcb89001e94d1cf368942ee1f0186f8b72c1",
+    "linked_prs": [],
+    "best_guess_fix_commit": "7db4bcb89001e94d1cf368942ee1f0186f8b72c1",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T12:37:53.294278+00:00",
+  "comments": [
+    {
+      "author": "AntonioABLima",
+      "created_at": "2026-06-22T19:30:55Z",
+      "body": "Thanks so much for the detailed report \u2014 the standalone reproduction, the traceback, and the root-cause analysis (the `except pickle.PicklingError` not catching the bare `TypeError` from `SSLContext`) made this very easy to confirm.\n\nI've reproduced it locally and verified the issue is present on `main` (1.10.0) as well as the `release-1.10.1` and `release-1.11.0` branches: `RedisCache.set` only catches `pickle.PicklingError`, while serializing a live model client raises a plain `TypeError`, so the cache write crashes the whole vertex build instead of degrading gracefully.\n\nI've filed an internal Jira ticket (**LE-1621**) so the eng team can evaluate it and ship a fix. We'll follow up here once there's an update.\n\nThanks again for taking the time to dig into this \u2014 and for noting the connection to the earlier #13171 report!\n"
+    }
+  ]
+}

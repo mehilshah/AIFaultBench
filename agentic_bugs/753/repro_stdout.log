@@ -1,0 +1,1 @@
+BUG OBSERVED: signature-only delta was dropped (expected 'signature-from-signature-only-delta', got '')

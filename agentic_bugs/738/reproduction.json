@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited 1 and stdout contained `EMITTED_TOOL_KEYS: name,description,inputSchema`.",
+    "Final stdout contained `OBSERVED ParamValidationError: invalid tagged union toolConfig.tools[0] (raw Bedrock tool lacks toolSpec wrapper)`; stderr was empty.",
+    "The repro blocks botocore\u2019s transport callback, so validation occurs locally and no AWS request is possible."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and completed checkout of `7afa18317c18142d7eb772682bc9369b10cf0e2e` via shallow fetch after the initial full clone was incomplete.",
+    "Created `.venv`, installed exact pinned dependencies, and installed the checkout editable.",
+    "Built the pinned Bedrock Converse request from a raw tool and passed it through botocore\u2019s local parameter validation.",
+    "Captured the final `run_repro.sh` output in `repro_stdout.log` and `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

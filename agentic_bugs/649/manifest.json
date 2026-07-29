@@ -1,0 +1,12 @@
+{
+  "bug_id": "649",
+  "bug_dir": "649",
+  "issue_url": "https://github.com/run-llama/llama_index/issues/21422",
+  "commit_hash": "33f7ba4e3c5e20c6b1a26cae354fa39900e6ffb4",
+  "library_name": "llama_index",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "run-llama/llama_index@33f7ba4e3c5e20c6b1a26cae354fa39900e6ffb4",
+  "codebase_present": "false",
+  "standardized_dir": "../649"
+}

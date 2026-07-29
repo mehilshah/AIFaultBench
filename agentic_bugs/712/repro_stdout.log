@@ -1,0 +1,1 @@
+BUG REPRODUCED: NameError: name 'SomeType' is not defined

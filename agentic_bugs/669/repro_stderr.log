@@ -1,0 +1,33 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/669/codebase/pydantic_ai_slim/pydantic_ai/models/openai.py", line 195, in _map_api_errors
+    yield
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/669/codebase/pydantic_ai_slim/pydantic_ai/models/openai.py", line 2546, in _responses_retrieve
+    return await self.client.responses.retrieve(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/669/repro.py", line 29, in retrieve
+    raise BadRequestError(message, response=response, body=response.json())
+openai.BadRequestError: Encrypted content cannot be requested for persisted responses.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/669/repro.py", line 53, in <module>
+    asyncio.run(main())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/669/repro.py", line 43, in main
+    await model._responses_retrieve("resp_persisted", {})
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/669/codebase/pydantic_ai_slim/pydantic_ai/models/openai.py", line 2544, in _responses_retrieve
+    with _map_api_errors(self.model_name):
+  File "/usr/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/669/codebase/pydantic_ai_slim/pydantic_ai/models/openai.py", line 198, in _map_api_errors
+    raise ModelHTTPError(status_code=status_code, model_name=model_name, body=e.body) from e
+pydantic_ai.exceptions.ModelHTTPError: status_code: 400, model_name: gpt-5.6-sol, body: {'message': 'Encrypted content cannot be requested for persisted responses.', 'type': 'invalid_request_error', 'param': 'include'}

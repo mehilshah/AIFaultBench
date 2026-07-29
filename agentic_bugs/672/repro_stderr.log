@@ -1,0 +1,7 @@
+/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/672/codebase/libs/agno/agno/workflow/workflow.py:1396: RuntimeWarning: coroutine 'get_session' was never awaited
+  workflow_session = cast(WorkflowSession, self._read_session(session_id=session_id_to_load, user_id=user_id))
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/672/repro.py", line 40, in <module>
+    raise AssertionError("async db.get_session was called without await")
+AssertionError: async db.get_session was called without await

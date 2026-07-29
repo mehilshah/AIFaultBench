@@ -1,0 +1,1 @@
+# No Python packages are required; the repro builds the pinned .NET checkout with an isolated .NET SDK.

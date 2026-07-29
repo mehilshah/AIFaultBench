@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "smolagents",
+  "number": 1814,
+  "html_url": "https://github.com/huggingface/smolagents/issues/1814",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "BUG: LocalPythonExecutor unable to handle nested for loop",
+  "author": "SingCheng",
+  "created_at": "2025-10-14T00:15:40Z",
+  "updated_at": "2025-10-17T08:32:22Z",
+  "closed_at": "2025-10-17T08:32:21Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.34,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:05:46.371115+00:00",
+  "comments": [
+    {
+      "author": "suryabdev",
+      "created_at": "2025-10-16T16:05:23Z",
+      "body": "Hi, Thanks for raising this issue. I was able to reproduce the error\n```\n    raise InterpreterError(\nsmolagents.local_python_executor.InterpreterError: Code execution failed at line 'map: Dict[Tuple[str, str], str] = {\n    (s_name, e.name): e.string_A\n    for s_name, s_struct in structureA.items()\n    for e in s_struct.list_A\n}' due to: InterpreterError: The variable `e` is not defined.\n```\n\nI created PR https://github.com/huggingface/smolagents/pull/1823 with a fix, After the change the code example seems to be working fine\n(Note: With the example as is I was getting `InterpreterError: Cannot assign to name 'map': doing this would erase the existing tool!` because the map variable clashes with the in-built map tool/function. Renaming the `map` variable printed the expected output)\n```\nCodeOutput(output=None, logs=\"{(<ClassC.ABC: 'ABC'>, <ClassB.valueA: 'one'>): 'vvv', (<ClassC.ABC: 'ABC'>, <ClassB.valueB: 'two'>): 'sss', (<ClassC.ABC: 'ABC'>, <ClassB.valueC: 'three'>): 'ddde'}\\n\", is_final_answer=False)\n```"
+    },
+    {
+      "author": "albertvillanova",
+      "created_at": "2025-10-17T08:32:22Z",
+      "body": "Fixed by #1823."
+    }
+  ]
+}

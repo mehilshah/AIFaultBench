@@ -1,0 +1,45 @@
+{
+  "owner": "langflow-ai",
+  "repo": "langflow",
+  "number": 11792,
+  "html_url": "https://github.com/langflow-ai/langflow/issues/11792",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "make docker_build failing- ModuleNotFoundError: No module named 'hatchling.build'",
+  "author": "harshitrjpt",
+  "created_at": "2026-02-17T08:02:14Z",
+  "updated_at": "2026-03-10T12:53:17Z",
+  "closed_at": "2026-03-10T12:53:17Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 21.2,
+  "fix": {
+    "closing_commit": "fd4867f785253855cc23cdd3521293a4b4f3fc81",
+    "linked_prs": [],
+    "best_guess_fix_commit": "fd4867f785253855cc23cdd3521293a4b4f3fc81",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T14:00:50.708791+00:00",
+  "comments": [
+    {
+      "author": "thakoreh",
+      "created_at": "2026-02-26T13:42:37Z",
+      "body": "## Root Cause Analysis\n\nThis error is **not caused by a missing dependency** in `pyproject.toml`. The `build-system.requires = [\"hatchling\"]` configuration is correct.\n\nThis is a known uv issue (astral-sh/uv#16228) caused by a **corrupted build cache**.\n\n## Why the error is misleading\n\nThe error message suggests adding `hatchling.build` to `build-system.requires`, but `hatchling.build` is a **module path** (inside the `hatchling` package), not a PyPI package. Adding it would cause a different error.\n\n## Solution\n\nClear the corrupted cache:\n\n**For Podman:**\n```bash\npodman builder prune -a --external\n```\n\nIf that doesn't work, reset the podman machine:\n```bash\npodman machine reset\n```\n\n**For Docker:**\n```bash\ndocker builder prune -a\n```\n\n**Also try:**\n```bash\nuv cache clean\n```\n\nThe build should succeed after clearing the cache. No code changes needed."
+    }
+  ]
+}

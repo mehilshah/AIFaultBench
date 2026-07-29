@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout resolved to `8d6b7c1d671af329dbf43a984fe1b3207ef59fe7`.",
+    "Final `run_repro.sh` exited with status 1 and printed: `BUG REPRODUCED: set_nested_value raised ValueError: invalid literal for int() with base 10: 'abc'`.",
+    "Captured stderr traceback identifies `codebase/cli/python/src/mem0_cli/config.py:238`, where `int(value)` raises the uncaught ValueError."
+  ],
+  "steps": [
+    "Read the issue report and maintainer triage notes.",
+    "Recreated and checked out the pinned source revision using a filtered Git transfer after full clone transfers were interrupted.",
+    "Created `.venv`, installed pinned build dependencies, and installed the CLI checkout editable without provider dependencies.",
+    "Ran `bash run_repro.sh` and captured final stdout/stderr logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

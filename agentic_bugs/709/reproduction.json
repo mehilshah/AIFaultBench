@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "`bash run_repro.sh` exited 0; stdout: `NOT REPRODUCED: missing Gemini tool-call thought_signature was replaced with fallback 'skip_thought_signature_validator'.`",
+    "The pinned Gemini request path added `extra_content.google.thought_signature` before the fake transport was invoked; stderr was empty."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`, resumed its incomplete generated Git fetch, and checked out `c7d4423ac566a89d8e509146187399e28832bf24`.",
+    "Created `.venv`, installed pinned dependencies, and installed the checkout editable.",
+    "Ran the offline fake-transport reproduction and captured final logs."
+  ],
+  "blocking_reason": "The pinned checkout already supplies the `skip_thought_signature_validator` fallback for a missing first Gemini tool-call signature, so the invalid request from the report cannot occur.",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

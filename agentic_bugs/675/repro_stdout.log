@@ -1,0 +1,1 @@
+OBSERVED BUG: BaseLM returned dict; GEPA raised AttributeError: 'dict' object has no attribute 'strip'

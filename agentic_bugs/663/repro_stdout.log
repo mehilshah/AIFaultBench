@@ -1,0 +1,1 @@
+OBSERVED BUG: RedisKVStore.get_all raised AttributeError: 'str' object has no attribute 'decode'

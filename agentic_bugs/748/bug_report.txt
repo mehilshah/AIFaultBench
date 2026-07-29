@@ -1,0 +1,234 @@
+# recovered-from-issue: https://github.com/langchain-ai/langgraph/issues/6578
+
+TITLE
+`Command(goto="__end__")` returned from tool does not stop agent loop in `create_agent`, causes invalid message order error
+
+BODY
+### Checked other resources
+
+- [x] This is a bug, not a usage question. For questions, please use the LangChain Forum (https://forum.langchain.com/).
+- [x] I added a clear and detailed title that summarizes the issue.
+- [x] I read what a minimal reproducible example is (https://stackoverflow.com/help/minimal-reproducible-example).
+- [x] I included a self-contained, minimal example that demonstrates the issue INCLUDING all the relevant imports. The code run AS IS to reproduce the issue.
+
+### Example Code
+
+```python
+from langchain.agents import create_agent
+from langchain.tools import ToolRuntime, tool
+from langchain_core.messages import ToolMessage, AIMessage, HumanMessage
+from langgraph.types import Command
+
+@tool(description="Request clarification from the user when intent is ambiguous.")
+def clarify_user(
+    question: str,
+    runtime: ToolRuntime,
+) -> Command:
+    return Command(
+        goto="__end__",
+        update={
+            "messages": [
+                ToolMessage(
+                    content="success",
+                    tool_call_id=runtime.tool_call_id,
+                    name="clarify_user"
+                ),
+                AIMessage(content=question)
+            ],
+            "awaiting_clarification": True,
+        },
+    )
+
+agent = create_agent(
+    model=your_chat_model,  # e.g., ChatOpenAI()
+    tools=[clarify_user],
+    system_prompt="For testing purposes, ALWAYS run clarify_user tool."
+)
+
+# This should terminate after clarify_user returns Command(goto="__end__")
+result = agent.invoke({
+    "messages": [HumanMessage(content="hello, run clarify_user tool please")]
+})
+print(result)
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+File ".../openai/_base_client.py", line 1047, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.BadRequestError: Error code: 400 - {
+    'object': 'error', 
+    'message': 'Expected last role User or Tool (or Assistant with prefix True) for serving but got assistant', 
+    'type': 'invalid_request_message_order', 
+    'param': None, 
+    'code': '3230'
+}
+```
+
+### Description
+
+Issue Body
+Description
+When using create_agent from LangGraph 1.0, returning a Command(goto="__end__", ...) from a tool does not terminate the graph as expected. Instead, the agent node is invoked again after the tool execution, which causes an OpenAI API error due to invalid message ordering.
+
+Expected Behavior
+Returning Command(goto="__end__", ...) from a tool should immediately terminate the graph and prevent further model nodes (LLM calls) .
+
+Actual Behavior
+The graph continues to the model/agent node after the tool returns the Command, causing an API error:
+
+openai.BadRequestError: Error code: 400 - {'object': 'error', 'message': 'Expected last role User or Tool (or Assistant with prefix True) for serving but got assistant', 'type': 'invalid_request_message_order', 'param': None, 'code': '3230'}
+This happens because:
+
+The tool updates state with [ToolMessage, AIMessage]
+The graph does not respect goto="__end__" and proceeds to call the model node
+The model sees the last message is an AIMessage, which violates OpenAI's message ordering constraints
+Reproduction
+from langchain.agents import create_agent
+from langchain.tools import ToolRuntime, tool
+from langchain_core.messages import ToolMessage, AIMessage, HumanMessage
+from langgraph.types import Command
+
+@tool(description="Request clarification from the user when intent is ambiguous.")
+def clarify_user(
+    question: str,
+    runtime: ToolRuntime,
+) -> Command:
+    return Command(
+        goto="__end__",
+        update={
+            "messages": [
+                ToolMessage(
+                    content="success",
+                    tool_call_id=runtime.tool_call_id,
+                    name="clarify_user"
+                ),
+                AIMessage(content=question)
+            ],
+            "awaiting_clarification": True,
+        },
+    )
+
+agent = create_agent(
+    model=your_chat_model,  # e.g., ChatOpenAI()
+    tools=[clarify_user],
+    system_prompt="For testing purposes, ALWAYS run clarify_user tool."
+)
+
+# This should terminate after clarify_user returns Command(goto="__end__")
+result = agent.invoke({
+    "messages": [HumanMessage(content="hello, run clarify_user tool please")]
+})
+print(result)
+Error Traceback
+File ".../openai/_base_client.py", line 1047, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.BadRequestError: Error code: 400 - {
+    'object': 'error', 
+    'message': 'Expected last role User or Tool (or Assistant with prefix True) for serving but got assistant', 
+    'type': 'invalid_request_message_order', 
+    'param': None, 
+    'code': '3230'
+}
+Current Workaround
+Using a before_model middleware to check if the last message is an AIMessage and manually jump to __end__:
+
+from langchain.agents.middleware import AgentMiddleware
+
+@jump_config(can_jump_to=["end"])
+def before_model_check(state, config):
+    if state["messages"] and isinstance(state["messages"][-1], AIMessage):
+        return {"jump_to": "end"}
+    return None
+
+# Apply middleware to agent
+This workaround is not ideal as it relies on message type inspection rather than proper Command handling.
+
+Environment
+langgraph version: 1.0.x (please specify exact version)
+langchain version: >1.0
+Python version: 3.12
+OS: macOS
+Questions
+Is Command(goto="__end__") supposed to work when returned from a tool inside create_agent?
+If so, is this a bug in the prebuilt agent's edge routing logic?
+If not, what is the recommended pattern for terminating an agent graph early from within a tool?
+
+
+### System Info
+
+System Information
+------------------
+> OS:  Darwin
+> OS Version:  Darwin Kernel Version 23.6.0: Wed May 14 13:52:22 PDT 2025; root:xnu-10063.141.1.705.2~2/RELEASE_ARM64_T6000
+> Python Version:  3.12.7 (main, Oct 16 2024, 07:12:08) [Clang 18.1.8 ]
+
+Package Information
+-------------------
+> langchain_core: 1.1.0
+> langchain: 1.1.0
+> langchain_community: 0.4.1
+> langsmith: 0.4.49
+> langchain_anthropic: 1.2.0
+> langchain_classic: 1.0.0
+> langchain_mcp_adapters: 0.1.14
+> langchain_openai: 1.1.0
+> langchain_text_splitters: 1.0.0
+> langgraph_api: 0.5.27
+> langgraph_cli: 0.4.7
+> langgraph_runtime_inmem: 0.19.0
+> langgraph_sdk: 0.2.10
+
+Optional packages not installed
+-------------------------------
+> langserve
+
+Other Dependencies
+------------------
+> aiohttp: 3.13.2
+> anthropic: 0.75.0
+> blockbuster: 1.5.25
+> click: 8.3.1
+> cloudpickle: 3.1.2
+> cryptography: 44.0.3
+> dataclasses-json: 0.6.7
+> grpcio: 1.76.0
+> grpcio-tools: 1.75.1
+> httpx: 0.28.1
+> httpx-sse: 0.4.3
+> jsonpatch: 1.33
+> jsonschema-rs: 0.29.1
+> langgraph: 1.0.4
+> langgraph-checkpoint: 3.0.1
+> mcp: 1.22.0
+> numpy: 2.3.5
+> openai: 1.109.1
+> opentelemetry-api: 1.38.0
+> opentelemetry-exporter-otlp-proto-http: 1.38.0
+> opentelemetry-sdk: 1.38.0
+> orjson: 3.11.4
+> packaging: 25.0
+> protobuf: 6.33.1
+> pydantic: 2.12.5
+> pydantic-settings: 2.12.0
+> pyjwt: 2.10.1
+> pytest: 9.0.1
+> python-dotenv: 1.2.1
+> pyyaml: 6.0.3
+> PyYAML: 6.0.3
+> requests: 2.32.5
+> requests-toolbelt: 1.0.0
+> rich: 14.2.0
+> sqlalchemy: 2.0.44
+> SQLAlchemy: 2.0.44
+> sse-starlette: 2.1.3
+> starlette: 0.50.0
+> structlog: 25.5.0
+> tenacity: 9.1.2
+> tiktoken: 0.12.0
+> truststore: 0.10.4
+> typing-extensions: 4.15.0
+> uvicorn: 0.38.0
+> watchfiles: 1.1.1
+> zstandard: 0.25.0

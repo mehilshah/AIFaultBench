@@ -1,0 +1,50 @@
+{
+  "owner": "mem0ai",
+  "repo": "mem0",
+  "number": 5378,
+  "html_url": "https://github.com/mem0ai/mem0/issues/5378",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Qdrant vector store uses HTTPS unexpectedly with host/port/api_key for self-hosted HTTP Qdrant",
+  "author": "haojingcn",
+  "created_at": "2026-06-05T03:06:47Z",
+  "updated_at": "2026-06-12T14:36:28Z",
+  "closed_at": "2026-06-12T14:36:28Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 7.48,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:38:43.033570+00:00",
+  "comments": [
+    {
+      "author": "antan2002",
+      "created_at": "2026-06-05T04:39:25Z",
+      "body": "Hi @haojingcn ,\n\nI'd like to work on this issue. Could you please assign it to me?\n\nFrom my investigation, the root cause appears to be that `qdrant-client` automatically enables HTTPS when an `api_key` is provided and only `host`/`port` are passed. Since Mem0 currently forwards these parameters directly to `QdrantClient`, self-hosted HTTP Qdrant deployments can fail with `SSL: WRONG_VERSION_NUMBER`.\n\nMy proposed fix is:\n\n1. Add an optional `https` field to the Mem0 Qdrant configuration and forward it to `QdrantClient`.\n2. Preserve backward compatibility by keeping the current behavior when `https` is not specified.\n3. Update the documentation and examples to clarify the difference between:\n\n   * `host` + `port` + `https`\n   * `url` (e.g. `http://127.0.0.1:6333`)\n4. Add tests covering:\n\n   * HTTP Qdrant with API key authentication\n   * HTTPS Qdrant with API key authentication\n   * Existing host/port configurations\n\nThis should allow self-hosted HTTP Qdrant instances to work correctly while maintaining compatibility with existing deployments.\n\nThanks!"
+    },
+    {
+      "author": "rehan243",
+      "created_at": "2026-06-05T15:31:42Z",
+      "body": "Ran into this exact thing with Qdrant at scale - we were hosting our own Qdrant cluster on K8s and getting those `SSL: WRONG_VERSION_NUMBER` errors left and right. Turns out, `qdrant-client` defaults to HTTPS when you pass an `api_key`, which isn't super intuitive. We ended up switching to using the `url` param instead of `host` and `port` to get around this. The `QdrantClient` constructor's behavior is what's causing the issue here - when you pass `host`, `port`, and `api_key`, it assumes HTTPS. I'd suggest exposing an `https` option in the mem0 Qdrant config or switching to `url` like we did. We've been running Qdrant v1.8.2 in prod with 100M+ vectors and it's been solid."
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langchain",
+  "number": 38629,
+  "html_url": "https://github.com/langchain-ai/langchain/issues/38629",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "MultiQueryRetriever.unique_union() crashes on list/dict metadata",
+  "author": "axiom-of-choice",
+  "created_at": "2026-07-02T20:30:31Z",
+  "updated_at": "2026-07-02T20:50:04Z",
+  "closed_at": "2026-07-02T20:49:45Z",
+  "labels": [
+    "bug",
+    "langchain",
+    "external"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:05:29.860681+00:00",
+  "comments": [
+    {
+      "author": "unfitcoder101",
+      "created_at": "2026-07-02T20:31:52Z",
+      "body": "I'd like to work on this. The suggested fix (JSON-serializing metadata for the hash key) looks right \u2014 will open a PR shortly."
+    },
+    {
+      "author": "unfitcoder101",
+      "created_at": "2026-07-02T20:47:41Z",
+      "body": "Looks like this was already resolved \u2014 main's _unique_documents() now uses equality comparison (`doc not in documents[:i]`) instead of the hash-based dict approach, so it no longer crashes on list/dict metadata. Can this be closed, or is there a different code path still hitting this?"
+    },
+    {
+      "author": "axiom-of-choice",
+      "created_at": "2026-07-02T20:50:04Z",
+      "body": "> Looks like this was already resolved \u2014 main's _unique_documents() now uses equality comparison (`doc not in documents[:i]`) instead of the hash-based dict approach, so it no longer crashes on list/dict metadata. Can this be closed, or is there a different code path still hitting this?\n\nThis was solved on the lang chain package, I checked legacy one"
+    }
+  ]
+}

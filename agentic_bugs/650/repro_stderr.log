@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/650/repro.py", line 15, in <module>
+    GradioUI(StubAgent()).create_app()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/650/codebase/src/smolagents/gradio_ui.py", line 419, in create_app
+    with gr.Blocks(theme="ocean", fill_height=True) as demo:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/650/.venv/lib/python3.12/site-packages/gradio/blocks.py", line 1071, in __init__
+    super().__init__(render=False, **kwargs)
+TypeError: BlockContext.__init__() got an unexpected keyword argument 'theme'

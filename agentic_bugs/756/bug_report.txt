@@ -1,0 +1,120 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/1706
+
+TITLE
+BUG: The variable `bytes` is not defined.
+
+BODY
+<!--
+Thank you for reporting a bug!
+Please provide as much detail as possible to help us identify and fix the issue.
+-->
+
+**Problem**
+When code contains type `bytes`, it raise a ``smolagents.local_python_executor.InterpreterError: The variable `bytes` is not defined.``
+
+I'm not sure this is a bug or intentional design.
+
+**Steps to reproduce**
+My markdown is poor, please dedent 4 spaces manually.
+```py
+    from contextlib import contextmanager
+    from unittest.mock import patch
+
+    from smolagents import ChatMessageStreamDelta, CodeAgent, TokenUsage, WebSearchTool
+    from smolagents.models import OpenAIServerModel
+
+
+    @contextmanager
+    def mock_model_response(agent, mock_response: str):
+        def mocked_generate_stream(*_args, **_kwargs):
+            yield ChatMessageStreamDelta(
+                content=mock_response,
+                tool_calls=None,
+                token_usage=None,
+            )
+            yield ChatMessageStreamDelta(
+                content="",
+                tool_calls=None,
+                token_usage=TokenUsage(input_tokens=21176, output_tokens=174),
+            )
+
+        with patch.object(agent.model, "generate_stream", side_effect=mocked_generate_stream):
+            yield
+
+
+    if __name__ == "__main__":
+        content = """\
+    Thought: I need to write a try-except code block that attempts to run the given code:
+    print(f"{type(bytes)=}"); print(f"{isinstance(b'123', bytes)=}"). If there's an error, I should use
+    final_answer to exit immediately.
+
+    Code:
+    ```py
+    try:
+        print(f"{type(bytes)=}")
+        print(f"{isinstance(b'123', bytes)=}")
+    except Exception as e:
+        final_answer(f"Error occurred: {type(e)}: {e}")
+    ```
+    """
+        model = OpenAIServerModel(model_id="123")
+        agent = CodeAgent(tools=[WebSearchTool()], model=model, stream_outputs=True)
+
+        with mock_model_response(agent, content):
+            agent.run(
+                """Using try-except block to run `print(f"{type(int)=}"); print(f"{isinstance(123, int)=}")`. Exit with final_answer if any exception raised."""
+            )
+```
+
+Console output:
+
+
+**Actual behavior and error logs**
+```text
+╭───────────────────────────────────────────────────────── New run ──────────────────────────────────────────────────────────╮│                                                                                                                            ││ Using try-except block to run `print(f"{type(int)=}"); print(f"{isinstance(123, int)=}")`. Exit with final_answer if any   ││ exception raised.                                                                                                          ││                                                                                                                            │╰─ OpenAIServerModel - 123 ──────────────────────────────────────────────────────────────────────────────────────────────────╯━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━Thought: I need to write a try-except code block that attempts to run the given code: print(f"{type(bytes)=}");
+print(f"{isinstance(b'123', bytes)=}"). If there's an error, I should use final_answer to exit immediately.
+
+Code:
+
+
+ try:
+     print(f"{type(bytes)=}")
+     print(f"{isinstance(b'123', bytes)=}")
+ except Exception as e:
+     final_answer(f"Error occurred: {type(e)}: {e}")
+
+ ─ Executing parsed code: ─────────────────────────────────────────────────────────────────────────────────────────────────── 
+  try:                                                                                                                        
+      print(f"{type(bytes)=}")                                                                                                
+      print(f"{isinstance(b'123', bytes)=}")                                                                                  
+  except Exception as e:                                                                                                      
+      final_answer(f"Error occurred: {type(e)}: {e}")                                                                         
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+Final answer: Error occurred: <class 'smolagents.local_python_executor.InterpreterError'>: The variable `bytes` is not        
+defined.
+[Step 1: Duration 0.04 seconds| Input tokens: 21,176 | Output tokens: 174]
+```
+
+**Expected behavior**
+
+It should print:
+```text
+<class 'type'>
+True
+```
+instead of raising an exception.
+
+**Environment:**
+Please complete the following information:
+- OS: Windows
+- Python version: 3.13.2
+- Package version: smolagents is on the main branch
+
+---
+
+### Checklist
+- [x] I have searched the existing issues and have not found a similar bug report.
+- [x] I have provided a minimal, reproducible example.
+- [x] I have provided the full traceback of the error.
+- [x] I have provided my environment details.
+- [x] I am willing to work on this issue and submit a pull request. (optional)

@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1 and stdout was `OBSERVED: AttributeError: 'str' object has no attribute 'items'`.",
+    "Captured traceback reaches `langgraph/_internal/_config.py`, line 302, at `for k, v in config.items()`, via `Pregel.stream` line 2499 and `Pregel.invoke` line 3071.",
+    "The fallback package `langgraph==1.0.7` has the same reported failing stack locations; no model, API key, or runtime network call is used."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; the full checkout did not finish under the shared host's concurrent clone workload, so used the permitted pinned issue-era release fallback.",
+    "Created `.venv` and installed fully pinned dependencies from `requirements.txt`.",
+    "Created a local one-node StateGraph reproduction and invoked it with `config=\"invalid_config\"`.",
+    "Ran and captured the final `bash run_repro.sh` output in `repro_stdout.log` and `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,46 @@
+{
+  "owner": "camel-ai",
+  "repo": "camel",
+  "number": 3954,
+  "html_url": "https://github.com/camel-ai/camel/issues/3954",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] AWS Bedrock Converse tool calling fails with ValidationException for toolResult",
+  "author": "HelloJocelynLu",
+  "created_at": "2026-03-21T07:51:27Z",
+  "updated_at": "2026-03-22T08:34:24Z",
+  "closed_at": "2026-03-22T08:34:24Z",
+  "labels": [
+    "bug",
+    "Needs Triage"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:37:51.207374+00:00",
+  "comments": [
+    {
+      "author": "Wendong-Fan",
+      "created_at": "2026-03-22T07:57:44Z",
+      "body": "thanks @HelloJocelynLu  for reporting this issue!"
+    }
+  ]
+}

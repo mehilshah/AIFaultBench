@@ -1,0 +1,98 @@
+# recovered-from-issue: https://github.com/camel-ai/camel/issues/4058
+
+TITLE
+[BUG] MinMax API url are different based on region
+
+BODY
+### Required prerequisites
+
+- [x] I have read the documentation <https://camel-ai.github.io/camel/camel.html>.
+- [x] I have searched the [Issue Tracker](https://github.com/camel-ai/camel/issues) and [Discussions](https://github.com/camel-ai/camel/discussions) that this hasn't already been reported. (+1 or comment there if it has.)
+- [x] Consider asking first in a [Discussion](https://github.com/camel-ai/camel/discussions/new).
+
+### What version of camel are you using?
+
+0.2.91a4
+
+### System information
+
+3.13.13 (main, May 10 2026, 19:26:54) [Clang 22.1.3 ] linux
+0.2.91a4
+
+
+### Problem description
+
+Minimax uses different API endpoints for mainland China and international users. Previously, the codebase defaulted to the mainland endpoint:
+```
+https://api.minimaxi.io/v1
+```
+However, international users must use:
+```
+https://api.minimax.io/v1
+```
+Because the mainland endpoint was set as the default, international users could encounter confusing authentication errors if they did not manually update the configuration.
+
+```
+openai.AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authorized_error', 'message': 'invalid api key (2049)', 'http_code': '401'}, 'request_id': '065a9f88e8f5db97a45c1f42651f8e7e'}
+```
+
+### Reproducible example code
+
+The Python snippets:
+test_minimax_agent.py
+```python
+from camel.agents import ChatAgent
+from camel.models import ModelFactory
+from camel.types import ModelPlatformType, ModelType
+
+
+sys_msg = "You are a helpful assistant."
+usr_msg = """Who is the best basketball player in the world?
+Tell about his career.
+"""
+
+model = ModelFactory.create(
+    model_platform=ModelPlatformType.MINIMAX,
+    model_type=ModelType.MINIMAX_M2_7,
+)
+agent = ChatAgent(
+    system_message=sys_msg,
+    model=model,
+)
+
+response = agent.step(usr_msg)
+print(response.msgs[0].content)
+```
+
+Command lines:
+
+```bash
+python examples/agents/test_minimax_agent.py
+```
+
+Extra dependencies:
+
+```text
+
+```
+
+Steps to reproduce:
+
+1. If you are not in china mainland and MINIMAX_API_BASE_URL is not set.
+2. You provide the international  MINIMAX_API_KEY
+3. Run the script above.
+
+
+### Traceback
+
+```pytb
+openai.AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authorized_error', 'message': 'invalid api key (2049)', 'http_code': '401'}, 'request_id': '065b5511cac5336bfe531c37967fc74a'}
+```
+
+### Expected behavior
+
+It is better to let user be aware of this URL pain point, otherwise they will think the problem comes from the framework.
+
+### Additional context
+
+_No response_

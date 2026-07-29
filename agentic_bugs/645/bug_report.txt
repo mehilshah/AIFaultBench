@@ -1,0 +1,130 @@
+# recovered-from-issue: https://github.com/langchain-ai/langchain/issues/38648
+
+TITLE
+ChatFireworks._combine_llm_outputs raises TypeError on nested token_usage dicts (prompt_tokens_details) in batched generate()
+
+BODY
+### Submission checklist
+
+- [x] This is a bug, not a usage question.
+- [x] I added a clear and descriptive title that summarizes this issue.
+- [x] I used the GitHub search to find a similar question and didn't find it.
+- [x] I am sure that this is a bug in LangChain rather than my code.
+- [x] The bug is not resolved by updating to the latest stable version of LangChain (or the specific integration package).
+- [x] This is not related to the langchain-community package.
+- [x] I posted a self-contained, minimal, reproducible example. A maintainer can copy it and run it AS IS.
+
+### Package (Required)
+
+- [ ] langchain
+- [ ] langchain-openai
+- [ ] langchain-anthropic
+- [ ] langchain-classic
+- [ ] langchain-core
+- [ ] langchain-model-profiles
+- [ ] langchain-tests
+- [ ] langchain-text-splitters
+- [ ] langchain-chroma
+- [ ] langchain-deepseek
+- [ ] langchain-exa
+- [x] langchain-fireworks
+- [ ] langchain-groq
+- [ ] langchain-huggingface
+- [ ] langchain-mistralai
+- [ ] langchain-nomic
+- [ ] langchain-ollama
+- [ ] langchain-openrouter
+- [ ] langchain-perplexity
+- [ ] langchain-qdrant
+- [ ] langchain-xai
+- [ ] Other / not sure / general
+
+### Related Issues / PRs
+
+* #38482 — the exact same bug shape in `langchain-mistralai` (already claimed by other contributors; this report is for the sibling copy in `langchain-fireworks`)
+* #38645 — first filing of this report, auto-closed by triage because it was submitted via the API; refiled here via the web form as instructed
+* #38646 — PR with the fix (auto-closed pending assignment)
+
+### Reproduction Steps / Example Code (Python)
+
+```python
+import os
+
+os.environ.setdefault("FIREWORKS_API_KEY", "fake-key")  # offline repro, no network needed
+
+from langchain_fireworks import ChatFireworks
+
+llm = ChatFireworks(model="accounts/fireworks/models/kimi-k2-instruct")
+
+# llm_output dicts exactly as _create_chat_result stores them for two Fireworks
+# responses. Fireworks returns nested usage details; the second response here
+# hits the prompt cache:
+llm_outputs = [
+    {
+        "token_usage": {
+            "prompt_tokens": 32,
+            "completion_tokens": 51,
+            "total_tokens": 83,
+            "prompt_tokens_details": {"cached_tokens": 0},
+        },
+        "model_name": "accounts/fireworks/models/kimi-k2-instruct",
+    },
+    {
+        "token_usage": {
+            "prompt_tokens": 44341,
+            "completion_tokens": 10,
+            "total_tokens": 44351,
+            "prompt_tokens_details": {"cached_tokens": 41518},
+        },
+        "model_name": "accounts/fireworks/models/kimi-k2-instruct",
+    },
+]
+
+llm._combine_llm_outputs(llm_outputs)
+
+# The end-to-end trigger against the live API is any batched call, e.g.
+# llm.generate([[HumanMessage("a")], [HumanMessage("b")]]) — generate() collects
+# the per-prompt llm_output dicts and calls _combine_llm_outputs on them.
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+Traceback (most recent call last):
+  File "repro_fireworks.py", line 44, in <module>
+    combined = llm._combine_llm_outputs(llm_outputs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".../langchain_fireworks/chat_models.py", line 967, in _combine_llm_outputs
+    overall_token_usage[k] += v
+TypeError: unsupported operand type(s) for +=: 'dict' and 'dict'
+```
+
+### Description
+
+`ChatFireworks._combine_llm_outputs` (`libs/partners/fireworks/langchain_fireworks/chat_models.py:956`) accumulates token usage with a plain `overall_token_usage[k] += v`, which assumes every usage value is an int.
+
+But `_create_chat_result` stores the raw `response["usage"]` dict in `llm_output["token_usage"]` (line ~1085), and Fireworks chat completions include nested dicts there — `"prompt_tokens_details": {"cached_tokens": ...}` (see e.g. the response samples in BerriAI/litellm#25950, which show `prompt_tokens_details: {"cached_tokens": 41518}` from Fireworks). So as soon as `generate()` runs more than one prompt in a batch, combining the second output hits `dict += dict` and raises `TypeError`.
+
+Two variants of the same problem:
+* `prompt_tokens_details` present in both outputs → `TypeError: unsupported operand type(s) for +=: 'dict' and 'dict'`
+* Fireworks can also return `"prompt_tokens_details": null`, which poisons `overall_token_usage` with `None` and blows up the same way on the next output.
+
+This is the same bug that was reported for `langchain-mistralai` in #38482 — fireworks has a copy of the same naive loop. `langchain-openai` already solved this: its `_combine_llm_outputs` skips `None` values and merges nested dicts recursively via `_update_token_usage` (`libs/partners/openai/langchain_openai/chat_models/base.py:486`).
+
+Fix is ready in #38646, mirroring the `langchain-openai` approach (`_update_token_usage` helper + `None` skip) with parametrized unit tests; `make format lint test` green in `libs/partners/fireworks` (118 passed). Could a maintainer assign this to me so the PR can be reopened?
+
+(Note: this is a re-file of #38645, which was auto-closed for being submitted via the API rather than the web form.)
+
+### System Info
+
+System Information
+------------------
+> OS:  Darwin
+> OS Version:  Darwin Kernel Version 24.6.0 (macOS 15.6.1, arm64)
+> Python Version:  3.12.10
+
+Package Information
+-------------------
+> langchain_core: 1.4.8
+> langchain_fireworks: 1.4.3 (reproduced on latest master as well)
+> langsmith: 0.9.7

@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "smolagents",
+  "number": 1689,
+  "html_url": "https://github.com/huggingface/smolagents/issues/1689",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "BUG: smolagents.utils.AgentGenerationError: Error in generating model output: Error code: 400 - {'object': 'error', 'message': 'Expected 2 output messages (reasoning and final), but got 64.', 'type': 'BadRequestError', 'param': None, 'code': 400}",
+  "author": "02deno",
+  "created_at": "2025-08-18T14:10:20Z",
+  "updated_at": "2025-10-17T11:36:04Z",
+  "closed_at": "2025-08-18T15:25:54Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.05,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T14:00:39.029608+00:00",
+  "comments": [
+    {
+      "author": "albertvillanova",
+      "created_at": "2025-08-18T15:25:54Z",
+      "body": "Thanks for reporting.\n\nFrom the error message, it looks like the issue is related to the way your model is being served through vLLM rather than something within smolagents itself.\n\nI'd recommend raising this with the vLLM team, since the mismatch in expected outputs seems to stem from the serving configuration. For now, I'll close this issue here. That said, please feel free to reopen it if you later confirm that the problem is indeed specific to smolagents."
+    },
+    {
+      "author": "suryabdev",
+      "created_at": "2025-10-17T11:36:04Z",
+      "body": "For future reference, It was a bug in vLLM https://github.com/vllm-project/vllm/pull/23318 that should be fixed in the latest release (More [details](https://github.com/huggingface/smolagents/issues/1694#issuecomment-3415128533))"
+    }
+  ]
+}

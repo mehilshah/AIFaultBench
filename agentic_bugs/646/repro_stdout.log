@@ -1,0 +1,1 @@
+BUG OBSERVED: streamed block and replay payload omit thinking: {'signature': 'offline-signature', 'type': 'thinking'}

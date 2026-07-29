@@ -1,0 +1,53 @@
+{
+  "owner": "pydantic",
+  "repo": "pydantic-ai",
+  "number": 6025,
+  "html_url": "https://github.com/pydantic/pydantic-ai/issues/6025",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`new_messages()` includes the user `ModelRequest` on the first turn through UI adapters (Vercel AI / AG-UI) with `manage_system_prompt='server'`",
+  "author": "rostislav-simonik-plc",
+  "created_at": "2026-06-23T17:19:56Z",
+  "updated_at": "2026-07-01T23:40:23Z",
+  "closed_at": "2026-07-01T23:40:23Z",
+  "labels": [
+    "bug",
+    "message history",
+    "pydanty:bug",
+    "area:ui-adapters"
+  ],
+  "milestone": "2026-07",
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 8.26,
+  "fix": {
+    "closing_commit": "d1d7348b15c2a80eb746c29017b04116ee0692cb",
+    "linked_prs": [],
+    "best_guess_fix_commit": "d1d7348b15c2a80eb746c29017b04116ee0692cb",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T14:00:41.934876+00:00",
+  "comments": [
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-06-23T17:20:22Z",
+      "body": "<!-- pydanty:runtime-failure -->\n\n### pydanty runtime failure\n\nRun `df_run_6339e5b2d5124030b473` started from the GitHub webhook, but the Dogfooding runtime\nfailed before pydanty completed the workflow. The pydanty status comment above\n(if any) is from a completed run and still stands.\n\n**Next step:** maintainer attention needed; rerun after fixing the runtime failure.\n\n<details>\n<summary>Failure detail (tail)</summary>\n\n```text\nsandbox bootstrap did not callback:   File \"/home/pydanty/dogfooding/.bootstrap.py\", line 334\n    // pull a breaking @main the baked image and agents weren't built against.\n                                                             ^\nSyntaxError: unterminated string literal (detected at line 334)\n\n```\n\n</details>"
+    },
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-06-23T19:20:34Z",
+      "body": "<!-- pydanty:status-comment:v1 -->\n\n## pydanty status: bug\n\n**Classification:** bug\n\n**Why this matters:** Apps using UI adapters (Vercel AI / AG-UI) with the default `manage_system_prompt='server'` store the first user message twice \u2014 once via their own persistence and once via the `ModelRequest` that leaks into `new_messages()` only on turn 1. The asymmetry between turn 1 and follow-up turns makes this hard to diagnose. The generalized defect affects any capability or history processor that `replace()`s the trailing `ModelRequest`, not just system prompt reinjection.\n\n**Evidence summary:** Reproducer delegate was unavailable (budget exhausted, 4 attempts failed \u2014 infrastructure reason, not evidence gap). Reproduction was NOT independently completed by pydanty. Evidence is from two sources: (1) code_librarian confirmed the exact mechanism at specific line numbers in current checked-in code with high confidence \u2014 _prepare_request captures resumed_request (original object) AFTER before_model_request mutates the list (lines 926-952); ReinjectSystemPrompt._prepend_to_first_request calls replace(first_request, parts=[*sys_parts, *first_request.parts]) (reinject_system_prompt.py lines 89-91), breaking both the `is` identity check and _is_same_request parts comparison (which compares parts/timestamp/instructions/metadata at lines 1693-1705) in _first_new_message_index (lines 1672-1690); boundary falls back to _first_run_id_index which matches the current run_id. (2) Reporter's own TestModel repro output (no network/API key needed) shows turn 1 new_messages() = [ModelRequest, ModelResponse] (LEAK), turn 2 = [ModelResponse] (ok), consistent with the code mechanism. The PR opener MUST run the reporter's TestModel script to independently confirm before merging.\n\n**Next action:** pr_ready -- code_librarian confirmed the exact mechanism at specific line numbers; reporter's own TestModel repro output is consistent; fix is narrow and backwards-compatible \u2014 capture resumed request's list index before before_model_request mutation.\n\n`new_messages()` leaks the inbound user `ModelRequest` whenever a capability (e.g. `ReinjectSystemPrompt`, the default-on UI adapter capability) `replace()`s the trailing `ModelRequest` before the boundary is computed in `_first_new_message_index`. The `replace()` breaks both the `is` identity check and the `_is_same_request` field-equality fallback, causing the boundary to fall back to `_first_run_id_index`, which matches the reinjected request stamped with the current `run_id`. Fix: capture the resumed request's list index BEFORE `before_model_request` mutates the list, and use that index to compute the new-message boundary directly. Reproduction was not independently completed by pydanty (reproducer delegate unavailable due to budget exhaustion); evidence is from code_librarian code reading + reporter's own TestModel repro output. PR opener must run the reporter's script to confirm before merging."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`repro_stdout.log`: `BUG OBSERVED: TypeError: 'function' object is not subscriptable`",
+    "Final `bash run_repro.sh` exit status: 1; `repro_stderr.log` is empty.",
+    "Pinned checkout verified: `bc5f1517cf7ac27addd4286e388228b8172b93b9`; editable imports resolve to its core and langchain_v1 packages."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`.",
+    "Installed the pinned environment with Pydantic 2.14.0a1 and editable packages from the checkout.",
+    "Ran and captured `bash run_repro.sh`; validated dependency consistency with `pip check`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

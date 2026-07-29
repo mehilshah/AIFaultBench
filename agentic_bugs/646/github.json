@@ -1,0 +1,97 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langchain",
+  "number": 38639,
+  "html_url": "https://github.com/langchain-ai/langchain/issues/38639",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "ChatAnthropic streaming drops thinking field from empty thinking blocks (signature_delta-only), replay fails with 400 thinking.thinking: Field required",
+  "author": "Seo-yul",
+  "created_at": "2026-07-03T10:55:08Z",
+  "updated_at": "2026-07-28T16:20:10Z",
+  "closed_at": "2026-07-28T16:20:10Z",
+  "labels": [
+    "bug",
+    "anthropic",
+    "external"
+  ],
+  "milestone": null,
+  "comments_count": 11,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 25.23,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:37:38.522807+00:00",
+  "comments": [
+    {
+      "author": "anneheartrecord",
+      "created_at": "2026-07-03T13:14:55Z",
+      "body": "Ran into this in an agent loop too. Happy to send a PR if you can assign me.\n\nThe empty-block case is what's missing. For a normal thinking block the `thinking` key comes from the `thinking_delta`, so reconstructing the block from the deltas works. But for an empty adaptive-thinking block there's no `thinking_delta` at all \u2014 just `content_block_start` (thinking=\"\") and a `signature_delta` \u2014 and `content_block_start` is intentionally dropped when both `thinking` and `signature` are empty (matching the text-block behavior, `test_empty_thinking_content_block_start_emits_no_chunk`). So the block ends up reconstructed from the `signature_delta` alone, which has no `thinking` key, and replay hits `400 thinking.thinking: Field required`.\n\nRather than emitting the empty start (which would break the text/thinking symmetry), the smaller fix is in the `signature_delta` branch of `_make_message_chunk_from_anthropic_event`: default `thinking` to `\"\"` when building the block from a signature delta, so the reconstructed block always carries the field:\n\n```python\nelif event.delta.type in {\"thinking_delta\", \"signature_delta\"}:\n    content_block = event.delta.model_dump()\n    content_block[\"index\"] = event.index\n    content_block[\"type\"] = \"thinking\"\n    if event.delta.type == \"signature_delta\":\n        content_block.setdefault(\"thinking\", \"\")\n    message_chunk = AIMessageChunk(content=[content_block])\n```\n\nFor a normal block the `thinking_delta` still supplies the real text and the empty string from the signature delta just concatenates away, so nothing changes there. Branch with the fix + a unit test built on your repro (aggregate the events, then `_get_request_payload` to confirm the replayed block validates):\n\nhttps://github.com/anneheartrecord/langchain/tree/fix/anthropic-empty-thinking-block\n\n<!-- oss-radar:idempotency=auto-20260703-201318.w2.langchain-ai_langchain.38639 -->\n"
+    },
+    {
+      "author": "Madhav-000-s",
+      "created_at": "2026-07-04T10:11:04Z",
+      "body": "Hi, I'd like to work on this \u2014 I've verified the root cause on current master and have a minimal fix in mind.\n\nRoot cause\n\nTwo things combine in _make_message_chunk_from_anthropic_event (libs/partners/anthropic/langchain_anthropic/chat_models.py):\n\ncontent_block_start events only emit a chunk for tool_use / tool_result / document / redacted_thinking blocks. For a thinking block, the start event (which carries thinking=\"\") is dropped, so the block is reconstructed entirely from subsequent deltas.\nThe signature_delta branch builds its content block from event.delta.model_dump(), which contains only signature \u2014 no thinking key.\nFor a normal thinking block this works, because the thinking key is supplied by the thinking_delta chunks. But an empty adaptive-thinking block streams content_block_start (dropped) followed by only a signature_delta, so the aggregated message ends up with {\"type\": \"thinking\", \"signature\": ..., \"index\": 0} \u2014 the required thinking field is missing. Replaying that message to the API then fails with 400 thinking.thinking: Field required, exactly as described above.\n\nProposed fix\n\nIn the signature_delta branch, include \"thinking\": \"\" in the emitted content block:\n\nEmpty blocks: the signature chunk alone now aggregates to a valid {\"type\": \"thinking\", \"thinking\": \"\", \"signature\": ...} block that round-trips to the API.\nNon-empty blocks: chunk merging concatenates string values, so the trailing \"\" is a no-op on the text already accumulated from thinking_delta chunks \u2014 no behavior change for the normal path.\nOne-line change, no public API surface touched.\n\nTest plan\n\nUnit tests in tests/unit_tests/test_chat_models.py (no network): replay the deterministic event sequence from this issue (content_block_start with empty thinking, then signature_delta only) and assert the aggregated block contains thinking; plus a companion test for a normal thinking-block sequence (thinking_deltas + signature_delta) asserting the thinking text is unchanged, to guard against regressions in the non-empty path.\n\nCould a maintainer assign this to me? I'll open the PR right away once assigned."
+    },
+    {
+      "author": "Madhav-000-s",
+      "created_at": "2026-07-04T10:22:09Z",
+      "body": "A correction to the analysis above, from checking current master: test_empty_thinking_content_block_start_emits_no_chunk doesn't exist anywhere in libs/partners/anthropic/tests/, and the start event isn't dropped via an empty-check \u2014 content_block_start only emits chunks for tool_use/tool_result/document/redacted_thinking block types, so thinking-block starts are dropped unconditionally. The conclusion is the same (the fix belongs in the signature_delta branch), but I've verified it end-to-end: my regression test fails with KeyError on unpatched master and passes with the fix, alongside the full anthropic unit suite (202 passed), ruff, and mypy. Ready to open the PR on assignment."
+    },
+    {
+      "author": "Seo-yul",
+      "created_at": "2026-07-06T00:05:37Z",
+      "body": "**Note to maintainers \u2014 most of the discussion above is automated spam, not real review.**\n\nTo save triage time, the state of this thread:\n\n**Legitimate discussion (first 3 comments):** Two contributors independently verified the root cause and converged on the same minimal fix \u2014 `content_block.setdefault(\"thinking\", \"\")` in the `signature_delta` branch of `_make_message_chunk_from_anthropic_event`, plus a regression test built on the repro in the issue body. That is the actionable state of this issue.\n\n**Everything after that is automated noise from two accounts:**\n\n- `kingpy-bot` \u2014 account created 2026-07-01, days before commenting here. Each comment self-identifies as \"prepared by an AI agent in the Content Distribution lane.\"\n- `Tuttotorna` \u2014 posts pseudo-formal restatements of the issue (\"Valid(\u03c4) \u21d4 Required(\u03c4) \u2286 Supported(\u03c4)\") across dozens of OSS repos to promote their own repository, PHI-OMEGA-RUNTIME. This issue has been listed without my involvement or consent in their \"Evidence Ledger\" (Tuttotorna/PHI-OMEGA-RUNTIME#2) as \"evidence\" for that framework, graded \"B++ = strong external uptake.\" I do not endorse that framework, and nothing in those comments adds technical information beyond what is already in the issue body.\n\nThe two accounts reply to each other, which makes the thread look like an active design discussion; it is not. I've reported the comments as spam and would appreciate a maintainer marking them as such, so the actual one-line fix doesn't get buried.\n"
+    },
+    {
+      "author": "Functionhx",
+      "created_at": "2026-07-09T19:25:13Z",
+      "body": "I have a fix ready for this (one-line setdefault in signature_delta handler + tests). Could someone assign this to me?"
+    },
+    {
+      "author": "Functionhx",
+      "created_at": "2026-07-09T19:26:27Z",
+      "body": "Here's my approach:\n\nRoot cause: when a signature_delta event arrives in the streaming path, event.delta.model_dump() returns {\"signature\": \"...\", \"type\": \"signature_delta\"} \u2014 no thinking key. Later, when this chunk is replayed to the API, the missing field causes a 400 error.\n\nFix: one line in chat_models.py \u2014 content_block.setdefault(\"thinking\", \"\") in the signature_delta branch. setdefault ensures it won't clobber an existing thinking field, and the empty string is a no-op during merge_dicts concatenation.\n\nAdded two tests: one directly verifies a signature_delta chunk carries thinking: \"\", another guards the non-empty thinking path against regression. Happy to adjust the approach if there's a better way to handle this."
+    },
+    {
+      "author": "AldrigoR",
+      "created_at": "2026-07-16T07:18:54Z",
+      "body": "I have the same issue when using sonnet-5.\nWhile if I use sonnet-4.6 it works fine.\nAny resolution date???"
+    },
+    {
+      "author": "d87skg",
+      "created_at": "2026-07-19T03:24:05Z",
+      "body": "I've faced this exact infinite reasoning loop issue many times with agents \u2014 without full step-by-step execution traces it's nearly impossible to tell which tool call or state transition triggers the loop.\n\nYou can add complete replayable tracing with Traccia in only 5 lines:\n\n```python\nfrom traccia import observe\n\n@observe\ndef run_agent():\n    # Your full LangGraph agent workflow here\nAfter running the failing agent, you can replay the entire execution chain to pinpoint the exact step that causes the infinite loop, and export a full audit log for analysis.\n\nInstall: pip install traccia-sdk"
+    },
+    {
+      "author": "mdrxy",
+      "created_at": "2026-07-27T21:56:45Z",
+      "body": "Consolidating a duplicate report here.\n\n#38977 describes the same bug via the adaptive thinking + `display: \"omitted\"` path (default on newer Claude models). Closing that issue as a duplicate of this one.\n\nUseful extras from #38977:\n- Fail mode is especially common when `thinking.display` defaults to `\"omitted\"` (signature-only stream, no `thinking_delta`)\n- Interim workaround until the fix lands:\n\n```python\nChatAnthropic(..., thinking={\"type\": \"adaptive\", \"display\": \"summarized\"})\n```\n\nStill the same repair: ensure streamed `signature_delta` thinking blocks retain `thinking: \"\"` so history is replayable (see #38765).\n"
+    },
+    {
+      "author": "mdrxy",
+      "created_at": "2026-07-27T22:11:19Z",
+      "body": "Will be handling this by tomorrow"
+    },
+    {
+      "author": "bolshchikov",
+      "created_at": "2026-07-28T13:28:39Z",
+      "body": "Happens to us too on sonnet-5 and opus-5"
+    }
+  ]
+}

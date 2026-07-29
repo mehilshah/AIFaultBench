@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/653/repro.py", line 57, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/653/repro.py", line 51, in main
+    raise RuntimeError(
+RuntimeError: Bug reproduced: Bedrock requires both toolResult blocks in the immediately following user message.

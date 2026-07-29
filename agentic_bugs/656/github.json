@@ -1,0 +1,45 @@
+{
+  "owner": "browser-use",
+  "repo": "browser-use",
+  "number": 3970,
+  "html_url": "https://github.com/browser-use/browser-use/issues/3970",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Bug: ...sensitive_data parameter",
+  "author": "ARCHIJAIN1505",
+  "created_at": "2026-01-29T10:48:30Z",
+  "updated_at": "2026-02-09T19:40:32Z",
+  "closed_at": "2026-02-09T19:40:32Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 11.37,
+  "fix": {
+    "closing_commit": "ab83ee7a8a5658b461e15f549d224f210c2b1596",
+    "linked_prs": [],
+    "best_guess_fix_commit": "ab83ee7a8a5658b461e15f549d224f210c2b1596",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T12:37:57.462352+00:00",
+  "comments": [
+    {
+      "author": "ARCHIJAIN1505",
+      "created_at": "2026-02-08T17:00:14Z",
+      "body": "Any update on when in which version release of browser-use this will get resolved? "
+    }
+  ]
+}

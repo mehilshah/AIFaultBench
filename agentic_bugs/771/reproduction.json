@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified: 9f43bbd8e7b52135f27e8071ce3b6d517d4545fd.",
+    "Final run exited 1.",
+    "stdout: OBSERVED BUG: TypeError: 'ChatMessage' object is not subscriptable",
+    "stderr was empty."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh.",
+    "Created the isolated environment and installed pinned dependencies.",
+    "Ran the offline deterministic ToolCallingAgent reproduction.",
+    "Captured final logs and validated required artifacts."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

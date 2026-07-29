@@ -1,0 +1,82 @@
+# recovered-from-issue: https://github.com/langflow-ai/langflow/issues/12775
+
+TITLE
+bug: `from X import Y as Z` alias ignored in custom component code — NameError on aliased imports
+
+BODY
+### Bug Description
+
+`_handle_module_attributes()` in `lfx/custom/validate.py` uses `alias.name` for the `exec_globals` dict key, ignoring `alias.asname`. When a component uses `from pkg import Foo as Bar`, the sandbox registers `Foo` in scope but the component code references `Bar` — resulting in a NameError. The component fails to load and doesn't appear in the sidebar.
+
+Note: the `import X as Y` handler in the same function (`prepare_global_scope`) correctly checks `alias.asname`. Only the `from X import Y as Z` handler is affected.
+
+Buggy code in `_handle_module_attributes`:
+
+```python
+def _handle_module_attributes(imported_module, node, module_name, exec_globals):
+    for alias in node.names:
+        try:
+            exec_globals[alias.name] = getattr(imported_module, alias.name)
+        except AttributeError:
+            full_module_path = f"{module_name}.{alias.name}"
+            exec_globals[alias.name] = importlib.import_module(full_module_path)
+```
+
+Should use `alias.asname or alias.name` as the dict key:
+
+```python
+key = alias.asname or alias.name
+exec_globals[key] = getattr(imported_module, alias.name)
+```
+
+### Reproduction
+
+Create a custom component with an aliased import and reference the alias:
+
+```python
+from some_package.module import OriginalName as AliasedName
+
+class MyComponent(Component):
+    display_name = "Test"
+
+    def build(self) -> Data:
+        obj = AliasedName()  # NameError: name 'AliasedName' is not defined
+        ...
+```
+
+Error:
+
+```
+Error building Component: Error creating class.
+NameError(name 'AliasedName' is not defined)
+```
+
+### Expected behavior
+
+
+`AliasedName` is available in the component's exec scope, matching standard Python import semantics. The `from X import Y as Z` form should bind `Z` in scope, not `Y`.
+
+
+### Who can help?
+
+@italojohnny 
+
+### Operating System
+
+macOS 26.2
+
+### Langflow Version
+
+1.0.9
+
+### Python Version
+
+3.12
+
+### Screenshot
+
+_No response_
+
+### Flow File
+
+_No response_

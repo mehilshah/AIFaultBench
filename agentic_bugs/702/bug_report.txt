@@ -1,0 +1,105 @@
+# recovered-from-issue: https://github.com/pydantic/pydantic-ai/issues/6215
+
+TITLE
+genai-prices lazy imports blocked by Temporal's sandbox
+
+BODY
+### Initial Checks
+
+- [x] I'm using the [latest version](https://github.com/pydantic/pydantic-ai/releases/latest) of Pydantic AI
+- [x] I've searched for my issue in [the issue tracker](https://github.com/pydantic/pydantic-ai/issues) before opening this issue
+
+### Description
+
+When Logfire-instrumented agent runs under `TemporalAgent`, `response.cost()` executes workflow-side, and genai-prices lazy-loads its price data + httpx2 on first call, inside the workflow sandbox. The sandbox intercepts and re-imports that chain, which trips on `httpx2._models` subclassing `urllib.request.Request`:
+
+```
+CostCalculationFailedWarning: Failed to get cost from response: RestrictedWorkflowAccessError: Cannot access urllib.request.Request.__mro_entries__ from inside a workflow.
+```
+
+Net effect: operation.cost is silently missing from every Temporal run, plus a wall of `Module genai_prices.data / httpx2.* was imported after initial workflow load` warnings on worker startup.
+
+The failure appeared when genai-prices moved from httpx (which is in `PydanticAIPlugin`'s passthrough list) to httpx2 (which isn't) — presumably fixable by adding genai_prices/httpx2 to the passthrough list in here:
+https://github.com/pydantic/pydantic-ai/blob/fe7ee8a630674a7e66fc57d8e63ee7ddad098424/pydantic_ai_slim/pydantic_ai/durable_exec/temporal/__init__.py#L73-L112
+Though worth flagging: the sandbox re-importing genai_prices.data on first cost() call happened before that move too, just without breaking anything.
+
+Happy to help with a fix.
+
+### Minimal, Reproducible Example
+
+```Python
+import asyncio
+from datetime import timedelta
+
+from temporalio import workflow
+from temporalio.client import Client
+from temporalio.testing import WorkflowEnvironment
+from temporalio.worker import Worker
+
+from pydantic_ai.durable_exec.temporal import PydanticAIPlugin
+from pydantic_ai.messages import ModelResponse, TextPart
+from pydantic_ai.usage import RequestUsage
+
+
+@workflow.defn
+class CalculateCostInWorkflow:
+    @workflow.run
+    async def run(self) -> float:
+        response = ModelResponse(
+            parts=[TextPart('ok')],
+            usage=RequestUsage(input_tokens=100, output_tokens=10),
+            model_name='claude-sonnet-4-5',
+            provider_name='anthropic',
+        )
+        return float(response.cost().total_price)
+
+
+async def main() -> None:
+    print('starting local temporal env...', flush=True)
+    async with await WorkflowEnvironment.start_local() as env:
+        print('env up, connecting client...', flush=True)
+        client = await Client.connect(
+            env.client.service_client.config.target_host,
+            plugins=[PydanticAIPlugin()],
+        )
+        async with Worker(
+            client,
+            task_queue='repro',
+            workflows=[CalculateCostInWorkflow],
+            # Surface the sandbox violation as a workflow failure instead of an
+            # infinite task-retry hang.
+            workflow_failure_exception_types=[Exception],
+        ):
+            print('worker up, executing workflow...', flush=True)
+            try:
+                result = await client.execute_workflow(
+                    CalculateCostInWorkflow.run,
+                    id='calculate-cost-repro',
+                    task_queue='repro',
+                    execution_timeout=timedelta(seconds=15),
+                )
+                print(f'workflow completed, cost: {result}')
+            except Exception as e:
+                print('workflow failed:')
+                cause: BaseException | None = e
+                while cause is not None:
+                    print(f'  {type(cause).__name__}: {cause}')
+                    cause = cause.__cause__
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
+```
+
+### Logfire Trace
+
+_No response_
+
+### Python, Pydantic AI & LLM client version
+
+- Python: 3.13.1
+- Pydantic AI: 2.2.0
+- LLM provider SDK: anthropic 0.108.0
+- temporalio 1.26.0
+- genai-prices 0.0.67
+- logfire 4.32.1

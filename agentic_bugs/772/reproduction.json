@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`bash run_repro.sh` exited 1 and printed: `OBSERVED BUG: Error code: 422 - message content must be a string; got list`.",
+    "`repro_stderr.log` is empty.",
+    "The repro\u2019s fake DeepInfra-compatible client observed a list under the default configuration and a string with `flatten_messages_as_text=True`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and confirmed commit `503dece3fb0cfcaaf7b11fc78a76eee810ab63bf`.",
+    "Created `.venv`, installed exact pinned dependencies, and installed `codebase` editable.",
+    "Created and ran the deterministic no-network reproduction; validated dependencies with `pip check`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

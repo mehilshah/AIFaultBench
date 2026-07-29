@@ -1,0 +1,1 @@
+# No third-party dependencies are needed; repro.py uses the pinned checkout's shell installer and the Python standard library.

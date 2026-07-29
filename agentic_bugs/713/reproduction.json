@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at 737d2c7a61f01ccc5724970abaf687dfeb114bbb.",
+    "Final captured stdout: BUG REPRODUCED: Name error (possibly undefined variable): name 'AliasedName' is not defined",
+    "The observed `bash run_repro.sh` exit status was 1; final stderr log is empty."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and verified the pinned revision.",
+    "Created `.venv` with `bash setup_env.sh`.",
+    "Ran `bash run_repro.sh` offline with a stub fixture and captured the final output."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

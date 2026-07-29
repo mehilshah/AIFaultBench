@@ -1,0 +1,51 @@
+{
+  "owner": "SWE-agent",
+  "repo": "SWE-agent",
+  "number": 1012,
+  "html_url": "https://github.com/SWE-agent/SWE-agent/issues/1012",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "UnicodeEncodeError in Python Logging: Handling Emojis with cp1252 Encoding Issue",
+  "author": "Teo-Selcuk",
+  "created_at": "2025-03-06T00:51:24Z",
+  "updated_at": "2025-03-06T03:51:58Z",
+  "closed_at": "2025-03-06T03:51:29Z",
+  "labels": [
+    "\ud83d\udc1b bug",
+    "os:windows"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.13,
+  "fix": {
+    "closing_commit": "1c534b9f439b5d4ce936601527c084b06685c3e5",
+    "linked_prs": [],
+    "best_guess_fix_commit": "1c534b9f439b5d4ce936601527c084b06685c3e5",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:06:19.203366+00:00",
+  "comments": [
+    {
+      "author": "klieret",
+      "created_at": "2025-03-06T03:35:18Z",
+      "body": "OK, so there's for example this: https://www.reddit.com/r/learnpython/comments/7sweo7/python_logging_and_unicode_error/\n\nSo it's probably still something that's misconfigured on your system, but it also sounds like we might still solve this on SWE-agent side anyway"
+    },
+    {
+      "author": "klieret",
+      "created_at": "2025-03-06T03:37:05Z",
+      "body": "Can you pull after #1013 is merged and try again? (make sure to `pip install -e .`)"
+    }
+  ]
+}

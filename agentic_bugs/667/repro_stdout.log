@@ -1,0 +1,1 @@
+OBSERVED BUG: InterpreterError: Forbidden function evaluation: 'open' is not among the explicitly allowed tools or defined/imported in the preceding code

@@ -1,0 +1,55 @@
+{
+  "owner": "stanfordnlp",
+  "repo": "dspy",
+  "number": 8917,
+  "html_url": "https://github.com/stanfordnlp/dspy/issues/8917",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug] Getting AttributeError: module 'dspy' has no attribute 'AzureOpenAI'",
+  "author": "GreenhouseCoffee",
+  "created_at": "2025-10-08T02:14:20Z",
+  "updated_at": "2025-10-08T23:39:06Z",
+  "closed_at": "2025-10-08T05:14:25Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.13,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T14:00:48.784627+00:00",
+  "comments": [
+    {
+      "author": "GreenhouseCoffee",
+      "created_at": "2025-10-08T02:22:21Z",
+      "body": "Any debugging help, implementation guidance, similar experiences and workarounds would be appreciated!"
+    },
+    {
+      "author": "TomeHirata",
+      "created_at": "2025-10-08T05:14:25Z",
+      "body": "We don't have dspy.AzureOpenAI now. We use litellm for communicating with LLMs, so please take a look at https://docs.litellm.ai/docs/providers/azure/ for how to configure AzureOpenAI with LiteLLM and pass the correct model (`azure/<your_deployment_name>`) to dspy.LM and set the environment variables. Thank you!"
+    },
+    {
+      "author": "GreenhouseCoffee",
+      "created_at": "2025-10-08T23:39:06Z",
+      "body": "Oh wow - I've been out of the loop for a bit and a lot has changed! Thanks for the link!"
+    }
+  ]
+}

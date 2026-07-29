@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at 65ec78efddec0de3267a510b33108100faa053e4.",
+    "Final run exited with status 1.",
+    "repro_stdout.log: OBSERVED BUG: Completions.create() got an unexpected keyword argument 'tool_choice'",
+    "repro_stderr.log was empty."
+  ],
+  "steps": [
+    "Ran bash setup_codebase.sh.",
+    "Created .venv and installed pinned dependencies plus editable packages from the checkout.",
+    "Ran bash run_repro.sh with an injected local completion-client stub.",
+    "Captured the final stdout and stderr logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

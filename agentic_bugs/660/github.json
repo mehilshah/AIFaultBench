@@ -1,0 +1,80 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langgraph",
+  "number": 6789,
+  "html_url": "https://github.com/langchain-ai/langgraph/issues/6789",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Send objects are not serializable, causing checkpointer failures",
+  "author": "sandeepyadav1478",
+  "created_at": "2026-02-12T02:23:15Z",
+  "updated_at": "2026-02-12T15:26:10Z",
+  "closed_at": "2026-02-12T03:04:32Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 8,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:38:04.431752+00:00",
+  "comments": [
+    {
+      "author": "weiguangli-io",
+      "created_at": "2026-02-12T02:39:52Z",
+      "body": "I opened a fix PR for this: https://github.com/langchain-ai/langgraph/pull/6790\\n\\nWhat it changes:\\n- keeps existing  serialization path\\n- adds a narrow compatibility fallback for  send-like objects ( with /)\\n- includes regression tests for both protocol-compatible and legacy send-like cases\\n\\nI also ran the checkpoint package lint + tests locally (, )."
+    },
+    {
+      "author": "weiguangli-io",
+      "created_at": "2026-02-12T02:40:14Z",
+      "body": "Follow-up with full details (the previous comment had formatting stripped by my shell):\n\nI opened PR #6790: https://github.com/langchain-ai/langgraph/pull/6790\n\nChanges in that PR:\n- Keep existing SendProtocol serialization behavior unchanged.\n- Add a narrow compatibility fallback for langgraph Send-like objects (class name Send, module path starts with langgraph., has node/arg).\n- Add regression tests for both protocol-compatible and legacy send-like cases.\n\nLocal validation completed in libs/checkpoint:\n- make lint\n- make test\n- TEST=tests/test_jsonplus.py make test"
+    },
+    {
+      "author": "sandeepyadav1478",
+      "created_at": "2026-02-12T02:42:27Z",
+      "body": "Awesome"
+    },
+    {
+      "author": "hinthornw",
+      "created_at": "2026-02-12T03:03:15Z",
+      "body": "This is incorrect"
+    },
+    {
+      "author": "hinthornw",
+      "created_at": "2026-02-12T03:04:32Z",
+      "body": "The first example you show is raw ormsgpack. We don't use that. We have our own hooks. https://github.com/langchain-ai/langgraph/blob/main/libs/checkpoint/langgraph/checkpoint/serde/jsonplus.py\n\nThe graph example you show is just because you're returning alist of send objects **from a node**\n\nThis was never supported. What IS suported is a `Command(goto=[Send(....)])` from the node.\n\nOR we support returning a list of sends **from conditional edges**."
+    },
+    {
+      "author": "sandeepyadav1478",
+      "created_at": "2026-02-12T03:26:34Z",
+      "body": "@hinthornw you are correct here, initially I was using older version of langgraph to debug that deep-agents issue. After version upgrade realized this already been fixed in latest version. \n**This is a LangChain issue**, not LangGraph\n\ncc:@OiPunk"
+    },
+    {
+      "author": "sandeepyadav1478",
+      "created_at": "2026-02-12T03:44:38Z",
+      "body": "Here's the main with PR\nhttps://github.com/langchain-ai/langchain/issues/34490"
+    },
+    {
+      "author": "keenborder786",
+      "created_at": "2026-02-12T15:26:10Z",
+      "body": "Ah nice thanks @sandeepyadav1478 "
+    }
+  ]
+}

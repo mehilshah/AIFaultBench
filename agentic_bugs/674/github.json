@@ -1,0 +1,80 @@
+{
+  "owner": "stanfordnlp",
+  "repo": "dspy",
+  "number": 9589,
+  "html_url": "https://github.com/stanfordnlp/dspy/issues/9589",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Module.load_state silently corrupts modules on partial failure (non-transactional)",
+  "author": "brm444",
+  "created_at": "2026-04-11T21:31:31Z",
+  "updated_at": "2026-05-12T19:20:50Z",
+  "closed_at": "2026-05-12T19:20:50Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 8,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 30.91,
+  "fix": {
+    "closing_commit": "e77d44c6c43952d86abc4ede700e65cefd61a643",
+    "linked_prs": [],
+    "best_guess_fix_commit": "e77d44c6c43952d86abc4ede700e65cefd61a643",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T12:38:27.958881+00:00",
+  "comments": [
+    {
+      "author": "isaacbmiller",
+      "created_at": "2026-04-22T22:35:03Z",
+      "body": "If an optimization was broken or a module had changed/diverged, wouldn't you want it to break?"
+    },
+    {
+      "author": "fanxing11",
+      "created_at": "2026-04-24T01:03:31Z",
+      "body": "PR #9655 addresses this \u2014 it snapshots all parameters before the loop and rolls back atomically on any exception. Tested with the reproducer from this issue (all 46 primitive tests still pass). Happy to adjust if you'd prefer a different approach (e.g. `copy.deepcopy` instead of `dump_state/load_state` round-trip)."
+    },
+    {
+      "author": "ashishSoni1234",
+      "created_at": "2026-05-09T19:52:02Z",
+      "body": "@isaacbmiller   , fair point, and I think it's worth pushing back on slightly. You are  right that breaking is correct behavior. \nThe question is how it breaks. Right now, after the KeyError fires, three things are simultaneously true :\n1. The exception propagated \n2. isinstance(m, dspy.Module)` still returns True\n3. Some predictors carry saved demos, others don't\n\nThat third state is the bug. The exception tells the  caller something failed, but the module itself is now in a state that:\n1. Type checks pass\n2. Looks structurally valid  \n3.Silently produces wrong inference\n\nThis isn't theoretical  brm444 spent days debugging \"RAG quality regression\" before finding  this, debugging \"RAG quality regression\" before finding this. The error WAS logged at startup.  it got attributed to model drift because the module looked fine afterward. So I'd reframe the question:\n\"Should it break?\" \u2192 Yes, absolutely.\n\"Should it leave the module half-mutated when it breaks?\"  That's the actual debate.\n\nValidate-first  keeps your \"fail loud\" semantics -same exception, same failure mode, ust guaranteed not to leave artifacts behind. Zero\n performance cost for the success path.\n\nI'd like to take a shot at this if you're open to that direction. I noticed the existing PRs got closed under \"mass coding agent\"   happy to walk through reasoning, edge cases, and test strategy in the PR description so it's clear  this is a thought-out fix, not a generated one."
+    },
+    {
+      "author": "ashishSoni1234",
+      "created_at": "2026-05-09T19:54:44Z",
+      "body": " @isaacbmiller ,I have also  implemented transactional patterns in PostgreSQL- BEGIN/ROLLBACK/COMMIT in my latest building project . The same atomicity principle applies here.\nThe same atomicity principle applies here,  load_state should be all-or-nothing."
+    },
+    {
+      "author": "isaacbmiller",
+      "created_at": "2026-05-11T12:46:55Z",
+      "body": "Okay I reread this issue and I was misunderstanding before.\n\nI prefer the deepcopying approach, as errors can also occur inside of the loading step, not just if a parameter is missing."
+    },
+    {
+      "author": "ashishSoni1234",
+      "created_at": "2026-05-11T17:13:30Z",
+      "body": "@isaacbmiller  I have  been following this thread and  reviewed all three closed PRs before writing my fix. My approach combines validate-first with your preferred deepcopy \u2014 validate catches missing keys at zero cost, deepcopy handles internal param.load_state() failures.\n\nWorking on the PR now."
+    },
+    {
+      "author": "ashishSoni1234",
+      "created_at": "2026-05-12T00:13:55Z",
+      "body": "@isaacbmiller  I've opened #9741 with the deepcopy approach you mentioned. Happy to adjust anything.\n"
+    },
+    {
+      "author": "ashishSoni1234",
+      "created_at": "2026-05-12T00:57:47Z",
+      "body": " @isaacbmiller Updated based on the Codex review \u2014 switched from  copy.deepcopy(self) to self.deepcopy(), which already exists in BaseModule and handles non-copyable attributes safely. "
+    }
+  ]
+}

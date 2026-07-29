@@ -1,0 +1,155 @@
+# recovered-from-issue: https://github.com/run-llama/llama_index/issues/20904
+
+TITLE
+[Bug]:  `SubQuestionQueryEngine` partial-failure handling breaks on non-ValueError exceptions
+
+BODY
+### Bug Description
+
+Both `_query_subq` and `_aquery_subq` in `SubQuestionQueryEngine` only catch `ValueError`, even though the class is explicitly designed to tolerate partial sub-question failures via `filter(None, qa_pairs_all)` . So, common runtime exceptions from sub-query execution, such as provider API errors, transport errors, timeouts, or a KeyError from an invalid tool name, escape uncaught and cause the entire query to fail instead of skipping the failed sub-question and continuing with the remaining results.
+
+### Version
+
+0.14.15
+
+### Steps to Reproduce
+
+``` python 
+
+  from unittest.mock import MagicMock
+  from llama_index.core import VectorStoreIndex, Settings
+  from llama_index.core.base.base_query_engine import BaseQueryEngine
+  from llama_index.core.base.response.schema import RESPONSE_TYPE
+  from llama_index.core.callbacks import CallbackManager
+  from llama_index.core.question_gen.types import SubQuestion
+  from llama_index.core.query_engine.sub_question_query_engine import SubQuestionQueryEngine
+  from llama_index.core.response_synthesizers import get_response_synthesizer
+  from llama_index.core.schema import Document, QueryBundle
+  from llama_index.core.tools import QueryEngineTool, ToolMetadata
+  from llama_index.llms.openai import OpenAI
+  from llama_index.embeddings.openai import OpenAIEmbedding
+
+  Settings.llm = OpenAI(model="gpt-5")
+  Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-small")
+
+
+  class RateLimitedQueryEngine(BaseQueryEngine):
+      def __init__(self):
+          super().__init__(callback_manager=CallbackManager([]))
+      def _query(self, query_bundle: QueryBundle) -> RESPONSE_TYPE:
+          raise RuntimeError("API rate limit exceeded")
+      async def _aquery(self, query_bundle: QueryBundle) -> RESPONSE_TYPE:
+          raise RuntimeError("API rate limit exceeded")
+      def _get_prompt_modules(self):
+          return {}
+
+  index = VectorStoreIndex.from_documents([Document(text="Paris is the capital of France.")])
+
+  tools = [
+      QueryEngineTool(
+          query_engine=index.as_query_engine(),
+          metadata=ToolMetadata(name="france_docs", description="Facts about France"),
+      ),
+      QueryEngineTool(
+          query_engine=RateLimitedQueryEngine(),
+          metadata=ToolMetadata(name="germany_docs", description="Facts about Germany"),
+      ),
+  ]
+
+  question_gen = MagicMock()
+  question_gen.generate.return_value = [
+      SubQuestion(sub_question="What is the capital of France?", tool_name="france_docs"),
+      SubQuestion(sub_question="What is the capital of Germany?", tool_name="germany_docs"),
+  ]
+
+  engine = SubQuestionQueryEngine(
+      question_gen=question_gen,
+      response_synthesizer=get_response_synthesizer(),
+      query_engine_tools=tools,
+      use_async=False,
+  )
+  response = engine.query("What are the capitals of France and Germany?")
+  print(response)
+
+```
+
+### Relevant Logs/Tracbacks
+
+```shell
+Generated 2 sub questions.
+[france_docs] Q: What is the capital of France?
+[france_docs] A: Paris
+[germany_docs] Q: What is the capital of Germany?
+---------------------------------------------------------------------------
+RuntimeError                              Traceback (most recent call last)
+/tmp/ipykernel_1122/1314053154.py in <cell line: 0>()
+     51     use_async=False,
+     52 )
+---> 53 response = engine.query("What are the capitals of France and Germany?")
+     54 print(response)
+
+8 frames/usr/local/lib/python3.12/dist-packages/llama_index_instrumentation/dispatcher.py in wrapper(func, instance, args, kwargs)
+    411 
+    412             try:
+--> 413                 result = func(*args, **kwargs)
+    414                 if isinstance(result, asyncio.Future):
+    415                     # If the result is a Future, wrap it
+
+/usr/local/lib/python3.12/dist-packages/llama_index/core/base/base_query_engine.py in query(self, str_or_query_bundle)
+     42             if isinstance(str_or_query_bundle, str):
+     43                 str_or_query_bundle = QueryBundle(str_or_query_bundle)
+---> 44             query_result = self._query(str_or_query_bundle)
+     45         dispatcher.event(
+     46             QueryEndEvent(query=str_or_query_bundle, response=query_result)
+
+/usr/local/lib/python3.12/dist-packages/llama_index_instrumentation/dispatcher.py in wrapper(func, instance, args, kwargs)
+    411 
+    412             try:
+--> 413                 result = func(*args, **kwargs)
+    414                 if isinstance(result, asyncio.Future):
+    415                     # If the result is a Future, wrap it
+
+/usr/local/lib/python3.12/dist-packages/llama_index/core/query_engine/sub_question_query_engine.py in _query(self, query_bundle)
+    153             else:
+    154                 qa_pairs_all = [
+--> 155                     self._query_subq(sub_q, color=colors[str(ind)])
+    156                     for ind, sub_q in enumerate(sub_questions)
+    157                 ]
+
+/usr/local/lib/python3.12/dist-packages/llama_index/core/query_engine/sub_question_query_engine.py in _query_subq(self, sub_q, color)
+    261                     print_text(f"[{sub_q.tool_name}] Q: {question}\n", color=color)
+    262 
+--> 263                 response = query_engine.query(question)
+    264                 response_text = str(response)
+    265 
+
+/usr/local/lib/python3.12/dist-packages/llama_index_instrumentation/dispatcher.py in wrapper(func, instance, args, kwargs)
+    411 
+    412             try:
+--> 413                 result = func(*args, **kwargs)
+    414                 if isinstance(result, asyncio.Future):
+    415                     # If the result is a Future, wrap it
+
+/usr/local/lib/python3.12/dist-packages/llama_index/core/base/base_query_engine.py in query(self, str_or_query_bundle)
+     42             if isinstance(str_or_query_bundle, str):
+     43                 str_or_query_bundle = QueryBundle(str_or_query_bundle)
+---> 44             query_result = self._query(str_or_query_bundle)
+     45         dispatcher.event(
+     46             QueryEndEvent(query=str_or_query_bundle, response=query_result)
+
+/usr/local/lib/python3.12/dist-packages/llama_index_instrumentation/dispatcher.py in wrapper(func, instance, args, kwargs)
+    411 
+    412             try:
+--> 413                 result = func(*args, **kwargs)
+    414                 if isinstance(result, asyncio.Future):
+    415                     # If the result is a Future, wrap it
+
+/tmp/ipykernel_1122/1314053154.py in _query(self, query_bundle)
+     20         super().__init__(callback_manager=CallbackManager([]))
+     21     def _query(self, query_bundle: QueryBundle) -> RESPONSE_TYPE:
+---> 22         raise RuntimeError("API rate limit exceeded")
+     23     async def _aquery(self, query_bundle: QueryBundle) -> RESPONSE_TYPE:
+     24         raise RuntimeError("API rate limit exceeded")
+
+RuntimeError: API rate limit exceeded
+```

@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "`repro_stdout.log` contains: `OBSERVED BUG: ImportError: You must install package `ddgs` to run this tool: for instance run `pip install ddgs`.`",
+    "`repro_stderr.log` is empty; the script asserts the chained cause is `ModuleNotFoundError: No module named 'ddgs'`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and confirmed checkout `83ff2f7ed09788e130965349929f8bd5152e507e`.",
+    "Created `.venv`, installed exact pinned core dependencies, and installed the checkout editable without optional `ddgs`.",
+    "Created and ran the direct offline tool-construction repro; no model client or runtime network call is used."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

@@ -1,0 +1,38 @@
+/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/765/.venv/lib/python3.12/site-packages/langgraph/cache/base/__init__.py:8: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+  from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/765/repro.py", line 68, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/765/repro.py", line 59, in main
+    graph.compile().invoke({"done_d": False})
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/765/codebase/libs/langgraph/langgraph/pregel/main.py", line 3050, in invoke
+    for chunk in self.stream(
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/765/codebase/libs/langgraph/langgraph/pregel/main.py", line 2633, in stream
+    for _ in runner.tick(
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/765/codebase/libs/langgraph/langgraph/pregel/_runner.py", line 258, in tick
+    _panic_or_proceed(
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/765/codebase/libs/langgraph/langgraph/pregel/_runner.py", line 520, in _panic_or_proceed
+    raise exc
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/765/codebase/libs/langgraph/langgraph/pregel/_executor.py", line 80, in done
+    task.result()
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.12/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/765/codebase/libs/langgraph/langgraph/pregel/_retry.py", line 42, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/765/codebase/libs/langgraph/langgraph/_internal/_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/765/codebase/libs/langgraph/langgraph/_internal/_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/765/repro.py", line 38, in node_f
+    raise RuntimeError("node_f ran before node_d completed")
+RuntimeError: node_f ran before node_d completed
+During task with name 'f' and id '87c04524-c660-d290-41f4-33a27d6e75c5'

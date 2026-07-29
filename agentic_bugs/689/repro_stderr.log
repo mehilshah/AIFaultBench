@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/689/repro.py", line 25, in <module>
+    graph.invoke(None, config="invalid_config")
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/689/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 3071, in invoke
+    for chunk in self.stream(
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/689/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 2499, in stream
+    config = ensure_config(self.config, config)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/689/.venv/lib/python3.12/site-packages/langgraph/_internal/_config.py", line 302, in ensure_config
+    for k, v in config.items():
+                ^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'items'

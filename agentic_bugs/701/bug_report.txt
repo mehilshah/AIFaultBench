@@ -1,0 +1,110 @@
+# recovered-from-issue: https://github.com/pydantic/pydantic-ai/issues/6286
+
+TITLE
+[roundtrip-sweep] ModelRequestPart: NativeToolSearchReturnPart and NativeToolReturnPart missing from discriminated union — breaks message history 
+[Content truncated due to length]
+
+BODY
+## Impact
+
+A `NativeToolSearchReturnPart` or `NativeToolReturnPart` placed in `ModelRequest.parts` constructs in Python without error (Annotated unions are not runtime-enforced), but round-tripping through `ModelMessagesTypeAdapter.dump_json` -> `ModelMessagesTypeAdapter.validate_json` raises `pydantic.ValidationError: union_tag_invalid`. Pydantic's serializer also emits a `UserWarning: Pydantic serializer warnings: ...Expected UserPromptPart...` for every part in such a `ModelRequest` because no member of the declared `ModelRequestPart` Annotated discriminated union matches the runtime type.
+
+This breaks every consumer that relies on `ModelMessagesTypeAdapter` for bidirectional message-history serialization — most importantly the [durable-exec / Temporal path](../durable_exec) and any user code that persists and reloads a conversation that may contain an Anthropic native tool-search call/result pair or any other `NativeToolReturnPart`. Even though Anthropic's adapter currently passes these parts through responses in normal operation, nothing prevents user code (or a future Anthropic-API change that splits call/result across the request boundary) from placing a `NativeToolSearchReturnPart` in a `ModelRequest`, and at present the round trip is hard-broken there.
+
+## Boundary & Code Path
+
+- Serialization boundary: [`ModelMessagesTypeAdapter`][pydantic_ai.messages.ModelMessagesTypeAdapter] (`dump_json` -> `validate_json`).
+- Failing point: the `ModelRequestPart` Annotated discriminated union — [`pydantic_ai_slim/pydantic_ai/messages.py:2151-2159`](../blob/main/pydantic_ai_slim/pydantic_ai/messages.py#L2151).
+- The discriminator [_model_request_part_discriminator`](../blob/main/pydantic_ai_slim/pydantic_ai/messages.py#L2124) correctly computes the tag via [`_TYPED_PART_TAGS[('builtin-tool-return', 'tool-search')]`](../blob/main/pydantic_ai_slim/pydantic_ai/_tool_search.py#L413) (-> `'builtin-tool-search-return'`), but `ModelRequestPart`'s `pydantic.Tag(...)` set doesn't contain `'builtin-tool-search-return'` or `'builtin-tool-return'` — only `ModelResponsePart` does ([messages.py:2197-2198](../blob/main/pydantic_ai_slim/pydantic_ai/messages.py#L2197)).
+- The mirror drift on the response side (base `ToolReturnPart` missing from `ModelResponsePart`) was previously fixed by PR #5723 closing the related sweep issue #5721. This issue is the symmetric drift on the **request** side: the `Native*` counterparts of those parts are missing.
+
+## Reproduction
+
+```python
+"""Minimal failing reproduction of NativeToolSearchReturnPart round-trip in ModelRequest.
+
+Run from a working tree where `pydantic_ai` is importable, e.g.:
+
+    VIRTUAL_ENV=... python /tmp/repro.py
+"""
+from __future__ import annotations
+
+import sys
+sys.path.insert(0, 'pydantic_ai_slim')
+
+from pydantic_ai.messages import (
+    ModelMessagesTypeAdapter,
+    ModelRequest,
+    ModelResponse,
+    NativeToolReturnPart,
+    NativeToolSearchCallPart,
+    NativeToolSearchReturnPart,
+)
+
+
+def test_native_tool_search_return_in_model_request_round_trips() -> None:
+    call = NativeToolSearchCallPart(
+        args={'queries': ['search']}, tool_call_id='call_xyz', provider_name='anthropic',
+    )
+    result = NativeToolSearchReturnPart(
+        content={'discovered_tools': [{'name': 'tool_a'}]},
+        tool_call_id='call_xyz',
+        provider_name='anthropic',
+    )
+    msgs = [ModelResponse(parts=[call]), ModelRequest(parts=[result])]
+    js = ModelMessagesTypeAdapter.dump_json(msgs).decode()
+    reloaded = ModelMessagesTypeAdapter.validate_json(js)
+    assert msgs == reloaded
+
+
+def test_native_tool_return_in_model_request_round_trips() -> None:
+    ret = NativeToolReturnPart(
+        tool_name='my_tool', content='ok', tool_call_id='c1', provider_name='anthropic',
+    )
+    msgs = [ModelRequest(parts=[ret])]
+    js = ModelMessagesTypeAdapter.dump_json(msgs).decode()
+    reloaded = ModelMessagesTypeAdapter.validate_json(js)
+    assert msgs == reloaded
+```
+
+## Expected vs Actual
+
+**Expected:** `msgs == reloaded` — every part that constructs without error and serializes without exception should deserialize back to the same object, since `ModelMessagesTypeAdapter` is the documented bidirectional wire format.
+
+**Actual:** `ModelMessagesTypeAdapter.validate_json(...)` raises `pydantic.ValidationError`:
+
+```
+test 1 FAILED: ValidationError: 1 validation error for list[tagged-union[ModelRequest,ModelResponse]]
+1.request.parts.0
+  Input tag 'builtin-tool-search-return' found using _model_request_part_discriminator() does not match any of the expected tags: 'system-prompt', 'user-prompt', 'tool-search-return', 'capability-load-return', 'tool-return', 'retry-prompt' [type=union_tag_invalid, input_value={'tool_name': 'tool_searc...: 'builtin-tool-return'}, input_type=dict]
+
+test 2 FAILED: ValidationError: 1 validation error for list[tagged-union[ModelRequest,ModelResponse]]
+0.request.parts.0
+  Input tag 'builtin-tool-return' found using _model_request_part_discriminator() does not match any of the expected tags: 'system-prompt', 'user-prompt', 'tool-search-return', 'capability-load-return', 'tool-return', 'retry-prompt' [type=union_tag_invalid, input_value={'tool_name': 'my_tool', ...: 'builtin-tool-return'}, input_type=dict]
+```
+
+The discriminator correctly returns the `'builtin-tool-search-return'` (resp. `'builtin-tool-return'`) tag; the union just doesn't list that tag. By contrast, the same parts inside `ModelResponse.parts` round-trip cleanly:
+
+```
+[ModelResponse(parts=[call, result])]  ->  equal: True
+[ModelResponse(parts=[call]), ModelResponse(parts=[result])]  ->  equal: True
+```
+
+Only the `ModelRequest`-side shape is broken.
+
+## Evidence
+
+- `pydantic_ai_slim/pydantic_ai/messages.py:2151-2159` — `ModelRequestPart` Annotated union. Member set: `SystemPromptPart`, `UserPromptPart`, `ToolSearchReturnPart`, `LoadCapabilityReturnPart`, `ToolReturnPart`, `RetryPromptPart`. Missing: `NativeToolSearchReturnPart`, `NativeToolReturnPart`.
+- `pydantic_ai_slim/pydantic_ai/messages.py:2190-2203` — `ModelResponsePart` Annotated union. Includes `NativeToolSearchReturnPart` (line 2197) and `NativeToolReturnPart` (line 2198) under tags `'builtin-tool-search-return'` and `'builtin-tool-return'`.
+- `pydantic_ai_slim/pydantic_ai/_tool_search.py:412-420` — `_TYPED_PART_TAGS[_] = 'builtin-tool-search-return'` (key `('builtin-tool-return', 'tool-search')`) and `_TYPED_PART_TAGS_BY_TYPE[NativeToolSearchReturnPart] = 'builtin-tool-search-return'`. The discriminator registries recognize the tag; the request-union just doesn't claim it.
+- Pydantic's TypeAdapter also raises a `UserWarning: Pydantic serializer warnings: ...Expected UserPromptPart - serialized value may not be as expected...` whenever such a `ModelRequest` is serialized, even before any attempt to round-trip.
+- Mirror precedent: sweep issue #5721 found `ToolReturnPart` missing from `ModelResponsePart`; PR #5723 added it. This is the symmetric drift on the request side.
+
+## Related
+
+- PR #5834 (open) "Guard against message-part discriminated-union drift and fix incomplete `PartStartEvent`/`PartEndEvent` part-kind `Literal`s" — adds guard tests and fixes adjacent drift, but does **not** add the missing `Native*` request-part members to `ModelRequestPart`. The new guard tests would *surface* this drift on a future CI run, so merging #5834 will catch this class of bug going forward — but the current round-trip break remains.
+- Closed sweep issue #5721 — same drift pattern on `ToolReturnPart` in `ModelResponsePart`, fixed by PR #5723.
+
+<!-- gh-aw-workflow-id: pydantic-ai-roundtrip-sweep -->
+<!-- gh-aw-workflow-call-id: pydantic/pydantic-ai/pydantic-ai-roundtrip-sweep -->
+<!-- gh-aw-close-key: roundtrip-sweep -->

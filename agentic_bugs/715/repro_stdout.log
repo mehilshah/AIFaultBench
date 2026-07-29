@@ -1,0 +1,1 @@
+OBSERVED BUG: Missing dependency No module named 'apscheduler'. Run `pip install 'litellm[proxy]'`

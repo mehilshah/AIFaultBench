@@ -1,0 +1,107 @@
+# recovered-from-issue: https://github.com/pydantic/pydantic-ai/issues/6771
+
+TITLE
+`GoogleModel`: any native tool on Gemini 3+ fails on Vertex because `include_server_side_tool_invocations` is set
+
+BODY
+### Initial Checks
+
+- [x] I'm using the [latest version](https://github.com/pydantic/pydantic-ai/releases/latest) of Pydantic AI
+- [x] I've searched for my issue in [the issue tracker](https://github.com/pydantic/pydantic-ai/issues) before opening this issue
+
+### Description
+
+Declaring any native tool (`WebFetchTool`, `WebSearchTool`, `FileSearchTool`) on a Gemini 3+ model fails on Vertex, before any HTTP request is made:
+
+```
+ValueError: include_server_side_tool_invocations parameter is not supported in Gemini Enterprise Agent Platform.
+```
+
+The cause is that support for this parameter is provider-dependent, but the profile that gates it is derived from the model name alone.
+
+`google_model_profile()` sets both of these purely from the model name (`pydantic_ai/profiles/google.py:98-99`):
+
+```python
+google_supports_tool_combination=is_3_or_newer,
+google_supports_server_side_tool_invocations=is_3_or_newer,
+```
+
+`GoogleModel._get_tool_config()` then sets the parameter whenever a native tool that emits invocations is present (`pydantic_ai/models/google.py:737-741`):
+
+```python
+emits_tool_call_invocations = any(
+    isinstance(t, (WebSearchTool, WebFetchTool, FileSearchTool)) for t in model_request_parameters.native_tools
+)
+if emits_tool_call_invocations and self._resolved_profile.google_supports_server_side_tool_invocations:
+    tool_config['include_server_side_tool_invocations'] = True
+```
+
+But `google-genai` has two separate converters for `ToolConfig`, and only one accepts the field. From `google/genai/models.py` (v1.74.0):
+
+```python
+def _ToolConfig_to_mldev(...):            # line 4085 — Gemini Developer API
+    if getv(from_object, ['include_server_side_tool_invocations']) is not None:
+        setv(to_object, ['includeServerSideToolInvocations'], ...)   # line 4107 — passed through
+
+def _ToolConfig_to_vertex(...):           # line 4117 — Vertex
+    if getv(from_object, ['include_server_side_tool_invocations']) is not None:
+        raise ValueError(                                            # line 4136 — always raises
+            'include_server_side_tool_invocations parameter is not supported in'
+            ' Gemini Enterprise Agent Platform.'
+        )
+```
+
+So the SDK already encodes that this is a Gemini-Developer-API-only parameter, and rejects it client-side. Because the pydantic-ai profile can't see which provider it is attached to, it asserts support on an endpoint that is guaranteed to refuse.
+
+### Minimal, Reproducible Example
+
+```Python
+import asyncio
+
+from pydantic import BaseModel
+from pydantic_ai import Agent, RunContext, ToolOutput
+from pydantic_ai.capabilities import WebFetch
+from pydantic_ai.models.google import GoogleModel
+from pydantic_ai.providers.google_cloud import GoogleCloudProvider
+
+
+class Out(BaseModel):
+    text: str
+
+
+async def main() -> None:
+    # Vertex-backed provider (service-account credentials, GCP project + location).
+    model = GoogleModel(
+        model_name='gemini-3.5-flash-lite',
+        provider=GoogleCloudProvider(project=PROJECT, location=LOCATION, credentials=CREDENTIALS),
+    )
+
+    agent: Agent[None, Out] = Agent(
+        model=model,
+        output_type=ToolOutput(Out),
+        capabilities=[WebFetch(native=True, local=False)],
+    )
+
+    @agent.tool
+    async def find_things(ctx: RunContext[None], queries: list[str]) -> list[str]:
+        """A function tool, so this exercises tool combination too."""
+        return [f'result for {q}' for q in queries]
+
+    # ValueError: include_server_side_tool_invocations parameter is not supported
+    #             in Gemini Enterprise Agent Platform.
+    result = await agent.run('Read https://en.wikipedia.org/?curid=17570 and name its topic.')
+    print(result.output.text)
+
+
+asyncio.run(main())
+```
+
+### Logfire Trace
+
+_No response_
+
+### Python, Pydantic AI & LLM client version
+
+- Python: 
+- Pydantic AI: 
+- LLM provider SDK:

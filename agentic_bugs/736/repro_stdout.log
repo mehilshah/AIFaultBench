@@ -1,0 +1,8 @@
+👋 WARN     SWE-ReX version 1.2.0 is not recommended. Please update to at least 
+            1.2.1 by running `pip install --upgrade swe-rex`.You can also rerun 
+            `pip install -e .` in this repository to install the latest version.
+👋 INFO     This is SWE-agent version 1.0.1                                     
+            (hash='c9a6634873077e7dc2bb77d72cf16091b5679ccd') with SWE-ReX      
+            version 1.2.0 (rex_hash='unavailable').                             
+🧰 WARN     State file not found, returning empty state                         
+OBSERVED BUG: state read used '\\root\\state.json' and returned {}

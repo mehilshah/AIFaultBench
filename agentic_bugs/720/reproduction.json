@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited 1.",
+    "stdout: `BUG REPRODUCED: nested newline action string was rejected as not a list`.",
+    "stderr contains `Input should be a valid list [type=list_type]` for `AgentOutput.action` with the literal-newline JSON string."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and verified HEAD `a1870b8b969553c375755c77d5d1cebf477c51f6`.",
+    "Created `.venv` and installed the editable pinned checkout.",
+    "Used an in-process fake Anthropic client returning a real SDK tool-use message with malformed nested action JSON.",
+    "Captured the final `run_repro.sh` output in the required log files."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

@@ -1,0 +1,114 @@
+# recovered-from-issue: https://github.com/mem0ai/mem0/issues/5378
+
+TITLE
+Qdrant vector store uses HTTPS unexpectedly with host/port/api_key for self-hosted HTTP Qdrant
+
+BODY
+### Component
+
+Vector Store (Qdrant, PGVector, Redis, Chroma, etc.)
+
+### Description
+
+### Summary
+
+`Qdrant` vector store can incorrectly connect over HTTPS when configured with `host + port + api_key` against a self-hosted HTTP Qdrant instance.
+
+This happens because `qdrant-client` treats `api_key` as a signal to use HTTPS unless `url` or `https=False` is explicitly provided. mem0 currently passes `host`, `port`, and `api_key` through to `QdrantClient(...)`, but the mem0 Qdrant config does not expose an `https` option. As a result, self-hosted Qdrant deployments using HTTP plus API key can fail with `SSL: WRONG_VERSION_NUMBER`.
+
+### Steps to Reproduce
+
+```python
+from mem0 import Memory
+
+config = {
+    "vector_store": {
+        "provider": "qdrant",
+        "config": {
+            "host": "127.0.0.1",
+            "port": 6333,
+            "api_key": "test-key",
+            "collection_name": "memories",
+            "embedding_model_dims": 1536,
+        },
+    },
+}
+
+m = Memory.from_config(config)
+m.get_all(user_id="test-user")
+```
+
+Use a self-hosted Qdrant server exposed over plain HTTP on port `6333` with API key authentication enabled.
+
+For comparison, this direct Qdrant client usage fails in the same way:
+
+```python
+from qdrant_client import QdrantClient
+
+client = QdrantClient(host="127.0.0.1", port=6333, api_key="test-key")
+client.get_collections()
+```
+
+But this works:
+
+```python
+from qdrant_client import QdrantClient
+
+client = QdrantClient(url="http://127.0.0.1:6333", api_key="test-key")
+client.get_collections()
+```
+
+### Expected Behavior
+
+mem0 should allow self-hosted HTTP Qdrant instances to be used with API key authentication.
+
+Either of these would work:
+
+- mem0 exposes an `https: false` option and forwards it to `QdrantClient`.
+- Documentation clearly states that HTTP Qdrant with API key must use `url: "http://..."` instead of `host + port + api_key`.
+
+Example expected config:
+
+```python
+config = {
+    "vector_store": {
+        "provider": "qdrant",
+        "config": {
+            "url": "http://127.0.0.1:6333",
+            "api_key": "test-key",
+            "collection_name": "memories",
+            "embedding_model_dims": 1536,
+        },
+    },
+}
+```
+
+### Actual Behavior
+
+mem0 passes `host`, `port`, and `api_key` to `QdrantClient`, which makes `qdrant-client` use HTTPS by default. When the Qdrant server is plain HTTP, requests fail with an SSL protocol error.
+
+Example traceback:
+
+```text
+qdrant_client.http.exceptions.ResponseHandlingException: [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1010)
+```
+
+Observed failing path:
+
+```python
+QdrantClient(host="127.0.0.1", port=6333, api_key="test-key")
+```
+
+Observed working path:
+
+```python
+QdrantClient(url="http://127.0.0.1:6333", api_key="test-key")
+```
+
+### Environment
+
+- mem0 version: 2.0.2
+- qdrant-client version: 1.13.3
+- Qdrant server version: 1.17.0
+- Python/Node version: Python 3.12
+- OS: Linux / Docker container

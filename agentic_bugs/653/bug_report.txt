@@ -1,0 +1,234 @@
+# recovered-from-issue: https://github.com/camel-ai/camel/issues/3954
+
+TITLE
+[BUG] AWS Bedrock Converse tool calling fails with ValidationException for toolResult
+
+BODY
+### Required prerequisites
+
+- [x] I have read the documentation <https://camel-ai.github.io/camel/camel.html>.
+- [x] I have searched the [Issue Tracker](https://github.com/camel-ai/camel/issues) and [Discussions](https://github.com/camel-ai/camel/discussions) that this hasn't already been reported. (+1 or comment there if it has.)
+- [x] Consider asking first in a [Discussion](https://github.com/camel-ai/camel/discussions/new).
+
+### What version of camel are you using?
+
+0.1.6.7
+
+### System information
+
+OS: macOS (Darwin 25.3.0, arm64)
+Describe how the library was installed: git clone from source, master branch
+3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:56:31) [Clang 19.1.7 ] darwin
+0.2.90a6
+## Versions of any other relevant libraries
+boto3 (used for Bedrock Converse)
+botocore (ValidationException originates here)
+python-dotenv
+
+
+### Problem description
+
+When running ChatAgent with AWS Bedrock Converse backend and function tools, CAMEL sends a request sequence that Bedrock rejects with:
+```
+botocore.errorfactory.ValidationException: An error occurred (ValidationException) when calling the Converse operation: Expected toolResult blocks at messages.2.content for the following Ids: tooluse_bRX9ftpYK3xO5tev2x4qtc
+```
+Bedrock rejects the request due to missing toolResult blocks for emitted toolUse IDs. The error occurs because Bedrock's API requires that every toolUse in an assistant message must be immediately followed by a user message containing corresponding toolResult blocks.
+For example:
+```
+...
+5 assistant ['text', 'toolUse', 'toolUse', 'toolUse'] ['tooluse_9Wpx82Jgfft7cqfo3fb5lp', 'tooluse_XWmAH7SUJCV9KjZqenyC4q', 'tooluse_VWjdWJGHj4sxuDCW0wg80Q']
+6 user ['toolResult'] ['tooluse_9Wpx82Jgfft7cqfo3fb5lp']
+7 user ['toolResult'] ['tooluse_XWmAH7SUJCV9KjZqenyC4q']
+8 user ['toolResult'] ['tooluse_VWjdWJGHj4sxuDCW0wg80Q']
+...
+```
+After one assistant message with 3 toolUses, the payload sends 3 separate user toolResult messages, but Converse expects those pending toolResult blocks grouped in the immediate next user message.
+
+### Reproducible example code
+
+The Python snippets:
+
+```python
+import os
+from pathlib import Path
+from typing import Any, Dict
+
+import boto3
+from botocore.config import Config
+from dotenv import load_dotenv
+
+from camel.agents import ChatAgent
+from camel.messages import BaseMessage
+from camel.models import ModelFactory
+from camel.toolkits import FunctionTool
+from camel.types import ModelPlatformType
+
+
+def tool_a(topic: str) -> Dict[str, Any]:
+    """Return a deterministic value for tool A."""
+    return {"tool": "tool_a", "topic": topic, "value": "result_a"}
+
+
+def tool_b(topic: str) -> Dict[str, Any]:
+    """Return a deterministic value for tool B."""
+    return {"tool": "tool_b", "topic": topic, "value": "result_b"}
+
+
+def build_bedrock_client() -> Any:
+    gateway_url = os.getenv("AI_GATEWAY_URL") or os.getenv("BEDROCK_ENDPOINT_URL")
+    api_key = os.getenv("AI_GATEWAY_KEY") or os.getenv("AWS_BEARER_TOKEN_BEDROCK")
+
+    if not gateway_url or not api_key:
+        load_dotenv(dotenv_path=Path(".env"))
+        gateway_url = gateway_url or os.getenv("AI_GATEWAY_URL") or os.getenv("BEDROCK_ENDPOINT_URL")
+        api_key = api_key or os.getenv("AI_GATEWAY_KEY") or os.getenv("AWS_BEARER_TOKEN_BEDROCK")
+
+    if not gateway_url or not api_key:
+        raise ValueError("Missing gateway URL/API key. Set AI_GATEWAY_URL and AI_GATEWAY_KEY in env or .env")
+
+    endpoint = gateway_url if gateway_url.endswith("/bedrock") else f"{gateway_url}/bedrock"
+    os.environ["AWS_BEARER_TOKEN_BEDROCK"] = api_key
+
+    return boto3.client(
+        service_name="bedrock-runtime",
+        region_name="us-east-1",
+        endpoint_url=endpoint,
+        aws_access_key_id="",
+        aws_secret_access_key="",
+        config=Config(retries={"max_attempts": 0}),
+    )
+
+
+def main() -> None:
+    model_id = os.getenv("BEDROCK_MODEL_ID", "amazon.nova-lite-v1:0")
+    client = build_bedrock_client()
+
+    model = ModelFactory.create(
+        model_platform=ModelPlatformType.AWS_BEDROCK_CONVERSE,
+        model_type=model_id,
+        model_config_dict={
+            "temperature": 0.0,
+            "max_tokens": 256,
+        },
+        bedrock_client=client,
+    )
+
+    tools = [FunctionTool(tool_a), FunctionTool(tool_b)]
+    agent = ChatAgent(
+        system_message="You are a test assistant.",
+        model=model,
+        tools=tools,
+        retry_attempts=1,
+        step_timeout=120,
+    )
+
+    user_msg = BaseMessage.make_user_message(
+        role_name="user",
+        content=(
+            "Call tool_a and tool_b in the same assistant turn. "
+            "Then summarize both tool results in one short sentence."
+        ),
+    )
+
+    print("Running ChatAgent repro with two dummy tools...")
+    print(f"Model: {model_id}")
+    
+    response = agent.step(user_msg)
+
+    for i, msg in enumerate(response.msgs):
+        print(f"msg[{i}] role={msg.role_name}")
+        print(msg.content[:400])
+
+if __name__ == "__main__":
+    main()
+```
+
+Command lines:
+
+```bash
+python test.py
+```
+
+Extra dependencies:
+
+```text
+
+```
+
+Steps to reproduce:
+
+1. Run `python test.py`
+2. Get error:
+```
+(agent) xxx@xxx ai_agent % python test.py
+2026-03-21 12:01:31,810 - root - WARNING - Unknown model 'amazon.nova-lite-v1:0': context window size not defined. Defaulting to 999_999_999.
+Running ChatAgent repro with two dummy tools...
+Model: amazon.nova-lite-v1:0
+2026-03-21 12:01:35,117 - camel.models.model_manager - ERROR - Error processing with model: <camel.models.aws_bedrock_converse_model.AWSBedrockConverseModel object at 0x10375f1d0>
+2026-03-21 12:01:35,117 - camel.camel.agents.chat_agent - ERROR - Model error: amazon.nova-lite-v1:0
+Traceback (most recent call last):
+  File "/Users/xxx/test.py", line 100, in <module>
+    main()
+  File "/Users/xxx/test.py", line 86, in main
+    response = agent.step(user_msg)
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/camel/camel/agents/chat_agent.py", line 2872, in step
+    return future.result(timeout=self.step_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/miniconda3/envs/agent/lib/python3.11/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/miniconda3/envs/agent/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/Users/xxx/miniconda3/envs/agent/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/Downloads/AZ/camel/camel/agents/chat_agent.py", line 2957, in _step_impl
+    response = self._get_model_response(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/Downloads/AZ/camel/camel/agents/chat_agent.py", line 3590, in _get_model_response
+    response = self.model_backend.run(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/Downloads/AZ/camel/camel/models/model_manager.py", line 239, in run
+    raise exc
+  File "/Users/xxx/Downloads/AZ/camel/camel/models/model_manager.py", line 229, in run
+    response = self.current_model.run(messages, response_format, tools)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/Downloads/AZ/camel/camel/models/base_model.py", line 214, in wrapped_run
+    result = original_run(self, messages, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/Downloads/AZ/camel/camel/models/base_model.py", line 873, in run
+    result = self._run(messages, response_format, tools)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/Downloads/AZ/camel/camel/models/aws_bedrock_converse_model.py", line 848, in _run
+    response = self.bedrock_client.converse(**request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/miniconda3/envs/agent/lib/python3.11/site-packages/botocore/client.py", line 602, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/miniconda3/envs/agent/lib/python3.11/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/miniconda3/envs/agent/lib/python3.11/site-packages/botocore/client.py", line 1078, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.errorfactory.ValidationException: An error occurred (ValidationException) when calling the Converse operation: Expected toolResult blocks at messages.2.content for the following Ids: tooluse_bRX9ftpYK3xO5tev2x4qtc
+```
+
+
+### Traceback
+
+```pytb
+See above
+```
+
+### Expected behavior
+
+ChatAgent should complete tool-calling flow without generating Bedrock-invalid message sequences.
+
+### Additional context
+
+Proposed fix: after apply patch to `camel/camel/models/aws_bedrock_converse_model.py`
+
+<img width="860" height="611" alt="Image" src="https://github.com/user-attachments/assets/308dcdd9-eb07-4828-9d0d-92503c3f50bd" />
+
+The error goes

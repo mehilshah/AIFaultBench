@@ -1,0 +1,49 @@
+# recovered-from-issue: https://github.com/microsoft/semantic-kernel/issues/13148
+
+TITLE
+.Net: Bug: .NET AddHuggingFaceEmbeddingGenerator return 404
+
+BODY
+**Describe the bug**
+Embeddings generation using HuggingFace returns `404`. 
+To my understanding it seems to originate from using the obsolete `api-inference.huggingface.co` instead of `router.huggingface.co/hf-inference`
+
+**To Reproduce**
+Try using the embedding generation with:
+```
+        var kernelBuilder = Kernel.CreateBuilder();
+        kernelBuilder.AddHuggingFaceEmbeddingGenerator(
+            "sentence-transformers/all-MiniLM-L6-v2",
+            apiKey: "api-key");
+        var k = kernelBuilder.Build();
+        var g = k.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
+        var r = g.GenerateAsync(["John: Hello, how are you?\nRoger: Hey, I'm Roger!"]).GetAwaiter().GetResult();
+```
+
+```
+Microsoft.SemanticKernel.HttpOperationException: Response status code does not indicate success: 404 (Not Found).
+ ---> System.Net.Http.HttpRequestException: Response status code does not indicate success: 404 (Not Found).
+   at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   at Microsoft.SemanticKernel.Http.HttpClientExtensions.SendWithSuccessCheckAsync(HttpClient client, HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.SemanticKernel.Http.HttpClientExtensions.SendWithSuccessCheckAsync(HttpClient client, HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
+   at Microsoft.SemanticKernel.Http.HttpClientExtensions.SendWithSuccessCheckAsync(HttpClient client, HttpRequestMessage request, CancellationToken cancellationToken)
+   at Microsoft.SemanticKernel.Connectors.HuggingFace.Core.HuggingFaceClient.SendRequestAndGetStringBodyAsync(HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
+   at Microsoft.SemanticKernel.Connectors.HuggingFace.Core.HuggingFaceClient.GenerateEmbeddingsAsync(IList`1 data, Kernel kernel, CancellationToken cancellationToken)
+   at Microsoft.SemanticKernel.Connectors.HuggingFace.HuggingFaceEmbeddingGenerator.GenerateAsync(IEnumerable`1 values, EmbeddingGenerationOptions options, CancellationToken cancellationToken)
+```
+
+**Expected behavior**
+Should return the embeddings
+
+**Additional context**
+This is the workaround I use for now 
+```
+ 
+ var endpoint = $"https://router.huggingface.co/hf-inference/models/{model}/pipeline/feature-extraction";
+
+  kernelBuilder.Services.AddKeyedSingleton<IEmbeddingGenerator<string, Embedding<float>>>(serviceKey: null, (serviceProvider, _) =>
+      new HuggingFaceEmbeddingGenerator(
+          new Uri(endpoint),
+          apiKey: "api-key"));
+```

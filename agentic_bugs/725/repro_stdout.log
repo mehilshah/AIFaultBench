@@ -1,0 +1,21 @@
+OBSERVED BUG: guardrail retry passed Answer to TaskOutput.raw
+╭───────────────────────────── 🛡️ Guardrail Check ─────────────────────────────╮
+│                                                                              │
+│  Guardrail Evaluation Started                                                │
+│  Name: def reject_first_output(_: TaskOutput) -> tuple[bo...                 │
+│  Status: 🔄 Evaluating                                                       │
+│  Attempt: 1                                                                  │
+│                                                                              │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+╭──────────────────────────── 🛡️ Guardrail Failed ─────────────────────────────╮
+│                                                                              │
+│  Guardrail Failed                                                            │
+│  Name: Validation Error                                                      │
+│  Error: force one offline guardrail retry                                    │
+│  Attempts: 1                                                                 │
+│                                                                              │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+

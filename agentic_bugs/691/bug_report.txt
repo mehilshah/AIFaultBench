@@ -1,0 +1,179 @@
+# recovered-from-issue: https://github.com/langchain-ai/langgraph/issues/6675
+
+TITLE
+calling `model_dump()` on pydantic state variables drops `tool_calls` in AIMessage
+
+BODY
+### Checked other resources
+
+- [x] This is a bug, not a usage question. For questions, please use the LangChain Forum (https://forum.langchain.com/).
+- [x] I added a clear and detailed title that summarizes the issue.
+- [x] I read what a minimal reproducible example is (https://stackoverflow.com/help/minimal-reproducible-example).
+- [x] I included a self-contained, minimal example that demonstrates the issue INCLUDING all the relevant imports. The code run AS IS to reproduce the issue.
+
+### Example Code
+
+```python
+from langchain_core.messages import AIMessage, BaseMessage, ToolCall
+from pydantic import BaseModel
+
+class State(BaseModel):
+    messages: list[BaseMessage]
+
+msg = AIMessage(content='foo',
+                tool_calls=[
+                    ToolCall(
+                        id='bar',
+                        args={'baz': 'qux'},
+                        name='quux'
+                    ),
+                ]
+            )
+state = State(messages=[msg])
+
+print(msg.model_dump())
+print(state.model_dump())
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+# output
+{'content': 'foo', 'additional_kwargs': {}, 'response_metadata': {}, 'type': 'ai', 'name': None, 'id': None, 'tool_calls': [{'name': 'quux', 'args': {'baz': 'qux'}, 'id': 'bar', 'type': 'tool_call'}], 'invalid_tool_calls': [], 'usage_metadata': None}
+{'messages': [{'content': 'foo', 'additional_kwargs': {}, 'response_metadata': {}, 'type': 'ai', 'name': None, 'id': None}]}
+```
+
+### Description
+
+When using a Pydantic `BaseModel` as the state schema, tool calls are dropped from `AIMessage` objects when the state is serialized via `model_dump()`.
+
+### Expected Behavior
+
+Both `msg.model_dump()` and `state.model_dump()` should include the tool_calls in the serialized output.
+
+### Actual Behavior
+
+- `msg.model_dump()` correctly includes tool_calls.
+- `state.model_dump()` drops the tool_calls from the message.
+
+### Impact
+
+This causes a KeyError when processing states that have been serialized using Pydantic, as the tool's call information is lost. See example below:
+
+```python
+import operator
+from typing import Annotated
+
+from dotenv import load_dotenv
+from langchain_core.messages import AIMessage, BaseMessage, ToolCall
+from langchain_core.prompts.chat import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+from langgraph.graph import END, StateGraph
+from langgraph.prebuilt import ToolNode
+from langchain_core.tools import tool
+
+from pydantic import BaseModel
+
+load_dotenv()
+
+
+class State(BaseModel):
+    messages: Annotated[list[BaseMessage], operator.add]
+
+
+@tool
+def foo(bar: str) -> str:
+    """A tool"""
+    return f'The argument is {bar}'
+
+prompt = ChatPromptTemplate.from_messages([
+    ('system', 'Return "YES" if the tool output is in english, "NO" if not.'),
+    ('placeholder', '{messages}')])
+llm = ChatOpenAI(name='llm', model='gpt-5-mini', reasoning_effort='low')
+agent = prompt | llm
+
+def agent_node(state: State) -> State:
+    msg = agent.invoke(state.model_dump())
+    return State(messages=[msg])
+
+graph = StateGraph(State)
+graph.add_node('tools', ToolNode([foo]))
+graph.add_node('agent', agent_node)
+graph.set_entry_point('tools')
+graph.add_edge('tools', 'agent')
+graph.set_finish_point('agent')
+
+compiled_agent = graph.compile()
+
+state = State(messages=[AIMessage(
+            content='The word to check is "cat"',
+            tool_calls=[
+                ToolCall(
+                    id='baz',
+                    args={'bar': 'cat'},
+                    name='foo'
+                ),
+            ]
+        )])
+
+compiled_agent.invoke(state)
+```
+
+--> Triggers:
+```
+KeyError: 'tool_call_id'
+During task with name 'agent' and id '29960e58-b80d-2b18-c5a2-855168b09a0a'
+```
+
+### System Info
+
+System Information
+------------------
+> OS:  Darwin
+> OS Version:  Darwin Kernel Version 25.2.0: Tue Nov 18 21:07:05 PST 2025; root:xnu-12377.61.12~1/RELEASE_ARM64_T6020
+> Python Version:  3.12.11 (main, Jul 31 2025, 09:52:35) [Clang 17.0.0 (clang-1700.0.13.5)]
+
+Package Information
+-------------------
+> langchain_core: 1.2.6
+> langchain: 1.2.3
+> langchain_community: 0.4.1
+> langsmith: 0.6.2
+> langchain_classic: 1.0.1
+> langchain_openai: 1.1.7
+> langchain_text_splitters: 1.1.0
+> langgraph_sdk: 0.3.1
+
+Optional packages not installed
+-------------------------------
+> langserve
+
+Other Dependencies
+------------------
+> aiohttp: 3.13.3
+> dataclasses-json: 0.6.7
+> httpx: 0.28.1
+> httpx-sse: 0.4.3
+> jsonpatch: 1.33
+> langgraph: 1.0.5
+> numpy: 2.3.5
+> openai: 2.14.0
+> opentelemetry-api: 1.39.1
+> opentelemetry-exporter-otlp-proto-http: 1.39.1
+> opentelemetry-sdk: 1.39.1
+> orjson: 3.11.5
+> packaging: 25.0
+> pydantic: 2.12.5
+> pydantic-settings: 2.12.0
+> pytest: 9.0.2
+> PyYAML: 6.0.3
+> pyyaml: 6.0.3
+> requests: 2.32.5
+> requests-toolbelt: 1.0.0
+> sqlalchemy: 2.0.45
+> SQLAlchemy: 2.0.45
+> tenacity: 9.1.2
+> tiktoken: 0.12.0
+> typing-extensions: 4.15.0
+> uuid-utils: 0.13.0
+> zstandard: 0.25.0

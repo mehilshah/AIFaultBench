@@ -1,0 +1,125 @@
+# recovered-from-issue: https://github.com/run-llama/llama_index/issues/20790
+
+TITLE
+[Bug]: Unexpected keyword argument `'tool_choice'` for `OpenAILike` used as `StructuredLLM`
+
+BODY
+### Bug Description
+
+Error when running a `OpenAILike` LLM as a `StructuredLLM` which raises a **Unexpected keyword argument `'tool_choice'` for `OpenAILike` used as `StructuredLLM`**
+
+### Version
+
+llama-index-core>=0.14.15
+llama-index-llms-openai-like>=0.6.0
+
+### Steps to Reproduce
+
+```python
+from llama_index.llms.openai_like import OpenAILike
+client = OpenAILike(
+    base_url=os.getenv("BASE_URL"),
+    api_key=os.getenv("API_KEY"),
+    http_client=httpx.Client(verify=False),
+    model="gpt-oss-20b",
+    is_function_calling_model=False
+    
+)
+sllm = client.as_structured_llm(Invoice)
+response = sllm.complete(text)
+json_response = json.loads(response.text)
+print(json.dumps(json_response, indent=2))
+```
+
+### Relevant Logs/Tracbacks
+
+```shell
+Traceback (most recent call last):
+  File "/home/robebs/gitlab/nlp/llama_indexx.py", line 43, in <module>
+    response = sllm.complete(text)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index_instrumentation/dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index/core/llms/callbacks.py", line 435, in wrapped_llm_predict
+    f_return_val = f(_self, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index/core/llms/structured_llm.py", line 95, in complete
+    return complete_fn(prompt, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index/core/base/llms/generic_utils.py", line 184, in wrapper
+    chat_response = func(messages, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index_instrumentation/dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index/core/llms/callbacks.py", line 175, in wrapped_llm_chat
+    f_return_val = f(_self, messages, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index/core/llms/structured_llm.py", line 63, in chat
+    output = self.llm.structured_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index_instrumentation/dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index/llms/openai/base.py", line 1119, in structured_predict
+    return super().structured_predict(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index_instrumentation/dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index/core/llms/llm.py", line 360, in structured_predict
+    result = program(llm_kwargs=llm_kwargs, **prompt_args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index_instrumentation/dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index/core/program/llm_program.py", line 98, in __call__
+    response = self._llm.complete(formatted_prompt, **llm_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index_instrumentation/dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index/llms/openai_like/base.py", line 168, in complete
+    return super().complete(prompt, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index_instrumentation/dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index/core/llms/callbacks.py", line 435, in wrapped_llm_predict
+    f_return_val = f(_self, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index/llms/openai/base.py", line 428, in complete
+    return complete_fn(prompt, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index/llms/openai/base.py", line 114, in wrapper
+    return retry(f)(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 331, in wrapped_f
+    return copy(f, *args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 393, in <lambda>
+    self._add_action_func(lambda rs: rs.outcome.result())
+                                     ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/llama_index/llms/openai/base.py", line 605, in _complete
+    response = client.completions.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/robebs/gitlab/nlp/.venv/lib/python3.12/site-packages/openai/_utils/_utils.py", line 286, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: Completions.create() got an unexpected keyword argument 'tool_choice'
+```

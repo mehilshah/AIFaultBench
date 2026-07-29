@@ -1,0 +1,85 @@
+{
+  "owner": "stanfordnlp",
+  "repo": "dspy",
+  "number": 8996,
+  "html_url": "https://github.com/stanfordnlp/dspy/issues/8996",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug] LiteLLM exception when using OpenAI Speech-To-Text models",
+  "author": "LizardBlizzard",
+  "created_at": "2025-10-29T13:00:14Z",
+  "updated_at": "2025-11-10T07:13:50Z",
+  "closed_at": "2025-11-10T07:13:50Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 9,
+  "reactions": {
+    "total_count": 2,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 1
+  },
+  "resolution_days": 11.76,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:03.128151+00:00",
+  "comments": [
+    {
+      "author": "TomeHirata",
+      "created_at": "2025-10-30T08:25:14Z",
+      "body": "Does it work when you use `gpt-4o-mini`?"
+    },
+    {
+      "author": "LizardBlizzard",
+      "created_at": "2025-11-02T07:27:23Z",
+      "body": "Hi Tome, I didn't manage to make it work by switching the model. I get errors about MIME type which makes sense to me considering that `gpt-4o-mini` doesn't support audio. I tried multiple things regardless:\n\n1. Using DSPy with `gpt-4o-mini` instead\nLiteLLM raised an exception by OpenAI about wrong MIME type\n\n<img width=\"916\" height=\"488\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/9c4b327d-8db0-4ee3-9819-8018a3c50e61\" />\n\n2. Use OpenAI SDK and the Files API\nOpenAI returned 400 with the following message:\n\n> \"Expected a file with an application/pdf MIME type, but got unsupported MIME type 'audio/x-wav'.\"\n\n<img width=\"1560\" height=\"185\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/d50f8e43-7b40-45e6-9ffa-72e2427efd1c\" />\n\n3. Use OpenAI SDK and upload file as Base64\nOpenAI returned 400 with the following message:\n\n> \"Invalid file data: 'messages[1].content[0].file.file_data'. Expected a base64-encoded data URL with an application/pdf MIME type (e.g. 'data:application/pdf;base64,SGVsbG8sIFdvcmxkIQ=='), but got unsupported MIME type 'audio/wav'.\"\n\n<img width=\"1459\" height=\"265\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/62862904-786d-4d75-ace7-3eafe3081b2d\" />\n\nThis is the code I used for the OpenAI tests:\n```python\nimport base64\nfrom pathlib import Path\n\nimport openai\n\n\ndef transcribe_base64(client: openai.OpenAI, audio_path: Path) -> str:\n    with open(audio_path, \"rb\") as f:\n        data = f.read()\n\n    base64_string = base64.b64encode(data).decode(\"utf-8\")\n    completion = client.chat.completions.create(\n        model=\"gpt-4o-mini\",\n        messages=[\n            {\"role\": \"system\", \"content\": \"Transcribe the user's audio into text.\"},\n            {\n                \"role\": \"user\",\n                \"content\": [\n                    {\n                        \"type\": \"file\",\n                        \"file\": {\n                            \"filename\": \"audio_test.wav\",\n                            \"file_data\": f\"data:audio/wav;base64,{base64_string}\",\n                        },\n                    }\n                ],\n            },\n        ],\n    )\n\n    return completion.choices[0].message.content\n\n\ndef transcribe_file(client: openai.OpenAI, audio_path: Path) -> str:\n    file = client.files.create(file=open(audio_path, \"rb\"), purpose=\"user_data\")\n    completion = client.chat.completions.create(\n        model=\"gpt-4o-mini\",\n        messages=[\n            {\"role\": \"system\", \"content\": \"Transcribe the user's audio into text.\"},\n            {\n                \"role\": \"user\",\n                \"content\": [\n                    {\n                        \"type\": \"file\",\n                        \"file\": {\n                            \"file_id\": file.id,\n                        },\n                    }\n                ],\n            },\n        ],\n    )\n\n    return completion.choices[0].message.content\n\n\nif __name__ == \"__main__\":\n    client = openai.OpenAI()\n    audio_path = Path(\"audio.wav\")\n    transcrition = transcribe_file(client, audio_path)\n    print(transcrition)\n\n```"
+    },
+    {
+      "author": "akshatvishu",
+      "created_at": "2025-11-03T13:29:05Z",
+      "body": "Hey @LizardBlizzard ! I think   ` model=\"gpt-4o-mini-transcribe\"` use `v1/audio/transcriptions` endpoint as mentioned in the [open ai docs](<https://platform.openai.com/docs/models/gpt-4o-transcribe>) and currently `dspy` only supports   `model_type: Literal['chat', 'text', 'responses']`  , please correct me if I am wrong!\n\n`ref`: <https://dspy.ai/api/models/LM/>, \n\n\nAs for the `x-wav` error when you  do `Using DSPy with gpt-4o-mini instead`, I think this is a bug in the codebase (happy to contribute towards a fix! ) which arises at  https://github.com/stanfordnlp/dspy/blob/9dafdcc7b1f80a3fa875d2abdc55197183015489/dspy/adapters/types/audio.py#L82\n```\naudio_format = mime_type.split(\"/\")[1]  # \u2192 'x-wav'\n```\nand that value 'x-wav' is later rejected by OpenAI\u2019s API (since it the valid accepted format is `wav`). Thus, what you can do for now is try to bypass this by:\n```py\nimport base64\nfrom pathlib import Path\nimport dspy\n\nclass TranscribeSignature(dspy.Signature):\n    \"\"\"Transcribe the given audio file into text.\"\"\"\n    audio: dspy.Audio = dspy.InputField()\n    transcription: str = dspy.OutputField()\n\n\nif __name__ == \"__main__\":\n    audio_path = Path(\"xyz.wav\") \n\n    if not audio_path.exists():\n        print(f\"Error: Audio file not found at {audio_path}\")\n    else:\n        #  Read the audio file as raw bytes\n        with audio_path.open(\"rb\") as f:\n            audio_bytes = f.read()\n        \n        # Manually base64 encode the bytes\n        b64_data = base64.b64encode(audio_bytes).decode(\"utf-8\")\n        \n        # Explicitly construct the Audio object, forcing the\n        # OpenAI-supported format \"wav\" to bypass the 'x-wav' bug.\n        audio = dspy.Audio(data=b64_data, audio_format=\"wav\")\n\n        # Now, call `gpt-4o-mini` as mentioned by Tome !\n        lm = dspy.LM(model=\"gpt-4o-mini\")\n        dspy.settings.configure(lm=lm)\n\n        transcriber = dspy.Predict(TranscribeSignature)\n\n        response = transcriber(audio=audio)\n        \n        print(\"Transcription:\")\n        print(response.transcription)\n```\n\n"
+    },
+    {
+      "author": "akshatvishu",
+      "created_at": "2025-11-03T13:51:19Z",
+      "body": "Hey @TomeHirata  , the `mimetypes.guess_type()` is used internally at [adapters/types/audio.py](github.com/stanfordnlp/dspy/blob/9dafdcc7b1f80a3fa875d2abdc55197183015489/dspy/adapters/types/audio.py#L75) , but it cannot recognize file extensions other than conventional one and should be patched with something like:\n\n```py\n# In dspy/adapters/audio.py\n\nMIME_TYPE_MAP = {\n    \"x-wav\": \"wav\",\n\n}\n\n@classmethod\n    def from_file(cls, file_path: str) -> \"Audio\":\n        \"\"\"\n        Read local audio file and encode it as base64.\n        \"\"\"\n        if not os.path.isfile(file_path):\n            raise ValueError(f\"File not found: {file_path}\")\n\n        mime_type, _ = mimetypes.guess_type(file_path)\n        if not mime_type or not mime_type.startswith(\"audio/\"):\n            raise ValueError(f\"Unsupported MIME type for audio: {mime_type}\")\n\n        with open(file_path, \"rb\") as file:\n            file_data = file.read()\n\n        audio_format = mime_type.split(\"/\")[1]\n\n        # Normalize the audio format\n        audio_format = MIME_TYPE_MAP.get(audio_format, audio_format)   # Apply fix here\n\n        \n        encoded_data = base64.b64encode(file_data).decode(\"utf-8\")\n        return cls(data=encoded_data, audio_format=audio_format)\n```\nsame fix for `def from_url` and `def encode_audio`\n\nI also checked for the following types:\n```py\nMIME_TYPE_MAP = {\n    \"x-wav\": \"wav\",\n    \"x-flac\": \"flac\",\n    \"x-m4a\": \"m4a\",\n    \"mpga\": \"mp3\",\n}\n```\nand only `x-wav` throws error thus, we can also move the correction logic inside each fn :\n\n```\n@classmethod\n    def from_file(cls, file_path: str) -> \"Audio\":\n        \"\"\"\n        Read local audio file and encode it as base64.\n        \"\"\"\n        if not os.path.isfile(file_path):\n            raise ValueError(f\"File not found: {file_path}\")\n\n        mime_type, _ = mimetypes.guess_type(file_path)\n        if not mime_type or not mime_type.startswith(\"audio/\"):\n            raise ValueError(f\"Unsupported MIME type for audio: {mime_type}\")\n\n        with open(file_path, \"rb\") as file:\n            file_data = file.read()\n\n        audio_format = mime_type.split(\"/\")[1]\n\n        # This fixes the bug where mimetypes incorrectly guesses \"x-wav\",\n        # ensuring an API-compliant format is used.\n        if audio_format == \"x-wav\":    # fix\n            audio_format = \"wav\"\n\n        \n        encoded_data = base64.b64encode(file_data).decode(\"utf-8\")\n        return cls(data=encoded_data, audio_format=audio_format)\n```\nsame fix for `def from_url` and `def encode_audio`."
+    },
+    {
+      "author": "TomeHirata",
+      "created_at": "2025-11-04T04:02:58Z",
+      "body": "@akshatvishu Thanks for the investigation! Can you file a pr for this fix? I'm happy to review.\n@LizardBlizzard In the meantime, can you use the workaround that @akshatvishu mentioned above?"
+    },
+    {
+      "author": "LizardBlizzard",
+      "created_at": "2025-11-04T06:29:51Z",
+      "body": "Nice triage @akshatvishu \ud83d\ude09\n\n@TomeHirata, this would be a workaround to the workaround, because I still need to use transcription models (`gpt-4o-transcribe` and not `gpt-4o-mini`). Is there a reason not to support this API endpoint? Should I also roll my sleeves and try to add it as a feature?\n\nAppreciate the help!"
+    },
+    {
+      "author": "akshatvishu",
+      "created_at": "2025-11-04T13:38:41Z",
+      "body": "Hey @TomeHirata ,I just opened a PR for this! \n\nAlso, on a side note, I think we should update `CONTRIBUTING.md` to mention that contributors need` Python 3.10` installed for `pre-commit` hooks to work properly.\n\nThe issue: \n\nCurrent  `.pre-commit-config.yaml` specifies :\n\n```yaml\ndefault_language_version:\n  python: python3.10\n```\nBut the current default setup instructions install `Python 3.11` (via either `uv sync` or `conda create -n dspy-dev python=3.11`). This causes `pre-commit` to fail with a`failed to find interpreter for python3.10` error when contributors try to commit. Very trivial matter but I think it will be beneficial for everyone if this info is mentioned upfront . I'm happy to open a separate PR for this documentation fix if you agree!"
+    },
+    {
+      "author": "TomeHirata",
+      "created_at": "2025-11-06T04:19:30Z",
+      "body": "@akshatvishu Good call, feel free to file another PR and tag me."
+    },
+    {
+      "author": "TomeHirata",
+      "created_at": "2025-11-06T04:25:25Z",
+      "body": "@LizardBlizzard We basically support any OpenAI models that can be called using chat completion endpoint. The 4o transcribe model doesn't support chat completion endpoint (https://platform.openai.com/docs/models/gpt-4o-transcribe), which is why you faced the error. You can either 1) implement your own dspy.LM class that calls the transcription endpoint or 2) file a PR to LiteLLM (instead of DSPy) to support the transcription endpoint from `litellm.completion`."
+    }
+  ]
+}

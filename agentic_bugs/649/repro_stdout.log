@@ -1,0 +1,1 @@
+BUG REPRODUCED: LLMChatEndEvent.model_dump changed ChatResponse.raw to dict

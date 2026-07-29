@@ -1,0 +1,45 @@
+{
+  "owner": "mem0ai",
+  "repo": "mem0",
+  "number": 5724,
+  "html_url": "https://github.com/mem0ai/mem0/issues/5724",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "bug(faiss): list() returns bare [] for uninitialized index, breaking the List[List[OutputData]] contract",
+  "author": "Bartok9",
+  "created_at": "2026-06-21T07:10:05Z",
+  "updated_at": "2026-06-22T06:27:08Z",
+  "closed_at": "2026-06-22T06:27:08Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.97,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:48.478317+00:00",
+  "comments": [
+    {
+      "author": "kartik-mem0",
+      "created_at": "2026-06-22T04:32:22Z",
+      "body": "## Triage Notes\n\n**What we've established:**\n- `FAISS.list()` in `mem0/vector_stores/faiss.py` returns `[results]` on initialized paths but a bare `[]` when `self.index is None`, breaking the `List[List[OutputData]]` contract.\n- On a fresh FAISS store, `Memory.delete_all()` raises `IndexError: list index out of range` when indexing `[0]` on that bare `[]` \u2014 so deleting from an empty/uninitialized store fails instead of being a clean no-op.\n- Same bug class as MongoDB (#5728), OpenSearch (#5726), and the previously fixed Pinecone error path (#5701/#5706).\n\n**Reproduction:** Confirmed (code tracing; reproducer in the issue body works with zero external services)\n**Root cause:** The uninitialized-index early-return in `FAISS.list()` needs to return `[[]]` instead of `[]` to match the contract all callers rely on.\n\n**Next step:** PR #5725 addresses this \u2014 review feedback will be posted there."
+    }
+  ]
+}

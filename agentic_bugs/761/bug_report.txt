@@ -1,0 +1,93 @@
+# recovered-from-issue: https://github.com/pydantic/pydantic-ai/issues/5987
+
+TITLE
+[roundtrip-sweep] `ModelMessagesTypeAdapter`: `RetryPromptPart.content` list of error details fails to round-trip when any item lacks `input`
+
+BODY
+## Impact
+
+Any code that round-trips message history containing a `RetryPromptPart` whose `content` is a list of `ErrorDetails`-shaped dicts missing the `input` key will silently produce a JSON payload that the framework **cannot reload**:
+
+- `Agent.all_messages_json()` → `validate_json` raises `ValidationError`.
+- `Temporal` / durable-exec workflow replay of an in-flight run that had a structured retry → workflow cannot resume.
+- Persisted message history that survives a Pydantic version bump and is then re-fed as `message_history=` to a later run → permanent data loss.
+
+The serialization step also emits a `PydanticSerializationUnexpectedValue` `UserWarning`, which the framework codebase has not silenced — every `dump_json()` of such a part hits the noise path.
+
+The `pydantic_core.ErrorDetails` `TypedDict` makes every key (`type`, `loc`, `msg`, `input`, `ctx`, `url`) **required**; but the framework's own helpers build these lists with `error.errors(include_url=False, include_context=False)` — which already omits two of the required keys (`url`, `ctx`) — and `pydantic_core.ValidationError.errors(include_input=False)` is a documented public option. Third-party validators that build their own dicts (or that lift the dicts from a plain `ValueError` with structured `loc`/`msg`) routinely do not include `input` either. Once a list like that is fed into `RetryPromptPart`, the data is irrecoverable after a `dump_json` round-trip.
+
+## Boundary & Code Path
+
+`pydantic_ai_slim/pydantic_ai/messages.py` — `RetryPromptPart` is declared with `content: list[pydantic_core.ErrorDetails] | str`.
+
+`ModelMessagesTypeAdapter` is built at module top with `defer_build=True` and is used (via `Agent.all_messages_json`, `result.new_messages_json`, and elsewhere) to (de)serialize `list[ModelMessage]`. Because the inner type is `list[ErrorDetails]`, the `validate_json` step enforces strict TypedDict shape, which makes the round-trip a *one-way door* the moment any element is missing a required key.
+
+## Reproduction
+
+A new test was added: `tests/test_retry_prompt_roundtrip.py::test_retry_prompt_round_trip_with_minimal_error_details`. It fails on the current `main`:
+
+```python
+from pydantic_ai.messages import (
+    ModelMessagesTypeAdapter, ModelRequest, RetryPromptPart,
+)
+
+# Three-key error details, as produced by `error.errors(include_url=False, include_context=False, include_input=False)`
+# or by a custom validator / older replay log.
+content: list[dict[str, object]] = [
+    {'type': 'missing', 'loc': ('x',), 'msg': 'Field required'},
+]
+part = RetryPromptPart(content=content, tool_name='foo', tool_call_id='call_1')  # type: ignore[arg-type]
+messages = [ModelRequest(parts=[part])]
+
+# Serializes (with PydanticSerializationUnexpectedValue warning)
+serialized = ModelMessagesTypeAdapter.dump_json(messages)
+
+# Deserialization FAILS — `input` is required by `ErrorDetails`
+ModelMessagesTypeAdapter.validate_json(serialized)
+```
+
+Run with `uv run python -m pytest tests/test_retry_prompt_roundtrip.py -v`. Captured output:
+
+```
+Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue: Expected 4 fields but got 3: ...
+  PydanticSerializationUnexpectedValue: Expected `str` - serialized value may not be as expected ...
+
+FAILED tests/test_retry_prompt_roundtrip.py::test_retry_prompt_round_trip_with_minimal_error_details
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for list[tagged-union[ModelRequest,ModelResponse]]
+0.request.parts.0.retry-prompt.content.list[ErrorDetails].0.input
+  Field required [type=missing, input_value={'type': 'missing', 'loc': ('x',), 'msg': 'Field required'}, input_type=dict]
+0.request.parts.0.retry-prompt.content.str
+  Input should be a valid string [type=string_type, input_value=[...], input_type=list]
+```
+
+The JSON payload written to disk is `{"content": [{"type": "missing", "loc": ["x"], "msg": "Field required"}], ...}` — a valid-looking, hand-editable list of error details — but the framework refuses to round-trip it back into a `RetryPromptPart`.
+
+## Expected vs Actual
+
+**Expected:** `validate_json(dump_json(messages)) == messages` for any `messages` that the dataclass type accepts on construction. The `content` field should round-trip whether each entry is the full `ErrorDetails` shape, the framework's `include_url=False, include_context=False` shape (no `url`/`ctx`), the `include_input=False` shape (no `input`), or a hand-built `{type, loc, msg}` dict.
+
+**Actual:** Only the canonical `ErrorDetails` shape round-trips. Anything missing a required key fails hard at `validate_json` time and emits a warning at `dump_json` time. Once a list with a 3-key entry has been serialized, the message is unrecoverable from its JSON.
+
+## Evidence
+
+- `pydantic_ai_slim/pydantic_ai/messages.py:1403` — `error_details_ta = pydantic.TypeAdapter(list[pydantic_core.ErrorDetails], config=pydantic.ConfigDict(defer_build=True))`
+- `pydantic_ai_slim/pydantic_ai/messages.py:1422` — `content: list[pydantic_core.ErrorDetails] | str` (the strict type that's the root cause)
+- `pydantic_ai_slim/pydantic_ai/messages.py:2381` — `ModelMessagesTypeAdapter = pydantic.TypeAdapter(list[ModelMessage], ...)` (the boundary used by `Agent.all_messages_json` / `result.new_messages_json`)
+- `pydantic_ai_slim/pydantic_ai/tool_manager.py:187` — framework call site that produces a 4-key list (`type/loc/msg/input`) and stores it as `content`
+- `pydantic_ai_slim/pydantic_ai/_output.py:123` — same pattern, in output-tool validation
+- `tests/test_retry_prompt_roundtrip.py` — new test (full code) demonstrating the round-trip failure
+
+## Suggested Fix
+
+Loosen the field's runtime type to `list[dict[str, Any]] | str` (keep the `ErrorDetails` shape as the documented ideal for tooling) so that:
+
+1. Construction accepts dicts of any subset of the canonical keys (as it does today at the dataclass level — `pydantic_core.ErrorDetails` is a `TypedDict`, not enforced at runtime).
+2. The `ModelMessagesTypeAdapter` (de)serialization round-trips all of those subsets.
+3. The `PydanticSerializationUnexpectedValue` warning stops firing for the framework's own `error.errors(include_url=False, include_context=False)` output (which is missing `url` and `ctx`).
+
+If stricter validation is desired, gate it behind a `model_config` / `model_validator` so users can opt in. The default — the path that runs for `all_messages_json` — must round-trip.
+
+<!-- gh-aw-workflow-id: pydantic-ai-roundtrip-sweep -->
+<!-- gh-aw-workflow-call-id: pydantic/pydantic-ai/pydantic-ai-roundtrip-sweep -->
+<!-- gh-aw-close-key: roundtrip-sweep -->

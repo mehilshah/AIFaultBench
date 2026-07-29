@@ -1,0 +1,46 @@
+{
+  "owner": "run-llama",
+  "repo": "llama_index",
+  "number": 20973,
+  "html_url": "https://github.com/run-llama/llama_index/issues/20973",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: Async retrieval paths call sync `postprocess_nodes()` instead of `apostprocess_nodes()`",
+  "author": "gautamvarmadatla",
+  "created_at": "2026-03-13T14:10:53Z",
+  "updated_at": "2026-05-01T22:31:27Z",
+  "closed_at": "2026-03-16T10:42:47Z",
+  "labels": [
+    "bug",
+    "triage"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.86,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:05:44.925354+00:00",
+  "comments": [
+    {
+      "author": "dosubot[bot]",
+      "created_at": "2026-03-13T14:54:42Z",
+      "body": "<!-- Answer -->\nThanks for the detailed bug report! I can confirm this issue and it's actually more widespread than initially identified.\n\n**Confirmed affected files in your list:**\n- [chat_engine/context.py](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-core/llama_index/core/chat_engine/context.py#L148-L156)\n- [chat_engine/condense_plus_context.py](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-core/llama_index/core/chat_engine/condense_plus_context.py#L215-L223)\n- [query_engine/citation_query_engine.py](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-core/llama_index/core/query_engine/citation_query_engine.py#L244-L250)\n- [query_engine/multi_modal.py](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-core/llama_index/core/query_engine/multi_modal.py#L106-L108)\n- [tools/retriever_tool.py](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-core/llama_index/core/tools/retriever_tool.py#L101-L123)\n\nNote: The multi-modal chat engine files (`multi_modal_context.py` and `multi_modal_condense_plus_context.py`) don't appear to exist in the current codebase.\n\n**Additional affected files I found:**\n- [RetrieverQueryEngine.aretrieve()](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-core/llama_index/core/query_engine/retriever_query_engine.py#L140-L142) - the base query engine itself has this bug\n- [evaluation/retrieval/evaluator.py](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-core/llama_index/core/evaluation/retrieval/evaluator.py#L35-L50) - `RetrieverEvaluator` and `MultiModalRetrieverEvaluator`\n- [objects/base.py](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-core/llama_index/core/objects/base.py#L76-L88) - `ObjectRetriever.aretrieve()`\n- [networks/network/retriever.py](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-networks/llama_index/networks/network/retriever.py#L43-L55) - `NetworkRetriever._aretrieve()`\n\nAlso in integrations: `VectaraQueryEngine` and `KodaRetriever`.\n\n**Note on RetrieverQueryEngine:** Contrary to the issue description, the `_async_apply_node_postprocessors` method doesn't actually exist in the codebase - `RetrieverQueryEngine` itself has the same bug, calling sync `_apply_node_postprocessors()` in its async path.\n\nThe fix for all locations would be to await [`apostprocess_nodes()`](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-core/llama_index/core/postprocessor/types.py#L65-L86) instead of calling `postprocess_nodes()`:\n\n```python\n# Before (incorrect)\nnodes = postprocessor.postprocess_nodes(nodes, query_bundle=query_bundle)\n\n# After (correct)\nnodes = await postprocessor.apostprocess_nodes(nodes, query_bundle=query_bundle)\n```\n\n\n<!-- Dosu Comment Footer -->\n*To reply, just mention [@dosu](https://go.dosu.dev/dosubot?utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=reply-with-mention&utm_term=run-llama%2Fllama_index).*\n\n---\n\nShare context across your team and agents. Try [Dosu](https://dosu.dev?utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=knowledge-infrastructure-tagline&utm_term=run-llama%2Fllama_index).\n\n[![Leave Feedback](https://img.shields.io/badge/Leave%20Feedback-555555?style=flat)](https://app.dosu.dev/response-feedback?utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=knowledge-infrastructure-feedback&utm_term=run-llama%2Fllama_index&message_id=f0af260a-46ff-4ded-a984-a401f0f8cd74) [![Learn about llama_index with Dosu](https://img.shields.io/badge/Learn%20about%20llama__index%20with%20Dosu-2f7b3f?style=flat&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iODYiIGhlaWdodD0iODkiIHZpZXdCb3g9IjAgMCA4NiA4OSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNS4yOTIzNiAxMi43OTI4TDE3Ljc1OTMgNi42ODE4OFY3Mi41NjY3TDUuMjkyMzYgODQuMDYxOFYxMi43OTI4WiIgZmlsbD0iI0I0QkI5MSIvPjxwYXRoIGQ9Ik0xOC4yNTc1IDczLjExOTZMNTkuMTMyOSA3Mi43NDhMNTEuNzAxMSA4Mi40MDk1TDI5LjAzMzggODYuMjkxTDYuMjM5NjIgODUuMTU1NEwxOC4yNTc1IDczLjExOTZaIiBmaWxsPSIjNzc4NTYxIi8%2BPHBhdGggZD0iTTE3LjQ5MTYgMy43MzYzM0wzLjU4NTU3IDEyLjcwOTlWODMuNTc5MkMzLjU4NTU3IDg0Ljc1NDIgNC45ODU2MyA4NS4zNjUyIDUuODQ3MDUgODQuNTY2TDE5LjYyOTYgNzEuNzgwMSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSI2LjQyODQ0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bWFzayBpZD0iZG9zdS1kLWN1dG91dCIgZmlsbD0id2hpdGUiPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNNDAuNzA0IDAuNTE4MDY2SDE3LjA0MzlWNzYuMjIyMUg0MC43MDRINDIuNTgwNUg0Ny44MDEzQzY4LjcwNjQgNzYuMjIyMSA4NS42NTMzIDU5LjI3NTIgODUuNjUzMyAzOC4zNzAxQzg1LjY1MzMgMTcuNDY1IDY4LjcwNjMgMC41MTgwNjYgNDcuODAxMyAwLjUxODA2Nkg0Mi41ODA1SDQwLjcwNFoiLz48L21hc2s%2BPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00MC43MDQgMC41MTgwNjZIMTcuMDQzOVY3Ni4yMjIxSDQwLjcwNEg0Mi41ODA1SDQ3LjgwMTNDNjguNzA2NCA3Ni4yMjIxIDg1LjY1MzMgNTkuMjc1MiA4NS42NTMzIDM4LjM3MDFDODUuNjUzMyAxNy40NjUgNjguNzA2MyAwLjUxODA2NiA0Ny44MDEzIDAuNTE4MDY2SDQyLjU4MDVINDAuNzA0WiIgZmlsbD0iI0YzRjZGMSIvPjxwYXRoIGQ9Ik0xNy4wNDM5IDAuNTE4MDY2Vi02LjU3OTE5SDkuOTQ2NjlWMC41MTgwNjZIMTcuMDQzOVpNMTcuMDQzOSA3Ni4yMjIxSDkuOTQ2NjlWODMuMzE5NEgxNy4wNDM5Vjc2LjIyMjFaTTE3LjA0MzkgNy42MTUzMkg0MC43MDRWLTYuNTc5MTlIMTcuMDQzOVY3LjYxNTMyWk0yNC4xNDEyIDc2LjIyMjFWMC41MTgwNjZIOS45NDY2OVY3Ni4yMjIxSDI0LjE0MTJaTTQwLjcwNCA2OS4xMjQ5SDE3LjA0MzlWODMuMzE5NEg0MC43MDRWNjkuMTI0OVpNNDIuNTgwNSA2OS4xMjQ5SDQwLjcwNFY4My4zMTk0SDQyLjU4MDVWNjkuMTI0OVpNNDcuODAxMyA2OS4xMjQ5SDQyLjU4MDVWODMuMzE5NEg0Ny44MDEzVjY5LjEyNDlaTTc4LjU1NiAzOC4zNzAxQzc4LjU1NiA1NS4zNTU1IDY0Ljc4NjcgNjkuMTI0OSA0Ny44MDEzIDY5LjEyNDlWODMuMzE5NEM3Mi42MjYxIDgzLjMxOTQgOTIuNzUwNSA2My4xOTQ5IDkyLjc1MDUgMzguMzcwMUg3OC41NTZaTTQ3LjgwMTMgNy42MTUzMkM2NC43ODY2IDcuNjE1MzIgNzguNTU2IDIxLjM4NDcgNzguNTU2IDM4LjM3MDFIOTIuNzUwNUM5Mi43NTA1IDEzLjU0NTMgNzIuNjI2IC02LjU3OTE5IDQ3LjgwMTMgLTYuNTc5MTlWNy42MTUzMlpNNDIuNTgwNSA3LjYxNTMySDQ3LjgwMTNWLTYuNTc5MTlINDIuNTgwNVY3LjYxNTMyWk00MC43MDQgNy42MTUzMkg0Mi41ODA1Vi02LjU3OTE5SDQwLjcwNFY3LjYxNTMyWiIgZmlsbD0iYmxhY2siIG1hc2s9InVybCgjZG9zdS1kLWN1dG91dCkiLz48cGF0aCBkPSJNNjguOTIxNSAzNi4wMTM1QzY4LjkyMTUgMzYuMDEzNSA2NS43MzY5IDQ5LjQ3MzggNTEuNDIzMSA0OS40NzM4QzM3LjEwOTMgNDkuNDczOCAzMi41Nzg3IDM3LjM1OTYgMzIuNTc4NyAzNi4wMTM1IiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjcuNjkxNjEiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0wLjM0ODYzMyA4NS40OTQ2QzAuMzQ4NjMzIDg1LjQ5NDYgMjkuNDg1NiA4NS44MzA5IDM0LjgwOSA4NS42OThDNDQuODMzNyA4NS40NDc3IDUxLjI4NzIgODQuNDAyIDU3LjUyNjkgNzguOTcyNEM2Mi44MTI5IDc0LjM3MjcgNzUuMTM0MiA1OS42ODM2IDc1LjEzNDIgNTkuNjgzNiIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSI2LjE2NDgyIi8%2BPC9zdmc%2B)](https://github.dosu.com/run-llama/llama_index?utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=knowledge-infrastructure-learn-repo&utm_term=run-llama%2Fllama_index) [![Add Dosu to your team](https://img.shields.io/badge/Add%20Dosu%20to%20your%20team-1f6feb?style=flat)](https://app.dosu.dev/signup?referrer=openSource&source=github-footer&utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=knowledge-infrastructure-add-team&utm_term=run-llama%2Fllama_index)"
+    }
+  ]
+}

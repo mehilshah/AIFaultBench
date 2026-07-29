@@ -1,0 +1,76 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langgraph",
+  "number": 6342,
+  "html_url": "https://github.com/langchain-ai/langgraph/issues/6342",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Major BUG] - RemoteGraph in LangGraph 1.0: Cannot use `context` and `config` together - Forces choice between checkpointing OR middleware",
+  "author": "errajibadr",
+  "created_at": "2025-10-25T14:42:57Z",
+  "updated_at": "2026-01-09T19:52:39Z",
+  "closed_at": "2026-01-09T19:52:39Z",
+  "labels": [
+    "bug",
+    "pending"
+  ],
+  "milestone": null,
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 2,
+    "+1": 2,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 76.22,
+  "fix": {
+    "closing_commit": "c4fbe44eade825d77c3a6b69d186f157c53d32e2",
+    "linked_prs": [],
+    "best_guess_fix_commit": "c4fbe44eade825d77c3a6b69d186f157c53d32e2",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T12:37:42.265473+00:00",
+  "comments": [
+    {
+      "author": "LouisAuneau",
+      "created_at": "2025-11-05T16:27:34Z",
+      "body": "I agree this is an issue. Our use-case it so set the `max_concurrency` to avoid rate limits. And at the same time we need some contextual values. Currently it is not possible to do this when using LangGraph Server."
+    },
+    {
+      "author": "jdrogers940",
+      "created_at": "2025-11-07T20:53:01Z",
+      "body": "Hey folks - thanks for raising this and sorry for the pain here. Working on a fix here where you would end up passing thread_id in via config as a top level parameter, something like this:\n\n```\nconfig = {\n  ...\n  \"thread_id\": \"<uuid>\",\n  ...\n}\n```\n\nWould appreciate any input on that! `max_concurrency` should already work with this pattern today:\n\n```\nimport uuid\nfrom langgraph.pregel.remote import RemoteGraph\n\nurl = \"http://localhost:8123\"\ngraph_name = \"agent\"\nremote_graph = RemoteGraph(graph_name, url=url)\n\ncontext = {\"user_id\": \"123\"}\nconfig = {\"max_concurrency\": 10}\n\n# This raises httpx.HTTPStatusError: 400 Bad Request\nfor chunk in remote_graph.stream(\n    {\"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]},\n    context=context,\n    config=config,\n    stream_mode=\"values\",\n):\n    print(chunk)\n```"
+    },
+    {
+      "author": "bolexyro",
+      "created_at": "2025-11-12T14:33:46Z",
+      "body": "@jdrogers940 this doesn't exactly solve the problem (passing thread_id as a top level parameter). When you do this, there's no checkpointing. It just prevents the 400 error from being shown. I have a fix already, just cleaning things up @sydney-runkle "
+    },
+    {
+      "author": "bolexyro",
+      "created_at": "2025-11-12T19:21:54Z",
+      "body": "The 400 error here isn\u2019t about using both config and context, it\u2019s specifically about using both configurable and context together.\n\nIn other words, this line in the error:\n\n`Cannot specify both configurable and context.\n`\n\nrefers to the configurable field inside config, not the entire config argument.\n\n\u2705 You can safely pass both config and context as long as config doesn\u2019t contain a configurable key.\n\nSo, instead of doing this:\n\n```\nconfig = {\"configurable\": {\"thread_id\": thread_id}}\ncontext = {\"user_id\": \"123\"}\n\n```\n\nYou can move those fields up into your context:\n\n`context = {\"user_id\": \"123\", \"thread_id\": thread_id}\n`\n\nand omit the configurable block entirely.\n\nHowever, with this approach, checkpointing still doesn\u2019t work, since the checkpointer only looks for thread_id inside config[\"configurable\"], not in context.\n\nI\u2019m currently working on a fix for that so checkpointing continues to work seamlessly when using only context."
+    },
+    {
+      "author": "errajibadr",
+      "created_at": "2025-11-16T21:55:11Z",
+      "body": "@bolexyro Thanks. But what's the politics of the team?  as it's still very tricky. How do we send configurable items ? ( like self-generated run/trace id so that we can do the feedback logic ) \n\n@lanchain_team ? "
+    },
+    {
+      "author": "bolexyro",
+      "created_at": "2025-11-27T05:30:18Z",
+      "body": "So I have solved the bug and opened a PR I don't think it has been looked into (@sydney-runkle, @jdrogers940) . For now you could just make a fork and copy what I did here https://github.com/langchain-ai/langgraph/pull/6438"
+    },
+    {
+      "author": "sydney-runkle",
+      "created_at": "2026-01-09T19:52:39Z",
+      "body": "This should be fixed! You can specify thread id via config + use context :)"
+    }
+  ]
+}

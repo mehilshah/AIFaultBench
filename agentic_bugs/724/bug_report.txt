@@ -1,0 +1,250 @@
+# recovered-from-issue: https://github.com/crewAIInc/crewAI/issues/5620
+
+TITLE
+[BUG] Checkpoint serialization fails with <class 'function'> after #5544 fix
+
+BODY
+### Description
+
+After the recent fix for ModelMetaclass serialization in checkpoints ([#5544](https://github.com/crewAIInc/crewAI/issues/5544)), I’m still encountering a serialization issue when checkpointing a Flow.
+
+This time, the error is related to function objects, not Pydantic model classes.
+
+Checkpointing fails when using `on_events=["method_execution_finished"]`, even though the user-defined state is fully JSON-serializable.
+
+### Steps to Reproduce
+
+1. Create a Flow with a simple Pydantic state (only primitives and nested models)
+2. Enable checkpointing:
+```
+CheckpointConfig(
+    location="./.checkpoints",
+    on_events=["method_execution_finished"],
+    provider=JsonProvider(),
+)
+```
+
+3. Run the flow
+4. Observe checkpointing logs
+
+### Expected behavior
+
+Checkpointing should:
+
+- Successfully serialize the state to JSON
+- Or safely ignore non-serializable internal fields (e.g. functions, callbacks)
+
+### Screenshots/Code snippets
+
+Same as in ([#5544](https://github.com/crewAIInc/crewAI/issues/5544))
+
+### Agents (agents.yaml)
+```
+generator:
+  role: "Family generator"
+  goal: "Generate a list of families with structured data"
+  backstory: "Expert in generating synthetic family datasets"
+```
+### Tasks (tasks.yaml)
+```
+generation_task:
+  description: >
+    Generate EXACTLY ONE FAMILY with {sizes} members.
+    Each family must include: id, name, size, members
+    Each member must include: id, name, role, age, sports
+    Output must be valid JSON matching the expected structure.
+  expected_output: >
+    A FamilyList containing exactly one Family with {sizes} members.
+  agent: generator
+```
+### Crew (family_crew.py)
+```
+from crewai import Agent, Crew, Process, Task
+from crewai.agents.agent_builder.base_agent import BaseAgent
+from crewai.project import CrewBase, agent, crew, task
+
+from sporty_family_flow.models.family import FamilyList
+from sporty_family_flow.guardrails.family_guardrails import is_family_guardrail
+
+
+@CrewBase
+class FamilyCrew:
+    """Family Crew"""
+
+    agents: list[BaseAgent]
+    tasks: list[Task]
+
+    agents_config = "config/agents.yaml"
+    tasks_config = "config/tasks.yaml"
+
+    @agent
+    def generator(self) -> Agent:
+        return Agent(
+            config=self.agents_config["generator"]
+        )
+
+    @task
+    def generation_task(self) -> Task:
+        return Task(
+            config=self.tasks_config["generation_task"],
+            output_pydantic=FamilyList,
+            guardrails=[is_family_guardrail],
+        )
+
+    @crew
+    def crew(self) -> Crew:
+        return Crew(
+            agents=self.agents,  # Automatically created by the @agent decorator
+            tasks=self.tasks,  # Automatically created by the @task decorator
+            process=Process.sequential,
+        )
+```
+### Guardrail (family_guardrails.py)
+```
+from sporty_family_flow.models.family import FamilyList
+
+def is_family_guardrail(output):
+    families = output.pydantic.families
+    for family in families:
+        if family.size <= 1:
+            return (False, f"Family {family.name} has an invalid size: {family.size}. Size must be greater than 1. Add members to this family.")
+    return (True, output)
+```
+### Pydantic Model (family.py)
+```
+from pydantic import BaseModel
+from typing import List
+
+
+class Member(BaseModel):
+    member_id: int
+    name: str
+    role: str
+    age: int
+    sports: List[str]
+
+
+class Family(BaseModel):
+    family_id: int
+    name: str
+    size: int
+    members: List[Member]
+
+
+class FamilyList(BaseModel):
+    families: List[Family]
+```
+### Flow (main.py)
+```
+from pydantic import BaseModel
+from crewai.flow import Flow, listen, start
+from crewai import CheckpointConfig
+from crewai.state import JsonProvider
+
+import sporty_family_flow.listeners
+from sporty_family_flow.crews.family_crew.family_crew import FamilyCrew
+from sporty_family_flow.models.family import Family, FamilyList
+
+
+class FamilyState(BaseModel):
+    families: list[Family] = []
+
+
+class FamilyFlow(Flow[FamilyState]):
+
+    @start()
+    def get_input(self):
+        return(input("Enter the sizes of your families: "))
+
+    @listen(get_input)
+    def create_families(self, sizes: str):
+        result = (FamilyCrew().crew().kickoff(inputs={"sizes": sizes}))
+        families = result.pydantic.families
+        self.state.families = families
+
+    @listen(create_families)
+    def print_families(self):
+        for family in self.state.families:
+            log = f"""
+            ----- Family {family.family_id} ----- \n\n
+            Family Name: {family.name}\n
+            Size: {family.size}\n
+            MEMBERS: \n
+            """
+            for member in family.members:
+                log += f"""
+                \t Member: {member.name} \n
+                \t Age: {member.age} \n
+                \t Role: {member.role} \n
+                \t Sports: {', '.join(member.sports)}
+                """
+            print(log)
+
+
+def kickoff():
+    cp_config = CheckpointConfig(
+        location="./.checkpoints",
+        on_events=["method_execution_finished"],
+        provider=JsonProvider(),
+        max_checkpoints=5
+    )
+    family_flow = FamilyFlow(checkpoint=cp_config)
+    family_flow.kickoff()
+
+
+def plot():
+    FamilyFlow().plot()
+
+if __name__ == "__main__":
+    kickoff()
+
+```
+
+### Operating System
+
+Ubuntu 24.04
+
+### Python Version
+
+3.12
+
+### crewAI Version
+
+1.14.3
+
+### crewAI Tools Version
+
+---
+
+### Virtual Environment
+
+Venv
+
+### Evidence
+
+Checkpointing fails with the following error:
+```
+Auto-checkpoint failed for event method_execution_finished
+Traceback (most recent call last):
+  File ".../site-packages/crewai/state/checkpoint_listener.py", line 242, in _on_any_event
+    _do_checkpoint(state, cfg, event)
+  File ".../site-packages/crewai/state/checkpoint_listener.py", line 144, in _do_checkpoint
+    payload = state.model_dump(mode="json")
+  File ".../site-packages/pydantic/main.py", line 463, in model_dump
+    return self.__pydantic_serializer__.to_python(
+pydantic_core._pydantic_core.PydanticSerializationError: Unable to serialize unknown type: <class 'function'>
+```
+
+### Possible Solution
+
+- Exclude callable objects from checkpoint serialization
+- Ensure that internal Flow metadata (listeners, callbacks, methods) is not included in the serialized state
+- Alternatively, serialize only the user-defined state instead of the full internal state
+
+### Additional context
+
+The previous fix (#5544) correctly addressed serialization of Pydantic model classes (ModelMetaclass) using schema-based serialization.
+
+However, a similar issue appears to persist for function objects, likely introduced by Flow internals (listeners, decorators, or execution context) during intermediate events.
+
+This suggests that checkpointing currently attempts to serialize more than just the user-defined state.

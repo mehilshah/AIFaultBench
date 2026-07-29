@@ -1,0 +1,12 @@
+{
+  "bug_id": "759",
+  "bug_dir": "759",
+  "issue_url": "https://github.com/pydantic/pydantic-ai/issues/6025",
+  "commit_hash": "e19e18065a13be0490483ad3c5601d232af8185b",
+  "library_name": "pydantic-ai",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "pydantic/pydantic-ai@e19e18065a13be0490483ad3c5601d232af8185b",
+  "codebase_present": "false",
+  "standardized_dir": "../759"
+}

@@ -1,0 +1,55 @@
+{
+  "owner": "huggingface",
+  "repo": "smolagents",
+  "number": 1730,
+  "html_url": "https://github.com/huggingface/smolagents/issues/1730",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "BUG: e2b executor does not work: TypeError: SandboxBase.__init__() missing 5 required positional arguments",
+  "author": "jacopotagliabue",
+  "created_at": "2025-08-28T15:40:22Z",
+  "updated_at": "2025-08-31T11:47:49Z",
+  "closed_at": "2025-08-31T11:47:49Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.84,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T14:00:35.846145+00:00",
+  "comments": [
+    {
+      "author": "jacopotagliabue",
+      "created_at": "2025-08-28T15:51:47Z",
+      "body": "This change will fix the example above:\n\n```python\ndef __init__(self, additional_imports: list[str], logger, **kwargs):\n        super().__init__(additional_imports, logger)\n        try:\n            from e2b_code_interpreter import Sandbox\n        except ModuleNotFoundError:\n            raise ModuleNotFoundError(\n                \"\"\"Please install 'e2b' extra to use E2BExecutor: `pip install 'smolagents[e2b]'`\"\"\"\n            )\n        #self.sandbox = Sandbox(**kwargs)\n        self.sandbox = Sandbox.create()\n```\n\nbut anything slightly more complex fails, i.e. using the ToolCollection: is the executor supposed to be transparent to the flow? (the example works without e2b of course):\n\n```python \nserver_params = {\n        \"url\": os.getenv(\"MCP_URL\"),\n        \"transport\": os.getenv(\"MCP_TRANSPORT\")\n    }\nquery = \"Use the bauplan from MCP to get the user name\"\nwith ToolCollection.from_mcp(server_params, trust_remote_code=True) as tc:\n        with CodeAgent(add_base_tools=False, tools=[*tc.tools], model=model, executor_type=\"e2b\") as agent:\n            result = agent.run(query)   \n\nprint(result)\n```\n -> \n```bash\nraceback (most recent call last):\n  File \"/Users/apo/Documents/repos/ieee-big-data-internal/src/e2b_playground.py\", line 27, in <module>\n    result = agent.run(query)\n  File \"/Users/apo/Documents/repos/ieee-big-data-internal/.venv/lib/python3.13/site-packages/smolagents/agents.py\", line 448, in run\n    self.python_executor.send_tools({**self.tools, **self.managed_agents})\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/apo/Documents/repos/ieee-big-data-internal/.venv/lib/python3.13/site-packages/smolagents/remote_executors.py\", line 74, in send_tools\n    for pkg in tool.to_dict()[\"requirements\"]\n               ~~~~~~~~~~~~^^\n  File \"/Users/apo/Documents/repos/ieee-big-data-internal/.venv/lib/python3.13/site-packages/smolagents/tools.py\", line 321, in to_dict\n    validate_tool_attributes(self.__class__)\n    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/Users/apo/Documents/repos/ieee-big-data-internal/.venv/lib/python3.13/site-packages/smolagents/tool_validation.py\", line 262, in validate_tool_attributes\n    raise ValueError(f\"Tool validation failed for {cls.__name__}:\\n\" + \"\\n\".join(errors))\nValueError: Tool validation failed for MCPAdaptTool:\nParameters in __init__ must have default values, found required parameters: description, name, output_type, inputs\n- __init__: Name '_sanitize_function_name' is undefined.\n- __init__: Name '_sanitize_function_name' is undefined.\n- forward: Name 'func' is undefined.\n- forward: Name 'func' is undefined.\n- forward: Name 'func' is undefined.\n- forward: Name 'func' is undefined.\n- forward: Name 'logger' is undefined.\n- forward: Name 'mcp' is undefined.\n- forward: Name 'json' is undefined.\n- forward: Name 'json' is undefined.\n- forward: Name 'logger' is undefined.\n- forward: Name 'mcp' is undefined.\n- forward: Name 'base64' is undefined.\n- forward: Name 'BytesIO' is undefined.\n- forward: Name 'BytesIO' is undefined.\n- forward: Name 'mcp' is undefined.\n- forward: Name '_is_package_available' is undefined.\n- forward: Name '_is_package_available' is undefined.\n- forward: Name 'base64' is undefined.\n- forward: Name 'BytesIO' is undefined.\n- forward: Name 'BytesIO' is undefined.\n- forward: Name 'Union' is undefined.\n```\n\n\n"
+    },
+    {
+      "author": "albertvillanova",
+      "created_at": "2025-08-29T09:06:09Z",
+      "body": "Thanks for reporting, @jacopotagliabue.\n\nIt looks like the `e2b-code-interpreter` 2.0.0 release introduced breaking changes that affect the executor. While we are adding support for their latest version, you can work around the issue by downgrading `e2b-code-interpreter` to the last compatible release:\n```\npip install -U \"e2b-code-interpreter==1.5.2\"\n```\nThis should get the executor example working again."
+    },
+    {
+      "author": "jacopotagliabue",
+      "created_at": "2025-08-29T10:41:58Z",
+      "body": "@albertvillanova thanks the tutorial one now works, but a real example still doesn't:\n\n(start mcp from here: `https://github.com/BauplanLabs/bauplan-mcp-server`) ->\n\n\n```python\nserver_params = {\"url\": 'http://localhost:8000/mcp', \"transport\": 'streamable-http'}\nquery = \"Use the bauplan from MCP to get the user name\"\nwith ToolCollection.from_mcp(server_params, trust_remote_code=True) as tc:\n    with CodeAgent(\n        add_base_tools=False, tools=[*tc.tools], model=model, executor_type=\"e2b\"\n    ) as agent:\n        result = agent.run(query)\n\nprint(result)\n```\n\ngets me\n\n```bash\napo@Jacopos-MBP src % uv run e2b_playground.py\nInitializing executor, hold on...\nE2B is running\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 New run \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502                                                                                                                         \u2502\n\u2502 Use the bauplan from MCP to get the user name                                                                           \u2502\n\u2502                                                                                                                         \u2502\n\u2570\u2500 LiteLLMModel - gpt-4o-mini \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\nShutting down sandbox...\nSandbox cleanup completed\nTraceback (most recent call last):\n  File \"/Users/apo/Documents/repos/ieee-big-data-internal/src/e2b_playground.py\", line 24, in <module>\n    result = agent.run(query)\n  File \"/Users/apo/Documents/repos/ieee-big-data-internal/.venv/lib/python3.13/site-packages/smolagents/agents.py\", line 448, in run\n    self.python_executor.send_tools({**self.tools, **self.managed_agents})\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/apo/Documents/repos/ieee-big-data-internal/.venv/lib/python3.13/site-packages/smolagents/remote_executors.py\", line 74, in send_tools\n    for pkg in tool.to_dict()[\"requirements\"]\n               ~~~~~~~~~~~~^^\n  File \"/Users/apo/Documents/repos/ieee-big-data-internal/.venv/lib/python3.13/site-packages/smolagents/tools.py\", line 321, in to_dict\n    validate_tool_attributes(self.__class__)\n    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/Users/apo/Documents/repos/ieee-big-data-internal/.venv/lib/python3.13/site-packages/smolagents/tool_validation.py\", line 262, in validate_tool_attributes\n    raise ValueError(f\"Tool validation failed for {cls.__name__}:\\n\" + \"\\n\".join(errors))\nValueError: Tool validation failed for MCPAdaptTool:\nParameters in __init__ must have default values, found required parameters: description, name, output_type, inputs\n- __init__: Name '_sanitize_function_name' is undefined.\n- __init__: Name '_sanitize_function_name' is undefined.\n- forward: Name 'func' is undefined.\n- forward: Name 'func' is undefined.\n- forward: Name 'func' is undefined.\n- forward: Name 'func' is undefined.\n- forward: Name 'logger' is undefined.\n- forward: Name 'mcp' is undefined.\n- forward: Name 'json' is undefined.\n- forward: Name 'json' is undefined.\n- forward: Name 'logger' is undefined.\n- forward: Name 'mcp' is undefined.\n- forward: Name 'base64' is undefined.\n- forward: Name 'BytesIO' is undefined.\n- forward: Name 'BytesIO' is undefined.\n- forward: Name 'mcp' is undefined.\n- forward: Name '_is_package_available' is undefined.\n- forward: Name '_is_package_available' is undefined.\n- forward: Name 'base64' is undefined.\n- forward: Name 'BytesIO' is undefined.\n- forward: Name 'BytesIO' is undefined.\n- forward: Name 'Union' is undefined.\n```\n\nCan you please provide a snippet with the MCP working? Is this supposed to work or is out of the operational envelope for the library?\n\n\n\n\n\n"
+    }
+  ]
+}

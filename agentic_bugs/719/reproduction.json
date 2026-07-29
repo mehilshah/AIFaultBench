@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`bash run_repro.sh` exited 1 and stdout was `OBSERVED BUG: AttributeError: items`.",
+    "Captured traceback passes through `browser_use/tokens/service.py:352`, then LangChain `ensure_config`, where `config.items()` raises `AttributeError: items`.",
+    "Artifact validation passed; logs are real output from the final run."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; the full checkout did not complete.",
+    "Used released issue-era `browser-use==0.12.6` with pinned LangChain dependencies in `.venv`.",
+    "Registered the raw `ChatOpenAI` subclass with `TokenCost` and invoked it with a Pydantic output model.",
+    "Captured the final deterministic offline failing run in the required logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

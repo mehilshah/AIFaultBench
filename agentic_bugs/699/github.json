@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "smolagents",
+  "number": 1779,
+  "html_url": "https://github.com/huggingface/smolagents/issues/1779",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "BUG:",
+  "author": "daxton256",
+  "created_at": "2025-09-21T19:15:36Z",
+  "updated_at": "2025-09-25T08:05:41Z",
+  "closed_at": "2025-09-25T08:05:41Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.53,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:05:50.055566+00:00",
+  "comments": [
+    {
+      "author": "suryabdev",
+      "created_at": "2025-09-22T05:56:53Z",
+      "body": "Hi @daxton256, the `LocalPythonExecutor` requires base Python tools ([BASE_PYTHON_TOOLS](https://github.com/huggingface/smolagents/blob/06cfa27051837fd41830b79ac4338e7f4cf0edd9/src/smolagents/local_python_executor.py#L71)) like range, print etc to be passed explicitly\nThey are initialized to None\nhttps://github.com/huggingface/smolagents/blob/06cfa27051837fd41830b79ac4338e7f4cf0edd9/src/smolagents/local_python_executor.py#L1655\nYou can use the `send_tools` function to add them. The following code will work\n```\nfrom smolagents import LocalPythonExecutor\nexecutor = LocalPythonExecutor([])\nexecutor.send_tools({})\nprint(executor(\"for i in range(1,3):\\n\\tprint(i)\"))\n\n# CodeOutput(output=None, logs='1\\n2\\n', is_final_answer=False)\n```\n\nAlternatively, You could use the `PythonInterpreterTool`, that will add the base tools automatically and use `LocalPythonExecutor`\n```\nfrom smolagents import PythonInterpreterTool\ntool = PythonInterpreterTool()\nprint(tool(\"for i in range(1,3):\\n\\tprint(i)\"))\n\n# Stdout:\n# 1\n# 2\n# \n# Output: None\n```"
+    },
+    {
+      "author": "albertvillanova",
+      "created_at": "2025-09-25T08:05:41Z",
+      "body": "Yes, as @daxton256 already explained, the issue comes from not using `LocalPythonExecutor` in the intended way. "
+    }
+  ]
+}

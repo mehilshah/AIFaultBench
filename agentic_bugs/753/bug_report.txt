@@ -1,0 +1,85 @@
+# recovered-from-issue: https://github.com/run-llama/llama_index/issues/20851
+
+TITLE
+[Bug]: Signature field not being provided in BedrockConverse requests (regression)
+
+BODY
+### Bug Description
+
+After upgrading to the latest version of `BedrockCoverse`, **`0.12.11`**, I am noticing a regression when using the LLM with extended thinking and tools. At a quick glance, I believe this regression is caused by the changes in #20664 , which modified the way that `reasoningContent` is handled.
+
+In particular, #20664 made modifications where "truthy"/"falsy" checks that were previously just looking at `reasoningContent` are now looking at `reasoningContent["text"]`. The issue, is that the `text` entry may not necessarily be included in the content block delta, and as such, certain data is being missed.
+
+In the case of _signature_, you may receive a chunk like:
+```json
+{"contentBlockDelta": {"delta": {"reasoningContent": {"signature": "...."}}, "contentBlockIndex": 0}}
+```
+
+which clearly doesn't have `text`.
+
+As a result, when invoking a `BedrockConverse` LLM with thinking enabled and tools, you eventually get an error:
+```
+botocore.errorfactory.ValidationException: An error occurred (ValidationException) when calling the ConverseStream operation: The model returned the following errors: messages.1.content.0.thinking.signature: Field required
+```
+
+This makes the latest versions of `llama-index-llms-bedrock-converse` unusable with extended thinking.
+
+
+
+### Version
+
+0.14.15
+
+### Steps to Reproduce
+
+```python
+import asyncio
+
+from llama_index.core.agent.workflow import FunctionAgent
+from llama_index.llms.bedrock_coverse import BedrockConverse
+
+
+def add(a: int | float, b: int | float) -> int | float:
+    """Add two numbers."""
+    return a + b
+
+
+def subtract(a: int | float, b: int | float) -> int | float:
+    """Subtract two numbers."""
+    return a - b
+
+
+async def main():
+    llm = BedrockConverse(
+        model="us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+        region_name="us-east-1",
+        max_tokens=16_000,
+        timeout=60.0,
+        max_retries=1,
+        temperature=1.0,  # required for extended thinking
+        thinking={
+            "type": "enabled",
+            "budget_tokens": 1024,
+        },
+    )
+
+    agent = FunctionAgent(
+        tools=[add, subtract],
+        llm=llm,
+        system_prompt="You are a helpful math assistant. You can perform basic arithmetic operations like addition and subtraction.",
+    )
+
+    response = await agent.run(user_msg="What is 15 plus 27 minus 10?")
+
+    # observe error
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### Relevant Logs/Tracbacks
+
+```shell
+
+```

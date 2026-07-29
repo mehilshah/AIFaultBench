@@ -1,0 +1,16 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Pinned checkout verified: df8becd5cfc74bb09ab2d7cbdf17c5559114b8d8.",
+    "Final run exited 0 and printed: NOT REPRODUCED: PostgresSaver serialized Send tasks and completed the graph",
+    "Artifact/schema validation passed; stderr was empty."
+  ],
+  "steps": [
+    "Read bug_report.txt and github.json.",
+    "Ran bash setup_codebase.sh and created .venv.",
+    "Installed pinned dependencies and editable checkout packages.",
+    "Ran the offline Send map-reduce reproduction and captured logs."
+  ],
+  "blocking_reason": "The pinned LangGraph 1.0.3 checkout uses checkpoint format v4, serializing Send tasks in a TASKS blob rather than JSONB; the reported TypeError is absent.",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

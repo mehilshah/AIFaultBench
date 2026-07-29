@@ -1,0 +1,52 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langchain",
+  "number": 37835,
+  "html_url": "https://github.com/langchain-ai/langchain/issues/37835",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Importing langchain.agents breaks BaseLLM class construction on Pydantic main",
+  "author": "alexmojaki",
+  "created_at": "2026-06-01T16:34:59Z",
+  "updated_at": "2026-06-26T07:14:49Z",
+  "closed_at": "2026-06-26T07:14:49Z",
+  "labels": [
+    "bug",
+    "core",
+    "external"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 24.61,
+  "fix": {
+    "closing_commit": "3fd288733a0e5dd9056f9245cafb271f79c0514e",
+    "linked_prs": [],
+    "best_guess_fix_commit": "3fd288733a0e5dd9056f9245cafb271f79c0514e",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T14:00:18.536411+00:00",
+  "comments": [
+    {
+      "author": "qflen",
+      "created_at": "2026-06-05T01:33:49Z",
+      "body": "Reproduced on `master` (6f7c8f54) with `pydantic==2.14.0a1` on Python 3.13, same `TypeError: 'function' object is not subscriptable` while evaluating `'dict[str, Any] | None'`. \n\nI found two things:\n\n1. The `_create_subset_model_v2` write is not the trigger. With `langchain-core` installed editable I commented out `rtn.__annotations__ = dict(selected_annotations)` (verified the edit was live with `inspect.getsource`) and the repro fails identically. That write does violate the `getattr`/`__dict__` invariant Viicos described in pydantic#13097, but fixing it alone won't resolve this issue.\n\n2. The actual trigger is the definition of `AgentStatePydantic` in `langgraph.prebuilt.chat_agent_executor`, which `langchain.agents` reaches through `langchain.tools` (a re-export of `langgraph.prebuilt`). Statement-level bisection narrows it to the `remaining_steps: RemainingSteps = 25` field, where `RemainingSteps = Annotated[int, RemainingStepsManager]`. Defining any such model is enough, no `langchain.agents` needed:\n\n```python\n# pydantic==2.14.0a1, langgraph 1.2.4\nfrom langgraph.managed import RemainingSteps\nfrom pydantic import BaseModel\n\nclass Poison(BaseModel):\n    remaining_steps: RemainingSteps = 25\n\nfrom langchain_core.language_models.llms import BaseLLM  # TypeError\n```\n\nAfter `Poison` is defined, parametrizing `BaseLanguageModel[str]` produces a class with no `__annotations__` of its own in `__dict__`, while `getattr` returns the string annotations inherited from `BaseLanguageModel` (`language_models/base.py` uses `from __future__ import annotations`). During `BaseLLM` construction those strings get re-evaluated in a namespace where `BaseLLM`'s legacy `dict()` method shadows the builtin, hence the error. Without the trigger, the parametrized class gets its own `__annotations__` and nothing is re-evaluated. The divergence comes from pydantic's own parametrization path, not from anything writing `__annotations__`.\n\nEverything passes on stable pydantic (tested 2.12.5).\n\nWhat I haven't pinned down yet is why this metadata flips pydantic's parametrization behavior. Synthetic equivalents using my own `Annotated[int, GenericSubclass]` metadata don't reproduce, so some ingredient of `RemainingStepsManager` or `BaseLanguageModel` is still essential.\n\n<details>\n<summary>Verification commands (run from <code>libs/langchain_v1</code>)</summary>\n\n```bash\n# original repro\nuv run --with \"pydantic==2.14.0a1\" python -c \\\n  \"import langchain.agents; from langchain_core.language_models.llms import BaseLLM\"\n\n# minimal trigger, no langchain.agents\nuv run --with \"pydantic==2.14.0a1\" python -c \"\nfrom langgraph.managed import RemainingSteps\nfrom pydantic import BaseModel\nclass Poison(BaseModel):\n    remaining_steps: RemainingSteps = 25\nfrom langchain_core.language_models.llms import BaseLLM\"\n\n# the import alone is fine\nuv run --with \"pydantic==2.14.0a1\" python -c \\\n  \"import langgraph.managed; from langchain_core.language_models.llms import BaseLLM; print('PASS')\"\n\n# stable pydantic control\nuv run python -c \\\n  \"import langchain.agents; from langchain_core.language_models.llms import BaseLLM; print('PASS')\"\n```\n\nBisection: stubbed `langgraph.prebuilt.__init__` in `sys.modules` to isolate its four submodules (only `chat_agent_executor` triggers), exec'd its top-level statements incrementally (the crash starts at the `AgentStatePydantic` ClassDef), then ablated its two fields (`messages` passes, `remaining_steps` crashes).\n\n</details>\n\nMy read is the primary defect is on the pydantic main side (2.14 is still alpha), and pydantic#13097 may be worth revisiting with this reduction since it was closed on the `__annotations__`-write theory.\n\n#### Plan:\n\n1. Finish reducing to a pydantic-only repro and take it upstream, then coordinate where the real fix lands (pydantic, langgraph's `RemainingSteps` shape, or here).\n2. Land the #34537-style `get_type_hints(..., include_extras=True)` cleanup in `_create_subset_model_v2` as hardening regardless (credit to @Aman071106's original PR), since the manual write does violate the invariant.\n3. Add a regression test that runs on stable pydantic, plus whatever is preferred for prerelease coverage.\n\n@mdrxy could you assign me? Happy to adjust scope depending on how you want this split across repos.\n"
+    },
+    {
+      "author": "Ramshetty02",
+      "created_at": "2026-06-07T15:50:13Z",
+      "body": "hey this is ram i am intreasted in this issue and like to pr this and get validate\n\n## Summary of Approach\n\nI've prepared a fix for this issue in PR #37955 that uses `typing.get_type_hints()` \nwith `include_extras=True` to properly extract and preserve type annotations without \nviolating Pydantic 2.14+'s `__annotations__` invariant.\n\n## Why This Solution Works\n\n**The Problem:**\nDirect mutation of `__annotations__` (as currently done in `_create_subset_model_v2` \nat line 274 of `libs/core/langchain_core/utils/pydantic.py`) breaks the Python 3.10+ \ninvariant that `getattr(cls, '__annotations__', {})` and \n`cls.__dict__.get('__annotations__', {})` should return the same object. Pydantic 2.14+ \nswitched to using `getattr()` instead of direct dict access, which exposes this bug.\n\n**The Solution:**\nUsing `typing.get_type_hints(model, include_extras=True)` instead:\n1. \u2705 Properly resolves and handles `Annotated` types with `TypedDict`\n2. \u2705 Preserves extras (`include_extras=True` maintains `Annotated` metadata)\n3. \u2705 Avoids the `__annotations__` invariant violation\n4. \u2705 Is more Pythonic and aligns with Pydantic's own recommendations\n\n## Changes in PR #37955\n\n**File:** `libs/core/langchain_core/utils/pydantic.py` (lines 267-274)\n\n**Before:**\n```python\nselected_annotations = [\n    (name, annotation)\n    for name, annotation in model.__annotations__.items()\n    if name in field_names\n]\nrtn.__annotations__ = dict(selected_annotations)"
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+# recovered-from-issue: https://github.com/langflow-ai/langflow/issues/12408
+
+TITLE
+`TypeError: 'NoneType' object is not subscriptable` in `build_vertex` when flow has frozen nodes and `chat_service` is unavailable
+
+BODY
+### Bug Description
+
+**Version:** `lfx 0.3.2`
+
+Hi! I think I found a bug that surfaces when using `arun_flow_from_json` in standalone mode (without a LangFlow server) on a flow that has **frozen vertices**. The execution crashes with a `TypeError: 'NoneType' object is not subscriptable` at `lfx/graph/graph/base.py:1565`.
+
+I believe the issue isn't really about whether frozen nodes should work in standalone mode — the problem is that when `chat_service` is `None`, the fallback `get_cache_func` returns `None` instead of `CacheMiss()`, which causes an unhandled `TypeError` deep inside the graph with no hint that `frozen` is the root cause.
+
+Here's the relevant code path. In two places within `base.py` (lines ~1446 and ~1671), the fallback is defined as:
+
+```python
+# base.py ~L1446  (duplicated at ~L1671)
+else:
+    # Fallback no-op cache functions for tests or when service unavailable
+    async def get_cache_func(*args, **kwargs):  # noqa: ARG001
+        return None                              # returns None instead of CacheMiss()
+```
+
+Then, in `build_vertex` (~L1553), when a frozen vertex is encountered:
+
+```python
+if not vertex.frozen or is_loop_component:
+    should_build = True
+else:
+    if get_cache is not None:
+        cached_result = await get_cache(key=vertex.id)  # returns None, not CacheMiss
+    else:
+        cached_result = CacheMiss()
+
+    if isinstance(cached_result, CacheMiss):   # False — None is not CacheMiss
+        should_build = True
+    else:
+        cached_vertex_dict = cached_result["result"]  # TypeError: None["result"]
+```
+
+The guard `if get_cache is not None` is `True` because `get_cache_func` is a valid callable. So `isinstance(None, CacheMiss)` is `False`, the code falls into the `else` branch, and `None["result"]` raises `TypeError`. This also isn't caught by the adjacent `except KeyError`, so it propagates all the way up and crashes the flow.
+
+The same pattern appears in both `execute_vertex` (~L1440) and `process` (~L1665).
+
+### Reproduction
+
+1. Create a flow in the LangFlow UI and **freeze** at least one component (toggle the "Freeze" option on any node).
+2. Export the flow as JSON.
+3. Execute it standalone:
+
+```python
+import asyncio
+import json
+from lfx.load import arun_flow_from_json
+
+with open("frozen_flow.json") as f:
+    flow = json.load(f)
+
+asyncio.run(arun_flow_from_json(flow=flow, input_value="hello", fallback_to_env_vars=True))
+```
+
+**Actual result:**
+
+```
+ValueError: Error running graph: 'NoneType' object is not subscriptable
+  File ".../lfx/graph/graph/base.py", line 1565, in build_vertex
+    cached_vertex_dict = cached_result["result"]
+                         ~~~~~~~~~~~~~^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+```
+
+**Workaround:** unfreeze all nodes in the flow before execution, or strip `"frozen": true` from the flow JSON before passing it to `arun_flow_from_json`.
+
+### Expected behavior
+
+When `chat_service` is unavailable, it would be great if the code handled this case more gracefully. Two approaches that would both work well:
+
+- **Option A (silent fallback):** have the fallback `get_cache_func` return `CacheMiss()` instead of `None`, so frozen vertices are simply rebuilt when no cache is available. This is a one-line change in two places:
+
+  ```python
+  async def get_cache_func(*args, **kwargs):  # noqa: ARG001
+      return CacheMiss()  # was: return None
+  ```
+
+- **Option B (explicit error):** raise a descriptive error early that identifies the frozen vertex and explains what's needed, so the user knows exactly what to fix:
+
+  ```python
+  if vertex.frozen and chat_service is None:
+      raise ValueError(
+          f"Vertex '{vertex_id}' is frozen but no cache service is available. "
+          "Frozen nodes require a running LangFlow server. "
+          "Unfreeze the component or run the flow through the LangFlow API."
+      )
+  ```
+
+Option A feels like the lower-risk change, but Option B gives a much better developer experience. Either way, the current `TypeError` surfacing from deep inside the graph is quite hard to debug without knowing where to look.
+
+Thanks for taking a look!
+
+
+### Who can help?
+
+@ogabrielluiz @italojohnny 
+
+### Operating System
+
+Ubuntu Linux 22.04
+
+### Langflow Version
+
+1.8.2
+
+### Python Version
+
+None
+
+### Screenshot
+
+_No response_
+
+### Flow File
+
+_No response_

@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final run printed: \"OBSERVED BUG: BaseLM returned dict; GEPA raised AttributeError: 'dict' object has no attribute 'strip'\".",
+    "Captured traceback reaches dspy/teleprompt/gepa/gepa_utils.py:148 and gepa/proposer/reflective_mutation/base.py:48.",
+    "Pinned checkout verified at fd93c38ca0548beaf512d6e4c3506c04d291cdb4."
+  ],
+  "steps": [
+    "Read issue materials and recreated the pinned checkout.",
+    "Built .venv with pinned dependencies and editable DSPy 3.1.0.",
+    "Ran the offline fake reasoning-LM reproducer through GEPA."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

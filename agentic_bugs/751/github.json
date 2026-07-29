@@ -1,0 +1,56 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langgraph",
+  "number": 6456,
+  "html_url": "https://github.com/langchain-ai/langgraph/issues/6456",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "TypeError: Object of type Send is not JSON serializable when using PostgresSaver checkpoint",
+  "author": "lasendo",
+  "created_at": "2025-11-18T15:38:13Z",
+  "updated_at": "2026-01-29T14:41:43Z",
+  "closed_at": "2026-01-29T14:41:43Z",
+  "labels": [
+    "bug",
+    "pending"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 71.96,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T14:00:29.242260+00:00",
+  "comments": [
+    {
+      "author": "Balmy-afterGlow",
+      "created_at": "2025-12-05T12:51:48Z",
+      "body": "me too"
+    },
+    {
+      "author": "Balmy-afterGlow",
+      "created_at": "2025-12-06T14:26:43Z",
+      "body": "@lasendo You can try to upgrade your langgraph version to 5.0.0 or above. Because the memory storage location of checkpoint[pending_sends] has changed, this should be a compatibility issue."
+    },
+    {
+      "author": "lasendo",
+      "created_at": "2026-01-29T14:39:23Z",
+      "body": "Thank you, @Balmy-afterGlow.\nI have been delaying this for a while, hoping to get a more detailed feedback on the issue.\n\nI guess you mean v0.5.0, as the latest LangGraph version to date is the v1.0.7.\n\nI did several attempts with the docker compose setup changing the versions of LangGraph, while not specifying any for [\nlangchain, langchain-community, langchain-core, langchain-experimental, langgraph-checkpoint and langgraph-sdk], i.e.\n\n```requirements.txt\nlangchain \nlangchain-community \nlangchain-core \nlangchain-experimental \nlanggraph==[version] \nlanggraph-checkpoint \nlanggraph-checkpoint-postgres==3.0.1 \nlanggraph-sdk \npsycopg[binary,pool] \npsycopg==3.2.12 \npsycopg-pool==3.2.7 \npydantic==2.10.2 \n```\n\nI tried for [version] 0.3.1, 0.4.0, 0.5.0, 0.5.1, 0.5.2, 0.5.3, 0.6.0, 1.0.0, 1.0.7.\n\nI am not aware why but now the error is different even with v0.2.53 in my docker reproducible setup. The error is:\n\n```shell\napp-1 |   File \"/app/app.py\", line 72, in main      \napp-1 |     raise e  \napp-1 |   File \"/app/app.py\", line 67, in main      \napp-1 |     result = app.invoke(default_state, config={'configurable': {'thread_id': \"1\"}})        \napp-1 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        \napp-1 |   File \"/usr/local/lib/python3.11/site-packages/langgraph/pregel/__init__.py\", line 2804, in invoke        \napp-1 |     for chunk in self.stream(        \napp-1 |   File \"/usr/local/lib/python3.11/site-packages/langgraph/pregel/__init__.py\", line 2440, in stream        \napp-1 |     while loop.tick(input_keys=self.input_channels):        \napp-1 |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        \napp-1 |   File \"/usr/local/lib/python3.11/site-packages/langgraph/pregel/loop.py\", line 461, in tick        \napp-1 |     updated_channels = self._first(input_keys=input_keys)        \napp-1 |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        \napp-1 |   File \"/usr/local/lib/python3.11/site-packages/langgraph/pregel/loop.py\", line 712, in _first        \napp-1 |     discard_tasks = prepare_next_tasks(        \napp-1 |                     ^^^^^^^^^^^^^^^^^^^        \napp-1 |   File \"/usr/local/lib/python3.11/site-packages/langgraph/pregel/algo.py\", line 431, in prepare_next_tasks        \napp-1 |     for idx, _ in enumerate(checkpoint[\"pending_sends\"]):        \napp-1 |                             ~~~~~~~~~~^^^^^^^^^^^^^^^^^        \napp-1 | KeyError: 'pending_sends'  exited with code 1 \n```\n\nwhich is related to what @Balmy-afterGlow pointed out.\n\nThe versions 0.5.0, 0.5.1 and 0.5.2 also crashed, but with a different error:\n\n```shell\napp-1       | Traceback (most recent call last):\napp-1       |   File \"/app/app.py\", line 3, in <module>\napp-1       |     from langgraph.graph import StateGraph, START, END\napp-1       |   File \"/usr/local/lib/python3.11/site-packages/langgraph/graph/__init__.py\", line 2, in <module>\napp-1       |     from langgraph.graph.message import MessageGraph, MessagesState, add_messages\napp-1       |   File \"/usr/local/lib/python3.11/site-packages/langgraph/graph/message.py\", line 28, in <module>\napp-1       |     from langgraph.graph.state import StateGraph\napp-1       |   File \"/usr/local/lib/python3.11/site-packages/langgraph/graph/state.py\", line 59, in <module>\napp-1       |     from langgraph.graph.branch import Branch\napp-1       |   File \"/usr/local/lib/python3.11/site-packages/langgraph/graph/branch.py\", line 31, in <module>\napp-1       |     from langgraph.pregel.write import PASSTHROUGH, ChannelWrite, ChannelWriteEntry\napp-1       |   File \"/usr/local/lib/python3.11/site-packages/langgraph/pregel/__init__.py\", line 71, in <module>\napp-1       |     from langgraph.pregel.algo import (\napp-1       |   File \"/usr/local/lib/python3.11/site-packages/langgraph/pregel/algo.py\", line 73, in <module>\napp-1       |     from langgraph.pregel.read import INPUT_CACHE_KEY_TYPE, PregelNode\napp-1       |   File \"/usr/local/lib/python3.11/site-packages/langgraph/pregel/read.py\", line 14, in <module>\napp-1       |     from langgraph.pregel.protocol import PregelProtocol\napp-1       |   File \"/usr/local/lib/python3.11/site-packages/langgraph/pregel/protocol.py\", line 16, in <module>\napp-1       |     class PregelProtocol(Runnable[InputT, Any], Generic[StateT, InputT, OutputT], ABC):\napp-1       |   File \"<frozen abc>\", line 106, in __new__\napp-1       | TypeError: Cannot create a consistent method resolution\napp-1       | order (MRO) for bases ABC, Generic\napp-1 exited with code 1\n```\n\nFrom v0.5.4 on it succeds. Finally I get the same behavior regardless of the checkpointer:\n\n\n```shell\napp-1       | Creating graph with...\napp-1       | \napp-1       | Trying with Memory checkpointing...\napp-1       | Running graph with Memory checkpointing...\napp-1       | Sending joke creation\napp-1       | Merge jokes\napp-1       | Result: {'topics': ['fine arts', 'firefighters', 'maths'], 'jokes': ['Joke for topic fine arts', 'Joke for topic firefighters', 'Joke for topic maths'], 'all_jokes': 'Joke for topic fine arts\\nJoke for topic firefighters\\nJoke for topic maths'}\napp-1       | \napp-1       | \napp-1       | Running graph with Postgres checkpointing...\napp-1       | Sending joke creation\napp-1       | Merge jokes\napp-1       | Result: {'topics': ['fine arts', 'firefighters', 'maths'], 'jokes': ['Joke for topic fine arts', 'Joke for topic firefighters', 'Joke for topic maths'], 'all_jokes': 'Joke for topic fine arts\\nJoke for topic firefighters\\nJoke for topic maths'}\n```\n"
+    }
+  ]
+}

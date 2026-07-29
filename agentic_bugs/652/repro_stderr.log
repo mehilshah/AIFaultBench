@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/652/repro.py", line 48, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/652/repro.py", line 37, in main
+    tracker.get_total_tokens()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/652/codebase/dspy/utils/usage_tracker.py", line 58, in get_total_tokens
+    total_usage = self._merge_usage_entries(total_usage, usage_entry)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/652/codebase/dspy/utils/usage_tracker.py", line 42, in _merge_usage_entries
+    result[k] = self._merge_usage_entries(current_v, v)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/652/codebase/dspy/utils/usage_tracker.py", line 44, in _merge_usage_entries
+    result[k] = (current_v or 0) + (v or 0)
+                ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'CacheCreationTokenDetails' and 'CacheCreationTokenDetails'

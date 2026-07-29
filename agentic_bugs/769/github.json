@@ -1,0 +1,65 @@
+{
+  "owner": "huggingface",
+  "repo": "smolagents",
+  "number": 1626,
+  "html_url": "https://github.com/huggingface/smolagents/issues/1626",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "BUG: @tool cannot correctly handle the body of some functions in remote Python executor",
+  "author": "HairlessVillager",
+  "created_at": "2025-07-28T03:24:36Z",
+  "updated_at": "2025-07-31T13:58:58Z",
+  "closed_at": "2025-07-31T13:58:58Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 3.44,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T14:44:27.728412+00:00",
+  "comments": [
+    {
+      "author": "sahibpreetsingh12",
+      "created_at": "2025-07-30T16:38:08Z",
+      "body": "@HairlessVillager is it still opne and can i contribute to this Bug?"
+    },
+    {
+      "author": "HairlessVillager",
+      "created_at": "2025-07-31T02:00:21Z",
+      "body": "I have already opened a PR #1627 , if you feel that this PR is not good enough, you can open another one :)"
+    },
+    {
+      "author": "albertvillanova",
+      "created_at": "2025-07-31T05:35:28Z",
+      "body": "Thanks for the detailed and thoughtful report: much appreciated! \ud83e\udd17\n\nAfter reviewing the issue, I agree that supporting multiline function signatures is important and should definitely be addressed. However, regarding multiple decorators, I'm less certain. For a tool to be used in a remote Python executor, we need access to the full function body so it can be serialized and sent for execution. The challenge with additional decorators is that they are not part of the function body itself and may not be reconstructable or serializable in the remote context.\n\nWhat do you think? Could you please give more details of your concrete use case with multiple decorators?"
+    },
+    {
+      "author": "HairlessVillager",
+      "created_at": "2025-07-31T06:34:09Z",
+      "body": "\ud83d\ude31\n\nYou have indeed pointed out a very serious issue. As far as I know, smolagents only sends the code of the function itself and some necessary `import` statements to the remote. It seems that smolagents has made an unrealistic assumption: utility functions will only depend on standard libraries or third-party libraries, and will not depend on custom classes, functions, or modules. If this assumption holds true, then sending code with decorators to the remote without sending the decorators themselves as dependencies is meaningless.\n\nIf that's the case, I can quickly think of two solutions:\n1. Implement a more comprehensive dependency retrieval based on AST, and send the code, including the decorators, to the remote;\n2. Explicitly prohibit the use of decorators in utility functions, for example, by throwing an exception.\n\nI think we can first implement Solution 2, and then modify the `@tool` when the conditions for Solution 1 are met.\n\nIs there any problem with my thinking? Do you have any ideas? Welcome to bring it up!"
+    },
+    {
+      "author": "albertvillanova",
+      "created_at": "2025-07-31T08:49:46Z",
+      "body": "Thanks for the thoughtful follow-up: you've summarized the problem very well.\n\nYou're absolutely right: the current approach in smolagents assumes utility functions are self-contained. That assumption definitely breaks down when decorators introduce dependencies that aren\u2019t captured in the function body. In that sense, sending code without decorators can lead to unpredictable or incorrect behavior.\n\nI think your proposed solutions make a lot of sense. Implementing option 2 first (explicitly prohibiting decorators with a clear error message) would be a practical and safe stopgap. It can help avoid silent failures and clarify the current limitations.\n\nLonger-term, I agree that option 1 is the ideal direction. A more robust dependency resolver could eventually allow us to serialize decorators (and their dependencies) along with the function body.\n\nIn summary: your thinking is spot-on, and I fully support the staged approach you suggested."
+    }
+  ]
+}

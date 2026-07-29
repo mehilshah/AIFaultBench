@@ -1,0 +1,1 @@
+OBSERVED BUG: Completions.create() got an unexpected keyword argument 'tool_choice'

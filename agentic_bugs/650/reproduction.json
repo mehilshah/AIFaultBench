@@ -1,0 +1,18 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`repro_stdout.log`: `OBSERVED BUG: TypeError: BlockContext.__init__() got an unexpected keyword argument 'theme'`.",
+    "`repro_stderr.log` traceback reaches `codebase/src/smolagents/gradio_ui.py:419` at `gr.Blocks(theme=\"ocean\", fill_height=True)`.",
+    "Verified checkout: `2ae00fb092d1b0e7d74de06e738dd48d04a8b2c2`; environment: `gradio=6.0.1`, `smolagents=1.24.0.dev0`.",
+    "`run_repro.sh` exits 1, as intended when the buggy behavior is present."
+  ],
+  "steps": [
+    "Read `bug_report.txt` and `github.json`.",
+    "Ran `bash setup_codebase.sh` to clone and check out the pinned commit.",
+    "Created `.venv`, installed `gradio==6.0.1`, and installed the checkout editable.",
+    "Wrote and ran an offline `GradioUI.create_app()` repro using a metadata-only stub agent.",
+    "Captured the final run in `repro_stdout.log` and `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

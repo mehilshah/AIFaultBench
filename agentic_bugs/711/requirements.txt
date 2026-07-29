@@ -1,0 +1,2 @@
+# Pin MCP below its incompatible 2.x API; the checked-out project supplies camel-ai.
+mcp==1.13.0

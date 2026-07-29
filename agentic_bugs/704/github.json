@@ -1,0 +1,53 @@
+{
+  "owner": "pydantic",
+  "repo": "pydantic-ai",
+  "number": 6051,
+  "html_url": "https://github.com/pydantic/pydantic-ai/issues/6051",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`GoogleModel` never sets `include_server_side_tool_invocations` for `CodeExecutionTool`, so code execution can't be combined with function tools on Gemini 3",
+  "author": "gmetzker",
+  "created_at": "2026-06-24T18:29:13Z",
+  "updated_at": "2026-06-29T23:38:12Z",
+  "closed_at": "2026-06-29T23:38:12Z",
+  "labels": [
+    "bug",
+    "google-gemini",
+    "native-tools",
+    "pydanty:bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 5.21,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:05:58.039414+00:00",
+  "comments": [
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-06-24T18:30:39Z",
+      "body": "<!-- pydanty:status-comment:v1 -->\n\n## pydanty status: bug\n\n**Classification:** bug\n\n**Why this matters:** Users combining CodeExecutionTool with function tools on Gemini 3 models hit an HTTP 400 from the Google API because GoogleModel never sets include_server_side_tool_invocations for CodeExecutionTool. This blocks a core use case \u2014 mixing code execution with custom tools \u2014 on the latest Gemini models. The fix unblocks this combination and is gated by a profile flag so older models are unaffected.\n\n**Evidence summary:** Reproducer confirmed via code inspection: google.py:718-720 checks only (WebSearchTool, WebFetchTool, FileSearchTool) in the isinstance guard for include_server_side_tool_invocations; CodeExecutionTool is imported (line 44) and converted to ToolDict (line 649) but excluded from the flag. Existing tests in test_tool_choice_unit.py cover only WebSearchTool. Repositorian confirmed PR #4848 introduced this logic and the exclusion was based on a comment that CodeExecutionTool uses its own parts, but the Gemini API requires the flag for any built-in tool + function calling combination. Reporter's subclass workaround works on gemini-3.1-pro-preview. No maintainer explicitly defended the exclusion.\n\n**Playground:** null\n\n**Next action:** pr_ready -- Reproduced, localized one-line fix with clear checked-in code preference; no maintainer design decision needed.\n\nGoogleModel._get_tool_config omits CodeExecutionTool from the isinstance check that gates include_server_side_tool_invocations, causing HTTP 400 when combining code execution with function tools on Gemini 3. Fix: add CodeExecutionTool to the isinstance tuple, update the comment, and add a regression test. The fix is gated on the google_supports_server_side_tool_invocations profile flag so older models are unaffected."
+    },
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-06-24T18:42:41Z",
+      "body": "<!-- pydanty:runtime-failure -->\n\n### pydanty runtime failure\n\nRun `df_run_7ad4c421a6e742aa9aa6` started from the GitHub webhook, but the Dogfooding runtime\nfailed before pydanty completed the workflow. The pydanty status comment above\n(if any) is from a completed run and still stands.\n\n**Next step:** maintainer attention needed; rerun after fixing the runtime failure.\n\n<details>\n<summary>Failure detail (tail)</summary>\n\n```text\nThe PR pipeline for issue #6051 stalled: no PR opened within the watchdog grace window. The implement run completed without a usable PR-finish handoff. Manual attention needed.\n```\n\n</details>"
+    }
+  ]
+}

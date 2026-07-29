@@ -1,0 +1,52 @@
+{
+  "owner": "microsoft",
+  "repo": "semantic-kernel",
+  "number": 13298,
+  "html_url": "https://github.com/microsoft/semantic-kernel/issues/13298",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Python: Bug: Fix import path: microsoft.agents vs microsoft_agents",
+  "author": "julienlambert706",
+  "created_at": "2025-10-27T09:16:34Z",
+  "updated_at": "2025-10-28T10:01:21Z",
+  "closed_at": "2025-10-28T10:01:21Z",
+  "labels": [
+    "bug",
+    "python",
+    "agents"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:39.346954+00:00",
+  "comments": [
+    {
+      "author": "moonbox3",
+      "created_at": "2025-10-28T06:24:57Z",
+      "body": "Hi @julienlambert706, the real issue here is that our docs re: installing packages are stale. The Microsoft Agents Copilot related packages are now on public PyPI. You can install the optional dependency via `pip install semantic-kernel[copilotstudio]`. I will get the docs updated to reflect this."
+    },
+    {
+      "author": "moonbox3",
+      "created_at": "2025-10-28T10:01:21Z",
+      "body": "The docs have been updated to reflect the proper package/extra to install: `pip install semantic-kernel[copilotstudio]`"
+    }
+  ]
+}

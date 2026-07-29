@@ -1,0 +1,45 @@
+{
+  "owner": "mem0ai",
+  "repo": "mem0",
+  "number": 5933,
+  "html_url": "https://github.com/mem0ai/mem0/issues/5933",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "bug(cli): `config set` on an int field crashes with uncaught ValueError on non-numeric input",
+  "author": "abhay-codes07",
+  "created_at": "2026-06-27T19:24:07Z",
+  "updated_at": "2026-06-29T09:17:34Z",
+  "closed_at": "2026-06-29T09:17:34Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.58,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:45.535030+00:00",
+  "comments": [
+    {
+      "author": "kartik-mem0",
+      "created_at": "2026-06-29T09:02:47Z",
+      "body": "## Triage Notes\n\n**What we've established:**\n- `set_nested_value()` advertises a boolean success/failure contract, but the int branch calls `int(value)` directly (`cli/python/src/mem0_cli/config.py:237` through `cli/python/src/mem0_cli/config.py:238`).\n- `cmd_config_set()` branches on the boolean return from `set_nested_value()` (`cli/python/src/mem0_cli/commands/config_cmd.py:117`), so an uncaught `ValueError` bypasses the intended clean failure output.\n- Open PRs #5934, #5941, and #5956 target this same root cause; #5956 is already in the active review path.\n\n**Reproduction:** Confirmed from code tracing.\n**Root cause:** Non-numeric input for an int-typed config field raises before `set_nested_value()` can return `False`, breaking the caller's success/failure contract and surfacing a raw traceback to the CLI user.\n\n**Next step:** Keep this on the contributor PR path, with #5956 as the active review-cycle PR, rather than fix-queueing a separate patch.\n"
+    }
+  ]
+}

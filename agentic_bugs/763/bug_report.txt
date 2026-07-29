@@ -1,0 +1,150 @@
+# recovered-from-issue: https://github.com/stanfordnlp/dspy/issues/8917
+
+TITLE
+[Bug] Getting AttributeError: module 'dspy' has no attribute 'AzureOpenAI'
+
+BODY
+### What happened?
+
+### Context:
+- We recently switched from using Anthropic APIs over to Azure OpenAI for our model serving needs. 
+    - Our dspy setup (nothing too fancy - couple of modules and signatures) used to work just fine before but it threw this error at me when I refactored our code for AzureOpenAI today:  
+    
+`AttributeError: module 'dspy' has no attribute 'AzureOpenAI'`
+
+I use UV for managing my virtual environment and package dependencies. First thing I checked was making sure my openai and dspy-ai package versions in pyproject.toml were up to date with latest releases (I also tried older stable(?) releases for openai and dspy to no avail):
+- openai==2.2.0
+- dspy-ai==3.0.3
+
+
+I looked for others with this issue or similar:
+- https://github.com/stanfordnlp/dspy/issues/395 (similar 'dspy' has no attribute... error)
+    - But I only have dspy-ai defined in my project dependencies, and never did a `uv pip install dspy` or similar. To confirm, I created the simple repro environment [see below]
+- https://github.com/stanfordnlp/dspy/issues/686 (someone having trouble with configuring AzureOpenAI for an older version of dspy)
+    - but when I try to recreate this person's technique (lm = AzureOpenAI(), dspy.settings.configure(lm=lm)), I get this error: `AzureOpenAI.__init__() got an unexpected keyword argument 'model'`  which I can't figure out as a totally separate issue...
+ 
+- These are the latest official docs I see: https://github.com/stanfordnlp/dspy/blob/5e06879f2606d20de5380b753ff269a7b8548b49/language_models_client.md#azureopenai
+    - but I'm using that exact syntax in my attempt to create the dspy.AzureOpenAI object
+
+
+
+
+
+
+
+### Steps to reproduce
+
+### Repro:
+
+Here's a simplified example to isolate the issue, which I created outside of our main project removing all the other complex dependencies to make sure it wasn't just a messed up virtual environment / dependency resolution issue:
+
+
+pyproject.toml:
+```yaml
+[project]
+name = "simple_dspy_test"
+version = "0.0.1"
+requires-python = ">=3.12"
+dependencies = [
+    "openai==2.2.0",
+    "dspy-ai==3.0.3",
+]
+
+```
+
+
+test_dspy.py:
+```python
+import dspy
+from openai import AzureOpenAI
+
+class simpleSignature(dspy.Signature):
+    """ always respond with a simple JSON object in the form of:
+    {
+        "question": "Your question here",
+        "answer": "Your answer here"
+    }
+
+    BUT make sure the answer is a rhyme.
+    """
+    input: str = dspy.InputField(description="Input question as a string")
+    output: dict = dspy.OutputField(description="Output data as a dictionary")
+
+class simpleModule(dspy.Module):
+    """Enhanced summary module using improved signature with better tone guidelines"""
+    
+    def __init__(self):
+        super().__init__()
+        self.give_answer = dspy.Predict(simpleSignature)
+ 
+    def forward(
+        self,
+        question: str
+    ):
+        result = self.give_answer(input=question)
+        output = result.output if hasattr(result, 'output') else result
+
+        return dspy.Prediction(
+            question=question,
+            answer=output['answer']
+        )
+
+
+def test_dspy_azure_openai():
+
+    model_name = "gpt-5-mini"
+
+    lm = dspy.AzureOpenAI(
+        model=model_name,
+        api_key=os.getenv('OPENAI_API_KEY'),
+        api_base=os.getenv('OPENAI_API_BASE'),
+        api_version="2025-04-01-preview",
+    )
+
+    dspy.configure(lm=lm)
+
+    module = simpleModule()
+    question = "Why is the sky blue?"
+    response = module(question=question)
+    print("Response:", response)
+
+
+def test_plain_azure_openai():
+    model_name = "gpt-5-mini"
+    
+    lm = AzureOpenAI(
+        model=model_name,
+        api_key=os.getenv('OPENAI_API_KEY'),
+        api_base=os.getenv('OPENAI_API_BASE'),
+        api_version="2025-04-01-preview",
+    )
+    dspy.settings.configure(lm=lm)
+    response = lm.predict("Why is the sky blue?")
+    print("Response:", response)
+
+
+if __name__ == "__main__":
+    try:
+        test_dspy_azure_openai()
+    except Exception as e:
+        print("dspy test failed:", e)
+
+    try:
+        test_plain_azure_openai()
+    except Exception as e:
+        print("plain openai test failed:", e)
+
+```
+
+Executing `uv run test_dspy.py` returns the errors mentioned above in the context:
+[output]:
+```json
+dspy test failed: module 'dspy' has no attribute 'AzureOpenAI'
+plain openai test failed: AzureOpenAI.__init__() got an unexpected keyword argument 'model'
+```
+
+
+
+### DSPy version
+
+3.0.3

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/753/repro.py", line 65, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/753/repro.py", line 60, in main
+    raise AssertionError("Bedrock Converse lost a signature-only reasoning delta")
+AssertionError: Bedrock Converse lost a signature-only reasoning delta

@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "`repro_stdout.log` contains: `OBSERVED BUG: failed async tool left an unpaired tool message (tool_call_id=call_offline_failure)`.",
+    "`repro_stderr.log` ends with `AssertionError: tool result was recorded without its preceding assistant tool_call`.",
+    "Pinned checkout verified as `adf4aba7f4cf1bf91c247b2b2c51ad11f5374ab2`."
+  ],
+  "steps": [
+    "Cloned the repository with `bash setup_codebase.sh` and checked out the pinned commit.",
+    "Created `.venv`, pinned `mcp==1.13.0` for issue-era compatibility, and installed the checkout editable.",
+    "Ran an offline reproducer using CAMEL's `StubModel` and a deterministic local async tool failure.",
+    "Captured the final failing run in `repro_stdout.log` and `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

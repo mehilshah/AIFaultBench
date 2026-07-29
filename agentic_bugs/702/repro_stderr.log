@@ -1,0 +1,140 @@
+__mro_entries__ on urllib.request.Request restricted
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/repro.py", line 42, in main
+    response.cost()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/codebase/pydantic_ai_slim/pydantic_ai/messages.py", line 2340, in cost
+    return calc_price(
+           ^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/genai_prices/__init__.py", line 58, in calc_price
+    return data_snapshot.get_snapshot().calc(usage, model_ref, provider_id, provider_api_url, genai_request_timestamp)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/genai_prices/data_snapshot.py", line 20, in get_snapshot
+    return _bundled_snapshot()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/genai_prices/data_snapshot.py", line 25, in _bundled_snapshot
+    from .data import providers
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+    return self.current(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+    mod = importlib.__import__(name, globals, locals, fromlist, level)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1470, in __import__
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1310, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/genai_prices/__init__.py", line 9, in <module>
+    from .update_prices import UpdatePrices, wait_prices_updated_async, wait_prices_updated_sync
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+    return self.current(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+    mod = importlib.__import__(name, globals, locals, fromlist, level)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1470, in __import__
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/genai_prices/update_prices.py", line 9, in <module>
+    import httpx2
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+    return self.current(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+    mod = importlib.__import__(name, globals, locals, fromlist, level)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1466, in __import__
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/httpx2/__init__.py", line 3, in <module>
+    from ._api import *
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+    return self.current(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+    mod = importlib.__import__(name, globals, locals, fromlist, level)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1470, in __import__
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/httpx2/_api.py", line 7, in <module>
+    from ._client import Client
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+    return self.current(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+    mod = importlib.__import__(name, globals, locals, fromlist, level)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1470, in __import__
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/httpx2/_client.py", line 14, in <module>
+    from ._auth import Auth, BasicAuth, FunctionAuth
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+    return self.current(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+    mod = importlib.__import__(name, globals, locals, fromlist, level)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1470, in __import__
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/httpx2/_auth.py", line 12, in <module>
+    from ._models import Cookies, Request, Response
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+    return self.current(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+    mod = importlib.__import__(name, globals, locals, fromlist, level)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1470, in __import__
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/httpx2/_models.py", line 1056, in <module>
+    class Cookies(typing.MutableMapping[str, str]):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/httpx2/_models.py", line 1217, in Cookies
+    class _CookieCompatRequest(urllib.request.Request):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_restrictions.py", line 1012, in __getattribute__
+    state.assert_child_not_restricted(__name)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/.venv/lib/python3.12/site-packages/temporalio/worker/workflow_sandbox/_restrictions.py", line 844, in assert_child_not_restricted
+    raise RestrictedWorkflowAccessError(
+temporalio.worker.workflow_sandbox._restrictions.RestrictedWorkflowAccessError: Cannot access urllib.request.Request.__mro_entries__ from inside a workflow. If this is code from a module not used in a workflow or known to only be used deterministically from a workflow, mark the import as pass through.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/repro.py", line 56, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/702/repro.py", line 47, in main
+    raise RuntimeError('BUG REPRODUCED: pricing lazy import is blocked by the Temporal sandbox') from exc
+RuntimeError: BUG REPRODUCED: pricing lazy import is blocked by the Temporal sandbox

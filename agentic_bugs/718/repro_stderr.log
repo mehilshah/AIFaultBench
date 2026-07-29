@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/718/codebase/browser_use/llm/openai/chat.py", line 284, in ainvoke
+    parsed = output_format.model_validate_json(choice.message.content)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/718/.venv/lib/python3.12/site-packages/pydantic/main.py", line 766, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for ExpectedOutput
+  Invalid JSON: EOF while parsing a value at line 1 column 0 [type=json_invalid, input_value='', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/json_invalid
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/718/repro.py", line 47, in <module>
+    asyncio.run(main())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/718/repro.py", line 39, in main
+    await llm.ainvoke([UserMessage(content='Return structured output')], ExpectedOutput)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/718/codebase/browser_use/llm/openai/chat.py", line 306, in ainvoke
+    raise ModelProviderError(message=str(e), model=self.name) from e
+browser_use.llm.exceptions.ModelProviderError: 1 validation error for ExpectedOutput
+  Invalid JSON: EOF while parsing a value at line 1 column 0 [type=json_invalid, input_value='', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/json_invalid

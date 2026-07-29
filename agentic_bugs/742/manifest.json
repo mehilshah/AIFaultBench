@@ -1,0 +1,12 @@
+{
+  "bug_id": "742",
+  "bug_dir": "742",
+  "issue_url": "https://github.com/microsoft/autogen/issues/6906",
+  "commit_hash": "7dd503eccfaafbbe36c427d3cfa29abfa2b3f3f8",
+  "library_name": "autogen",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "microsoft/autogen@7dd503eccfaafbbe36c427d3cfa29abfa2b3f3f8",
+  "codebase_present": "false",
+  "standardized_dir": "../742"
+}

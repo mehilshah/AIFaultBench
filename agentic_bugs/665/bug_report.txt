@@ -1,0 +1,121 @@
+# recovered-from-issue: https://github.com/run-llama/llama_index/issues/21378
+
+TITLE
+[Bug]: to_openai_message_dict doesn't JSON-serialize ToolCallBlock.tool_kwargs and breaks cross-provider agent workflows
+
+BODY
+### Bug Description
+
+When using AgentWorkflow with mixed LLM providers (e.g., Anthropic orchestrator handing off to an OpenAI sub-agent), the OpenAI Chat Completions API returns a 400 BadRequestError because function.arguments is sent as a JSON object instead of a JSON string.
+
+
+```
+BadRequestError: Error code: 400 - {'error': {'message': "Invalid type for 
+'messages[3].tool_calls[0].function.arguments': expected a string, but got an 
+object instead.", 'type': 'invalid_request_error', 'param': 
+'messages[3].tool_calls[0].function.arguments', 'code': 'invalid_type'}}
+```
+
+Root Cause
+
+In llama_index/llms/openai/utils.py, the `to_openai_message_dict` function places `block.tool_kwargs` directly into "arguments" without serialization:
+
+```
+# to_openai_message_dict (Chat Completions API) — BROKEN
+elif isinstance(block, ToolCallBlock):
+    function_dict = {
+        "type": "function",
+        "function": {
+            "name": block.tool_name,
+            "arguments": block.tool_kwargs,   # <-- dict when from Anthropic, OpenAI expects string
+        },
+        "id": block.tool_call_id,
+    }
+```
+
+The Anthropic provider stores tool_kwargs as a Python dict (since the Anthropic API returns tool input as an object). The OpenAI Chat Completions API requires function.arguments to be a JSON string.
+
+This is already fixed in `to_openai_responses_message_dict` (Responses API path) but not in `to_openai_message_dict` (Chat Completions API path):
+
+
+```
+# to_openai_responses_message_dict (Responses API) — FIXED
+elif isinstance(block, ToolCallBlock):
+    arguments = block.tool_kwargs
+    if not isinstance(arguments, str):
+        arguments = json.dumps(arguments)      # <-- correctly serialized
+    tool_calls.extend([...])
+```
+
+
+Suggested Fix
+
+In `to_openai_message_dict`, apply the same pattern used in `to_openai_responses_message_dict`:
+
+```
+elif isinstance(block, ToolCallBlock):
+    try:
+        arguments = block.tool_kwargs
+        if not isinstance(arguments, str):
+            arguments = json.dumps(arguments)
+        
+        function_dict = {
+            "type": "function",
+            "function": {
+                "name": block.tool_name,
+                "arguments": arguments,
+            },
+            "id": block.tool_call_id,
+        }
+```
+
+This is a one-line fix that ensures cross-provider compatibility while remaining backward-compatible (if tool_kwargs is already a string, it's passed through unchanged).
+
+### Version
+
+0.14.8
+
+### Steps to Reproduce
+
+Create an AgentWorkflow with two agents:
+
+Agent A using an Anthropic LLM (e.g., claude-sonnet-4-6)
+Agent B using an AzureOpenAI LLM (e.g., gpt-5.2)
+Agent A is the root orchestrator with can_handoff_to=["Agent B"]
+Send a user query that causes Agent A to hand off to Agent B
+Agent B's LLM call fails with the 400 BadRequestError
+
+```
+from llama_index.core.agent.workflow import AgentWorkflow, FunctionAgent
+from llama_index.llms.anthropic import Anthropic
+from llama_index.llms.openai import OpenAI
+
+orchestrator = FunctionAgent(
+    name="orchestrator",
+    llm=Anthropic(model="claude-sonnet-4-6"),
+    can_handoff_to=["worker"],
+    system_prompt="Delegate all queries to the worker agent.",
+)
+
+worker = FunctionAgent(
+    name="worker",
+    llm=AzureOpenAI(model="gpt-5.2",
+    system_prompt="Answer the user's question.",
+    tools=[...],
+)
+
+workflow = AgentWorkflow(agents=[orchestrator, worker], root_agent="orchestrator")
+
+# This will fail when the orchestrator hands off to the worker
+result = await workflow.run(user_msg="Hello")
+```
+
+Expected Behavior
+
+tool_kwargs should be JSON-serialized to a string before being placed into function.arguments when converting messages for the OpenAI Chat Completions API, consistent with how it's already handled in to_openai_responses_message_dict.
+
+### Relevant Logs/Tracebacks
+
+```shell
+
+```

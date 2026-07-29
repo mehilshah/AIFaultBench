@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`git -C codebase rev-parse HEAD` returned `737d2c7a61f01ccc5724970abaf687dfeb114bbb`.",
+    "Final `bash run_repro.sh` exit status was 1.",
+    "`repro_stdout.log` contains: `BUG REPRODUCED: NameError: name 'SomeType' is not defined`.",
+    "`repro_stderr.log` is empty."
+  ],
+  "steps": [
+    "Read the issue report and inspected the pinned `prepare_global_scope` implementation.",
+    "Ran `bash setup_codebase.sh`; used a shallow fetch of the same SHA after the full clone proved impractically large in the shared environment.",
+    "Created `.venv` with `setup_env.sh`.",
+    "Ran the offline reproduction and captured its final stdout and stderr logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,12 @@
+{
+  "bug_id": "751",
+  "bug_dir": "751",
+  "issue_url": "https://github.com/langchain-ai/langgraph/issues/6456",
+  "commit_hash": "df8becd5cfc74bb09ab2d7cbdf17c5559114b8d8",
+  "library_name": "langgraph",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "langchain-ai/langgraph@df8becd5cfc74bb09ab2d7cbdf17c5559114b8d8",
+  "codebase_present": "false",
+  "standardized_dir": "../751"
+}

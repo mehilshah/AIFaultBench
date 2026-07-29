@@ -1,0 +1,1 @@
+BUG REPRODUCED: persisted polling sent reasoning.encrypted_content; Encrypted content cannot be requested for persisted responses.

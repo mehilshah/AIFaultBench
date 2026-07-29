@@ -1,0 +1,87 @@
+# recovered-from-issue: https://github.com/browser-use/browser-use/issues/4073
+
+TITLE
+Browser Use doesn't works on Windows
+
+BODY
+### Browser Use Version
+
+0.11.9
+
+### Bug Description, Steps to Reproduce, Screenshots
+
+1. Install latest browser_use with pip on Windows in vevn (Python 3.12)
+2. Try any simple example, the issue with path (hardcoded to Linux only?)
+
+### Failing Python Code
+
+```python
+DEBUG    [browser_use.utils] Display size: width=1920 height=1080
+Traceback (most recent call last):
+  File "c:\Python312\Lib\pathlib.py", line 1311, in mkdir
+    os.mkdir(self, mode)
+FileNotFoundError: [WinError 3] The system cannot find the path specified: '\\tmp\\browser-use-downloads-a334d8e6'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "e:\projects\browser-use\wrapper\test.py", line 1, in <module>
+    from browser_use import Agent, ChatOpenAI
+  File "<frozen importlib._bootstrap>", line 1412, in _handle_fromlist
+  File "e:\projects\browser-use\wrapper\venv\Lib\site-packages\browser_use\__init__.py", line 117, in __getattr__
+    module = import_module(module_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Python312\Lib\importlib\__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "e:\projects\browser-use\wrapper\venv\Lib\site-packages\browser_use\agent\service.py", line 38, in <module>
+    from browser_use import Browser, BrowserProfile, BrowserSession
+  File "<frozen importlib._bootstrap>", line 1412, in _handle_fromlist
+  File "e:\projects\browser-use\wrapper\venv\Lib\site-packages\browser_use\__init__.py", line 122, in __getattr__
+    attr = getattr(module, attr_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "e:\projects\browser-use\wrapper\venv\Lib\site-packages\browser_use\browser\__init__.py", line 26, in __getattr__
+    module = import_module(full_module_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Python312\Lib\importlib\__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "e:\projects\browser-use\wrapper\venv\Lib\site-packages\browser_use\browser\session.py", line 54, in <module>
+    DEFAULT_BROWSER_PROFILE = BrowserProfile()
+                              ^^^^^^^^^^^^^^^^
+  File "e:\projects\browser-use\wrapper\venv\Lib\site-packages\pydantic\main.py", line 250, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "e:\projects\browser-use\wrapper\venv\Lib\site-packages\browser_use\browser\profile.py", line 795, in model_post_init
+    self.detect_display_configuration()
+  File "e:\projects\browser-use\wrapper\venv\Lib\site-packages\browser_use\browser\profile.py", line 1171, in detect_display_configuration
+    self.screen = self.screen or display_size or ViewportSize(width=1920, height=1080)
+    ^^^^^^^^^^^
+  File "e:\projects\browser-use\wrapper\venv\Lib\site-packages\pydantic\main.py", line 1033, in __setattr__
+    setattr_handler(self, name, value)  # call here to not memo on possibly unknown fields
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "e:\projects\browser-use\wrapper\venv\Lib\site-packages\pydantic\main.py", line 111, in <lambda>
+    'validate_assignment': lambda model, name, val: model.__pydantic_validator__.validate_assignment(model, name, val),  # pyright: ignore[reportAssignmentType]
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "e:\projects\browser-use\wrapper\venv\Lib\site-packages\browser_use\browser\profile.py", line 443, in set_default_downloads_path
+    self.downloads_path.mkdir(parents=True, exist_ok=True)
+  File "c:\Python312\Lib\pathlib.py", line 1315, in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+  File "c:\Python312\Lib\pathlib.py", line 1311, in mkdir
+    os.mkdir(self, mode)
+FileExistsError: [WinError 183] Cannot create a file when that file already exists: '\\tmp'
+```
+
+### LLM Model
+
+_No response_
+
+### Operating System & Browser Versions
+
+_No response_
+
+### Full DEBUG Log Output
+
+```shell
+
+```

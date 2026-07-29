@@ -1,0 +1,55 @@
+{
+  "owner": "stanfordnlp",
+  "repo": "dspy",
+  "number": 9032,
+  "html_url": "https://github.com/stanfordnlp/dspy/issues/9032",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]  Azure gpt-5-chat incorrectly classified as reasoning model",
+  "author": "mindful-time",
+  "created_at": "2025-11-07T15:46:30Z",
+  "updated_at": "2025-11-10T14:35:07Z",
+  "closed_at": "2025-11-10T14:35:02Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.95,
+  "fix": {
+    "closing_commit": "7817ed984054535bd48ce4b1db4c2a4b6090c3cd",
+    "linked_prs": [],
+    "best_guess_fix_commit": "7817ed984054535bd48ce4b1db4c2a4b6090c3cd",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:06:01.507146+00:00",
+  "comments": [
+    {
+      "author": "yashwantbezawada",
+      "created_at": "2025-11-09T06:42:51Z",
+      "body": "Fixed in PR #9037!\n\nThe regex pattern has been updated to use exact matching with the `$` anchor, preventing `gpt-5-chat` from being incorrectly classified as a reasoning model.\n\n**Changes:**\n- Added `$` end anchor to prevent prefix matching\n- Added support for `gpt-5-pro` as a valid reasoning model variant\n- Explicit date suffix support for o-series models\n- Added test cases to verify `gpt-5-chat` does NOT match and `gpt-5-pro` DOES match\n\nUsers can now use `gpt-5-chat` with standard conversational parameters without triggering the inappropriate reasoning model validation."
+    },
+    {
+      "author": "mindful-time",
+      "created_at": "2025-11-09T07:36:28Z",
+      "body": "The fix was already place , by using negative a different type of regex match. The one you purposed is still restricting. Check the pr here https://github.com/stanfordnlp/dspy/pull/9033"
+    },
+    {
+      "author": "okhat",
+      "created_at": "2025-11-10T14:35:07Z",
+      "body": "Thanks, merged"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`bash run_repro.sh` exited with status 1.",
+    "stdout: `OBSERVED: llama-index-core 0.14.18 Refine leaked ValueError: LLM did not return any tool calls`.",
+    "stderr ends with `AssertionError: BUG: Refine failed to catch ValueError`; traceback enters `response_synthesizers/refine.py:241`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; the monorepo clone remained unpacking under concurrent load, so used the issue-reported released core package.",
+    "Created `.venv` and installed `llama-index-core==0.14.18` and `pydantic==2.13.4`.",
+    "Patched `FunctionCallingProgram.__call__` in-process to raise the reported ValueError using the built-in offline mock LLM, then ran `bash run_repro.sh`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

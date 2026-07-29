@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/673/codebase/libs/agno/agno/os/routers/teams/router.py", line 113, in team_response_streamer
+    yield format_sse_event(run_response_chunk)  # type: ignore
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/673/codebase/libs/agno/agno/os/utils.py", line 199, in format_sse_event
+    event_type = event.event or "message"
+                 ^^^^^^^^^^^
+AttributeError: 'TeamRunOutput' object has no attribute 'event'. Did you mean: 'events'?

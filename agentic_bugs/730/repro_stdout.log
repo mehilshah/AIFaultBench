@@ -1,0 +1,1 @@
+OBSERVED_BUG: HttpOperationException 404 after request to https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2

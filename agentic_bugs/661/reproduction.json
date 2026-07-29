@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`bash run_repro.sh` exited with code 1.",
+    "stdout: `OBSERVED BUG with a2a-sdk 1.0.1: cannot import name 'A2AClientHTTPError' from 'a2a.client.errors'`.",
+    "Traceback reaches `crewai/a2a/config.py:53` and `updates/polling/handler.py:11`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and verified pinned commit `b0e2fda105c2e0c05c7abb1f53800443ffd582ea`.",
+    "Created `.venv`, installed pinned dependencies, and installed the CrewAI checkout editable.",
+    "Captured the final offline run of `bash run_repro.sh` in `repro_stdout.log` and `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

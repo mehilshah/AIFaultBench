@@ -1,0 +1,62 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langchain",
+  "number": 37912,
+  "html_url": "https://github.com/langchain-ai/langchain/issues/37912",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "perplexity: _convert_message_to_dict drops AIMessage.tool_calls and raises on ToolMessage",
+  "author": "rbuchmayer-pplx",
+  "created_at": "2026-06-04T23:26:22Z",
+  "updated_at": "2026-06-05T19:14:44Z",
+  "closed_at": "2026-06-05T19:14:44Z",
+  "labels": [
+    "bug",
+    "perplexity",
+    "external"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.83,
+  "fix": {
+    "closing_commit": "1be54cc0e12bd45cfb43c6d31077a139989797b1",
+    "linked_prs": [],
+    "best_guess_fix_commit": "1be54cc0e12bd45cfb43c6d31077a139989797b1",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:05:31.522199+00:00",
+  "comments": [
+    {
+      "author": "vansvan17",
+      "created_at": "2026-06-05T10:47:38Z",
+      "body": "I'd like to fix this. ChatPerplexity._convert_message_to_dict needs two changes matching langchain-openai's pattern:\n1. Add a ToolMessage branch that returns {'role': 'tool', 'content': message.content, 'tool_call_id': message.tool_call_id}\n2. Include tool_calls and invalid_tool_calls in the AIMessage branch, setting content to None when tool calls are present (OpenAI format)\n\nCan I be assigned?"
+    },
+    {
+      "author": "Oxygen56",
+      "created_at": "2026-06-05T12:45:26Z",
+      "body": "This should be resolved by #37919."
+    },
+    {
+      "author": "Oxygen56",
+      "created_at": "2026-06-05T12:46:56Z",
+      "body": "I have a fix ready at #37919 (was auto-closed by the issue-link check). Could a maintainer assign this issue to me so I can reopen the PR?"
+    },
+    {
+      "author": "rbuchmayer-pplx",
+      "created_at": "2026-06-05T15:31:43Z",
+      "body": "I also have a similar fix open #37911"
+    }
+  ]
+}

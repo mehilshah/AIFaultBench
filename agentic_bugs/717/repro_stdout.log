@@ -1,0 +1,2 @@
+ INFO      🤖 MODEL INPUT                                                       
+OBSERVED BUG: UnicodeEncodeError for U+1F916 with cp1252 FileHandler

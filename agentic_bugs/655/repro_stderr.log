@@ -1,0 +1,2 @@
+ERROR: Could not find a version that satisfies requirement tree-sitter==0.21.3 (requires Python >=3.8; simulated Python 3.5.6)
+ERROR: Could not find a version that satisfies requirement tree-sitter-languages (requires Python >=3.8; simulated Python 3.5.6)

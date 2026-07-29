@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout HEAD: 031975ccbe60e50967d8f192b6dfe6ca6de1daa7.",
+    "Final `bash run_repro.sh` exited with status 1.",
+    "stdout: BUG REPRODUCED: validation accepted an invalid timestamp; conversion raised ValueError: Invalid isoformat string: 'not-a-date'",
+    "`repro_stderr.log` is empty."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; completed the exact pinned checkout with a depth-1 fetch when the full clone remained incomplete in this process host.",
+    "Created `.venv`, installed pinned dependencies, and installed the pinned phoenix-client checkout editable.",
+    "Ran `bash run_repro.sh` and captured the final output logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

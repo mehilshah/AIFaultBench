@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified: 0d4ac836e3a943a6a807910001f84a1d11b52776.",
+    "Final run exited with status 1.",
+    "repro_stdout.log: `OBSERVED EARLY EXECUTION: node_f ran before node_d completed`.",
+    "repro_stderr.log ends with `RuntimeError: node_f ran before node_d completed`."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh and restored the generated checkout to the required pinned commit after its initial clone race.",
+    "Created .venv and installed exact pinned dependencies plus editable codebase/libs/langgraph.",
+    "Ran run_repro.sh, captured the final stdout/stderr logs, and verified the expected non-zero exit."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

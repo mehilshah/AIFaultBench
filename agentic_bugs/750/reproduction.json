@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Final output: `NOT_REPRODUCED: runtime-injected checkpointer cached @task output (calls=1)`",
+    "The resume returned the expected result and `pip check` reported no broken requirements.",
+    "A clean `.venv` bootstrap via `bash run_repro.sh` also completed successfully."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; its clone was empty in this environment.",
+    "Used released `langgraph==1.0.4` with issue-era dependency pins.",
+    "Ran an offline interrupt/resume graph with an injected `InMemorySaver` and deterministic task counter."
+  ],
+  "blocking_reason": "The claimed fault does not reproduce: the runtime-injected checkpointer restores the completed @task result, leaving its call counter at 1 after resume.",
+  "reproduction_command": "bash run_repro.sh"
+}

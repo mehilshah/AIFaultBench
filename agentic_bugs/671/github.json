@@ -1,0 +1,48 @@
+{
+  "owner": "pydantic",
+  "repo": "pydantic-ai",
+  "number": 6331,
+  "html_url": "https://github.com/pydantic/pydantic-ai/issues/6331",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Native tools contributed by capability functions are dropped under `override(native_tools=...)`",
+  "author": "DouweM",
+  "created_at": "2026-07-07T22:05:24Z",
+  "updated_at": "2026-07-07T23:41:03Z",
+  "closed_at": "2026-07-07T23:41:03Z",
+  "labels": [
+    "bug",
+    "native-tools",
+    "pydanty:bug",
+    "loopable"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.07,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:38:22.738924+00:00",
+  "comments": [
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-07-07T22:06:14Z",
+      "body": "<!-- pydanty:status-comment:v1 -->\n\n## pydanty status: bug -- confirmed (high), signal 8/10 - p1\n\n**Why:** Native tools contributed by capability functions (DynamicCapability) are silently dropped from model requests when override(native_tools=...) is active. This affects any user combining dynamic capabilities with native tool overrides -- a core runtime path (agent run loop + tool calling + capabilities). The fix requires restructuring capability resolution to call for_run exactly once, which is a design-sensitive internal refactor touching the agent run setup flow.\n**Evidence:** Reproducer confirmed the bug: no-override path correctly includes dynamic MCPServerTool from capability function; override + static capability includes both override and static tools; override + capability function drops the dynamic tool -- only [CodeExecutionTool] appears in model request parameters. Mechanism: agent/__init__.py:1297-1298 reads cap.get_native_tools() on pre-for_run extra_capabilities, but DynamicCapability (capabilities/_dynamic.py) has no get_native_tools override and inherits AbstractCapability's default returning []. The non-override path correctly uses run_capability (post-for_run resolved). Repositorian confirmed from PR #6242 review that DouweM rejected the double for_run workaround and requires resolving capabilities exactly once. code_librarian was unavailable (both calls failed with read_repository_file retry exhaustion), so the exact integration point for the single-resolution restructure could not be confirmed from code.\n**Playground:** null\n**Next:** needs_maintainer_discussion -- Fix direction is clear from DouweM's PR #6242 review, but the implementation requires restructuring the capability resolution flow in agent/__init__.py to resolve run capabilities exactly once and feed resolved instances into the override path -- a non-trivial internal refactor where code_librarian was unavailable to confirm the exact integration point and CombinedCapability helper API, so the PR opener needs more specific code surface information before implementing.\n\n@adtyavrdhn -- assigned for prioritization (p1, signal 8/10).\n\n<details>\n<summary>\ud83d\udcb0 Run usage: 892,187 tokens, 52 model requests (est. cost $0.3164)</summary>\n\n| Agent | Cost | Input | Output | Requests | Tool calls | Model |\n|---|--:|--:|--:|--:|--:|---|\n| `repositorian` | $0.1137 | 440,992 | 2,636 | 25 | 24 | kimi-k2.7-code-20260612 |\n| `reproducer` | $0.0945 | 294,080 | 3,869 | 16 | 20 | kimi-k2.7-code-20260612 |\n| `pydanty-orchestrator` | $0.1083 | 147,699 | 2,911 | 11 | 10 | \u2014 |\n| **total** | **$0.3164** | **882,771** | **9,416** | **52** | **54** | |\n</details>"
+    }
+  ]
+}

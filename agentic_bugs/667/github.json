@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "smolagents",
+  "number": 1830,
+  "html_url": "https://github.com/huggingface/smolagents/issues/1830",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "BUG: InterpreterError: Forbidden function evaluation: 'open' is not among the explicitly allowed tools",
+  "author": "arturoPMM",
+  "created_at": "2025-10-22T18:07:08Z",
+  "updated_at": "2026-01-14T09:16:39Z",
+  "closed_at": "2026-01-14T09:13:58Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 83.63,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:38:15.841317+00:00",
+  "comments": [
+    {
+      "author": "suryabdev",
+      "created_at": "2025-10-24T11:34:42Z",
+      "body": "Hi @arturoPMM, another workaround you could use is to pass in 'open' to the CodeAgent's executor_kwargs\n```\nagent = CodeAgent(executor_kwargs={'additional_functions':{'open': open}})\n```\nI've raised a PR https://github.com/huggingface/smolagents/pull/1832 to fix the issue, Will discuss with the others"
+    },
+    {
+      "author": "albertvillanova",
+      "created_at": "2026-01-14T09:13:58Z",
+      "body": "This is the solution: use `additional_functions`: https://github.com/huggingface/smolagents/issues/1830#issuecomment-3442666336\n```python\nagent = CodeAgent(executor_kwargs={'additional_functions':{'open': open}})\n```\n\nNote that `open`:\n- is a **function** and should be allowed with `additional_functions`. \n- is not a **module** that we could allow to be imported with `additional_authorized_imports`."
+    }
+  ]
+}

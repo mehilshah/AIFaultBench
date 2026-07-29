@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at c9a6634873077e7dc2bb77d72cf16091b5679ccd.",
+    "Final stdout: OBSERVED BUG: state read used '\\\\root\\\\state.json' and returned {}.",
+    "Final stderr ends: AssertionError: Windows path was sent to the POSIX container."
+  ],
+  "steps": [
+    "Ran bash setup_codebase.sh and checked out the pinned commit.",
+    "Built .venv with exact pinned dependencies and installed the checkout editable.",
+    "Ran bash run_repro.sh and captured its stdout/stderr."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

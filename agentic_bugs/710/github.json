@@ -1,0 +1,46 @@
+{
+  "owner": "camel-ai",
+  "repo": "camel",
+  "number": 3422,
+  "html_url": "https://github.com/camel-ai/camel/issues/3422",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] ChatAgent.__init__() got an unexpected keyword argument 'single_iteration'",
+  "author": "kevindick668-sketch",
+  "created_at": "2025-11-16T09:11:15Z",
+  "updated_at": "2025-11-16T09:49:36Z",
+  "closed_at": "2025-11-16T09:49:36Z",
+  "labels": [
+    "bug",
+    "Needs Triage"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:08.003786+00:00",
+  "comments": [
+    {
+      "author": "kevindick668-sketch",
+      "created_at": "2025-11-16T09:49:35Z",
+      "body": "This problem seems fixed after I comment out the single_iteration parameter."
+    }
+  ]
+}

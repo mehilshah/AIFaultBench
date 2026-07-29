@@ -1,0 +1,69 @@
+# recovered-from-issue: https://github.com/browser-use/browser-use/issues/4510
+
+TITLE
+Bug: `action` field returned as JSON string instead of list when done-text contains newlines (Claude Sonnet)
+
+BODY
+### Browser Use Version
+
+0.12.3
+
+### Bug Description, Steps to Reproduce, Screenshots
+
+Agent crashes on the final `done` step when the done-text contains 
+newlines (multi-line summaries, markdown tables).
+
+Steps to reproduce:
+1. Use ChatAnthropic with claude-sonnet-4-6
+2. Run a task that produces a long multi-line summary (e.g. "log in and 
+   describe all sections you see")
+3. Agent navigates and clicks correctly, but crashes on the done step
+
+Error: `Input should be a valid list [type=list_type]` or 
+`JSONDecodeError: Expecting ',' delimiter`
+
+Root cause: content_block.input['action'] is returned as a JSON string 
+instead of a list. The string contains literal chr(10) newlines inside 
+a JSON string value, which breaks json.loads().
+
+Fix applied in our project: escape chr(10/13/9) before json.loads():
+  cleaned = action_str.replace(chr(10), chr(92)+'n')
+  _input['action'] = json.loads(cleaned)
+
+
+### Failing Python Code
+
+```python
+from browser_use import Agent
+from browser_use.llm.anthropic.chat import ChatAnthropic
+
+agent = Agent(
+    task="Log into https://example.com with password 'test123'. "
+         "Then describe all sections, menus and features you see "
+         "in detail with a structured summary.",
+    llm=ChatAnthropic(model="claude-sonnet-4-6"),
+    max_steps=15,
+)
+history = await agent.run()
+# Crashes at the done step when the summary contains newlines
+```
+
+### LLM Model
+
+claude-sonnet-4-6 via ChatAnthropic
+
+### Operating System & Browser Versions
+
+Windows 11 + Chromium via CDP (browser-use automatic)
+
+### Full DEBUG Log Output
+
+```shell
+INFO [Agent] Task: Go to https://example.com/, log in, describe sections.
+INFO [Agent] Step 3: done action with multi-line text
+pydantic_core.ValidationError: 1 validation error for AgentOutput
+action
+  Input should be a valid list [type=list_type]
+  
+json.decoder.JSONDecodeError: Expecting ',' delimiter: line 3 column 45
+```

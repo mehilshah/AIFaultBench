@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at 9cdb0aac28b2a04b064e40697ccd301872cf6a43.",
+    "Final run stdout: `OBSERVED BUG: KeyError('b.predict') left a.predict.demos partially loaded`.",
+    "Final `run_repro.sh` exit code was 1; stderr was empty."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and verified the pinned checkout.",
+    "Created `.venv`, installed pinned dependencies, and installed `codebase` editable.",
+    "Saved state for two predictors, removed `b.predict`, and loaded it into a fresh program without an LLM call.",
+    "Captured the final `run_repro.sh` output in the required log files and validated all artifacts."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

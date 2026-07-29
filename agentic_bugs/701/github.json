@@ -1,0 +1,59 @@
+{
+  "owner": "pydantic",
+  "repo": "pydantic-ai",
+  "number": 6286,
+  "html_url": "https://github.com/pydantic/pydantic-ai/issues/6286",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[roundtrip-sweep] ModelRequestPart: NativeToolSearchReturnPart and NativeToolReturnPart missing from discriminated union \u2014 breaks message history \n[Content truncated due to length]",
+  "author": "github-actions[bot]",
+  "created_at": "2026-07-06T04:33:04Z",
+  "updated_at": "2026-07-23T17:03:46Z",
+  "closed_at": "2026-07-06T08:18:51Z",
+  "labels": [
+    "bug",
+    "message history",
+    "pydanty:bug",
+    "serialization",
+    "roundtrip-sweep"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.16,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:05:53.007393+00:00",
+  "comments": [
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-07-06T04:34:14Z",
+      "body": "<!-- pydanty:status-comment:v1 -->\n\n## pydanty status: bug\n\n**Classification:** bug\n\n**Verdict:** confirmed (high confidence)\n\n**Signal:** 5/10 -- p2\n\n**Why this matters:** ModelMessagesTypeAdapter is the documented bidirectional wire format for message history. If native tool return parts ever appear in a ModelRequest (e.g., in durable execution replay, cross-provider history translation, or user-constructed messages), the round-trip silently breaks at deserialization. The fix is a two-line union addition plus a regression test, but the maintainer's 'by design' stance on the symmetric asymmetry must be reconciled first.\n\n**Evidence summary:** code_librarian confirmed ModelRequestPart union (messages.py:2151-2159) has 6 members, none Native*, while ModelResponsePart (messages.py:2190-2203) includes both NativeToolSearchReturnPart (tag 'builtin-tool-search-return') and NativeToolReturnPart (tag 'builtin-tool-return'). No static guard prevents placing these parts in a ModelRequest. Sweep reproducer verified the union_tag_invalid failure with a runnable script and confirmed normal agent operation does NOT place these parts in ModelRequest (they're handled on ModelResponse side or translated to base parts). Repositorian found maintainer adtyavrdhn rejected the symmetric PR #5723 (ToolReturnPart in ModelResponsePart) on 2026-06-12 as 'by design', stating asymmetry between the two unions is intentional and pyright warns are expected. Open PR #5834 adds drift guard tests but does not fix this gap.\n\n**Next action:** needs_maintainer_discussion -- Reproduced round-trip failure is confirmed, but maintainer adtyavrdhn explicitly said the ModelRequestPart/ModelResponsePart asymmetry is 'by design' on PR #5723. Normal agent operation doesn't hit this scenario. Whether the 'by design' stance applies to Native* return parts in ModelRequestPart needs maintainer decision.\n\nConfirmed: ModelRequestPart discriminated union is missing NativeToolSearchReturnPart and NativeToolReturnPart, causing union_tag_invalid ValidationError when round-tripping a ModelRequest containing these parts through ModelMessagesTypeAdapter. The fix would be narrow (add two Annotated entries to the union), but maintainer adtyavrdhn rejected the symmetric PR #5723 saying the asymmetry is 'by design'. Normal agent operation doesn't place native return parts in ModelRequest. Needs maintainer decision on whether the 'by design' stance extends to this case."
+    },
+    {
+      "author": "adtyavrdhn",
+      "created_at": "2026-07-06T08:18:51Z",
+      "body": "Not a valid issue"
+    },
+    {
+      "author": "Kikingodoy",
+      "created_at": "2026-07-23T17:03:46Z",
+      "body": "I have a fix for this ready and will be submitting a PR shortly!"
+    }
+  ]
+}

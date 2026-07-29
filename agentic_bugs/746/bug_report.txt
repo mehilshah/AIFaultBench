@@ -1,0 +1,138 @@
+# recovered-from-issue: https://github.com/langchain-ai/langchain/issues/37736
+
+TITLE
+EnsembleRetriever: arank_fusion uses different normalization logic than rank_fusion causing ValidationError in async
+
+BODY
+### Submission checklist
+
+- [x] This is a bug, not a usage question.
+- [x] I added a clear and descriptive title that summarizes this issue.
+- [x] I used the GitHub search to find a similar question and didn't find it.
+- [x] I am sure that this is a bug in LangChain rather than my code.
+- [x] The bug is not resolved by updating to the latest stable version of LangChain (or the specific integration package).
+- [x] This is not related to the langchain-community package.
+- [x] I posted a self-contained, minimal, reproducible example. A maintainer can copy it and run it AS IS.
+
+### Package (Required)
+
+- [x] langchain
+- [ ] langchain-openai
+- [ ] langchain-anthropic
+- [x] langchain-classic
+- [ ] langchain-core
+- [ ] langchain-model-profiles
+- [ ] langchain-tests
+- [ ] langchain-text-splitters
+- [ ] langchain-chroma
+- [ ] langchain-deepseek
+- [ ] langchain-exa
+- [ ] langchain-fireworks
+- [ ] langchain-groq
+- [ ] langchain-huggingface
+- [ ] langchain-mistralai
+- [ ] langchain-nomic
+- [ ] langchain-ollama
+- [ ] langchain-openrouter
+- [ ] langchain-perplexity
+- [ ] langchain-qdrant
+- [ ] langchain-xai
+- [ ] Other / not sure / general
+
+### Related Issues / PRs
+
+_No response_
+
+### Reproduction Steps / Example Code (Python)
+
+```python
+import asyncio
+from langchain_core.retrievers import BaseRetriever
+from langchain_core.documents import Document
+from langchain.retrievers import EnsembleRetriever
+
+
+class WeirdRetriever(BaseRetriever):
+    def _get_relevant_documents(self, query, *, run_manager=None):
+        return [42]
+
+    async def _aget_relevant_documents(self, query, *, run_manager=None):
+        return [42]
+
+
+ensemble = EnsembleRetriever(retrievers=[WeirdRetriever()], weights=[1.0])
+
+# Sync path: no crash, 42 passes through unchanged
+ensemble.invoke("test")
+
+# Async path: raises ValidationError
+asyncio.run(ensemble.ainvoke("test"))
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Document
+  page_content
+    Input should be a valid string [type=string_type, input_value=42, input_type=int]
+```
+
+### Description
+
+I noticed that rank_fusion (sync) and arank_fusion (async) use different
+conditions when normalizing retriever outputs to Documents.
+
+rank_fusion uses:   isinstance(doc, str)          — only wraps bare strings
+arank_fusion uses:  not isinstance(doc, Document) — wraps everything that
+                                                     isn't a Document
+
+So if a retriever returns anything that isn't a string or a Document, the
+async path tries to call Document(page_content=<that value>) and Pydantic
+raises a ValidationError immediately. The sync path just passes it through
+unchanged, so the behavior is inconsistent between the two methods.
+
+Expected: both paths apply the same normalization — arank_fusion should use
+isinstance(doc, str) to match rank_fusion.
+
+
+### System Info
+
+System Information
+------------------
+> OS:  Windows
+> OS Version:  10.0.26200
+> Python Version:  3.10.4 (tags/v3.10.4:9d38120, Mar 23 2022, 23:13:41) [MSC v.1929 64 bit (AMD64)]
+
+Package Information
+-------------------
+> langchain_core: 1.4.0
+> langsmith: 0.8.5
+> langchain_classic: 1.0.7
+> langchain_protocol: 0.0.15
+> langchain_text_splitters: 1.1.2
+
+Optional packages not installed
+-------------------------------
+> deepagents
+> deepagents-cli
+
+Other Dependencies
+------------------
+> async-timeout: 4.0.3
+> httpx: 0.28.1
+> jsonpatch: 1.33
+> orjson: 3.11.9
+> packaging: 26.2
+> pydantic: 2.13.4
+> pytest: 9.0.3
+> pyyaml: 6.0.2
+> requests: 2.30.0
+> requests-toolbelt: 1.0.0
+> rich: 13.3.5
+> sqlalchemy: 2.0.50
+> tenacity: 8.2.2
+> typing-extensions: 4.15.0
+> uuid-utils: 0.16.0
+> wrapt: 1.14.1
+> xxhash: 3.7.0
+> zstandard: 0.25.0

@@ -1,0 +1,190 @@
+# recovered-from-issue: https://github.com/camel-ai/camel/issues/3962
+
+TITLE
+[BUG] Bedrock Converse validation failure when using CAMEL ChatAgent with PubMedToolkit function tools
+
+BODY
+### Required prerequisites
+
+- [x] I have read the documentation <https://camel-ai.github.io/camel/camel.html>.
+- [x] I have searched the [Issue Tracker](https://github.com/camel-ai/camel/issues) and [Discussions](https://github.com/camel-ai/camel/discussions) that this hasn't already been reported. (+1 or comment there if it has.)
+- [x] Consider asking first in a [Discussion](https://github.com/camel-ai/camel/discussions/new).
+
+### What version of camel are you using?
+
+0.2.90a6
+
+### System information
+
+OS: macOS (Darwin 25.3.0, arm64)
+Describe how the library was installed: git clone from source, master branch
+3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:56:31) [Clang 19.1.7 ] darwin
+0.2.90a6
+
+### Problem description
+
+I am seeing a Bedrock Converse validation failure when using CAMEL ChatAgent with PubMedToolkit function tools.
+
+### Reproducible example code
+
+The Python snippets:
+
+```python
+import os
+from pathlib import Path
+from typing import Any
+
+import boto3
+from botocore.config import Config
+from dotenv import load_dotenv
+
+from camel.agents import ChatAgent
+from camel.models import ModelFactory
+from camel.toolkits import PubMedToolkit
+from camel.types import ModelPlatformType
+
+
+def build_bedrock_client() -> Any:
+    gateway_url = os.getenv("AI_GATEWAY_URL") or os.getenv("BEDROCK_ENDPOINT_URL")
+    api_key = os.getenv("AI_GATEWAY_KEY") or os.getenv("AWS_BEARER_TOKEN_BEDROCK")
+
+    if not gateway_url or not api_key:
+        load_dotenv(dotenv_path=Path(".env"))
+        gateway_url = (
+            gateway_url
+            or os.getenv("AI_GATEWAY_URL")
+            or os.getenv("BEDROCK_ENDPOINT_URL")
+        )
+        api_key = (
+            api_key
+            or os.getenv("AI_GATEWAY_KEY")
+            or os.getenv("AWS_BEARER_TOKEN_BEDROCK")
+        )
+
+    if not gateway_url or not api_key:
+        raise ValueError(
+            "Missing gateway config. Set AI_GATEWAY_URL and AI_GATEWAY_KEY in env/.env"
+        )
+
+    endpoint = gateway_url if gateway_url.endswith("/bedrock") else f"{gateway_url}/bedrock"
+    os.environ["AWS_BEARER_TOKEN_BEDROCK"] = api_key
+
+    return boto3.client(
+        service_name="bedrock-runtime",
+        region_name="us-east-1",
+        endpoint_url=endpoint,
+        aws_access_key_id="",
+        aws_secret_access_key="",
+        config=Config(retries={"max_attempts": 0}),
+    )
+
+
+def main() -> None:
+    model_id = os.getenv("BEDROCK_MODEL_ID", "amazon.nova-lite-v1:0")
+    client = build_bedrock_client()
+
+    model = ModelFactory.create(
+        model_platform=ModelPlatformType.AWS_BEDROCK_CONVERSE,
+        model_type=model_id,
+        model_config_dict={"temperature": 0.0, "max_tokens": 256},
+        bedrock_client=client,
+    )
+
+    toolkit = PubMedToolkit(timeout=10)
+    agent = ChatAgent(
+        system_message=(
+            "You must call the search_papers tool exactly once before answering."
+        ),
+        model=model,
+        tools=toolkit.get_tools(),
+        retry_attempts=1,
+        step_timeout=120,
+    )
+
+    prompt = (
+        "Find papers on YIBEUIWD2u and give one-sentence summary. "
+        "Use search_papers first."
+    )
+    response = agent.step(prompt)
+    print(response.msgs[0].content)
+
+if __name__ == "__main__":
+    main()
+```
+
+Command lines:
+
+```bash
+python test.py
+```
+
+Steps to reproduce:
+
+1. Name the reproducible code to `test.py`
+2. Run `python test.py`
+
+
+### Traceback
+
+```pytb
+Traceback (most recent call last):
+  File "/Users/xxx/test.py", line 80, in <module>
+    main()
+  File "/Users/xxx/test.py", line 76, in main
+    response = agent.step(prompt)
+               ^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/camel/camel/agents/chat_agent.py", line 2872, in step
+    return future.result(timeout=self.step_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/miniconda3/envs/agent/lib/python3.11/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/miniconda3/envs/agent/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/Users/xxx/miniconda3/envs/agent/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/Downloads/AZ/camel/camel/agents/chat_agent.py", line 2957, in _step_impl
+    response = self._get_model_response(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/camel/camel/agents/chat_agent.py", line 3590, in _get_model_response
+    response = self.model_backend.run(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/camel/camel/models/model_manager.py", line 239, in run
+    raise exc
+  File "/Users/xxx/camel/camel/models/model_manager.py", line 229, in run
+    response = self.current_model.run(messages, response_format, tools)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/camel/camel/models/base_model.py", line 214, in wrapped_run
+    result = original_run(self, messages, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/camel/camel/models/base_model.py", line 873, in run
+    result = self._run(messages, response_format, tools)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/camel/camel/models/aws_bedrock_converse_model.py", line 866, in _run
+    response = self.bedrock_client.converse(**request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/miniconda3/envs/agent/lib/python3.11/site-packages/botocore/client.py", line 602, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/miniconda3/envs/agent/lib/python3.11/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xxx/miniconda3/envs/agent/lib/python3.11/site-packages/botocore/client.py", line 1078, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.errorfactory.ValidationException: An error occurred (ValidationException) when calling the Converse operation: The format of the value at messages.2.content.0.toolResult.content.0.json is invalid. Provide a json object for the field and try again.
+```
+
+### Expected behavior
+
+It should call `search_papers` in `PubMedToolkit` without errors.
+
+### Additional context
+
+In `search_papers` when nothing is found am empty list will return and toolResult.content[].json is being sent as a non-object (for example a list) when a tool returns a top-level list, which Bedrock rejects.
+code pointer:
+https://github.com/camel-ai/camel/blob/d84c72c78259b5c7358fa92e1f280e85e2e39f56/camel/toolkits/pubmed_toolkit.py#L150-L156
+
+## Proposed fix:
+1. In CAMEL’s Bedrock Converse adapter (not only in PubMedToolkit), normalize every tool result before building toolResult.content[].json.
+2. Wrap the PubMedToolkit returns with a dict

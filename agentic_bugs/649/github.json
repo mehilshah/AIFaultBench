@@ -1,0 +1,56 @@
+{
+  "owner": "run-llama",
+  "repo": "llama_index",
+  "number": 21422,
+  "html_url": "https://github.com/run-llama/llama_index/issues/21422",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: LLMChatEndEvent.model_dump() mutates ChatResponse.raw in-place, corrupting caller's response object",
+  "author": "AdamJanasek",
+  "created_at": "2026-04-20T13:34:27Z",
+  "updated_at": "2026-04-24T23:42:56Z",
+  "closed_at": "2026-04-24T23:42:56Z",
+  "labels": [
+    "bug",
+    "triage"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 4.42,
+  "fix": {
+    "closing_commit": "2538dc1b90b5df0c1dc55024fa62464c68ab677a",
+    "linked_prs": [],
+    "best_guess_fix_commit": "2538dc1b90b5df0c1dc55024fa62464c68ab677a",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T12:37:43.898823+00:00",
+  "comments": [
+    {
+      "author": "rehan243",
+      "created_at": "2026-04-21T14:14:42Z",
+      "body": "fwiw, I've run into this exact same mess with `ChatResponse.raw` getting mutated in-place when telemetry is active. The thing is, it\u2019s super sneaky since, like you mentioned, it only blows up when you\u2019ve got OpenTelemetry subscribers running\u2014totally fine in local dev, then bam, `AttributeError` in prod. We hit this on a deployment with llama_index 0.14.18 a few weeks back, and it took us a solid day to trace it back to that `model_dump()` call messing with the Pydantic model. Honestly, our workaround was to deep-copy the response object right after the call to `achat()` before anything else touched it. Not ideal, but it saved us from downstream code expecting a proper Pydantic instance and choking on a dict. Kept us moving while waiting for a proper fix upstream."
+    },
+    {
+      "author": "PrajwaL-N-TECHIE",
+      "created_at": "2026-04-24T04:47:53Z",
+      "body": "Hi, I'd like to take a look at this! I'll trace how model_dump() is modifying the raw field in-place and patch it to work on a copy instead. Will also add a test that confirms the caller's original ChatResponse object stays unmodified after the call.\n"
+    },
+    {
+      "author": "albin-george-kurian",
+      "created_at": "2026-04-24T06:51:31Z",
+      "body": "Hi, I\u2019d like to contribute to this issue. I noticed there are already a few PRs in progress, but while digging into it I explored an alternative approach that avoids in-place mutation by ensuring serialization operates on a copied structure.\n\nHappy to share the approach, compare trade-offs, or help with testing and validation if that\u2019s useful. Let me know if there\u2019s still room to contribute.\n\n@"
+    }
+  ]
+}

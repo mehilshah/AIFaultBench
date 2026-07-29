@@ -1,0 +1,12 @@
+{
+  "bug_id": "736",
+  "bug_dir": "736",
+  "issue_url": "https://github.com/SWE-agent/SWE-agent/issues/1048",
+  "commit_hash": "c9a6634873077e7dc2bb77d72cf16091b5679ccd",
+  "library_name": "SWE-agent",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "SWE-agent/SWE-agent@c9a6634873077e7dc2bb77d72cf16091b5679ccd",
+  "codebase_present": "false",
+  "standardized_dir": "../736"
+}

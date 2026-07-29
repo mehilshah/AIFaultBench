@@ -1,0 +1,194 @@
+# recovered-from-issue: https://github.com/microsoft/autogen/issues/6788
+
+TITLE
+OpenAI.UnprocessableEntityError(422) when AssistantAgent invokes multiple tool calls
+
+BODY
+### What happened?
+
+**Describe the bug**
+1. I'm experiencing a persistent `openai.UnprocessableEntityError` when running the following example from the official documentation (https://microsoft.github.io/autogen/0.5.7/user-guide/agentchat-user-guide/tutorial/teams.html#single-agent-team). **The issue seems to arise when an `AssistantAgent` in a team (for example, `RoundRobinGroupChat`) makes multiple tool calls in response to a task**.
+2. I have tried both built-in tools (customized function) and MCP workbench tools, and the same issue occurs. The problem consistently happens when the agent calls the same tool in different steps from a multi-turn conversation.
+3. This issue has hindered me for quite some time, and I’d really appreciate any guidance or suggestions!
+
+**To Reproduce**
+Run the following example:
+```python
+from autogen_agentchat.agents import AssistantAgent
+from autogen_agentchat.conditions import TextMessageTermination, TextMentionTermination
+from autogen_agentchat.teams import RoundRobinGroupChat
+from autogen_agentchat.ui import Console
+from autogen_ext.models.openai import OpenAIChatCompletionClient
+
+async def main():
+    model_client = OpenAIChatCompletionClient(
+        model="gpt-4o",
+        # api_key="...",  # my key
+        # Disable parallel tool calls for this example.
+        parallel_tool_calls=False,  # type: ignore
+    )
+
+    # Create a tool for incrementing a number.
+    def increment_number(number: int) -> int:
+        """Increment a number by 1."""
+        return number + 1
+
+    # Create a tool agent that uses the increment_number function.
+    looped_assistant = AssistantAgent(
+        "looped_assistant",
+        model_client=model_client,
+        tools=[increment_number],  # Register the tool.
+        system_message="You are a helpful AI assistant, use the tool to increment the number.",
+    )
+
+    termination_condition = TextMessageTermination("looped_assistant")
+    # Even change the termination condition, the same error occurs
+    # termination_condition = TextMentionTermination("TERMINATE")
+    
+    # Create a team with the looped assistant agent and the termination condition.
+    team = RoundRobinGroupChat(
+        [looped_assistant],
+        termination_condition=termination_condition,
+    )
+
+    # Run the team with a task and print the messages to the console.
+    stream = team.run_stream(task='Increment the number 5 to 10.')
+    await Console(stream)
+
+    await model_client.close()
+
+asyncio.run(main())
+```
+
+**Actual behavior / Error**
+The process fails with the following traceback:
+```python
+Error processing publish message for looped_assistant_a6e4e486-6560-41ef-b20d-c7f308e301a8/a6e4e486-6560-41ef-b20d-c7f308e301a8
+Traceback (most recent call last):
+  File "/Users/junon/PycharmProject/test_autogen/.venv/lib/python3.11/site-packages/autogen_core/_single_threaded_agent_runtime.py", line 604, in _on_message
+    return await agent.on_message(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/junon/PycharmProject/test_autogen/.venv/lib/python3.11/site-packages/autogen_core/_base_agent.py", line 119, in on_message
+    return await self.on_message_impl(message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/junon/PycharmProject/test_autogen/.venv/lib/python3.11/site-packages/autogen_agentchat/teams/_group_chat/_sequential_routed_agent.py", line 67, in on_message_impl
+    return await super().on_message_impl(message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/junon/PycharmProject/test_autogen/.venv/lib/python3.11/site-packages/autogen_core/_routed_agent.py", line 485, in on_message_impl
+    return await h(self, message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/junon/PycharmProject/test_autogen/.venv/lib/python3.11/site-packages/autogen_core/_routed_agent.py", line 268, in wrapper
+    return_value = await func(self, message, ctx)  # type: ignore
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/junon/PycharmProject/test_autogen/.venv/lib/python3.11/site-packages/autogen_agentchat/teams/_group_chat/_chat_agent_container.py", line 79, in handle_request
+    async for msg in self._agent.on_messages_stream(self._message_buffer, ctx.cancellation_token):
+  File "/Users/junon/PycharmProject/test_autogen/.venv/lib/python3.11/site-packages/autogen_agentchat/agents/_assistant_agent.py", line 827, in on_messages_stream
+    async for inference_output in self._call_llm(
+  File "/Users/junon/PycharmProject/test_autogen/.venv/lib/python3.11/site-packages/autogen_agentchat/agents/_assistant_agent.py", line 955, in _call_llm
+    model_result = await model_client.create(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/junon/PycharmProject/test_autogen/.venv/lib/python3.11/site-packages/autogen_ext/models/openai/_openai_client.py", line 624, in create
+    result: Union[ParsedChatCompletion[BaseModel], ChatCompletion] = await future
+                                                                     ^^^^^^^^^^^^
+  File "/Users/junon/PycharmProject/test_autogen/.venv/lib/python3.11/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+  File "/Users/junon/PycharmProject/test_autogen/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1742, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/junon/PycharmProject/test_autogen/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1549, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.UnprocessableEntityError: Error code: 422 - {'detail': [{'type': 'missing', 'loc': ['body', 'messages', 2, 'content'], 'msg': 'Field required', 'input': {'role': 'assistant', 'tool_calls': [{'id': 'call_v3KmocuVBPqIV8QilBkZR5SH', 'function': {'arguments': '{"number": 5}', 'name': 'increment_number'}, 'type': 'function'}, {'id': 'call_oP7LS15Blcjjy8xpgntsqB2J', 'function': {'arguments': '{"number": 6}', 'name': 'increment_number'}, 'type': 'function'}, {'id': 'call_Gqk38KNKloxanGYTEyrPAWRx', 'function': {'arguments': '{"number": 7}', 'name': 'increment_number'}, 'type': 'function'}, {'id': 'call_Lx7A8T6yHUuVdpowLnwY8DSl', 'function': {'arguments': '{"number": 8}', 'name': 'increment_number'}, 'type': 'function'}, {'id': 'call_LB3lQGDfsrL8pSyPk5BoR2RV', 'function': {'arguments': '{"number": 9}', 'name': 'increment_number'}, 'type': 'function'}]}}]}
+Traceback (most recent call last):
+  File "/Users/junon/PycharmProject/magentic-ui/samples/sample_single_agent.py", line 50, in <module>
+    asyncio.run(main())
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/test/magentic-ui/samples/sample_single_agent.py", line 44, in main
+    await Console(stream)
+  File "/Users/test/test_autogen/.venv/lib/python3.11/site-packages/autogen_agentchat/ui/_console.py", line 117, in Console
+    async for message in stream:
+  File "/Users/test/test_autogen/.venv/lib/python3.11/site-packages/autogen_agentchat/teams/_group_chat/_base_group_chat.py", line 518, in run_stream
+    raise RuntimeError(str(message.error))
+RuntimeError: UnprocessableEntityError: Error code: 422 - {'detail': [{'type': 'missing', 'loc': ['body', 'messages', 2, 'content'], 'msg': 'Field required', 'input': {'role': 'assistant', 'tool_calls': [{'id': 'call_v3KmocuVBPqIV8QilBkZR5SH', 'function': {'arguments': '{"number": 5}', 'name': 'increment_number'}, 'type': 'function'}, {'id': 'call_oP7LS15Blcjjy8xpgntsqB2J', 'function': {'arguments': '{"number": 6}', 'name': 'increment_number'}, 'type': 'function'}, {'id': 'call_Gqk38KNKloxanGYTEyrPAWRx', 'function': {'arguments': '{"number": 7}', 'name': 'increment_number'}, 'type': 'function'}, {'id': 'call_Lx7A8T6yHUuVdpowLnwY8DSl', 'function': {'arguments': '{"number": 8}', 'name': 'increment_number'}, 'type': 'function'}, {'id': 'call_LB3lQGDfsrL8pSyPk5BoR2RV', 'function': {'arguments': '{"number": 9}', 'name': 'increment_number'}, 'type': 'function'}]}}]}
+Traceback:
+Traceback (most recent call last):
+
+  File "/Users/test/test_autogen/.venv/lib/python3.11/site-packages/autogen_agentchat/teams/_group_chat/_chat_agent_container.py", line 79, in handle_request
+    async for msg in self._agent.on_messages_stream(self._message_buffer, ctx.cancellation_token):
+
+  File "/Users/test/test_autogen/.venv/lib/python3.11/site-packages/autogen_agentchat/agents/_assistant_agent.py", line 827, in on_messages_stream
+    async for inference_output in self._call_llm(
+
+  File "/Users/test/test_autogen/.venv/lib/python3.11/site-packages/autogen_agentchat/agents/_assistant_agent.py", line 955, in _call_llm
+    model_result = await model_client.create(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "/Users/test/test_autogen/.venv/lib/python3.11/site-packages/autogen_ext/models/openai/_openai_client.py", line 624, in create
+    result: Union[ParsedChatCompletion[BaseModel], ChatCompletion] = await future
+                                                                     ^^^^^^^^^^^^
+
+  File "/Users/test/test_autogen/.venv/lib/python3.11/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+
+  File "/Users/test/test_autogen/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1742, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "/Users/test/test_autogen/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1549, in request
+    raise self._make_status_error_from_response(err.response) from None
+
+openai.UnprocessableEntityError: Error code: 422 - {'detail': [{'type': 'missing', 'loc': ['body', 'messages', 2, 'content'], 'msg': 'Field required', 'input': {'role': 'assistant', 'tool_calls': [{'id': 'call_v3KmocuVBPqIV8QilBkZR5SH', 'function': {'arguments': '{"number": 5}', 'name': 'increment_number'}, 'type': 'function'}, {'id': 'call_oP7LS15Blcjjy8xpgntsqB2J', 'function': {'arguments': '{"number": 6}', 'name': 'increment_number'}, 'type': 'function'}, {'id': 'call_Gqk38KNKloxanGYTEyrPAWRx', 'function': {'arguments': '{"number": 7}', 'name': 'increment_number'}, 'type': 'function'}, {'id': 'call_Lx7A8T6yHUuVdpowLnwY8DSl', 'function': {'arguments': '{"number": 8}', 'name': 'increment_number'}, 'type': 'function'}, {'id': 'call_LB3lQGDfsrL8pSyPk5BoR2RV', 'function': {'arguments': '{"number": 9}', 'name': 'increment_number'}, 'type': 'function'}]}}]}
+```
+
+**Environment**
+- AutoGen: `0.5.7`
+- Python: `3.11`
+- Model Client: `OpenAIChatCompletionClient` (`gpt-4o`)
+
+Thanks for your support!
+
+
+### Which packages was the bug in?
+
+Python Extensions (autogen-ext)
+
+### AutoGen library version.
+
+Python 0.5.7
+
+### Other library version.
+
+_No response_
+
+### Model used
+
+gpt-4o-2024-11-20
+
+### Model provider
+
+OpenAI
+
+### Other model provider
+
+_No response_
+
+### Python version
+
+3.11
+
+### .NET version
+
+None
+
+### Operating system
+
+MacOS

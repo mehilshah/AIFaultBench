@@ -1,0 +1,108 @@
+# recovered-from-issue: https://github.com/browser-use/browser-use/issues/3970
+
+TITLE
+Bug: ...sensitive_data parameter
+
+BODY
+### Browser Use Version
+
+0.11.1-0.11.5
+
+### Bug Description, Steps to Reproduce, Screenshots
+
+when used sensitive_data with task agent is inputting literal placeholder user_name,pass_word instead of actual value given
+
+### Failing Python Code
+
+```python
+import asyncio
+from browser_use import Agent, ChatGoogle,ChatOpenAI
+from dotenv import load_dotenv
+import os
+os.environ['ANONYMIZED_TELEMETRY'] = "false"
+load_dotenv()
+GEMINI_API_KEY = ""
+
+sensitive_data_new = {
+    'user_name': 'learner@gmail.com',
+    'pass_word': 'learner'
+}
+task='''
+1. Log into https://applications.webomates.com/elearning/ put the secure information in the relevant fields with username user_name and password pass_word and ROLE-learner and generate javaseleniumtestng  code for automation for steps performed
+'''
+from browser_use import Agent, Browser
+browser = Browser(wait_between_actions=2.0)  # 1 second wait
+
+
+agent = Agent(
+    task=task,
+    sensitive_data=sensitive_data_new,
+    browser=browser,
+    save_conversation_path="./130/conversations",
+    # available_file_paths=['./browser_use_data/results.md'],
+    extended_system_prompt="always use exact placeholder value from sensitive_data.",
+    use_vision=False,
+    llm=ChatGoogle(model='gemini-2.5-flash', api_key="")
+)
+
+async def main():
+    await agent.run()
+
+asyncio.run(main())
+```
+
+### LLM Model
+
+gemini-2.5-flash
+
+### Operating System & Browser Versions
+
+windows-11
+
+### Full DEBUG Log Output
+
+```shell
+INFO     [Agent] Starting a browser-use agent with version 0.11.5, with provider=google and model=gemini-2.5-flash
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 1:
+INFO     [Agent]   👍 Eval: Agent initialized, no previous action to evaluate. Verdict: Success
+INFO     [Agent]   🧠 Memory: Initialized with the task to generate a Java Selenium TestNG script. The first step involves navigating to a URL and logging in.
+INFO     [Agent]   🎯 Next goal: Navigate to the application URL and then proceed with the login steps.      
+INFO     [Agent]   ▶️  [1/2] write_file: file_name: todo.md, content: # Selenium Java TestNG Script Generatioon Task
+
+## Goal: Generate a complete, runnable Java-based Selenium version 4 TestNG script for the given manual..., append: False, trailing_newline: True, leading_newline: False
+INFO     [tools] 💾 Data written to file todo.md successfully. File location: C:\Users\hp\AppData\Local\Temp\browser_use_agent_0697b392-9a88-788d-8000-6c945dd3c0ae_1769683241\browseruse_agent_data\todo.md
+INFO     [Agent]   ▶️  [2/2] navigate: url: https://applications.webomates.com/elearning/, new_tab: False
+INFO     [tools] 🔗 Navigated to https://applications.webomates.com/elearning/
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 2:
+INFO     [Agent]   👍 Eval: Successfully navigated to the application URL. Verdict: Success
+INFO     [Agent]   🧠 Memory: Navigated to the application URL and am now on the login screen, ready to input credentials.
+INFO     [Agent]   🎯 Next goal: Input the username, password, select the role, and click the login button to log into the application.
+INFO     [Agent]   ▶️  [1/3] input: index: 5, text: user_name, clear: True
+INFO     [BrowserSession] ⌨️ Typed <sensitive> into element with index 5
+INFO     [Agent]   ▶️  [2/3] input: index: 6, text: pass_word, clear: True
+INFO     [BrowserSession] ⌨️ Typed <sensitive> into element with index 6
+INFO     [Agent]   ▶️  [3/3] select_dropdown: index: 7, text: Learner
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 3:
+INFO     [Agent]   👍 Eval: Successfully input the username, password, and selected the role. Verdict: Success
+INFO     [Agent]   🧠 Memory: Successfully navigated to the login page, entered username 'user_name', password 'pass_word', and selected 'Learner' role. The next action is to click the login button.
+INFO     [Agent]   🎯 Next goal: Click the 'Log In' button to complete the login process, then generate the Java Selenium TestNG script.
+INFO     [Agent]   ▶️   click: index: 11
+INFO     [tools] 🖱️ Clicked input type=submit id=login
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 4:
+WARNING  [BrowserSession] [SessionManager] Agent focus target 87327C20... detached! Current focus: None (already cleared). Auto-recovering by switching to another target...
+WARNING  [BrowserSession] [SessionManager] No tabs remain! Creating new tab for agent...
+WARNING  [BrowserSession] Cannot navigate - browser not connected
+ERROR    [BrowserSession] [SessionManager] ❌ Error during agent_focus recovery: RuntimeError: {'code': -32000, 'message': 'Failed to open new tab - no browser is open'}
+INFO     [Agent]   ⚠️ Eval: Attempted to click the login button, but the login failed with an 'Incorrect userrname or password' message. Verdict: Failure
+INFO     [Agent]   🧠 Memory: Successfully navigated to the login page, input username 'user_name', password 'pass_word', and selected 'Learner' role. However, the login attempt was unsuccessful. The task cannot proceed without successful authentication.
+INFO     [Agent]   🎯 Next goal: Report the login failure to the user and terminate the task as per the instructions.
+INFO     [Agent]   ▶️  [1/2] replace_file: file_name: todo.md, old_str: - [ ] Log into the application with uusername `user_name` and password `pass_word`, new_str: - [x] Log into the application with username `user_name` and password `pass_word` (Failed)
+```

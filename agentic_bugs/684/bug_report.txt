@@ -1,0 +1,132 @@
+# recovered-from-issue: https://github.com/langflow-ai/langflow/issues/14227
+
+TITLE
+Failure to start 1.11.0 in Kubernetes
+
+BODY
+### Bug Description
+
+After upgrading to 1.11.0, Langflow back end will not start when running in Kubernetes. I'm using the IDE Helm chart (version 0.1.2) to run Langflow. The langflow-service-0 pod fails to start with the following stack trace
+```
+Traceback (most recent call last):
+  File "/app/.venv/bin/langflow", line 10, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/app/.venv/lib64/python3.14/site-packages/langflow/langflow_launcher.py", line 30, in main
+    from langflow.__main__ import main as langflow_main
+  File "/app/.venv/lib64/python3.14/site-packages/langflow/__main__.py", line 56, in <module>
+    from langflow.main import setup_app
+  File "/app/.venv/lib64/python3.14/site-packages/langflow/main.py", line 30, in <module>
+    from langflow.api.router import router
+  File "/app/.venv/lib64/python3.14/site-packages/langflow/api/router.py", line 8, in <module>
+    from langflow.api.v1 import (
+    ...<32 lines>...
+    )
+  File "/app/.venv/lib64/python3.14/site-packages/langflow/api/v1/__init__.py", line 17, in <module>
+    from langflow.api.v1.knowledge_bases import router as knowledge_bases_router
+  File "/app/.venv/lib64/python3.14/site-packages/langflow/api/v1/knowledge_bases.py", line 29, in <module>
+    from langflow.api.utils import CurrentActiveUser, ingestion_run_service, knowledge_base_service
+  File "/app/.venv/lib64/python3.14/site-packages/langflow/api/utils/knowledge_base_service.py", line 34, in <module>
+    from langflow.services.memory_base.embedding_helpers import infer_embedding_provider
+  File "/app/.venv/lib64/python3.14/site-packages/langflow/services/memory_base/__init__.py", line 1, in <module>
+    from langflow.services.memory_base.service import MemoryBaseService
+  File "/app/.venv/lib64/python3.14/site-packages/langflow/services/memory_base/service.py", line 35, in <module>
+    from langflow.services.memory_base.ingestion import (
+        cancel_active_jobs,
+    )
+  File "/app/.venv/lib64/python3.14/site-packages/langflow/services/memory_base/ingestion.py", line 36, in <module>
+    from langflow.services.memory_base.task import IngestionRequest, ingest_memory_task
+  File "/app/.venv/lib64/python3.14/site-packages/langflow/services/memory_base/task.py", line 51, in <module>
+    from langflow.services.memory_base.preprocessing import DEFAULT_KILL_PHRASE, run_preprocessing
+  File "/app/.venv/lib64/python3.14/site-packages/langflow/services/memory_base/preprocessing.py", line 20, in <module>
+    from lfx.components.models import LanguageModelComponent
+  File "/app/.venv/lib64/python3.14/site-packages/lfx/components/models/__init__.py", line 11, in <module>
+    from lfx.components.models_and_agents import *  # noqa: F403
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1429, in _handle_fromlist
+  File "<frozen importlib._bootstrap>", line 1431, in _handle_fromlist
+  File "/app/.venv/lib64/python3.14/site-packages/lfx/components/models_and_agents/__init__.py", line 46, in __getattr__
+    result = import_mod(attr_name, _dynamic_imports[attr_name], __spec__.parent)
+  File "/app/.venv/lib64/python3.14/site-packages/lfx/utils/lazy_import.py", line 44, in import_mod
+    module = import_module(f".{module_name}", package=package)
+  File "/usr/lib64/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib64/python3.14/site-packages/lfx/components/models_and_agents/agent.py", line 51, in <module>
+    from lfx.components.helpers import CalculatorComponent, CurrentDateComponent
+  File "<frozen importlib._bootstrap>", line 1431, in _handle_fromlist
+  File "/app/.venv/lib64/python3.14/site-packages/lfx/components/helpers/__init__.py", line 108, in __getattr__
+    from lfx.components import utilities
+  File "<frozen importlib._bootstrap>", line 1431, in _handle_fromlist
+  File "/app/.venv/lib64/python3.14/site-packages/lfx/components/__init__.py", line 361, in __getattr__
+    _discover_components_from_module(module_name)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/app/.venv/lib64/python3.14/site-packages/lfx/components/__init__.py", line 221, in _discover_components_from_module
+    module = import_mod(module_name, "__module__", __spec__.parent)
+  File "/app/.venv/lib64/python3.14/site-packages/lfx/utils/lazy_import.py", line 38, in import_mod
+    result = import_module(f".{attr_name}", package=package)
+  File "/usr/lib64/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib64/python3.14/site-packages/lfx/components/mem0/__init__.py", line 13, in <module>
+    sys.modules[__name__] = importlib.import_module("lfx_bundles.mem0")
+                            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib64/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib64/python3.14/site-packages/lfx_bundles/mem0/__init__.py", line 1, in <module>
+    from .mem0_chat_memory import Mem0MemoryComponent
+  File "/app/.venv/lib64/python3.14/site-packages/lfx_bundles/mem0/mem0_chat_memory.py", line 15, in <module>
+    _mem0 = importlib.import_module("mem0")
+  File "/usr/lib64/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib64/python3.14/site-packages/mem0/__init__.py", line 5, in <module>
+    from mem0.client.main import AsyncMemoryClient, MemoryClient  # noqa
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib64/python3.14/site-packages/mem0/client/main.py", line 11, in <module>
+    from mem0.client.project import AsyncProject, Project
+  File "/app/.venv/lib64/python3.14/site-packages/mem0/client/project.py", line 9, in <module>
+    from mem0.memory.telemetry import capture_client_event
+  File "/app/.venv/lib64/python3.14/site-packages/mem0/memory/telemetry.py", line 12, in <module>
+    from mem0.memory.setup import get_or_create_user_id
+  File "/app/.venv/lib64/python3.14/site-packages/mem0/memory/setup.py", line 12, in <module>
+    os.makedirs(mem0_dir, exist_ok=True)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 236, in makedirs
+OSError: [Errno 30] Read-only file system: '/opt/app-root/src/.mem0'
+```
+
+I have no extra volumes/volumeMounts than what are defined in the Helm chart.
+
+### Reproduction
+
+1. Start Langflow 1.11.0 using the Langflow IDE Helm chart.
+
+### Expected behavior
+
+Langflow starts and runs
+
+### Who can help?
+
+@italojohnny 
+
+### Operating System
+
+Docker
+
+### Langflow Version
+
+1.11.0
+
+### Python Version
+
+None
+
+### Screenshot
+
+_No response_
+
+### Flow File
+
+_No response_

@@ -1,0 +1,9 @@
+annotated-types==0.8.0
+jsonref==1.1.0
+opentelemetry-api==1.44.0
+pillow==12.3.0
+protobuf==5.29.6
+pydantic==2.13.4
+pydantic_core==2.46.4
+typing-extensions==4.16.0
+typing-inspection==0.4.2

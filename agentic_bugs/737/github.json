@@ -1,0 +1,56 @@
+{
+  "owner": "modelcontextprotocol",
+  "repo": "python-sdk",
+  "number": 1967,
+  "html_url": "https://github.com/modelcontextprotocol/python-sdk/issues/1967",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "ClosedResourceError During MCP Stateless Server Shutdown When Sending Log Messages",
+  "author": "jonfinerty",
+  "created_at": "2026-01-27T20:55:08Z",
+  "updated_at": "2026-03-09T17:47:29Z",
+  "closed_at": "2026-03-09T17:47:29Z",
+  "labels": [
+    "bug",
+    "needs repro"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 3,
+    "+1": 3,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 40.87,
+  "fix": {
+    "closing_commit": "c1fe08c06b7d6289f4ae0123e0eec4c6d8ee59c5",
+    "linked_prs": [],
+    "best_guess_fix_commit": "c1fe08c06b7d6289f4ae0123e0eec4c6d8ee59c5",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:06:52.339508+00:00",
+  "comments": [
+    {
+      "author": "maxisbey",
+      "created_at": "2026-01-28T12:09:55Z",
+      "body": "Could you please provide a minimal reproducible example code snippet we can run to get the error?"
+    },
+    {
+      "author": "felixweinberger",
+      "created_at": "2026-01-28T18:07:31Z",
+      "body": "thanks for the detailed stack trace. this does look like a distinct race from #1384 \u2014 the write stream is getting closed before the log notification can be sent.\n\ncan you share a minimal reproduction when you get one? ideally a small script we can run to trigger the shutdown race. info about your transport setup (streamable HTTP?) and what's triggering the log messages during shutdown would help too."
+    },
+    {
+      "author": "tokoyoda",
+      "created_at": "2026-02-04T01:38:33Z",
+      "body": "I hit what appears to be the same `ClosedResourceError` on mcp 1.26.0 with streamable-http transport (stateful mode). The crash occurs reliably whenever the MCP client disconnects while a long-running tool handler is still in progress. Below is a minimal reproduction and root cause analysis.\n\n### Reproduction\n\n```python\n#!/usr/bin/env python3\n# /// script\n# requires-python = \"==3.14.*\"\n# dependencies = [\"mcp==1.26.0\", \"httpx==0.28.1\"]\n# ///\n\"\"\"\nReproduce ClosedResourceError when DELETE is sent during in-flight tool handler.\n\n    uv run reproduce_minimal.py\n\nhttps://github.com/modelcontextprotocol/python-sdk/issues/1967\n\"\"\"\n\nimport asyncio\nimport httpx\nfrom mcp.server import FastMCP\n\n# ---------- Server ----------\n\nserver = FastMCP(\"repro-server\", host=\"localhost\", port=9999)\n\n\n@server.tool(description=\"Simulates a long-running operation\")\nasync def slow_task(seconds: float = 3.0) -> dict:\n    print(f\"[server] slow_task: sleeping {seconds}s ...\")\n    await asyncio.sleep(seconds)\n    print(\"[server] slow_task: done, sending response ...\")\n    return {\"ok\": True}\n\n\n# ---------- Client ----------\n\nBASE = \"http://localhost:9999/mcp\"\nH = {\"Accept\": \"application/json, text/event-stream\", \"Content-Type\": \"application/json\"}\n\n\nasync def run_client():\n    \"\"\"Init session -> call slow_task -> DELETE mid-flight -> observe crash.\"\"\"\n    await asyncio.sleep(2)  # wait for server startup\n\n    async with httpx.AsyncClient(timeout=30) as c:\n        # 1. Initialize\n        r = await c.post(BASE, json={\n            \"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"initialize\",\n            \"params\": {\n                \"protocolVersion\": \"2024-11-05\",\n                \"capabilities\": {},\n                \"clientInfo\": {\"name\": \"repro\", \"version\": \"0.1\"},\n            },\n        }, headers=H)\n        sid = r.headers[\"mcp-session-id\"]\n        print(f\"[client] session: {sid[:12]}...\")\n        sh = {**H, \"mcp-session-id\": sid}\n\n        # 2. Initialized notification\n        await c.post(BASE, json={\"jsonrpc\": \"2.0\", \"method\": \"notifications/initialized\"}, headers=sh)\n\n    # 3. Call slow_task (fire-and-forget with short timeout)\n    async def call_slow():\n        async with httpx.AsyncClient(timeout=httpx.Timeout(1.0)) as c:\n            try:\n                await c.post(BASE, json={\n                    \"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/call\",\n                    \"params\": {\"name\": \"slow_task\", \"arguments\": {\"seconds\": 3}},\n                }, headers=sh)\n            except httpx.ReadTimeout:\n                pass  # expected\n\n    asyncio.create_task(call_slow())\n    await asyncio.sleep(1)  # let task start on server\n\n    # 4. DELETE -> terminate session while slow_task is still running\n    print(\"[client] sending DELETE to terminate session mid-task ...\")\n    async with httpx.AsyncClient(timeout=5) as c:\n        r = await c.delete(BASE, headers=sh)\n        print(f\"[client] DELETE response: {r.status_code}\")\n\n    # 5. Wait for server to hit the error\n    print(\"[client] waiting for slow_task to finish on server ...\")\n    await asyncio.sleep(3)\n    print(\"[client] done\")\n\n\n# ---------- Main ----------\n\nasync def main():\n    import threading\n    t = threading.Thread(target=lambda: server.run(transport=\"streamable-http\"), daemon=True)\n    t.start()\n    await run_client()\n\nasyncio.run(main())\n```\n\n### Root Cause\n\n`terminate()` closes `_write_stream` immediately without waiting for in-flight handlers. When a handler finishes and calls `respond()` \u2192 `_send_response()` \u2192 `_write_stream.send()`, it raises `ClosedResourceError` which propagates unhandled through the `TaskGroup`, crashing the session.\n\n1. Client sends **DELETE** \u2192 [`_handle_delete_request`](https://github.com/modelcontextprotocol/python-sdk/blob/v1.26.0/src/mcp/server/streamable_http.py#L497) \u2192 [`terminate()`](https://github.com/modelcontextprotocol/python-sdk/blob/v1.26.0/src/mcp/server/streamable_http.py#L513) closes all streams\n2. [`_receive_loop()`](https://github.com/modelcontextprotocol/python-sdk/blob/v1.26.0/src/mcp/shared/session.py#L250) exits its `async with` block \u2192 `_write_stream` closed\n3. [`Server.run()`](https://github.com/modelcontextprotocol/python-sdk/blob/v1.26.0/src/mcp/server/lowlevel/server.py#L575) `TaskGroup` waits for in-flight handlers\n4. Handler calls [`message.respond()`](https://github.com/modelcontextprotocol/python-sdk/blob/v1.26.0/src/mcp/server/lowlevel/server.py#L693) \u2192 [`_send_response()`](https://github.com/modelcontextprotocol/python-sdk/blob/v1.26.0/src/mcp/shared/session.py#L226) \u2192 `_write_stream.send()` \u2192 **`ClosedResourceError`**\n\nThe existing [`ClosedResourceError` catch](https://github.com/modelcontextprotocol/python-sdk/blob/v1.26.0/src/mcp/shared/session.py#L323) in `_receive_loop` only guards the **read** side, not the write path used by handlers.\n\nNote: [`streamablehttp_client`](https://github.com/modelcontextprotocol/python-sdk/blob/v1.26.0/src/mcp/client/streamable_http.py#L346) defaults to `terminate_on_close=True`, so every normal client disconnect sends DELETE \u2014 meaning any long-running tool handler will crash the session.\n"
+    }
+  ]
+}

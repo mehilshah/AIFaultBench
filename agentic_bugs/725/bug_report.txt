@@ -1,0 +1,323 @@
+# recovered-from-issue: https://github.com/crewAIInc/crewAI/issues/5544
+
+TITLE
+[BUG] Checkpointing + guardrail retry incompatible with Pydantic outputs in Flow
+
+BODY
+### Description
+
+When using CrewAI Flows with Pydantic state and Crew tasks using output_pydantic, two issues occur:
+1. Checkpointing fails when the Flow state contains Pydantic models.
+2. Guardrail retry breaks when a task uses output_pydantic, causing a TaskOutput type mismatch during retry.
+
+These issues make it difficult to reliably use structured outputs in Flows with guardrails enabled.
+
+### Steps to Reproduce
+
+**I - Checkpointing issue**
+
+1. Define a Flow state using a Pydantic model
+2. Enable checkpointing with CheckpointConfig
+3. Run a flow with multiple executions
+
+**II - Guardrail retry issue**
+
+1. Define a task with output_pydantic
+2. Add a guardrail that may return (False, feedback)
+3. Trigger a guardrail failure
+4. Observe retry execution
+
+### Expected behavior
+
+### Expected Behavior
+
+**I - Checkpointing**
+
+Flow state containing Pydantic models should be serialized correctly via state.model_dump(mode="json").
+
+**II - Guardrail retry**
+
+When a guardrail fails:
+- Feedback should be injected into the next LLM call
+- Task should retry successfully using structured output
+
+### Actual behavior
+
+**I - Checkpointing failure**
+```
+PydanticSerializationError: Unable to serialize unknown type:
+<class 'pydantic._internal._model_construction.ModelMetaclass'>
+```
+Checkpointing fails when trying to serialize Flow state containing Pydantic models.
+
+**II - Guardrail retry failure**
+
+When a guardrail fails once, retry breaks with:
+```
+ValidationError for TaskOutput
+raw
+Input should be a valid string
+input_value=FamilyList(...)
+```
+The retry mechanism passes a Pydantic object where a string is expected.
+
+### Screenshots/Code snippets
+
+### Agents (agents.yaml)
+
+```
+generator:
+  role: "Family generator"
+  goal: "Generate a list of families with structured data"
+  backstory: "Expert in generating synthetic family datasets"
+```
+
+### Tasks (tasks.yaml)
+
+```
+generation_task:
+  description: >
+    Generate EXACTLY ONE FAMILY with {sizes} members.
+    Each family must include: id, name, size, members
+    Each member must include: id, name, role, age, sports
+    Output must be valid JSON matching the expected structure.
+  expected_output: >
+    A FamilyList containing exactly one Family with {sizes} members.
+  agent: generator
+```
+
+### Crew (family_crew.py)
+
+```
+from crewai import Agent, Crew, Process, Task
+from crewai.agents.agent_builder.base_agent import BaseAgent
+from crewai.project import CrewBase, agent, crew, task
+
+from sporty_family_flow.models.family import FamilyList
+from sporty_family_flow.guardrails.family_guardrails import is_family_guardrail
+
+
+@CrewBase
+class FamilyCrew:
+    """Family Crew"""
+
+    agents: list[BaseAgent]
+    tasks: list[Task]
+
+    agents_config = "config/agents.yaml"
+    tasks_config = "config/tasks.yaml"
+
+    @agent
+    def generator(self) -> Agent:
+        return Agent(
+            config=self.agents_config["generator"]
+        )
+
+    @task
+    def generation_task(self) -> Task:
+        return Task(
+            config=self.tasks_config["generation_task"],
+            output_pydantic=FamilyList,
+            guardrails=[is_family_guardrail],
+        )
+
+    @crew
+    def crew(self) -> Crew:
+        return Crew(
+            agents=self.agents,  # Automatically created by the @agent decorator
+            tasks=self.tasks,  # Automatically created by the @task decorator
+            process=Process.sequential,
+        )
+```
+
+###  Guardrail (family_guardrails.py)
+
+```
+from sporty_family_flow.models.family import FamilyList
+
+def is_family_guardrail(output):
+    families = output.pydantic.families
+    for family in families:
+        if family.size <= 1:
+            return (False, f"Family {family.name} has an invalid size: {family.size}. Size must be greater than 1. Add members to this family.")
+    return (True, output)
+```
+
+### Pydantic Model (family.py)
+
+```
+from pydantic import BaseModel
+from typing import List
+
+
+class Member(BaseModel):
+    member_id: int
+    name: str
+    role: str
+    age: int
+    sports: List[str]
+
+
+class Family(BaseModel):
+    family_id: int
+    name: str
+    size: int
+    members: List[Member]
+
+
+class FamilyList(BaseModel):
+    families: List[Family]
+```
+
+### Flow (main.py)
+
+```
+from pydantic import BaseModel
+from crewai.flow import Flow, listen, start
+from crewai import CheckpointConfig
+from crewai.state import JsonProvider
+
+import sporty_family_flow.listeners
+from sporty_family_flow.crews.family_crew.family_crew import FamilyCrew
+from sporty_family_flow.models.family import Family, FamilyList
+
+
+class FamilyState(BaseModel):
+    families: list[Family] = []
+
+
+class FamilyFlow(Flow[FamilyState]):
+
+    @start()
+    def get_input(self):
+        return(input("Enter the sizes of your families: "))
+
+    @listen(get_input)
+    def create_families(self, sizes: str):
+        result = (FamilyCrew().crew().kickoff(inputs={"sizes": sizes}))
+        families = FamilyList.model_validate_json(result.raw).families
+        self.state.families = families
+
+    @listen(create_families)
+    def print_families(self):
+        for family in self.state.families:
+            log = f"""
+            ----- Family {family.family_id} ----- \n\n
+            Family Name: {family.name}\n
+            Size: {family.size}\n
+            MEMBERS: \n
+            """
+            for member in family.members:
+                log += f"""
+                \t Member: {member.name} \n
+                \t Age: {member.age} \n
+                \t Role: {member.role} \n
+                \t Sports: {', '.join(member.sports)}
+                """
+            print(log)
+
+
+def kickoff():
+    cp_config = CheckpointConfig(
+        location="./.checkpoints",
+        on_events=["method_execution_finished"],
+        provider=JsonProvider(),
+        max_checkpoints=5
+    )
+    family_flow = FamilyFlow(checkpoint=cp_config)
+    family_flow.kickoff()
+
+
+def plot():
+    FamilyFlow().plot()
+
+if __name__ == "__main__":
+    kickoff()
+
+```
+
+### Operating System
+
+Ubuntu 24.04
+
+### Python Version
+
+3.12
+
+### crewAI Version
+
+1.14.2
+
+### crewAI Tools Version
+
+---
+
+### Virtual Environment
+
+Venv
+
+### Evidence
+
+**General remarks:**
+- Checkpointing fails during state.model_dump(mode="json")
+- Guardrail retry fails during TaskOutput reconstruction
+- Issue occurs only when:
+    - output_pydantic is enabled
+    - guardrail returns (False, feedback)
+
+**I - Checkpoiting warning**
+
+```
+Auto-checkpoint failed for event method_execution_finished
+pydantic_core._pydantic_core.PydanticSerializationError: Unable to serialize unknown type: <class 'pydantic._internal._model_construction.ModelMetaclass'>
+```
+
+**II - Guardrail blocking error**
+
+```
+pydantic_core._pydantic_core.ValidationError: 1 validation error for TaskOutput
+raw
+  Input should be a valid string [type=string_type, input_value=FamilyList(families=[Fami...occer', 'Swimming'])])]), input_type=FamilyList]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+An error occurred while running the flow: Command '['uv', 'run', 'kickoff']' returned non-zero exit status 1.
+```
+
+### Possible Solution
+
+I was able to partially work around the issue by avoiding strict reliance on CrewAI’s internal Pydantic → JSON pipeline and manually controlling schema + parsing.
+
+**1. Explicit schema injection in prompt**
+
+Instead of relying on output_pydantic, I inject the JSON schema manually:
+```
+expected_output = f"""
+You MUST return valid JSON matching this schema:
+
+{json.dumps(FamilyList.model_json_schema(), indent=2)}
+
+Do not include explanations or markdown.
+"""
+```
+This bypasses part of CrewAI’s internal formatting pipeline.
+
+**2. Manual parsing of output**
+
+Instead of relying on result.pydantic, I manually parse:
+`families = FamilyList.model_validate_json(result.raw).families`
+
+### Additional context
+
+It seems that:
+
+**1. Checkpointing issue**
+
+Pydantic model types inside Flow state are not properly serialized, possibly due to internal handling of ModelMetaclass instead of instances.
+
+**2. Guardrail retry issue**
+
+During retry, CrewAI reconstructs TaskOutput and incorrectly passes a Pydantic object into the raw field, which expects a string, causing a validation failure.
+
+This suggests inconsistent handling between:
+- raw output (string)
+- parsed output (Pydantic model)
+- retry pipeline

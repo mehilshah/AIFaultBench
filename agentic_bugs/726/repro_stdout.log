@@ -1,0 +1,1 @@
+BUG REPRODUCED: dict[str, int] requires an unwanted response wrapper

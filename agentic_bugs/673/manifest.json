@@ -1,0 +1,12 @@
+{
+  "bug_id": "673",
+  "bug_dir": "673",
+  "issue_url": "https://github.com/agno-agi/agno/issues/8235",
+  "commit_hash": "1a32f1651b0427ed8c70aa6123a5a93610d8c3d0",
+  "library_name": "agno",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "agno-agi/agno@1a32f1651b0427ed8c70aa6123a5a93610d8c3d0",
+  "codebase_present": "false",
+  "standardized_dir": "../673"
+}

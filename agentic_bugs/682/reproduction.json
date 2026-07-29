@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned commit e615cc66de7ae8e356d7c37b98200016a32e1d0f contains the in-place rewrite in both Azure provider modules.",
+    "Final run exited 1 and printed: `BUG REPRODUCED: both Azure providers mutate caller content and raise AttributeError for multimodal lists`.",
+    "The repro asserts the caller message changes to `my ai helps me schedule meetings` and catches `AttributeError: 'list' object has no attribute 'replace'` for both providers."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh and checked out the pinned commit.",
+    "Created .venv, installed pinned dependencies, and installed codebase editable.",
+    "Ran the offline fake-client repro and captured final logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

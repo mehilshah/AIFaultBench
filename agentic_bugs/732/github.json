@@ -1,0 +1,51 @@
+{
+  "owner": "mem0ai",
+  "repo": "mem0",
+  "number": 6258,
+  "html_url": "https://github.com/mem0ai/mem0/issues/6258",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Chroma vector store silently downgrades unknown filter operators to equality",
+  "author": "HrushiYadav",
+  "created_at": "2026-07-12T14:47:57Z",
+  "updated_at": "2026-07-23T09:43:13Z",
+  "closed_at": "2026-07-23T09:43:13Z",
+  "labels": [
+    "bug",
+    "P1-high"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 10.79,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:43.656482+00:00",
+  "comments": [
+    {
+      "author": "kartik-mem0",
+      "created_at": "2026-07-13T11:48:58Z",
+      "body": "Thanks for the report and the clean repro one-liner.\n\n## Triage Notes\n\n**What we've established:**\n- `ChromaDB._generate_where_clause`'s inner `convert_condition` (`mem0/vector_stores/chroma.py:267-301`) maps known operators (`eq`/`ne`/`gt`/`gte`/`lt`/`lte`/`in`/`nin`/`contains`/`icontains`) to Chroma's `$`-prefixed equivalents; anything else falls into the `else` branch at lines 295-297 and is silently rewritten to `{\"$eq\": val}` \u2014 so `{\"age\": {\"betwen\": [10, 20]}}` quietly becomes `{\"age\": {\"$eq\": [10, 20]}}` with no error or warning.\n- This is a real inconsistency between backends, not just a hypothetical: Qdrant's filter handling (`mem0/vector_stores/qdrant.py:332-335`) raises `ValueError(\"Unsupported filter operator(s) for field ...\")` for the same class of input, so Chroma is the outlier that fails silently instead of fast.\n- Because this covers any operator the shared filter DSL doesn't explicitly enumerate for Chroma, it's also a forward-compatibility trap: a new operator added elsewhere to the filter surface (or a simple typo) would silently misfilter on Chroma specifically, with nothing flagging it.\n\n**Reproduction:** Confirmed \u2014 `ChromaDB._generate_where_clause({\"age\": {\"betwen\": [10, 20]}})` on current `main` returns `{\"age\": {\"$eq\": [10, 20]}}` exactly as reported.\n\n**Root cause:** The `else` branch of `convert_condition` in `_generate_where_clause` (`mem0/vector_stores/chroma.py:295-297`) silently downgrades any unrecognized filter operator to equality instead of raising.\n\n**Severity:** P1. It's a silent wrong-result bug \u2014 `search()`/`list()` calls with a malformed or unsupported operator return incorrect results with zero signal to the caller, in a widely-used self-hosted vector store backend, and it's a live footgun against future filter-DSL additions.\n\n**Next step:** PR #6259 is open against this issue.\n"
+    },
+    {
+      "author": "HrushiYadav",
+      "created_at": "2026-07-23T09:43:12Z",
+      "body": "Closing this. The _generate_where_clause refactor reworked this area (fixing the range-operator overwrite bug) and intentionally keeps the unknown-operator equality fallback, documented in the new code comments. Closing #6259 alongside. Thanks!"
+    }
+  ]
+}

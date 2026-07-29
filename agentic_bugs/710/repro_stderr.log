@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/710/repro.py", line 26, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/710/repro.py", line 14, in main
+    ChatAgent(single_iteration=True)
+TypeError: ChatAgent.__init__() got an unexpected keyword argument 'single_iteration'

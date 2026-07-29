@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout HEAD: ba32809e730d9c35969a4d899fde0305344638a1.",
+    "Final run exited 1 and printed: BUG REPRODUCED: gpt-5-chat was classified as a reasoning model: OpenAI's reasoning models require passing temperature=1.0 or None and max_tokens >= 16000 or None..."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh and verified the pinned commit.",
+    "Created .venv, installed locked dependencies, and installed the checkout editable.",
+    "Ran the offline constructor-only repro for azure/gpt-5-chat."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

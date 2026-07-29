@@ -1,0 +1,45 @@
+{
+  "owner": "browser-use",
+  "repo": "browser-use",
+  "number": 4769,
+  "html_url": "https://github.com/browser-use/browser-use/issues/4769",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Bug: when using LMStudio nvidia/nemotron-3-nano-4b agent prints invalid json error",
+  "author": "mstrYoda",
+  "created_at": "2026-04-29T19:47:58Z",
+  "updated_at": "2026-04-29T19:59:26Z",
+  "closed_at": "2026-04-29T19:59:26Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.01,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:20.589372+00:00",
+  "comments": [
+    {
+      "author": "mstrYoda",
+      "created_at": "2026-04-29T19:59:26Z",
+      "body": "When I disable reasoning in model parameters, it fixed."
+    }
+  ]
+}

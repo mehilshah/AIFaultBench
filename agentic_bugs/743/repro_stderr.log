@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/743/repro.py", line 57, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/743/repro.py", line 42, in main
+    strict_openai_compatible_endpoint(
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/743/repro.py", line 28, in strict_openai_compatible_endpoint
+    raise openai.UnprocessableEntityError("Error code: 422 - " + str(body), response=response, body=body)
+openai.UnprocessableEntityError: Error code: 422 - {'detail': [{'type': 'missing', 'loc': ['body', 'messages', 2, 'content'], 'msg': 'Field required', 'input': {'role': 'assistant', 'tool_calls': [{'id': 'call_1', 'function': {'arguments': '{"number": 5}', 'name': 'increment_number'}, 'type': 'function'}, {'id': 'call_2', 'function': {'arguments': '{"number": 6}', 'name': 'increment_number'}, 'type': 'function'}]}}]}

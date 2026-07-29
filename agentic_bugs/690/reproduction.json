@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Fresh environment with langgraph-api==0.7.6 reproduced the exact ImportError.",
+    "run_repro.sh exited 1; stdout contains the missing langgraph-runtime-postgres error and stderr is empty."
+  ],
+  "steps": [
+    "Started setup_codebase.sh; used the released package fallback after the full clone exceeded 331 MiB without checkout.",
+    "Created a fresh .venv from requirements.txt and ran run_repro.sh.",
+    "Validated reproduction.json schema and confirmed final logs match a repeat run."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

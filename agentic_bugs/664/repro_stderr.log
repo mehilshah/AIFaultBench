@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/664/repro.py", line 54, in <module>
+    raise AssertionError("streaming tool input was not normalized to a dict")
+AssertionError: streaming tool input was not normalized to a dict

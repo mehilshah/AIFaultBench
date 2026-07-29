@@ -1,0 +1,89 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/1799
+
+TITLE
+BUG: Premature validation of executor type in `CodeAgent` prevents subclassing.
+
+BODY
+<!--
+Thank you for reporting a bug!
+Please provide as much detail as possible to help us identify and fix the issue.
+-->
+**Problem**
+In `CodeAgent.__init__`, the executor type is validated **before** the executor is created.
+This makes it impossible to subclass `CodeAgent` and override `create_python_executor()` to implement a custom executor, because the initialization raises a `ValueError` as soon as a non-standard `executor_type` is provided.
+
+The validation logic should be inside `create_python_executor()` instead of the constructor.
+
+
+**Steps to reproduce**
+
+1. Subclass `CodeAgent` to define a custom executor.
+2. Pass a custom `executor_type` (e.g., `"my_executor"`) to the subclass.
+
+```python
+from smolagents import CodeAgent
+
+class CustomCodeAgent(CodeAgent):
+    def create_python_executor(self):
+        # Custom executor logic here
+        return MyCustomExecutor()
+
+agent = CustomCodeAgent(
+    tools=[],
+    model=my_model,
+    executor_type="my_executor",  # <- Raises error in __init__
+)
+```
+
+
+**Actual behavior and error logs**
+
+```shell
+ValueError: Unsupported executor type: my_executor
+```
+
+This happens even though the subclass overrides `create_python_executor()` and never relies on the base implementation.
+
+
+
+**Expected behavior**
+It should be possible to subclass `CodeAgent` and override `create_python_executor()` to support custom executors, without triggering a validation error in `__init__`.
+
+
+**Environment:**
+
+* OS: Win
+* Python version: 3.13
+* Package version: 1.22.0 (`pip show smolagents`)
+
+
+**Additional context (optional)**
+
+For now, there is two workarounds:
+- Totally override `__init__` in the subclass, and skip calling `super().__init__()`, which is not workable if you want to keep the base initialization logic.
+- Monkey-patch `__init__` or bypass/restore in the subclass to remove the validation logic, which is hacky and not very maintainable.
+```py
+from smolagents import CodeAgent
+
+class CustomCodeAgent(CodeAgent):
+    def __init__(self, *args, executor_type="my_executor", **kwargs):
+        if executor_type == "my_executor":
+            executor_type = "local"  # Bypass validation
+            super().__init__(*args, executor_type=executor_type, **kwargs) # To keep base init logic
+            self.executor_type = "my_executor"  # Restore custom type
+            self.python_executor = self.create_python_executor()
+
+    def create_python_executorself):
+        # Custom executor logic here
+        return MyCustomExecutor()
+```
+
+---
+
+### Checklist
+
+* [x] I have searched the existing issues and have not found a similar bug report.
+* [x] I have provided a minimal, reproducible example.
+* [x] I have provided the full traceback of the error.
+* [x] I have provided my environment details.
+* [x] I am willing to work on this issue and submit a pull request. (optional) PR #1800

@@ -1,0 +1,50 @@
+{
+  "owner": "agno-agi",
+  "repo": "agno",
+  "number": 8644,
+  "html_url": "https://github.com/agno-agi/agno/issues/8644",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug] Workflow._read_session() and Workflow.get_session() call async db.get_session() without await when using AsyncPostgresDb",
+  "author": "Taki224",
+  "created_at": "2026-06-30T09:25:41Z",
+  "updated_at": "2026-07-01T13:07:57Z",
+  "closed_at": "2026-07-01T13:07:36Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.15,
+  "fix": {
+    "closing_commit": "5de127b0d00a7571920e98bff059fefce9601dd1",
+    "linked_prs": [],
+    "best_guess_fix_commit": "5de127b0d00a7571920e98bff059fefce9601dd1",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T12:38:24.252728+00:00",
+  "comments": [
+    {
+      "author": "Taki224",
+      "created_at": "2026-06-30T12:30:00Z",
+      "body": "Thanks for looking at this. To clarify: **option 2 (raising `RuntimeError` in the sync helpers) is not an acceptable fix for us.**\n\nThe problem isn\u2019t that application code is calling `Workflow.get_session()` with an async DB by mistake \u2014 we use `AsyncPostgresDb` with `arun()`. The bug is that **Agno\u2019s own internal code paths still call `_read_session()` / `get_session()`** during workflow execution (e.g. session load/reload). Raising in those sync methods would crash workflows that are already configured correctly, without fixing the underlying sync/async mismatch inside the library.\n\nWhat we need is **option 1**: when `_has_async_db()` is true, sync session helpers should delegate to the existing async implementations (`_aread_session`, `aget_session`, etc.) \u2014 the same branching `_aread_session()` already has. Alternatively, audit and update all **internal** call sites to use the async API consistently."
+    },
+    {
+      "author": "harshsinha03",
+      "created_at": "2026-07-01T13:07:57Z",
+      "body": "Hey @Taki224, thank you for reporting this! The fix is merged, and we'll get the fix out in the next release. Thank you for using Agno!"
+    }
+  ]
+}

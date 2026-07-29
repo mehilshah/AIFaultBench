@@ -1,0 +1,133 @@
+# recovered-from-issue: https://github.com/camel-ai/camel/issues/3422
+
+TITLE
+[BUG] ChatAgent.__init__() got an unexpected keyword argument 'single_iteration'
+
+BODY
+### Required prerequisites
+
+- [x] I have read the documentation <https://camel-ai.github.io/camel/camel.html>.
+- [x] I have searched the [Issue Tracker](https://github.com/camel-ai/camel/issues) and [Discussions](https://github.com/camel-ai/camel/discussions) that this hasn't already been reported. (+1 or comment there if it has.)
+- [ ] Consider asking first in a [Discussion](https://github.com/camel-ai/camel/discussions/new).
+
+### What version of camel are you using?
+
+0.2.78
+
+### System information
+
+sys: 3.11.12 (main, Apr  9 2025, 08:55:55) [GCC 9.4.0] linux
+camel: 0.2.78
+
+### Problem description
+
+I was previously using camel 0.2.62 and oasis 0.2.3. When running the OASIS simulation with the OpenAI API, I encountered the error “OpenAI 400 when the same agent performs consecutive LLM tool calls.” After updating the camel version to 0.2.78, a new error appeared: “ChatAgent.__init__() got an unexpected keyword argument ‘single_iteration’.”
+
+### Reproducible example code
+
+The Python snippets:
+import pandas as pd
+from sklearn.model_selection import StratifiedShuffleSplit
+import asyncio
+import os
+import urllib3
+import logging
+import tiktoken
+import sqlite3
+from collections import defaultdict
+import random
+
+from camel.models import VLLMModel
+from camel.models import ModelFactory
+from camel.types import ModelPlatformType, ModelType
+from oasis.social_platform.platform import Platform
+from oasis.clock.clock import Clock
+
+import oasis
+from oasis import (ActionType, LLMAction, ManualAction, generate_twitter_agent_graph)
+
+# Define the model for the agents
+openai_model = ModelFactory.create(
+    model_platform=ModelPlatformType.DEEPSEEK,
+    model_type= ModelType.DEEPSEEK_CHAT,
+)
+
+# Define the available actions for the agents
+available_actions = [
+    ActionType.CREATE_POST,
+    ActionType.LIKE_POST,
+    ActionType.UNLIKE_POST,
+    #ActionType.CREATE_COMMENT,
+    ActionType.DO_NOTHING,
+    ActionType.REFRESH,
+]
+
+agent_graph = await generate_twitter_agent_graph(
+    profile_path="/root/OASIS/sample_agents_profile/sample_agents.csv",
+    model=openai_model,
+    available_actions=available_actions,
+)
+
+### Traceback
+
+```pytb
+TypeError                                 Traceback (most recent call last)
+Cell In[10], [line 24](vscode-notebook-cell:?execution_count=10&line=24)
+      8 available_actions = [
+      9     ActionType.CREATE_POST,
+     10     ActionType.LIKE_POST,
+   (...)     20     # ActionType.UNFOLLOW
+     21 ]
+     23 # 读取csv格式profile初始化智能体
+---> [24](vscode-notebook-cell:?execution_count=10&line=24) agent_graph = await generate_twitter_agent_graph(
+     25     profile_path="/root/OASIS/sample_agents_profile/sample_agents.csv",
+     26     model=openai_model,
+     27     available_actions=available_actions,
+     28 )
+     30 # 定义数据库路径
+     31 db_path = "/root/OASIS/deepseek_simulation/deepseek_wechat.db" # 试验新设置
+
+File ~/venv/lib/python3.11/site-packages/oasis/social_agent/agents_generator.py:640, in generate_twitter_agent_graph(profile_path, model, available_actions)
+    633     user_info = UserInfo(
+    634         name=agent_info["username"][agent_id],
+    635         description=agent_info["description"][agent_id],
+    636         profile=profile,
+    637         recsys_type='twitter',
+    638     )
+    639     print(user_info)
+--> [640](https://vscode-remote+ssh-002dremote-002b166-002e111-002e107-002e194.vscode-resource.vscode-cdn.net/root/OASIS/~/venv/lib/python3.11/site-packages/oasis/social_agent/agents_generator.py:640)     agent = SocialAgent(
+    641         agent_id=agent_id,
+    642         user_info=user_info,
+    643         model=model,
+    644         agent_graph=agent_graph,
+    645         available_actions=available_actions,
+    646     )
+    647     agent_graph.add_agent(agent)
+    649 return agent_graph
+
+File ~/venv/lib/python3.11/site-packages/oasis/social_agent/agent.py:106, in SocialAgent.__init__(self, agent_id, user_info, user_info_template, channel, model, agent_graph, available_actions, tools, single_iteration, interview_record)
+     99     self.action_tools = [
+    100         tool for tool in all_tools if tool.func.__name__ in [
+    101             a.value if isinstance(a, ActionType) else a
+    102             for a in available_actions
+    103         ]
+    104     ]
+    105 all_tools = (tools or []) + (self.action_tools or [])
+--> [106](https://vscode-remote+ssh-002dremote-002b166-002e111-002e107-002e194.vscode-resource.vscode-cdn.net/root/OASIS/~/venv/lib/python3.11/site-packages/oasis/social_agent/agent.py:106) super().__init__(system_message=system_message,
+    107                  model=model,
+    108                  scheduling_strategy='random_model',
+    109                  tools=all_tools,
+    110                  single_iteration=single_iteration)
+    111 self.interview_record = interview_record
+    112 self.agent_graph = agent_graph
+
+TypeError: ChatAgent.__init__() got an unexpected keyword argument 'single_iteration'
+```
+
+### Expected behavior
+
+_No response_
+
+### Additional context
+
+_No response_

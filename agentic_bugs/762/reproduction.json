@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "stdout: `BUG REPRODUCED: request captured typing.Any | None; stream captured __main__.MyDeps | None`",
+    "stderr was empty; checkout verified as `a6b2dbd68fa46287aa061f2dc726c9fd6cb870d2`; Temporal was `1.27.2`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and completed the pinned checkout.",
+    "Created `.venv`, installed `temporalio==1.27.2`, and installed editable checkout packages.",
+    "Captured the final failing `bash run_repro.sh` output in the required log files."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

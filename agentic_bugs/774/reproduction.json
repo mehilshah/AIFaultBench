@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at b2641ea3b775aac005736e688a8efef9c88e17b8; profile.py hard-codes `/tmp/browser-use-downloads-...`.",
+    "Final `bash run_repro.sh` exited 1; stdout: `OBSERVED BUG: FileExistsError [WinError 183] while creating \\tmp from hard-coded /tmp downloads path`.",
+    "`repro_stderr.log` is empty."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`.",
+    "Created `.venv`, installed pinned dependencies, and installed the checkout editable.",
+    "Ran and captured the deterministic Windows-semantics reproduction."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

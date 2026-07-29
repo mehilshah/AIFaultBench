@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout resolved to 73160209c3e60a8311f6e3402686d8982d735f83.",
+    "Final `bash run_repro.sh` exited 1 and printed: `BUG REPRODUCED: unsupported id leaked into system.0`.",
+    "Captured stderr ends: `AssertionError: Anthropic would reject this payload: system.0.id: Extra inputs are not permitted`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` to clone and check out the pinned revision.",
+    "Created `.venv`, installed pinned dependencies, and installed checkout versions of langchain-core and langchain-anthropic editable.",
+    "Ran the offline repro with a local Anthropic-client stub and captured final logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

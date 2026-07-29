@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "smolagents",
+  "number": 1799,
+  "html_url": "https://github.com/huggingface/smolagents/issues/1799",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "BUG: Premature validation of executor type in `CodeAgent` prevents subclassing.",
+  "author": "Lrakotoson",
+  "created_at": "2025-10-08T10:00:37Z",
+  "updated_at": "2025-10-10T07:06:22Z",
+  "closed_at": "2025-10-10T07:06:22Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.88,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:05:48.180888+00:00",
+  "comments": [
+    {
+      "author": "aymeric-roucher",
+      "created_at": "2025-10-10T07:06:22Z",
+      "body": "Solved by #1800 !"
+    }
+  ]
+}

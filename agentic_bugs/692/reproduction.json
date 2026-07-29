@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "`repro_stdout.log` contains: `OBSERVED BUG: get_graph() missing 1 required keyword-only argument: 'is_for_execution'`.",
+    "`pip check` reported `No broken requirements found.`"
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; its clone did not yield a checkout HEAD, so used the permitted released-package fallback.",
+    "Installed pinned issue-era LangGraph packages in `.venv`.",
+    "Executed the real `Threads.State.list` history path with only local persistence/auth stubs.",
+    "Captured the final run in `repro_stdout.log` and `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

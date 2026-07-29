@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with code 1.",
+    "`repro_stdout.log`: `OBSERVED BUG: async path called_sync=True called_async=False`.",
+    "`repro_stderr.log` ends with `AssertionError: sync postprocessor was called in async path`.",
+    "Artifact validation confirmed the required JSON keys and captured fault output."
+  ],
+  "steps": [
+    "Read bug_report.txt and github.json.",
+    "Ran setup_codebase.sh; used the issue-reported released package because the full monorepo clone was impractically slow.",
+    "Created .venv and installed `llama-index-core==0.14.15`.",
+    "Ran the local dummy retriever and tracking postprocessor repro; captured the final output."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

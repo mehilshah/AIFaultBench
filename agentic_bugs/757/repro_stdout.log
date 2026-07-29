@@ -1,0 +1,12 @@
+╭────────────────────────────────── New run ───────────────────────────────────╮
+│                                                                              │
+│ Return a short answer.                                                       │
+│                                                                              │
+╰─ LocalOnlyOpenAIModel - local-vllm ──────────────────────────────────────────╯
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Error in generating model output:
+Error code: 400 - {'object': 'error', 'message': 'Expected 2 output messages 
+(reasoning and final), but got 64.', 'type': 'BadRequestError', 'param': None, 
+'code': 400}
+[Step 1: Duration 0.00 seconds]
+NOT_REPRODUCED: smolagents wrapped the injected upstream vLLM 400; it did not create it.

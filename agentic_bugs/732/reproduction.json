@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Verified checkout HEAD: `17836748d7afe0521516c6a73c6a256680f05527`.",
+    "Final `repro_stdout.log`: `BUG REPRODUCED: unsupported operator 'betwen' silently became {'age': {'$eq': [10, 20]}}`.",
+    "Final `repro_stderr.log` ends with `AssertionError: unsupported operator was silently downgraded to equality`.",
+    "Verified `bash run_repro.sh` exits with status 1."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; repaired its delayed clone state by fetching and checking out the exact pinned SHA, then cleaned generated checkout artifacts.",
+    "Created `.venv`, installed `pydantic==2.12.5`, and installed the checkout editable without optional dependency resolution.",
+    "Wrote an offline reproducer that stubs only Chroma\u2019s import surface and executes the pinned adapter\u2019s actual `_generate_where_clause` method.",
+    "Captured the final `run_repro.sh` stdout and stderr logs and validated all required artifacts."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

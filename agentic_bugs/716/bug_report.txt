@@ -1,0 +1,158 @@
+# recovered-from-issue: https://github.com/SWE-agent/SWE-agent/issues/1078
+
+TITLE
+Open PR tool creates a token limit exceeded for PR body issue
+
+BODY
+### Describe the bug
+
+I have set up SWE Agent as part of GH Actions to run when a user opens a new issue. This bug is sporadic because it depends on the task. It completes the entire fixing process up until the PR needs to be opened. Then it fails saying that the PR body limit has been exceeded. Ideally I would suggest an option to automatically truncate or summarize the PR body in some way to prevent this from happening. 
+
+Note: working_config in the file below is the same default config file provided in sweagent repo
+
+### Steps/commands/code to Reproduce
+
+```
+name: SWE-agent Autofix
+
+on:
+  issues:
+    types: [opened, reopened, edited]
+ 
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          path: repo
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          
+      - name: Install SWE-agent from Source
+        run: |
+          # Clone and install SWE-agent from source
+          git clone https://github.com/SWE-agent/SWE-agent.git
+          cd SWE-agent
+          python -m pip install --upgrade pip && pip install --editable .
+          cd ..
+          # Install linting tools
+          pip install pylint flake8
+
+      - name: Test Docker
+        run: docker run hello-world
+
+      - name: Update Config with Dynamic Values
+        run: |
+          # Create a copy of the stored config file and move it to SWE-Agent directory
+          cp repo/scripts/config/sweagent_pr_generator.yaml SWE-agent/working_config.yaml
+          
+          # Update variables in the config
+          sed -i "s|{{GITHUB_REPOSITORY}}|${{ github.repository }}|g" SWE-agent/working_config.yaml
+          sed -i "s|{{ISSUE_NUMBER}}|${{ github.event.issue.number }}|g" SWE-agent/working_config.yaml
+          
+          # Display the updated config for debugging
+          cat SWE-agent/working_config.yaml
+
+      - name: Run SWE-agent on the Issue
+        working-directory: ./SWE-agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          # Run sweagent from the SWE-Agent root directory
+          sweagent run \
+            --config working_config.yaml \
+            --agent.model.name=claude-3-7-sonnet-20250219 \
+            --agent.model.per_instance_cost_limit=2.00 \
+            --agent.model.max_output_tokens=32000 \
+            --env.repo.github_url=https://github.com/${{ github.repository }} \
+            --problem_statement.github_url=https://github.com/${{ github.repository }}/issues/${{ github.event.issue.number }} \
+            --actions.open_pr=True
+
+      - name: Add Comment to Issue
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            I've initiated an automated fix for this issue using SWE-agent.
+            
+            A pull request should be created shortly if a solution is found. Please review the changes when the PR appears.
+```
+
+### Error message/results
+
+```
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.11.11/x64/bin/sweagent", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/runner/work/main_folder/main_folder/SWE-agent/sweagent/run/run.py", line 87, in main
+    run_single_main(remaining_args)
+  File "/home/runner/work/main_folder/main_folder/SWE-agent/sweagent/run/run_single.py", line 216, in run_from_cli
+    run_from_config(BasicCLI(RunSingleConfig, help_text=help_text).get_config(args))  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/main_folder/main_folder/SWE-agent/sweagent/run/run_single.py", line 206, in run_from_config
+    RunSingle.from_config(config).run()
+  File "/home/runner/work/main_folder/main_folder/SWE-agent/sweagent/run/run_single.py", line 198, in run
+    self._chooks.on_instance_completed(result=result)
+  File "/home/runner/work/main_folder/main_folder/SWE-agent/sweagent/run/hooks/abstract.py", line 67, in on_instance_completed
+    hook.on_instance_completed(result=result)
+  File "/home/runner/work/main_folder/main_folder/SWE-agent/sweagent/run/hooks/open_pr.py", line 140, in on_instance_completed
+    open_pr(
+  File "/home/runner/work/main_folder/main_folder/SWE-agent/sweagent/run/hooks/open_pr.py", line 111, in open_pr
+    pr_info = api.pulls.create(**args)  # type: ignore
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/ghapi/core.py", line 74, in __call__
+    return self.client(self.path, self.verb, headers=headers, decode=self.decode, route=route_p, query=query_p, data=data_p)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/ghapi/core.py", line 133, in __call__
+    res,self.recv_hdrs = urlsend(path, verb, headers=headers or None, decode=decode, debug=debug, return_headers=True,
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/fastcore/net.py", line 221, in urlsend
+    return urlread(req, decode=decode, return_json=return_json, return_headers=return_headers, timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/fastcore/net.py", line 122, in urlread
+    if 400 <= e.code < 500: raise ExceptionsHTTP[e.code](e.url, e.hdrs, e.fp, msg=e.msg) from None
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+fastcore.net.HTTP422UnprocessableEntityError: HTTP Error 422: Unprocessable Entity
+====Error Body====
+{
+  "message": "Validation Failed",
+  "errors": [
+    {
+      "resource": "Issue",
+      "code": "custom",
+      "field": "body",
+      "message": "body is too long (maximum is 65536 characters)"
+    }
+  ],
+  "documentation_url": "https://docs.github.com/rest/pulls/pulls#create-a-pull-request",
+  "status": "422"
+}
+```
+
+### System Information
+
+Ubuntu 20.04, Python 3.11, agent was cloned and installed from the source. 
+
+### Checklist
+
+- [x] I'm running with the latest docker container/on the latest development version (i.e., I ran `git pull`))
+- [x] I have copied the full command/code that I ran (as text, not as screenshot!)
+- [x] If applicable: I have copied the **full** log file/error message that was the result (as text, not as screenshot!)
+- [x] I have enclosed code/log messages in triple backticks ([docs](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#quoting-code)) and clicked "Preview" to make sure it's displayed correctly.

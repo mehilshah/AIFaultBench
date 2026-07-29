@@ -1,0 +1,4 @@
+a2a-sdk==1.0.1
+pydantic==2.11.10
+httpx==0.28.1
+PyJWT==2.10.1

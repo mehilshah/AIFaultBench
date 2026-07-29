@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at e73446e86e318f4c437aa7f49ece8c6ba3afba43.",
+    "Final `bash run_repro.sh` exited with status 1.",
+    "stdout: `OBSERVED BUG: AttributeError: 'StreamWrapper' object has no attribute 'usage'`",
+    "Final stderr was empty."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and restored the requested detached pinned commit.",
+    "Created an isolated environment with pinned OpenAI/OpenTelemetry dependencies and installed the checkout editable.",
+    "Used OpenTelemetry's real `StreamWrapper` with an offline fake chat-completions client, then captured the final `run_repro.sh` output."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

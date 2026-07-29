@@ -1,0 +1,2 @@
+langchain-core==1.4.8
+langchain-fireworks==1.4.3

@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`bash run_repro.sh` exited with status 1.",
+    "stdout: `BUG REPRODUCED: persisted polling sent reasoning.encrypted_content; Encrypted content cannot be requested for persisted responses.`",
+    "stderr ends with `ModelHTTPError: status_code: 400, model_name: gpt-5.6-sol` and the reported `include` error body."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and checked out pinned commit `fa0ec68b551a5940ac32b0a5593b965c7c84fd6b`.",
+    "Created `.venv`, installed pinned dependencies, and installed `codebase/pydantic_ai_slim` editable.",
+    "Ran the offline fake-SDK reproduction and captured its final stdout/stderr logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

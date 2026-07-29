@@ -1,0 +1,97 @@
+# recovered-from-issue: https://github.com/langflow-ai/langflow/issues/12776
+
+TITLE
+`from __future__ import annotations` has no effect in custom component sandbox — TYPE_CHECKING imports cause NameError
+
+BODY
+### Bug Description
+
+`prepare_global_scope()` in `lfx/custom/validate.py` separates imports from definitions (`ClassDef`/`FunctionDef`/`Assign`). Imports are resolved into `exec_globals`. Definitions are compiled into a separate `ast.Module` and executed via `exec()`.
+
+`from __future__ import annotations` is a compiler directive (PEP 563) — it must be present in the `ast.Module` at `compile()` time to activate lazy annotation evaluation. Since it's classified as an `ImportFrom` node and excluded from the definitions module, all annotations in function signatures and dataclass fields are eagerly evaluated. This breaks the standard `TYPE_CHECKING` + `from __future__ import annotations` pattern that is recommended by Python typing best practices.
+
+The flow inside `prepare_global_scope`:
+
+1. `from __future__ import annotations` is processed as an `ImportFrom` node — added to `exec_globals` (has no effect, since it's a compiler directive, not a runtime import)
+2. Definitions are compiled into a new `ast.Module` WITHOUT the `__future__` import — annotations are evaluated eagerly
+3. `TYPE_CHECKING` is `False` at runtime — names are not imported — NameError
+
+Suggested fix — include `__future__` imports when building the definitions module:
+
+```python
+future_imports = [
+    n for n in module.body
+    if isinstance(n, ast.ImportFrom) and n.module == "__future__"
+]
+combined_module = ast.Module(body=future_imports + definitions, type_ignores=[])
+```
+
+### Reproduction
+
+Create a custom component using the standard `TYPE_CHECKING` pattern:
+
+```python
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from some_package import SomeType
+
+class MyComponent(Component):
+    display_name = "Test"
+
+    def build(self, value: SomeType) -> Data:
+        # NameError: name 'SomeType' is not defined
+        ...
+```
+
+Error:
+
+```
+Error building Component: Error creating class.
+NameError(name 'SomeType' is not defined)
+```
+
+This also affects dataclass fields:
+
+```python
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from dataclasses import dataclass
+
+if TYPE_CHECKING:
+    from some_package import SomeEnum
+
+@dataclass
+class Config:
+    value: SomeEnum  # NameError: name 'SomeEnum' is not defined
+```
+
+### Expected behavior
+
+With `from __future__ import annotations`, type annotations should be stored as strings (PEP 563), not evaluated at function/class definition time. `TYPE_CHECKING`-only imports should work in annotations, matching standard Python behavior.
+
+
+### Who can help?
+
+@italojohnny 
+
+### Operating System
+
+macOS 26.2
+
+### Langflow Version
+
+1.0.9
+
+### Python Version
+
+3.12
+
+### Screenshot
+
+_No response_
+
+### Flow File
+
+_No response_

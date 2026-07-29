@@ -1,0 +1,95 @@
+# recovered-from-issue: https://github.com/run-llama/llama_index/issues/21086
+
+TITLE
+[Bug]: Ollama does not respect the client's initialization
+
+BODY
+### Bug Description
+
+I was experimenting with llama_index, and decided to use Ollama, but my network Ollama instance has a api_key (Authorization headers with Bearer).
+
+It seems that Ollama in Llama-Index not respect **kwargs passed  or it is no using Client sent at all. 
+Also I need to send twice the host.
+
+### Version
+
+llama-index-llms-ollama==0.10.0
+
+### Steps to Reproduce
+
+```python
+from llama_index.llms.ollama import Ollama
+from ollama import AsyncClient, Client
+
+host=MY_CVUSTOM_HOST
+headers={"Authorization": "Bearer MY_API_KEY}
+model="MY_MODEL"
+
+c = AsyncClient(host=host, headers=headers)
+llm = Ollama(async_client=c, base_url=host, model=model)
+
+resp = llm.complete("hi")
+print(resp)
+```
+
+If i use directly de Ollama python client it works ok: 
+
+```python
+from ollama import Client
+host=MY_CVUSTOM_HOST
+headers={"Authorization": "Bearer MY_API_KEY}
+model="MY_MODEL"
+client = Client(host=host, headers=headers)
+messages = [{ 'role': 'user',  'content': 'Why is the sky blue?', },]
+for part in client.chat(model, messages=messages, stream=True):
+    print(part.message.content, end='', flush=True)
+```
+
+
+### Relevant Logs/Tracbacks
+
+```shell
+This error is 401, because it is not sending the headers
+
+
+Traceback (most recent call last):
+  File "test.py", line 12, in <module>
+    resp = llm.complete("hi")
+           ^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/llama_index_instrumentation/dispatcher.py", line 413, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/llama_index/core/llms/callbacks.py", line 447, in wrapped_llm_predict
+    f_return_val = f(_self, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/llama_index/llms/ollama/base.py", line 659, in complete
+    return chat_to_completion_decorator(self.chat)(prompt, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/llama_index/core/base/llms/generic_utils.py", line 184, in wrapper
+    chat_response = func(messages, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/llama_index_instrumentation/dispatcher.py", line 413, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/llama_index/core/llms/callbacks.py", line 181, in wrapped_llm_chat
+    f_return_val = f(_self, messages, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/llama_index/llms/ollama/base.py", line 404, in chat
+    options=self._model_kwargs,
+            ^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/llama_index/llms/ollama/base.py", line 214, in _model_kwargs
+    "num_ctx": self.get_context_window(),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/llama_index/llms/ollama/base.py", line 224, in get_context_window
+    info = self.client.show(self.model).modelinfo
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/ollama/_client.py", line 637, in show
+    return self._request(
+           ^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/ollama/_client.py", line 190, in _request
+    return cls(**self._request_raw(*args, **kwargs).json())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/ollama/_client.py", line 134, in _request_raw
+    raise ResponseError(e.response.text, e.response.status_code) from None
+ollama._types.ResponseError: Unauthorized (status code: 401)
+```

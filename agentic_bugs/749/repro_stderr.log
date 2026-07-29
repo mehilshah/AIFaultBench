@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/749/repro.py", line 18, in <module>
+    get_greeting_rules.invoke({})
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/749/.venv/lib/python3.12/site-packages/langchain_core/tools/base.py", line 605, in invoke
+    return self.run(tool_input, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/749/.venv/lib/python3.12/site-packages/langchain_core/tools/base.py", line 932, in run
+    raise error_to_raise
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/749/.venv/lib/python3.12/site-packages/langchain_core/tools/base.py", line 891, in run
+    tool_args, tool_kwargs = self._to_args_and_kwargs(
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/749/.venv/lib/python3.12/site-packages/langchain_core/tools/base.py", line 794, in _to_args_and_kwargs
+    tool_input = self._parse_input(tool_input, tool_call_id)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/749/.venv/lib/python3.12/site-packages/langchain_core/tools/base.py", line 672, in _parse_input
+    result = input_args.model_validate(tool_input)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/749/.venv/lib/python3.12/site-packages/pydantic/main.py", line 732, in model_validate
+    return cls.__pydantic_validator__.validate_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for get_greeting_rules
+runtime
+  Field required [type=missing, input_value={}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.13/v/missing

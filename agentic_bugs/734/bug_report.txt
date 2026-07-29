@@ -1,0 +1,74 @@
+# recovered-from-issue: https://github.com/mem0ai/mem0/issues/5911
+
+TITLE
+bug: Memory.add() missing `llm` parameter present in AsyncMemory.add()
+
+BODY
+### Component
+
+Core / Python SDK
+
+### Description
+
+### Summary
+
+`Memory.add()` is missing the `llm` parameter that `AsyncMemory.add()` already
+accepts, causing a `TypeError` when sync users try to pass a custom LangChain
+model for procedural memory creation.
+
+`AsyncMemory.add()` has accepted `llm=None` since #5710, forwarding it to
+`AsyncMemory._create_procedural_memory()` which calls `llm.invoke()` via the
+LangChain path. The synchronous `Memory.add()` and its internal helper
+`Memory._create_procedural_memory()` were never updated to match, leaving the
+two classes with divergent public APIs.
+
+### Steps to Reproduce
+
+```python
+from mem0 import Memory
+from langchain_openai import ChatOpenAI
+
+m = Memory()
+custom_llm = ChatOpenAI(model="gpt-4o")
+
+# Raises TypeError: Memory.add() got an unexpected keyword argument 'llm'
+m.add(
+    [{"role": "user", "content": "Always verify inputs before processing."}],
+    agent_id="agent-1",
+    memory_type="procedural_memory",
+    llm=custom_llm,
+)
+```
+
+The async path works without error:
+
+```python
+from mem0 import AsyncMemory
+
+memory = AsyncMemory()
+await memory.add(
+    [...],
+    agent_id="agent-1",
+    memory_type="procedural_memory",
+    llm=custom_llm,   # accepted — no error
+)
+```
+
+### Expected Behavior
+
+`Memory.add()` should accept `llm=None` and forward it to
+`Memory._create_procedural_memory()`. When `llm` is not `None`, the sync
+helper should call `llm.invoke()` (the LangChain `BaseChatModel` interface),
+mirroring the async implementation exactly.
+
+### Actual Behavior
+
+```
+TypeError: Memory.add() got an unexpected keyword argument 'llm'
+```
+
+### Environment
+
+- mem0 version: latest (`main`)
+- Python version: 3.10+
+- OS: any

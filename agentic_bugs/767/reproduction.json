@@ -1,0 +1,15 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Pinned checkout verified: a6dde39be72e0a8f7ea3eea946e0993720e982ce.",
+    "Final `bash run_repro.sh` exited 0 and printed: `NOT_REPRODUCED: Send-mapped nodes received supplied Runtime context; the reported RuntimeError occurs only when context is omitted.`",
+    "`repro_stderr.log` is empty."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`.",
+    "Created `.venv`, installed pinned dependencies, and installed `codebase/libs/langgraph` editable.",
+    "Ran and captured the final deterministic reproduction command."
+  ],
+  "blocking_reason": "The issue was closed as a misdiagnosis: Studio resumed an interrupted SDK run without context. At the pinned checkout, supplied Runtime context reaches every Send-mapped node; the reported exception occurs only when context is intentionally omitted.",
+  "reproduction_command": "bash run_repro.sh"
+}

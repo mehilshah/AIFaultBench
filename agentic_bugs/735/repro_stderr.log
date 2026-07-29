@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/735/repro.py", line 16, in <module>
+    raise AssertionError("uninitialized FAISS.list() violates its List[List[OutputData]] contract")
+AssertionError: uninitialized FAISS.list() violates its List[List[OutputData]] contract

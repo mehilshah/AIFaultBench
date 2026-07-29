@@ -1,0 +1,2 @@
+# The full monorepo clone was impractically slow; this is the issue-reported release.
+llama-index-core==0.14.15

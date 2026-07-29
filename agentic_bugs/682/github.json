@@ -1,0 +1,50 @@
+{
+  "owner": "mem0ai",
+  "repo": "mem0",
+  "number": 5732,
+  "html_url": "https://github.com/mem0ai/mem0/issues/5732",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Azure providers rewrite the caller's last message in place (assistant -> ai), corrupting content and crashing on multimodal input",
+  "author": "Hexecu",
+  "created_at": "2026-06-21T14:14:51Z",
+  "updated_at": "2026-06-22T06:15:48Z",
+  "closed_at": "2026-06-22T06:15:48Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.67,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:38:41.288428+00:00",
+  "comments": [
+    {
+      "author": "Hexecu",
+      "created_at": "2026-06-21T14:15:19Z",
+      "body": "Already have a fix up for this in #5731 \u2014 applies the rewrite to a deepcopy that only goes to the model, keeps the caller's messages intact, and guards for non-string content so multimodal input doesn't crash. Covers both Azure providers. Verified against a live Azure deployment.\n"
+    },
+    {
+      "author": "kartik-mem0",
+      "created_at": "2026-06-22T04:31:48Z",
+      "body": "## Triage Notes\n\n**What we've established:**\n- Both `AzureOpenAILLM` and `AzureOpenAIStructuredLLM` apply `messages[-1][\"content\"] = user_prompt.replace(\"assistant\", \"ai\")` in place \u2014 which mutates the caller's list, corrupts any occurrence of the substring (not just the role literal), and crashes on multimodal content where `content` is a list rather than a string.\n- The original intent (avoiding Azure's \"Indirect Attacks\" content filter, tracked in #2636/#2937) is sound, but the implementation touches the caller's own data structure.\n- Scope is narrow: Azure-only, triggered only when the last user message contains the substring \"assistant\" or when multimodal content is passed.\n\n**Reproduction:** Confirmed (code tracing; multimodal crash reproducible without Azure credentials)\n**Root cause:** `mem0/llms/azure_openai.py` and `mem0/llms/azure_openai_structured.py` rewrite `messages[-1][\"content\"]` on the original list rather than working on a copy, and do not guard for `content` being a list type.\n\n**Next step:** PR #5731 fixes this by applying the rewrite to a deep copy \u2014 review feedback will be posted there."
+    }
+  ]
+}

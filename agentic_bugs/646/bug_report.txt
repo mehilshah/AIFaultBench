@@ -1,0 +1,167 @@
+# recovered-from-issue: https://github.com/langchain-ai/langchain/issues/38639
+
+TITLE
+ChatAnthropic streaming drops thinking field from empty thinking blocks (signature_delta-only), replay fails with 400 thinking.thinking: Field required
+
+BODY
+### Submission checklist
+
+- [x] This is a bug, not a usage question.
+- [x] I added a clear and descriptive title that summarizes this issue.
+- [x] I used the GitHub search to find a similar question and didn't find it.
+- [x] I am sure that this is a bug in LangChain rather than my code.
+- [x] The bug is not resolved by updating to the latest stable version of LangChain (or the specific integration package).
+- [x] This is not related to the langchain-community package.
+- [x] I posted a self-contained, minimal, reproducible example. A maintainer can copy it and run it AS IS.
+
+### Package (Required)
+
+- [ ] langchain
+- [ ] langchain-openai
+- [x] langchain-anthropic
+- [ ] langchain-classic
+- [ ] langchain-core
+- [ ] langchain-model-profiles
+- [ ] langchain-tests
+- [ ] langchain-text-splitters
+- [ ] langchain-chroma
+- [ ] langchain-deepseek
+- [ ] langchain-exa
+- [ ] langchain-fireworks
+- [ ] langchain-groq
+- [ ] langchain-huggingface
+- [ ] langchain-mistralai
+- [ ] langchain-nomic
+- [ ] langchain-ollama
+- [ ] langchain-openrouter
+- [ ] langchain-perplexity
+- [ ] langchain-qdrant
+- [ ] langchain-xai
+- [ ] Other / not sure / general
+
+### Related Issues / PRs
+
+ #36288
+
+### Reproduction Steps / Example Code (Python)
+
+```python
+# Deterministic reproduction — no API key / network needed.
+# Simulates the exact event sequence Anthropic streams for an adaptive-thinking
+# block whose thinking text is empty: content_block_start (thinking="") followed
+# by signature_delta only, with NO thinking_delta in between.
+from anthropic.types import (
+    RawContentBlockDeltaEvent,
+    RawContentBlockStartEvent,
+    SignatureDelta,
+    ThinkingBlock,
+)
+from langchain_anthropic.chat_models import ChatAnthropic
+from langchain_core.messages import AIMessage, HumanMessage
+
+llm = ChatAnthropic(model="claude-opus-4-6", api_key="test")
+
+events = [
+    RawContentBlockStartEvent(
+        type="content_block_start",
+        index=0,
+        content_block=ThinkingBlock(type="thinking", thinking="", signature=""),
+    ),
+    RawContentBlockDeltaEvent(
+        type="content_block_delta",
+        index=0,
+        delta=SignatureDelta(type="signature_delta", signature="EqQBCkYIBRgCIkDaq3rk..."),
+    ),
+]
+
+aggregated = None
+block_start_event = None
+for event in events:
+    chunk, block_start_event = llm._make_message_chunk_from_anthropic_event(
+        event,
+        stream_usage=True,
+        coerce_content_to_string=False,
+        block_start_event=block_start_event,
+    )
+    if chunk is not None:
+        aggregated = chunk if aggregated is None else aggregated + chunk
+
+print(aggregated.content)
+# [{'signature': 'EqQBCkYIBRgCIkDaq3rk...', 'type': 'thinking', 'index': 0}]
+#  -> the `thinking` key is MISSING
+
+assert "thinking" not in aggregated.content[0]  # bug: passes
+
+# Replaying this message on the next model call (e.g. agent loop after a tool
+# call) produces an invalid payload that the Anthropic API rejects with 400:
+payload = llm._get_request_payload(
+    [HumanMessage("hi"), AIMessage(content=aggregated.content), HumanMessage("continue")]
+)
+print(payload["messages"][1]["content"][0])
+# {'signature': 'EqQBCkYIBRgCIkDaq3rk...', 'type': 'thinking'}  -> API returns 400
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'messages.1.content.0.thinking.thinking: Field required'}, 'request_id': 'req_011Ccew3oAKvavEEJnTroFjZ'}
+```
+
+### Description
+
+* With adaptive thinking (e.g. `claude-opus-4-6`), the API can return a thinking block whose thinking text is empty — typically on the assistant turn that follows a tool result. In streaming, such a block arrives as `content_block_start` (with `thinking=""`) followed only by `signature_delta` events; no `thinking_delta` is ever emitted.
+* I expect the aggregated `AIMessage` to contain a thinking block with `thinking: ""` plus the signature, so the message can be replayed on the next model call (required for tool-calling agent loops, where thinking blocks must be sent back).
+* Instead, the aggregated block is `{'type': 'thinking', 'signature': '...'}` with **no `thinking` key**, and the next request fails with `400 - messages.N.content.M.thinking.thinking: Field required`. In an agent loop this makes every tool-calling conversation break on the second model call, and the corrupted message is persisted in checkpointers.
+
+Root cause in `libs/partners/anthropic/langchain_anthropic/chat_models.py` (`_make_message_chunk_from_anthropic_event`):
+
+1. The `content_block_start` handler added in 1.4.8 only emits the initial thinking content when `thinking or signature` is truthy. For an empty adaptive-thinking block, `content_block_start` carries `thinking=""` and `signature=""`, so nothing is emitted and the `thinking` key is lost.
+
+```python
+else:  # thinking
+    thinking = getattr(event.content_block, "thinking", "") or ""
+    signature = getattr(event.content_block, "signature", "") or ""
+    if thinking or signature:   # <- empty block: start event is dropped entirely
+        ...
+```
+
+2. The block is then reconstructed from deltas alone. A `signature_delta` produces `{'signature': ..., 'type': 'thinking'}` without a `thinking` key:
+
+```python
+elif event.delta.type in {"thinking_delta", "signature_delta"}:
+    content_block = event.delta.model_dump()
+    content_block["index"] = event.index
+    content_block["type"] = "thinking"
+    message_chunk = AIMessageChunk(content=[content_block])
+```
+
+3. On replay, `_format_messages` passes the block through unchanged (it only filters keys, it does not restore `thinking`), so the invalid block reaches the API.
+
+Possible fixes: always emit the `content_block_start` content for thinking blocks (including `thinking=""`), or default `thinking` to `""` when building the block from a `signature_delta`. Restoring `thinking: ""` reconstructs the canonical form the API returned, so the signature still validates.
+
+### System Info
+
+System Information
+------------------
+> OS:  Darwin
+> OS Version:  Darwin Kernel Version 24.3.0: Thu Jan  2 20:24:16 PST 2025; root:xnu-11215.81.4~3/RELEASE_ARM64_T6000
+> Python Version:  3.12.10 (main, May 28 2025, 09:42:05) [Clang 17.0.0 (clang-1700.0.13.3)]
+
+Package Information
+-------------------
+> langchain_core: 1.4.7
+> langchain: 1.3.9
+> langsmith: 0.8.15
+> deepagents: 0.6.10
+> langchain_anthropic: 1.4.8
+> langchain_aws: 1.4.1
+> langchain_google_genai: 4.2.5
+> langchain_mcp_adapters: 0.2.2
+> langchain_modal: 0.0.2
+> langchain_openai: 1.1.12
+> langchain_protocol: 0.0.15
+> langgraph_sdk: 0.4.2
+
+Other Dependencies
+------------------
+> anthropic: 0.109.1

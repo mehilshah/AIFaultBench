@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "`repro_stdout.log` contains: `OBSERVED BUG: Failed to get native MCP tools: maximum recursion depth exceeded`.",
+    "`repro_stderr.log` shows the underlying `RecursionError` in `force_additional_properties_false` and the wrapping RuntimeError from `tool_resolver.py:447`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; its full clone did not complete in the execution window, so used the issue-era release `crewai==1.14.1` as permitted.",
+    "Created `.venv` and installed `crewai==1.14.1`.",
+    "Wrote an offline fake MCP client with ten ordinary schemas and one recursive `$defs` schema.",
+    "Ran `bash run_repro.sh` and captured final output logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

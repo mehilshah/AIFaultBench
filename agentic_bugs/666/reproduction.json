@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exit code: 1.",
+    "`repro_stdout.log`: `OBSERVED: ImportError: cannot import name 'OpenAIServerModel' from partially initialized module 'smolagents'`.",
+    "Pinned checkout verified as `5c684c18df01895832ed0e0caecb6896f72890da`; `pip check` reported no broken requirements."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`.",
+    "Created `.venv`, installed pinned dependencies, and installed `codebase` editable.",
+    "Ran `bash run_repro.sh` and captured final stdout/stderr logs.",
+    "Validated the JSON, executable scripts, and Python harness syntax."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

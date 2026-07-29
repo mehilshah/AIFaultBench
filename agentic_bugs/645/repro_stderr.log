@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/645/repro.py", line 31, in <module>
+    combined = ChatFireworks._combine_llm_outputs(None, outputs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/645/codebase/libs/partners/fireworks/langchain_fireworks/chat_models.py", line 967, in _combine_llm_outputs
+    overall_token_usage[k] += v
+TypeError: unsupported operand type(s) for +=: 'dict' and 'dict'

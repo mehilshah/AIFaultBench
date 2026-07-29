@@ -1,0 +1,53 @@
+# recovered-from-issue: https://github.com/Arize-ai/phoenix/issues/13775
+
+TITLE
+[BUG]: phoenix-otel header parsing crashes on malformed header segments
+
+BODY
+### Where do you use Phoenix
+
+Self-hosted
+
+### What version of Phoenix are you using?
+
+main branch
+
+### What happened?
+
+`packages/phoenix-otel/src/phoenix/otel/settings.py::parse_env_headers()` crashes with `ValueError` when `PHOENIX_CLIENT_HEADERS` contains a malformed comma-delimited segment without `=`.
+
+The parser intends to warn and skip invalid header entries, but in the fallback branch it does:
+
+```python
+parts = header.split("=", 1)
+name, value = parts
+```
+
+If the segment has no equals sign, `parts` has length 1 and the parser raises before it can log a warning or continue.
+
+Expected behavior: malformed segments should be skipped with a warning, consistent with the stricter client/server `parse_env_headers` helpers.
+
+### Additional information
+
+Verification performed on `main`:
+
+```python
+from phoenix.otel.settings import parse_env_headers
+
+parse_env_headers("Authorization")
+```
+
+Actual result:
+
+```text
+ValueError: not enough values to unpack (expected 2, got 1)
+```
+
+A mixed valid/invalid header string fails the same way:
+
+```python
+parse_env_headers("x=a,bad")
+# ValueError: not enough values to unpack (expected 2, got 1)
+```
+
+This can make `phoenix.otel.register()` fail at startup when `PHOENIX_CLIENT_HEADERS` contains one malformed segment, instead of ignoring that segment and preserving the valid headers.

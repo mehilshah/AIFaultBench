@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/676/repro.py", line 29, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/676/repro.py", line 19, in main
+    tracker.get_total_tokens()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/676/codebase/dspy/utils/usage_tracker.py", line 63, in get_total_tokens
+    total_usage = self._merge_usage_entries(total_usage, usage_entry)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/676/codebase/dspy/utils/usage_tracker.py", line 47, in _merge_usage_entries
+    result[k] = self._merge_usage_entries(current_v, v)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/676/codebase/dspy/utils/usage_tracker.py", line 40, in _merge_usage_entries
+    if usage_entry2 is None or len(usage_entry2) == 0:
+                               ^^^^^^^^^^^^^^^^^
+TypeError: object of type 'int' has no len()

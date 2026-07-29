@@ -1,0 +1,45 @@
+# recovered-from-issue: https://github.com/mem0ai/mem0/issues/5732
+
+TITLE
+Azure providers rewrite the caller's last message in place (assistant -> ai), corrupting content and crashing on multimodal input
+
+BODY
+### Summary
+
+While going through the Azure providers I noticed that both `AzureOpenAILLM` and `AzureOpenAIStructuredLLM` rewrite the last user message in place before the request. They do `messages[-1]["content"].replace("assistant", "ai")` to keep the word `assistant` out of the prompt (it can trip Azure's content filter, that's the "Indirect Attacks" thing from #2636, added in #2937).
+
+The idea makes sense, but the way it's done has a few side effects:
+
+- it edits the caller's `messages` list directly, so the change leaks back out to whoever passed the list in;
+- `str.replace` hits the substring anywhere, so `"my assistant helps me"` ends up as `"my ai helps me"` — and that rewritten text is what actually gets sent and then stored as memory;
+- if the last message has multimodal `content` (a list of blocks), `.replace` blows up with `AttributeError: 'list' object has no attribute 'replace'`.
+
+### A note on priority
+
+Just to be honest about scope: this isn't urgent. It's Azure-only, and in the normal `add()` path you'd only hit it if the user's last message literally contains "assistant", or if you pass multimodal content, or if something reuses the same `messages` list afterwards. So it's a real correctness bug but a fairly narrow one. Mostly opening this so the fix has something to reference.
+
+### Reproduce
+
+```python
+from mem0.llms.azure_openai import AzureOpenAILLM
+from mem0.configs.llms.azure import AzureOpenAIConfig
+
+llm = AzureOpenAILLM(AzureOpenAIConfig(model="<deployment>", azure_kwargs={...}))
+
+messages = [{"role": "user", "content": "my assistant helps me schedule meetings"}]
+llm.generate_response(messages)
+# messages[-1]["content"] is now "my ai helps me schedule meetings"
+
+llm.generate_response([{"role": "user", "content": [{"type": "text", "text": "describe my assistant"}]}])
+# AttributeError: 'list' object has no attribute 'replace'
+```
+
+### Expected
+
+The workaround should only touch the copy sent to the model, leave the caller's messages alone, and not choke on list content.
+
+### Environment
+
+- mem0 version: main
+- Python: 3.12
+- OS: macOS

@@ -1,0 +1,68 @@
+{
+  "owner": "modelcontextprotocol",
+  "repo": "python-sdk",
+  "number": 2704,
+  "html_url": "https://github.com/modelcontextprotocol/python-sdk/issues/2704",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Flaky streamable-HTTP/SSE tests: TOCTOU port race under pytest -n auto",
+  "author": "Ar-maan05",
+  "created_at": "2026-05-28T08:10:33Z",
+  "updated_at": "2026-06-07T08:34:30Z",
+  "closed_at": "2026-06-03T11:45:02Z",
+  "labels": [
+    "bug",
+    "ready for work",
+    "P2",
+    "fix proposed"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 6.15,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:27.083944+00:00",
+  "comments": [
+    {
+      "author": "scosemicolon",
+      "created_at": "2026-05-28T11:03:23Z",
+      "body": "This diagnosis lines up with the failure signatures. One extra acceptance check I would add is that the migrated fixture proves the URL is derived from the actual bound socket, not from a separately selected port value.\n\nFor the thread-helper path, the useful invariant is:\n\n1. the helper binds/listens on port `0`\n2. uvicorn receives that already-bound socket\n3. the yielded URL is read from `sock.getsockname()` after bind\n\nThat makes the test immune to xdist worker races and also avoids a weaker refactor where a fixture still calls a `pick_free_port()` helper before starting uvicorn. If this is done across the sibling SSE/security fixtures, it may be worth adding a short comment near any remaining free-port helper explaining that it must not be used for servers started later in another process or thread.\n"
+    },
+    {
+      "author": "Ar-maan05",
+      "created_at": "2026-05-28T11:19:33Z",
+      "body": "Thanks for the feedback!\n\nThe implementation in this PR (#2705 ) follows this exact pattern. For both the thread-based helper (`run_uvicorn_in_thread`) and the process-based helper (`running_server`):\n    1. The socket is bound and put into a listening state on port `0` (`127.0.0.1:0`) in the thread/process prior to starting the server.\n    2. The port is derived directly from that active socket using `sock.getsockname()[1]`.\n    3. `uvicorn` is started by passing this pre-bound socket directly via `server.run(sockets=[sock])`.\n\nAdditionally, the old polling helper `wait_for_server` has been removed and there are no remaining custom `pick_free_port` helpers left in `test_helpers.py` that could be mistakenly reused."
+    },
+    {
+      "author": "mcp-claude[bot]",
+      "created_at": "2026-06-01T11:10:53Z",
+      "body": "test-infrastructure TOCTOU race confirmed. fix is to retire the `pick-a-port-then-rebind` fixtures and serve through the existing `run_uvicorn_in_thread` helper in `tests/test_helpers.py`, which binds + `listen()`s the socket before handing it to uvicorn so no other xdist worker can grab the port in between. same racy pattern is on `origin/v1.x` too, so a backport is needed if the fix lands on main only.\n\nboth failure signatures the report describes reproduce against `origin/main` HEAD 616476f. signature 1 \u2014 server bind raises `[Errno 98] address already in use` when something else won the race in the window. signature 2 \u2014 the client request lands on a different server than the fixture intended, returning a payload that belongs to another test (the `ValidationError: 1 validation error for CallToolResult / Field required` is exactly what pydantic produces when a `ListToolsResult` shape is parsed as `CallToolResult`).\n\nracy fixtures (5 files):\n- `tests/shared/test_streamable_http.py:474, 482, 512`\n- `tests/shared/test_sse.py`\n- `tests/server/test_sse_security.py`\n- `tests/server/test_streamable_http_security.py`\n- `tests/client/test_http_unicode.py`\n\n<details>\n<summary>repro.py \u2014 run with <code>uv run python repro.py</code></summary>\n\n```python\n\"\"\"Repro for the TOCTOU port race in test fixtures.\n\nDemonstrates that the `pick_free_port`-then-close pattern used in\ntests/shared/test_streamable_http.py:474 leaves a window where another\nprocess can claim the port before the real server binds it.\n\nReproduces both failure signatures the issue describes:\n  1. EADDRINUSE when the server tries to bind the port.\n  2. Client reaches the wrong server (crossed responses).\n\"\"\"\n\nfrom __future__ import annotations\n\nimport multiprocessing\nimport socket\nimport time\nimport urllib.request\n\n\ndef pick_free_port() -> int:\n    \"\"\"Exact pattern from tests/shared/test_streamable_http.py:474.\"\"\"\n    with socket.socket() as s:\n        s.bind((\"127.0.0.1\", 0))\n        return s.getsockname()[1]\n\n\ndef serve_simple(port: int, payload: bytes, started_evt: multiprocessing.Event) -> None:\n    s = socket.socket()\n    try:\n        s.bind((\"127.0.0.1\", port))\n    except OSError as e:\n        print(f\"  [server payload={payload!r}] bind failed: {e}\")\n        started_evt.set()\n        return\n    s.listen()\n    started_evt.set()\n    conn, _ = s.accept()\n    conn.recv(4096)\n    conn.sendall(\n        b\"HTTP/1.1 200 OK\\r\\nContent-Length: \"\n        + str(len(payload)).encode()\n        + b\"\\r\\n\\r\\n\"\n        + payload\n    )\n    conn.close()\n    s.close()\n\n\ndef demo_bind_collision() -> None:\n    print(\"=== Signature 1: EADDRINUSE bind race ===\")\n    port = pick_free_port()\n    print(f\"  fixture handed out port {port} (socket already closed)\")\n\n    intruder = socket.socket()\n    intruder.bind((\"127.0.0.1\", port))\n    intruder.listen()\n    print(f\"  intruder grabbed {port} in the TOCTOU window\")\n\n    server_sock = socket.socket()\n    try:\n        server_sock.bind((\"127.0.0.1\", port))\n        print(\"  ERROR: expected EADDRINUSE, got success\")\n    except OSError as e:\n        print(f\"  real server bind() raised: {e}\")\n    finally:\n        intruder.close()\n        server_sock.close()\n\n\ndef demo_crossed_responses() -> None:\n    print(\"\\n=== Signature 2: client reaches wrong server ===\")\n    ctx = multiprocessing.get_context(\"spawn\")\n\n    port_a = pick_free_port()\n    port_b = pick_free_port()\n    print(f\"  fixture A got port {port_a}, fixture B got port {port_b}\")\n\n    started_b = ctx.Event()\n    proc_b = ctx.Process(\n        target=serve_simple,\n        args=(port_a, b'{\"tools\":[\"wrong-server\"]}', started_b),\n        daemon=True,\n    )\n    proc_b.start()\n    started_b.wait(timeout=5)\n    print(f\"  server B raced in and bound port {port_a} (the OS reissued it)\")\n\n    started_a = ctx.Event()\n    proc_a = ctx.Process(\n        target=serve_simple,\n        args=(port_a, b'{\"content\":[{\"type\":\"text\",\"text\":\"correct\"}]}', started_a),\n        daemon=True,\n    )\n    proc_a.start()\n    started_a.wait(timeout=5)\n\n    time.sleep(0.1)\n    try:\n        resp = urllib.request.urlopen(f\"http://127.0.0.1:{port_a}/\", timeout=2).read()\n        print(f\"  client asked port {port_a} (the 'real' server A)\")\n        print(f\"  client received: {resp.decode()!r}\")\n        if b\"wrong-server\" in resp:\n            print(\"  -> client reached the other test's server (crossed response)\")\n    except Exception as e:\n        print(f\"  client got: {e}\")\n    finally:\n        for p in (proc_a, proc_b):\n            p.terminate()\n            p.join(timeout=2)\n\n\nif __name__ == \"__main__\":\n    demo_bind_collision()\n    demo_crossed_responses()\n```\n\n</details>\n\n<details>\n<summary>command and output</summary>\n\n```\n$ uv run python repro.py\n=== Signature 1: EADDRINUSE bind race ===\n  fixture handed out port 59237 (socket already closed)\n  intruder grabbed 59237 in the TOCTOU window\n  real server bind() raised: [Errno 98] Address already in use\n\n=== Signature 2: client reaches wrong server ===\n  fixture A got port 46291, fixture B got port 46271\n  server B raced in and bound port 46291 (the OS reissued it)\n  [server payload=b'{\"content\":[...]}'] bind failed: [Errno 98] Address already in use\n  client asked port 46291 (the 'real' server A)\n  client received: '{\"tools\":[\"wrong-server\"]}'\n  -> client reached the other test's server (crossed response)\n```\n\n</details>\n\n<details>\n<summary>suggested fix</summary>\n\nper-file pattern (showing `tests/shared/test_streamable_http.py`; the other four files follow the same shape):\n\n```diff\n- import multiprocessing\n- import traceback\n- import uvicorn\n- from tests.test_helpers import wait_for_server\n+ from tests.test_helpers import run_uvicorn_in_thread\n\n- def run_server(port: int, ...): ...  # subprocess entry point\n-\n- @pytest.fixture\n- def basic_server_port() -> int:\n-     with socket.socket() as s:\n-         s.bind((\"127.0.0.1\", 0))\n-         return s.getsockname()[1]\n-\n- @pytest.fixture\n- def basic_server(basic_server_port: int) -> Generator[None, None, None]:\n-     proc = multiprocessing.Process(target=run_server, kwargs={\"port\": basic_server_port}, daemon=True)\n-     proc.start()\n-     wait_for_server(basic_server_port)\n-     yield\n-     proc.kill(); proc.join(timeout=2)\n+ @pytest.fixture\n+ def basic_server() -> Generator[str, None, None]:\n+     with run_uvicorn_in_thread(create_app()) as url:\n+         yield url\n+\n+ @pytest.fixture\n+ def basic_server_url(basic_server: str) -> str:\n+     return basic_server\n+\n+ @pytest.fixture\n+ def basic_server_port(basic_server: str) -> int:\n+     return int(basic_server.rsplit(\":\", 1)[1])\n```\n\neach `*_server_port` fixture is removed and the `*_server` fixture switches from `multiprocessing.Process(target=run_server, port=...)` to `run_uvicorn_in_thread(make_app())`, yielding a URL. derived URL/port fixtures depend on the server fixture so a test asking for the port forces the server to be listening before the port is observed \u2014 closing the TOCTOU window. for the two security files the matching change is to retire `start_server_process(port, settings)` in favour of a `start_server(settings)` context manager that yields the URL, and update each test to use the URL instead of `f\"http://127.0.0.1:{server_port}/...\"`.\n\ntest to verify: `test_basic_server_port_holds_reservation_regression_2704` asserts that a second bind on the port handed back by the fixture fails with `EADDRINUSE`, which only holds when the fixture is backed by an actually-listening server (post-fix); the old pick-then-close port fixture lets the bind succeed.\n\nfull diff across the five files: 5 files changed, 205 insertions(+), 495 deletions(-); the suite (1743 passed, 98 skipped, 1 xfailed) passes locally including under `-n auto`. fix is for `origin/main` only; `origin/v1.x` carries the same pattern and needs the equivalent backport.\n</details>"
+    },
+    {
+      "author": "Ar-maan05",
+      "created_at": "2026-06-01T11:30:59Z",
+      "body": "Thanks, confirmation matches what #2705 implements. Good call on v1.x: it carries the same pick-a-port-then-rebind pattern (actually in more test files than main), so I'll open a [v1.x] backport PR applying the same fix once #2705 lands."
+    },
+    {
+      "author": "norika1207-lab",
+      "created_at": "2026-06-02T03:38:35Z",
+      "body": "This looks worth pinning down as a protocol-level regression rather than only an implementation bug.\n\nFor `flaky streamable HTTP/SSE tests TOCTOU port race`, the acceptance test I would want is a minimal client/server fixture that records the exact JSON-RPC or HTTP exchange, then asserts both the wire result and the local lifecycle state after the failure path. In MCP deployments, the dangerous failures are often not just wrong return values; they are pending requests, dropped notifications, mismatched session state, or errors that get translated into a generic response and become impossible to diagnose.\n\nA useful fix boundary would preserve three signals: the protocol error sent to the peer, the local exception or cancellation reason available to application code, and a trace/log field that ties the two together. That makes the behavior debuggable for agent hosts without requiring every host to special-case this SDK detail.\n"
+    }
+  ]
+}

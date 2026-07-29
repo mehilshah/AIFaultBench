@@ -1,0 +1,12 @@
+{
+  "bug_id": "729",
+  "bug_dir": "729",
+  "issue_url": "https://github.com/microsoft/semantic-kernel/issues/13298",
+  "commit_hash": "cf9a5f21f74782fddfada1d934088fbff6cc24b9",
+  "library_name": "semantic-kernel",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "microsoft/semantic-kernel@cf9a5f21f74782fddfada1d934088fbff6cc24b9",
+  "codebase_present": "false",
+  "standardized_dir": "../729"
+}

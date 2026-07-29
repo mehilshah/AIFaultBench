@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `run_repro.sh` exited 1.",
+    "MSBuild emitted MSB3277 for Microsoft.Bcl.AsyncInterfaces versions 9.0.0.8 and 9.0.0.9.",
+    "`repro_stdout.log` contains the observed-fault line; stderr was empty."
+  ],
+  "steps": [
+    "Cloned and verified the pinned commit 1c11258a3242a5a9f8dfa421674fa2108c5e5456.",
+    "Installed .NET SDK 10.0.100 in .venv and restored Microsoft.SemanticKernel.Connectors.InMemory 1.66.0-preview.",
+    "Ran the offline no-restore net48 build reproduction and captured its output."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,103 @@
+# recovered-from-issue: https://github.com/pydantic/pydantic-ai/issues/6051
+
+TITLE
+`GoogleModel` never sets `include_server_side_tool_invocations` for `CodeExecutionTool`, so code execution can't be combined with function tools on Gemini 3
+
+BODY
+### Initial Checks
+
+- [x] I'm using the [latest version](https://github.com/pydantic/pydantic-ai/releases/latest) of Pydantic AI
+- [x] I've searched for my issue in [the issue tracker](https://github.com/pydantic/pydantic-ai/issues) before opening this issue
+
+### Description
+
+On a Gemini 3 model, combining the built-in `CodeExecutionTool` with any user function tool in the same request fails with HTTP 400:
+
+```
+google.genai.errors.ClientError: 400 INVALID_ARGUMENT.
+{'error': {'code': 400, 'message': 'Please enable tool_config.include_server_side_tool_invocations
+to use Built-in tools with Function calling.', 'status': 'INVALID_ARGUMENT'}}
+```
+
+In [`GoogleModel._get_tool_config`](https://github.com/pydantic/pydantic-ai/blob/v2.0.0/pydantic_ai_slim/pydantic_ai/models/google.py#L714-L722) (`pydantic_ai_slim/pydantic_ai/models/google.py`), `include_server_side_tool_invocations` is set only when a `WebSearchTool`, `WebFetchTool`, or `FileSearchTool` is present.
+
+
+If I subclass `GoogleModel` and force `include_server_side_tool_invocations=true` I can get it to work with both local tools and Native tools, so this combination appears to work at least for the model I was testing with `"gemini-3.1-pro-preview"` and `GoogleProvider`.  I haven't tested with Vertex/GoogleCloudProvider.
+
+
+### Work around
+
+```python
+class CodeExecGoogleModel(GoogleModel):
+    def _get_tool_config(self, params, settings):
+        tools, tool_config, image = super()._get_tool_config(params, settings)
+        if (
+            tool_config is not None
+            and params.function_tools
+            and self.profile.get("google_supports_server_side_tool_invocations", False)
+            and any(isinstance(t, CodeExecutionTool) for t in params.native_tools)
+        ):
+            tool_config["include_server_side_tool_invocations"] = True
+        return tools, tool_config, image
+```
+
+### Fix
+The fix for this seems easy enough, but i'm sure I'm missing something.
+Seems like we just need to add `CodeExecutionTool` to the list.
+
+`GoogleModel._get_tool_config()` https://github.com/pydantic/pydantic-ai/blob/e19e18065a13be0490483ad3c5601d232af8185b/pydantic_ai_slim/pydantic_ai/models/google.py#L718
+
+```python
+emits_tool_call_invocations = any(
+    isinstance(t, (WebSearchTool, WebFetchTool, FileSearchTool, CodeExecutionTool))
+    for t in model_request_parameters.native_tools
+)
+if emits_tool_call_invocations and self.profile.get('google_supports_server_side_tool_invocations', False):
+            tool_config['include_server_side_tool_invocations'] = True
+```
+
+There was some original discussion out this here: https://github.com/pydantic/pydantic-ai/pull/4848
+
+
+
+### Minimal, Reproducible Example
+
+```Python
+# /// script
+# dependencies = ["pydantic-ai-slim[google]==2.0.0"]
+# ///
+import os
+
+from pydantic_ai import Agent
+from pydantic_ai.capabilities import NativeTool
+from pydantic_ai.models.google import GoogleModel
+from pydantic_ai.native_tools import CodeExecutionTool
+from pydantic_ai.providers.google import GoogleProvider
+
+
+def add(a: int, b: int) -> int:
+    return a + b
+
+
+agent = Agent(
+    GoogleModel("gemini-3.1-pro-preview", provider=GoogleProvider(api_key=os.environ["GOOGLE_API_KEY"])),
+    tools=[add],
+)
+result = agent.run_sync(
+    "Call add(123, 456), then use the code execution tool to compute the factorial of that sum "
+    "and report how many digits it has.",
+    capabilities=[NativeTool(CodeExecutionTool())],
+)
+print(result.output)
+```
+
+### Logfire Trace
+
+_No response_
+
+### Python, Pydantic AI & LLM client version
+
+- pydantic-ai 2.0.0 (also reproduces on 1.106.0; on 1.106 the profile is read via `self._resolved_profile.google_supports_server_side_tool_invocations`)
+- google-genai 2.8.0
+- Python 3.12
+- Gemini Developer API (`GoogleProvider`, API-key auth)

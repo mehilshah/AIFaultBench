@@ -1,0 +1,12 @@
+{
+  "bug_id": "661",
+  "bug_dir": "661",
+  "issue_url": "https://github.com/crewAIInc/crewAI/issues/5607",
+  "commit_hash": "b0e2fda105c2e0c05c7abb1f53800443ffd582ea",
+  "library_name": "crewAI",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "crewAIInc/crewAI@b0e2fda105c2e0c05c7abb1f53800443ffd582ea",
+  "codebase_present": "false",
+  "standardized_dir": "../661"
+}

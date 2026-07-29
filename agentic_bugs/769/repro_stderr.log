@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/769/repro.py", line 22, in <module>
+    multiline_signature_tool.to_dict()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/769/codebase/src/smolagents/tools.py", line 270, in to_dict
+    forward_node = ast.parse(source_code)
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/ast.py", line 52, in parse
+    return compile(source, filename, mode, flags,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<unknown>", line 2
+    text: str,
+             ^
+SyntaxError: invalid syntax

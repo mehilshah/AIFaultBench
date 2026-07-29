@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout confirmed at f5ba8f54ca312fef802158fd1fa0d7af964b50e7.",
+    "Final captured stdout: \"BUG OBSERVED: RedisCache.set leaked raw TypeError: cannot pickle 'SSLContext' object\".",
+    "The repro exits with status 1; repro_stderr.log is empty."
+  ],
+  "steps": [
+    "Ran bash setup_codebase.sh.",
+    "Created .venv and installed pinned dependencies plus the editable backend checkout.",
+    "Ran bash run_repro.sh with StrictRedis mocked and a local SSLContext cached."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/741/repro.py", line 36, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/741/repro.py", line 23, in main
+    headers = parse_env_headers("x=a,bad")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/741/.venv/lib/python3.12/site-packages/phoenix/otel/settings.py", line 135, in parse_env_headers
+    name, value = parts
+    ^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 2, got 1)

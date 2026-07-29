@@ -1,0 +1,1 @@
+BUG OBSERVED: RedisCache.set leaked raw TypeError: cannot pickle 'SSLContext' object

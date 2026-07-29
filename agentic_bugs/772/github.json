@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "smolagents",
+  "number": 1518,
+  "html_url": "https://github.com/huggingface/smolagents/issues/1518",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] smolagents returns 422 if using OpenAIServerModel as the model, with deepinfra as the provider.",
+  "author": "lvicentesanchez",
+  "created_at": "2025-07-04T00:14:53Z",
+  "updated_at": "2025-07-04T11:08:04Z",
+  "closed_at": "2025-07-04T06:58:46Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.28,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T14:44:32.802516+00:00",
+  "comments": [
+    {
+      "author": "albertvillanova",
+      "created_at": "2025-07-04T06:58:46Z",
+      "body": "Hi @lvicentesanchez, thanks for reporting this!\n\nThe issue stems from how the `messages` content is formatted. By default, `smolagents.OpenAIServerModel` sends message content as an array of structured elements (e.g., `{\"type\": \"text\", \"text\": \"...\"}`), which is fully compliant with the OpenAI Chat Completions API spec: https://platform.openai.com/docs/api-reference/chat/create#chat-create-messages\n\nHowever, not all providers implementing the OpenAI-compatible API support the full spec. In the case of **DeepInfra**, it appears that only `string`-type content is accepted (not arrays), which causes the 422 error when using `OpenAIServerModel`.\n\nTo work around this, you can pass `flatten_messages_as_text=True` to force `smolagents.OpenAIServerModel` to serialize message content to plain strings, which DeepInfra handles correctly.\n\nYou can check the `OpenAiServerModel` docs about `flatten_messages_as_text` here: https://huggingface.co/docs/smolagents/reference/models#smolagents.OpenAIServerModel.flatten_messages_as_text\n- Maybe we should consider adding a note or warning there! \n\nThanks again!\n"
+    },
+    {
+      "author": "lvicentesanchez",
+      "created_at": "2025-07-04T11:08:04Z",
+      "body": "Hi @albertvillanova! That's what I ended up doing. I believe I saw a comment in the source code saying that option would eventually be removed, so that's why I decided to create this issue, but I can't find it anymore so maybe I got confused with something else."
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+# recovered-from-issue: https://github.com/run-llama/llama_index/issues/21109
+
+TITLE
+[Bug]: SimplePropertyGraphStore can't persist utf-8 encoded chars on Windows
+
+BODY
+### Bug Description
+
+I'm trying to create a knowledge graph based on documents which are OCR using deepseek. During the OCR process is common to have some non-utf8 characters sometimes due to hallucinations, sometimes just valid Chinese characters.
+While creating the graph and trying to persist it, I got the following stack trace:
+
+> [18/329] Processing: chunk_00052_00054.txt...
+Applying transformations: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 22.97it/s]
+Traceback (most recent call last):
+File "C:\Users\manue\Documents\Dictadura\kg_builder.py", line 130, in <module>
+index.storage_context.persist(persist_dir=PERSIST_DIR)
+File "C:\Users\manue\Documents\Dictadura.venv310\lib\site-packages\llama_index\core\storage\storage_context.py", line 187, in persist
+self.property_graph_store.persist(persist_path=pg_graph_store_path, fs=fs)
+File "C:\Users\manue\Documents\Dictadura.venv310\lib\site-packages\llama_index\core\graph_stores\simple_labelled.py", line 171, in persist
+f.write(self.graph.model_dump_json())
+File "C:\Users\manue\AppData\Local\Python\pythoncore-3.10-64\lib\encodings\cp1252.py", line 19, in encode
+return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 2139192-2139193: character maps to <undefined>
+
+I**n Windows, the default encoding is cp1252, not utf-8**, which is likely the root cause of this error.
+I've noticed that `SimplePropertyGraphStore.persist` does not specify an encoding nor does it allow it to be specified. I've solved this issue by monkey patching it. Same applies to `from_persist_path`.
+
+```
+import llama_index.core.graph_stores.simple_labelled as _sg
+
+def _persist_utf8(self, persist_path, fs=None):
+    if fs is None:
+        fs = _fsspec.filesystem("file")
+    with fs.open(persist_path, "w", encoding="utf-8") as f:
+        f.write(self.graph.model_dump_json())
+
+_sg.SimplePropertyGraphStore.persist = _persist_utf8
+
+@classmethod
+def _from_persist_path_utf8(cls, persist_path, fs=None):
+    if fs is None:
+        fs = _fsspec.filesystem("file")
+    with fs.open(persist_path, "r", encoding="utf-8") as f:
+        data = json.loads(f.read())
+    return cls.from_dict(data)
+
+_sg.SimplePropertyGraphStore.from_persist_path = _from_persist_path_utf8
+```
+
+This seems to have solved my issue, although it is obviously not a desirable solution
+
+### Version
+
+0.14.18
+
+### Steps to Reproduce
+
+1. Create a document with lots fo utf-8 characters like `-定义 \[ \text{图} \]`
+2. Be on Windows
+3. Create a `PropertyGraphIndex` and store it
+4. The code should crash if the text in the graph nodes contains such characters. 
+
+### Relevant Logs/Tracbacks
+
+```shell
+Stack trace of crash during store (likely due to corruption from previous run failing, not necessarily a bug in LlamaIndex):
+
+[18/329] Processing: chunk_00052_00054.txt...
+Applying transformations: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 22.97it/s]
+Traceback (most recent call last):
+File "C:\Users\manue\Documents\Dictadura\kg_builder.py", line 130, in <module>
+index.storage_context.persist(persist_dir=PERSIST_DIR)
+File "C:\Users\manue\Documents\Dictadura.venv310\lib\site-packages\llama_index\core\storage\storage_context.py", line 187, in persist
+self.property_graph_store.persist(persist_path=pg_graph_store_path, fs=fs)
+File "C:\Users\manue\Documents\Dictadura.venv310\lib\site-packages\llama_index\core\graph_stores\simple_labelled.py", line 171, in persist
+f.write(self.graph.model_dump_json())
+File "C:\Users\manue\AppData\Local\Python\pythoncore-3.10-64\lib\encodings\cp1252.py", line 19, in encode
+return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 2139192-2139193: character maps to <undefined>
+
+Stack trace of crash during load:
+
+(.venv310) PS C:\Users\manue\Documents\Dictadura> python .\kg_builder.py
+Loading index from storage...
+Traceback (most recent call last):
+File "C:\Users\manue\Documents\Dictadura\kg_builder.py", line 120, in <module>
+storage_context = StorageContext.from_defaults(persist_dir=PERSIST_DIR)
+File "C:\Users\manue\Documents\Dictadura.venv310\lib\site-packages\llama_index\core\storage\storage_context.py", line 126, in from_defaults
+or SimplePropertyGraphStore.from_persist_dir(persist_dir, fs=fs)
+File "C:\Users\manue\Documents\Dictadura.venv310\lib\site-packages\llama_index\core\graph_stores\simple_labelled.py", line 196, in from_persist_dir
+return cls.from_persist_path(persist_path, fs=fs)
+File "C:\Users\manue\Documents\Dictadura.venv310\lib\site-packages\llama_index\core\graph_stores\simple_labelled.py", line 184, in from_persist_path
+data = json.loads(f.read())
+File "C:\Users\manue\AppData\Local\Python\pythoncore-3.10-64\lib\json_init_.py", line 346, in loads
+return _default_decoder.decode(s)
+File "C:\Users\manue\AppData\Local\Python\pythoncore-3.10-64\lib\json\decoder.py", line 337, in decode
+obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+File "C:\Users\manue\AppData\Local\Python\pythoncore-3.10-64\lib\json\decoder.py", line 355, in raw_decode
+raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+```

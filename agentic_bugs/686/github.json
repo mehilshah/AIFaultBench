@@ -1,0 +1,67 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langchain",
+  "number": 38644,
+  "html_url": "https://github.com/langchain-ai/langchain/issues/38644",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "ChatAnthropic.bind_tools() crashes with KeyError: 'parameters' on advisor_ built-in tool",
+  "author": "corsettigyg",
+  "created_at": "2026-07-03T12:16:49Z",
+  "updated_at": "2026-07-10T02:18:54Z",
+  "closed_at": "2026-07-10T02:18:54Z",
+  "labels": [
+    "bug",
+    "anthropic",
+    "external"
+  ],
+  "milestone": null,
+  "comments_count": 9,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 6.58,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:05:28.219709+00:00",
+  "comments": [
+    {
+      "author": "Irfan-lab700",
+      "created_at": "2026-07-03T13:12:39Z",
+      "body": "Hi! I'd like to work on this issue if it's still available. Could you please assign it to me?\n\nThanks!"
+    },
+    {
+      "author": "corsettigyg",
+      "created_at": "2026-07-03T13:28:46Z",
+      "body": "the fix should be adding `\"advisor_\"` to [_BUILTIN_TOOL_PREFIXES](https://github.com/corsettigyg/langchain/blob/0501325e6c536a0693565bec99dde038cc5c4d20/libs/partners/anthropic/langchain_anthropic/chat_models.py#L154-L164). I can submit the PR if the issue is approved."
+    },
+    {
+      "author": "gingeekrishna",
+      "created_at": "2026-07-04T18:00:33Z",
+      "body": "Opened PR #38686 with the fix (previous PR #38660 was closed due to CI format issues \u2014 this one follows the required template). Root cause confirmed: `advisor_` was missing from `_BUILTIN_TOOL_PREFIXES`, causing `bind_tools()` to route `advisor_20260301` specs through `convert_to_anthropic_tool()` which expects a `parameters` key that advisor specs don't have. Adding `\"advisor_\"` to the prefix list (one line, following the documented maintenance pattern in the source) makes `_is_builtin_tool()` return `True` so the dict passes through unchanged. Includes a unit test confirming the fix."
+    },
+    {
+      "author": "gingeekrishna",
+      "created_at": "2026-07-04T18:02:23Z",
+      "body": "Hi maintainers \u2014 I'd like to fix this if it's available for assignment. Here's my full proposed approach:\n\n**Root cause:** `advisor_20260301` is missing from `_BUILTIN_TOOL_PREFIXES` in `chat_models.py`. Without it, `_is_builtin_tool()` returns `False`, so `bind_tools()` routes the spec through `convert_to_anthropic_tool()`. That function expects a function-style schema with a `parameters` key \u2014 which advisor specs don't have \u2014 causing `KeyError: 'parameters'`.\n\n**Fix:** Add `\"advisor_\"` to `_BUILTIN_TOOL_PREFIXES` (one line). The codebase already has a comment (lines 128\u2013136 of `chat_models.py`) documenting this exact maintenance pattern:\n\n> \"2. _is_builtin_tool() - Add the tool type prefix to _BUILTIN_TOOL_PREFIXES. This ensures the tool dict is passed through to the API unchanged (instead of being converted via convert_to_anthropic_tool, which may fail).\"\n\nThis is the same path already used for `web_search_`, `computer_`, `memory_`, `tool_search_`, etc. \u2014 `advisor_` was just never added.\n\n```python\n_BUILTIN_TOOL_PREFIXES = [\n    \"text_editor_\",\n    \"computer_\",\n    ...\n    \"tool_search_\",\n    \"advisor_\",   # <-- add this\n]\n```\n\n**Test coverage:** Added `test_advisor_is_builtin_tool` asserting:\n1. `_is_builtin_tool({\"type\": \"advisor_20260301\", ...})` returns `True`\n2. `bind_tools([advisor_tool])` includes the dict unchanged in the request payload (no `KeyError`)\n\nPR is open at #38686."
+    },
+    {
+      "author": "corsettigyg",
+      "created_at": "2026-07-07T11:43:25Z",
+      "body": "it is a small issue guys, no need for that much AI-generated noise \ud83d\ude04 "
+    }
+  ]
+}

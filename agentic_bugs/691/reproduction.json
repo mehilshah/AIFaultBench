@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "stdout: `BUG REPRODUCED: State.model_dump() dropped AIMessage.tool_calls`",
+    "stderr shows the serialized nested message has no `tool_calls` key.",
+    "Environment: langchain-core=1.2.6, pydantic=2.12.5."
+  ],
+  "steps": [
+    "Read the report and maintainer comments.",
+    "Ran `bash setup_codebase.sh`; used the released issue-era dependencies because this standalone path does not import LangGraph.",
+    "Created the isolated environment and captured the final repro run in the required logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

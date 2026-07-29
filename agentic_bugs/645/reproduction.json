@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at 0501325e6c536a0693565bec99dde038cc5c4d20.",
+    "Final `bash run_repro.sh` exited 1 with `TypeError: unsupported operand type(s) for +=: 'dict' and 'dict'` at `chat_models.py:967` in the checked-out Fireworks integration."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`.",
+    "Created `.venv`, installed pinned dependencies, and installed `codebase/libs/partners/fireworks` editable.",
+    "Ran the offline nested-token-usage reproduction and captured stdout/stderr logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

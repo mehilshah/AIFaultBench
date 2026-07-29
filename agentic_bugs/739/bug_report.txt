@@ -1,0 +1,48 @@
+# recovered-from-issue: https://github.com/Arize-ai/phoenix/issues/13780
+
+TITLE
+[BUG]: ATIF validation accepts non-object step metrics that crash conversion
+
+BODY
+### Where
+
+`packages/phoenix-client/src/phoenix/client/helpers/atif/_validate.py` and `_convert.py`
+
+### Reproduction
+
+On current `main`:
+
+```python
+import json
+from pathlib import Path
+from phoenix.client.helpers.atif._validate import _validate_atif_trajectory
+from phoenix.client.helpers.atif._convert import _convert_atif_trajectory_to_spans
+
+trajectory = json.loads(Path(packages/phoenix-client/tests/client/helpers/atif/fixtures/simple_trajectory.json).read_text())
+trajectory[steps][1][metrics] = oops
+
+_validate_atif_trajectory(trajectory)
+_convert_atif_trajectory_to_spans(trajectory)
+```
+
+### Observed
+
+Validation succeeds, then conversion crashes while building LLM attributes:
+
+```
+AttributeError: 'str' object has no attribute 'get'
+```
+
+Numeric-looking but invalid token values also pass validation and fail later, for example `{prompt_tokens: abc}` raises:
+
+```
+ValueError: invalid literal for int() with base 10: 'abc'
+```
+
+### Expected
+
+ATIF validation should reject non-object `metrics` and non-numeric token metric values before conversion. A malformed user-supplied trajectory should produce a structured validation error instead of a raw converter exception.
+
+### Notes
+
+Self-verified locally. `_build_llm_attributes` treats `metrics` as a mapping and calls `.get()`, but `_validate_atif_trajectory` currently only checks `metrics` in the special `llm_call_count == 0` case.

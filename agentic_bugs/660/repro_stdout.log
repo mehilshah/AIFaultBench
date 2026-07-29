@@ -1,0 +1,5 @@
+RAW_ORMSGPACK_REJECTS_SEND: Type is not msgpack serializable: Send
+JSONPLUS_SEND_ROUND_TRIP_OK: type=msgpack, value=Send(node='worker', arg={'task': 'alpha'})
+REPORTED_GRAPH_REJECTED_AS_NODE_UPDATE: InvalidUpdateError
+CHECKPOINTED_SEND_GRAPH_OK: results=['alpha', 'beta']
+NOT_REPRODUCED: JsonPlusSerializer and supported checkpointed Send routing succeed

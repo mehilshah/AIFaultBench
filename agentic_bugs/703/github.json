@@ -1,0 +1,48 @@
+{
+  "owner": "pydantic",
+  "repo": "pydantic-ai",
+  "number": 6081,
+  "html_url": "https://github.com/pydantic/pydantic-ai/issues/6081",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Bedrock: an attachment (`DocumentUrl`/`ImageUrl`) merged into the same user message as a `tool_result` \u2192 Converse `ValidationException`",
+  "author": "ShurikAg",
+  "created_at": "2026-06-27T02:27:13Z",
+  "updated_at": "2026-07-04T00:38:37Z",
+  "closed_at": "2026-07-04T00:38:37Z",
+  "labels": [
+    "bug",
+    "bedrock",
+    "validation",
+    "media"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 6.92,
+  "fix": {
+    "closing_commit": "2f1f287f3de34cbe05544b835fdcf070c6e4ffbe",
+    "linked_prs": [],
+    "best_guess_fix_commit": "2f1f287f3de34cbe05544b835fdcf070c6e4ffbe",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:05:56.478181+00:00",
+  "comments": [
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-06-27T02:27:53Z",
+      "body": "<!-- pydanty:status-comment:v1 -->\n\n## pydanty status: bug\n\n**Classification:** bug\n\n**Why this matters:** Multi-turn Bedrock apps where a tool call ends a turn and the next user turn includes a file attachment (DocumentUrl/ImageUrl/BinaryContent) will fail with a Converse ValidationException. This is a natural and common interaction pattern \u2014 the model calls a tool, gets results, then the user sends a new message with a document. The bug makes Bedrock unusable for this flow, while the same pattern works on OpenAI. Affects any Pydantic AI user on Bedrock with tools + attachments in multi-turn conversations.\n\n**Evidence summary:** No delegate evidence was gathered this run. All six delegate calls failed: reproducer (path error then budget exhaustion), code_librarian (UnexpectedModelBehavior x3 then budget exhaustion), repositorian (UnexpectedModelBehavior), explorer (UnexpectedModelBehavior x2). The issue report itself names specific code paths (_clean_message_history in _agent_graph.py merging consecutive ModelRequests, BedrockConverseModel._map_messages merging consecutive user messages), provides a runnable reproduction script, and includes the exact AWS error. The reported version is pydantic-ai-slim 1.60.0 claimed unchanged on main/2.0. However, per pydanty policy, a bug cannot be marked PR-ready without a reproducer result from this or a chained run, and no reproducer evidence was obtained.\n\n**Next action:** needs_maintainer_discussion -- Reproduction was not completed \u2014 all delegates (reproducer, code_librarian, repositorian, explorer) failed due to infrastructure issues (model behavior errors, path errors, budget exhaustion). Cannot classify as PR-ready without reproducer confirmation per policy. The issue report is high-quality and credible but the evidence gap must be stated honestly.\n\nBedrock adapter merges a trailing tool_result ModelRequest with a following attachment-bearing ModelRequest into one Converse user message containing [toolResult, text, document], which Bedrock Claude models reject with ValidationException. The issue is well-reported with a concrete reproduction script and named code paths. However, all delegate calls failed this run due to infrastructure issues \u2014 reproduction was not completed and no code_librarian or repositorian evidence was gathered. Classifying as a bug, but routing to needs_maintainer_discussion because the evidence gap from delegate failures prevents PR-ready classification. When delegates are available, the next step is to reproduce by running the reporter's script against current checked-in code, then locate the merge logic in BedrockConverseModel._map_messages and _clean_message_history for a localized fix that prevents co-locating attachment blocks with toolResult blocks."
+    }
+  ]
+}

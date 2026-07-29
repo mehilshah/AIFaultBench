@@ -1,0 +1,86 @@
+# recovered-from-issue: https://github.com/openai/openai-agents-python/issues/2962
+
+TITLE
+`WorkspaceStartError` on Windows
+
+BODY
+### Please read this first
+
+- ✅ **Have you read the docs?**[Agents SDK docs](https://openai.github.io/openai-agents-python/)
+- ✅ **Have you searched for related issues?** Others may have faced similar issues.
+
+### Describe the bug
+
+I'm trying to use the Agents SDK with a Modal sandbox. I'm getting the following (running on Windows):
+
+```
+  File "C:\Users\Rae\Desktop\Code\.venv\Lib\site-packages\agents\sandbox\session\base_sandbox_session.py", line 766, in _validate_remote_path_access
+    raise ExecNonZeroError(
+agents.sandbox.errors.ExecNonZeroError: executing processes for container: executing command "\\tmp\\openai-agents\\bin\\resolve-workspace-path-f8e24896b498 \\workspace \\workspace 1" in sandbox: error finding executable "\\tmp\\openai-agents\\bin\\resolve-workspace-path-f8e24896b498" in PATH [/usr/local/bin /usr/local/sbin /usr/local/bin /usr/sbin /usr/bin /sbin /bin]: no such file or directory
+
+The above exception was the direct cause of the following exception:
+
+  File "C:\Users\Rae\Desktop\Code\.venv\Lib\site-packages\agents\sandbox\session\base_sandbox_session.py", line 142, in start
+    raise wrapped from e
+agents.sandbox.errors.WorkspaceStartError: failed to start session
+```
+
+### Debug information
+- Agents SDK version: (e.g. `v0.0.3`): 0.14.2
+- Python version (e.g. Python 3.14): 3.12.1
+- OpenAI version: 2.32.0
+
+### Repro steps
+
+If you set `remote=False` in this script on Windows, you will get the error. If you set `remote=True` to run the script on a remote Linux machine (I was using a Modal function), you'll see that it works.
+
+You could also set `remote=False` and run it on a machine that's also not Windows; I think it'll also work there.
+
+```python
+import asyncio
+from agents import Runner
+from agents.sandbox import SandboxAgent
+from agents.extensions.sandbox.modal import (
+    ModalImageSelector,
+    ModalSandboxClient,
+    ModalSandboxClientOptions,
+)
+from agents.sandbox import SandboxRunConfig
+from agents.run import RunConfig
+import modal
+
+image = modal.Image.debian_slim(python_version="3.12").uv_pip_install(
+    "openai-agents[modal]"
+)
+app = modal.App("test-sandbox")
+
+agent = SandboxAgent(name="test", model="gpt-5.2", instructions="You are helpful.")
+
+
+async def main() -> str:
+    client = ModalSandboxClient(image=ModalImageSelector.from_image(image))
+    opts = ModalSandboxClientOptions(app_name="test-sandbox", timeout=60)
+    result = await Runner.run(
+        agent,
+        "Tell me a joke.",
+        run_config=RunConfig(sandbox=SandboxRunConfig(client=client, options=opts)),
+    )
+    return result.final_output
+
+
+@app.function(image=image, secrets=[modal.Secret.from_name("openai-api-key")])
+async def run_remote() -> str:
+    return await main()
+
+
+if __name__ == "__main__":
+    remote = False
+
+    with app.run():
+        if remote:
+            output = run_remote.remote()
+            print(output)
+        else:
+            print(asyncio.run(main()))
+
+```

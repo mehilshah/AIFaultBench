@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`bash run_repro.sh` exited with status 1.",
+    "Captured stdout: `VALIDATION_ACCEPTED_NON_OBJECT_METRICS` and `BUG_REPRODUCED: converter raised AttributeError: 'str' object has no attribute 'get'`.",
+    "Captured stderr is empty.",
+    "Pinned checkout resolves to `031975ccbe60e50967d8f192b6dfe6ca6de1daa7`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; completed the checkout using a shallow fetch of the exact pinned commit after the full-history clone did not complete.",
+    "Created `.venv`, installed exact pinned dependencies, and installed `codebase/packages/phoenix-client` editable.",
+    "Ran the deterministic local validator/converter reproduction and captured the final `run_repro.sh` output."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at b7a2fda98db44d7b3feeda9259ef09ae0b0de8b5.",
+    "Final run exited 1 and printed: `OBSERVED BUG: TypeError: unsupported operand type(s) for +=: 'int' and 'NoneType'`.",
+    "Traceback reaches `codebase/camel/agents/chat_agent.py:4460` and line 3361, where completion token usage is added to an integer tracker."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and verified the pinned checkout.",
+    "Created `.venv`, installed pinned requirements, and installed the checkout editable.",
+    "Ran `bash run_repro.sh` with an offline usage-only stream chunk containing `completion_tokens=None`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

@@ -1,0 +1,1 @@
+OBSERVED BUG: Invalid value: 'text'. Supported values are: 'input_text', 'input_image', 'output_text', 'refusal', 'input_file', 'computer_screenshot', and 'summary_text'. (DSPy content types: input_text, text, image_url, text)

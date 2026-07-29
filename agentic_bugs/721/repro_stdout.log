@@ -1,0 +1,1 @@
+OBSERVED BUG: BrowserStateRequestEvent had no result; AssertionError: Root CDP client not initialized

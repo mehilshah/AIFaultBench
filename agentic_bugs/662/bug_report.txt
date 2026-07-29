@@ -1,0 +1,138 @@
+# recovered-from-issue: https://github.com/crewAIInc/crewAI/issues/5474
+
+TITLE
+[BUG] MCP servers over 10 tools causes maximum recursion depth exceeded error
+
+BODY
+### Description
+
+It appears that when using an MCP server with more than 10 tools, the CrewAI MCP adapter fails with the following error:
+
+`RuntimeError: Failed to get native MCP tools: maximum recursion depth exceeded`
+
+The MCP server I was using was [ms-365-mcp-server](https://github.com/Softeria/ms-365-mcp-server)￼, which provides integrations for Microsoft services. I traced the issue to the CrewAI source code, specifically at the point where the error is triggered: [tool_resolver.py#L447](https://github.com/crewAIInc/crewAI/blob/1c90d574abb9f28dd09de8ded437bcad19fa97dc/lib/crewai/src/crewai/mcp/tool_resolver.py#L447)￼.
+
+From my testing, this issue only occurs when the MCP server exposes more than 10 tools. For comparison, I also had the [Atlassian MCP server](https://github.com/atlassian/atlassian-mcp-server)￼ connected simultaneously, and it performed without any issues.
+
+I tried using [Pydantic AI](https://pydantic.dev/docs/ai/overview/) and the Pydantic agent work perfectly with this server as a test.
+
+I had only found one other [issue](https://github.com/crewAIInc/crewAI/issues/3025) on this which seem to be resolve along time ago.
+
+This is a blocking problem, as it prevents users from using MCP servers that expose more than 10 tools.
+
+### Steps to Reproduce
+
+1. Go install [Poetry](https://python-poetry.org/docs/) 
+2. Install crewai with Poetry - `poetry install crewai`
+3. Use this MCP invocation - `npx -y @softeria/ms-365-mcp-server --org-mode` with the agent follow the crewai docs on MCP usage 
+4. The error should appear once the agent tries to use the server.
+
+### Expected behavior
+
+I expected the ms-365-mcp-server to work perfectly like it would work; like when I tested with the [Pydantic AI](https://pydantic.dev/docs/ai/overview/) framework it worked perfectly.
+
+### Screenshots/Code snippets
+
+```python
+def _build_and_run_crew(access_token: str, task_description: str, llm_model: str) -> str:
+    """Build the CrewAI crew and run it synchronously (called from executor).
+
+    Uses MCPServerAdapter with StdioServerParameters to spawn the local
+    ms-365-mcp-server in BYOT mode (MS365_MCP_OAUTH_TOKEN env var).
+    """
+
+    from mcp import StdioServerParameters  # noqa: E402
+    from crewai_tools import MCPServerAdapter
+    from crewai import Agent, Crew, Process, Task
+
+    server_params = StdioServerParameters(
+        command="npx",
+        args=["-y", "@softeria/ms-365-mcp-server", "--org-mode"],
+        env={
+            "MS365_MCP_OAUTH_TOKEN": access_token,
+            "PATH": os.environ.get("PATH", ""),
+        },
+    )
+
+    with MCPServerAdapter(server_params) as tools:
+        agent = Agent(
+            role="Microsoft 365 Assistant",
+            goal=(
+                "Help users query and manage their Microsoft 365 resources "
+                "including emails, calendar events, Teams messages, OneDrive "
+                "files, To Do tasks, and more."
+            ),
+            backstory=(
+                "You are an expert Microsoft 365 assistant with access to the "
+                "user's Outlook mail, calendar, Teams, OneDrive, To Do, and "
+                "other Microsoft 365 services.\n"
+                "When listing chats, use the chatType filter to narrow results: "
+                "chatType eq 'oneOnOne' for 1:1 DMs, 'group' for group chats, "
+                "'meeting' for meeting chats. Default to 'oneOnOne' unless the "
+                "user asks for something else."
+            ),
+            llm=llm_model,
+            max_iter=10,
+            max_retry_limit=2,
+            tools=tools,
+            verbose=True,
+        )
+
+        task = Task(
+            description=(
+                f"{task_description}\n\n"
+                "For chat messages, first call list-chats to get chatId, "
+                "then use that chatId in list-chat-messages."
+            ),
+            expected_output=(
+                "A clear, structured summary of the results from "
+                "Microsoft 365."
+            ),
+            agent=agent,
+        )
+
+        crew = Crew(
+            agents=[agent],
+            tasks=[task],
+            process=Process.sequential,
+            verbose=True,
+        )
+
+        try:
+            result = crew.kickoff()
+            return str(result)
+        except Exception as e:
+            return f"Agent completed with error: {e}"
+```
+
+### Operating System
+
+macOS Sonoma
+
+### Python Version
+
+3.12
+
+### crewAI Version
+
+1.14.1
+
+### crewAI Tools Version
+
+1.14.1
+
+### Virtual Environment
+
+Poetry
+
+### Evidence
+
+`RuntimeError: Failed to get native MCP tools: maximum recursion depth exceeded`
+
+### Possible Solution
+
+Not sure but It has to do with this section of [code](https://github.com/crewAIInc/crewAI/blob/1c90d574abb9f28dd09de8ded437bcad19fa97dc/lib/crewai/src/crewai/mcp/tool_resolver.py#L447).
+
+### Additional context
+
+N/A, sufficient information already provide above.

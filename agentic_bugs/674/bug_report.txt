@@ -1,0 +1,168 @@
+# recovered-from-issue: https://github.com/stanfordnlp/dspy/issues/9589
+
+TITLE
+Module.load_state silently corrupts modules on partial failure (non-transactional)
+
+BODY
+# `Module.load_state` silently corrupts modules on partial failure (non-transactional)
+
+## Summary
+
+`dspy.Module.load_state` is a non-transactional in-place mutation loop over named parameters. If any parameter's key is missing from the saved state (signature drift, schema migration, manual edit), the exception fires **after** earlier parameters have already been overwritten with saved state. Callers that catch the exception see a module that passes `isinstance(m, dspy.Module)` but is a Frankenstein — some predictors carry saved demos, others still have template defaults — with no way to distinguish it from a clean fresh template.
+
+This silently corrupts inference in production. We found it while debugging a "why are my RAG answers quality-regressing after this deploy" problem where the actual cause was a signature drift between a saved optimization run and the new template.
+
+## Environment
+
+- DSPy **3.0.3** (installed via `uv pip install dspy`)
+- Python 3.13.11
+- Platform: macOS (darwin), also reproducible on Linux
+- Tested against the canonical `program.save(path, save_program=False)` / `Module.load(path)` persistence pattern for JSON state
+
+## Minimal reproducer
+
+```python
+import dspy, json, tempfile
+from pathlib import Path
+from dspy.primitives.example import Example
+
+
+class Sig(dspy.Signature):
+    question: str = dspy.InputField()
+    answer: str = dspy.OutputField()
+
+
+class Prog(dspy.Module):
+    def __init__(self):
+        super().__init__()
+        self.a = dspy.ChainOfThought(Sig)
+        self.b = dspy.ChainOfThought(Sig)
+
+
+# 1. Save a program with non-default state (injected demos on both predictors)
+source = Prog()
+sentinel = Example(question="q1", answer="a1").with_inputs("question")
+source.a.predict.demos = [sentinel]
+source.b.predict.demos = [sentinel]
+
+with tempfile.TemporaryDirectory() as d:
+    path = Path(d) / "state.json"
+    source.save(str(path), save_program=False)
+
+    # 2. Simulate a signature drift: saved state has b.predict, but in the
+    #    time since the save, someone deleted / renamed b — or equivalently,
+    #    the saved file has been hand-edited or truncated mid-key. Here we
+    #    remove b.predict's entry from the saved JSON.
+    raw = json.loads(path.read_text())
+    corrupted = {k: v for k, v in raw.items() if "b." not in k}
+    path.write_text(json.dumps(corrupted))
+
+    # 3. Fresh template, load the now-incompatible state
+    template = Prog()
+    print(f"BEFORE load: template.a.predict.demos = {template.a.predict.demos}")
+    try:
+        template.load(str(path))
+    except Exception as e:
+        print(f"load raised: {type(e).__name__}: {e}")
+    print(f"AFTER  load: template.a.predict.demos = {[str(d) for d in template.a.predict.demos]}")
+```
+
+### Output
+
+```
+BEFORE load: template.a.predict.demos = []
+load raised: KeyError: 'b.predict'
+AFTER  load: template.a.predict.demos = ["{'question': 'q1', 'answer': 'a1'}"]
+```
+
+**Despite the exception**, `template.a.predict.demos` was mutated from the fresh-template default `[]` to the saved sentinel before the exception fired on `b.predict`.
+
+## Root cause
+
+`Module.load_state` in `dspy/primitives/base_module.py`:
+
+```python
+def load_state(self, state):
+    for name, param in self.named_parameters():
+        param.load_state(state[name])
+```
+
+This iterates named parameters and mutates each in place. There is no transactional boundary: if `state[name]` raises `KeyError` for parameter N, parameters `0..N-1` have already been overwritten on `self`. Any caller that catches the exception and continues using `self` is now serving inference from a half-hydrated module.
+
+## Impact
+
+Downstream projects that persist DSPy state across runs and catch load failures silently ship corrupted optimization state. We hit this in a Graph RAG MCP server where every restart would load optimization state for 6 DSPy programs, and a single saved-state/template mismatch on one program would leave the others in an inconsistent state invisible from a type check or `isinstance` probe.
+
+The failure mode is especially pernicious because:
+
+1. **The symptom is "answers are slightly worse after this deploy"** — not a hard crash. Attributed to "model quality" during triage.
+2. **One ERROR log at startup** is the only signal, easily missed after deploys.
+3. **`isinstance(m, dspy.Module)` still passes** — there's no structural way to tell a half-loaded module from a fresh one.
+
+## Suggested fixes
+
+### Option A: Two-phase validate-then-apply (preferred)
+
+Validate that every parameter key is present in the saved state **before** starting to mutate:
+
+```python
+def load_state(self, state):
+    param_items = list(self.named_parameters())
+    missing = [name for name, _ in param_items if name not in state]
+    if missing:
+        raise KeyError(f"Saved state missing required keys: {missing}")
+    for name, param in param_items:
+        param.load_state(state[name])
+```
+
+This catches the failure before any mutation occurs. Still leaves a gap if `param.load_state` can itself fail mid-load on an individual param's internal state, but closes the common case.
+
+### Option B: Deep-copy, apply, swap
+
+Apply the loaded state to a temporary deep copy of self, then swap atomically:
+
+```python
+def load_state(self, state):
+    import copy
+    scratch = copy.deepcopy(self)
+    for name, param in scratch.named_parameters():
+        param.load_state(state[name])  # may raise on missing key
+    # Only swap if the whole load succeeded
+    for name, param in self.named_parameters():
+        param.load_state(state[name])
+```
+
+More expensive but fully transactional regardless of where the failure occurs.
+
+### Option C: Document the non-transactional contract and let callers deepcopy
+
+If neither of the above is desirable, at least document clearly in the `Module.load` docstring that the method is non-transactional and callers must make their own copy if they want failure-safe loading. In our downstream project we ended up working around this by changing our API to take a `template_factory: Callable[[], dspy.Module]` and calling it a second time on failure — which works but is awkward and requires every caller to know about the footgun.
+
+## Workaround we shipped
+
+For reference, this is what we did in `brm444/graph-rag-mcp-server` PR #3:
+
+```python
+def load_program(self, name: str, template_factory: Callable[[], dspy.Module]) -> dspy.Module:
+    state_file = self.state_dir / f"{name}.json"
+    template = template_factory()
+    if not state_file.exists():
+        return template
+    try:
+        template.load(str(state_file))
+        return template
+    except Exception as e:
+        logger.error(
+            f"Failed to load program '{name}' from {state_file}: {e}. "
+            f"Discarding partially-hydrated module and returning fresh template."
+        )
+        return template_factory()  # <-- second factory call to get a clean instance
+```
+
+We also added a regression test locking in "after a mid-load failure, the returned module's demos are the factory defaults, not the sentinel from the failed load" to prevent this regressing if we later forget why the factory signature exists.
+
+## Related
+
+The docstring on `Module.load` says "Load the saved module. You may also want to check out dspy.load, if you want to load an entire program, not just the state for an existing program." The non-transactional nature is not mentioned.
+
+`dspy.load` (module-level, for `save_program=True`) is transactional because it deserializes the whole program at once. The asymmetry with the JSON / `save_program=False` path is surprising.

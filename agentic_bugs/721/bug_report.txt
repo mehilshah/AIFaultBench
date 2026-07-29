@@ -1,0 +1,186 @@
+# recovered-from-issue: https://github.com/browser-use/browser-use/issues/4269
+
+TITLE
+Bug: CodeAgent — Persistent BrowserStateRequestEvent Failure with Root CDP client not initialized
+
+BODY
+### Browser Use Version
+
+ 0.12.1
+
+### Bug Description, Steps to Reproduce, Screenshots
+
+## Observed Errors
+
+### Error 1 — Repeated on every step (state retrieval)
+
+```
+ERROR [service] Failed to get browser state: Expected at least one handler to return a non-None result, but none did! ?▶ BrowserStateRequestEvent#6bb8 ✅ -> {}
+```
+
+This error repeats for **every step** of the agent loop (Steps 1–7+ observed). The event fires and resolves to an empty dict `{}` — no handler populates the browser state.
+
+### Error 2 — Thrown on every `evaluate()` call
+
+```
+ERROR [service] Code execution error: AssertionError: Root CDP client not initialized
+```
+
+Occurs whenever the agent attempts to run JavaScript via `evaluate()`:
+
+```python
+current_url = await evaluate('window.location.href')
+title = await evaluate('document.title')
+page_info = await evaluate('(function(){ return {...}; })()')
+```
+
+All calls fail with the same assertion error, indicating the CDP root client was **never initialized** or was lost after the first navigation.
+
+### Error 3 — Screenshot capture fails
+
+```
+WARNING [service] Failed to capture screenshot for step N: Expected at least one handler to return a non-None result, but none did! ?▶ BrowserStateRequestEvent#xxxx ✅ -> {}
+```
+
+Screenshot capture fails on every step because the underlying browser state is unavailable.
+
+
+### Failing Python Code
+
+```python
+## Steps to Reproduce
+
+### 1. Browser Setup (`BrowserManager`)
+
+
+from browser_use import Browser
+
+browser = Browser(
+    headless=True,
+    window_size={"width": 1280, "height": 720},
+    allowed_domains=["https://emr25.oneglancehealth.com"],
+)
+
+
+### 2. Agent Setup (`CodeAgent`)
+
+
+from browser_use import CodeAgent, ChatBrowserUse
+
+agent = CodeAgent(
+    task=prompt,
+    llm=ChatBrowserUse(),
+    browser=browser,
+    sensitive_data={
+        "EHR_USERNAME": "<username>",
+        "EHR_PASSWORD": "<password>",
+    },
+    initial_actions=[{"navigate": {"url": "https://example.com"}}], #provided actual website name
+    directly_open_url=False,
+    max_actions_per_step=15,
+    generate_gif="execution_run.gif",
+    save_conversation_path="conversation.json",
+    available_file_paths=["/tmp/"],
+)
+
+await agent.run(max_steps=100)
+```
+
+### LLM Model
+
+_No response_
+
+### Operating System & Browser Versions
+
+OS: Ubuntu 25.04 (Linux 6.14.0-1017-gcp x86_64), Python: 3.13.2, browser-use: 0.12.1, playwright: 1.58.0, Chromium (Playwright managed): 145.0.7632.6 (playwright chromium v1208), Server type: Headless GCP VM (no display)
+
+### Full DEBUG Log Output
+
+```shell
+INFO     [explore_ehr.core.browser_manager] {'headless': True, 'user_data_dir': '/home/yash/ayu-browser-mcp-mvp/ayu-browser-mcp-mvp/chrome_profile', 'event': 'Creating browser', 'level': 'info', 'logger': 'explore_ehr.core.browser_manager', 'timestamp': '2026-03-04T08:36:25.439677Z'}
+INFO     [service] Using anonymized telemetry, see https://docs.browser-use.com/development/monitoring/telemetry.
+INFO     [execute_ehr.agents.code_ehr_agent] {'workflow': 'new_patient_registration', 'event': 'Starting agent execution', 'level': 'info', 'logger': 'execute_ehr.agents.code_ehr_agent', 'timestamp': '2026-03-04T08:36:25.869065Z'}
+INFO     [service] Extracted URL from task, navigating to: https://example.com
+INFO     [tools] 🔗 Navigated to https://example.com
+ERROR    [service] Failed to get browser state: Expected at least one handler to return a non-None result, but none did! ?▶ BrowserStateRequestEvent#1853 ✅ -> {}
+ERROR    [service] Failed to get browser state: Expected at least one handler to return a non-None result, but none did! ?▶ BrowserStateRequestEvent#8481 ✅ -> {}
+INFO     [service] 
+
+
+
+
+
+
+Step 1/100
+INFO     [service] LLM Response:
+I will start by navigating to the EHR application URL and checking if a login is required.
+
+
+await navigate('https://example.com')
+await asyncio.sleep(2)
+
+INFO     [tools] 🔗 Navigated to https://example.com
+WARNING  [service] Failed to capture screenshot for step 1: Expected at least one handler to return a non-None result, but none did! ?▶ BrowserStateRequestEvent#da60 ✅ -> {}
+INFO     [service] 
+
+
+
+
+
+
+Step 2/100
+ERROR    [service] Failed to get browser state: Expected at least one handler to return a non-None result, but none did! ?▶ BrowserStateRequestEvent#08bc ✅ -> {}
+INFO     [service] LLM Response:
+The navigation step seems to have encountered a state retrieval issue, likely due to the page still loading or a redirection. I will re-verify the current URL and attempt to interact with the login form if it's visible.
+
+
+# Check current URL and try to find login fields
+current_url = await evaluate("window.location.href")
+print(f"Current URL: {current_url}")
+
+# Attempt to log in using the provided credentials from sensitive_data
+# Assuming standard EHR_USERNAME and EHR_PASSWORD keys
+try:
+    # Look for username/password fields and login button
+    # We will use indices once the browser state is recovered in the next turn
+    # For now, let's just wait a moment to ensure the page is stable
+    await asyncio.sleep(2)
+except Exception as e:
+    print(f"Initial check failed: {e}")
+
+ERROR    [service] Code execution error: AssertionError: Root CDP client not initialized
+WARNING  [service] Consecutive errors: 1/8
+WARNING  [service] Failed to capture screenshot for step 2: Expected at least one handler to return a non-None result, but none did! ?▶ BrowserStateRequestEvent#d7f0 ✅ -> {}
+INFO     [service] 
+
+
+
+
+
+
+Step 3/100
+ERROR    [service] Failed to get browser state: Expected at least one handler to return a non-None result, but none did! ?▶ BrowserStateRequestEvent#c02b ✅ -> {}
+INFO     [service] LLM Response:
+The browser state retrieval is failing, likely due to a connection or initialization issue. I will attempt to refresh the page and perform a simple check to see if the DOM is accessible before proceeding with the login.
+
+
+import asyncio
+
+# Attempt to refresh/re-navigate to ensure the CDP connection is stable
+await navigate('https://example.com')
+await asyncio.sleep(5)
+
+# Verify if we can execute a simple script to check for common login elements
+login_check = await evaluate('''(function() {
+    return {
+        url: window.location.href,
+        hasUsername: !!document.querySelector('input[type="text"], input[name*="user"], input[id*="user"]'),
+        hasPassword: !!document.querySelector('input[type="password"]'),
+        bodyText: document.body.innerText.substring(0, 100)
+    };
+})()''')
+
+print(f"Login Check Output: {login_check}")
+
+INFO     [tools] 🔗 Navigated to https://example.com
+```

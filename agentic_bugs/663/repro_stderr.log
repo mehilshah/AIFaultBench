@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/663/repro.py", line 33, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/663/repro.py", line 23, in main
+    store.get_all(collection="metadata")
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/663/codebase/llama-index-integrations/storage/kvstore/llama-index-storage-kvstore-redis/llama_index/storage/kvstore/redis/base.py", line 161, in get_all
+    collection_kv_dict[key.decode()] = value
+                       ^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'decode'. Did you mean: 'encode'?

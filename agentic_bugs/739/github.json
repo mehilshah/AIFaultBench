@@ -1,0 +1,40 @@
+{
+  "owner": "Arize-ai",
+  "repo": "phoenix",
+  "number": 13780,
+  "html_url": "https://github.com/Arize-ai/phoenix/issues/13780",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG]: ATIF validation accepts non-object step metrics that crash conversion",
+  "author": "luochen211",
+  "created_at": "2026-06-16T15:26:14Z",
+  "updated_at": "2026-06-30T23:15:24Z",
+  "closed_at": "2026-06-30T23:15:24Z",
+  "labels": [
+    "bug",
+    "triage"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 14.33,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:55.823131+00:00",
+  "comments": []
+}

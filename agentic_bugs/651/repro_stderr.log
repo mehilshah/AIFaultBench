@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/651/repro.py", line 32, in <module>
+    agent.replay(detailed=True)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/651/codebase/src/smolagents/agents.py", line 871, in replay
+    self.memory.replay(self.logger, detailed=detailed)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/651/codebase/src/smolagents/memory.py", line 264, in replay
+    logger.log_messages(step.model_input_messages, level=LogLevel.ERROR)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/651/codebase/src/smolagents/monitoring.py", line 213, in log_messages
+    messages_as_string = "\n".join([json.dumps(dict(message), indent=4) for message in messages])
+                                               ^^^^^^^^^^^^^
+TypeError: 'ChatMessage' object is not iterable

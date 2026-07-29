@@ -1,0 +1,46 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langgraph",
+  "number": 6370,
+  "html_url": "https://github.com/langchain-ai/langgraph/issues/6370",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "LangGraph Server not propagating Runtime Context when using SendAPI",
+  "author": "LouisAuneau",
+  "created_at": "2025-10-31T14:04:50Z",
+  "updated_at": "2025-11-06T15:28:09Z",
+  "closed_at": "2025-11-06T15:24:32Z",
+  "labels": [
+    "bug",
+    "pending"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 6.06,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T14:44:24.464311+00:00",
+  "comments": [
+    {
+      "author": "LouisAuneau",
+      "created_at": "2025-11-06T15:24:32Z",
+      "body": "For people seeing this issue. It turns out that if in my case it wasn't related to the sendAPI at all. But when I invoked my assistant through the `langgraph-sdk`, and then hit an `interrupt`. I was resuming my graph from LangGraph Studio, which resets the context to `None`, while I should have resumed from the SDK and provide the context again. "
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "owner": "huggingface",
+  "repo": "smolagents",
+  "number": 1767,
+  "html_url": "https://github.com/huggingface/smolagents/issues/1767",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "BUG: ModuleNotFoundError: No module named 'ddgs'",
+  "author": "valmetisrinivas",
+  "created_at": "2025-09-11T16:35:51Z",
+  "updated_at": "2025-09-18T07:32:03Z",
+  "closed_at": "2025-09-17T06:39:41Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 5.59,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:05:51.511801+00:00",
+  "comments": [
+    {
+      "author": "abhipriya-gif",
+      "created_at": "2025-09-12T18:32:48Z",
+      "body": "ddgs is the duckduckgo-search tool and is listed as an optional requirement that only gets downloaded automatically if you install the smolagents[toolkit]. if you're using the core smolagents library it needs to be installed separately. that's probably why you're seeing this error. Installing it separately using `pip install ddgs` (if you use pip) should fix it"
+    },
+    {
+      "author": "valmetisrinivas",
+      "created_at": "2025-09-17T08:18:00Z",
+      "body": "@abhipriya-gif Thanks a lot. That helps. Hope the course creators/ administrators can incorporate the required change in the course/ notebook.\n"
+    },
+    {
+      "author": "albertvillanova",
+      "created_at": "2025-09-18T05:31:45Z",
+      "body": "@valmetisrinivas in the course website, you can find the instructions on how to report a bug or suggest improvements to the course content: https://huggingface.co/learn/agents-course/unit0/introduction#contribute\n> I found a bug, or I want to improve the course:\n> - If you found a bug \ud83d\udc1b in a notebook, please [open an issue](https://github.com/huggingface/agents-course/issues) and describe the problem\n\nTo install some tool-releated dependencies (besides the core `smolagents`), users need to install the `toolkit` extra:\n```shell\npip install -U \"smolagents[toolkit]\"\n```"
+    },
+    {
+      "author": "valmetisrinivas",
+      "created_at": "2025-09-18T07:32:02Z",
+      "body": "Noted. Thanks a lot Albert.\r\n\r\nreg,\r\nSrinivas\r\n\r\nOn Thu, 18 Sept 2025 at 09:32, Albert Villanova del Moral <\r\n***@***.***> wrote:\r\n\r\n> *albertvillanova* left a comment (huggingface/smolagents#1767)\r\n> <https://github.com/huggingface/smolagents/issues/1767#issuecomment-3305488649>\r\n>\r\n> @valmetisrinivas <https://github.com/valmetisrinivas> in the course\r\n> website, you can find the instructions on how to report a bug or suggest\r\n> improvements to the course content:\r\n> https://huggingface.co/learn/agents-course/unit0/introduction#contribute\r\n>\r\n> I found a bug, or I want to improve the course:\r\n>\r\n>    - If you found a bug \ud83d\udc1b in a notebook, please open an issue\r\n>    <https://github.com/huggingface/agents-course/issues> and describe the\r\n>    problem\r\n>\r\n> \u2014\r\n> Reply to this email directly, view it on GitHub\r\n> <https://github.com/huggingface/smolagents/issues/1767#issuecomment-3305488649>,\r\n> or unsubscribe\r\n> <https://github.com/notifications/unsubscribe-auth/AMGKJKFKLZFPLT5GSTHLNN33TI7VPAVCNFSM6AAAAACGIJTEAWVHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHMZTGMBVGQ4DQNRUHE>\r\n> .\r\n> You are receiving this because you were mentioned.Message ID:\r\n> ***@***.***>\r\n>\r\n"
+    }
+  ]
+}

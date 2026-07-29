@@ -1,0 +1,115 @@
+# recovered-from-issue: https://github.com/camel-ai/camel/issues/3602
+
+TITLE
+[BUG] Token usage tracking fails in streaming mode
+
+BODY
+### Required prerequisites
+
+- [x] I have read the documentation <https://camel-ai.github.io/camel/camel.html>.
+- [x] I have searched the [Issue Tracker](https://github.com/camel-ai/camel/issues) and [Discussions](https://github.com/camel-ai/camel/discussions) that this hasn't already been reported. (+1 or comment there if it has.)
+- [x] Consider asking first in a [Discussion](https://github.com/camel-ai/camel/discussions/new).
+
+### What version of camel are you using?
+
+0.2.82
+
+### System information
+
+3.10.16 (main, Mar 17 2025, 21:30:07) [Clang 20.1.0 ] darwin
+0.2.82
+
+### Problem description
+
+When using ChatAgent.step() for streaming output in stream mode, the program will report an error in handling the token usage logic. The reason seems to be that the usage_dict["completion_tokens"] for some stream chunks is None, but the code still attempts to execute int += None, resulting in a TypeError.
+
+### Reproducible example code
+
+The Python snippets:
+
+```python
+from camel.agents import ChatAgent
+from camel.models import ModelFactory
+from camel.types import ModelPlatformType, ModelType
+ 
+# 1. 创建支持流式输出的模型
+streaming_model = ModelFactory.create(
+    model_platform=ModelPlatformType.DEFAULT,
+    model_type=ModelType.GPT_4O_MINI,
+    model_config_dict={"stream": True}  # 启用流式模式
+)
+ 
+# 2. 初始化流式对话代理
+agent = ChatAgent(
+    system_message="你是一个简洁的助手，用要点回答问题",
+    model=streaming_model
+)
+ 
+# 3. 获取流式响应并实时打印
+for chunk in agent.step("介绍CAMEL框架的核心功能"):
+    print(chunk.msg.content, end="", flush=True)  # 实时输出每个块
+```
+
+Command lines:
+
+```bash
+
+```
+
+Extra dependencies:
+
+```text
+
+```
+
+Steps to reproduce:
+
+1.
+2.
+3.
+
+
+### Traceback
+
+```pytb
+/Users/nanshine/.cursor/extensions/ms-python.debugpy-2025.14.1-darwin-arm64/bundled/libs/debugpy/adapter/../../debug
+py/launcher 55864 -- /Users/nanshine/PlayGround/camel/draft.py 
+Traceback (most recent call last):
+  File "/Users/nanshine/.local/share/uv/python/cpython-3.10.16-macos-aarch64-none/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/Users/nanshine/.local/share/uv/python/cpython-3.10.16-macos-aarch64-none/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/Users/nanshine/.cursor/extensions/ms-python.debugpy-2025.14.1-darwin-arm64/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/__main__.py", line 71, in <module>
+    cli.main()
+  File "/Users/nanshine/.cursor/extensions/ms-python.debugpy-2025.14.1-darwin-arm64/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/../debugpy/server/cli.py", line 508, in main
+    run()
+  File "/Users/nanshine/.cursor/extensions/ms-python.debugpy-2025.14.1-darwin-arm64/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/../debugpy/server/cli.py", line 358, in run_file
+    runpy.run_path(target, run_name="__main__")
+  File "/Users/nanshine/.cursor/extensions/ms-python.debugpy-2025.14.1-darwin-arm64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 310, in run_path
+    return _run_module_code(code, init_globals, run_name, pkg_name=pkg_name, script_name=fname)
+  File "/Users/nanshine/.cursor/extensions/ms-python.debugpy-2025.14.1-darwin-arm64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 127, in _run_module_code
+    _run_code(code, mod_globals, init_globals, mod_name, mod_spec, pkg_name, script_name)
+  File "/Users/nanshine/.cursor/extensions/ms-python.debugpy-2025.14.1-darwin-arm64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 118, in _run_code
+    exec(code, run_globals)
+  File "/Users/nanshine/PlayGround/camel/draft.py", line 19, in <module>
+    for chunk in agent.step("介绍CAMEL框架的核心功能"):
+  File "/Users/nanshine/PlayGround/camel/camel/agents/chat_agent.py", line 301, in __iter__
+    for response in self._generator:
+  File "/Users/nanshine/PlayGround/camel/camel/agents/chat_agent.py", line 4146, in _stream
+    yield from self._stream_response(
+  File "/Users/nanshine/PlayGround/camel/camel/agents/chat_agent.py", line 4203, in _stream_response
+    ) = yield from self._process_stream_chunks_with_accumulator(
+  File "/Users/nanshine/PlayGround/camel/camel/agents/chat_agent.py", line 4460, in _process_stream_chunks_with_accumulator
+    self._update_token_usage_tracker(
+  File "/Users/nanshine/PlayGround/camel/camel/agents/chat_agent.py", line 3361, in _update_token_usage_tracker
+    tracker["completion_tokens"] += usage_dict.get("completion_tokens", 0)
+TypeError: unsupported operand type(s) for +=: 'int' and 'NoneType'
+```
+
+### Expected behavior
+
+_No response_
+
+### Additional context
+
+_No response_

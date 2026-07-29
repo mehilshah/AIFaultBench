@@ -1,0 +1,68 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langchain",
+  "number": 37736,
+  "html_url": "https://github.com/langchain-ai/langchain/issues/37736",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "EnsembleRetriever: arank_fusion uses different normalization logic than rank_fusion causing ValidationError in async",
+  "author": "AliMuhammadAslam",
+  "created_at": "2026-05-28T11:27:28Z",
+  "updated_at": "2026-06-11T01:33:14Z",
+  "closed_at": "2026-06-11T01:33:14Z",
+  "labels": [
+    "bug",
+    "langchain",
+    "langchain-classic",
+    "external"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 13.59,
+  "fix": {
+    "closing_commit": "d74e537dacc344c4a157951cfe906df6972caa9e",
+    "linked_prs": [],
+    "best_guess_fix_commit": "d74e537dacc344c4a157951cfe906df6972caa9e",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T14:00:20.655893+00:00",
+  "comments": [
+    {
+      "author": "AliMuhammadAslam",
+      "created_at": "2026-05-28T11:29:12Z",
+      "body": "I tracked this down to `arank_fusion` in `ensemble.py` using `not isinstance(doc, Document)` as its wrapping condition while `rank_fusion` uses `isinstance(doc, str)`. The one-line fix is to bring `arank_fusion` in line with the sync path.\n\nI've already opened a PR with the fix and tests: #37737\n\nHappy to take this one if a maintainer can assign it to me."
+    },
+    {
+      "author": "AliMuhammadAslam",
+      "created_at": "2026-05-28T11:33:08Z",
+      "body": "To add more detail on the approach:\n\nThe divergence lives in two spots inside `libs/langchain/langchain_classic/retrievers/ensemble.py`:\n\n`rank_fusion` (lines 251-255):\n```python\nretriever_docs[i] = [\n    Document(page_content=cast(\"str\", doc)) if isinstance(doc, str) else doc  # type: ignore[unreachable]\n    for doc in retriever_docs[i]\n]\n```\n\n`arank_fusion` (lines 295-299):\n```python\nretriever_docs[i] = [\n    Document(page_content=doc) if not isinstance(doc, Document) else doc\n    for doc in retriever_docs[i]\n]\n```\n\nThe `# type: ignore[unreachable]` on the sync path shows this normalization is considered dead code for well-typed retrievers \u2014 but it exists as a safety net for bare strings. The async version should have the identical safety net. The fix is changing the single line in `arank_fusion` to use `isinstance(doc, str)` instead of `not isinstance(doc, Document)`.\n\nPR #37737 has the one-line fix plus three unit tests covering: bare strings in sync, bare strings in async, and result consistency between the two paths."
+    },
+    {
+      "author": "sanidhyasin",
+      "created_at": "2026-06-02T09:48:24Z",
+      "body": "I'd like to work on this.\n\n**Root cause:** `rank_fusion` wraps stray values with `Document(page_content=cast(\"str\", doc)) if isinstance(doc, str) else doc`, but `arank_fusion` uses `Document(page_content=doc) if not isinstance(doc, Document) else doc`. So in the async path any non-`Document` (e.g. an `int`) gets passed as `page_content`, which fails Pydantic validation \u2014 whereas the sync path leaves it untouched.\n\n**Proposed fix:** align `arank_fusion`'s check with `rank_fusion` (`isinstance(doc, str)`) so both paths behave identically, and add an async test mirroring the sync one.\n\n@ccurme @mdrxy could you assign this to me? Thanks!"
+    },
+    {
+      "author": "AliMuhammadAslam",
+      "created_at": "2026-06-05T19:54:28Z",
+      "body": "Just to keep this thread accurate: I opened both this issue and PR #37737 on the same day (May 28). The PR has the one-line fix plus three unit tests covering sync bare-string normalization, async bare-string normalization, and result consistency between the two paths \u2014 it's ready to go.\n\nThe PR was auto-closed by the bot because I hadn't been assigned yet at the time. It'll reopen automatically once a maintainer assigns me. Happy to address any feedback.\n\n@ccurme @mdrxy"
+    },
+    {
+      "author": "citizen204",
+      "created_at": "2026-06-06T03:04:34Z",
+      "body": "## Proposed fix\n\nThe divergence between  (sync) and  (async) is a one-line difference in the normalization guard:\n\n| method | current guard | problem |\n|---|---|---|\n| `rank_fusion` | `isinstance(doc, str)` | wraps bare strings; everything else passes through |\n| `arank_fusion` | `not isinstance(doc, Document)` | tries `Document(page_content=<value>)` for **any** non-Document \u2014 raises `pydantic_core.ValidationError` for non-string types |\n\n**Fix:** change the async guard to match the sync guard:\n\n```python\n# Before (arank_fusion, line 297)\nDocument(page_content=doc) if not isinstance(doc, Document) else doc\n\n# After\nDocument(page_content=cast(\"str\", doc)) if isinstance(doc, str) else doc  # type: ignore[unreachable]\n```\n\nThis is a minimal, focused change \u2014 one character class check in a single comprehension. The `cast` and `# type: ignore` comment already exist on the sync side so the style is consistent. No behaviour change for well-behaved retrievers that return `Document` objects.\n\nI have a PR ready: https://github.com/langchain-ai/langchain/pull/37932 (currently auto-closed pending assignment). Happy to address any review feedback."
+    }
+  ]
+}

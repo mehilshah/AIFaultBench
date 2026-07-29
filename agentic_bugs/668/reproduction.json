@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final stdout: `OBSERVED BUG: ValueError: include_server_side_tool_invocations parameter is not supported in Gemini Enterprise Agent Platform.`",
+    "`run_repro.sh` exits with status 1.",
+    "Verified pinned checkout: `e9ebd28626152401b9b485337ce6c1175dbbe681`."
+  ],
+  "steps": [
+    "Ran the checkout setup and verified the pinned revision.",
+    "Created `.venv`, installed pinned dependencies, and installed editable Pydantic AI packages.",
+    "Ran the deterministic offline reproducer and captured final logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

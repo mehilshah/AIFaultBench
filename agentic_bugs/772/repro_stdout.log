@@ -1,0 +1,1 @@
+OBSERVED BUG: Error code: 422 - message content must be a string; got list

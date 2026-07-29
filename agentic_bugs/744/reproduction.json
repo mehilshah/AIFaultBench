@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "`repro_stdout.log` contains: `OBSERVED: RuntimeError: No available speakers found.`",
+    "`repro_stderr.log` shows the error raised at `autogen_agentchat/teams/_group_chat/_graph/_digraph_group_chat.py:357`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and restored the pinned commit `446da624ac091562f4055344b36e6e2115ae5727`.",
+    "Created `.venv`, installed pinned dependencies, and installed local autogen-core and autogen-agentchat packages editable.",
+    "Ran a deterministic no-network GraphFlow with scripted agents following A\u2192B\u2192A\u2192B\u2192D and the reported C\u2192E/D\u2192E edges.",
+    "Captured the final failing run in `repro_stdout.log` and `repro_stderr.log`."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

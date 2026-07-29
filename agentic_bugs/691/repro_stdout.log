@@ -1,0 +1,1 @@
+BUG REPRODUCED: State.model_dump() dropped AIMessage.tool_calls

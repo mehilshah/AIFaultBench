@@ -1,0 +1,45 @@
+{
+  "owner": "huggingface",
+  "repo": "smolagents",
+  "number": 1887,
+  "html_url": "https://github.com/huggingface/smolagents/issues/1887",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "BUG: `GradioUI(...).launch()` does not work because of deprecated keyword argument to `gr.Blocks`",
+  "author": "atharva-novi",
+  "created_at": "2025-11-28T15:07:04Z",
+  "updated_at": "2025-12-18T10:17:06Z",
+  "closed_at": "2025-12-18T10:17:06Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 2,
+    "+1": 2,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 19.8,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:37:45.830043+00:00",
+  "comments": [
+    {
+      "author": "thatgeeman",
+      "created_at": "2025-11-30T18:12:21Z",
+      "body": "In the migration guide it is mentioned clearly that the theme parameter is now with `demo.launch()` \n\nhttps://www.gradio.app/main/guides/gradio-6-migration-guide"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/678/repro.py", line 62, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/678/repro.py", line 54, in main
+    model._run(messages)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/678/codebase/camel/models/aws_bedrock_converse_model.py", line 864, in _run
+    response = self.bedrock_client.converse(**request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/678/repro.py", line 19, in converse
+    raise BedrockValidationException(
+BedrockValidationException: ValidationException: The format of the value at messages.1.content.0.toolResult.content.0.json is invalid. Provide a json object for the field and try again.

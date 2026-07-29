@@ -1,0 +1,1 @@
+FAULT: pydantic-graph=2.0.0b7; downstream_join_id returned []; join emitted [[], [1, 2, 3]]

@@ -1,0 +1,110 @@
+# recovered-from-issue: https://github.com/run-llama/llama_index/issues/21089
+
+TITLE
+[Bug]: Refine does not catch `ValueError`/`TypeError` from tool-calling structured outputs
+
+BODY
+### Bug Description
+
+When using `output_cls` with a function-calling LLM, `Refine._give_response_single` and its refine/async counterparts only catch `ValidationError`. On current `main`, the function-calling structured-output path can raise `ValueError` for missing/failed tool calls and `TypeError` for non-`BaseModel` tool outputs. These exceptions are uncaught in `Refine`, so the query fails instead of taking the existing warning path used for `ValidationError`.
+
+This likely also affects `structured_answer_filtering=True`, since `Refine` supports that mode and uses structured programs there as well, but the repro below demonstrates the `output_cls` path specifically.
+
+This appears to have been introduced after v0.14.18, in the changes from #21036
+
+### Version
+
+0.14.18 
+
+### Steps to Reproduce
+
+``` python 
+
+from unittest.mock import patch
+from pydantic import BaseModel, Field
+from llama_index.core import SummaryIndex, Document
+from llama_index.core.response_synthesizers import Refine
+from llama_index.core.program.function_program import FunctionCallingProgram
+from llama_index.llms.openai import OpenAI
+
+
+class Answer(BaseModel):
+    response: str = Field(description="Answer to the question")
+    confidence: float = Field(description="Confidence score between 0 and 1")
+
+
+docs = [Document(text="Paris is the capital of France.")]
+index = SummaryIndex.from_documents(docs)
+
+query_engine = index.as_query_engine(
+    response_synthesizer=Refine(llm=OpenAI(api_key="sk-fake"), output_cls=Answer)
+)
+
+with patch.object(FunctionCallingProgram, "__call__", side_effect=ValueError("LLM did not return any tool calls")):
+    response = query_engine.query("What is the capital of France?")
+
+print(response)
+
+```
+
+### Relevant Logs/Tracbacks
+
+```shell
+Traceback (most recent call last):
+  File "D:\code\llama_index\repro_refine_bug.py", line 22, in <module>
+    response = query_engine.query("What is the capital of France?")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\site-packages\llama_index_instrumentation\dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\code\llama_index\llama-index-core\llama_index\core\base\base_query_engine.py", line 44, in query
+    query_result = self._query(str_or_query_bundle)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\site-packages\llama_index_instrumentation\dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\code\llama_index\llama-index-core\llama_index\core\query_engine\retriever_query_engine.py", line 197, in _query
+    response = self._response_synthesizer.synthesize(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\site-packages\llama_index_instrumentation\dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\code\llama_index\llama-index-core\llama_index\core\response_synthesizers\base.py", line 235, in synthesize
+    response_str = self.get_response(
+                   ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\site-packages\llama_index_instrumentation\dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\code\llama_index\llama-index-core\llama_index\core\response_synthesizers\refine.py", line 179, in get_response
+    response = self._give_response_single(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\code\llama_index\llama-index-core\llama_index\core\response_synthesizers\refine.py", line 241, in _give_response_single
+    program(
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\site-packages\llama_index_instrumentation\dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\code\llama_index\llama-index-core\llama_index\core\response_synthesizers\refine.py", line 77, in __call__
+    answer = self._llm.structured_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\site-packages\llama_index_instrumentation\dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\site-packages\llama_index\llms\openai\base.py", line 1118, in structured_predict
+    return super().structured_predict(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\site-packages\llama_index_instrumentation\dispatcher.py", line 335, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\code\llama_index\llama-index-core\llama_index\core\llms\llm.py", line 360, in structured_predict
+    result = program(llm_kwargs=llm_kwargs, **prompt_args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\unittest\mock.py", line 1124, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\unittest\mock.py", line 1128, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\unittest\mock.py", line 1183, in _execute_mock_call
+    raise effect
+ValueError: LLM did not return any tool calls
+```

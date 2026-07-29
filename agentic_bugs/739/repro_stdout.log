@@ -1,0 +1,2 @@
+VALIDATION_ACCEPTED_NON_OBJECT_METRICS
+BUG_REPRODUCED: converter raised AttributeError: 'str' object has no attribute 'get'

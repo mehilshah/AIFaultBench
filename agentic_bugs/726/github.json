@@ -1,0 +1,40 @@
+{
+  "owner": "openai",
+  "repo": "openai-agents-python",
+  "number": 3315,
+  "html_url": "https://github.com/openai/openai-agents-python/issues/3315",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Generic dict output types are wrapped under response",
+  "author": "Aphroq",
+  "created_at": "2026-05-09T16:09:07Z",
+  "updated_at": "2026-05-09T23:54:17Z",
+  "closed_at": "2026-05-09T23:54:17Z",
+  "labels": [
+    "bug",
+    "feature:core"
+  ],
+  "milestone": "0.17.x",
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.32,
+  "fix": {
+    "closing_commit": "94fa9e21ba0cde222750d3cce31eaf41b4362feb",
+    "linked_prs": [],
+    "best_guess_fix_commit": "94fa9e21ba0cde222750d3cce31eaf41b4362feb",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:06:33.735254+00:00",
+  "comments": []
+}

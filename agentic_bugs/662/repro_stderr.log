@@ -1,0 +1,27 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/662/.venv/lib/python3.12/site-packages/crewai/mcp/tool_resolver.py", line 420, in _resolve_native
+    args_schema = self._json_schema_to_pydantic(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/662/.venv/lib/python3.12/site-packages/crewai/mcp/tool_resolver.py", line 620, in _json_schema_to_pydantic
+    return create_model_from_schema(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/662/.venv/lib/python3.12/site-packages/crewai/utilities/pydantic_schema_utils.py", line 606, in create_model_from_schema
+    json_schema = force_additional_properties_false(json_schema)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/662/.venv/lib/python3.12/site-packages/crewai/utilities/pydantic_schema_utils.py", line 169, in force_additional_properties_false
+    force_additional_properties_false(v)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/662/.venv/lib/python3.12/site-packages/crewai/utilities/pydantic_schema_utils.py", line 169, in force_additional_properties_false
+    force_additional_properties_false(v)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/662/.venv/lib/python3.12/site-packages/crewai/utilities/pydantic_schema_utils.py", line 169, in force_additional_properties_false
+    force_additional_properties_false(v)
+  [Previous line repeated 993 more times]
+RecursionError: maximum recursion depth exceeded
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/662/repro.py", line 50, in <module>
+    resolver._resolve_native(MCPServerStdio(command="offline-fake", args=[]))
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/662/.venv/lib/python3.12/site-packages/crewai/mcp/tool_resolver.py", line 447, in _resolve_native
+    raise RuntimeError(f"Failed to get native MCP tools: {e}") from e
+RuntimeError: Failed to get native MCP tools: maximum recursion depth exceeded

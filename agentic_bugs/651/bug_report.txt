@@ -1,0 +1,63 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/1742
+
+TITLE
+BUG: agent.replay(detailed=True) fails with error:  'ChatMessage' object is not iterable
+
+BODY
+**Problem**
+agent.replay(detailed=True) fails with error 'ChatMessage' object is not iterable
+
+**Steps to reproduce**
+See code below
+
+```python
+from smolagents import CodeAgent, LiteLLMModel
+
+model = LiteLLMModel(
+    model_id="openrouter/openai/gpt-4o-mini",
+    api_base="https://openrouter.ai/api/v1",
+    api_key="[API_KEY]",
+)
+agent = CodeAgent(model=model, tools=[])
+agent.run(task="what is 2*2 ?")
+agent.replay(detailed=True)
+```
+
+**Actual behavior and error logs**
+```shell
+Traceback (most recent call last):
+  File "/Users/lkubaski/Documents/src/ai/smolagents/src/bug/bug.py", line 11, in <module>
+    agent.replay(detailed=True)
+  File "/Users/lkubaski/Documents/src/ai/smolagents/src-copy/smolagents/agents.py", line 824, in replay
+    self.memory.replay(self.logger, detailed=detailed)
+  File "/Users/lkubaski/Documents/src/ai/smolagents/src-copy/smolagents/memory.py", line 245, in replay
+    logger.log_messages(step.model_input_messages, level=LogLevel.ERROR)
+  File "/Users/lkubaski/Documents/src/ai/smolagents/src-copy/smolagents/monitoring.py", line 213, in log_messages
+    messages_as_string = "\n".join([json.dumps(dict(message), indent=4) for message in messages])
+                                               ^^^^^^^^^^^^^
+TypeError: 'ChatMessage' object is not iterable
+```
+
+**Expected behavior**
+Smolagents should probably use "message.dict()" instead of "dict(message)"
+
+**Environment:**
+Please complete the following information:
+- OS: macOS
+- Python version: 3.12
+- Package version: 1.21.2
+```
+
+```
+
+**Additional context (optional)**
+Add any other context, screenshots, or links about the bug here.
+
+---
+
+### Checklist
+- [X] I have searched the existing issues and have not found a similar bug report.
+- [X] I have provided a minimal, reproducible example.
+- [X] I have provided the full traceback of the error.
+- [X] I have provided my environment details.
+- [ ] I am willing to work on this issue and submit a pull request. (optional)

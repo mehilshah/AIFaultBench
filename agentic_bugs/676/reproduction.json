@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "`repro_stdout.log` contains: `OBSERVED BUG: TypeError: object of type 'int' has no len()`.",
+    "`repro_stderr.log` traces the exception to `codebase/dspy/utils/usage_tracker.py:40` in `_merge_usage_entries` at `len(usage_entry2)`.",
+    "Pinned checkout verified at `d27c5afe5e5f027a9b23e7f9e33ede3160edf28f`; clean environment bootstrap and dependency validation succeeded."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and checked out the pinned DSPy source.",
+    "Created `.venv`, installed exact pinned dependencies and the editable checkout.",
+    "Wrote a deterministic `UsageTracker` repro with two `None` detail values followed by a dictionary value.",
+    "Ran the bootstrap path and final `bash run_repro.sh`, capturing its real stdout and stderr."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

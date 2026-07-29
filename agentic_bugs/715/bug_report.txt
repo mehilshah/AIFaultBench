@@ -1,0 +1,98 @@
+# recovered-from-issue: https://github.com/langflow-ai/langflow/issues/12228
+
+TITLE
+Module Not Found Errors running langflow-ide - missing required litellm module's
+
+BODY
+### Bug Description
+
+Missing packages as the `extra` packages required by litellm are not installed as not specified in `pyproject.toml`
+
+https://github.com/langflow-ai/langflow/blob/cacb54d6013d04851e7217f9a9f224f8ba7eaaa7/src/backend/base/pyproject.toml#L280
+
+Update to:
+`litellm = ["litellm[proxy]>=1.60.2,<2.0.0"]`
+
+This will add the packages specified here: https://github.com/BerriAI/litellm/blob/b4a5e516680bb23e48e876cadbd3a76b3bacc100/pyproject.toml#L82-L108
+
+Without, when running langflow-ide it throws errors when logging, note multiple packages are required (e.g. apscheduler, fastapi-sso, ...) - see different error messages below after having resolved the first missing package locally.
+
+### Reproduction
+
+langflow-ide running in kubernetes Azure AKS cluster, v.1.32.10. Connected to `litellm` as an openai endpoint and logging to `langfuse`
+
+See example two errors below, the first after install, the second after manually adding the `apscheduler` package:
+```
+Traceback (most recent call last):
+  File "/app/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/litellm_logging.py", line 4370, in get_standard_logging_object_payload
+    clean_metadata = StandardLoggingPayloadSetup.get_standard_logging_metadata(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/litellm_logging.py", line 3921, in get_standard_logging_metadata
+    cold_storage_object_key = StandardLoggingPayloadSetup._generate_cold_storage_object_key(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/litellm_logging.py", line 4109, in _generate_cold_storage_object_key
+    configured_cold_storage_logger = ColdStorageHandler._get_configured_cold_storage_custom_logger()
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/litellm/proxy/spend_tracking/cold_storage_handler.py", line 67, in _get_configured_cold_storage_custom_logger
+    from litellm.proxy.proxy_server import general_settings
+  File "/app/.venv/lib/python3.12/site-packages/litellm/proxy/proxy_server.py", line 80, in <module>
+    raise ImportError(f"Missing dependency {e}. Run `pip install 'litellm[proxy[]'`")
+ImportError: Missing dependency No module named 'apscheduler'. Run `pip install 'litellm[proxy[]'`
+[2026-01-20 14:47:09,672[][ERROR[] Error creating standard logging object - Missing dependency No module named 'apscheduler'. Run `pip install 'litellm[proxy[]'`
+Traceback (most recent call last):
+  File "/app/.venv/lib/python3.12/site-packages/litellm/proxy/proxy_server.py", line 78, in <module>
+    from apscheduler.schedulers.asyncio import AsyncIOScheduler
+ModuleNotFoundError: No module named 'apscheduler'
+```
+---
+```
+langflow-ide 11:17:21 - LiteLLM:ERROR: litellm_logging.py:4483 - Error creating standard logging object - No module named 'fastapi_sso'
+langflow-ide Traceback (most recent call last):
+langflow-ide   File "/app/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/litellm_logging.py", line 4370, in get_standard_logging_object_payload
+langflow-ide     clean_metadata = StandardLoggingPayloadSetup.get_standard_logging_metadata(
+langflow-ide                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+langflow-ide   File "/app/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/litellm_logging.py", line 3921, in get_standard_logging_metadata
+langflow-ide     cold_storage_object_key = StandardLoggingPayloadSetup._generate_cold_storage_object_key(
+langflow-ide                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+langflow-ide   File "/app/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/litellm_logging.py", line 4109, in _generate_cold_storage_object_key
+langflow-ide     configured_cold_storage_logger = ColdStorageHandler._get_configured_cold_storage_custom_logger()
+langflow-ide                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+langflow-ide   File "/app/.venv/lib/python3.12/site-packages/litellm/proxy/spend_tracking/cold_storage_handler.py", line 67, in _get_configured_cold_storage_custom_logger
+langflow-ide     from litellm.proxy.proxy_server import general_settings
+langflow-ide   File "/app/.venv/lib/python3.12/site-packages/litellm/proxy/proxy_server.py", line 284, in <module>
+langflow-ide     from litellm.proxy.management_endpoints.ui_sso import (
+langflow-ide   File "/app/.venv/lib/python3.12/site-packages/litellm/proxy/management_endpoints/ui_sso.py", line 61, in <module>
+langflow-ide     from litellm.proxy.management_endpoints.types import CustomOpenID
+langflow-ide   File "/app/.venv/lib/python3.12/site-packages/litellm/proxy/management_endpoints/types.py", line 9, in <module>
+langflow-ide     from fastapi_sso.sso.base import OpenID
+langflow-ide ModuleNotFoundError: No module named 'fastapi_sso'
+```
+
+
+### Expected behavior
+
+No logging errors from missing packages
+
+### Who can help?
+
+@italojohnny 
+
+### Operating System
+
+Debian GNU/Linux 13 (trixie)
+
+### Langflow Version
+
+1.7.3
+
+### Python Version
+
+3.12
+
+### Screenshot
+
+_No response_
+
+### Flow File
+
+_No response_

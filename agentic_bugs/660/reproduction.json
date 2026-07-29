@@ -1,0 +1,16 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "`JsonPlusSerializer` round-tripped `Send(node='worker', arg={'task': 'alpha'})` as `msgpack`.",
+    "The report's node-return graph raised `InvalidUpdateError`, not a serializer error.",
+    "A supported conditional-edge `Send` graph with `InMemorySaver` completed with `results=['alpha', 'beta']`.",
+    "Final `run_repro.sh` exited 0; stdout/stderr were captured in the required logs."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; its clone was empty on this host, then tested the identical pinned GitHub source archive.",
+    "Created `.venv`, installed pinned dependencies, and installed checkpoint/langgraph editable from the source tree.",
+    "Ran and captured `bash run_repro.sh`; also verified `pip check`."
+  ],
+  "blocking_reason": "The claimed LangGraph serialization fault does not occur at the pinned checkout: its serializer handles Send, while the reported graph uses unsupported `list[Send]` output from a node.",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

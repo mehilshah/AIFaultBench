@@ -1,0 +1,62 @@
+# recovered-from-issue: https://github.com/pydantic/pydantic-ai/issues/6611
+
+TITLE
+OpenAI background polling requests encrypted content for persisted responses
+
+BODY
+### Initial Checks
+
+- [x] I'm using the [latest version](https://github.com/pydantic/pydantic-ai/releases/latest) of Pydantic AI
+- [x] I've searched for my issue in [the issue tracker](https://github.com/pydantic/pydantic-ai/issues) before opening this issue
+
+### Description
+
+Support was recently added for OpenAI background mode in https://github.com/pydantic/pydantic-ai/issues/3268, however there's issues with it related to persisting responses
+
+Using Pydantic AI 2.10.0 with OpenAI background mode fails on the first poll (see minimal example below)
+
+Error:
+
+```
+ModelHTTPError: status_code: 400, model_name: gpt-5.6-sol,
+body: {
+  "message": "Encrypted content cannot be requested for persisted responses.",
+  "type": "invalid_request_error",
+  "param": "include"
+}
+```
+
+`_responses_retrieve()` calls `_build_include()`, which adds `reasoning.encrypted_content` for reasoning models. Because `openai_store `defaults to OpenAI’s persisted behavior, the subsequent `responses.retrieve()` request is rejected.
+
+Setting `openai_store=False` works around the error, but removes durable response-ID continuation, which is an unfortunate limitation
+
+**Expected behavior:** background polling should work with persisted responses, likely by omitting reasoning.encrypted_content from retrieval when the response is stored.
+
+
+
+### Minimal, Reproducible Example
+
+```Python
+from pydantic_ai import Agent
+from pydantic_ai.models.openai import OpenAIResponsesModelSettings
+
+agent = Agent(
+    "openai-responses:gpt-5.6-sol",
+    model_settings=OpenAIResponsesModelSettings(
+        openai_background=True,
+        openai_reasoning_mode="pro",
+    ),
+)
+
+agent.run_sync("Investigate this issue")
+```
+
+### Logfire Trace
+
+_No response_
+
+### Python, Pydantic AI & LLM client version
+
+- Python: 3.12
+- Pydantic AI: 2.10.0 (technically not latest, but I'm confident this is not fixed in the last couple minor versions)
+- LLM provider SDK: 2.45.0

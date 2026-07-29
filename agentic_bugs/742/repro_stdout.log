@@ -1,0 +1,1 @@
+BUG OBSERVED: valid tool schema raises TypeError: Cannot instantiate typing.Union

@@ -1,0 +1,12 @@
+{
+  "bug_id": "735",
+  "bug_dir": "735",
+  "issue_url": "https://github.com/mem0ai/mem0/issues/5724",
+  "commit_hash": "e615cc66de7ae8e356d7c37b98200016a32e1d0f",
+  "library_name": "mem0",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "mem0ai/mem0@e615cc66de7ae8e356d7c37b98200016a32e1d0f",
+  "codebase_present": "false",
+  "standardized_dir": "../735"
+}

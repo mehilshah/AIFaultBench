@@ -1,0 +1,46 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langgraph",
+  "number": 6434,
+  "html_url": "https://github.com/langchain-ai/langgraph/issues/6434",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`ImportError: cannot import name 'CompiledStateGraph' from 'langgraph.graph'`",
+  "author": "khteh",
+  "created_at": "2025-11-12T10:12:33Z",
+  "updated_at": "2025-11-12T10:15:31Z",
+  "closed_at": "2025-11-12T10:15:31Z",
+  "labels": [
+    "bug",
+    "pending"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.0,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T14:44:23.074048+00:00",
+  "comments": [
+    {
+      "author": "khteh",
+      "created_at": "2025-11-12T10:15:31Z",
+      "body": "`langgraph.graph.state`"
+    }
+  ]
+}

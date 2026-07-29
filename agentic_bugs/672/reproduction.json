@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exit status: 1.",
+    "`repro_stdout.log`: `BUG REPRODUCED: Workflow.get_session returned None for an async stored session`.",
+    "`repro_stderr.log`: `RuntimeWarning: coroutine 'get_session' was never awaited` and `AssertionError: async db.get_session was called without await`.",
+    "`pip check` reported `No broken requirements found`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and checked out `eca49700e3d7e9ef78840abc6c15bbf5dca3f9e2`.",
+    "Created `.venv`, installed pinned dependencies, and installed `codebase/libs/agno` editable.",
+    "Used an offline `AsyncBaseDb` fake whose async `get_session()` returns a stored `WorkflowSession`.",
+    "Verified `aget_session()` loads it, then captured `get_session()` returning `None` with an unawaited-coroutine warning."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

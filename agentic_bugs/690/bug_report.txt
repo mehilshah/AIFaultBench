@@ -1,0 +1,106 @@
+# recovered-from-issue: https://github.com/langchain-ai/langgraph/issues/6709
+
+TITLE
+langgraph-runtime-postgres Package Missing on PyPI (Critical, CLI/API Postgres Runtime Blocked)
+
+BODY
+### Checked other resources
+
+- [ ] This is a bug, not a usage question. For questions, please use the LangChain Forum (https://forum.langchain.com/).
+- [x] I added a clear and detailed title that summarizes the issue.
+- [x] I read what a minimal reproducible example is (https://stackoverflow.com/help/minimal-reproducible-example).
+- [x] I included a self-contained, minimal example that demonstrates the issue INCLUDING all the relevant imports. The code run AS IS to reproduce the issue.
+
+### Example Code
+
+```python
+'''Minimal reproduction of langgraph-runtime-postgres import error
+This demonstrates the issue when using LANGGRAPH_RUNTIME_EDITION=postgres'''
+import os
+# Set environment variable BEFORE importing langgraph_api
+os.environ["LANGGRAPH_RUNTIME_EDITION"] = "postgres"
+# This import will fail because langgraph-runtime-postgres doesn't exist
+try:
+    from langgraph_api.server import app
+    print("✓ Import successful")
+except ImportError as e:
+    print(f"✗ Import failed: {e}")
+
+# Alternative minimal example:
+import importlib.util
+os.environ["LANGGRAPH_RUNTIME_EDITION"] = "postgres"
+# This is what langgraph_runtime.__init__.py does internally
+RUNTIME_EDITION = os.environ["LANGGRAPH_RUNTIME_EDITION"]
+RUNTIME_PACKAGE = f"langgraph_runtime_{RUNTIME_EDITION}"  # "langgraph_runtime_postgres"
+if importlib.util.find_spec(RUNTIME_PACKAGE):
+    print(f"✓ Package {RUNTIME_PACKAGE} found")
+else:
+    print(f"✗ Package {RUNTIME_PACKAGE} NOT FOUND")
+    print(f"   Suggested installation: pip install 'langgraph-runtime-{RUNTIME_EDITION}'")
+    print(f"   But this package doesn't exist in PyPI!")
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+Traceback (most recent call last):
+  File "app.py", line 5, in <module>
+    from langgraph_api.server import app
+  File ".venv\Lib\site-packages\langgraph_api\server.py", line 32, in <module>
+    from langgraph_api.api import (
+  File ".venv\Lib\site-packages\langgraph_api\api\__init__.py", line 17, in <module>
+    from langgraph_api.api.assistants import assistants_routes
+  File ".venv\Lib\site-packages\langgraph_api\api\assistants.py", line 27, in <module>
+    from langgraph_api.grpc.ops import Assistants as GrpcAssistants
+  File ".venv\Lib\site-packages\langgraph_api\grpc\ops\__init__.py", line 372, in <module>
+    from .threads import Threads  # noqa: E402
+  File ".venv\Lib\site-packages\langgraph_api\grpc\ops\threads.py", line 42, in <module>
+    from langgraph_runtime.checkpoint import Checkpointer
+  File ".venv\Lib\site-packages\langgraph_runtime\__init__.py", line 24, in <module>
+    raise ImportError(ImportError: Langgraph runtime backend not found. Please install with `pip install "langgraph-runtime-postgres"`
+```
+
+### Description
+
+**Summary:**
+- When the LANGGRAPH_RUNTIME_EDITION environment variable is set to 'postgres', the LangGraph runtime system tries to import the langgraph_runtime_postgres module. However, this package does not exist on PyPI. The error suggests running `pip install "langgraph-runtime-postgres"`, but the package isn't available.
+
+**Expected Behavior:**
+- The package required for the PostgreSQL backend (langgraph-runtime-postgres) should exist on PyPI and be installable.
+
+**Actual Behavior:**
+- LANGGRAPH_RUNTIME_EDITION=inmem → ✅ Works (langgraph-runtime-inmem available)
+- LANGGRAPH_RUNTIME_EDITION=postgres → ❌ ImportError (missing package)
+
+PyPI Packages:
+- ✅ langgraph-checkpoint-postgres – EXISTS (v3.0.3)
+- ✅ langgraph-runtime-inmem – EXISTS (v0.22.1)
+- ❌ langgraph-runtime-postgres – MISSING
+
+**Impacted Users:**
+All users intending to use the PostgreSQL backend in production environments are blocked by this issue.
+
+**Temporary Workaround:**
+Currently, only the in-memory backend is available using LANGGRAPH_RUNTIME_EDITION=inmem. Using PostgreSQL persistence requires a custom implementation with langgraph-checkpoint-postgres (without LangGraph API).
+
+### System Info
+
+System Information
+```
+------------------
+OS: Windows 11
+Python Version: 3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]
+Package Information
+-------------------
+langchain-core: 0.3.69
+langchain: 0.3.26
+langgraph: 1.0.6
+langgraph-api: 0.7.6
+langgraph-checkpoint: 4.0.0
+langgraph-checkpoint-postgres: 3.0.3
+langgraph-runtime-inmem: 0.22.1
+langgraph-sdk: 0.3.3
+Optional packages not installed
+--------------------------------
+langgraph-runtime-postgres: NOT AVAILABLE IN PYPI ❌
+```

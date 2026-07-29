@@ -1,0 +1,71 @@
+# recovered-from-issue: https://github.com/pydantic/pydantic-ai/issues/6415
+
+TITLE
+repr() of message parts raises ValueError when a field holds a numpy array
+
+BODY
+### Description
+
+`dataclasses_no_defaults_repr` in `pydantic_ai_slim/pydantic_ai/_utils.py` is installed as `__repr__` on many public dataclasses (`ToolReturnPart`, `UserPromptPart`, `ModelRequest`, `ModelResponse`, `RequestUsage`, ...). It decides whether to show each field with:
+
+```python
+getattr(self, f.name) != f.default
+```
+
+and then relies on that result being usable in an `if`.
+
+For a **required** field such as `ToolReturnPart.content`, `f.default` is `dataclasses.MISSING`, so the expression becomes `value != MISSING`. When `value` is a numpy array (or a pandas `Series`/`DataFrame`, or any object whose `__ne__` returns a non-bool), that yields an elementwise result and the implicit `bool(...)` raises:
+
+```
+ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+```
+
+A tool returning a numpy array is common in data/analysis agents, so `repr(part)`, `print(result.all_messages())`, or any log line or traceback that formats the message history crashes. Since `repr()` is expected never to raise, this is a contract violation, and it can turn an unrelated error into a confusing secondary crash while a traceback is being formatted.
+
+Worth noting: a plain `dataclasses`-generated `__repr__` reprs the same value without any problem. The crash comes only from the `!= f.default` comparison.
+
+### Minimal reproduction
+
+```python
+import numpy as np
+from pydantic_ai.messages import ToolReturnPart, ModelRequest
+
+part = ToolReturnPart(tool_name='get_array', content=np.array([1, 2, 3]))
+repr(part)                        # ValueError
+repr(ModelRequest(parts=[part]))  # ValueError
+```
+
+Observed:
+
+```
+ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+```
+
+Expected: `repr()` returns a string.
+
+(A single-element array does not trigger it, because `bool()` succeeds there.)
+
+### Possible fix
+
+Make the "differs from default" test robust to values whose `!=` does not return a plain bool, and skip the comparison entirely for required fields, which are currently compared against the `MISSING` sentinel:
+
+```python
+def _show(f) -> bool:
+    if not f.repr:
+        return False
+    if f.default is MISSING and f.default_factory is MISSING:
+        return True  # required field: always show
+    default = f.default if f.default is not MISSING else f.default_factory()
+    try:
+        return bool(getattr(self, f.name) != default)
+    except Exception:
+        return True
+```
+
+A regression test can avoid adding numpy as a test dependency by using a small stand-in class whose `__ne__` returns an object with an exploding `__bool__`.
+
+Following CONTRIBUTING I am filing this as an issue first; I already have the fix and a regression test ready and am happy to open a PR if you would like.
+
+### Version
+
+Reproduced on `main` (commit `ab79636`), with `pydantic_ai_slim` installed from source.

@@ -1,0 +1,1 @@
+BUG REPRODUCED: request captured typing.Any | None; stream captured __main__.MyDeps | None

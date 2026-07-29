@@ -1,0 +1,10 @@
+editables==0.5
+hatchling==1.27.0
+markdown-it-py==4.2.0
+mdurl==0.1.2
+packaging==26.2
+pathspec==1.1.1
+pluggy==1.6.0
+Pygments==2.20.0
+rich==13.9.4
+trove-classifiers==2026.6.1.19

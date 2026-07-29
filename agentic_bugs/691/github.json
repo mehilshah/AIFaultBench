@@ -1,0 +1,76 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langgraph",
+  "number": 6675,
+  "html_url": "https://github.com/langchain-ai/langgraph/issues/6675",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "calling `model_dump()` on pydantic state variables drops `tool_calls` in AIMessage",
+  "author": "Thommy257",
+  "created_at": "2026-01-12T17:22:17Z",
+  "updated_at": "2026-01-30T17:24:08Z",
+  "closed_at": "2026-01-30T17:24:08Z",
+  "labels": [
+    "bug",
+    "pending"
+  ],
+  "milestone": null,
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 18.0,
+  "fix": {
+    "closing_commit": "cc587a08364a901bfd15c15e07a67f581d90c95f",
+    "linked_prs": [],
+    "best_guess_fix_commit": "cc587a08364a901bfd15c15e07a67f581d90c95f",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:05:36.906699+00:00",
+  "comments": [
+    {
+      "author": "ahmedibrahimX",
+      "created_at": "2026-01-13T07:33:21Z",
+      "body": "Hi! I'd like to help with this issue. I've investigated the root cause and have a proposed solution I'd like to run by you before implementing.\n\n## Root Cause\nThe issue occurs during Pydantic serialization. When `State.model_dump()` is called on a model with `list[BaseMessage]` type annotations, Pydantic treats this as a union and serializes each message using only the `BaseMessage` schema, which drops subclass-specific fields like `tool_calls`.\n\n**Why the behavior differs:**\n- `AIMessage.model_dump()` \u2192 uses concrete `AIMessage` schema \u2192 all fields preserved\n- `State(messages=[msg]).model_dump()` \u2192 uses base `BaseMessage` schema \u2192 subclass fields lost\n\n## Proposed Solution\nModify `JsonPlusSerializer` in `langgraph/checkpoint/serde/jsonplus.py` to handle `BaseMessage` objects specially:\n\n1. **In `_msgpack_default()`**: Check for `BaseMessage` instances before the general Pydantic model check and serialize using the concrete message class\n2. **In `_msgpack_ext_hook()`**: Use `LC_REVIVER` during deserialization to properly reconstruct message objects with all fields\n\n**Benefits:**\n- [x] Fixes the issue without requiring changes to user code\n- [x] Preserves backward compatibility  \n- [x] Graceful fallback if `langchain_core` isn't available\n- [x] Works for any State schema with message lists\n\nWould this approach work for you? Happy to share a draft PR or adjust based on your feedback!"
+    },
+    {
+      "author": "ahmedibrahimX",
+      "created_at": "2026-01-13T23:17:00Z",
+      "body": "I've implemented this solution in PR #6685. The fix adds special handling for BaseMessage objects in both standalone and nested contexts (within Pydantic State objects). All tests passing and ready for review!"
+    },
+    {
+      "author": "ahmedibrahimX",
+      "created_at": "2026-01-14T07:56:01Z",
+      "body": "Hi @Thommy257,\n\nI did a deep investigation into this issue and wanted to share what I found.\n\n### The Good News\n\nLangGraph\u2019s checkpoint system already handles this correctly, `tool_calls` are preserved when using MemorySaver and other checkpoint savers. I tested this with State defined as both a TypedDict and a Pydantic BaseModel, and both work as expected.\n\n### What\u2019s Causing the Behavior\n\nThe issue you\u2019re seeing happens when `state.model_dump()` is called directly inside the node:\n\n```python\ndef agent_node(state: State) -> State:\n    msg = agent.invoke(state.model_dump())\n    return State(messages=[msg])\n```\n\nWhen Pydantic serializes a model containing `list[BaseMessage]`, it uses the base class schema, which doesn\u2019t include subclass-specific fields like tool_calls. This is expected Pydantic behavior and occurs outside LangGraph\u2019s serialization path.\n\n### Recommended Pattern\nInstead of calling `model_dump()` on the full state, let LangGraph pass message objects through directly:\n\n```python\ndef agent_node(state: State) -> State:\n    msg = agent.invoke({\"messages\": state.messages})\n    return State(messages=[msg])\n```\nThis preserves message types and tool_calls.\n\n### Why This Happens\nLangGraph\u2019s checkpoint persistence uses JsonPlusSerializer, which has special handling to preserve message subclasses. Calling `model_dump()` directly skips that mechanism and relies purely on Pydantic\u2019s base-class serialization.\n\n### PR Status\n\nI opened PR #6685 initially, but closed it after realizing it addressed a different edge case (nested Pydantic data in custom checkpoint payloads). This issue is best solved through usage rather than a code change.\n\nHope this helps \u2014 happy to clarify or test further."
+    },
+    {
+      "author": "Thommy257",
+      "created_at": "2026-01-14T12:42:05Z",
+      "body": "Hi @ahmedibrahimX,\n\nThanks for your response. In my specific use case, `State` has numerous variables that I would potentially like to pass to the agent. I have to admit that I'm a bit lazy here, but keeping track of what variables need to be passed to the ChatPromptTemplate and which not seems a bit tedious.\n\nI solved the issue by adding a `shallow_dump` method to my `State` class:\n\n```python\ndef shallow_dump(self, /) -> dict[str, Any]:\n    \"\"\"Get a shallow dictionary dump of the model, depth 1 only.\"\"\"\n    keys = chain(self.__class__.model_fields.keys(),\n                 self.__class__.model_computed_fields.keys())\n    return {k: getattr(self, k) for k in keys}\n```"
+    },
+    {
+      "author": "ahmedibrahimX",
+      "created_at": "2026-01-14T18:28:50Z",
+      "body": "Hi @Thommy257 , that makes total sense, especially when the state grows and you want a low-friction way to pass context through.\n\nI like this approach! Conceptually, `shallow_dump` is closer to state projection than serialization, which avoids the Pydantic base-class issue while keeping the ergonomics you want.\n\nAs long as the receiving code can handle the actual message objects (rather than needing pre-serialized dictionaries), this feels like a clean and explicit solution. Thanks for sharing, I think others may run into the same tradeoff."
+    },
+    {
+      "author": "Momo-Not-Emo",
+      "created_at": "2026-01-30T03:29:55Z",
+      "body": "This could be fix by using `SerializeAsAny` from pydantic. I have found a similar issue in https://github.com/langchain-ai/langchain/issues/34925\n\n```py\nfrom pydantic import SerializeAsAny\n\nclass State(BaseModel):\n    messages: list[SerializeAsAny[BaseMessage]]\n```"
+    },
+    {
+      "author": "mdrxy",
+      "created_at": "2026-01-30T17:24:08Z",
+      "body": "Closing as this is not related to LangGraph. See the issue mentioned by @Momo-Not-Emo "
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+OBSERVED BUG: unsupported custom executor rejected before overridden factory ran

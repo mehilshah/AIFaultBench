@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`repro_stdout.log`: `OBSERVED BUG: ToolCallBlock.tool_kwargs is str: {\"document_id\":\"123\"}`",
+    "`repro_stderr.log`: `AssertionError: streaming tool input was not normalized to a dict`",
+    "Used released issue-era `llama-index-llms-bedrock-converse==0.14.9` after the full checkout clone did not complete."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; cloning did not complete on this host.",
+    "Created `.venv` and installed exact pinned dependencies.",
+    "Ran the offline deterministic fake Bedrock stream through `BedrockConverse.stream_chat`.",
+    "Captured final output and wrote all required artifacts."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

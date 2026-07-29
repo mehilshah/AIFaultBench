@@ -1,0 +1,76 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/1674
+
+TITLE
+BUG: AmazonBedrockServerModel Throw Error When calling DeepSeek R1: "text" field not found
+
+BODY
+<!--
+Thank you for reporting a bug!
+Please provide as much detail as possible to help us identify and fix the issue.
+-->
+
+**Problem**
+When using an AmazonBedrockServerModel to call the DeepSeek R1 model for a CodeAgent, it will throw an AgentGenerationError: Error in generating model output:
+'"text" field not found in the last element of response["output"]["message"]["content"]. Unexpected output format, 
+possibly due to thinking mode changes.'
+
+Other models such as Claude 3.7 won't throw this error.
+
+**Steps to reproduce**
+Please provide a minimal, self-contained, and reproducible example of the bug.
+1.  Import bedrock and call deepseek.r1
+2. Pass any prompt to the agent
+3.  Get the error
+
+```python
+# Your code to reproduce the bug here
+`from smolagents import AmazonBedrockServerModel
+
+model = AmazonBedrockServerModel(
+    model_id = "us.deepseek.r1-v1:0"
+)
+system_prompt = "Hello"
+
+result = agent.run(system_prompt, additional_args=dict(additional_notes=additional_notes))
+
+# Process the result as needed
+print(f"Agent response: {result}")`
+
+`from smolagents import InferenceClientModel, CodeAgent, LiteLLMModel
+import os
+
+# Use the tools with your agent
+agent = CodeAgent(tools=[],
+                  model=model,
+                  add_base_tools=True,
+                  additional_authorized_imports=[])`
+
+**Actual behavior and error logs**
+A clear and concise description of what actually happened. Please include the full traceback if an exception was raised.
+```shell
+
+```
+
+**Expected behavior**
+Agent responds to the prompt.
+
+**Environment:**
+Please complete the following information:
+- OS: Linux
+- Python version: 3.10
+- Package version: (output of `pip show smolagents`)
+```
+Smolagents Version: 1.20.0
+```
+
+**Additional context (optional)**
+Add any other context, screenshots, or links about the bug here.
+
+---
+
+### Checklist
+- [x] I have searched the existing issues and have not found a similar bug report.
+- [x] I have provided a minimal, reproducible example.
+- [ ] I have provided the full traceback of the error.
+- [x] I have provided my environment details.
+- [ ] I am willing to work on this issue and submit a pull request. (optional)

@@ -1,0 +1,56 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langgraph",
+  "number": 6709,
+  "html_url": "https://github.com/langchain-ai/langgraph/issues/6709",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "langgraph-runtime-postgres Package Missing on PyPI (Critical, CLI/API Postgres Runtime Blocked)",
+  "author": "fzozyurt",
+  "created_at": "2026-01-22T08:12:57Z",
+  "updated_at": "2026-02-06T14:24:47Z",
+  "closed_at": "2026-02-06T14:24:47Z",
+  "labels": [
+    "bug",
+    "pending"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 15.26,
+  "fix": {
+    "closing_commit": "57a2827dec8cce765d43d7652b2cee87df0743e8",
+    "linked_prs": [],
+    "best_guess_fix_commit": "57a2827dec8cce765d43d7652b2cee87df0743e8",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T13:05:35.186915+00:00",
+  "comments": [
+    {
+      "author": "hinthornw",
+      "created_at": "2026-01-23T13:36:12Z",
+      "body": "Thanks for writing in!\n\nI suspect you are modifying your dockerfile in a way that installs the `langgraph-api` package into a new python virtualenvironment, and that is overwriting the server built into the image.\n\nThe production runtime is not published, and your ChatGPT analysis is incorrect. It's local to the image.\n\n\nE.g., in the builder, we make sure that the user deps from your project config are not overwriting the installed version in the i mage.\nhttps://github.com/langchain-ai/langgraph/blob/2c6f99cbf0acd68a74aa9e9570ad03ea8858c0e1/libs/cli/langgraph_cli/config.py#L35"
+    },
+    {
+      "author": "gedion",
+      "created_at": "2026-01-24T12:52:11Z",
+      "body": "Is there a community edition available for LANGGRAPH_RUNTIME_EDITION? I see references to `LANGGRAPH_RUNTIME_EDITION=community`\n\nWe're looking for options that would allow:\n\n- PostgreSQL persistence without requiring the official Docker image\n- Self-hosted deployment with custom runtime implementations\n\nIf a community edition does not exist yet, what would be the recommended approach for implementing it?\n\n- Installation (PyPI package name?)\n- Configuration requirements\n- Feature differences vs. the built-in postgres edition"
+    },
+    {
+      "author": "hinthornw",
+      "created_at": "2026-02-06T14:24:47Z",
+      "body": "Not today. The server + runtime are closed source right now. I wrote that community flag but maintaining a community edition's compatibility would be untenable for me at this point. Perhaps in the future."
+    }
+  ]
+}

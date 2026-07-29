@@ -1,0 +1,188 @@
+# recovered-from-issue: https://github.com/stanfordnlp/dspy/issues/8965
+
+TITLE
+[Bug] `TypeError` when using `track_usage()` with Anthropic models that return `CacheCreation` objects
+
+BODY
+### What happened?
+
+## Summary
+The `UsageTracker` crashes with a `TypeError` when tracking usage for Anthropic models that use prompt caching. Anthropic's API returns `CacheCreation` Pydantic model objects in the usage data, but DSPy's `_merge_usage_entries()` attempts to add these objects arithmetically, which fails.
+
+## Expected Behavior
+Usage tracking should work correctly with all LM providers, including Anthropic models with prompt caching enabled. The tracker should either:
+- Skip or ignore non-numeric fields
+- Convert Pydantic objects to their numeric values
+- Handle these objects gracefully in some other way
+
+## Actual Behavior
+When calling `tracker.get_total_tokens()` after making multiple API calls to Anthropic with caching enabled, a `TypeError` is raised:
+
+```bash
+$ DSPY_CACHEDIR=./ignored/dspycache_$(date +%s).cache uv run --prerelease=allow repro_dspy_cache_bug.py
+
+   ERROR: unsupported operand type(s) for +: 'CacheCreationTokenDetails' and 'CacheCreationTokenDetails'
+
+============================================================
+✗ FAILED: Bug reproduced!
+Traceback (most recent call last):
+  File "/Users/ndr/coding/github/stanfordnlp/dspy/repro_dspy_cache_bug.py", line 74, in <module>
+    asyncio.run(main())
+    ~~~~~~~~~~~^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/ndr/coding/github/stanfordnlp/dspy/repro_dspy_cache_bug.py", line 62, in main
+    total_usage = tracker.get_total_tokens()
+  File "/Users/ndr/coding/github/stanfordnlp/dspy/dspy/utils/usage_tracker.py", line 58, in get_total_tokens
+    total_usage = self._merge_usage_entries(total_usage, usage_entry)
+  File "/Users/ndr/coding/github/stanfordnlp/dspy/dspy/utils/usage_tracker.py", line 42, in _merge_usage_entries
+    result[k] = self._merge_usage_entries(current_v, v)
+                ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/ndr/coding/github/stanfordnlp/dspy/dspy/utils/usage_tracker.py", line 44, in _merge_usage_entries
+    result[k] = (current_v or 0) + (v or 0)
+                ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'CacheCreationTokenDetails' and 'CacheCreationTokenDetails'
+
+```
+
+## Root Cause
+The bug seems to be in [`dspy/utils/usage_tracker.py:44`](https://github.com/stanfordnlp/dspy/blob/main/dspy/utils/usage_tracker.py#L44):
+
+```python
+result[k] = (current_v or 0) + (v or 0)
+```
+
+This line assumes all usage values are numeric (int/float), but Anthropic's API returns structured objects like:
+
+```python
+Usage(
+    input_tokens=100,
+    output_tokens=50,
+    cache_creation_input_tokens=CacheCreation(ephemeral_1h_input_tokens=1024, ephemeral_5m_input_tokens=512),
+    cache_read_input_tokens=None
+)
+```
+
+When merging usage from multiple API calls, the code tries to add two `CacheCreation` objects together, which fails because Pydantic models don't support addition.
+
+## Steps to Reproduce
+
+I've included a standalone reproduction script (`repro_dspy_cache_bug.py`) that demonstrates the issue. To run it:
+
+```bash
+ANTHROPIC_API_KEY=your_key_here DSPY_CACHEDIR=./cache uv run --prerelease=allow repro_dspy_cache_bug.py
+```
+
+
+## Additional Context
+- The bug only manifests when:
+  1. Using Anthropic models (Claude)
+  2. Making 2+ API calls within a `track_usage()` context
+  3. The API returns `CacheCreation` objects (when caching is used)
+- First call doesn't crash (nothing to merge)
+- OpenAI and other providers that return only numeric usage values are unaffected
+
+## Proposed Solution
+The `_merge_usage_entries()` method should detect non-numeric values and handle them appropriately. Possible approaches:
+1. Check if values support addition before attempting it
+2. Convert Pydantic models to dicts before merging
+3. Store non-numeric values in a way that doesn't require arithmetic operations
+
+I can submit a PR with a fix if helpful!
+
+
+
+
+### Steps to reproduce
+
+Run the following with:
+
+`DSPY_CACHEDIR=./dspycache_$(date +%s).cache uv run --prerelease=allow repro_dspy_cache_bug.py`
+
+```python
+#!/usr/bin/env -S uv run --prerelease=allow
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "dspy==3.0.4b1",
+#     "anthropic",
+# ]
+# ///
+"""
+Reproduces DSPy usage tracker bug with Anthropic prompt caching.
+
+When using cache=True with Anthropic models, the API returns a CacheCreation object
+in the usage data. DSPy's usage tracker tries to add these objects like numbers,
+causing: TypeError: unsupported operand type(s) for +: 'CacheCreation' and 'CacheCreation'
+
+The bug is in dspy/utils/usage_tracker.py:44 where it assumes all values are numeric.
+
+Run with: uv run repro_dspy_cache_bug.py
+Requires ANTHROPIC_API_KEY environment variable.
+
+run with:
+DSPY_CACHEDIR=./ignored_dspycache_$(date +%s).cache uv run --prerelease=allow repro_dspy_cache_bug.py
+
+A second run with the same cache will succeed even if the first failed.
+"""
+
+import asyncio
+import os
+
+import dspy
+from dspy.utils.usage_tracker import track_usage
+
+
+async def main() -> None:
+    # Verify API key is set
+    if not os.getenv("ANTHROPIC_API_KEY"):
+        raise ValueError("ANTHROPIC_API_KEY environment variable must be set")
+
+    # Create LM with a large system prompt to trigger caching
+    # Anthropic only caches content blocks >= 1024 tokens
+    lm = dspy.LM(
+        model="claude-sonnet-4-5-20250929",
+        #model = "gpt-4o-mini" # <--- with this model the script succeeds
+        cache=True,
+        max_tokens=1000,
+    )
+
+    # Use track_usage context manager to trigger the bug
+
+
+    with track_usage() as tracker:
+        with dspy.context(lm=lm):
+            predictor = dspy.Predict("question -> answer")
+
+            # Just make 2 calls - that's all we need!
+            await predictor.acall(question="What is 2+2?")
+            # So commenting this line makes the script succeed
+            await predictor.acall(question="What is 3+3?")
+
+        # The bug happens HERE when merging usage with cache_creation objects
+        try:
+            total_usage = tracker.get_total_tokens()
+            print(f"   Total usage: {total_usage}")
+            print("\n" + "=" * 60)
+            print("✓ SUCCESS: Bug is fixed! The script completed without errors.")
+        except TypeError as e:
+            print(f"\n   ERROR: {e}")
+            print("\n" + "=" * 60)
+            print("✗ FAILED: Bug reproduced!")
+            raise
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### DSPy version
+
+3.0.4b1

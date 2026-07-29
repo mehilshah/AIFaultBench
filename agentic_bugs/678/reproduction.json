@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at `d84c72c78259b5c7358fa92e1f280e85e2e39f56`.",
+    "Captured stdout reports the expected Bedrock `ValidationException` for `toolResult.content[0].json`.",
+    "Final run exits with status 1 and traceback reaches the pinned Bedrock Converse adapter."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`.",
+    "Created `.venv`, installed pinned dependencies, and installed the checkout editable.",
+    "Ran the offline fake-Bedrock reproducer and captured final stdout/stderr.",
+    "Validated scripts, JSON, and expected non-zero exit."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

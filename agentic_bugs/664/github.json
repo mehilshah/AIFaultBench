@@ -1,0 +1,96 @@
+{
+  "owner": "run-llama",
+  "repo": "llama_index",
+  "number": 21579,
+  "html_url": "https://github.com/run-llama/llama_index/issues/21579",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]: Bedrock Converse streaming produces string `tool_kwargs` in `ToolCallBlock` instead of dict",
+  "author": "jimhotchkin-wf",
+  "created_at": "2026-05-06T17:37:23Z",
+  "updated_at": "2026-05-28T17:23:05Z",
+  "closed_at": "2026-05-28T17:23:05Z",
+  "labels": [
+    "bug",
+    "triage"
+  ],
+  "milestone": null,
+  "comments_count": 11,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 21.99,
+  "fix": {
+    "closing_commit": "559e8df93328c4a2d7704371a5ce346e875d7ca8",
+    "linked_prs": [],
+    "best_guess_fix_commit": "559e8df93328c4a2d7704371a5ce346e875d7ca8",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T12:38:11.286979+00:00",
+  "comments": [
+    {
+      "author": "dosubot[bot]",
+      "created_at": "2026-05-06T17:53:21Z",
+      "body": "<!-- Greeting -->\nHi @jimhotchkin-wf! I'm [Dosu](https://go.dosu.dev/dosubot) and I\u2019m helping the llama_index team.\n\n<!-- Answer -->\nThanks for the detailed bug report. I investigated the current state of the code and have some observations:\n\n**The core issue is real, but the details differ from the report.** The current `base.py` has 773 lines total [[1]](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-integrations/llms/llama-index-llms-bedrock-converse/llama_index/llms/bedrock_converse/base.py), not the ~978+ implied by the report. Also, `ToolCallBlock` does not exist in the LlamaIndex codebase \u2014 tool calls are stored as raw dicts in `ChatMessage.additional_kwargs[\"tool_calls\"]`, and the class used downstream is `ToolSelection`.\n\n**What actually happens in streaming:** The streaming code paths (`stream_chat` and `astream_chat`) accumulate the `\"input\"` field as a concatenated JSON string [[2]](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-integrations/llms/llama-index-llms-bedrock-converse/llama_index/llms/bedrock_converse/base.py#L434-L440) [[3]](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-integrations/llms/llama-index-llms-bedrock-converse/llama_index/llms/bedrock_converse/base.py#L594-L600) and yield `ChatResponse` objects with those raw dicts (containing string `\"input\"`) in `additional_kwargs[\"tool_calls\"]`.\n\n**The `get_tool_calls_from_response` method already handles this correctly** \u2014 it checks `isinstance(tool_call[\"input\"], str)` and parses it via `parse_partial_json()` before constructing `ToolSelection` objects with a proper dict `tool_kwargs` [[4]](https://github.com/run-llama/llama_index/blob/ddeb22219e1255829d07cde44e172c8f8c6bd2ff/llama-index-integrations/llms/llama-index-llms-bedrock-converse/llama_index/llms/bedrock_converse/base.py#L733-L744).\n\n**So the Bedrock Converse adapter itself works end-to-end** because the agent workflow calls `get_tool_calls_from_response()` which normalizes the string. However, the broader concern is valid: if another provider's adapter consumes the raw `additional_kwargs[\"tool_calls\"]` dicts from a Bedrock streaming session (e.g., when persisting and replaying chat history cross-provider), it would encounter string `\"input\"` values instead of dicts.\n\n**Suggested fix location:** Parsing `current_tool_call[\"input\"]` from string to dict at the `contentBlockStop` event (when the tool use block is complete) would be the cleanest approach. This normalizes the data at the source so all downstream consumers \u2014 whether Bedrock's own `get_tool_calls_from_response` or another provider \u2014 see a dict. This is a one-line addition per streaming method rather than touching 6 construction sites.\n\n\n<!-- Dosu Comment Footer -->\n*To reply, just mention [@dosu](https://go.dosu.dev/dosubot?utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=reply-with-mention&utm_term=run-llama%2Fllama_index).*\n\n---\n\nShare context across your team and agents. Try [Dosu](https://dosu.dev?utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=knowledge-infrastructure-tagline&utm_term=run-llama%2Fllama_index).\n\n[![Leave Feedback](https://img.shields.io/badge/Leave%20Feedback-555555?style=flat)](https://app.dosu.dev/response-feedback?utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=knowledge-infrastructure-feedback&utm_term=run-llama%2Fllama_index&message_id=f6c64a93-eecb-428b-9787-892dcd810fcc) [![Learn about llama_index with Dosu](https://img.shields.io/badge/Learn%20about%20llama__index%20with%20Dosu-2f7b3f?style=flat&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iODYiIGhlaWdodD0iODkiIHZpZXdCb3g9IjAgMCA4NiA4OSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNS4yOTIzNiAxMi43OTI4TDE3Ljc1OTMgNi42ODE4OFY3Mi41NjY3TDUuMjkyMzYgODQuMDYxOFYxMi43OTI4WiIgZmlsbD0iI0I0QkI5MSIvPjxwYXRoIGQ9Ik0xOC4yNTc1IDczLjExOTZMNTkuMTMyOSA3Mi43NDhMNTEuNzAxMSA4Mi40MDk1TDI5LjAzMzggODYuMjkxTDYuMjM5NjIgODUuMTU1NEwxOC4yNTc1IDczLjExOTZaIiBmaWxsPSIjNzc4NTYxIi8%2BPHBhdGggZD0iTTE3LjQ5MTYgMy43MzYzM0wzLjU4NTU3IDEyLjcwOTlWODMuNTc5MkMzLjU4NTU3IDg0Ljc1NDIgNC45ODU2MyA4NS4zNjUyIDUuODQ3MDUgODQuNTY2TDE5LjYyOTYgNzEuNzgwMSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSI2LjQyODQ0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bWFzayBpZD0iZG9zdS1kLWN1dG91dCIgZmlsbD0id2hpdGUiPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNNDAuNzA0IDAuNTE4MDY2SDE3LjA0MzlWNzYuMjIyMUg0MC43MDRINDIuNTgwNUg0Ny44MDEzQzY4LjcwNjQgNzYuMjIyMSA4NS42NTMzIDU5LjI3NTIgODUuNjUzMyAzOC4zNzAxQzg1LjY1MzMgMTcuNDY1IDY4LjcwNjMgMC41MTgwNjYgNDcuODAxMyAwLjUxODA2Nkg0Mi41ODA1SDQwLjcwNFoiLz48L21hc2s%2BPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00MC43MDQgMC41MTgwNjZIMTcuMDQzOVY3Ni4yMjIxSDQwLjcwNEg0Mi41ODA1SDQ3LjgwMTNDNjguNzA2NCA3Ni4yMjIxIDg1LjY1MzMgNTkuMjc1MiA4NS42NTMzIDM4LjM3MDFDODUuNjUzMyAxNy40NjUgNjguNzA2MyAwLjUxODA2NiA0Ny44MDEzIDAuNTE4MDY2SDQyLjU4MDVINDAuNzA0WiIgZmlsbD0iI0YzRjZGMSIvPjxwYXRoIGQ9Ik0xNy4wNDM5IDAuNTE4MDY2Vi02LjU3OTE5SDkuOTQ2NjlWMC41MTgwNjZIMTcuMDQzOVpNMTcuMDQzOSA3Ni4yMjIxSDkuOTQ2NjlWODMuMzE5NEgxNy4wNDM5Vjc2LjIyMjFaTTE3LjA0MzkgNy42MTUzMkg0MC43MDRWLTYuNTc5MTlIMTcuMDQzOVY3LjYxNTMyWk0yNC4xNDEyIDc2LjIyMjFWMC41MTgwNjZIOS45NDY2OVY3Ni4yMjIxSDI0LjE0MTJaTTQwLjcwNCA2OS4xMjQ5SDE3LjA0MzlWODMuMzE5NEg0MC43MDRWNjkuMTI0OVpNNDIuNTgwNSA2OS4xMjQ5SDQwLjcwNFY4My4zMTk0SDQyLjU4MDVWNjkuMTI0OVpNNDcuODAxMyA2OS4xMjQ5SDQyLjU4MDVWODMuMzE5NEg0Ny44MDEzVjY5LjEyNDlaTTc4LjU1NiAzOC4zNzAxQzc4LjU1NiA1NS4zNTU1IDY0Ljc4NjcgNjkuMTI0OSA0Ny44MDEzIDY5LjEyNDlWODMuMzE5NEM3Mi42MjYxIDgzLjMxOTQgOTIuNzUwNSA2My4xOTQ5IDkyLjc1MDUgMzguMzcwMUg3OC41NTZaTTQ3LjgwMTMgNy42MTUzMkM2NC43ODY2IDcuNjE1MzIgNzguNTU2IDIxLjM4NDcgNzguNTU2IDM4LjM3MDFIOTIuNzUwNUM5Mi43NTA1IDEzLjU0NTMgNzIuNjI2IC02LjU3OTE5IDQ3LjgwMTMgLTYuNTc5MTlWNy42MTUzMlpNNDIuNTgwNSA3LjYxNTMySDQ3LjgwMTNWLTYuNTc5MTlINDIuNTgwNVY3LjYxNTMyWk00MC43MDQgNy42MTUzMkg0Mi41ODA1Vi02LjU3OTE5SDQwLjcwNFY3LjYxNTMyWiIgZmlsbD0iYmxhY2siIG1hc2s9InVybCgjZG9zdS1kLWN1dG91dCkiLz48cGF0aCBkPSJNNjguOTIxNSAzNi4wMTM1QzY4LjkyMTUgMzYuMDEzNSA2NS43MzY5IDQ5LjQ3MzggNTEuNDIzMSA0OS40NzM4QzM3LjEwOTMgNDkuNDczOCAzMi41Nzg3IDM3LjM1OTYgMzIuNTc4NyAzNi4wMTM1IiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjcuNjkxNjEiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0wLjM0ODYzMyA4NS40OTQ2QzAuMzQ4NjMzIDg1LjQ5NDYgMjkuNDg1NiA4NS44MzA5IDM0LjgwOSA4NS42OThDNDQuODMzNyA4NS40NDc3IDUxLjI4NzIgODQuNDAyIDU3LjUyNjkgNzguOTcyNEM2Mi44MTI5IDc0LjM3MjcgNzUuMTM0MiA1OS42ODM2IDc1LjEzNDIgNTkuNjgzNiIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSI2LjE2NDgyIi8%2BPC9zdmc%2B)](https://github.dosu.com/run-llama/llama_index?utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=knowledge-infrastructure-learn-repo&utm_term=run-llama%2Fllama_index) [![Add Dosu to your team](https://img.shields.io/badge/Add%20Dosu%20to%20your%20team-1f6feb?style=flat)](https://app.dosu.dev/signup?referrer=openSource&source=github-footer&utm_source=github&utm_medium=bot-comment&utm_campaign=github-comment-footer-20260415&utm_content=knowledge-infrastructure-add-team&utm_term=run-llama%2Fllama_index)"
+    },
+    {
+      "author": "ayushh0110",
+      "created_at": "2026-05-06T18:18:51Z",
+      "body": "I'd like to work on this\n\nWill go with the approach @dosu suggested \u2014 parsing current_tool_call[\"input\"] from string to dict at the contentBlockStop event in both stream_chat and astream_chat. This normalizes the data at the source so all downstream consumers (including cross-provider replay) get a proper dict without needing changes at every construction site."
+    },
+    {
+      "author": "ayushh0110",
+      "created_at": "2026-05-06T19:06:12Z",
+      "body": "Opened #21580 to fix this.\n\nInstead of parsing at `contentBlockStop` as suggested by Dosu, I went with a `_parse_tool_input()` helper applied at each of the 6 `ToolCallBlock` construction sites. The `contentBlockStop` approach has a couple of issues \u2014 there's no handler for that event in the current code, and even if we added one, intermediate `contentBlockDelta` yields would still emit raw strings before it fires. The helper approach normalizes every yield (intermediate and final), requires no new event handlers, and matches the existing defensive pattern already used in `get_tool_calls_from_response()`.\n"
+    },
+    {
+      "author": "rehan243",
+      "created_at": "2026-05-07T14:53:56Z",
+      "body": "The fix is pretty straightforward - we just need to parse that `tool_call[\"input\"]` string to a dict before passing it to `ToolCallBlock`. We can use `json.loads()` for this. Here's what the corrected code might look like:\n```python\nimport json\n# ...\nToolCallBlock(\n    tool_kwargs=json.loads(tool_call.get(\"input\", \"{}\")),\n    tool_name=tool_call.get(\"name\", \"\"),\n    tool_call_id=tool_call.get(\"toolUseId\"),\n)\n```\nWe've run into similar issues with other providers where the API returns JSON strings that need parsing - took us a few tries to catch all the edge cases. Are you using the latest boto3 version (1.34.x or newer)?"
+    },
+    {
+      "author": "ayushh0110",
+      "created_at": "2026-05-07T17:03:41Z",
+      "body": "Thanks @rehan243 ! I've already addressed this in #21580 \u2014 same core idea but wrapped in a defensive helper with fallback for partial JSON during intermediate streaming yields, applied across all 6 construction sites.\n"
+    },
+    {
+      "author": "hanselhansel",
+      "created_at": "2026-05-07T23:28:07Z",
+      "body": "Confirming this exact failure mode shows up the moment chat history gets replayed across providers. We hit the string-vs-dict mismatch when a multi-agent workflow had Bedrock streaming on the planner side and Google GenAI on the executor side, and the executor failed schema validation on the replayed tool call. The defensive helper approach in #21580 is the right shape because the alternative (parse at the consumer) means every downstream provider has to know about Bedrock's streaming quirk forever. Normalizing at the adapter boundary is what keeps this from becoming a contract negotiation between every pair of providers. One small ask for the helper: does it also handle the partial-JSON case where an intermediate `contentBlockDelta` yield emits a half-string? The PR description suggests yes, which is the right call, but a unit test pinning that behavior would save the next person tracing a flaky test back to half-parsed JSON."
+    },
+    {
+      "author": "ayushh0110",
+      "created_at": "2026-05-08T00:54:05Z",
+      "body": "Thanks for the feedback @hanselhansel ! Just pushed a commit adding 5 unit tests that pin `_parse_tool_input` at the helper level, including the partial-JSON half-string case (`'{\"locat'` \u2192 `{}`). \n"
+    },
+    {
+      "author": "hanselhansel",
+      "created_at": "2026-05-08T23:44:06Z",
+      "body": "Nice, the partial-JSON half-string case is the right one to pin. That is the exact shape that crashes the parser silently in streaming paths.\n\nOne more case worth adding if you have not already: mid-key truncation, e.g. `'{\"loc'` (no value, no closing quote on the key itself). Different code path from the half-value case in most JSON parsers, and the one I have seen leak through helper-level tests because the value-side fixture covers the obvious failure.\n\nThanks for moving on this fast."
+    },
+    {
+      "author": "ayushh0110",
+      "created_at": "2026-05-09T00:54:41Z",
+      "body": "thanks @hanselhansel ! Added `test_parse_tool_input_mid_key_truncation_returns_empty_dict` \u2014 pins `'{\"loc'` \u2192 `{}`.\n\n"
+    },
+    {
+      "author": "rehan243",
+      "created_at": "2026-05-09T19:11:06Z",
+      "body": "Oh nice, yeah I saw your PR \u2014 that helper is definitely the way to go, especially with partial JSON during streaming. Just curious, are you running on v2.x or v3? The fallback logic\u2019s kinda version-sensitive sometimes."
+    },
+    {
+      "author": "ayushh0110",
+      "created_at": "2026-05-09T20:19:43Z",
+      "body": "thanks @rehan243 On main, core 0.14.x. The helper's just stdlib json.loads so nothing version-sensitive there.\n"
+    }
+  ]
+}

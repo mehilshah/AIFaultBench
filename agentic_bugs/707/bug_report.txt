@@ -1,0 +1,56 @@
+# recovered-from-issue: https://github.com/stanfordnlp/dspy/issues/8996
+
+TITLE
+[Bug] LiteLLM exception when using OpenAI Speech-To-Text models
+
+BODY
+### What happened?
+
+I'm trying to use DSPy for an audio transcription task. From what I see in the documentation, this should be supported with a dedicated `dsp.yAudio` input class.
+When I execute the attached code example I receive the following error:
+> litellm.exceptions.BadRequestError: litellm.BadRequestError: OpenAIException - This is not a chat model and thus not supported in the v1/chat/completions endpoint. Did you mean to use v1/completions?
+
+I do manage to use OpenAI's speech-to-text models using LiteLLM directly though:
+```python
+
+from litellm import transcription
+from pathlib import Path
+
+audio_file = Path("example_001.m4a").open("rb")
+response = transcription(model="gpt-4o-transcribe", file=audio_file)
+print(f"response: {response}")
+
+```
+
+Am I missing anything or is this a bug with the way LiteLLM is used behind the scenes?
+
+### Steps to reproduce
+
+```python
+from pathlib import Path
+
+import dspy
+
+
+class TranscribeSignature(dspy.Signature):
+    audio: dspy.Audio = dspy.InputField()
+    transcription: str = dspy.OutputField()
+
+
+if __name__ == "__main__":
+    audio_path = Path("example_001.m4a")
+    audio = dspy.Audio.from_file(audio_path)
+
+    lm = dspy.LM(model="gpt-4o-mini-transcribe")
+    dspy.configure(lm=lm)
+
+    transcriber = dspy.Predict(TranscribeSignature)
+
+    transcription = transcriber(audio=audio)  # <- raises litellm.exceptions.BadRequestError
+    print(transcription)
+
+```
+
+### DSPy version
+
+3.0.3

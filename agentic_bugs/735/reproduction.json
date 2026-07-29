@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final run exit code: 1.",
+    "stdout: `OBSERVED BUG: FAISS.list() returned []; expected [[]]`",
+    "stderr ends with `AssertionError: uninitialized FAISS.list() violates its List[List[OutputData]] contract`.",
+    "Pinned checkout verified at `e615cc66de7ae8e356d7c37b98200016a32e1d0f`."
+  ],
+  "steps": [
+    "Ran the provided checkout setup; recovered the same SHA with a filtered Git fetch after the initial full clone transfer was incomplete.",
+    "Created `.venv`, installed pinned dependencies, and installed the checkout editable.",
+    "Ran `bash run_repro.sh` and captured final logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

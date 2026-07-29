@@ -1,0 +1,114 @@
+# recovered-from-issue: https://github.com/langchain-ai/langgraph/issues/6782
+
+TITLE
+graph.invoke() / graph.stream() raise AttributeError when config is not a mapping
+
+BODY
+### Checked other resources
+
+- [x] This is a bug, not a usage question.
+- [x] I added a clear and descriptive title that summarizes this issue.
+- [x] I used the GitHub search to find a similar question and didn't find it.
+- [x] I am sure that this is a bug in LangGraph rather than my code.
+- [x] The bug is not resolved by updating to the latest stable version of LangGraph (or the specific integration package).
+- [x] This is not related to the langchain-community package.
+- [x] I posted a self-contained, minimal, reproducible example. A maintainer can copy it and run it AS IS.
+
+### Reproduction Steps / Example Code (Python)
+
+```python
+import operator
+from typing import Annotated, TypedDict
+from langgraph.graph import StateGraph, START, END
+
+class State(TypedDict):
+    messages: Annotated[list[str], operator.add]
+
+def node(name: str):
+    def _node(state: State):
+        return {"messages": [f"entered {name} node"]}
+    return _node
+
+builder = StateGraph(State)
+builder.add_node("one", node("one"))
+builder.add_node("two", node("two"))
+builder.add_edge(START, "one")
+builder.add_edge("one", "two")
+builder.add_edge("two", END)
+graph = builder.compile()
+
+# Valid config works
+graph.invoke({"messages": []}, config={"configurable": {"thread_id": "1"}})
+
+# Invalid config (string instead of dict)
+graph.invoke(None, config="invalid_config")
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+File "/Users/macbook/wlnwun3/lang_xxx.py", line 25, in <module>
+    graph.invoke(None, config="invalid_config")
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/macbook/wlnwun3/.venv-lg108/lib/python3.13/site-packages/langgraph/pregel/main.py", line 3071, in invoke
+    for chunk in self.stream(
+                 ~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<10 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ):
+    ^
+  File "/Users/macbook/wlnwun3/.venv-lg108/lib/python3.13/site-packages/langgraph/pregel/main.py", line 2499, in stream
+    config = ensure_config(self.config, config)
+  File "/Users/macbook/wlnwun3/.venv-lg108/lib/python3.13/site-packages/langgraph/_internal/_config.py", line 302, in ensure_config
+    for k, v in config.items():
+                ^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'items'
+```
+
+### Description
+
+When calling graph.invoke() or graph.stream() with a config argument that is not a mapping (e.g., a string), LangGraph raises an internal AttributeError:  'str' object has no attribute 'items'
+
+The exception originates from:
+langgraph/_internal/_config.py
+for k, v in config.items():
+
+This indicates that the framework assumes config is a mapping without validating its type.
+
+
+### System Info
+
+System Information
+------------------
+> OS:  Darwin
+> OS Version:  Darwin Kernel Version 24.6.0: Mon Jul 14 11:30:40 PDT 2025; root:xnu-11417.140.69~1/RELEASE_ARM64_T8132
+> Python Version:  3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 11:23:37) [Clang 14.0.6 ]
+
+Package Information
+-------------------
+> langchain_core: 1.2.11
+> langsmith: 0.7.1
+> langgraph_sdk: 0.3.5
+
+Optional packages not installed
+-------------------------------
+> langserve
+
+Other Dependencies
+------------------
+> httpx: 0.28.1
+> jsonpatch: 1.33
+> orjson: 3.11.7
+> packaging: 26.0
+> pydantic: 2.12.5
+> pyyaml: 6.0.3
+> requests: 2.32.5
+> requests-toolbelt: 1.0.0
+> tenacity: 9.1.4
+> typing-extensions: 4.15.0
+> uuid-utils: 0.14.0
+> xxhash: 3.6.0
+> zstandard: 0.25.0

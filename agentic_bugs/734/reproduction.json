@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at f38608fb5061c5aa067793740447cf217b3afee0.",
+    "Final run printed: BUG REPRODUCED: Memory.add() got an unexpected keyword argument 'llm'",
+    "Final run exited with status 1; stderr was empty."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh and recovered its interrupted clone by fetching the identical pinned commit.",
+    "Created .venv and installed pinned dependencies plus the editable checkout.",
+    "Ran bash run_repro.sh and captured repro_stdout.log and repro_stderr.log."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

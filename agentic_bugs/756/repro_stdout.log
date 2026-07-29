@@ -1,0 +1,1 @@
+BUG OBSERVED: InterpreterError: Code execution failed at line 'print(f'{type(bytes)=}')' due to: InterpreterError: The variable `bytes` is not defined.

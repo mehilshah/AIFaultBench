@@ -1,0 +1,66 @@
+{
+  "owner": "pydantic",
+  "repo": "pydantic-ai",
+  "number": 5987,
+  "html_url": "https://github.com/pydantic/pydantic-ai/issues/5987",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[roundtrip-sweep] `ModelMessagesTypeAdapter`: `RetryPromptPart.content` list of error details fails to round-trip when any item lacks `input`",
+  "author": "github-actions[bot]",
+  "created_at": "2026-06-19T04:35:03Z",
+  "updated_at": "2026-07-07T16:00:23Z",
+  "closed_at": "2026-07-07T16:00:23Z",
+  "labels": [
+    "bug",
+    "durable exec",
+    "message history",
+    "pydanty:bug",
+    "serialization",
+    "state-loss",
+    "roundtrip-sweep"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 18.48,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T14:00:45.598435+00:00",
+  "comments": [
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-06-19T04:35:49Z",
+      "body": "<!-- pydanty:status-comment:v1 -->\n\n**pydanty: pr-ready** \u2014 localized bug in message-history (de)serialization.\n\n**Classification:** bug.\n\n**Why this matters:** Anyone whose message history contains a RetryPromptPart with a structured `content` list missing required TypedDict keys loses the ability to round-trip through `Agent.all_messages_json()`, `new_messages_json()`, or durable-execution replay. Once serialized, the JSON becomes unloadable, causing data loss or workflow paralysis. A simple fix at the RetryPromptPart type boundary reduces that state-loss risk and removes the PydanticSerializationUnexpectedValue noise for the framework's own `error.errors(include_url=False, include_context=False)` output.\n\n**Evidence summary:** Maintainer history shows this class of round-trip failure is fixed narrowly at the message-type boundary (Issue #5696 / PRs #5697, #5698: add missing part to the discriminated union). It also shows RetryPromptPart error-dict key omission is deliberate policy: PR #4947 (approved by DouweM) strips `input`/`ctx` from retry content, then PR #5181 (DouweM) narrowed this to NativeOutput retries while preserving `input` for tool-call retries. The current reader (`ErrorDetails` TypedDict) is incompatible with the writer's chosen omissions, making round-trip a one-way door. Reproduction in the issue body demonstrates `ModelMessagesTypeAdapter.validate_json(serialized)` raises `ValidationError: input field required`. The code boundary is `pydantic_ai_slim/pydantic_ai/messages.py` (`RetryPromptPart.content`, `error_details_ta`, and `model_response()`).\n\n**Playground share URL:** No share could be created in this run; the reproducer delegate could not reach the local checkout and the issue body already contains the failing test and traceback.\n\n**Next action:** PR-ready. Reason: this is a reproduced, localized bug with a clear boundary in messages.py; maintainer history supports narrow round-trip fixes at that boundary and shows the key omissions are intentional. No API-design discussion is needed."
+    },
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-06-19T04:45:06Z",
+      "body": "<!-- pydanty:runtime-failure -->\n\n### pydanty runtime failure\n\nRun `df_run_075f7899a77e46b593bd` started from the GitHub webhook, but the Dogfooding runtime\nfailed before pydanty completed the workflow. The pydanty status comment above\n(if any) is from a completed run and still stands.\n\n**Next step:** maintainer attention needed; rerun after fixing the runtime failure.\n\n<details>\n<summary>Failure detail (tail)</summary>\n\n```text\nThe PR-ready handoff artifact failed validation, so the PR opener was not queued and no PR will open without intervention.\n```\n\n</details>"
+    },
+    {
+      "author": "urbantech",
+      "created_at": "2026-06-19T13:10:05Z",
+      "body": "One low-risk acceptance bar that seems worth preserving here: `dump_json -> validate_json` should succeed for every shape the runtime already emits today, not just the canonical `ErrorDetails` shape.\n\nConcretely, I would add regression coverage for at least three payload families:\n\n1. tool/native retry content missing `input`\n2. framework-generated content missing `ctx` / `url`\n3. the same payload after JSON round-trip has normalized `loc` as a list instead of a tuple\n\nThat would keep the fix tied to the real contract boundary: persisted message history must remain reloadable across replay / restart / version bump, even when the error-detail dict is only partial.\n\nImplementation-wise, loosening the serialized boundary is probably safer than trying to re-tighten every writer. If maintainers still want a richer in-memory shape, a normalize-on-read step feels less risky than requiring every historical payload to satisfy the full `TypedDict`."
+    },
+    {
+      "author": "adtyavrdhn",
+      "created_at": "2026-07-07T16:00:23Z",
+      "body": "Not reachable via public paths, if a user does run into it feel free to reopen and ping me :)"
+    }
+  ]
+}

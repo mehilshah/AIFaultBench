@@ -1,0 +1,12 @@
+{
+  "bug_id": "705",
+  "bug_dir": "705",
+  "issue_url": "https://github.com/stanfordnlp/dspy/issues/9059",
+  "commit_hash": "c542bb64a7bb321fe16fd159a5da646ca4d92974",
+  "library_name": "dspy",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "stanfordnlp/dspy@c542bb64a7bb321fe16fd159a5da646ca4d92974",
+  "codebase_present": "false",
+  "standardized_dir": "../705"
+}

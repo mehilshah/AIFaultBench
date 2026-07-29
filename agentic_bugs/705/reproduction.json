@@ -1,0 +1,14 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Final run exited 0 and printed: `NOT REPRODUCED: DSPy forwarded 3; GEPA reflection batches were [3, 3].`",
+    "DSPy 3.0.4 forwarded `reflection_minibatch_size=3`; real GEPA 0.0.17 supplied only three trajectories per reflective batch."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; its Git transfer did not complete, so used released issue-era DSPy 3.0.4 as permitted.",
+    "Created `.venv`, installed pinned dependencies, wrote the no-network recording-adapter check, and ran `bash run_repro.sh`.",
+    "Captured the final output in `repro_stdout.log` and `repro_stderr.log` and wrote all required benchmark artifacts."
+  ],
+  "blocking_reason": "The reporter retracted the diagnosis: DSPy forwards reflection_minibatch_size to GEPA, whose BatchSampler limits trajectories before DspyAdapter receives them. The claimed ignored-parameter fault is therefore not executable at the reported release.",
+  "reproduction_command": "bash run_repro.sh"
+}

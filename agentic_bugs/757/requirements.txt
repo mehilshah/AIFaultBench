@@ -1,0 +1,1 @@
+# No additional packages: setup_env.sh installs the pinned checkout in editable mode.

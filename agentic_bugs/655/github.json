@@ -1,0 +1,45 @@
+{
+  "owner": "SWE-agent",
+  "repo": "SWE-agent",
+  "number": 1179,
+  "html_url": "https://github.com/SWE-agent/SWE-agent/issues/1179",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "swe-bench Docker image uses Python 3.5, incompatible with `tree-sitter==0.21.3` required by edit_anthropic",
+  "author": "Hambaobao",
+  "created_at": "2025-05-31T05:03:54Z",
+  "updated_at": "2025-05-31T18:10:58Z",
+  "closed_at": "2025-05-31T18:10:58Z",
+  "labels": [
+    "\ud83d\udc1b bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.55,
+  "fix": {
+    "closing_commit": "a42ec4fe973a3d2113ba867e98c52b39071cc9d2",
+    "linked_prs": [],
+    "best_guess_fix_commit": "a42ec4fe973a3d2113ba867e98c52b39071cc9d2",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T12:37:55.448410+00:00",
+  "comments": [
+    {
+      "author": "klieret",
+      "created_at": "2025-05-31T17:57:05Z",
+      "body": "Hi, thanks for the detailed report!\n\nOne option to resolve this is to use a different python for the tools. We've started doing this since a while, but it's currently not the default behavior: You can just do a sed replace of all shebangs like [this](https://github.com/SWE-agent/SWE-agent/commit/c79ac2591fb66a84a26858a05d9bb209c2d473aa) and then also [update the installation](https://github.com/SWE-agent/SWE-agent/commit/c79ac2591fb66a84a26858a05d9bb209c2d473aa).\n\nAnother hotfix you could do might be to downgrade `tree-sitter` to `0.20.4`, I just checked that this only requires `py>3.3` (but not sure if this version is enough).\n\nHowever, I also think that the pip install fails shouldn't be enough to cause the agent to quit. `str_replace_editor` is already fault tolerant in that it falls back to normal print if there's a problem with the filemap.\n\nSo for a quick fix/workaround, let me just make sure that install failures of treesitter are ignored."
+    }
+  ]
+}

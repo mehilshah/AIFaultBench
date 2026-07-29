@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/656/repro.py", line 46, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/656/repro.py", line 38, in main
+    raise AssertionError(
+AssertionError: buggy prompt lacks a concrete <secret>user_name</secret> example and the action executor leaves raw user_name unchanged

@@ -1,0 +1,71 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/1532
+
+TITLE
+[BUG] ChatMessage `content` Attribute Accessed Incorrectly
+
+BODY
+**Describe the bug**
+On line 831 of `smolagents/agents.py`, the `smolagents.models.ChatMessage` object `message` is accessed using `__getitem__()` which causes a `TypeError` because `smolagents.models.ChatMessage` does not have `__getitem__()` implemented.
+
+This bug is only hit when the agent's `provide_run_summary` argument is `True`.
+
+I've opened a PR to fix this bug: #1533 
+
+**Code to reproduce the error**
+```python
+import os
+import litellm
+
+model = LiteLLMModel(model_id="anthropic/claude-3-5-sonnet-latest", api_key=os.getenv("ANTHROPIC_API_KEY"))
+data_discovery_agent = ToolCallingAgent(
+    model=model,
+    tools=tools,  # your tools here
+    max_steps=20,
+    verbosity_level=2,
+    planning_interval=4,
+    name="data_discovery_agent",
+    description="""A team member that will search a data repository to find files which help to answer your question.
+Ask him for all your questions that require searching a repository of relevant data.
+Provide him as much context as possible, in particular if you need to search on a specific timeframe!
+And don't hesitate to provide him with a complex search task, like finding a difference between two files.
+Your request must be a real sentence, not a keyword search! Like "Find me this information (...)" rather than a few keywords.
+""",
+    provide_run_summary=True,
+)
+
+# error here
+result = data_discovery_agent(                                                                                                                                                                                             
+      task="Find official reports or statistics containing the number of identity theft reports for the year 2001. Focus on FTC reports or Department of Justice statistics.",                                      
+      additional_args={}                                                                                                                                                                                            
+  )   
+```
+
+**Error logs (if any)**
+```
+> /home/mdrusso/palimpzest/src/palimpzest/query/operators/search.py(429)__call__()
+-> import pdb; pdb.set_trace()
+(Pdb) import traceback; print(traceback.format_exc())
+Traceback (most recent call last):
+  File "/home/mdrusso/palimpzest/src/palimpzest/query/operators/search.py", line 424, in __call__
+    result = data_discovery_agent(
+        task='Find official reports or statistics containing the number of identity theft reports for the year 2001. Focus on FTC reports or Department of Justice statistics.',
+        additional_args={}
+    )
+  File "/home/mdrusso/palimpzest/venv/lib/python3.13/site-packages/smolagents/agents.py", line 831, in __call__
+    content = message["content"]
+              ~~~~~~~^^^^^^^^^^^
+TypeError: 'ChatMessage' object is not subscriptable
+```
+
+**Expected behavior**
+The `ChatMessage` content should have been added to the summary of work without an exception.
+
+**Packages version:**
+```
+smolagents==1.19.0
+Python 3.13.3
+OS: Arch Linux
+```
+
+**Additional context**
+N/A

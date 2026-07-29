@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at 97320843fe78b93bd5290ce366841ff9850bf379.",
+    "Final run exited 1 and printed: OBSERVED BUG: AttributeError: module 'langgraph_api.config' has no attribute 'LSD_PROM_METRICS_ENABLED'",
+    "repro_stderr.log is empty."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh and restored the generated checkout to the pinned commit.",
+    "Installed langgraph-api==0.12.0.dev3, langgraph-runtime-inmem==0.31.0.dev9, and editable pinned langgraph-cli 0.4.29.",
+    "Ran the offline lifespan reproduction with service startup helpers stubbed and captured output."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

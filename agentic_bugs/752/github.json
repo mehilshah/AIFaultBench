@@ -1,0 +1,51 @@
+{
+  "owner": "run-llama",
+  "repo": "llama_index",
+  "number": 20904,
+  "html_url": "https://github.com/run-llama/llama_index/issues/20904",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug]:  `SubQuestionQueryEngine` partial-failure handling breaks on non-ValueError exceptions",
+  "author": "gautamvarmadatla",
+  "created_at": "2026-03-06T15:31:29Z",
+  "updated_at": "2026-03-09T10:57:49Z",
+  "closed_at": "2026-03-09T10:57:49Z",
+  "labels": [
+    "bug",
+    "triage"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.81,
+  "fix": {
+    "closing_commit": "fdd317ae92a4ed07c05731158b09977ebe324830",
+    "linked_prs": [],
+    "best_guess_fix_commit": "fdd317ae92a4ed07c05731158b09977ebe324830",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T14:00:30.759869+00:00",
+  "comments": [
+    {
+      "author": "nightcityblade",
+      "created_at": "2026-03-08T04:16:11Z",
+      "body": "Hi, I'd like to work on this. I'll submit a PR shortly."
+    },
+    {
+      "author": "gautamvarmadatla",
+      "created_at": "2026-03-08T17:09:58Z",
+      "body": "> Hi, I'd like to work on this. I'll submit a PR shortly.\n\nhi! Thanks for working on this, as i mentioned on your PR. You have the exact same fix as mine :) \n\nPlease try to avoid doing such duplicate PRs. "
+    }
+  ]
+}

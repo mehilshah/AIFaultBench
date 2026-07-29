@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "stdout: `OBSERVED: ModelRequest NativeToolReturnPart round-trip raised union_tag_invalid`.",
+    "stderr reports `Input tag 'builtin-tool-return' ... does not match any of the expected tags` with `[type=union_tag_invalid]`."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh and verified checkout d7e399521c1d1a7f617af88dfa8ef0a213382761.",
+    "Installed pinned dependencies and editable checkout packages in .venv.",
+    "Ran and captured the offline serialization round-trip reproducer.",
+    "Validated the required artifact schema and captured logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

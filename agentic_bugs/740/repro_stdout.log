@@ -1,0 +1,1 @@
+BUG REPRODUCED: validation accepted an invalid timestamp; conversion raised ValueError: Invalid isoformat string: 'not-a-date'

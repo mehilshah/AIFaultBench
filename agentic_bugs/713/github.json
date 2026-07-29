@@ -1,0 +1,45 @@
+{
+  "owner": "langflow-ai",
+  "repo": "langflow",
+  "number": 12775,
+  "html_url": "https://github.com/langflow-ai/langflow/issues/12775",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "bug: `from X import Y as Z` alias ignored in custom component code \u2014 NameError on aliased imports",
+  "author": "DeyLak",
+  "created_at": "2026-04-20T07:57:27Z",
+  "updated_at": "2026-04-21T16:18:50Z",
+  "closed_at": "2026-04-21T16:18:50Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.35,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:12.794426+00:00",
+  "comments": [
+    {
+      "author": "erichare",
+      "created_at": "2026-04-21T16:18:50Z",
+      "body": "Fixed in #12813 thanks @DeyLak !"
+    }
+  ]
+}

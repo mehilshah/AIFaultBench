@@ -1,0 +1,54 @@
+Error processing publish message for GraphManager_bca8c988-b0d2-4622-86d5-7e6e04224d9b/bca8c988-b0d2-4622-86d5-7e6e04224d9b
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/744/codebase/python/packages/autogen-core/src/autogen_core/_single_threaded_agent_runtime.py", line 604, in _on_message
+    return await agent.on_message(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/744/codebase/python/packages/autogen-core/src/autogen_core/_base_agent.py", line 119, in on_message
+    return await self.on_message_impl(message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/744/codebase/python/packages/autogen-agentchat/src/autogen_agentchat/teams/_group_chat/_sequential_routed_agent.py", line 67, in on_message_impl
+    return await super().on_message_impl(message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/744/codebase/python/packages/autogen-core/src/autogen_core/_routed_agent.py", line 485, in on_message_impl
+    return await h(self, message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/744/codebase/python/packages/autogen-core/src/autogen_core/_routed_agent.py", line 268, in wrapper
+    return_value = await func(self, message, ctx)  # type: ignore
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/744/codebase/python/packages/autogen-agentchat/src/autogen_agentchat/teams/_group_chat/_base_group_chat_manager.py", line 165, in handle_agent_response
+    speaker_name = await speaker_name_future
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/744/codebase/python/packages/autogen-agentchat/src/autogen_agentchat/teams/_group_chat/_graph/_digraph_group_chat.py", line 357, in select_speaker
+    raise RuntimeError("No available speakers found.")
+RuntimeError: No available speakers found.
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/744/repro.py", line 72, in <module>
+    asyncio.run(main())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/744/repro.py", line 62, in main
+    await team.run(task="test")
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/744/codebase/python/packages/autogen-agentchat/src/autogen_agentchat/teams/_group_chat/_base_group_chat.py", line 307, in run
+    async for message in self.run_stream(
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/744/codebase/python/packages/autogen-agentchat/src/autogen_agentchat/teams/_group_chat/_base_group_chat.py", line 518, in run_stream
+    raise RuntimeError(str(message.error))
+RuntimeError: RuntimeError: No available speakers found.
+Traceback:
+Traceback (most recent call last):
+
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/744/codebase/python/packages/autogen-agentchat/src/autogen_agentchat/teams/_group_chat/_base_group_chat_manager.py", line 165, in handle_agent_response
+    speaker_name = await speaker_name_future
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/744/codebase/python/packages/autogen-agentchat/src/autogen_agentchat/teams/_group_chat/_graph/_digraph_group_chat.py", line 357, in select_speaker
+    raise RuntimeError("No available speakers found.")
+
+RuntimeError: No available speakers found.
+

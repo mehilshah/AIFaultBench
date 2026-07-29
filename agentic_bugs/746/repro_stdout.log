@@ -1,0 +1,1 @@
+BUG OBSERVED: async arank_fusion rejected integer 42 as Document.page_content

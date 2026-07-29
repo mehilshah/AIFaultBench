@@ -1,0 +1,2 @@
+llama-index-core==0.14.18
+pydantic==2.13.4

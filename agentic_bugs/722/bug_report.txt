@@ -1,0 +1,131 @@
+# recovered-from-issue: https://github.com/modelcontextprotocol/python-sdk/issues/2704
+
+TITLE
+Flaky streamable-HTTP/SSE tests: TOCTOU port race under pytest -n auto
+
+BODY
+### Initial Checks
+
+- [x] I confirm that I'm using the latest version of MCP Python SDK
+- [x] I confirm that I searched for my issue in https://github.com/modelcontextprotocol/python-sdk/issues before opening this issue
+
+### Description
+
+### Summary
+
+  Tests in `tests/shared/test_streamable_http.py` intermittently fail in CI (non-deterministically, across different Python versions). The failures are not real regressions, they're caused by a time-of-check/time-of-use (TOCTOU) race in how the test server fixtures allocate ports, which collides when tests run in parallel under pytest -n auto.
+
+### Evidence
+  
+  The flakiness is intermittent and non-deterministic: the same commit, re-run across the CI matrix, fails on different tests and different Python versions, while passing locally and on most matrix entries. That pattern, a failure that moves around rather than reproducing on a specific test/version, is the signature of a parallelism race, not a code defect.
+
+  Two failure signatures have been observed, and both reduce to "the client connected to the wrong server instance":
+
+  1. Server can't bind the port (`test_streamable_http_client_session_termination_204`)
+
+  ERROR: [Errno 98] error while attempting to bind on address ('127.0.0.1', 35105): address already in use
+  AssertionError: assert 2 == 10
+  The intended server (10 tools) loses the bind race, so the client reaches a different test's server: `len(tools.tools)` comes back as `2` (the `echo_headers/echo_context server`) instead of 10.
+
+  2. Crossed responses (`test_streamable_http_client_respects_retry_interval`)
+
+  pydantic_core.ValidationError: 1 validation error for CallToolResult
+  content
+    Field required [type=missing, input_value={'tools': [...]}, input_type=dict]
+  A call_tool request is answered with a `ListToolsResult` payload (`{'tools': [...]}`), which fails to validate as `CallToolResult`. The client is talking to a server/stream that belongs to another test.
+  
+  Both symptoms are downstream of two servers contending for the same ephemeral port — see Root cause below.
+
+
+### Root cause
+
+The port fixtures pick a port, then close the socket before the real server binds it:
+
+```python
+# tests/shared/test_streamable_http.py:474
+@pytest.fixture
+def basic_server_port() -> int:
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))      # OS assigns a free port
+        return s.getsockname()[1]      # ...socket closes here, freeing the port
+```
+
+The server is then started in a separate `multiprocessing.Process` (`run_server`, line 435) and binds that port later. In the gap, another xdist worker's fixture can be handed the same port by the OS, so two servers race for it - one fails with `Errno 98`, and clients can reach the wrong server.
+
+### Affected files (same pattern)
+
+  - tests/shared/test_streamable_http.py
+  - tests/shared/test_sse.py
+  - tests/server/test_sse_security.py
+  - tests/server/test_streamable_http_security.py
+  - tests/client/test_http_unicode.py
+
+### Proposed fix
+
+Reuse the existing race-free helper `run_uvicorn_in_thread` in `tests/test_helpers.py:15`. It binds and `listen()`s a socket, then hands that same socket to uvicorn (`server.run(sockets=[sock])`), so there is no window where another worker can claim the port. This pattern is already proven in tests/shared/test_ws.py, and its docstring documents exactly this race.
+
+Migrate the racy fixtures, e.g.:
+
+```python
+# before: basic_server_port + basic_server + basic_server_url (3 fixtures, racy)
+# after:
+@pytest.fixture
+def basic_server_url() -> Generator[str, None, None]:
+    app = create_app()
+    with run_uvicorn_in_thread(app, limit_concurrency=10, timeout_keep_alive=5, access_log=False) as url:
+        yield url
+```
+
+This also removes the need for the `wait_for_server(port)` poll (the helper's pre-listen()ed socket means connections are accepted as soon as the fixture yields).
+
+### Considerations
+
+  - This converts the test servers from a subprocess to a background thread (as `test_ws.py` already does). Need to confirm no test relies on subprocess semantics (e.g. `proc.kill()`); the streamable-HTTP tests appear to test HTTP-level behavior, not process lifecycle.
+  - A subprocess-preserving alternative (pass a pre-bound listening socket into the child via `server.run(sockets=[sock]))` is harder cross-platform, Windows spawn can't easily inherit/pickle sockets, so the thread helper is preferred for the CI matrix.
+
+### Scope
+
+Primary scope: `tests/shared/test_streamable_http.py`. The 4 sibling files share the root cause and can be migrated in the same PR or as follow-ups.
+
+### Acceptance criteria
+
+  - Racy `*_port` fixtures + `run_server/wait_for_server` subprocess pattern removed from the affected file(s).
+  - Tests pass reliably under `uv run pytest -n auto` across the CI matrix (3.10–3.14, ubuntu + windows).
+
+
+### Example Code
+
+```Python
+import socket
+
+def pick_free_port() -> int:
+    # Exact pattern used by basic_server_port / json_server_port / event_server_port
+    # in tests/shared/test_streamable_http.py
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]  # <- socket closes here, so the port is free again
+
+
+# A fixture assigns this port to "server A"...
+port = pick_free_port()
+
+# ...but server A is started later (in a separate multiprocessing.Process), so the
+# port sits free in between. Under `pytest -n auto`, another worker can claim it.
+# Simulate that intruder grabbing the port during the window:
+intruder = socket.socket()
+intruder.bind(("127.0.0.1", port))
+intruder.listen()
+
+# Now server A finally tries to bind the port it was handed:
+server_a = socket.socket()
+server_a.bind(("127.0.0.1", port))  # OSError: [Errno 98] Address already in use
+```
+
+### Python & MCP Python SDK
+
+```Text
+Python: CPython 3.10 and 3.13 (failures captured on ubuntu-latest in CI).
+        Not version-specific, it's a test-parallelism race, so it can surface anywhere on the 3.10–3.14 matrix.
+
+MCP Python SDK: main branch (the unreleased v2 line) — 1.25.1.dev builds.
+```

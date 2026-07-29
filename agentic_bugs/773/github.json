@@ -1,0 +1,50 @@
+{
+  "owner": "browser-use",
+  "repo": "browser-use",
+  "number": 4267,
+  "html_url": "https://github.com/browser-use/browser-use/issues/4267",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Interaction Issue: session_to_python_script doesnt work with gemini api",
+  "author": "migratesky",
+  "created_at": "2026-03-03T19:13:34Z",
+  "updated_at": "2026-03-22T21:42:05Z",
+  "closed_at": "2026-03-22T21:30:46Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 19.1,
+  "fix": {
+    "closing_commit": "3d917866000ceedb740b64d259607ad8e3ba8d84",
+    "linked_prs": [],
+    "best_guess_fix_commit": "3d917866000ceedb740b64d259607ad8e3ba8d84",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T14:44:34.346099+00:00",
+  "comments": [
+    {
+      "author": "shoaib027",
+      "created_at": "2026-03-06T11:28:14Z",
+      "body": "You are passing the wrong agent instance to `export_to_ipynb` and `session_to_python_script`. Both functions expect a `CodeAgent` type, but an `Agent` instance is currently being passed. This is not a bug. Hope this solves the issue"
+    },
+    {
+      "author": "laithrw",
+      "created_at": "2026-03-22T21:42:05Z",
+      "body": "Closing; you passed Agent instead of CodeAgent to session_to_python_script()). Both CodeAgent and session_to_python_script have since been removed from the codebase."
+    }
+  ]
+}

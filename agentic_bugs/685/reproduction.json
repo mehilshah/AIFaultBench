@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Installed released issue-era fallback `langchain==1.2.12` on Python 3.12.3.",
+    "Final `bash run_repro.sh` exited 1 and printed: `BUG REPRODUCED: public PIIMatch import raised ImportError: cannot import name 'PIIMatch' from 'langchain.agents.middleware'`.",
+    "`repro_stderr.log` is empty; the reproduction makes no model or provider calls."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; its Git transfer left no refs, so used the permitted released-package fallback cited by the report.",
+    "Created pinned requirements, an isolated `.venv`, minimal `repro.py`, and self-bootstrapping shell scripts.",
+    "Rebuilt the environment through `run_repro.sh`, then ran it again and captured the final logs.",
+    "Validated shell syntax, JSON schema keys, required files, and executable permissions."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

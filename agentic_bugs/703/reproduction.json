@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final captured run at `1e8adad9155a3656bb037a844f238a408e6e95f5` exited 1 and printed `BUG REPRODUCED: final Bedrock user content blocks = ['toolResult', 'text', 'document']`.",
+    "Final stderr contains `RuntimeError: BUG REPRODUCED: Bedrock would reject toolResult and document in one user message`.",
+    "The repro imported the editable pinned checkout and made no AWS or LLM call."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and verified the pinned checkout.",
+    "Installed pinned Bedrock dependencies and editable checkout packages in `.venv`.",
+    "Ran `bash run_repro.sh` and captured its final stdout/stderr logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

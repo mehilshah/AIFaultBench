@@ -1,0 +1,4 @@
+/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/728/.venv/dotnet/sdk/10.0.100/Microsoft.Common.CurrentVersion.targets(2437,5): warning MSB3277: Found conflicts between different versions of "Microsoft.Bcl.AsyncInterfaces" that could not be resolved. [/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/728/.venv/repro-project/Repro.csproj]
+/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/728/.venv/dotnet/sdk/10.0.100/Microsoft.Common.CurrentVersion.targets(2437,5): warning MSB3277: There was a conflict between "Microsoft.Bcl.AsyncInterfaces, Version=9.0.0.8, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" and "Microsoft.Bcl.AsyncInterfaces, Version=9.0.0.9, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51". [/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/728/.venv/repro-project/Repro.csproj]
+OBSERVED BUG: MSB3277 Microsoft.Bcl.AsyncInterfaces assembly conflict
+Conflict versions: 9.0.0.8 vs 9.0.0.9

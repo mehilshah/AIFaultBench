@@ -1,0 +1,218 @@
+# recovered-from-issue: https://github.com/SWE-agent/SWE-agent/issues/1179
+
+TITLE
+swe-bench Docker image uses Python 3.5, incompatible with `tree-sitter==0.21.3` required by edit_anthropic
+
+BODY
+### Describe the bug
+
+Hi team,
+
+I’m encountering an issue when trying to install the `edit_anthropic` tool as part of running **SWE-agent-v1.1.0**. Specifically, the base swe-bench Docker image appears to use **Python** `3.5.6`, which is too old to support `tree-sitter==0.21.3` (requires **Python** `>=3.8`). This causes installation failures when setting up the environment.
+
+Here is the relevant error log:
+```bash
+🪴 ERROR    Command failed:                                                                  
+            /opt/miniconda3/envs/testbed/bin/python                                          
+            Python 3.5.6 :: Anaconda, Inc.                                                   
+            /opt/miniconda3/envs/testbed/bin/pip                                             
+            pip 10.0.1 from /opt/miniconda3/envs/testbed/lib/python3.5/site-packages/pip     
+            (python 3.5)                                                                     
+            Collecting tree-sitter==0.21.3                                                   
+              Could not find a version that satisfies the requirement tree-sitter==0.21.3    
+            (from versions: 0.0.1, 0.0.2, 0.0.3, 0.0.4, 0.0.5, 0.0.6, 0.0.7, 0.0.8, 0.0.9,   
+            0.0.10, 0.1.0, 0.1.1, 0.2.0, 0.2.1, 0.2.2, 0.19.0, 0.20.0, 0.20.1, 0.20.2,       
+            0.20.3, 0.20.4)                                                                  
+            No matching distribution found for tree-sitter==0.21.3                           
+            You are using pip version 10.0.1, however version 20.3.4 is available.           
+            You should consider upgrading via the 'pip install --upgrade pip' command.       
+            Collecting tree-sitter-languages                                                 
+              Could not find a version that satisfies the requirement tree-sitter-languages  
+            (from versions: )                                                                
+            No matching distribution found for tree-sitter-languages                         
+            You are using pip version 10.0.1, however version 20.3.4 is available. 
+🪴 ERROR    Command 'export PATH=/root/tools/edit_anthropic/bin:$PATH && chmod +x            
+            /root/tools/edit_anthropic/bin/* && cd /root/tools/edit_anthropic && source      
+            install.sh && chmod +x /root/tools/edit_anthropic/bin/*' failed (r.exit_code=1): 
+            Command failed 
+```
+
+This issue occurs when running instances such as:
+- `django__django-10097`
+- `django__django-7530`
+
+Would you consider updating the base **Python** version in the swe-bench image to `>=3.8` to ensure compatibility with modern packages like `tree-sitter`?
+
+### Steps/commands/code to Reproduce
+
+```bash
+
+#!/bin/bash
+
+set -e
+
+EVAL_SWEAGENT_VERSION="1.1.0"
+
+INSTANCE_ID="django__django-7530"
+OUTPUT_DIR="outputs/$INSTANCE_ID"
+DATASET="princeton-nlp/SWE-bench_Verified"
+SUBSET="verified"
+
+CUSTOM_LLM_PROVIDER="litellm_proxy"
+BASE_URL="http://127.0.0.1:8000/v1"
+API_KEY="token-abc123"
+MODEL="claude-3-7-sonnet-20250219"
+TEMPERATURE="0.0"
+
+# clean up output directory if it exists
+rm -rf $OUTPUT_DIR
+
+# run inference
+/root/miniconda3/envs/swe-agent-v$EVAL_SWEAGENT_VERSION/bin/sweagent run-batch \
+    --output_dir $OUTPUT_DIR \
+    --instances.filter=$INSTANCE_ID \
+    --instances.type=swe_bench \
+    --instances.subset=$SUBSET \
+    --instances.split=test \
+    --instances.shuffle=False \
+    --instances.evaluate=False \
+    --instances.deployment.startup_timeout=600 \
+    --agent.model.name=$CUSTOM_LLM_PROVIDER/$MODEL \
+    --agent.model.api_base=$BASE_URL \
+    --agent.model.api_key=$API_KEY \
+    --agent.model.temperature=$TEMPERATURE \
+    --agent.model.per_instance_call_limit="150" \
+    --agent.model.retry.retries=30 \
+    --agent.tools.parse_function.type="function_calling" \
+    --config config/benchmarks/250225_anthropic_filemap_simple_review.yaml
+
+```
+
+### Error message/results
+
+```bash
+
+🦖 INFO     Starting runtime at 40543                                                        
+🦖 INFO     Runtime started in 0.76s                                                         
+🪴 INFO     Environment Initialized                                                          
+🪴 DEBUG    Resetting repository testbed to commit f8fab6f90233c7114d642dfe01a4e6d4cb14ee7d  
+🤠 INFO     Setting up agent for instance django__django-7530                                
+🤠 INFO     Trajectory will be saved to                                                      
+            /root/workspace/remote-swe-agent/outputs/django__django-7530/django__django-7530/
+            django__django-7530.traj                                                         
+🪴 DEBUG    No environment variables to set                                                  
+🦖 DEBUG    Uploading file from /root/workspace/swe-agent/SWE-agent-1.1.0/tools/registry to  
+            /root/tools/registry                                                             
+🦖 DEBUG    Created zip file at /tmp/tmpyh23qyz8/zipped_transfer.zip                         
+🦖 DEBUG    Uploading file from                                                              
+            /root/workspace/swe-agent/SWE-agent-1.1.0/tools/edit_anthropic to                
+            /root/tools/edit_anthropic                                                       
+🦖 DEBUG    Created zip file at /tmp/tmpurx_upkk/zipped_transfer.zip                         
+🦖 DEBUG    Uploading file from                                                              
+            /root/workspace/swe-agent/SWE-agent-1.1.0/tools/review_on_submit_m to            
+            /root/tools/review_on_submit_m                                                   
+🦖 DEBUG    Created zip file at /tmp/tmpusoqc4cm/zipped_transfer.zip                         
+🦖 DEBUG    Uploading file from /root/workspace/swe-agent/SWE-agent-1.1.0/tools/diff_state to
+            /root/tools/diff_state                                                           
+🦖 DEBUG    Created zip file at /tmp/tmp5koip_5v/zipped_transfer.zip                         
+🪴 ERROR    Command failed:                                                                  
+            /opt/miniconda3/envs/testbed/bin/python                                          
+            Python 3.5.6 :: Anaconda, Inc.                                                   
+            /opt/miniconda3/envs/testbed/bin/pip                                             
+            pip 10.0.1 from /opt/miniconda3/envs/testbed/lib/python3.5/site-packages/pip     
+            (python 3.5)                                                                     
+            Collecting tree-sitter==0.21.3                                                   
+              Could not find a version that satisfies the requirement tree-sitter==0.21.3    
+            (from versions: 0.0.1, 0.0.2, 0.0.3, 0.0.4, 0.0.5, 0.0.6, 0.0.7, 0.0.8, 0.0.9,   
+            0.0.10, 0.1.0, 0.1.1, 0.2.0, 0.2.1, 0.2.2, 0.19.0, 0.20.0, 0.20.1, 0.20.2,       
+            0.20.3, 0.20.4)                                                                  
+            No matching distribution found for tree-sitter==0.21.3                           
+            You are using pip version 10.0.1, however version 20.3.4 is available.           
+            You should consider upgrading via the 'pip install --upgrade pip' command.       
+            Collecting tree-sitter-languages                                                 
+              Could not find a version that satisfies the requirement tree-sitter-languages  
+            (from versions: )                                                                
+            No matching distribution found for tree-sitter-languages                         
+            You are using pip version 10.0.1, however version 20.3.4 is available.           
+            You should consider upgrading via the 'pip install --upgrade pip' command.       
+🪴 ERROR    Command 'export PATH=/root/tools/edit_anthropic/bin:$PATH && chmod +x            
+            /root/tools/edit_anthropic/bin/* && cd /root/tools/edit_anthropic && source      
+            install.sh && chmod +x /root/tools/edit_anthropic/bin/*' failed (r.exit_code=1): 
+            Command failed                                                                   
+🪴 INFO     Beginning environment shutdown...                                                
+🤠 ERROR    Traceback (most recent call last):                                               
+              File "/root/workspace/swe-agent/SWE-agent-1.1.0/sweagent/run/run_batch.py",    
+            line 360, in _run_instance                                                       
+                result = agent.run(                                                          
+                         ^^^^^^^^^^                                                          
+              File "/root/workspace/swe-agent/SWE-agent-1.1.0/sweagent/agent/agents.py", line
+            1235, in run                                                                     
+                self.setup(env=env, problem_statement=problem_statement,                     
+            output_dir=output_dir)                                                           
+              File "/root/workspace/swe-agent/SWE-agent-1.1.0/sweagent/agent/agents.py", line
+            552, in setup                                                                    
+                self.tools.install(self._env)                                                
+              File "/root/workspace/swe-agent/SWE-agent-1.1.0/sweagent/tools/tools.py", line 
+            237, in install                                                                  
+                self._install_commands(env)                                                  
+              File "/root/workspace/swe-agent/SWE-agent-1.1.0/sweagent/tools/tools.py", line 
+            286, in _install_commands                                                        
+                env.communicate(                                                             
+              File                                                                           
+            "/root/workspace/swe-agent/SWE-agent-1.1.0/sweagent/environment/swe_env.py", line
+            230, in communicate                                                              
+                raise RuntimeError(msg)                                                      
+            RuntimeError: Command 'export PATH=/root/tools/edit_anthropic/bin:$PATH && chmod 
+            +x /root/tools/edit_anthropic/bin/* && cd /root/tools/edit_anthropic && source   
+            install.sh && chmod +x /root/tools/edit_anthropic/bin/*' failed (r.exit_code=1): 
+            Command failed                                                                   
+                                                                                             
+🪴 INFO     Beginning environment shutdown...                                                
+🏃 ERROR    Traceback (most recent call last):                                               
+              File "/root/workspace/swe-agent/SWE-agent-1.1.0/sweagent/run/run_batch.py",    
+            line 311, in run_instance                                                        
+                result = self._run_instance(instance)                                        
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^                                        
+              File "/root/workspace/swe-agent/SWE-agent-1.1.0/sweagent/run/run_batch.py",    
+            line 360, in _run_instance                                                       
+                result = agent.run(                                                          
+                         ^^^^^^^^^^                                                          
+              File "/root/workspace/swe-agent/SWE-agent-1.1.0/sweagent/agent/agents.py", line
+            1235, in run                                                                     
+                self.setup(env=env, problem_statement=problem_statement,                     
+            output_dir=output_dir)                                                           
+              File "/root/workspace/swe-agent/SWE-agent-1.1.0/sweagent/agent/agents.py", line
+            552, in setup                                                                    
+                self.tools.install(self._env)                                                
+              File "/root/workspace/swe-agent/SWE-agent-1.1.0/sweagent/tools/tools.py", line 
+            237, in install                                                                  
+                self._install_commands(env)                                                  
+              File "/root/workspace/swe-agent/SWE-agent-1.1.0/sweagent/tools/tools.py", line 
+            286, in _install_commands                                                        
+                env.communicate(                                                             
+              File                                                                           
+            "/root/workspace/swe-agent/SWE-agent-1.1.0/sweagent/environment/swe_env.py", line
+            230, in communicate                                                              
+                raise RuntimeError(msg)                                                      
+            RuntimeError: Command 'export PATH=/root/tools/edit_anthropic/bin:$PATH && chmod 
+            +x /root/tools/edit_anthropic/bin/* && cd /root/tools/edit_anthropic && source   
+            install.sh && chmod +x /root/tools/edit_anthropic/bin/*' failed (r.exit_code=1): 
+            Command failed                                                                   
+                                                                                             
+🏃 ERROR    ❌ Failed on django__django-7530: Command 'export                                
+            PATH=/root/tools/edit_anthropic/bin:$PATH && chmod +x                            
+            /root/tools/edit_anthropic/bin/* && cd /root/tools/edit_anthropic && source      
+            install.sh && chmod +x /root/tools/edit_anthropic/bin/*' failed (r.exit_code=1): 
+            Command failed 
+```
+
+### System Information
+
+Ubuntu22.04, python=3.12
+
+### Checklist
+
+- [x] I'm running with the latest docker container/on the latest development version (i.e., I ran `git pull`))
+- [x] I have copied the full command/code that I ran (as text, not as screenshot!)
+- [x] If applicable: I have copied the **full** log file/error message that was the result (as text, not as screenshot!)
+- [x] I have enclosed code/log messages in triple backticks ([docs](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#quoting-code)) and clicked "Preview" to make sure it's displayed correctly.

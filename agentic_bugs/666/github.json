@@ -1,0 +1,50 @@
+{
+  "owner": "huggingface",
+  "repo": "smolagents",
+  "number": 2073,
+  "html_url": "https://github.com/huggingface/smolagents/issues/2073",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "BUG: Can't import classes or methods from smolagents package",
+  "author": "aaishwarymishra",
+  "created_at": "2026-03-10T18:30:37Z",
+  "updated_at": "2026-03-13T04:35:26Z",
+  "closed_at": "2026-03-13T04:35:26Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 2.42,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:38:14.361108+00:00",
+  "comments": [
+    {
+      "author": "tyxlb",
+      "created_at": "2026-03-13T04:18:43Z",
+      "body": "Clearly, you're importing smolagents into a file named smolagents.py. Rename the file to test.py.\n\nClose the issue."
+    },
+    {
+      "author": "aaishwarymishra",
+      "created_at": "2026-03-13T04:35:19Z",
+      "body": "My bad I forgot that I can't have same file as repo name, sorry for this issue and thanks :)"
+    }
+  ]
+}

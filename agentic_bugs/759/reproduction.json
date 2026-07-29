@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at e19e18065a13be0490483ad3c5601d232af8185b.",
+    "repro_stdout.log: turn 1 new_messages: ['ModelRequest', 'ModelResponse']",
+    "repro_stdout.log: turn 2 new_messages: ['ModelResponse']",
+    "repro_stderr.log ends with AssertionError: BUG: turn 1 new_messages() includes the inbound user ModelRequest.",
+    "Final run of bash run_repro.sh exited with status 1."
+  ],
+  "steps": [
+    "Ran bash setup_codebase.sh and checked out the pinned commit.",
+    "Created .venv and installed pinned dependencies plus editable local pydantic_ai_slim and pydantic_graph packages.",
+    "Ran the offline TestModel Vercel AI adapter reproduction and captured the final run output."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

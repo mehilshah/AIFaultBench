@@ -1,0 +1,27 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/708/repro.py", line 51, in main
+    lm(messages=messages)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/708/codebase/dspy/utils/callback.py", line 326, in sync_wrapper
+    return fn(instance, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/708/codebase/dspy/clients/base_lm.py", line 85, in __call__
+    response = self.forward(prompt=prompt, messages=messages, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/708/codebase/dspy/clients/lm.py", line 148, in forward
+    results = completion(
+              ^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/708/codebase/dspy/clients/lm.py", line 440, in litellm_responses_completion
+    return litellm.responses(
+           ^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/708/repro.py", line 26, in offline_responses
+    raise ResponsesValidationError(
+ResponsesValidationError: Invalid value: 'text'. Supported values are: 'input_text', 'input_image', 'output_text', 'refusal', 'input_file', 'computer_screenshot', and 'summary_text'. (DSPy content types: input_text, text, image_url, text)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/708/repro.py", line 61, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/708/repro.py", line 55, in main
+    raise RuntimeError("BUG REPRODUCED: OpenAI Responses image payload is malformed") from error
+RuntimeError: BUG REPRODUCED: OpenAI Responses image payload is malformed

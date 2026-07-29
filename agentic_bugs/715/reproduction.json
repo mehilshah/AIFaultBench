@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at 38eed35ffb70bda2f9ee02b84eaa311d537ae5ae; pyproject.toml line 289 declares LiteLLM without [proxy].",
+    "Final run exited 1 and printed: OBSERVED BUG: Missing dependency No module named 'apscheduler'. Run `pip install 'litellm[proxy]'`.",
+    "repro_stderr.log is empty; the reproduction makes only a local import and no provider call."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh and completed checkout of the pinned historical revision.",
+    "Verified the omitted dependency extra in the pinned metadata and the lockfile\u2019s LiteLLM 1.80.0 resolution.",
+    "Built .venv with the exact pinned repro dependencies.",
+    "Ran run_repro.sh and captured final stdout/stderr logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

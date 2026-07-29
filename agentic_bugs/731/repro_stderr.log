@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/731/repro.py", line 29, in <module>
+    assert observed == expected, (
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: BUG: an unset MINIMAX_API_BASE_URL selected 'https://api.minimaxi.com/v1'; international users require 'https://api.minimax.io/v1'

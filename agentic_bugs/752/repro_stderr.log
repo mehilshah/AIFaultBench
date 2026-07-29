@@ -1,0 +1,29 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/752/repro.py", line 75, in <module>
+    engine.query("Compare France and Germany")
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/752/.venv/lib/python3.12/site-packages/llama_index_instrumentation/dispatcher.py", line 413, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/752/codebase/llama-index-core/llama_index/core/base/base_query_engine.py", line 44, in query
+    query_result = self._query(str_or_query_bundle)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/752/.venv/lib/python3.12/site-packages/llama_index_instrumentation/dispatcher.py", line 413, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/752/codebase/llama-index-core/llama_index/core/query_engine/sub_question_query_engine.py", line 155, in _query
+    self._query_subq(sub_q, color=colors[str(ind)])
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/752/codebase/llama-index-core/llama_index/core/query_engine/sub_question_query_engine.py", line 263, in _query_subq
+    response = query_engine.query(question)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/752/.venv/lib/python3.12/site-packages/llama_index_instrumentation/dispatcher.py", line 413, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/752/codebase/llama-index-core/llama_index/core/base/base_query_engine.py", line 44, in query
+    query_result = self._query(str_or_query_bundle)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/752/.venv/lib/python3.12/site-packages/llama_index_instrumentation/dispatcher.py", line 413, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/752/repro.py", line 34, in _query
+    raise RuntimeError("API rate limit exceeded")
+RuntimeError: API rate limit exceeded

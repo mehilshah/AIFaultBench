@@ -1,0 +1,60 @@
+# recovered-from-issue: https://github.com/browser-use/browser-use/issues/4676
+
+TITLE
+[Bug] AttributeError: items when using Custom OpenAI/DeepSeek models (Pydantic ConfigDict clash)
+
+BODY
+### Browser Use Version
+
+0.12.6
+
+### Bug Description, Steps to Reproduce, Screenshots
+
+Hello `browser-use` team! I encountered a critical bug where the agent crashes with an `AttributeError: items` after 5-6 steps when using a custom `ChatOpenAI` model (like DeepSeek with base_url).
+
+**The Core Issue:**
+The crash happens in `browser_use/tokens/service.py` within the `tracked_ainvoke` function. 
+When the token tracker intercepts the LLM call, it passes the `kwargs` (which includes the `config` object) to LangChain's `ainvoke`. However, LangChain's `ensure_config` expects `config` to be a `dict` (so it can call `.items()`). Because the custom model's config is sometimes passed as a Pydantic object, LangChain crashes with `AttributeError: items`.
+
+**Stacktrace snippet:**
+  File "...\langchain_core\runnables\config.py", line 258, in ensure_config
+    for k, v in config.items()
+  File "...\pydantic\_internal\_model_construction.py", line 289, in __getattr__
+    raise AttributeError(item)
+AttributeError: items
+
+### Failing Python Code
+
+```python
+from langchain_openai import ChatOpenAI
+from pydantic import ConfigDict
+
+# The code that causes the crash due to Pydantic ConfigDict:
+class CustomDeepSeek(ChatOpenAI):
+    model_config = ConfigDict(extra="allow", arbitrary_types_allowed=True)
+    
+    @property
+    def provider(self):
+        return "openai"
+
+# TEMPORARY WORKAROUND WE USED:
+# We had to monkey-patch ainvoke to nullify the invalid config object:
+    async def ainvoke(self, input, config=None, **kwargs):
+        if config is not None and not isinstance(config, dict):
+            config = None 
+        return await super().ainvoke(input, config=config, **kwargs)
+```
+
+### LLM Model
+
+_No response_
+
+### Operating System & Browser Versions
+
+_No response_
+
+### Full DEBUG Log Output
+
+```shell
+
+```

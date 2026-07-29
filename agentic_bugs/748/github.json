@@ -1,0 +1,76 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langgraph",
+  "number": 6578,
+  "html_url": "https://github.com/langchain-ai/langgraph/issues/6578",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`Command(goto=\"__end__\")` returned from tool does not stop agent loop in `create_agent`, causes invalid message order error",
+  "author": "errajibadr",
+  "created_at": "2025-12-12T11:33:44Z",
+  "updated_at": "2026-03-07T09:18:06Z",
+  "closed_at": "2026-01-09T20:17:39Z",
+  "labels": [
+    "bug",
+    "pending"
+  ],
+  "milestone": null,
+  "comments_count": 7,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 28.36,
+  "fix": {
+    "closing_commit": "24a38a223b6426c5d24cda3463d2225f639707a4",
+    "linked_prs": [],
+    "best_guess_fix_commit": "24a38a223b6426c5d24cda3463d2225f639707a4",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T14:00:24.069114+00:00",
+  "comments": [
+    {
+      "author": "KarthikeyaKollu",
+      "created_at": "2025-12-12T12:12:28Z",
+      "body": "@errajibadr made a PR on the same issue let me know if that works for you!!"
+    },
+    {
+      "author": "errajibadr",
+      "created_at": "2025-12-12T13:41:08Z",
+      "body": "i'm mitigated on your solution. which is basically my Troubleshoot. \n\nIt doesn't really respect the \nCommand(goto=\"__end__\") \n\nIt just uses a trick based on last AI message for circuit breaker. which is not what i want nor the Expected behavior. \nCommand goto should be respected whatever the last message\n\nBut i really need command to work. for other edge cases i need to implement. "
+    },
+    {
+      "author": "Zi-Ling",
+      "created_at": "2025-12-23T14:01:28Z",
+      "body": "This feels like an execution boundary issue.\n\nIf a tool explicitly returns a terminal command,\ncontinuing the loop seems more harmful than helpful.\n\nIs the intention here that stop signals are best-effort,\nor should they always hard-interrupt the agent loop?\n"
+    },
+    {
+      "author": "sydney-runkle",
+      "created_at": "2026-01-09T20:17:08Z",
+      "body": "This is expected actually - a `Command` with `goto` adds a dynamic edge, but the other static edges still execute, hence the continuation of the agent loop. You might want to use `return_direct=True` on this tool instead."
+    },
+    {
+      "author": "Prudhvi0717",
+      "created_at": "2026-01-21T15:35:43Z",
+      "body": "@sydney-runkle `return_direct` doesn't work here. The `Command.update` added an `AIMessage` and https://github.com/langchain-ai/langgraph/blob/main/libs/prebuilt/langgraph/prebuilt/chat_agent_executor.py#L964-L977 will return `entrypoint` -> which doesn't end the graph"
+    },
+    {
+      "author": "arthurdorigueto",
+      "created_at": "2026-01-29T05:18:57Z",
+      "body": "Maybe `AgentState`'s `\"jump_to\"` should be usable by tools?"
+    },
+    {
+      "author": "navneetgurjar",
+      "created_at": "2026-03-07T09:18:06Z",
+      "body": "I think @sydney-runkle is right. @Prudhvi0717 I was able to resolve this issue in my case via: `return_direct=True.` I was also using a similar library, named `create_supervisor`, which is the previous version for creating a Supervisor....similar to `create_agent` It has similar features and issues....internally, all these are `ReAct` agents\n\n---\n\nWhen I attached some tools to it, and that tool was returning a `Command` to directly go to the end node, that wasn't happening. I visualised the graph internally. There was only one edge from the tool to the LLM (in the graph of `create_agent`. So, it only executed the internal edge instead of directly initiating the `END` node; it went to the LLM, and then the LLM used to initiate the `END` node. Following @sydney-runkle suggestion and some help from Claude Code, I set r`return_direct=True.`, tested it, and it no longer went to the LLM. After the tool was executed, it went directly to the end node. \n\n---\n\nAlso, one suggestion is that in your case, you are facing another issue with the LLM: that every tool call `AIMessage` must be paired with a `ToolMessage` before an LLM invocation in **OpenAI and Anthropic models as well.** This is causing an API error. To resolve this, you can add your own `ToolMessage` with the same tool invocation id or simply remove the orphaned tool call AI message before calling the LLM"
+    }
+  ]
+}

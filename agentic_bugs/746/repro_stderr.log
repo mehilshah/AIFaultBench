@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/746/repro.py", line 35, in <module>
+    asyncio.run(main())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/746/repro.py", line 24, in main
+    await ensemble.ainvoke("test")
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/746/codebase/libs/langchain/langchain_classic/retrievers/ensemble.py", line 167, in ainvoke
+    result = await self.arank_fusion(
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/746/codebase/libs/langchain/langchain_classic/retrievers/ensemble.py", line 297, in arank_fusion
+    Document(page_content=doc) if not isinstance(doc, Document) else doc
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/746/codebase/libs/core/langchain_core/documents/base.py", line 315, in __init__
+    super().__init__(page_content=page_content, **kwargs)  # type: ignore[call-arg,unused-ignore]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/746/codebase/libs/core/langchain_core/load/serializable.py", line 118, in __init__
+    super().__init__(*args, **kwargs)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/746/.venv/lib/python3.12/site-packages/pydantic/main.py", line 263, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Document
+page_content
+  Input should be a valid string [type=string_type, input_value=42, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.13/v/string_type

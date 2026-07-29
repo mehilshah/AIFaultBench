@@ -1,0 +1,17 @@
+{
+  "reproducible": false,
+  "evidence": [
+    "Pinned checkout verified at 84e3c795ec292cd32156f65c37c1445abb94b576.",
+    "Installed langchain-openai==1.2.2, langchain-core==1.4.0, openai==2.38.0, and pydantic==2.13.4.",
+    "Final `bash run_repro.sh` exited 0 and printed: `NOT REPRODUCED: structured output completed with no parsed-field serializer warning`.",
+    "Final repro_stderr.log is empty."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh and checked out the pinned commit.",
+    "Created .venv and installed pinned dependencies plus editable checkout packages.",
+    "Used an in-memory OpenAI SDK ParsedChatCompletion and fake response parser to invoke the reported public structured-output path offline.",
+    "Captured the final run output and wrote all required artifacts."
+  ],
+  "blocking_reason": "With the issue-reported openai==2.38.0 and pydantic==2.13.4 versions, the pinned checkout completes the public structured-output path without a Pydantic warning containing field_name='parsed'.",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

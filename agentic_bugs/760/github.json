@@ -1,0 +1,68 @@
+{
+  "owner": "pydantic",
+  "repo": "pydantic-ai",
+  "number": 6008,
+  "html_url": "https://github.com/pydantic/pydantic-ai/issues/6008",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[graph] map with downstream_join_id double-fires the join on a non-empty iterable",
+  "author": "slavashvets",
+  "created_at": "2026-06-22T09:55:30Z",
+  "updated_at": "2026-06-30T02:00:20Z",
+  "closed_at": "2026-06-30T01:59:50Z",
+  "labels": [
+    "bug",
+    "graph",
+    "pydanty:bug",
+    "loopable"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 7.67,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T14:00:44.027681+00:00",
+  "comments": [
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-06-22T10:00:26Z",
+      "body": "<!-- pydanty:status-comment:v1 -->\n\n**Classification:** bug\n\n**Why this matters:** Users who use `downstream_join_id` as documented get a silently wrong result on non-empty graphs: the run returns the reducer initial value instead of the reduced mapped result.\n\n**Evidence summary:** The issue includes a runnable minimal reproduction showing that `add_mapping_edge(..., downstream_join_id=collect.id)` makes the join fire twice (`[[], [1, 2, 3]]`) and returns `[]`, while a plain `.map()` returns `[1, 2, 3]` once. The reporter verified on latest beta and stable. Repository research found no duplicate or prior fix.\n\n**Next action:** PR-ready. A localized guard in the mapping-edge join dispatch is the likely fix; the PR opener will reproduce and add a regression test."
+    },
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-06-22T10:32:21Z",
+      "body": "<!-- pydanty:runtime-failure -->\n\n### pydanty runtime failure\n\nRun `df_run_97c96b0f85444ad19faa` started from the GitHub webhook, but the Dogfooding runtime\nfailed before pydanty completed the workflow. The pydanty status comment above\n(if any) is from a completed run and still stands.\n\n**Next step:** maintainer attention needed; rerun after fixing the runtime failure.\n\n<details>\n<summary>Failure detail (tail)</summary>\n\n```text\nool.call_func(tool_args, ctx)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/pydanty/dogfooding/.venv/lib/python3.12/site-packages/pydantic_ai/_function_schema.py\", line 87, in call\n    return await run_in_executor(function, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/pydanty/dogfooding/.venv/lib/python3.12/site-packages/pydantic_ai/_utils.py\", line 131, in run_in_executor\n    return await run_sync(wrapped_func)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/pydanty/dogfooding/.venv/lib/python3.12/site-packages/anyio/to_thread.py\", line 63, in run_sync\n    return await get_async_backend().run_sync_in_worker_thread(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/pydanty/dogfooding/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py\", line 2592, in run_sync_in_worker_thread\n    return await future\n           ^^^^^^^^^^^^\n  File \"/home/pydanty/dogfooding/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py\", line 1029, in run\n    result = context.run(func, *args)\n             ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/pydanty/dogfooding/agents/test_runner/test_runner_agent.py\", line 83, in shell\n    result = run_shell_command(command, cwd=cwd, timeout_seconds=timeout_seconds)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/pydanty/dogfooding/agents/shared/command.py\", line 48, in run_shell_command\n    working_dir = resolve_repo_cwd(cwd)\n                  ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/pydanty/dogfooding/agents/shared/command.py\", line 180, in resolve_repo_cwd\n    raise FileNotFoundError(f\"cwd does not exist: {candidate}\")\nFileNotFoundError: cwd does not exist: /home/pydanty/pydantic-ai/dogfooding_checkout\n\n```\n\n</details>"
+    },
+    {
+      "author": "clavedeluna",
+      "created_at": "2026-06-22T11:49:45Z",
+      "body": "I think I know the solution to this. There's a duplicate reducer created because it's keyed by the map fork's run id instead of the join parent fork run id."
+    },
+    {
+      "author": "slavashvets",
+      "created_at": "2026-06-24T13:30:16Z",
+      "body": "Since the fix seems pretty trivial, do you have an ETA on when it'll be merged?"
+    },
+    {
+      "author": "dmontagu",
+      "created_at": "2026-06-30T02:00:20Z",
+      "body": "@slavashvets sorry for delay, just merged!"
+    }
+  ]
+}

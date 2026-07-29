@@ -1,0 +1,2 @@
+NOT_REPRODUCED: gpt-4o-mini-transcribe is routed to LiteLLM chat completion; the pinned DSPy API exposes no transcription model type or endpoint.
+CHECKED_COMMIT: da69f9d05fc7509eb20c4acb41e8b8b793104f7e

@@ -1,0 +1,338 @@
+# recovered-from-issue: https://github.com/langchain-ai/langgraph/issues/6789
+
+TITLE
+Send objects are not serializable, causing checkpointer failures
+
+BODY
+### Checked other resources
+
+- [x] This is a bug, not a usage question.
+- [x] I added a clear and descriptive title that summarizes this issue.
+- [x] I used the GitHub search to find a similar question and didn't find it.
+- [x] I am sure that this is a bug in LangGraph rather than my code.
+- [x] The bug is not resolved by updating to the latest stable version of LangGraph (or the specific integration package).
+- [x] This is not related to the langchain-community package.
+- [x] I posted a self-contained, minimal, reproducible example. A maintainer can copy it and run it AS IS.
+
+### Reproduction Steps / Example Code (Python)
+
+```python
+### Minimal Reproduction (Copy and Run)
+
+
+"""
+Minimal reproduction showing Send objects cannot be serialized.
+This is a self-contained example with NO external dependencies.
+"""
+from langgraph.types import Send
+from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+import ormsgpack
+
+# Create a Send object
+test_send = Send(node="test_node", arg={"data": "test"})
+
+# Individual attributes ARE serializable
+print("Testing individual attributes:")
+print("✅ node serializable:", ormsgpack.packb(test_send.node))
+print("✅ arg serializable:", ormsgpack.packb(test_send.arg))
+
+# But the Send object itself is NOT
+print("\nTesting Send object:")
+try:
+    packed = ormsgpack.packb(test_send)
+    print("✅ Send serializable")
+except TypeError as e:
+    print(f"❌ Send NOT serializable: {e}")
+
+# Using JsonPlusSerializer also fails
+print("\nTesting JsonPlusSerializer:")
+serde = JsonPlusSerializer()
+try:
+    serialized = serde.dumps_typed(test_send)
+    print("✅ JsonPlusSerializer worked")
+except Exception as e:
+    print(f"❌ JsonPlusSerializer failed: {e}")
+
+
+### Real-World Reproduction (With Checkpointer)
+
+
+"""
+Real-world reproduction showing the issue with graphs using Send + checkpointing.
+This reproduces the exact error users encounter.
+"""
+from typing import TypedDict
+from langgraph.types import Send
+from langgraph.graph import StateGraph, START
+from langgraph.checkpoint.memory import MemorySaver
+
+class State(TypedDict):
+    messages: list[str]
+    results: list[str]
+
+def router_node(state: State):
+    """Node that creates Send objects for parallel routing."""
+    # This is a common pattern in LangGraph for map-reduce
+    return [Send("worker", {"task": f"task_{i}"}) for i in range(3)]
+
+def worker_node(state: State):
+    """Worker node that processes tasks."""
+    return {"results": [state.get("task", "done")]}
+
+def aggregator_node(state: State):
+    """Aggregates results."""
+    return {"messages": ["All tasks completed"]}
+
+# Build graph with Send objects
+graph = StateGraph(State)
+graph.add_node("router", router_node)
+graph.add_node("worker", worker_node)
+graph.add_node("aggregator", aggregator_node)
+graph.add_edge(START, "router")
+graph.add_edge("worker", "aggregator")
+
+# Compile with checkpointer - THIS CAUSES THE ERROR
+checkpointer = MemorySaver()
+app = graph.compile(checkpointer=checkpointer)
+
+# Try to run - will fail with serialization error
+config = {"configurable": {"thread_id": "test-1"}}
+try:
+    result = app.invoke({"messages": ["start"]}, config=config)
+    print("✅ Success! No error")
+except TypeError as e:
+    print(f"❌ ERROR: {e}")
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+## Error Message and Stack Trace
+
+
+TypeError: Type is not msgpack serializable: Send
+
+
+**Full Stack Trace:**
+
+
+Traceback (most recent call last):
+  File "/path/to/script.py", line X, in <module>
+    result = app.invoke({"messages": ["start"]}, config=config)
+  File "langgraph/pregel/__init__.py", line XXX, in invoke
+    ...
+  File "langgraph/checkpoint/memory.py", line XXX, in put_writes
+    ...
+  File "langgraph/checkpoint/serde/jsonplus.py", line XXX, in dumps_typed
+    return self.dumps(self._encode_value(obj))
+  File "langgraph/checkpoint/serde/jsonplus.py", line 650, in _msgpack_enc
+    return ormsgpack.packb(data, default=_msgpack_default, option=_option)
+TypeError: Type is not msgpack serializable: Send
+
+
+**When pickle fallback is enabled:**
+
+
+TypeError: cannot pickle '_thread.lock' object
+
+
+This occurs because some Send objects may contain non-picklable objects (like thread locks) in their `arg` attribute.
+```
+
+### Description
+
+### The Problem
+
+The `Send` class from `langgraph.types` cannot be serialized by msgpack or pickle, causing a `TypeError` when using checkpointers (MemorySaver/InMemorySaver) with any graph that creates Send objects in its state.
+
+### What I'm Trying to Do
+
+I'm trying to use LangGraph's Send objects (for dynamic routing and parallel execution patterns) together with checkpointing (for conversation memory and state persistence).
+
+### What I Expect to Happen
+
+1. Graph executes and creates Send objects for dynamic routing
+2. Checkpointer serializes the graph state (including Send objects)
+3. State is saved successfully
+4. Graph continues execution
+
+### What Actually Happens
+
+1. Graph executes and creates Send objects
+2. Checkpointer attempts to serialize state
+3. Serialization fails with `TypeError: Type is not msgpack serializable: Send`
+4. Graph execution crashes
+
+### Root Cause Analysis
+
+#### 1. Send class lacks serialization support
+
+The `Send` class in `langgraph/types.py` uses `__slots__` but has no `__reduce__` method for pickle support:
+
+```python
+class Send:
+    """A message or packet to send to a specific node in the graph."""
+    __slots__ = ('node', 'arg')
+
+    def __init__(self, node: str, arg: Any) -> None:
+        self.node = node
+        self.arg = arg
+
+    # ❌ Missing: __reduce__() method
+```
+
+#### 2. JsonPlusSerializer has no handler for Send
+
+The `_msgpack_default` function in `langgraph/checkpoint/serde/jsonplus.py` (line ~224) has handlers for:
+- ✅ Pydantic models
+- ✅ NamedTuples
+- ✅ pathlib.Path
+- ✅ re.Pattern
+- ❌ **Missing: Send objects**
+
+### Impact
+
+This bug affects:
+- ✅ **Any graph using Send objects with checkpointing** (not specific to any middleware)
+- ✅ **Map-reduce patterns** that use Send for parallel execution
+- ✅ **Dynamic routing** that uses Send for conditional edges
+- ✅ **LangChain's ShellToolMiddleware** (creates ~82 Send objects during execution)
+
+**Severity:** Users must choose between using Send objects OR using checkpointing. They cannot use both together, which is a significant limitation for production applications.
+
+### Why Individual Attributes Work But Send Object Fails
+
+```python
+from langgraph.types import Send
+import ormsgpack
+
+test_send = Send(node="test", arg={"data": "value"})
+
+# These work:
+ormsgpack.packb(test_send.node)  # ✅ str is natively supported
+ormsgpack.packb(test_send.arg)   # ✅ dict is natively supported
+
+# This fails:
+ormsgpack.packb(test_send)  # ❌ Custom class not supported
+
+# Manual dict conversion works:
+ormsgpack.packb({"node": test_send.node, "arg": test_send.arg})  # ✅
+```
+
+The issue is that ormsgpack doesn't have built-in support for custom Python classes using `__slots__`.
+
+### Proposed Solution
+
+#### Option 1: Add `__reduce__` to Send class (Simplest)
+
+**File:** `langgraph/types.py`
+
+```python
+class Send:
+    """A message or packet to send to a specific node in the graph."""
+    __slots__ = ('node', 'arg')
+
+    def __init__(self, node: str, arg: Any) -> None:
+        self.node = node
+        self.arg = arg
+
+    def __reduce__(self):
+        """Support pickle serialization."""
+        return (self.__class__, (self.node, self.arg))
+```
+
+**Benefits:** 3-line fix, enables pickle fallback, follows Python conventions
+
+#### Option 2: Add msgpack handler (More efficient)
+
+**File:** `langgraph/checkpoint/serde/jsonplus.py`
+
+Add to `_msgpack_default` function:
+
+```python
+def _msgpack_default(obj: Any) -> str | ormsgpack.Ext:
+    # ... existing handlers ...
+
+    # Handle Send objects
+    if isinstance(obj, Send):
+        return {
+            "__send__": True,
+            "node": obj.node,
+            "arg": obj.arg,
+        }
+
+    # ... rest of code ...
+```
+
+Add to `_msgpack_decoder`:
+
+```python
+def _msgpack_decoder(obj: dict) -> Any:
+    # ... existing decoders ...
+
+    if "__send__" in obj:
+        from langgraph.types import Send
+        return Send(node=obj["node"], arg=obj["arg"])
+
+    # ... rest of code ...
+```
+
+**Benefits:** Native msgpack support, more efficient than pickle
+
+#### Recommendation
+
+Implement **BOTH** options for complete coverage:
+- Primary: msgpack handler (efficient)
+- Fallback: pickle support (for edge cases)
+
+### Workarounds (Until Fixed)
+
+**Option 1:** Disable checkpointing (loses conversation memory)
+```python
+app = graph.compile(checkpointer=None)  # Works but no state persistence
+```
+
+**Option 2:** Avoid using Send objects (limits functionality)
+```python
+# Use conditional edges instead of Send (less flexible)
+```
+
+### Additional Context
+
+- Related issue: langchain-ai/deepagents#941
+- Send objects are a **core LangGraph feature** used for:
+  - Dynamic node routing
+  - Parallel execution (map-reduce)
+  - Conditional branching
+  - Complex workflow orchestration
+- In real-world testing, we observed **82 Send objects** created in a single agent invocation
+- Individual Send attributes (node, arg) ARE fully serializable
+- Only the Send object wrapper itself lacks serialization support
+
+This confirms that a simple fix will fully resolve the issue.
+**Note:** I have additional investigation files (deep introspection scripts, visual diagrams, detailed analysis) available if maintainers need them for further debugging.
+
+### System Info
+
+```
+System Information
+------------------
+> OS: macOS
+> OS Version: Darwin 25.2.0
+> Python Version: 3.11.13 (main, Jan 7 2025, 18:56:40) [Clang 18.1.8 ]
+
+Package Information
+-------------------
+> langchain_core: 1.3.8
+> langgraph: 1.0.7
+> langgraph-checkpoint: 4.0.0
+> langgraph-sdk: 0.2.3
+> ormsgpack: 1.5.2
+
+Optional packages not installed
+--------------------------------
+> langgraph-checkpoint-duckdb
+> langgraph-checkpoint-mongodb
+> langgraph-checkpoint-postgres
+> langgraph-checkpoint-sqlite
+```

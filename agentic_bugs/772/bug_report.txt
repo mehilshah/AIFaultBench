@@ -1,0 +1,82 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/1518
+
+TITLE
+[BUG] smolagents returns 422 if using OpenAIServerModel as the model, with deepinfra as the provider.
+
+BODY
+**Describe the bug**
+When trying to execute a simple example using CodeAgent with OpenAIServerModel as the model, the app returns a 422. But this only happens if the model provider is Deepinfra.
+
+**Code to reproduce the error**
+```
+import os
+
+from dotenv import load_dotenv
+
+from smolagents import CodeAgent, OpenAIServerModel, WebSearchTool
+
+load_dotenv(override=True)
+
+model = OpenAIServerModel(
+    model_id="google/gemini-2.5-flash",
+    api_base="https://api.deepinfra.com/v1/openai",
+    api_key=os.getenv("DEEPINFRA_API_KEY"),
+)
+
+agent = CodeAgent(tools=[WebSearchTool()], model=model)
+
+output = agent.run(
+    "Calculate how long it takes to the fastest land animal to run through the longest continuous road. "
+    "Do not consider roads that have gaps or interruptions. "
+)
+
+print("Result:", output)
+```
+**Error logs (if any)**
+` ` `
+Error in generating model output:
+Error code: 422 - {'detail': [{'type': 'literal_error', 'loc': ['body', 'messages', 2, 'ChatCompletionToolMessage', 'role'\], 'msg': "Input should be <ChatMessageRole.TOOL: 'tool'>", 'input': 'assistant', 'ctx': {'expected': "<ChatMessageRole.TOOL: 
+'tool'>"}}, {'type': 'string_type', 'loc': ['body', 'messages', 2, 'ChatCompletionToolMessage', 'content'\], 'msg': 'Input should be a valid string', 'input': [{'type': 'text', 'text': '<code>\nfastest_animal_speed = web_search("fastest land animal 
+speed")\nlongest_road_length = web_search("longest continuous road length")\nprint(f"Fastest land animal speed: {fastest_animal_speed}")\nprint(f"Longest continuous road length: {longest_road_length}")\n</code>\nCalling tools:\n[{\'id\': \'call_1\', 
+\'type\': \'function\', \'function\': {\'name\': \'python_interpreter\', \'arguments\': \'fastest_animal_speed = web_search("fastest land animal speed")\\nlongest_road_length = web_search("longest continuous road length")\\nprint(f"Fastest land animal 
+speed: {fastest_animal_speed}")\\nprint(f"Longest continuous road length: {longest_road_length}")\'}}\]'}]}, {'type': 'missing', 'loc': ['body', 'messages', 2, 'ChatCompletionToolMessage', 'tool_call_id'\], 'msg': 'Field required', 'input': {'role': 
+'assistant', 'content': [{'type': 'text', 'text': '<code>\nfastest_animal_speed = web_search("fastest land animal speed")\nlongest_road_length = web_search("longest continuous road length")\nprint(f"Fastest land animal speed: 
+{fastest_animal_speed}")\nprint(f"Longest continuous road length: {longest_road_length}")\n</code>\nCalling tools:\n[{\'id\': \'call_1\', \'type\': \'function\', \'function\': {\'name\': \'python_interpreter\', \'arguments\': \'fastest_animal_speed = 
+web_search("fastest land animal speed")\\nlongest_road_length = web_search("longest continuous road length")\\nprint(f"Fastest land animal speed: {fastest_animal_speed}")\\nprint(f"Longest continuous road length: {longest_road_length}")\'}}\]'}]}}, 
+{'type': 'string_type', 'loc': ['body', 'messages', 2, 'ChatCompletionAssistantMessage', 'content'\], 'msg': 'Input should be a valid string', 'input': [{'type': 'text', 'text': '<code>\nfastest_animal_speed = web_search("fastest land animal 
+speed")\nlongest_road_length = web_search("longest continuous road length")\nprint(f"Fastest land animal speed: {fastest_animal_speed}")\nprint(f"Longest continuous road length: {longest_road_length}")\n</code>\nCalling tools:\n[{\'id\': \'call_1\', 
+\'type\': \'function\', \'function\': {\'name\': \'python_interpreter\', \'arguments\': \'fastest_animal_speed = web_search("fastest land animal speed")\\nlongest_road_length = web_search("longest continuous road length")\\nprint(f"Fastest land animal 
+speed: {fastest_animal_speed}")\\nprint(f"Longest continuous road length: {longest_road_length}")\'}}\]'}]}, {'type': 'literal_error', 'loc': ['body', 'messages', 2, 'ChatCompletionUserMessage', 'role'\], 'msg': "Input should be <ChatMessageRole.USER: 
+'user'>", 'input': 'assistant', 'ctx': {'expected': "<ChatMessageRole.USER: 'user'>"}}, {'type': 'literal_error', 'loc': ['body', 'messages', 2, 'ChatCompletionSystemMessage', 'role'\], 'msg': "Input should be <ChatMessageRole.SYSTEM: 'system'>", 
+'input': 'assistant', 'ctx': {'expected': "<ChatMessageRole.SYSTEM: 'system'>"}}]}
+[Step 2: Duration 0.27 seconds]
+Traceback (most recent call last):
+  File "/home/luis/development/tools/miniconda3/envs/llm_playground/lib/python3.11/site-packages/smolagents/agents.py", line 1638, in _step_stream
+    chat_message: ChatMessage = self.model.generate(
+                                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/luis/development/tools/miniconda3/envs/llm_playground/lib/python3.11/site-packages/smolagents/models.py", line 1605, in generate
+    response = self.client.chat.completions.create(**completion_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luis/development/tools/miniconda3/envs/llm_playground/lib/python3.11/site-packages/openai/_utils/_utils.py", line 287, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luis/development/tools/miniconda3/envs/llm_playground/lib/python3.11/site-packages/openai/resources/chat/completions/completions.py", line 1087, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/home/luis/development/tools/miniconda3/envs/llm_playground/lib/python3.11/site-packages/openai/_base_client.py", line 1249, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luis/development/tools/miniconda3/envs/llm_playground/lib/python3.11/site-packages/openai/_base_client.py", line 1037, in request
+    raise self._make_status_error_from_response(err.response) from None
+` ` `
+
+**Expected behavior**
+It should not raise an exception.
+
+**Packages version:**
+
+smolagents==1.19.0
+
+**Additional context**
+
+If you set flatten_messages_as_text to True, it works.

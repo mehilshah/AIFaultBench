@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at `8d6b7c1d671af329dbf43a984fe1b3207ef59fe7`.",
+    "Final `bash run_repro.sh` exited with code 1.",
+    "Captured stdout: `BUG REPRODUCED: format_memories_text: TypeError: 'NoneType' object is not subscriptable; format_memories_table: TypeError: object of type 'NoneType' has no len()`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and checked out the supplied commit.",
+    "Inspected the formatter source and confirmed the unsafe null-field slice and `len()` operations.",
+    "Created `.venv`, installed pinned dependencies, and installed the CLI checkout editable without its unrelated runtime dependencies.",
+    "Ran `bash run_repro.sh` and captured final stdout/stderr logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

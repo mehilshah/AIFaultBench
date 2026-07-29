@@ -1,0 +1,17 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout is exactly `263cfc68f170110473a9a1a47c1d0f1b629ab548`.",
+    "Final `bash run_repro.sh` exited with status 1.",
+    "`repro_stdout.log` contains `BUG REPRODUCED: TypeError: 'NoneType' object is not subscriptable`.",
+    "`repro_stderr.log` traces the failure to `codebase/src/lfx/src/lfx/graph/graph/base.py:1565`, at `cached_result[\"result\"]`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and verified the pinned commit.",
+    "Created `.venv`, installed `lfx==0.4.0` for the declared dependency set, then installed `codebase/src/lfx` editable so imports use the pinned buggy source.",
+    "Ran the real `Graph.astep` on a minimal frozen vertex with `get_chat_service` patched to return `None`; no provider or runtime network calls were made.",
+    "Captured the final run's stdout and stderr in the required log files."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

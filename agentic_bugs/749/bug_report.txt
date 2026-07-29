@@ -1,0 +1,143 @@
+# recovered-from-issue: https://github.com/langchain-ai/langgraph/issues/6576
+
+TITLE
+Pydantic error when using custom tool node and having runtime in the tools
+
+BODY
+### Checked other resources
+
+- [x] This is a bug, not a usage question. For questions, please use the LangChain Forum (https://forum.langchain.com/).
+- [x] I added a clear and detailed title that summarizes the issue.
+- [x] I read what a minimal reproducible example is (https://stackoverflow.com/help/minimal-reproducible-example).
+- [x] I included a self-contained, minimal example that demonstrates the issue INCLUDING all the relevant imports. The code run AS IS to reproduce the issue.
+
+### Example Code
+
+```python
+tools_by_name = {tool.name: tool for tool in ROUTING_TOOLS}
+
+def tool_node(state: RouterTestState):
+    """Performs the tool call"""
+
+    result = []
+    for tool_call in state["router_history"][-1].tool_calls: # I access router_history instead of messages
+        tool = tools_by_name[tool_call["name"]]
+        observation = tool.invoke(tool_call["args"])
+        result.append(ToolMessage(content=observation, tool_call_id=tool_call["id"]))
+    return {"router_history": result}
+
+#This is my tool:
+@tool
+def get_greeting_rules(
+    runtime: ToolRuntime,
+) -> Command:
+    """Get guidelines for responding to greetings, small talk, and conversational queries.
+    
+    Call this when the user says hello, thanks you, asks about your capabilities,
+    or engages in general conversation.
+    """
+    user_query = runtime.state.get("user_query", "")
+    
+    # Use LLM to generate appropriate greeting response based on rules
+    llm = ChatOpenAI(**LLM_CONFIG)
+    prompt = f"""{GREETING_RULES}
+
+## User Message
+{user_query}
+
+Based on the guidelines above, give a short answer on how to respond to the user's message."""
+    
+    response = llm.invoke([AIMessage(content=prompt)])
+    print(response)
+    return Command(update={"router_history": [ToolMessage(content=response.content, tool_call_id=runtime.tool_call_id)]})
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\test.py", line 217, in <module>
+    asyncio.run(test_router())
+  File "C:\Users\Venkatesan.KRISHNAMU\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\test.py", line 172, in test_router
+    result = await router_test_graph.ainvoke({
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3158, in ainvoke
+    async for chunk in self.astream(
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\langgraph\pregel\main.py", line 2971, in astream
+    async for _ in runner.atick(
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 304, in atick
+    await arun_with_retry(
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 137, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 705, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 473, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 603, in run_in_executor
+    return await asyncio.get_running_loop().run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 594, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\test.py", line 48, in tool_node
+    observation = tool.invoke(tool_call["args"])
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\langchain_core\tools\base.py", line 605, in invoke
+    return self.run(tool_input, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\langchain_core\tools\base.py", line 932, in run
+    raise error_to_raise
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\langchain_core\tools\base.py", line 891, in run
+    tool_args, tool_kwargs = self._to_args_and_kwargs(
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\langchain_core\tools\base.py", line 794, in _to_args_and_kwargs
+    tool_input = self._parse_input(tool_input, tool_call_id)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\langchain_core\tools\base.py", line 672, in _parse_input
+    result = input_args.model_validate(tool_input)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent\.venv\Lib\site-packages\pydantic\main.py", line 716, in model_validate
+    return cls.__pydantic_validator__.validate_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for get_greeting_rules
+runtime
+  Field required [type=missing, input_value={}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+During task with name 'routing_tools' and id '0fc27e77-a79f-9a5d-7975-e0a92268484d'
+(.venv) PS C:\Users\Venkatesan.KRISHNAMU\Projects\drc-agent>
+```
+
+### Description
+
+I am expecting to see this tool called without the runtime parameter. When I wrapped the tools with ToolNode from `langgraph.prebuilt import ToolNode`, the runtime is hidden to the LLM and there is no error. However, I get this error upon using custom tool calling node. 
+Could you please provide a fix? 
+
+### System Info
+
+System Information
+------------------
+> OS:  Windows
+> OS Version:  10.0.19045
+> Python Version:  3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]
+
+Package Information
+-------------------
+> langchain_core: 1.1.0
+> langchain: 1.1.0
+> langsmith: 0.4.53
+> langchain_openai: 1.1.0
+> langgraph_sdk: 0.2.12

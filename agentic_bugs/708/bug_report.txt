@@ -1,0 +1,79 @@
+# recovered-from-issue: https://github.com/stanfordnlp/dspy/issues/8985
+
+TITLE
+[Bug] OpenAI Responses `model_type` fails with `Image` inputs
+
+BODY
+### What happened?
+
+When using the Responses API for OpenAI models, Image inputs aren't handled correctly.
+
+Given the following code:
+
+```python
+import python
+
+class ImageDescriptionGeneratorSignature(dspy.Signature):
+    image: dspy.Image = dspy.InputField(desc="")
+    image_description: str = dspy.OutputField(desc="")
+
+descriptor = dspy.Predict(ImageDescriptionGeneratorSignature)
+
+lm = dspy.LM(
+    model="openai/gpt-5-mini",
+    api_key="MY-KEY",
+    max_tokens=16000,
+    temperature=1.0,
+    model_type="responses"
+)
+
+dspy.configure(lm=lm)
+img = dspy.Image("overload.jpg")
+
+result = descriptor(image=img)
+print(result.image_description)
+```
+
+This throws a LiteLLM error:
+
+```
+BadRequestError: litellm.BadRequestError: OpenAIException - {
+  "error": {
+    "message": "Invalid value: 'text'. Supported values are: 'input_text', 'input_image', 'output_text', 'refusal', 'input_file', 'computer_screenshot', and 'summary_text'.",
+    "type": "invalid_request_error",
+    "param": "input[0].content[1].type",
+    "code": "invalid_value"
+  }
+}
+```
+
+To fix the issue, we need to make sure we're formatting images correctly for the Responses API.
+
+### Steps to reproduce
+
+import python
+
+class ImageDescriptionGeneratorSignature(dspy.Signature):
+    image: dspy.Image = dspy.InputField(desc="")
+    image_description: str = dspy.OutputField(desc="")
+
+descriptor = dspy.Predict(ImageDescriptionGeneratorSignature)
+
+lm = dspy.LM(
+    model="openai/gpt-5-mini",
+    api_key="MY-KEY",
+    max_tokens=16000,
+    temperature=1.0,
+    model_type="responses"
+)
+
+dspy.configure(lm=lm)
+img = dspy.Image("overload.jpg")
+
+result = descriptor(image=img)
+print(result.image_description)
+
+
+### DSPy version
+
+3.0.4b1

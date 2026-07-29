@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "stdout: `OBSERVED BUG: TypeError: Expected dict, got _Environ`.",
+    "stderr traceback reaches `langgraph_api/js/ui.py:62` and uvloop raises the same TypeError."
+  ],
+  "steps": [
+    "Checked out pinned commit `5796ca9a0ad8ec53dbcf12fa9f1d671b826e5f1d`.",
+    "Installed pinned `langgraph-api==0.4.46` and `uvloop==0.21.0` in `.venv`.",
+    "Ran the deterministic local-stub reproduction and captured logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

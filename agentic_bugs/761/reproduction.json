@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at 2661b55323644eeaf56d133fc6fcb1580c6bcdee.",
+    "Final run exited 1 and printed: BUG REPRODUCED: partial ErrorDetails JSON cannot be reloaded (input is required).",
+    "stderr captured PydanticSerializationUnexpectedValue: Expected 4 fields but got 3."
+  ],
+  "steps": [
+    "Read bug_report.txt and github.json.",
+    "Ran setup_codebase.sh and installed pinned dependencies in .venv.",
+    "Ran run_repro.sh and captured final stdout/stderr logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

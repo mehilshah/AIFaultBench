@@ -1,0 +1,39 @@
+{
+  "owner": "camel-ai",
+  "repo": "camel",
+  "number": 4058,
+  "html_url": "https://github.com/camel-ai/camel/issues/4058",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] MinMax API url are different based on region",
+  "author": "YunfeiZHAO",
+  "created_at": "2026-05-19T08:42:27Z",
+  "updated_at": "2026-05-19T09:19:44Z",
+  "closed_at": "2026-05-19T09:19:44Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 0,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:42.386217+00:00",
+  "comments": []
+}

@@ -1,0 +1,112 @@
+# recovered-from-issue: https://github.com/run-llama/llama_index/issues/20973
+
+TITLE
+[Bug]: Async retrieval paths call sync `postprocess_nodes()` instead of `apostprocess_nodes()`
+
+BODY
+### Bug Description
+
+In several async retrieval paths (`achat`, `astream_chat`, `aretrieve`, `acall`), the code calls `postprocess_nodes()` instead of awaiting `apostprocess_nodes()`. This bypasses `apostprocess_nodes()`, meaning async-specific postprocessor implementations are skipped in these code paths.
+
+`RetrieverQueryEngine` already uses the correct pattern through `_async_apply_node_postprocessors`, but the same was not applied to the other components.
+
+Affected files:
+- `chat_engine/context.py`
+- `chat_engine/condense_plus_context.py`
+- `chat_engine/multi_modal_context.py`
+- `chat_engine/multi_modal_condense_plus_context.py`
+- `query_engine/citation_query_engine.py`
+- `query_engine/multi_modal.py`
+- `tools/retriever_tool.py`
+
+### Version
+
+0.14.15
+
+### Steps to Reproduce
+
+``` python 
+
+import asyncio
+from unittest.mock import MagicMock
+
+from llama_index.core.postprocessor.types import BaseNodePostprocessor
+from llama_index.core.schema import NodeWithScore, QueryBundle, TextNode
+from llama_index.core.chat_engine.context import ContextChatEngine
+from llama_index.core.base.base_retriever import BaseRetriever
+
+
+class TrackingPostprocessor(BaseNodePostprocessor):
+    called_sync: bool = False
+    called_async: bool = False
+
+    def _postprocess_nodes(self, nodes, query_bundle=None):
+        self.called_sync = True
+        return nodes
+
+    async def _apostprocess_nodes(self, nodes, query_bundle=None):
+        self.called_async = True
+        return nodes
+
+
+class DummyRetriever(BaseRetriever):
+    def _retrieve(self, query_bundle):
+        return [NodeWithScore(node=TextNode(text="dummy"))]
+
+    async def _aretrieve(self, query_bundle):
+        return self._retrieve(query_bundle)
+
+
+async def main():
+    postprocessor = TrackingPostprocessor()
+
+    mock_llm = MagicMock()
+    mock_llm.metadata.context_window = 4096
+    mock_llm.metadata.system_role = "system"
+
+    engine = ContextChatEngine.from_defaults(
+        retriever=DummyRetriever(),
+        llm=mock_llm,
+        node_postprocessors=[postprocessor],
+    )
+
+    await engine._aget_nodes(QueryBundle("test"))
+
+    print(f"called_sync:  {postprocessor.called_sync}")
+    print(f"called_async: {postprocessor.called_async}")
+
+    assert postprocessor.called_sync is False, (
+        "sync postprocessor should not be called in async path"
+    )
+    assert postprocessor.called_async is True, (
+        "async postprocessor should be called in async path"
+    )
+    print("All assertions passed!")
+
+
+asyncio.run(main())
+
+```
+
+### Relevant Logs/Tracbacks
+
+```shell
+called_sync:  True
+called_async: False
+Traceback (most recent call last):
+  File "D:\code\llama_index\repro_async_postprocessor.py", line 58, in <module>
+    asyncio.run(main())
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\asyncio\runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gauta\miniforge3\envs\llamaindex-dev\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "D:\code\llama_index\repro_async_postprocessor.py", line 49, in main
+    assert postprocessor.called_sync is False, (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: sync postprocessor should not be called in async path
+```

@@ -1,0 +1,308 @@
+# recovered-from-issue: https://github.com/microsoft/semantic-kernel/issues/13174
+
+TITLE
+Python: Bug: AzureChatCompletion StreamWrapper AttributeError: 'usage' missing in Semantic Kernel Group Chat Orchestration
+
+BODY
+**Describe the bug**
+When running a Group Chat Orchestration with Azure AI Foundry Tracing enabled using the semantic-kernel SDK, the orchestration fails with an AttributeError: 'StreamWrapper' object has no attribute 'usage' during streaming responses. This causes the group chat to crash and prevents completion of the workflow.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Create a GroupChatOrchestration with multiple agents using the Semantic Kernel GroupChatManager and InProcessRuntime.
+2. Enable Azure AI Foundry tracing and OpenTelemetry instrumentation as shown in the code snippet.
+3. Run the orchestration with a streaming agent (AzureChatCompletion service).
+4. Observe the error in logs.
+
+**Expected behavior**
+The group chat orchestration should execute successfully with tracing enabled and should:
+1. Correctly capture token usage, including intermediate and final LLM calls.
+2. Complete the prompt execution and return results without crashing.
+
+**Code snippets**
+```py
+
+import os
+import asyncio
+import traceback
+from typing import Optional
+
+# Set environment variable for OpenTelemetry message content capture
+os.environ["OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"] = "true"
+
+from pydantic import BaseModel
+from opentelemetry import trace
+from azure.monitor.opentelemetry import configure_azure_monitor
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
+
+# Semantic Kernel imports
+from semantic_kernel.agents import GroupChatManager, GroupChatOrchestration
+from semantic_kernel.agents.runtime import InProcessRuntime
+from semantic_kernel.agents import (
+    GroupChatManager,
+    BooleanResult,
+    StringResult,
+    MessageResult,
+)
+from semantic_kernel.contents import ChatMessageContent, ChatHistory
+from utils.logger import logger as log, case_logging_context
+
+from agent_verse.agent1.agent import Agent1
+from agent_verse.agent2.agent import Agent2
+from agent_verse.agent3.agent import Agent3
+from agent_verse.agent4.agent import Agent4
+from agent_verse.agent5.agent import Agent5
+
+class TracingManager:
+    """Enhanced tracing manager with plugin-level tracing support."""
+
+    def __init__(self):
+        self.project_client = None
+        self.connection_string = None
+        self.tracer = trace.get_tracer(__name__)
+        self._initialized = False
+
+    async def initialize(self):
+        """Initialize Azure AI Foundry tracing configuration."""
+        if self._initialized:
+            return
+
+        try:
+            log.info("🔍 Initializing Azure AI Foundry tracing...")
+
+            self.project_client = AIProjectClient(
+                credential=DefaultAzureCredential(),
+                endpoint=AZURE_AI_FOUNDRY_PROJECT_ENDPOINT,
+            )
+
+            self.connection_string = (
+                self.project_client.telemetry.get_connection_string()
+            )
+            log.info("✅ Retrieved Application Insights connection string")
+
+            configure_azure_monitor(connection_string=self.connection_string)
+            log.info("✅ Azure Monitor OpenTelemetry configured successfully")
+   
+            OpenAIInstrumentor().instrument()
+
+            self._initialized = True
+
+        except Exception as e:
+            log.error(f"❌ Failed to initialize Azure AI Foundry tracing: {str(e)}")
+            log.error(f"Tracing error details: {traceback.format_exc()}")
+            self._initialized = False
+
+    def get_tracer(self):
+        """Get the OpenTelemetry tracer instance."""
+        return self.tracer
+
+# Global tracing manager instance
+tracing_manager = TracingManager()
+
+class GroupChatInputModel(BaseModel):
+    """Pydantic model for incoming group chat requests."""
+
+    case_id: str
+
+class CustomGroupChatManager(GroupChatManager):
+    async def filter_results(self, chat_history: ChatHistory) -> MessageResult:
+        # Custom logic to filter or summarize chat results
+        summary = "Summary of the discussion."
+        return MessageResult(
+            result=ChatMessageContent(role="assistant", content=summary),
+            reason="Custom summary logic.",
+        )
+
+    async def select_next_agent(
+        self, chat_history: ChatHistory, participant_descriptions: dict[str, str]
+    ) -> StringResult:
+        # Randomly select an agent from the participants
+        import random
+
+        next_agent = random.choice(list(participant_descriptions.keys()))
+        return StringResult(result=next_agent, reason="Custom selection logic.")
+
+    async def should_request_user_input(
+        self, chat_history: ChatHistory
+    ) -> BooleanResult:
+        # Custom logic to decide if user input is needed
+        return BooleanResult(result=False, reason="No user input required.")
+
+    async def should_terminate(self, chat_history: ChatHistory) -> BooleanResult:
+        # Optionally call the base implementation to check for default termination logic
+        base_result = await super().should_terminate(chat_history)
+        if base_result.result:
+            return base_result
+        # Custom logic to determine if the chat should terminate
+        should_end = len(chat_history.messages) > 10  # Example: end after 10 messages
+        return BooleanResult(result=should_end, reason="Custom termination logic.")
+
+class ProcessAgent:
+    """Enhanced ProcessAgent with simplified tracing to avoid streaming conflicts."""
+
+    def __init__(self):
+        # Existing initialization
+
+        # Enhanced with tracing
+        self.tracer = tracing_manager.get_tracer()
+
+    async def get_group_chat_orchestration(
+        self,
+        case_id: str,
+        starting_agent: Optional[str] = None,
+    ) -> GroupChatOrchestration:
+        """Create orchestration with simplified tracing."""
+        with self.tracer.start_as_current_span("get_group_chat_orchestration") as span:
+            span.set_attribute("case_id", case_id)
+            span.set_attribute("starting_agent", starting_agent or "default")
+
+            # Set case context for plugin tracing
+            tracing_manager.set_case_context(case_id)
+
+            # Use original agents (no plugin wrapping for now to avoid streaming issues)
+            agent1 = await Agent1().get_agent(
+                preloaded_prompt=self.agent_prompt_cache.get("agent1")
+            )
+            agent2 = await Agent2().get_agent(
+                preloaded_prompt=self.agent_prompt_cache.get("agent2"),
+            )
+            agent3 = await Agent3().get_agent(
+                preloaded_prompt=self.agent_prompt_cache.get("agent3")
+            )
+            agent4 = await Agent4().get_agent(
+                preloaded_prompt=self.agent_prompt_cache.get("agent4")
+            )
+
+            allowed_agents = [
+                agent1,
+                agent2,
+                agent3,
+                agent4,
+            ]
+
+            span.set_attribute("agents_count", len(allowed_agents))
+            log.info(
+                f"✅ Successfully initialized {len(allowed_agents)} agents with basic tracing"
+            )
+
+            orchestration = GroupChatOrchestration(
+                members=allowed_agents, manager=CustomGroupChatManager()
+            )
+
+            log.info(
+                f"Created group chat with {len(allowed_agents)} agents for case {case_id}"
+            )
+            return orchestration
+
+
+async def process_group_chat(input_data: GroupChatInputModel):
+    """Enhanced group chat processing with simplified Azure AI Foundry tracing."""
+    case_id = input_data.case_id
+
+    # Initialize tracing if not already done
+    await tracing_manager.initialize()
+    tracer = tracing_manager.get_tracer()
+    starting_agent = "agent1"
+
+    with tracer.start_as_current_span(f"process_case_id_{case_id}") as root_span:
+        root_span.set_attribute("case_id", case_id)
+        root_span.set_attribute("operation_type", "group_chat_orchestration")
+
+        with case_logging_context(case_id):
+            log.info(f"🚀 Preparing data for case {case_id}")
+
+            try:
+                # Case preparation with tracing
+                with tracer.start_as_current_span("case_preparation") as prep_span:
+                    prep_span.set_attribute("case_id", case_id)
+
+                    agent5 = Agent5()
+                    agent5_response = await agent5.prepare_data(case_id)
+
+                    prep_span.set_attribute(
+                        "starting_agent", starting_agent or "default"
+                    )
+
+                # Initialize ProcessAgent with tracing
+                process_agent = ProcessAgent()
+                await process_agent.preload_agent_prompts()
+                process_agent._initialize_group_chat_tracking(case_id)
+
+                # Group chat execution with comprehensive tracing
+                with tracer.start_as_current_span("group_chat_execution") as exec_span:
+                    exec_span.set_attribute("case_id", case_id)
+                    exec_span.set_attribute(
+                        "starting_agent", starting_agent or "default"
+                    )
+                    exec_span.set_attribute("max_rounds", MAX_ROUNDS)
+
+                    log.info(f"🚀 Starting group chat workflow for case {case_id}")
+
+                    log.info("🚀 Starting runtime...")
+                    runtime = InProcessRuntime()
+                    try:
+                        runtime.start()
+                        log.info("✅ Runtime initialized and started successfully")
+
+                        # Get group chat orchestration
+                        group_chat_orchestration = (
+                            await process_agent.get_group_chat_orchestration(
+                                case_id, starting_agent
+                            )
+                        )
+
+                        # Invoke group chat with detailed tracing
+                        with tracer.start_as_current_span(
+                            "orchestration_invoke"
+                        ) as invoke_span:
+                            file_path = os.path.join(
+                                "test_data",
+                                f"test_data.json",
+                            )
+                            invoke_span.set_attribute("task_file_path", file_path)
+
+                            orchestration_result = (
+                                await group_chat_orchestration.invoke(
+                                    task=file_path, runtime=runtime
+                                )
+                            )
+
+                            # Get results
+                            group_chat_results = await orchestration_result.get()
+
+                        await runtime.stop_when_idle()
+                        log.info(f"Agents group chat completed for case {case_id}")
+
+                        root_span.set_attribute("completion_status", "success")
+
+                    finally:
+                        try:
+                            await runtime.close()
+                        except Exception:
+                            pass
+
+            except Exception as e:
+                log.error(f"Error while processing group chat: {str(e)}")
+                log.error(
+                    f"Traceback error while processing group chat {traceback.format_exc()}"
+                )
+
+                root_span.record_exception(e)
+                root_span.set_attribute("completion_status", "error")
+                root_span.set_attribute("error_message", str(e))
+                raise
+
+```
+
+**Platform**
+ - Language: [Python]
+ - Source: [semantic-kernel==1.37.0, python 3.13.3]
+ - AI model: azure-gpt-4o (Creating agent using ChatCompletionAgent)
+ - IDE: VS Code
+ - OS: [Windows]
+
+**Additional context**
+- The issue occurs specifically when running group chat orchestration and Azure AI Foundry tracing turned on.
+- Non-group-chat agents (single agent orchestration) work fine with tracing enabled.

@@ -1,0 +1,1 @@
+OBSERVED BUG: failed async tool left an unpaired tool message (tool_call_id=call_offline_failure)

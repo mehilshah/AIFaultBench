@@ -1,0 +1,50 @@
+# recovered-from-issue: https://github.com/mem0ai/mem0/issues/5933
+
+TITLE
+bug(cli): `config set` on an int field crashes with uncaught ValueError on non-numeric input
+
+BODY
+### Component
+
+Other (`mem0-cli` — Python CLI)
+
+### Description
+
+`set_nested_value()` in `cli/python/src/mem0_cli/config.py` is documented as returning a bool ("Set a config value by dotted path. Returns True on success."), and the codebase relies on that — e.g. `test_set_nonexistent_key` asserts it returns `False` for a bad key, and `cmd_config_set` branches on the return value.
+
+But for an **int**-typed config field it coerces with a bare `int(value)`:
+
+```python
+elif isinstance(current, int):
+    value = int(value)  # type: ignore[assignment]
+```
+
+If the value isn't numeric, `int()` raises `ValueError`, which is never caught. Instead of reporting a failed set, the CLI crashes with a raw traceback.
+
+`version` is an int field on `Mem0Config`, and `mem0 config set <key> <value>` passes the key straight through, so this is reachable from the CLI.
+
+### Steps to Reproduce
+
+```bash
+mem0 config set version abc
+```
+
+```python
+from mem0_cli.config import Mem0Config, set_nested_value
+set_nested_value(Mem0Config(), "version", "abc")
+# ValueError: invalid literal for int() with base 10: 'abc'  (uncaught)
+```
+
+### Expected Behavior
+
+A non-numeric value for an int field should be treated as a failed set — `set_nested_value` returns `False` (consistent with the unknown-key case) and the original value is left untouched. No traceback.
+
+### Actual Behavior
+
+`set_nested_value` raises an uncaught `ValueError`, breaking the documented bool contract and surfacing a stack trace to the user.
+
+### Environment
+
+- mem0-cli: current `main`
+- Python: 3.10
+- OS: platform-independent

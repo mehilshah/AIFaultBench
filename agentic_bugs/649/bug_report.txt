@@ -1,0 +1,74 @@
+# recovered-from-issue: https://github.com/run-llama/llama_index/issues/21422
+
+TITLE
+[Bug]: LLMChatEndEvent.model_dump() mutates ChatResponse.raw in-place, corrupting caller's response object
+
+BODY
+### Bug Description
+`LLMChatEndEvent.model_dump()` (and `LLMCompletionEndEvent.model_dump()`) mutates `ChatResponse.raw` **in-place** when serializing the event for telemetry spans:
+
+```python
+# llama_index/core/instrumentation/events/llm.py
+def model_dump(self, **kwargs: Any) -> Dict[str, Any]:
+    if self.response is not None and isinstance(self.response.raw, BaseModel):
+        self.response.raw = self.response.raw.model_dump()  # ← mutates original object!
+    return super().model_dump(**kwargs)
+```
+
+Because `self.response` holds a reference to the same `ChatResponse` object that was returned to the caller, this converts `ChatResponse.raw` from a Pydantic model instance to a plain dict — permanently, for the caller.
+
+Impact
+
+Any code using `StructuredLLM.achat()` that runs with an active OpenTelemetry/dispatcher subscriber (e.g. `LlamaIndexOpenTelemetry.start_registering()`) will receive a dict instead of the expected Pydantic model from ChatResponse.raw. This causes AttributeError:
+'dict' object has no attribute '...' in all callers that access fields on the structured response.
+
+The bug is silent in local development (no telemetry subscriber → `model_dump()` never called) and only manifests in environments with telemetry enabled.
+
+### Version
+
+0.14.20
+
+### Steps to Reproduce
+
+```python
+from llama_index.observability.otel import LlamaIndexOpenTelemetry
+from llama_index.core.llms import OpenAI
+from pydantic import BaseModel
+
+class MyModel(BaseModel):
+     answer: str
+
+# register telemetry (activates dispatcher subscriber)
+LlamaIndexOpenTelemetry(...).start_registering()
+
+llm = OpenAI(model="gpt-4o-mini")
+structured_llm = llm.as_structured_llm(output_cls=MyModel)
+
+from llama_index.core.llms import ChatMessage
+output = await structured_llm.achat([ChatMessage.from_str("Say hello")])
+print(type(output.raw))  # <class 'dict'>  ← expected MyModel instance
+output.raw.answer        # AttributeError: 'dict' object has no attribute 'answer'
+```
+
+  Expected Behavior
+ `model_dump()` should serialize a copy of the data, not mutate the original object. ChatResponse.raw must remain a Pydantic model instance after `model_dump()` is called on the event.
+
+  Proposed Fix - same in `LLMCompletionEndEvent`
+```python
+def model_dump(self, **kwargs: Any) -> Dict[str, Any]:
+    if self.response is not None and isinstance(self.response.raw, BaseModel):
+        # Do NOT mutate self.response.raw — create a copy for serialization only
+        data = super().model_dump(**kwargs)
+        data["response"]["raw"] = self.response.raw.model_dump()
+        return data
+    return super().model_dump(**kwargs)
+```
+Or alternatively, override model_dump to deep-copy the response before mutation.
+
+### Relevant Logs/Tracebacks
+
+```shell
+[2026-04-20 12:58:39,879: WARNING/ForkPoolWorker-1] [LLM_DBG] ruleset_selection attempt=1 llm_type=StructuredLLM output_cls=<class 'XXX'> output_type=ChatResponse has_raw=True raw_type=dict output_repr=ChatResponse(message=ChatMessage(role=<MessageRole.ASSISTANT: 'assistant'>, additional_kwargs={}, blocks=[TextBlock(block_type='text', text='{"reasoning":"The [Response] value \'XXX\' corresponds to the XXX condition, so per the rule no ruleset is selected.","ruleset_id":null}')]), raw={'reasoning': "The [Response] value 'XXX' corresponds to the XXX condition, so per the rule no ruleset is selected.", 'ruleset_id': None}
+[2026-04-20 12:58:39,879: WARNING/ForkPoolWorker-1] [LLM_DBG] ruleset_selection attempt=1 response_type=dict is_dict=True response_repr={'reasoning': "The [Response] value 'XXX' corresponds to the XXX condition, so per the rule no ruleset is selected.",'ruleset_id': None}
+[2026-04-20 12:58:39,879: ERROR/ForkPoolWorker-1] _decide_which_ruleset_to_use: LLM FAILED. Error type: AttributeError, Message: 'dict' object has no attribute 'ruleset_id'
+```

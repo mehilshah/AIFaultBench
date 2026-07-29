@@ -1,0 +1,1 @@
+OBSERVED BUG with a2a-sdk 1.0.1: cannot import name 'A2AClientHTTPError' from 'a2a.client.errors' (/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/661/.venv/lib/python3.12/site-packages/a2a/client/errors.py)

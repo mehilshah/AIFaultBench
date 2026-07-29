@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final stdout: `BUG REPRODUCED: basic_server_port released 46133; delayed server bind raised EADDRINUSE`.",
+    "`bash run_repro.sh` exited 1, intentionally signaling present buggy behavior.",
+    "Pinned checkout verified at `3eb579948a4719d606d2adbd1f3f69371c9c0f48`; stderr was empty."
+  ],
+  "steps": [
+    "Ran setup_codebase.sh and verified the commit.",
+    "Created .venv with setup_env.sh.",
+    "Extracted and invoked the exact pinned fixture, then reserved its returned port before delayed bind.",
+    "Captured final run output and validated artifacts."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

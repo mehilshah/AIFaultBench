@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exit status: 1.",
+    "`repro_stdout.log`: `BUG REPRODUCED: dict[str, int] requires an unwanted response wrapper`.",
+    "The reproducer verified that `{\"a\": 1}` raises `ModelBehaviorError` for missing `response`, while `{\"response\": {\"a\": 1}}` validates to `{'a': 1}`."
+  ],
+  "steps": [
+    "Read bug_report.txt and github.json.",
+    "Ran setup_codebase.sh, then fetched and checked out the pinned commit after its generated clone was incomplete.",
+    "Created .venv, installed pinned dependencies and the editable checkout.",
+    "Created repro.py and ran run_repro.sh with stdout and stderr captured."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

@@ -1,0 +1,46 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langgraph",
+  "number": 6576,
+  "html_url": "https://github.com/langchain-ai/langgraph/issues/6576",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "Pydantic error when using custom tool node and having runtime in the tools",
+  "author": "venki-lfc",
+  "created_at": "2025-12-11T20:07:11Z",
+  "updated_at": "2026-01-09T20:16:02Z",
+  "closed_at": "2026-01-09T20:16:02Z",
+  "labels": [
+    "bug",
+    "pending"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 29.01,
+  "fix": {
+    "closing_commit": "a91926f6134d7fb33f1f15e85619ada72699a0f8",
+    "linked_prs": [],
+    "best_guess_fix_commit": "a91926f6134d7fb33f1f15e85619ada72699a0f8",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T14:00:26.240758+00:00",
+  "comments": [
+    {
+      "author": "sydney-runkle",
+      "created_at": "2026-01-09T20:16:02Z",
+      "body": "Your custom tool node will need to manage the tool runtime injection. You're invoking your tool w/o the runtime, hence the error"
+    }
+  ]
+}

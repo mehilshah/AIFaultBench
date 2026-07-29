@@ -1,0 +1,42 @@
+# recovered-from-issue: https://github.com/Arize-ai/phoenix/issues/13777
+
+TITLE
+[BUG]: ATIF validation accepts invalid step timestamps that crash conversion
+
+BODY
+### Where
+
+`packages/phoenix-client/src/phoenix/client/helpers/atif/_validate.py` and `_convert.py`
+
+### Reproduction
+
+On current `main`, start from the checked-in simple ATIF fixture and replace a step timestamp with a non-ISO string:
+
+```python
+import copy, json
+from pathlib import Path
+from phoenix.client.helpers.atif._validate import _validate_atif_trajectory
+from phoenix.client.helpers.atif._convert import _convert_atif_trajectory_to_spans
+
+trajectory = json.loads(Path(packages/phoenix-client/tests/client/helpers/atif/fixtures/simple_trajectory.json).read_text())
+trajectory[steps][0][timestamp] = not-a-date
+
+_validate_atif_trajectory(trajectory)
+_convert_atif_trajectory_to_spans(trajectory)
+```
+
+### Observed
+
+Validation succeeds, then conversion raises a raw parser error:
+
+```
+ValueError: Invalid isoformat string: 'not-a-date'
+```
+
+### Expected
+
+`_validate_atif_trajectory` should reject malformed timestamp values with the rest of the ATIF validation errors before conversion begins, or conversion should handle them without a raw crash.
+
+### Notes
+
+This is self-verified against the local checkout. The converter calls `datetime.fromisoformat(ts.replace(Z, +00:00))`, but validation currently only documents that timestamps are optional; it does not validate the format when a timestamp is present.

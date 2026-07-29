@@ -1,0 +1,65 @@
+{
+  "owner": "huggingface",
+  "repo": "smolagents",
+  "number": 1565,
+  "html_url": "https://github.com/huggingface/smolagents/issues/1565",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "BUG: Unable to get example code working",
+  "author": "dhairyadalal",
+  "created_at": "2025-07-16T12:29:58Z",
+  "updated_at": "2025-07-17T16:48:25Z",
+  "closed_at": "2025-07-17T16:48:25Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.18,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T14:44:29.765528+00:00",
+  "comments": [
+    {
+      "author": "albertvillanova",
+      "created_at": "2025-07-16T13:41:08Z",
+      "body": "Thanks for reporting, @dhairyadalal, and for the detailed bug report: appreciate it! \ud83e\udd17 \n\nGood catch! I am investigating the bug..."
+    },
+    {
+      "author": "albertvillanova",
+      "created_at": "2025-07-16T13:54:03Z",
+      "body": "I think the issue was introduced in:\n- #1449 \n\nAfter this PR the message is no longer a typed dict, but a dataclass. I suspect that a key design consideration in that PR might have been underestimated: https://github.com/huggingface/smolagents/pull/1449/files#r2157218133\n> Since Message and ChatMessage were mostly interchangeable, I fuse them.\nOne potential difficulty to consider is that the class is not a TypedDict anymore, so cannot be considered a dict.\nBut this didn't really create any implementation problem so far: we just handle ChatMessage objects internally, and can handle the dict conversion in Model subclasses just before sending messages to inference.\n\nIn practice, this change appears to break code paths that expect a dictionary-like structure, as illustrated by the current error:\n```\nAttributeError: 'dict' object has no attribute 'role'\n```\nThis suggests that somewhere, a dict (perhaps from external input) is now incorrectly assumed to be a ChatMessage instance. I suspect that during input handling, the conversion between external dicts and internal ChatMessage objects is missing or incomplete.\n\nWe may need to revisit the assumption in #1449 that handling dict conversion solely in Model subclasses would be sufficient, especially given the expectations set in the tutorials and examples.\n\nCC: @aymeric-roucher "
+    },
+    {
+      "author": "aymeric-roucher",
+      "created_at": "2025-07-16T18:53:55Z",
+      "body": "I think in this example the offending dict is the message you passed:  way to fix it is to just make it a ChatMessage, like:\n\n```python\nfrom smolagents import LiteLLMModel, ChatMessage\n\nmessages = [\n  ChatMessage(role= \"user\", content= [{\"type\": \"text\", \"text\": \"Hello, how are you?\"}])\n]\n\nmodel = LiteLLMModel(model_id=\"gemini/gemini-2.5-flash\")\nprint(model(messages))\n```\n\nAlternatively, one could add a method at the entrance of both `generate` and `generate_stream` methods (maybe at the entrance of `get_clean_message_list` would work) to also accept dicts as input."
+    },
+    {
+      "author": "aymeric-roucher",
+      "created_at": "2025-07-16T19:01:00Z",
+      "body": "Found [this PR](https://github.com/huggingface/smolagents/pull/1552) that implements the \"accept dict-type messages in `get_clean_message_list`\" solution"
+    },
+    {
+      "author": "albertvillanova",
+      "created_at": "2025-07-17T08:23:41Z",
+      "body": "Yes, I think we should support dict messages as direct input to models. I am reviewing that PR. Thanks for pointing it out, @aymeric-roucher! \ud83e\udd17 "
+    }
+  ]
+}

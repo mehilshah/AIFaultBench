@@ -1,0 +1,61 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/1887
+
+TITLE
+BUG: `GradioUI(...).launch()` does not work because of deprecated keyword argument to `gr.Blocks`
+
+BODY
+<!--
+Thank you for reporting a bug!
+Please provide as much detail as possible to help us identify and fix the issue.
+-->
+
+**Problem**
+`GradioUI(agent).launch()` does not work. This is because `gr.Blocks` no longer accepts `theme` as an argument. [This is the line](https://github.com/huggingface/smolagents/blob/2ae00fb092d1b0e7d74de06e738dd48d04a8b2c2/src/smolagents/gradio_ui.py#L419) where the keyword `theme` is passed, and [this is the place](https://github.com/gradio-app/gradio/blob/28b49e3e74fc73dff938a2b7f53325d554fdf680/gradio/blocks.py#L1016) in gradio where you see that this argument is no longer accepted.
+
+**Steps to reproduce**
+This is the way to reproduce _only_ the offending line in `gradio_ui.py`.
+```python
+import gradio as gr
+gr.Blocks(theme="ocean", fill_height=True)
+```
+
+**Actual behavior and error logs**
+While trying to define an agent using `GradioUI(agent).launch()`, the following error was seen:
+```shell
+Traceback (most recent call last):
+  File "***/agent.py", line 255, in <module>
+    GradioUI(agent).launch()
+  File "***/lib/python3.12/site-packages/smolagents/gradio_ui.py", line 414, in launch
+    self.create_app().launch(debug=True, share=share, **kwargs)
+    ^^^^^^^^^^^^^^^^^
+  File "***/lib/python3.12/site-packages/smolagents/gradio_ui.py", line 419, in create_app
+    with gr.Blocks(theme="ocean", fill_height=True) as demo:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "***/lib/python3.12/site-packages/gradio/blocks.py", line 1071, in __init__
+    super().__init__(render=False, **kwargs)
+TypeError: BlockContext.__init__() got an unexpected keyword argument 'theme'
+```
+
+**Expected behavior**
+Expected the GradioUI app to be launched.
+
+**Environment:**
+Please complete the following information:
+- OS: macOS
+- Python version: 3.12
+- Package version: 1.23.0 (gradio: 6.0.1)
+```
+
+```
+
+**Additional context (optional)**
+None
+
+---
+
+### Checklist
+- [x] I have searched the existing issues and have not found a similar bug report.
+- [x] I have provided a minimal, reproducible example.
+- [x] I have provided the full traceback of the error.
+- [x] I have provided my environment details.
+- [x] I am willing to work on this issue and submit a pull request. (optional)

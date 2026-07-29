@@ -1,0 +1,45 @@
+{
+  "owner": "crewAIInc",
+  "repo": "crewAI",
+  "number": 5607,
+  "html_url": "https://github.com/crewAIInc/crewAI/issues/5607",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Incompatibility between CrewAI 1.14.2 and a2a-sdk 1.0.1+ (Multiple Breaking Changes)",
+  "author": "johnvan7",
+  "created_at": "2026-04-24T15:28:19Z",
+  "updated_at": "2026-04-24T16:06:29Z",
+  "closed_at": "2026-04-24T16:06:29Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.03,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:38:05.962390+00:00",
+  "comments": [
+    {
+      "author": "greysonlalonde",
+      "created_at": "2026-04-24T15:55:35Z",
+      "body": "Hi! This is known and documented, we support 0.2 - 0.3. Please close and open an issue regarding feature support for it"
+    }
+  ]
+}

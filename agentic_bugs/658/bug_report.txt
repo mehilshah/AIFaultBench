@@ -1,0 +1,124 @@
+# recovered-from-issue: https://github.com/langchain-ai/langchain/issues/38741
+
+TITLE
+Fireworks LLM: async _acall shows a bound-method repr instead of the API   response body (missing await)
+
+BODY
+### Submission checklist
+
+- [x] This is a bug, not a usage question.
+- [x] I added a clear and descriptive title that summarizes this issue.
+- [x] I used the GitHub search to find a similar question and didn't find it.
+- [x] I am sure that this is a bug in LangChain rather than my code.
+- [x] The bug is not resolved by updating to the latest stable version of LangChain (or the specific integration package).
+- [x] This is not related to the langchain-community package.
+- [x] I posted a self-contained, minimal, reproducible example. A maintainer can copy it and run it AS IS.
+
+### Package (Required)
+
+- [ ] langchain
+- [ ] langchain-openai
+- [ ] langchain-anthropic
+- [ ] langchain-classic
+- [ ] langchain-core
+- [ ] langchain-model-profiles
+- [ ] langchain-tests
+- [ ] langchain-text-splitters
+- [ ] langchain-chroma
+- [ ] langchain-deepseek
+- [ ] langchain-exa
+- [x] langchain-fireworks
+- [ ] langchain-groq
+- [ ] langchain-huggingface
+- [ ] langchain-mistralai
+- [ ] langchain-nomic
+- [ ] langchain-ollama
+- [ ] langchain-openrouter
+- [ ] langchain-perplexity
+- [ ] langchain-qdrant
+- [ ] langchain-xai
+- [ ] Other / not sure / general
+
+### Related Issues / PRs
+
+_No response_
+
+### Reproduction Steps / Example Code (Python)
+
+```python
+# Offline, deterministic repro (mock aiohttp session returning a 4xx).
+  import asyncio
+  from unittest.mock import patch
+
+  from langchain_fireworks import Fireworks
+
+
+  class _Resp:
+      status = 400
+      async def __aenter__(self): return self
+      async def __aexit__(self, *a): return False
+      
+
+  class _Session:
+      async def __aenter__(self): return self
+      async def __aexit__(self, *a): return False
+      def post(self, *a, **k): return _Resp()
+      
+
+  async def main():
+      llm = Fireworks(model="foo", api_key="dummy")
+      with patch("langchain_fireworks.llms.ClientSession",
+  return_value=_Session()):
+          await llm._acall("hi")
+
+
+  asyncio.run(main())
+  
+  # Real-world trigger: any `await Fireworks(...).ainvoke("...")` /
+  `.agenerate(...)`
+  # where Fireworks rejects the request (bad model, invalid params, rate limit,
+  5xx).
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+ValueError: Fireworks received an invalid payload: <bound method
+  ClientResponse.text of <ClientResponse ... [400 Bad Request]>>
+```
+
+### Description
+
+* When the Fireworks API returns an error (4xx/5xx), I expect the raised error
+  to include the API response body explaining what went wrong.
+  * Instead, the message contains a coroutine repr like `<bound method
+  ClientResponse.text ...>`.
+  
+  Root cause: `Fireworks._acall` (in `langchain_fireworks/llms.py`) builds its
+  HTTP error messages with `{response.text}`. On an `aiohttp.ClientResponse`,
+  `.text` is a coroutine method, not a property — unlike a `requests.Response`,
+  where `.text` is a property — so it is never awaited and the f-string
+  interpolates the bound method's repr instead of the body. The synchronous
+  `_call` path (which uses `requests`) is correct. The async method already
+  correctly uses aiohttp's `.status` (vs requests' `.status_code`), so this is
+  an oversight, not intent.
+
+  Proposed fix: `await response.text()` in both error branches of `_acall`. I
+  have the fix plus a regression unit test ready (the test fails on current
+  master, showing the bound-method message, and passes with the fix; the
+  libs/partners/fireworks unit suite and ruff are green). Happy to open the PR —
+  could a maintainer assign this to me?
+
+
+### System Info
+
+System Information
+  ------------------
+  > OS: Linux
+  > Python Version: 3.12
+
+  Package Information
+  -------------------
+  > langchain_core: 1.4.x
+  > langchain_fireworks: current master
+  > aiohttp: 3.x

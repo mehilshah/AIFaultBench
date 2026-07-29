@@ -1,0 +1,2 @@
+OBSERVED BUG: pinned edit_anthropic install.sh propagates the tree-sitter Python-3.5 pip failure (exit 1).
+PINNED COMMIT: b21a0614da892c758ca15ab91f759caa147f09e4

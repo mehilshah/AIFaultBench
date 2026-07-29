@@ -1,0 +1,65 @@
+# recovered-from-issue: https://github.com/Arize-ai/phoenix/issues/13934
+
+TITLE
+[bug][playground] Bedrock raw tools missing toolSpec wrapper causes ParamValidationError
+
+BODY
+## Description
+
+When replaying a Bedrock Converse API trace in Phoenix's playground (or via evaluations that rerun agent traces), raw tools are passed directly to `converse_stream` without the required `{"toolSpec": ...}` wrapper, causing a `botocore.exceptions.ParamValidationError`.
+
+## Error
+
+```
+botocore.exceptions.ParamValidationError: Parameter validation failed:
+Invalid number of parameters set for tagged union structure toolConfig.tools[0]. Can only set one of the following keys: toolSpec, systemTool, cachePoint.
+Unknown parameter in toolConfig.tools[0]: "name", must be one of: toolSpec, systemTool, cachePoint
+Unknown parameter in toolConfig.tools[0]: "description", must be one of: toolSpec, systemTool, cachePoint
+Unknown parameter in toolConfig.tools[0]: "inputSchema", must be one of: toolSpec, systemTool, cachePoint
+```
+
+## Root Cause
+
+In `phoenix/server/api/helpers/playground_clients.py`, the Bedrock client handler passes raw tools directly without wrapping:
+
+```python
+# Line ~1584
+for tool in tools.tools:
+    if tool.type == "raw":
+        tool_list.append(cast(ToolTypeDef, tool.raw))  # BUG: raw is {"name": ..., "description": ..., "inputSchema": ...}
+        continue
+```
+
+Bedrock's Converse API expects each tool in `toolConfig.tools[]` to be wrapped:
+
+```python
+{"toolSpec": {"name": ..., "description": ..., "inputSchema": ...}}
+```
+
+But `tool.raw` contains just the inner spec body (as stored by `openinference-instrumentation-bedrock` via `Tool(json_schema=dict(tool["toolSpec"]))`).
+
+## Suggested Fix
+
+```python
+if tool.type == "raw":
+    raw = tool.raw
+    if "toolSpec" not in raw:
+        tool_list.append(ToolTypeDef(toolSpec=raw))
+    else:
+        tool_list.append(cast(ToolTypeDef, raw))
+    continue
+```
+
+## Reproduction
+
+1. Use Strands Agents SDK (or any framework) with Bedrock Converse API and tool use
+2. Instrument with `openinference-instrumentation-bedrock` exporting to Phoenix
+3. Open the trace in Phoenix playground and attempt to replay, OR run an evaluation that reruns the trace
+4. Observe `ParamValidationError`
+
+## Environment
+
+- Phoenix version: 17.12.0 (also reproduced on 16.2.0)
+- Provider: AWS Bedrock (Converse API)
+- Instrumentation: `openinference-instrumentation-bedrock`
+- Agent framework: Strands Agents SDK (structured output tools)

@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at 67b15aee2ba1ea70ba9536d94f0be4f1a598578c.",
+    "Final `bash run_repro.sh` exited with status 1 and stdout was: `BUG REPRODUCED: The variable `e` is not defined.`",
+    "Final stderr capture is empty."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`.",
+    "Created the isolated environment, installed pinned dependencies, and installed `codebase` editable.",
+    "Wrote and ran the deterministic offline nested-dictionary-comprehension reproduction.",
+    "Captured the final stdout/stderr logs and validated reproduction.json."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

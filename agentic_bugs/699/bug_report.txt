@@ -1,0 +1,67 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/1779
+
+TITLE
+BUG:
+
+BODY
+<!--
+Thank you for reporting a bug!
+Please provide as much detail as possible to help us identify and fix the issue.
+-->
+
+**Problem**
+Error is thrown that many built in python functions (eg. zip, range, len, enumerate) are not allowed even though it is specified in the allowed functions in the source code
+
+**Steps to reproduce**
+
+```python
+from smolagents.local_python_executor import LocalPythonExecutor
+custom_executor = LocalPythonExecutor(["matplotlib", "matplotlib.*", "numpy", "sympy", "io", "base64"])
+custom_executor("zip()")
+custom_executor("len()")
+custom_executor("range()")
+custom_executor("enumerate()")
+```
+
+**Actual behavior and error logs**
+A clear and concise description of what actually happened. Please include the full traceback if an exception was raised.
+```shell
+     smolagents.local_python_executor.InterpreterError: Code execution failed at line 'zip()' due to: InterpreterError: Forbidden function evaluation: 'zip' is not among the explicitly allowed tools or defined/imported in the preceding code
+```
+
+```shell
+     smolagents.local_python_executor.InterpreterError: Code execution failed at line 'enumerate()' due to: InterpreterError: Forbidden function evaluation: 'enumerate' is not among the explicitly allowed tools or defined/imported in the preceding code
+```
+
+```shell
+     smolagents.local_python_executor.InterpreterError: Code execution failed at line 'len()' due to: InterpreterError: Forbidden function evaluation: 'len' is not among the explicitly allowed tools or defined/imported in the preceding code
+```
+
+```shell
+     smolagents.local_python_executor.InterpreterError: Code execution failed at line 'range()' due to: InterpreterError: Forbidden function evaluation: 'range' is not among the explicitly allowed tools or defined/imported in the preceding code
+```
+
+**Expected behavior**
+These built-in functions should have executed successfully
+
+**Environment:**
+Please complete the following information:
+- OS: [Windows]
+- Python version: 3.13.3
+- Package version:
+```
+Name: smolagents
+Version: 1.21.3
+Summary: 🤗 smolagents: a barebones library for agents. Agents write python code to call tools or orchestrate other agents.
+Home-page:
+Author:
+Author-email: Aymeric Roucher <aymeric@hf.co>
+License:
+Location: C:\Users\Hex\AppData\Local\Programs\Python\Python313\Lib\site-packages
+Requires: huggingface-hub, jinja2, pillow, python-dotenv, requests, rich
+Required-by:
+```
+
+- [x] I have provided the full traceback of the error.
+- [x] I have provided my environment details.
+- [ ] I am willing to work on this issue and submit a pull request. (optional)

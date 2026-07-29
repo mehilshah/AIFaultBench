@@ -1,0 +1,1 @@
+OBSERVED BUG: KeyError: '"text" field not found in the last element of response["output"]["message"]["content"]. Unexpected output format, possibly due to thinking mode changes.'

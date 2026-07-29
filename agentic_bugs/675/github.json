@@ -1,0 +1,45 @@
+{
+  "owner": "stanfordnlp",
+  "repo": "dspy",
+  "number": 9168,
+  "html_url": "https://github.com/stanfordnlp/dspy/issues/9168",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug] `dspy==3.1.0` with reasoning no longer guarantees a `list[str]` output from `dspy.BaseLM.__call__`, but GEPA assumes it and crashes",
+  "author": "mariusarvinte",
+  "created_at": "2026-01-07T16:44:26Z",
+  "updated_at": "2026-01-19T02:16:12Z",
+  "closed_at": "2026-01-19T02:16:12Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 11.4,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:38:29.384679+00:00",
+  "comments": [
+    {
+      "author": "TomeHirata",
+      "created_at": "2026-01-08T00:47:17Z",
+      "body": "Thank you for the report, left a comment on your pr."
+    }
+  ]
+}

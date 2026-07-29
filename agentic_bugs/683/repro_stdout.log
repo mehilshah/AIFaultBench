@@ -1,0 +1,1 @@
+BUG REPRODUCED: host+port+api_key attempted HTTPS against plain HTTP: [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1000)

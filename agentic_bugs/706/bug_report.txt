@@ -1,0 +1,394 @@
+# recovered-from-issue: https://github.com/stanfordnlp/dspy/issues/9032
+
+TITLE
+[Bug]  Azure gpt-5-chat incorrectly classified as reasoning model
+
+BODY
+### What happened?
+
+
+The `gpt-5-chat` model (available through Azure AI Foundry) is being incorrectly classified as a reasoning model in DSPy, causing it to be subject to reasoning model validation requirements (temperature=1.0 and max_tokens>=16000) that don't apply to this model.
+
+The `gpt-5-chat` model is optimized for advanced, natural, multimodal, and context-aware conversations in enterprise applications. While it supports features like multi-personality interactions, search integration, and image generation, it is **not** classified as a reasoning model. Instead, it focuses on facilitating natural and context-aware dialogues.
+
+## Impact
+
+When users try to use `gpt-5-chat` with standard temperature and max_tokens values (e.g., `temperature=0.7`, `max_tokens=1000`), they receive a `ValueError` stating:
+
+```
+OpenAI's reasoning models require passing temperature=1.0 or None and max_tokens >= 16000 or None
+```
+
+This prevents users from using `gpt-5-chat` with appropriate settings for conversational use cases.
+
+Additionally, even when users comply with the reasoning model requirements, attempting to use the model results in a runtime error because Azure's API doesn't support reasoning parameters for `gpt-5-chat`:
+
+```
+litellm.exceptions.BadRequestError: AzureException BadRequestError - Unrecognized request argument supplied: reasoning
+```
+
+
+**Expected behavior:** The model should work without reasoning parameters since `gpt-5-chat` is not a reasoning model.
+
+**Actual behavior:** DSPy incorrectly classifies it as a reasoning model and attempts to pass reasoning parameters, which Azure rejects.
+
+## Root cause
+
+The regex pattern in `dspy/clients/lm.py` that identifies reasoning models was matching `gpt-5-chat` because it only checked for the `gpt-5` prefix without excluding non-reasoning variants like `-chat`.
+
+The original pattern was:
+```python
+r"^(?:o[1345](?:-(?:mini|nano))?(?:-\d{4}-\d{2}-\d{2})?|gpt-5(?:-(?:mini|nano))?)$"
+```
+
+This pattern would match `gpt-5-chat` because the optional suffix `(?:-(?:mini|nano))?` allows any text after `gpt-5-` to pass through.
+
+## Model context
+
+For reference, here's how the GPT-5 family models differ:
+
+### Reasoning models (should be recognized):
+- **gpt-5**: Designed for logic-heavy and multi-step tasks, providing deeper, richer reasoning capabilities for analytics and code generation.
+- **gpt-5-mini**: A lightweight version tailored for cost-sensitive applications, offering minimal reasoning and optimized for speed.
+- **gpt-5-nano**: Optimized for ultra-fast, low-latency use cases, supporting minimal reasoning and ideal for applications requiring quick responses.
+- **gpt-5-pro**: Designed for advanced reasoning capabilities.
+
+### Non-reasoning models (should NOT be recognized):
+- **gpt-5-chat**: Optimized for advanced, natural, multimodal, and context-aware conversations. Focuses on facilitating natural dialogues rather than deep reasoning.
+
+
+### Steps to reproduce
+
+
+## Steps to reproduce
+
+### working example : 
+```python 
+import dspy
+import litellm
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+os.environ["AZURE_OPENAI_API_KEY"] = os.getenv("AZURE_OPENAI_API_KEY")
+os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZURE_OPENAI_ENDPOINT")
+
+litellm.drop_params = True # Drop unsupported params for Azure
+lm_kwargs = {
+                "model": f"azure/gpt-5-mini",
+                "api_key": os.getenv("AZURE_OPENAI_API_KEY"),
+                "api_base": os.getenv("AZURE_OPENAI_ENDPOINT"),
+                "api_version": "2025-03-01-preview",
+                "model_type": "responses",
+                "temperature": 1.0,
+                "max_tokens": 16000,
+                "reasoning": {"effort": "high", "summary": "auto"},
+            }
+lm = dspy.LM(**lm_kwargs)
+dspy.configure(lm=lm)
+print(lm("Hello, world!"))
+```
+
+```
+['Hello! 👋 How can I help you today? (I can answer questions, write or debug code, help with writing, explain concepts, or anything else you need.)']
+```
+
+### Example 1: Validation Error with responses_api  / althought this model is chat completion , i just checked both 
+
+```python
+import dspy
+import litellm
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+os.environ["AZURE_OPENAI_API_KEY"] = os.getenv("AZURE_OPENAI_API_KEY")
+os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZURE_OPENAI_ENDPOINT")
+
+litellm.drop_params = True # Drop unsupported params for Azure
+lm_kwargs = {
+                "model": f"azure/gpt-5-chat",
+                "api_key": os.getenv("AZURE_OPENAI_API_KEY"),
+                "api_base": os.getenv("AZURE_OPENAI_ENDPOINT"),
+                "api_version": "2025-03-01-preview",
+                "model_type": "responses",
+                "temperature": 1.0,
+                "max_tokens": 16000,
+                "reasoning": {"effort": "high", "summary": "auto"},
+            }
+lm = dspy.LM(**lm_kwargs)
+dspy.configure(lm=lm)
+print(lm("Hello, world!"))
+```
+
+```
+raceback (most recent call last):
+  File "/.venv/lib/python3.11/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 1563, in response_api_handler
+    response = sync_httpx_client.post(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/litellm/llms/custom_httpx/http_handler.py", line 802, in post
+    raise e
+  File ".venv/lib/python3.11/site-packages/litellm/llms/custom_httpx/http_handler.py", line 784, in post
+    response.raise_for_status()
+  File "venv/lib/python3.11/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '400 Bad Request' for url 'https://xxx.cognitiveservices.azure.com/openai/responses?api-version=2025-03-01-preview'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File ".venv/lib/python3.11/site-packages/litellm/responses/main.py", line 636, in responses
+    response = base_llm_http_handler.response_api_handler(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.11/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 1571, in response_api_handler
+    raise self._handle_error(
+          ^^^^^^^^^^^^^^^^^^^
+  File "venv/lib/python3.11/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 3025, in _handle_error
+    raise provider_config.get_error_class(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.11/site-packages/litellm/llms/base_llm/responses/transformation.py", line 206, in get_error_class
+    raise BaseLLMException(
+litellm.llms.base_llm.chat.transformation.BaseLLMException: {
+  "error": {
+    "message": "Unsupported parameter: 'reasoning.effort' is not supported with this model.",
+    "type": "invalid_request_error",
+    "param": "reasoning.effort",
+    "code": "unsupported_parameter"
+  }
+}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/core/llm/llm.py", line 24, in <module>
+    print(lm("Hello, world!"))
+          ^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/dspy/utils/callback.py", line 326, in sync_wrapper
+    return fn(instance, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.11/site-packages/dspy/clients/base_lm.py", line 85, in __call__
+    response = self.forward(prompt=prompt, messages=messages, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/dspy/clients/lm.py", line 147, in forward
+    results = completion(
+              ^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/dspy/clients/cache.py", line 235, in sync_wrapper
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/dspy/clients/lm.py", line 421, in litellm_responses_completion
+    return litellm.responses(
+           ^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/litellm/utils.py", line 1356, in wrapper
+    raise e
+  File "/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1231, in wrapper
+    result = original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/litellm/responses/main.py", line 665, in responses
+    raise litellm.exception_type(
+          ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2273, in exception_type
+    raise e
+  File ".venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2016, in exception_type
+    raise BadRequestError(
+litellm.exceptions.BadRequestError: litellm.BadRequestError: AzureException BadRequestError - {
+  "error": {
+    "message": "Unsupported parameter: 'reasoning.effort' is not supported with this model.",
+    "type": "invalid_request_error",
+    "param": "reasoning.effort",
+    "code": "unsupported_parameter"
+  }
+}
+```
+
+
+## Example using model_type = chat  the Regex bug trigger as it looks that the gpt-5 and then matches it 
+
+``` python
+import dspy
+import litellm
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+os.environ["AZURE_OPENAI_API_KEY"] = os.getenv("AZURE_OPENAI_API_KEY")
+os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZURE_OPENAI_ENDPOINT")
+
+litellm.drop_params = True # Drop unsupported params for Azure
+lm_kwargs = {
+                "model": f"azure/gpt-5-chat",
+                "api_key": os.getenv("AZURE_OPENAI_API_KEY"),
+                "api_base": os.getenv("AZURE_OPENAI_ENDPOINT"),
+                "api_version": "2025-03-01-preview",
+                "model_type": "chat",
+                "temperature": 0.0,
+                "max_tokens": 128000,
+                "reasoning": {"effort": "high", "summary": "auto"},
+            }
+lm = dspy.LM(**lm_kwargs)
+dspy.configure(lm=lm)
+print(lm("Hello, world!"))
+```
+
+```
+Traceback (most recent call last):
+  File "app/core/llm/llm.py", line 22, in <module>
+    lm = dspy.LM(**lm_kwargs)
+         ^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/dspy/clients/lm.py", line 90, in __init__
+    raise ValueError(
+ValueError: OpenAI's reasoning models require passing temperature=1.0 and max_tokens >= 16000 to `dspy.LM(...)`, e.g., dspy.LM('openai/gpt-5', temperature=1.0, max_tokens=16000)
+```
+
+## Example with model_type = chat and temprature and max_token as based on the value error 
+
+```
+"temperature": 1.0,
+"max_tokens": 16000,
+``` 
+
+```python 
+import dspy
+import litellm
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+os.environ["AZURE_OPENAI_API_KEY"] = os.getenv("AZURE_OPENAI_API_KEY")
+os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZURE_OPENAI_ENDPOINT")
+
+litellm.drop_params = True # Drop unsupported params for Azure
+lm_kwargs = {
+                "model": f"azure/gpt-5-chat",
+                "api_key": os.getenv("AZURE_OPENAI_API_KEY"),
+                "api_base": os.getenv("AZURE_OPENAI_ENDPOINT"),
+                "api_version": "2025-03-01-preview",
+                "model_type": "chat",
+                "temperature": 1.0,
+                "max_tokens": 16000,
+                "reasoning": {"effort": "high", "summary": "auto"},
+            }
+lm = dspy.LM(**lm_kwargs)
+dspy.configure(lm=lm)
+print(lm("Hello, world!"))
+```
+
+``` 
+Traceback (most recent call last):
+  File ".venv/lib/python3.11/site-packages/litellm/llms/azure/azure.py", line 336, in completion
+    headers, response = self.make_sync_azure_openai_chat_completion_request(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/litellm/llms/azure/azure.py", line 148, in make_sync_azure_openai_chat_completion_request
+    raise e
+  File ".venv/lib/python3.11/site-packages/litellm/llms/azure/azure.py", line 140, in make_sync_azure_openai_chat_completion_request
+    raw_response = azure_client.chat.completions.with_raw_response.create(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/openai/_legacy_response.py", line 364, in wrapped
+    return cast(LegacyAPIResponse[R], func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/openai/_utils/_utils.py", line 286, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/openai/resources/chat/completions/completions.py", line 1147, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/openai/_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "venv/lib/python3.11/site-packages/openai/_base_client.py", line 1047, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.BadRequestError: Error code: 400 - {'error': {'message': 'Unrecognized request argument supplied: reasoning', 'type': 'invalid_request_error', 'param': None, 'code': None}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.11/site-packages/litellm/main.py", line 1503, in completion
+    response = azure_chat_completions.completion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/litellm/llms/azure/azure.py", line 366, in completion
+    raise AzureOpenAIError(
+litellm.llms.azure.common_utils.AzureOpenAIError: Error code: 400 - {'error': {'message': 'Unrecognized request argument supplied: reasoning', 'type': 'invalid_request_error', 'param': None, 'code': None}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File ".venv/lib/python3.11/site-packages/litellm/utils.py", line 1231, in wrapper
+    result = original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/litellm/main.py", line 3733, in completion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2273, in exception_type
+    raise e
+  File "/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2016, in exception_type
+    raise BadRequestError(
+litellm.exceptions.BadRequestError: litellm.BadRequestError: AzureException BadRequestError - Unrecognized request argument supplied: reasoning
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "app/core/llm/llm.py", line 24, in <module>
+    print(lm("Hello, world!"))
+          ^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/dspy/utils/callback.py", line 326, in sync_wrapper
+    return fn(instance, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "venv/lib/python3.11/site-packages/dspy/clients/base_lm.py", line 85, in __call__
+    response = self.forward(prompt=prompt, messages=messages, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/dspy/clients/lm.py", line 147, in forward
+    results = completion(
+              ^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/dspy/clients/cache.py", line 235, in sync_wrapper
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/dspy/clients/lm.py", line 336, in litellm_completion
+    return litellm.completion(
+           ^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/litellm/utils.py", line 1336, in wrapper
+    return litellm.completion_with_retries(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/litellm/main.py", line 3771, in completion_with_retries
+    return retryer(original_function, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/tenacity/__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/tenacity/__init__.py", line 378, in iter
+    result = action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/tenacity/__init__.py", line 420, in exc_check
+    raise retry_exc.reraise()
+          ^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/tenacity/__init__.py", line 187, in reraise
+    raise self.last_attempt.result()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/.local/share/uv/python/cpython-3.11.11-macos-x86_64-none/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users//.local/share/uv/python/cpython-3.11.11-macos-x86_64-none/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File ".venv/lib/python3.11/site-packages/tenacity/__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1356, in wrapper
+    raise e
+  File ".venv/lib/python3.11/site-packages/litellm/utils.py", line 1231, in wrapper
+    result = original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".venv/lib/python3.11/site-packages/litellm/main.py", line 3733, in completion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2273, in exception_type
+    raise e
+  File ".venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2016, in exception_type
+    raise BadRequestError(
+litellm.exceptions.BadRequestError: litellm.BadRequestError: AzureException BadRequestError - Unrecognized request argument supplied: reasoning```
+
+### DSPy version
+
+3.0.3

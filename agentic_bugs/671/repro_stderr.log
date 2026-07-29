@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/671/repro.py", line 34, in <module>
+    raise AssertionError(f'expected dynamic MCP tool alongside override; got {native_tools!r}')
+AssertionError: expected dynamic MCP tool alongside override; got [CodeExecutionTool(kind='code_execution', optional=False, files=None)]

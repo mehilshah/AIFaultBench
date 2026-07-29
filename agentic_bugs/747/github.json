@@ -1,0 +1,68 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langchain",
+  "number": 37723,
+  "html_url": "https://github.com/langchain-ai/langchain/issues/37723",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "UserWarning: Pydantic serializer warnings:",
+  "author": "ghostman-git",
+  "created_at": "2026-05-28T08:26:25Z",
+  "updated_at": "2026-07-08T22:28:41Z",
+  "closed_at": "2026-07-08T22:28:41Z",
+  "labels": [
+    "bug",
+    "langchain",
+    "openai",
+    "external"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 41.58,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T14:00:22.313289+00:00",
+  "comments": [
+    {
+      "author": "gitbalaji",
+      "created_at": "2026-05-28T08:30:06Z",
+      "body": "Hi, I'd like to work on this. Could a maintainer please assign it to me?"
+    },
+    {
+      "author": "subramanya-dev",
+      "created_at": "2026-05-28T08:49:33Z",
+      "body": "I\u2019m interested in contributing to this. Please assign this issue to me if possible."
+    },
+    {
+      "author": "Naominour",
+      "created_at": "2026-05-28T09:20:39Z",
+      "body": "Hey, I looked into this, the issue is **in _create_chat_result** in langchain-openai. The response.model_dump(exclude={\"choices\": {\"__all__\": {\"message\": {\"parsed\"}}}}) call triggers the warning because Pydantic actually validates the parsed field before excluding it. Since the OpenAI SDK types parsed as Optional[None], it freaks out when there's a real structured output model sitting in there.\n\nThere's even a **test** for this (test_create_chat_result_avoids_parsed_model_dump_warning) but the mock uses parsed: None = None which doesn't reproduce the real SDK typin, so the warning still slips through in production.\n\nFix is adding warnings=False to that model_dump() call and updating the test mock to actually catch this. Will open a PR shortly.\n\nCould this be assigned to me?"
+    },
+    {
+      "author": "jasiecky",
+      "created_at": "2026-05-31T17:55:08Z",
+      "body": "I would love to work on it, I've added a [PR](https://github.com/langchain-ai/langchain/pull/37812)"
+    },
+    {
+      "author": "goingforstudying-ctrl",
+      "created_at": "2026-06-10T12:04:45Z",
+      "body": "I can take this. The bug is that UserWarning: Pydantic serializer warnings are emitted during normal operation with certain model configurations.\\n\\nRoot cause: the warning comes from Pydantic v2's serializer when it encounters fields that are marked as optional but receive None values during model_dump, or when custom serializers return unexpected types. In LangChain, this typically happens in AIMessage, HumanMessage, or tool output parsing where the model has complex nested fields with custom validators.\\n\\nFix plan:\\n1. Identify the exact model classes and fields that trigger the warning (likely in langchain_core/messages or output parsers)\\n2. Add proper serialize_by_alias, serialize_as_any, or field serializers to suppress the warning without changing behavior\\n3. Alternatively, add explicit None-handling in the dump path so the serializer does not warn about expected None values\\n4. Add unit tests that call model_dump on the affected classes and assert no warnings are emitted\\n\\nThis is a focused cleanup fix in langchain-core. Can you assign me?"
+    }
+  ]
+}

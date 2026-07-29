@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "stdout: `BUG_REPRODUCED: ModuleNotFoundError: No module named 'microsoft'`.",
+    "stderr identifies `copilot_studio_agent.py:10` importing `microsoft.agents.copilotstudio.client` despite the underscored Microsoft Agents packages being installed."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`; the shared clone was impractically slow, so used the permitted issue-era package fallback.",
+    "Created `.venv` and installed semantic-kernel 1.37.0 plus Microsoft Agents 0.3.1 dependencies.",
+    "Ran and captured the final `bash run_repro.sh` output; validated required files and metadata."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

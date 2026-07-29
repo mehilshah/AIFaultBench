@@ -1,0 +1,45 @@
+{
+  "owner": "agno-agi",
+  "repo": "agno",
+  "number": 8235,
+  "html_url": "https://github.com/agno-agi/agno/issues/8235",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug] `AttributeError: 'TeamRunOutput' object has no attribute 'event'` in team SSE streaming",
+  "author": "phnmn",
+  "created_at": "2026-06-03T22:13:18Z",
+  "updated_at": "2026-07-15T06:56:12Z",
+  "closed_at": "2026-07-15T06:56:12Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 41.36,
+  "fix": {
+    "closing_commit": "edb74db2c033e76ff9397de1c150b5b468700c9f",
+    "linked_prs": [],
+    "best_guess_fix_commit": "edb74db2c033e76ff9397de1c150b5b468700c9f",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T12:38:26.213887+00:00",
+  "comments": [
+    {
+      "author": "phnmn",
+      "created_at": "2026-06-04T06:55:59Z",
+      "body": "I've opened PR #8240 that provides a comprehensive fix for this issue, covering all 6 affected call sites (not just the team router):\n\n**Changes in #8240:**\n\n1. **Defensive check in `format_sse_event`** (`os/utils.py`): `getattr(event, \"event\", None) or \"message\"` \u2014 belt-and-suspenders protection against any accumulator reaching the formatter\n\n2. **isinstance filtering in all 6 SSE router streamers**:\n   - `teams/router.py`: `team_response_streamer` + `team_continue_response_streamer` \u2192 filter `TeamRunOutput`\n   - `agents/router.py`: `agent_response_streamer` + `agent_continue_response_streamer` \u2192 filter `RunOutput`\n   - `workflows/router.py`: `workflow_response_streamer` + `workflow_continue_response_streamer` \u2192 filter `WorkflowRunOutput`\n\n3. **12 regression tests** across 3 test files (4 per router type)\n\nThe existing PR #8236 only fixes 2 of the 6 vulnerable call sites (team router only), missing the agent and workflow routers entirely. The same `.events` vs `.event` mismatch and accumulator leak exists in all 3 routers."
+    }
+  ]
+}

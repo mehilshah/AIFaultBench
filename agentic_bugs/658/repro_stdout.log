@@ -1,0 +1,1 @@
+OBSERVED BUG: async error contains bound method, not response body

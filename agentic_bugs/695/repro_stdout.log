@@ -1,0 +1,1 @@
+BUG OBSERVED: sync complete ignored supplied async-client Authorization headers

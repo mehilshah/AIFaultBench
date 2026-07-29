@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/732/repro.py", line 49, in <module>
+    raise AssertionError("unsupported operator was silently downgraded to equality")
+AssertionError: unsupported operator was silently downgraded to equality

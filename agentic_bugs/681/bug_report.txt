@@ -1,0 +1,49 @@
+# recovered-from-issue: https://github.com/mem0ai/mem0/issues/5931
+
+TITLE
+bug(cli): list memory formatters crash on null `id`/`memory` fields from API
+
+BODY
+### Component
+
+Other (`mem0-cli` — Python CLI)
+
+### Description
+
+The CLI's list/single memory formatters in `cli/python/src/mem0_cli/output.py` assume `id` and `memory` are always non-null strings. When the backend returns a record with an explicit JSON `null` for one of those fields, `dict.get(key, default)` returns `None` (the key *is* present, so the default is never applied), and the subsequent slice/`len()` blows up.
+
+Two concrete crashes:
+
+- `format_memories_text` — `mem.get("id", "")[:8]` → `None[:8]` → `TypeError: 'NoneType' object is not subscriptable`
+- `format_memories_table` — `len(mem.get("memory", ...))` → `len(None)` → `TypeError: object of type 'NoneType' has no len()`
+
+This means `mem0 search` / `mem0 list` can hard-crash on otherwise valid API output instead of just rendering a blank cell.
+
+Interestingly, `format_add_result` in the same file already guards against exactly this with the `r.get("id") or ""` pattern — the list/single formatters were simply missed.
+
+### Steps to Reproduce
+
+```python
+from rich.console import Console
+from mem0_cli.output import format_memories_text, format_memories_table
+
+c = Console()
+records = [{"id": None, "memory": None, "created_at": None, "categories": None}]
+
+format_memories_text(c, records)   # TypeError: 'NoneType' object is not subscriptable
+format_memories_table(c, records)  # TypeError: object of type 'NoneType' has no len()
+```
+
+### Expected Behavior
+
+A `null` (or missing) `id`/`memory`/`text` field should render as an empty value, consistent with how `format_add_result` already handles it. No crash.
+
+### Actual Behavior
+
+`format_memories_text` and `format_memories_table` raise `TypeError` and abort the command.
+
+### Environment
+
+- mem0-cli: current `main`
+- Python: 3.10
+- OS: Windows 11 (logic is platform-independent)

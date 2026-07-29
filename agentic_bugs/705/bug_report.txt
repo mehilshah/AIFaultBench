@@ -1,0 +1,88 @@
+# recovered-from-issue: https://github.com/stanfordnlp/dspy/issues/9059
+
+TITLE
+[Bug] GEPA reflection_minibatch_size parameter ignored, causing context length explosions
+
+BODY
+### What happened?
+
+GEPA's `reflection_minibatch_size` parameter (default: 3) is documented to limit "the number of examples to use for reflection in a single GEPA step", but `DspyAdapter.make_reflective_dataset()` ignores this and processes **all trajectories**, causing context explosions EX):
+
+- By iteration 6: 10-20 trajectories × ~25K tokens = **250K-500K tokens**
+- Reflection LM receives 568K tokens → **exceeds 400K limit** → optimization crashes
+
+```python
+litellm.BadRequestError: OpenrouterException - 
+{"error":{"message":"This endpoint's maximum context length is 400000 tokens. 
+However, you requested about 584066 tokens (568066 of text input, 16000 in the output)."}}
+```
+
+### Possible Root Cause
+
+The parameter is stored in `GEPA` and passed to GEPA core, but **never reaches `DspyAdapter`**:
+
+1. ✅ `GEPA.__init__()` stores `self.reflection_minibatch_size = 3` (gepa.py)
+2. ❌ `GEPA.compile()` creates adapter **without** passing it (gepa.py)
+3. ❌ `DspyAdapter.__init__()` doesn't accept it (gepa_utils.py)
+4. ❌ `DspyAdapter.make_reflective_dataset()` loops through **all** trajectories (gepa_utils.py)
+
+**Buggy code:**
+```python
+# gepa_utils.py:365
+for data in eval_batch.trajectories or []:  # ← NO LIMIT!
+    items.append(...)
+```
+
+### Impact
+
+- **Affects all GEPA users** (any predictor type, not just ReAct)
+- **Worse for ReAct** due to conversation history (larger traces)
+
+Optional: Add context length error handling with retry logic.
+
+### Proposed Fix
+
+Wire `reflection_minibatch_size` through to `DspyAdapter`:
+
+```python
+# 1. Pass to adapter (gepa.py)
+adapter = DspyAdapter(..., reflection_minibatch_size=self.reflection_minibatch_size)
+
+# 2. Accept in adapter __init__ (gepa_utils.py)
+def __init__(self, ..., reflection_minibatch_size: int = 3):
+    self.reflection_minibatch_size = reflection_minibatch_size
+
+# 3. Sample trajectories (gepa_utils.py)
+trajectories = eval_batch.trajectories or []
+if len(trajectories) > self.reflection_minibatch_size:
+    trajectories = self.rng.sample(trajectories, self.reflection_minibatch_size)
+for data in trajectories:
+    # ... process sampled trajectories
+```
+
+### Steps to reproduce
+
+```python
+import dspy
+from dspy.teleprompt import GEPA
+
+# Configure GEPA with small minibatch size
+gepa = GEPA(
+    metric=my_metric,
+    max_metric_calls=30,
+    reflection_minibatch_size=3,  # ← Should limit to 3 examples
+    reflection_lm=dspy.LM("openrouter/openai/gpt-5-mini"),
+)
+
+# Use ReAct agent (generates large trajectories)
+program = MyReActAgent()
+optimized = gepa.compile(program, trainset=trainset, valset=valset)
+```
+
+**Expected:** Reflection uses ≤3 example trajectories (~10K tokens)
+**Actual:** Reflection uses ALL trajectories from eval batch (~250K-500K tokens by iteration 6)
+
+
+### DSPy version
+
+3.0.4

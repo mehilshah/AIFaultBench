@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/704/repro.py", line 41, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/704/repro.py", line 35, in main
+    raise AssertionError(
+AssertionError: GoogleModel omitted include_server_side_tool_invocations for CodeExecutionTool with function calling

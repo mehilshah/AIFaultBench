@@ -1,0 +1,1 @@
+BUG REPRODUCED: nested newline action string was rejected as not a list

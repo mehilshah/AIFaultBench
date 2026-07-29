@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/658/repro.py", line 41, in main
+    await llm._acall("hi")
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/658/.venv/lib/python3.12/site-packages/langchain_fireworks/llms.py", line 231, in _acall
+    raise ValueError(msg)
+ValueError: Fireworks received an invalid payload: <bound method _Resp.text of <fake Fireworks 400 response>>
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/658/repro.py", line 51, in <module>
+    asyncio.run(main())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/658/repro.py", line 47, in main
+    raise AssertionError("buggy missing-await behavior reproduced") from exc
+AssertionError: buggy missing-await behavior reproduced

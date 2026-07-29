@@ -1,0 +1,74 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/1767
+
+TITLE
+BUG: ModuleNotFoundError: No module named 'ddgs'
+
+BODY
+<!--
+Thank you for reporting a bug!
+Please provide as much detail as possible to help us identify and fix the issue.
+-->
+
+**Problem**
+Getting the error ' ModuleNotFoundError: No module named 'ddgs''
+**Steps to reproduce**
+Please provide a minimal, self-contained, and reproducible example of the bug.
+
+Try running the starting code in the notebook 'Code_agents.ipynb' provided in the 'Agents Course' under 'Building Agents That Use Code' section.
+
+```python
+# Your code to reproduce the bug here
+from smolagents import CodeAgent, DuckDuckGoSearchTool, InferenceClientModel
+agent = CodeAgent(tools=[DuckDuckGoSearchTool()], model=InferenceClientModel())
+agent.run("Search for the best music recommendations for a party at the Wayne's mansion.")
+```
+
+**Actual behavior and error logs**
+A clear and concise description of what actually happened. Please include the full traceback if an exception was raised.
+```shell
+---------------------------------------------------------------------------
+ModuleNotFoundError                       Traceback (most recent call last)
+[/usr/local/lib/python3.12/dist-packages/smolagents/default_tools.py](https://localhost:8080/#) in __init__(self, max_results, rate_limit, **kwargs)
+    129         try:
+--> 130             from ddgs import DDGS
+    131         except ImportError as e:
+
+ModuleNotFoundError: No module named 'ddgs'
+
+The above exception was the direct cause of the following exception:
+
+ImportError                               Traceback (most recent call last)
+2 frames
+[/usr/local/lib/python3.12/dist-packages/smolagents/default_tools.py](https://localhost:8080/#) in __init__(self, max_results, rate_limit, **kwargs)
+    130             from ddgs import DDGS
+    131         except ImportError as e:
+--> 132             raise ImportError(
+    133                 "You must install package `ddgs` to run this tool: for instance run `pip install ddgs`."
+    134             ) from e
+
+ImportError: You must install package `ddgs` to run this tool: for instance
+```
+
+**Expected behavior**
+A clear and concise description of what you expected to happen.
+
+**Environment:**
+Please complete the following information:
+- OS: [Windows on my Laptop]
+- Using Colab notebook
+- Package version: (output of `pip show smolagents`) - Version: 1.21.3
+```
+
+```
+
+**Additional context (optional)**
+Add any other context, screenshots, or links about the bug here.
+
+---
+
+### Checklist
+- [x] I have searched the existing issues and have not found a similar bug report.
+- [x] I have provided a minimal, reproducible example.
+- [x] I have provided the full traceback of the error.
+- [x] I have provided my environment details.
+- [ ] I am willing to work on this issue and submit a pull request. (optional)

@@ -1,0 +1,97 @@
+# recovered-from-issue: https://github.com/crewAIInc/crewAI/issues/5607
+
+TITLE
+[BUG] Incompatibility between CrewAI 1.14.2 and a2a-sdk 1.0.1+ (Multiple Breaking Changes)
+
+BODY
+### Description
+
+The A2A (Agent-to-Agent) module in CrewAI 1.14.2 is currently incompatible with the latest a2a-sdk (v1.0.x). Attempting to run a crew that uses A2AClientConfig results in an immediate ImportError because CrewAI references classes (like A2AClientHTTPError) that have been renamed or removed in the new SDK version. Beyond the initial import error, there appear to be further architectural changes in the SDK that prevent the crew from initializing.
+
+Migration guide: https://github.com/a2aproject/a2a-python/blob/main/docs/migrations/v1_0/README.md
+
+### Steps to Reproduce
+
+1. uv init
+
+2. uv add crewai==1.14.2 a2a-sdk
+
+3. Configure a Crew and a remote agent with A2AClientConfig.
+
+4. Attempt to run the crew.
+
+### Expected behavior
+
+The Crew should initialize and start correctly.
+
+### Screenshots/Code snippets
+
+```
+  @agent
+  def technical_architect_and_writer(self) -> Agent:
+    return Agent(
+      config=self.agents_config['technical_architect_and_writer'],
+      verbose=True,
+      llm=llm_gemini,
+      a2a=[
+        A2AClientConfig(
+            endpoint="http://localhost:8888/.well-known/agent-card.json",
+            timeout=120,
+            max_turns=5,
+            fail_fast=False,
+        )
+        ],
+    )
+```
+
+### Operating System
+
+macOS Sonoma
+
+### Python Version
+
+3.12
+
+### crewAI Version
+
+1.14.2
+
+### crewAI Tools Version
+
+1.14.2
+
+### Virtual Environment
+
+Venv
+
+### Evidence
+
+```
+Traceback (most recent call last):
+  File "src/main.py", line 20, in <module>
+    run()
+  File "src/main.py", line 14, in run
+    result = TestCrew().crew().kickoff(inputs=inputs)
+  ...
+  File "src/crew.py", line 83, in technical_architect_and_writer
+    A2AClientConfig(...)
+  File ".../pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+  File ".../crewai/a2a/config.py", line 53, in _get_default_update_config
+    from crewai.a2a.updates import StreamingConfig
+  File ".../crewai/a2a/updates/__init__.py", line 12, in <module>
+    from crewai.a2a.updates.polling.handler import PollingHandler
+  File ".../crewai/a2a/updates/polling/handler.py", line 11, in <module>
+    from a2a.client.errors import A2AClientHTTPError
+ImportError: cannot import name 'A2AClientHTTPError' from 'a2a.client.errors'
+```
+
+### Possible Solution
+
+Short term: Update pyproject.toml in the CrewAI repository to pin a2a-sdk < 1.0.1.
+
+Long term: Refactor crewai.a2a modules to align with the new class names and structures introduced in a2a-sdk 1.x.
+
+### Additional context
+
+Python 3.13

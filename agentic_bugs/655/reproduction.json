@@ -1,0 +1,18 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final run exited 1.",
+    "stdout: `OBSERVED BUG: pinned edit_anthropic install.sh propagates the tree-sitter Python-3.5 pip failure (exit 1).`",
+    "stderr records local deterministic Python-3.5 incompatibility errors for `tree-sitter==0.21.3` and `tree-sitter-languages`.",
+    "Pinned checkout verified at `b21a0614da892c758ca15ab91f759caa147f09e4`."
+  ],
+  "steps": [
+    "Read bug_report.txt and github.json.",
+    "Ran `bash setup_codebase.sh` and verified the pinned checkout.",
+    "Created the isolated `.venv` with `setup_env.sh`.",
+    "Ran the copied edit_anthropic bundle through the ToolHandler installation shell sequence with an offline fake pip simulating Python 3.5.",
+    "Ran `bash run_repro.sh` and captured final logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

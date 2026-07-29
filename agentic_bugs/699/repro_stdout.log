@@ -1,0 +1,1 @@
+OBSERVED BUG: LocalPythonExecutor rejects range before send_tools: Code execution failed at line 'range(1)' due to: InterpreterError: Forbidden function evaluation: 'range' is not among the explicitly allowed tools or defined/imported in the preceding code

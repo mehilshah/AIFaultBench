@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at cb46a1c4babef8c51db6499d7a81f2c36b01bdef.",
+    "Final run printed: OBSERVED: RuntimeState JSON serialization: Unable to serialize unknown type: <class 'function'>.",
+    "Final stderr ends with pydantic_core._pydantic_core.PydanticSerializationError: Unable to serialize unknown type: <class 'function'>."
+  ],
+  "steps": [
+    "Ran bash setup_codebase.sh and verified the pinned commit.",
+    "Created .venv, installed crewai==1.14.3 dependencies, and installed codebase/lib/crewai editable.",
+    "Ran bash run_repro.sh and captured its output in repro_stdout.log and repro_stderr.log."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

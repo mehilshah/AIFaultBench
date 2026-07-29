@@ -1,0 +1,50 @@
+{
+  "owner": "camel-ai",
+  "repo": "camel",
+  "number": 3339,
+  "html_url": "https://github.com/camel-ai/camel/issues/3339",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[BUG] Invalid parameter: messages with role 'tool' must be a response to a preceding message with 'tool_calls'.",
+  "author": "coolbeevip",
+  "created_at": "2025-10-29T15:55:47Z",
+  "updated_at": "2025-10-30T14:25:44Z",
+  "closed_at": "2025-10-30T14:25:43Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": "Sprint 41",
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 0.94,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:09.460114+00:00",
+  "comments": [
+    {
+      "author": "coolbeevip",
+      "created_at": "2025-10-30T03:54:08Z",
+      "body": "If `await tool.async_call(**args)` raises an exception (e.g., `DuckDuckGo RatelimitException`)\n\nhttps://github.com/camel-ai/camel/blob/1999dc0a27cda0eff22462cea37ac3166745dc53/camel/agents/chat_agent.py#L3480\n\nthe `tool_call` message  is never recorded in the message buffer.\n\nhttps://github.com/camel-ai/camel/blob/1999dc0a27cda0eff22462cea37ac3166745dc53/camel/agents/chat_agent.py#L4223\n\nHowever, the exception handling  proceeds to create and append a `tool` message. \n\nhttps://github.com/camel-ai/camel/blob/1999dc0a27cda0eff22462cea37ac3166745dc53/camel/agents/chat_agent.py#L4279\n\nThis results in an unpaired `tool` message.\n\nOpenAI API requires `tool_call` and `tool` messages to always appear in pairs. This mismatch causes an API error."
+    },
+    {
+      "author": "fengju0213",
+      "created_at": "2025-10-30T06:12:05Z",
+      "body": "@coolbeevip thank you very much for the issue and pr! will review it asap!"
+    }
+  ]
+}

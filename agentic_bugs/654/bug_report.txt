@@ -1,0 +1,337 @@
+# recovered-from-issue: https://github.com/langflow-ai/langflow/issues/13764
+
+TITLE
+RedisCache only accepts values that can be pickled
+
+BODY
+### Bug Description
+
+Enable Redis cache `LANGFLOW_CACHE_TYPE=redis`. The flow contains one `agent` component and it uses `gemini-3.5-flash` as a model. see below image:
+
+<img width="585" height="566" alt="Image" src="https://github.com/user-attachments/assets/bb1e587a-4dff-4137-835b-e6b82c6960a2" />
+
+when running the flow it fails to build. see the whole log:
+```
+RedisCache only accepts values that can be pickled. 
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.14/pickle.py", line 347, in whichmodule
+    if _getattribute(module, dotted_path) is obj:
+       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 317, in _getattribute
+    obj = getattr(obj, subpath)
+AttributeError: module 'lfx.io.schema' has no attribute 'InputSchema'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/langflow_install_workspace/langflow/src/backend/base/langflow/services/cache/service.py", line 282, in set
+    if pickled := dill.dumps(value, recurse=True):
+                  ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 289, in dumps
+    dump(obj, file, protocol, byref, fmode, recurse, **kwds)#, strictio)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 261, in dump
+    Pickler(file, protocol, **_kwds).dump(obj)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 429, in dump
+    StockPickler.dump(self, obj)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 498, in dump
+    self.save(obj)
+    ~~~~~~~~~^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 423, in save
+    StockPickler.save(self, obj, save_persistent_id)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 572, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 1266, in save_module_dict
+    StockPickler.save_dict(pickler, obj)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1058, in save_dict
+    self._batch_setitems(obj.items(), obj)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1084, in _batch_setitems
+    save(v)
+    ~~~~^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 423, in save
+    StockPickler.save(self, obj, save_persistent_id)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 572, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 1266, in save_module_dict
+    StockPickler.save_dict(pickler, obj)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1058, in save_dict
+    self._batch_setitems(obj.items(), obj)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1084, in _batch_setitems
+    save(v)
+    ~~~~^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 423, in save
+    StockPickler.save(self, obj, save_persistent_id)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 572, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 1266, in save_module_dict
+    StockPickler.save_dict(pickler, obj)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1058, in save_dict
+    self._batch_setitems(obj.items(), obj)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1084, in _batch_setitems
+    save(v)
+    ~~~~^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 423, in save
+    StockPickler.save(self, obj, save_persistent_id)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 572, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1009, in save_list
+    self._batch_appends(obj, obj)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1037, in _batch_appends
+    save(x)
+    ~~~~^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 423, in save
+    StockPickler.save(self, obj, save_persistent_id)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 615, in save
+    self.save_reduce(obj=obj, *rv)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 761, in save_reduce
+    save(state)
+    ~~~~^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 423, in save
+    StockPickler.save(self, obj, save_persistent_id)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 572, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 1266, in save_module_dict
+    StockPickler.save_dict(pickler, obj)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1058, in save_dict
+    self._batch_setitems(obj.items(), obj)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1084, in _batch_setitems
+    save(v)
+    ~~~~^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 423, in save
+    StockPickler.save(self, obj, save_persistent_id)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^...
+```
+
+I noticed similar error but different error log when using `Language Model` component and select `gemini-3.5-flash` as a model.
+
+<img width="543" height="550" alt="Image" src="https://github.com/user-attachments/assets/d417afd9-379e-44e3-a23f-65f059be6c4b" />
+
+when running the flow it fails to build. see the whole log:
+```
+cannot pickle 'SSLContext' object
+
+Traceback (most recent call last):
+  File "/langflow_install_workspace/langflow/src/backend/base/langflow/api/build.py", line 464, in _build_vertex
+    vertex_build_result = await graph.build_vertex(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/langflow_install_workspace/langflow/src/lfx/src/lfx/graph/graph/base.py", line 1708, in build_vertex
+    await set_cache(key=vertex.id, data=vertex_dict)
+  File "/langflow_install_workspace/langflow/src/backend/base/langflow/services/chat/service.py", line 37, in set_cache
+    await self.cache_service.upsert(str(key), result_dict, lock=lock or self.async_cache_locks[key])
+  File "/langflow_install_workspace/langflow/src/backend/base/langflow/services/cache/service.py", line 309, in upsert
+    await self.set(key, value)
+  File "/langflow_install_workspace/langflow/src/backend/base/langflow/services/cache/service.py", line 282, in set
+    if pickled := dill.dumps(value, recurse=True):
+                  ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 289, in dumps
+    dump(obj, file, protocol, byref, fmode, recurse, **kwds)#, strictio)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 261, in dump
+    Pickler(file, protocol, **_kwds).dump(obj)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 429, in dump
+    StockPickler.dump(self, obj)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 498, in dump
+    self.save(obj)
+    ~~~~~~~~~^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 423, in save
+    StockPickler.save(self, obj, save_persistent_id)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 572, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 1266, in save_module_dict
+    StockPickler.save_dict(pickler, obj)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1058, in save_dict
+    self._batch_setitems(obj.items(), obj)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1084, in _batch_setitems
+    save(v)
+    ~~~~^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 423, in save
+    StockPickler.save(self, obj, save_persistent_id)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 572, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 1266, in save_module_dict
+    StockPickler.save_dict(pickler, obj)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1058, in save_dict
+    self._batch_setitems(obj.items(), obj)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1084, in _batch_setitems
+    save(v)
+    ~~~~^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 423, in save
+    StockPickler.save(self, obj, save_persistent_id)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 572, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 1266, in save_module_dict
+    StockPickler.save_dict(pickler, obj)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1058, in save_dict
+    self._batch_setitems(obj.items(), obj)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1084, in _batch_setitems
+    save(v)
+    ~~~~^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 423, in save
+    StockPickler.save(self, obj, save_persistent_id)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 615, in save
+    self.save_reduce(obj=obj, *rv)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 761, in save_reduce
+    save(state)
+    ~~~~^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 423, in save
+    StockPickler.save(self, obj, save_persistent_id)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 572, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 1266, in save_module_dict
+    StockPickler.save_dict(pickler, obj)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1058, in save_dict
+    self._batch_setitems(obj.items(), obj)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 1084, in _batch_setitems
+    save(v)
+    ~~~~^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 423, in save
+    StockPickler.save(self, obj, save_persistent_id)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/pickle.py", line 572, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "/langflow_install_workspace/langflow/.venv/lib/python3.14/site-packages/dill/_dill.py", line 1266, in...
+```
+
+The following is a breakdown analysis of the logs.
+
+The flow builds successfully, then fails when Langflow writes the vertex state to Redis cache.
+
+Here is the chain from the logs:
+
+1. `Graph.build_vertex()` builds `LanguageModelComponent-H38jo`
+2. After build, it caches the vertex dict:
+
+`base.py Lines 1698-1708`
+```python
+                if set_cache is not None:
+                    vertex_dict = {
+                        "built": vertex.built,
+                        "results": vertex.results,
+                        "artifacts": vertex.artifacts,
+                        "built_object": vertex.built_object,
+                        "built_result": vertex.built_result,
+                        "full_data": vertex.full_data,
+                    }
+                    await set_cache(key=vertex.id, data=vertex_dict)
+```
+3. `ChatService.set_cache` → `RedisCache.set` → `dill.dumps(value, recurse=True)`
+
+`service.py Lines 280-289`
+```python
+    async def set(self, key, value, lock=None) -> None:
+        try:
+            if pickled := dill.dumps(value, recurse=True):
+                result = await self._client.setex(self._key(key), self.expiration_time, pickled)
+                ...
+        except pickle.PicklingError as exc:
+            msg = "RedisCache only accepts values that can be pickled. "
+            raise TypeError(msg) from exc
+```
+4. `dill` walks into the built LLM object: `ChatGoogleGenerativeAI` (langchain-google-genai 4.1.3) → google.genai API client → `_async_httpx_client_args` containing `{'verify': <ssl.SSLContext ...>}`
+`SSLContext` (and also httpx clients, thread locks, retry objects) cannot be pickled. That is why I see the error even for a simple `"hello"` input — the model client is created during build, and caching that live object is what breaks.
+
+my config uses Redis `LANGFLOW_CACHE_TYPE=redis`
+
+Here is a snipet code to reproduce the issue:
+```python
+
+import dill, ssl
+from langchain_google_genai import ChatGoogleGenerativeAI
+from pydantic import SecretStr
+
+model = ChatGoogleGenerativeAI(model='gemini-2.5-flash', google_api_key=SecretStr('test-key'))
+try:
+    dill.dumps(model, recurse=True)
+    print('pickle OK')
+except Exception as e:
+    print(type(e).__name__, e)
+```
+
+```
+TypeError cannot pickle 'SSLContext' object
+```
+
+I previously reported this issue here #13171 and was closed but the fix did not address the issue.
+
+### Reproduction
+
+1. enable Redis Cache `LANGFLOW_CACHE_TYPE=redis`
+2. add two components: chat input and Large Model components
+3. ask a question
+4. error will popup
+
+### Expected behavior
+
+If Redis does not support certain object then bypass that pickle action.
+
+### Who can help?
+
+@andifilhohub 
+
+### Operating System
+
+Linux (debian 12)
+
+### Langflow Version
+
+1.10.0
+
+### Python Version
+
+3.12
+
+### Screenshot
+
+_No response_
+
+### Flow File
+
+_No response_

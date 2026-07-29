@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/736/repro.py", line 41, in <module>
+    main()
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/736/repro.py", line 33, in main
+    raise AssertionError("Windows path was sent to the POSIX container")
+AssertionError: Windows path was sent to the POSIX container

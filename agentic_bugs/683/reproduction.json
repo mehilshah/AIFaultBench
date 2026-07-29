@@ -1,0 +1,14 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited 1 and printed: `BUG REPRODUCED: host+port+api_key attempted HTTPS against plain HTTP: [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1000)`.",
+    "Verified checkout HEAD: `90f2d24e832302c97e0daa55454b29657e742c15`; its Qdrant wrapper forwards host, port, and API key without an HTTPS setting."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and ensured the generated checkout was at the pinned commit.",
+    "Created `.venv` with pinned dependencies and installed the checkout editable.",
+    "Ran the local-only reproduction against a standard-library plain-HTTP server and captured final logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

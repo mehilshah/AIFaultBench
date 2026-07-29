@@ -1,0 +1,1 @@
+OBSERVED BUG: ChatFireworks._combine_llm_outputs raised TypeError: unsupported operand type(s) for +=: 'dict' and 'dict'

@@ -1,0 +1,62 @@
+{
+  "owner": "langchain-ai",
+  "repo": "langchain",
+  "number": 38648,
+  "html_url": "https://github.com/langchain-ai/langchain/issues/38648",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "ChatFireworks._combine_llm_outputs raises TypeError on nested token_usage dicts (prompt_tokens_details) in batched generate()",
+  "author": "abcgco",
+  "created_at": "2026-07-03T19:02:26Z",
+  "updated_at": "2026-07-09T17:39:40Z",
+  "closed_at": "2026-07-09T17:39:40Z",
+  "labels": [
+    "bug",
+    "fireworks",
+    "external"
+  ],
+  "milestone": null,
+  "comments_count": 4,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 5.94,
+  "fix": {
+    "closing_commit": "ea24fb1e1372fcb30b9321788ea575eb0c62d31d",
+    "linked_prs": [],
+    "best_guess_fix_commit": "ea24fb1e1372fcb30b9321788ea575eb0c62d31d",
+    "has_fix": true
+  },
+  "fetched_at": "2026-07-29T12:37:36.164869+00:00",
+  "comments": [
+    {
+      "author": "gitbalaji",
+      "created_at": "2026-07-03T19:30:05Z",
+      "body": "Hi, I'd like to work on this. Could a maintainer please assign it to me?"
+    },
+    {
+      "author": "abcgco",
+      "created_at": "2026-07-05T13:00:28Z",
+      "body": "For maintainers triaging: the fix described in the issue body is already implemented and pushed \u2014 full diff: https://github.com/langchain-ai/langchain/compare/master...abcgco:langchain:fix-fireworks-combine-nested-token-usage (mirrors `_update_token_usage` from `langchain-openai`, with parametrized regression tests). PR #38646 was auto-closed pending assignment and reopens once the issue is assigned."
+    },
+    {
+      "author": "mdrxy",
+      "created_at": "2026-07-09T06:41:28Z",
+      "body": "Thanks for the clear repro. One question before we prioritize this: what real user path is calling `llm.generate(...)` directly here?\n\n`generate()` is still part of the lower-level chat model API, and we should avoid crashing there, but it is not an API surface we actively promote for typical user code anymore. The recommended paths are generally `invoke()`, `ainvoke()`, `stream()`, `astream()`, `batch()`, or `abatch()`.\n\nThe important distinction is that default `batch()` runs multiple `invoke()` calls, so it usually does not hit this combine path. The failure here requires `generate()`/`agenerate()` with multiple message lists, where LangChain combines multiple `llm_output` dictionaries:\n\n```python\nllm.generate([\n    [HumanMessage(content=\"a\")],\n    [HumanMessage(content=\"b\")],\n])\n```\n\nCan you share where this pattern is coming from in practice? For example:\n\n- direct application code calling `llm.generate(...)`\n- an older chain/agent abstraction\n- a callback/tracing/evaluation path\n- migration from older LangChain APIs\n- another library wrapping LangChain models\n\nThat context would help us understand whether this is mostly a defensive compatibility fix for a lower-level method, or whether there is a higher-level promoted path that is unexpectedly reaching `generate()` with multiple prompts.\n"
+    },
+    {
+      "author": "abcgco",
+      "created_at": "2026-07-09T08:47:47Z",
+      "body": "Honest answer first: I found this by auditing the partner packages for this merge pattern after #38482 (same failure, mistralai) was filed \u2014 so no first-party production stack trace from me. Mapping to your list, the paths that reach `generate()`/`agenerate()` with multiple message lists without anyone writing `llm.generate(...)`:\n\n**Older chain abstractions:** `LLMChain` \u2014 deprecated since 0.1.17 (removal slated for 2.0) but still shipped in `langchain-classic` 1.0.8 \u2014 packs the whole `input_list` into a single `generate_prompt(...)` call in `generate()` ([source](https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain_classic/chains/llm.py#L120-L134)), with `apply()` built on it (docstring: \"Utilize the LLM generate method for speed gains\"). `MapReduceDocumentsChain.combine_docs()` runs `llm_chain.apply(...)` across all mapped documents ([source](https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain_classic/chains/combine_documents/map_reduce.py#L236)), so classic map-reduce summarization/QA combines one `llm_output` per document on every run.\n\n**Libraries wrapping LangChain models:** ragas routes judge calls through `generate_prompt`/`agenerate_prompt`, and its fallback for models without native `n` support packs `prompts=[prompt] * n` into one call ([source](https://github.com/explodinggradients/ragas/blob/main/src/ragas/llms/base.py#L251-L255)).\n\nOn \"why now\": this path had been stable \u2014 it only started crashing once providers began returning nested `*_tokens_details` blocks in `usage` (the issue links a live Fireworks payload with `prompt_tokens_details.cached_tokens`), so existing code regressed without any user-side change. And at least one other user independently filed the same failure on mistralai (#38482).\n\nAgreed on the `batch()` distinction \u2014 default `batch()` fans out over `invoke()`, so `_combine_llm_outputs` only ever sees a single `llm_output` on that path and the merge never happens. The failure needs the `generate()`/`agenerate()` + N-prompts surface.\n\nSo to answer your framing directly: this is a defensive compatibility fix for a lower-level surface \u2014 the callers I can point to are deprecated-but-shipped classic chains, migration-era code, and eval wrappers \u2014 and the failure mode is a crash rather than a wrong number. The fix mirrors `langchain-openai`'s `_update_token_usage` one-for-one; #38646 has it ready with parametrized regression tests.\n"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "bug_id": "713",
+  "bug_dir": "713",
+  "issue_url": "https://github.com/langflow-ai/langflow/issues/12775",
+  "commit_hash": "737d2c7a61f01ccc5724970abaf687dfeb114bbb",
+  "library_name": "langflow",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "langflow-ai/langflow@737d2c7a61f01ccc5724970abaf687dfeb114bbb",
+  "codebase_present": "false",
+  "standardized_dir": "../713"
+}

@@ -1,0 +1,12 @@
+{
+  "bug_id": "741",
+  "bug_dir": "741",
+  "issue_url": "https://github.com/Arize-ai/phoenix/issues/13775",
+  "commit_hash": "031975ccbe60e50967d8f192b6dfe6ca6de1daa7",
+  "library_name": "phoenix",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "Arize-ai/phoenix@031975ccbe60e50967d8f192b6dfe6ca6de1daa7",
+  "codebase_present": "false",
+  "standardized_dir": "../741"
+}

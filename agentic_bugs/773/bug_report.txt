@@ -1,0 +1,93 @@
+# recovered-from-issue: https://github.com/browser-use/browser-use/issues/4267
+
+TITLE
+Interaction Issue: session_to_python_script doesnt work with gemini api
+
+BODY
+### Browser Use Version
+
+0.12.1
+
+### LLM Model
+
+gemini-flash-latest
+
+### Screenshots, Description, and task prompt given to Agent
+
+import asyncio
+import os
+from dotenv import load_dotenv
+
+from browser_use import Agent, ChatGoogle
+from browser_use.code_use.notebook_export import export_to_ipynb, session_to_python_script
+load_dotenv()
+
+api_key = os.getenv('GOOGLE_API_KEY')
+if not api_key:
+    raise ValueError('GOOGLE_API_KEY is not set')
+
+
+async def main():
+    agent = Agent(
+        task="Extract product data from https://example.com",
+        llm=ChatGoogle(model='gemini-flash-latest', api_key=api_key)
+    )
+    
+    #python_script = session_to_python_script(agent)
+
+    # Run your automation
+    await agent.run()
+    export_to_ipynb(agent, "product_scraping.ipynb")
+
+    # Export to Python script
+    python_script = session_to_python_script(agent)
+    with open("product_scraping.py", "w") as f:
+        f.write(python_script)
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
+
+
+Traceback (most recent call last):
+  File "/browser_use_quickstart/main.py", line 32, in <module>
+    asyncio.run(main())
+  File "/opt/homebrew/Caskroom/miniforge/base/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Caskroom/miniforge/base/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Caskroom/miniforge/base/lib/python3.12/asyncio/base_events.py", line 686, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/browser_use_quickstart/main.py", line 20, in main
+    python_script = session_to_python_script(agent)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/browser_use_quickstart/.venv/lib/python3.12/site-packages/browser_use/code_use/notebook_export.py", line 260, in session_to_python_script
+    for i, cell in enumerate(agent.session.cells):
+                             ^^^^^^^^^^^^^
+AttributeError: 'Agent' object has no attribute 'session'. Did you mean: 'version'?
+
+
+### HTML around where it's failing
+
+```html
+NA
+```
+
+### Operating System & Browser Versions
+
+_No response_
+
+### Python Code Sample
+
+```python
+
+```
+
+### Full DEBUG Log Output
+
+```shell
+
+```

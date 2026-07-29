@@ -1,0 +1,65 @@
+{
+  "owner": "microsoft",
+  "repo": "autogen",
+  "number": 6906,
+  "html_url": "https://github.com/microsoft/autogen/issues/6906",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "`StreamableHttpMcpToolAdapter` incorrectly parses valid server schema, causing `TypeError`",
+  "author": "snowch",
+  "created_at": "2025-08-08T00:12:18Z",
+  "updated_at": "2025-09-16T08:31:21Z",
+  "closed_at": "2025-09-16T08:31:21Z",
+  "labels": [
+    "needs-triage"
+  ],
+  "milestone": null,
+  "comments_count": 5,
+  "reactions": {
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 39.35,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:07:00.321521+00:00",
+  "comments": [
+    {
+      "author": "zhenwang1219",
+      "created_at": "2025-08-08T02:30:55Z",
+      "body": "I suffer it too .  \n\nChatCompletionToolParam is a Union.  \n<img width=\"954\" height=\"176\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/19e18c7b-9ea6-46ba-a0d2-11fa2746142f\" />\nAn error occurred when instantiating it. throw `TypeError: Cannot instantiate typing.Union`\n<img width=\"892\" height=\"256\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/3e5e1e9d-7f28-42d8-b334-72a6bcc1a72f\" />\n\n<img width=\"1025\" height=\"263\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/1c9a2d88-2fda-4c53-a1f6-50f72315ea0a\" />\n\n"
+    },
+    {
+      "author": "apremalal",
+      "created_at": "2025-08-08T03:07:41Z",
+      "body": "This happens to me with the latest openai library 1.99.3. Works well with 1.80.0. This is a blocker to try out gpt5."
+    },
+    {
+      "author": "zhenwang1219",
+      "created_at": "2025-08-08T06:01:54Z",
+      "body": "> This happens to me with the latest openai library 1.99.3. Works well with 1.80.0. This is a blocker to try out gpt5.\n\nyes, it works"
+    },
+    {
+      "author": "snowch",
+      "created_at": "2025-08-08T10:03:05Z",
+      "body": "Fixing the openai library to 1.80.0 unblocked me...\n\n```\n!pip install --quiet -U \"autogen-agentchat>=0.7\" \"autogen-ext[openai,mcp]>=0.7\" \"mcp>=1.0.0\"\n!pip install --quiet --force-reinstall \"openai==1.80\"\n```"
+    },
+    {
+      "author": "ekzhu",
+      "created_at": "2025-08-11T00:39:51Z",
+      "body": "Please let us know when the issue is resolved for you with this release: https://github.com/openai/openai-python/releases/tag/v1.99.6"
+    }
+  ]
+}

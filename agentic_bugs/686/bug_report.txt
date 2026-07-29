@@ -1,0 +1,95 @@
+# recovered-from-issue: https://github.com/langchain-ai/langchain/issues/38644
+
+TITLE
+ChatAnthropic.bind_tools() crashes with KeyError: 'parameters' on advisor_ built-in tool
+
+BODY
+### Submission checklist
+
+- [x] This is a bug, not a usage question.
+- [x] I added a clear and descriptive title that summarizes this issue.
+- [x] I used the GitHub search to find a similar question and didn't find it.
+- [x] I am sure that this is a bug in LangChain rather than my code.
+- [x] The bug is not resolved by updating to the latest stable version of LangChain (or the specific integration package).
+- [x] This is not related to the langchain-community package.
+- [x] I posted a self-contained, minimal, reproducible example. A maintainer can copy it and run it AS IS.
+
+### Package (Required)
+
+- [ ] langchain
+- [ ] langchain-openai
+- [x] langchain-anthropic
+- [ ] langchain-classic
+- [ ] langchain-core
+- [ ] langchain-model-profiles
+- [ ] langchain-tests
+- [ ] langchain-text-splitters
+- [ ] langchain-chroma
+- [ ] langchain-deepseek
+- [ ] langchain-exa
+- [ ] langchain-fireworks
+- [ ] langchain-groq
+- [ ] langchain-huggingface
+- [ ] langchain-mistralai
+- [ ] langchain-nomic
+- [ ] langchain-ollama
+- [ ] langchain-openrouter
+- [ ] langchain-perplexity
+- [ ] langchain-qdrant
+- [ ] langchain-xai
+- [ ] Other / not sure / general
+
+### Related Issues / PRs
+
+https://github.com/langchain-ai/langchain/pull/31157
+
+### Reproduction Steps / Example Code (Python)
+
+```python
+from langchain_anthropic import ChatAnthropic
+
+model = ChatAnthropic(model="claude-sonnet-4-6")
+
+advisor_tool = {
+    "type": "advisor_20260301",
+    "name": "advisor",
+    "model": "claude-sonnet-4-6",
+    "max_uses": 3,
+    "max_tokens": 1024,
+}
+
+model.bind_tools([advisor_tool]).invoke("hello")
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+Traceback (most recent call last):
+  File "<string>", line 14, in <module>
+    model.bind_tools([advisor_tool]).invoke('hello')
+  File ".../langchain_anthropic/chat_models.py", line 1884, in bind_tools
+    else convert_to_anthropic_tool(tool, strict=strict)
+  File ".../langchain_anthropic/chat_models.py", line 2226, in convert_to_anthropic_tool
+    input_schema=oai_formatted["parameters"],
+KeyError: 'parameters'
+```
+
+### Description
+
+[advisor-middleware](https://github.com/emanueleielo/advisor-middleware)'s native mode (prefer_native=True, the library's default) injects an advisor_20260301 server-side tool spec into the executor's tool list when the executor is an Anthropic model. `advisor_` isn't in `_BUILTIN_TOOL_PREFIXES` as of langchain-anthropic current main (1.4.8), so bind_tools() routes it through convert_to_anthropic_tool() instead of passing it through unchanged, which then crashes with `KeyError: 'parameters'.`
+
+### System Info
+
+```
+System Information
+------------------
+> OS:  Darwin
+> OS Version:  Darwin Kernel Version 25.5.0: Mon Apr 27 20:39:09 PDT 2026; root:xnu-12377.121.6~2/RELEASE_ARM64_T6020
+> Python Version:  3.13.11 (main, Dec  9 2025, 20:26:22) [Clang 21.1.4 ]
+
+Package Information
+-------------------
+> langchain_core: 1.4.8
+> langchain: 1.3.11
+> langchain_anthropic: 1.4.8
+```

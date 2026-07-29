@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/733/repro.py", line 11, in <module>
+    set_nested_value(config, "version", "abc")
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/733/codebase/cli/python/src/mem0_cli/config.py", line 238, in set_nested_value
+    value = int(value)  # type: ignore[assignment]
+            ^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'abc'

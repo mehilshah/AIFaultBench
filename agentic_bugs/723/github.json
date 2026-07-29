@@ -1,0 +1,46 @@
+{
+  "owner": "modelcontextprotocol",
+  "repo": "python-sdk",
+  "number": 1708,
+  "html_url": "https://github.com/modelcontextprotocol/python-sdk/issues/1708",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "ClientSession for mcp sse_client throws httpx.ReadTimeout after session has been initialized in docker container",
+  "author": "cmakasy",
+  "created_at": "2025-12-01T08:00:11Z",
+  "updated_at": "2026-03-16T11:04:38Z",
+  "closed_at": "2026-03-16T11:04:38Z",
+  "labels": [
+    "bug",
+    "needs confirmation"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 105.13,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:06:29.149389+00:00",
+  "comments": [
+    {
+      "author": "Kludex",
+      "created_at": "2025-12-03T22:06:49Z",
+      "body": "Doesn't seem an issue related to this project."
+    }
+  ]
+}

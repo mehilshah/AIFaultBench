@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at 77f86fa06f5fdde847f782710c5964e41037f096.",
+    "Final stdout: `OBSERVED BUG: override request dropped dynamic MCPServerTool(id=\"dyn\").`",
+    "Final stderr shows only `CodeExecutionTool(...)` in request native tools; final run exited 1."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh`.",
+    "Created `.venv`, installed pinned requirements and editable checkout packages.",
+    "Ran `bash run_repro.sh` and captured final logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

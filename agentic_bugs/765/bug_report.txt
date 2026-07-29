@@ -1,0 +1,224 @@
+# recovered-from-issue: https://github.com/langchain-ai/langgraph/issues/6439
+
+TITLE
+[bug] When a node relies on multiple input edges,  it will execute as soon as one of the edges meets the condition.
+
+BODY
+### Checked other resources
+
+- [x] This is a bug, not a usage question. For questions, please use the LangChain Forum (https://forum.langchain.com/).
+- [x] I added a clear and detailed title that summarizes the issue.
+- [x] I read what a minimal reproducible example is (https://stackoverflow.com/help/minimal-reproducible-example).
+- [x] I included a self-contained, minimal example that demonstrates the issue INCLUDING all the relevant imports. The code run AS IS to reproduce the issue.
+
+### Example Code
+
+```python
+from typing import TypedDict
+from typing import Optional
+from langgraph.types import Command
+from langgraph.graph import StateGraph,START,END
+
+class GraphState(TypedDict):
+    data_from_a: Optional[str] = None
+    data_from_b: Optional[str] = None
+    data_from_c: Optional[str] = None
+    data_from_d: Optional[str] = None
+    data_from_e: Optional[str] = None
+    data_from_f: Optional[str] = None
+
+
+def node_a(state: GraphState) -> Command:
+    print("execute node A...")
+    # 模拟耗时操作（如调用API、计算）
+    #time.sleep(5)
+    data_a = "data from node_a"
+    # 将结果写入State
+    return Command(update={"data_from_a": data_a})
+
+# 前置节点B：生成数据b
+def node_b(state: GraphState) -> Command:
+    print("execute node B...")
+    # 模拟耗时操作
+    data_b = "data from node b"
+    # 将结果写入State
+    return Command(update={"data_from_b": data_b})
+
+# 目标节点C：依赖A、B的输出，需A、B都执行完才触发
+def node_c(state: GraphState):
+    print("execute node C...")
+    # 从State中读取A、B的输出（此时A、B已执行完，数据已存在）
+    if state["input"]:
+        return Command(update={"data_from_c": "node_d"})
+    else:
+        return Command(update={"data_from_c": "node_e"})
+
+
+def node_d(state: GraphState) -> Command:
+    print("execute node D...")
+    # 模拟耗时操作
+    data_d = "data from node_d"
+    # 将结果写入State
+    return Command(update={"data_from_d": data_d})
+
+
+def node_e(state: GraphState) -> Command:
+    print("execute node E...")
+    # 模拟耗时操作
+    data_e = "data from node_e"
+    # 将结果写入State
+    return Command(update={"data_from_e": data_e})
+
+
+def node_f(state: GraphState) -> Command:
+    print("execute node F...")
+    # 模拟耗时操作
+    data_f = "data from node_f"
+    if state["data_from_a"] and state["data_from_b"] \
+        and (state["data_from_d"] or state["data_from_e"]):
+    # 将结果写入State
+        return Command(update={"data_from_f": data_f})
+    else:
+        raise Exception("没有充分的执行条件")
+
+graph = StateGraph(GraphState)
+
+# 2. 添加所有节点
+graph.add_node("node_a", node_a)
+graph.add_node("node_b", node_b)
+graph.add_node("node_c", node_c)
+graph.add_node("node_d", node_d)
+graph.add_node("node_e", node_e)
+graph.add_node("node_f", node_f)
+
+def choice(state: GraphState):
+    if state["data_from_c"] == "node_d":
+        return "node_d"
+    else:
+        return "node_e"
+
+# 3. 配置边：给node_c添加两个入边（依赖node_a和node_b）
+graph.add_edge(START, "node_a")
+graph.add_edge(START, "node_b")
+graph.add_edge("node_a", "node_f")  # node_a执行完 → 指向node_f
+graph.add_edge("node_b", "node_c")  # node_b执行完 → 指向node_c
+graph.add_conditional_edges(
+    source="node_c",
+    path = choice
+)
+graph.add_edge("node_d", "node_f")
+graph.add_edge("node_e", "node_f")
+
+
+# 4. 指定图的入口节点（A和B可并行执行）
+graph.add_edge("node_f", END)
+# 5. 指定图的出口节点（执行完node_c后结束）
+# 6. 编译图
+compiled_graph = graph.compile()
+
+compiled_graph.invoke({"input": ""})
+#compiled_graph.invoke({"input": "anything"})
+```
+
+### Error Message and Stack Trace (if applicable)
+
+```shell
+Traceback (most recent call last):
+  File "E:\Gitee\flowagent\test\state.py", line 105, in <module>
+    compiled_graph.invoke({"input": ""})
+  File "E:\Gitee\flowagent\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3094, in invoke
+    for chunk in self.stream(
+                 ^^^^^^^^^^^^
+  File "E:\Gitee\flowagent\.venv\Lib\site-packages\langgraph\pregel\main.py", line 2679, in stream
+    for _ in runner.tick(
+             ^^^^^^^^^^^^
+  File "E:\Gitee\flowagent\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 258, in tick
+    _panic_or_proceed(
+  File "E:\Gitee\flowagent\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 520, in _panic_or_proceed
+    raise exc
+  File "E:\Gitee\flowagent\.venv\Lib\site-packages\langgraph\pregel\_executor.py", line 80, in done
+    task.result()
+  File "D:\Softwares\Python312\Lib\concurrent\futures\_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Softwares\Python312\Lib\concurrent\futures\_base.py", line 401, in __get_result
+    raise self._exception
+  File "D:\Softwares\Python312\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Gitee\flowagent\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 42, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Gitee\flowagent\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Gitee\flowagent\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Gitee\flowagent\test\state.py", line 64, in node_f
+    and (state["data_from_d"] or state["data_from_e"]):
+         ~~~~~^^^^^^^^^^^^^^^
+KeyError: 'data_from_d'
+During task with name 'node_f' and id '80262465-cd43-4899-55f1-0f1962764732'
+execute node A...
+execute node B...
+execute node C...
+execute node F...
+```
+
+### Description
+
+When I execute ```compiled_graph.invoke({"input": "anything"})```,the expected output is :
+execute node A...
+execute node B...
+execute node C...
+execute node D...
+execute node F...
+
+or I execute ```compiled_graph.invoke({"input": ""})```, the expected output is :
+execute node A...
+execute node B...
+execute node C...
+execute node E...
+execute node F...
+
+But the process raise the aforementioned exception.
+
+
+### System Info
+
+
+System Information
+------------------
+> OS:  Windows
+> OS Version:  10.0.26200
+> Python Version:  3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]
+
+Package Information
+-------------------
+> langchain_core: 1.0.4
+> langchain: 1.0.5
+> langsmith: 0.4.42
+> langchain_openai: 1.0.2
+> langgraph_sdk: 0.2.9
+
+Optional packages not installed
+-------------------------------
+> langserve
+
+Other Dependencies
+------------------
+> httpx: 0.28.1
+> jsonpatch: 1.33
+> langgraph: 1.0.2
+> openai: 2.7.2
+> orjson: 3.11.4
+> packaging: 25.0
+> pydantic: 2.12.4
+> pyyaml: 6.0.3
+> requests: 2.32.5
+> requests-toolbelt: 1.0.0
+> tenacity: 9.1.2
+> tiktoken: 0.12.0
+> typing-extensions: 4.15.0
+> zstandard: 0.25.0

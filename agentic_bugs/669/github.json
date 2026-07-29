@@ -1,0 +1,50 @@
+{
+  "owner": "pydantic",
+  "repo": "pydantic-ai",
+  "number": 6611,
+  "html_url": "https://github.com/pydantic/pydantic-ai/issues/6611",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "OpenAI background polling requests encrypted content for persisted responses",
+  "author": "mike-hoyle",
+  "created_at": "2026-07-20T18:30:44Z",
+  "updated_at": "2026-07-21T22:04:31Z",
+  "closed_at": "2026-07-21T22:04:31Z",
+  "labels": [
+    "bug",
+    "model issue",
+    "openai",
+    "pydanty:bug",
+    "loopable",
+    "p:2-high"
+  ],
+  "milestone": null,
+  "comments_count": 1,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 1.15,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T12:38:19.486649+00:00",
+  "comments": [
+    {
+      "author": "pydanty[bot]",
+      "created_at": "2026-07-20T18:31:43Z",
+      "body": "<!-- pydanty:status-comment:v1 -->\n\n## pydanty status: bug -- confirmed (high), signal 7/10 - p:2-high\n\n**Why:** OpenAI background mode (a recently added feature) is broken for all reasoning models when responses are persisted (the default). Users cannot use background mode with durable response-ID continuation without hitting a 400 error on the first poll. The workaround (openai_store=False) sacrifices continuation, which is a core benefit of persisted responses. This affects Tier-1 provider (OpenAI) on a non-default but recently shipped feature path.\n**Evidence:** Code_librarian confirmed from checked-in source (pydantic_ai_slim/pydantic_ai/models/openai.py): (1) _build_include() (line 2497) unconditionally appends 'reasoning.encrypted_content' when profile flag openai_supports_encrypted_reasoning_content is True \u2014 no store-aware or retrieve-vs-create guard. (2) This same include list is shared by _responses_create() (line 2423) and _responses_retrieve() (line 2542). (3) _responses_retrieve() (line 2533) calls responses.retrieve() with include=include or OMIT (line 2548) but does NOT pass store. (4) openai_store defaults to None (OMIT) \u2192 OpenAI persists server-side. (5) OpenAI API rejects retrieve with reasoning.encrypted_content for persisted responses with 400 \"Encrypted content cannot be requested for persisted responses.\" Bug present in current checked-in code (2.13.0), not just reported 2.10.0. Reproducer delegate was unavailable this run due to budget exhaustion; no live provider call was made. The code-level mechanism is sufficient to confirm the defect without runtime verification.\n**Next:** pr_ready -- Bug mechanism confirmed from code reading (code_librarian, high confidence); reproducer was unavailable due to budget limits, not missing evidence. The defect is a parameter-construction issue visible in checked-in source: _build_include() unconditionally adds reasoning.encrypted_content for both create and retrieve, with no store-aware guard. PR-ready handoff written; reproduction gap stated in status comment.\n\n@adtyavrdhn -- assigned for prioritization (p:2-high, signal 7/10).\n\n<details>\n<summary>\ud83d\udcb0 Run usage: 344,640 tokens, 26 model requests (est. cost $0.1801)</summary>\n\n| Agent | Cost | Input | Output | Requests | Tool calls | Model |\n|---|--:|--:|--:|--:|--:|---|\n| `pydanty-orchestrator` | $0.1459 | 175,997 | 12,096 | 14 | 13 | \u2014 |\n| `code_librarian` | $0.0342 | 149,558 | 6,989 | 12 | 19 | minimax-m3, glm-5.2 |\n| **total** | **$0.1801** | **325,555** | **19,085** | **26** | **32** | |\n</details>"
+    }
+  ]
+}

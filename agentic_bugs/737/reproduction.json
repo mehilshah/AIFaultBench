@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "stdout: `BUG REPRODUCED: send_log_message after terminate raised anyio.ClosedResourceError`",
+    "`repro_stderr.log` is empty; the pinned checkout is `b38716e5e3761dd2d52809d2d68ce65325faad5e`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` to clone the pinned repository.",
+    "Created `.venv`, installed exact pinned dependencies, and installed `codebase/` editable.",
+    "Ran the deterministic in-process Streamable HTTP termination/logging reproduction and captured final logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

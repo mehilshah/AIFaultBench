@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified at `84e3c795ec292cd32156f65c37c1445abb94b576`.",
+    "`bash run_repro.sh` exited 1 and stdout printed: `BUG OBSERVED: async arank_fusion rejected integer 42 as Document.page_content`.",
+    "Captured stderr raises `pydantic_core._pydantic_core.ValidationError` from `ensemble.py:297`, with `input_value=42` and `input_type=int`."
+  ],
+  "steps": [
+    "Read `bug_report.txt` and `github.json`.",
+    "Ran `bash setup_codebase.sh`, then fetched the required pinned commit after its initial clone lacked a valid HEAD.",
+    "Created and cleanly verified `.venv` through `setup_env.sh`.",
+    "Ran `bash run_repro.sh` and captured final output in the required log files."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

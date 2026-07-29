@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/719/repro.py", line 39, in <module>
+    asyncio.run(main())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/719/repro.py", line 29, in main
+    await llm.ainvoke('hello', output_format=ExpectedOutput)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/719/.venv/lib/python3.12/site-packages/browser_use/tokens/service.py", line 352, in tracked_ainvoke
+    result = await original_ainvoke(messages, output_format, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/719/.venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 498, in ainvoke
+    config = ensure_config(config)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/719/.venv/lib/python3.12/site-packages/langchain_core/runnables/config.py", line 288, in ensure_config
+    for k, v in config.items()
+                ^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/719/.venv/lib/python3.12/site-packages/pydantic/_internal/_model_construction.py", line 289, in __getattr__
+    raise AttributeError(item)
+AttributeError: items

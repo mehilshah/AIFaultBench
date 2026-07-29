@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "`run_repro.sh` exited with status 1.",
+    "stdout: `BUG OBSERVED: valid tool schema raises TypeError: Cannot instantiate typing.Union`",
+    "Traceback identifies `convert_tools` in `_openai_client.py:256`."
+  ],
+  "steps": [
+    "Checked out commit `7dd503eccfaafbbe36c427d3cfa29abfa2b3f3f8`.",
+    "Installed editable AutoGen packages with `openai==1.99.3`.",
+    "Ran and captured the offline reproducer."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/742/repro.py", line 19, in <module>
+    convert_tools([TOOL_SCHEMA])
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/742/codebase/python/packages/autogen-ext/src/autogen_ext/models/openai/_openai_client.py", line 256, in convert_tools
+    ChatCompletionToolParam(
+  File "/usr/lib/python3.12/typing.py", line 1157, in __call__
+    result = self.__origin__(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/typing.py", line 494, in __call__
+    raise TypeError(f"Cannot instantiate {self!r}")
+TypeError: Cannot instantiate typing.Union

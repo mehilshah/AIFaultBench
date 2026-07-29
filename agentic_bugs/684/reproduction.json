@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final stdout: `OBSERVED BUG: importing mem0 raised OSError: [Errno 30] Read-only file system: '/snap/bare/5/.mem0'`.",
+    "`repro_stderr.log` is empty; the repro verifies the exception then exits 1.",
+    "Pinned Langflow lockfile resolves the affected dependency as `mem0ai==2.0.12`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` for the pinned Langflow checkout.",
+    "Created `.venv` and installed the fully pinned issue-era mem0ai dependency graph.",
+    "Ran `bash run_repro.sh` and captured final output in the required logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}

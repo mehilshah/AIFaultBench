@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/665/repro.py", line 27, in <module>
+    raise AssertionError("OpenAI Chat Completions requires function.arguments to be a JSON string")
+AssertionError: OpenAI Chat Completions requires function.arguments to be a JSON string

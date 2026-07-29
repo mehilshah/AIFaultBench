@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "`repro_stdout.log` contains: `OBSERVED BUG: RedisKVStore.get_all raised AttributeError: 'str' object has no attribute 'decode'`.",
+    "`repro_stderr.log` traceback points to the pinned checkout's `base.py:161`, `collection_kv_dict[key.decode()] = value`.",
+    "Verified pinned checkout is `9f66e8a649856524ef0ff081a23d58cd071b6ae4` and validated `reproduction.json` has exactly the required keys."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and verified the requested pinned revision.",
+    "Created `.venv`, installed `llama-index-core==0.14.22` and `redis==5.2.1`, then installed the Redis KV-store integration editable from the checkout.",
+    "Used an offline Redis double that yields a `str` key, equivalent to `decode_responses=True`, and captured the final `bash run_repro.sh` output."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

@@ -1,0 +1,43 @@
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/720/codebase/browser_use/llm/anthropic/chat.py", line 234, in ainvoke
+    raise e
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/720/codebase/browser_use/llm/anthropic/chat.py", line 221, in ainvoke
+    completion=output_format.model_validate(content_block.input),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/720/.venv/lib/python3.12/site-packages/pydantic/main.py", line 716, in model_validate
+    return cls.__pydantic_validator__.validate_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for AgentOutput
+action
+  Input should be a valid list [type=list_type, input_value='[{"done":{"text":"first line\nsecond line"}}]', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/720/repro.py", line 65, in reproduce
+    await chat.ainvoke([UserMessage(content='return a done action')], output_format=AgentOutput)
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/720/codebase/browser_use/llm/anthropic/chat.py", line 246, in ainvoke
+    raise ModelProviderError(message=str(e), model=self.name) from e
+browser_use.llm.exceptions.ModelProviderError: 1 validation error for AgentOutput
+action
+  Input should be a valid list [type=list_type, input_value='[{"done":{"text":"first line\nsecond line"}}]', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/720/repro.py", line 75, in <module>
+    asyncio.run(reproduce())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/users/grad/mehil/MSR-MiningChallenge-2027/agentic_bugs/720/repro.py", line 70, in reproduce
+    raise AssertionError('buggy parser rejected the newline-containing action string')
+AssertionError: buggy parser rejected the newline-containing action string

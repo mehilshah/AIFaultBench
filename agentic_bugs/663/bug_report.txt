@@ -1,0 +1,71 @@
+# recovered-from-issue: https://github.com/run-llama/llama_index/issues/22115
+
+TITLE
+[Bug]: RedisKVStore breaks with decode_responses=True
+
+BODY
+### Bug Description
+
+It was fixed here https://github.com/run-llama/llama_index/pull/12324 but then about a month later someone reverted the fix for some reason https://github.com/run-llama/llama_index/pull/13201
+
+### Version
+
+0.14.22
+
+### Steps to Reproduce
+
+```python
+from llama_index.storage.kvstore.redis import RedisKVStore
+from redis.asyncio import Redis as AsyncRedis
+from redis import ConnectionPool
+from llama_index.core.ingestion import DocstoreStrategy, IngestionPipeline
+
+connection_pool = ConnectionPool(host=...,
+                                 port=..., 
+                                 decode_responses=True)
+
+redis_client = Redis(connection_pool=connection_pool)
+
+redis_kvstore = RedisKVStore(redis_client=redis_client, async_redis_client=AsyncRedis.from_pool(connection_pool))
+
+docstore = RedisDocumentStore(redis_kvstore)
+
+pipeline = IngestionPipeline(
+    docstore=docstore,
+    docstore_strategy=DocstoreStrategy.DUPLICATES_ONLY,
+    vector_store=vector_store,
+)
+
+pipeline.run(documents=[...])
+```
+
+### Relevant Logs/Tracebacks
+
+```shell
+Traceback (most recent call last):
+  File "/opt/.../.../bgtask.py", line 117, in run
+    func(*args, **kwargs)
+    ~~~~^^^^^^^^^^^^^^^^^
+  File "/opt/.../.../oden.py", line 423, in _ingest
+    ingest(url, ns, fromDate)
+    ~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/opt/.../.../oden.py", line 241, in ingest
+    ingest_documents(redis_client, vector_store, access_token, url, ns, fromDate)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/.../.../oden.py", line 293, in ingest_documents
+    pipeline.run(documents=[doc])
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/opt/.../.venv/lib/python3.13/site-packages/llama_index_instrumentation/dispatcher.py", line 413, in wrapper
+    result = func(*args, **kwargs)
+  File "/opt/.../.venv/lib/python3.13/site-packages/llama_index/core/ingestion/pipeline.py", line 598, in run
+    nodes_to_run = self._handle_duplicates(input_nodes)
+  File "/opt/.../.venv/lib/python3.13/site-packages/llama_index/core/ingestion/pipeline.py", line 458, in _handle_duplicates
+    existing_hashes = self.docstore.get_all_document_hashes()
+  File "/opt/.../.venv/lib/python3.13/site-packages/llama_index/core/storage/docstore/keyval_docstore.py", line 656, in get_all_document_hashes
+    self._kvstore.get_all(collection=self._metadata_collection)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/.../.venv/lib/python3.13/site-packages/llama_index/storage/kvstore/redis/base.py", line 161, in get_all
+    collection_kv_dict[key.decode()] = value
+                       ^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'decode'. Did you mean: 'encode'?
+```

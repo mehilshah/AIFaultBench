@@ -1,0 +1,70 @@
+{
+  "owner": "microsoft",
+  "repo": "autogen",
+  "number": 6788,
+  "html_url": "https://github.com/microsoft/autogen/issues/6788",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "OpenAI.UnprocessableEntityError(422) when AssistantAgent invokes multiple tool calls",
+  "author": "besthunterhj",
+  "created_at": "2025-07-10T08:04:04Z",
+  "updated_at": "2025-07-21T02:01:38Z",
+  "closed_at": "2025-07-20T07:30:43Z",
+  "labels": [
+    "needs-triage"
+  ],
+  "milestone": null,
+  "comments_count": 6,
+  "reactions": {
+    "total_count": 1,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 1
+  },
+  "resolution_days": 9.98,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:07:02.324997+00:00",
+  "comments": [
+    {
+      "author": "ekzhu",
+      "created_at": "2025-07-17T18:14:45Z",
+      "body": "@besthunterhj does the latest version also have this issue for you? I tested your code with 0.6.4 but I can't reproduce your error"
+    },
+    {
+      "author": "besthunterhj",
+      "created_at": "2025-07-18T11:10:07Z",
+      "body": "@ekzhu Thank you for your support! I have upgraded to the latest version (0.6.4); The same issue occurs when I run the code above. However, I found that the issue can be solved by changing **line 273** in `_set_null_content_for_tool_calls()` to `return {\"content\": \"\"}` in `python/packages/autogen-ext/src/autogen_ext/models/openai/_message_transform.py` from the branch `copilot/fix-6788`."
+    },
+    {
+      "author": "ekzhu",
+      "created_at": "2025-07-18T17:37:36Z",
+      "body": "@besthunterhj  I tried running your script and still cannot get the error. What is the API endpoint you are using, is it OpenAI? "
+    },
+    {
+      "author": "besthunterhj",
+      "created_at": "2025-07-20T04:24:20Z",
+      "body": "@ekzhu Hi! Actually, I use an alternative endpoint rather than the official OpenAI API endpoint, which might be the source of the issue."
+    },
+    {
+      "author": "ekzhu",
+      "created_at": "2025-07-20T07:20:52Z",
+      "body": "> [@ekzhu](https://github.com/ekzhu) Hi! Actually, I use an alternative endpoint rather than the official OpenAI API endpoint, which might be the source of the issue.\n\nOkay. Is #6799 going to fix your problem?"
+    },
+    {
+      "author": "besthunterhj",
+      "created_at": "2025-07-21T02:01:38Z",
+      "body": "> > [@ekzhu](https://github.com/ekzhu) Hi! Actually, I use an alternative endpoint rather than the official OpenAI API endpoint, which might be the source of the issue.\n> \n> Okay. Is [#6799](https://github.com/microsoft/autogen/pull/6799) going to fix your problem?\n\nYeah, thank you so much!"
+    }
+  ]
+}

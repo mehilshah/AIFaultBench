@@ -1,0 +1,98 @@
+{
+  "owner": "microsoft",
+  "repo": "autogen",
+  "number": 6551,
+  "html_url": "https://github.com/microsoft/autogen/issues/6551",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "GraphFlow fails to find next speaker when conditional edge is added (No available speakers found)",
+  "author": "SogoKato",
+  "created_at": "2025-05-16T16:04:16Z",
+  "updated_at": "2025-06-10T17:49:15Z",
+  "closed_at": "2025-06-10T17:49:15Z",
+  "labels": [],
+  "milestone": null,
+  "comments_count": 12,
+  "reactions": {
+    "total_count": 2,
+    "+1": 2,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 25.07,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:07:03.981540+00:00",
+  "comments": [
+    {
+      "author": "salvprest",
+      "created_at": "2025-05-17T08:03:35Z",
+      "body": "I have a similar problem,\ni have the flow\nA -> B -> C -> D\nconditional:\nD -> C  \"OR\"  D -> E\nthen\nE -> C \"OR\"  E -> F\n\nthis give me the same error at the step B -> C of the linear flow (it don't see the C speaker)\nif I Remove the conditional part of the flow, then the error disappear\n\nOperating system:\nUbuntu 24.04\nPython version:\n3.12\nModel:\ngpt-4o"
+    },
+    {
+      "author": "ekzhu",
+      "created_at": "2025-05-17T17:03:05Z",
+      "body": "Thanks for the issue. This will be addressed through #6542 \n\nIf a node's edges are all conditional, and none of the conditions are met, no next node can be found."
+    },
+    {
+      "author": "SogoKato",
+      "created_at": "2025-05-19T04:32:11Z",
+      "body": "Thank you for the response!\n\nIn the example above, agent D only has a single, unconditional edge to agent E, yet GraphFlow still fails to find that next node. This suggests that even non-conditional outgoing edges are ignored."
+    },
+    {
+      "author": "Timilla",
+      "created_at": "2025-05-27T04:15:31Z",
+      "body": "Autogen's current graph-based approach is proving inefficient and is far behind what's achievable with LangGraph."
+    },
+    {
+      "author": "ekzhu",
+      "created_at": "2025-05-27T06:44:27Z",
+      "body": "> Thank you for the response!\n> \n> In the example above, agent D only has a single, unconditional edge to agent E, yet GraphFlow still fails to find that next node. This suggests that even non-conditional outgoing edges are ignored.\n\nThis should be fixed in the next release as the execution logic has been updated. "
+    },
+    {
+      "author": "ekzhu",
+      "created_at": "2025-05-27T06:48:13Z",
+      "body": "> Autogen's current graph-based approach is proving inefficient and is far behind what's achievable with LangGraph.\n\nI think it's a good idea to use langgrah if that suits your needs. I think LangGraph is great!\n\nWe are an open source community, so if you have requirements that the current code base doesn't meet, you are welcome to suggest features in discussions and submit PR to address them. \n\nAI models will be writing most of the code for us in short future, so I don't see code writing as a bottleneck once we have agreed on design. "
+    },
+    {
+      "author": "Timilla",
+      "created_at": "2025-05-27T07:04:40Z",
+      "body": "- To clarify: My immense appreciation goes out to the community for their invaluable efforts and contributions. \n- My frustration is directed at Microsoft's strategy: prioritizing the marketing of solutions that are clearly still in early development, rather than committing sufficient resources to their completion."
+    },
+    {
+      "author": "ekzhu",
+      "created_at": "2025-05-27T08:45:10Z",
+      "body": "@Timilla thanks. \n\nAutoGen is experimental and has been maintained by a research team. Hopefully things will change. "
+    },
+    {
+      "author": "Justin-12138",
+      "created_at": "2025-06-05T05:19:11Z",
+      "body": "@ekzhu Hi,I find that you released a new version,seems that you solved this problem,But It still got the the same error when using the example from @SogoKato ,and my own example either which is similar with that,I 'd appreciate it if you give me some help"
+    },
+    {
+      "author": "ekzhu",
+      "created_at": "2025-06-05T13:40:06Z",
+      "body": "Can you make sure your conditional edges cover all possible outcomes from a node? "
+    },
+    {
+      "author": "peterychang",
+      "created_at": "2025-06-09T19:01:30Z",
+      "body": "The example by @SogoKato appears to have been fixed at some point between 0.5.7 and 0.6.1. @SogoKato or @Justin-12138 can either of you confirm whether this issue is present for you in autogen 0.6.1?\n\n0.5.7\n\n<img width=\"927\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/bb2afea8-318f-431f-ba54-487cc5a8e1ea\" />\n\n0.6.1\n<img width=\"914\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/d7068612-daca-402e-9587-272a7a812152\" />\n\nOn a side note, the same bug that was the cause of https://github.com/microsoft/autogen/issues/6643 can be found in this code as well. `agent_e` is not being triggered because there are 2 parent nodes, only one of which may trigger. To resolve this, you can use `.add_node(agent_e, 'any')`. This is likely the underlying cause of the original issue as well.\n\n<img width=\"919\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/b653fab2-0e3b-43ff-acb3-69723526e8de\" />"
+    },
+    {
+      "author": "SogoKato",
+      "created_at": "2025-06-10T15:52:49Z",
+      "body": "Thank you for looking into this, @ekzhu!\n\nI can confirm that the original error is gone after upgrading from 0.5.7 to 0.6.1. In addition, as @peterychang pointed out, `agent_e` does not get triggered unless it is registered with `.add_node(agent_e, \"any\")`.\n\n```\n% rye run python main.py\n---------- TextMessage (user) ----------\nWhat is LangGraph?\n---------- ToolCallRequestEvent (A) ----------\n[FunctionCall(id='call_hQ4zpSZoAbAsLD3IeXPBBU3K', arguments='{\"query\":\"What is LangGraph\"}', name='web_search_func')]\n---------- ToolCallExecutionEvent (A) ----------\n[FunctionExecutionResult(content='No results.', name='web_search_func', call_id='call_hQ4zpSZoAbAsLD3IeXPBBU3K', is_error=False)]\n---------- ToolCallSummaryMessage (A) ----------\nNo results.\n---------- TextMessage (B) ----------\nSEARCH_AGAIN\n---------- ToolCallRequestEvent (A) ----------\n[FunctionCall(id='call_Fx9SrmsCOVUIxfIyqVkwfsT5', arguments='{\"query\":\"LangGraph\"}', name='web_search_func')]\n---------- ToolCallExecutionEvent (A) ----------\n[FunctionExecutionResult(content='No results.', name='web_search_func', call_id='call_Fx9SrmsCOVUIxfIyqVkwfsT5', is_error=False)]\n---------- ToolCallSummaryMessage (A) ----------\nNo results.\n---------- TextMessage (B) ----------\nNOT_FOUND\n---------- TextMessage (D) ----------\nIt appears that there is no available information about \"LangGraph\" in the current data. It might be a recent development, a specialized term, or a product that hasn't been widely documented yet. If you can provide more context or details, I would be happy to help further!\n---------- StopMessage (DiGraphStopAgent) ----------\nDigraph execution is complete\n```"
+    }
+  ]
+}

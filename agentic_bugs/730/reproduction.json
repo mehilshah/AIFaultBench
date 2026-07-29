@@ -1,0 +1,15 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Pinned checkout verified as 28ea2f4df872e8fd03ef0792ebc9e1989b4be0ee.",
+    "Final run exited 1 and printed: OBSERVED_BUG: HttpOperationException 404 after request to https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2",
+    "Final repro_stderr.log is empty."
+  ],
+  "steps": [
+    "Ran bash setup_codebase.sh and restored the checkout to the pinned commit after detecting the clone\u2019s delayed checkout.",
+    "Created .venv, provisioned an isolated .NET 8.0.129 SDK, and restored the connector dependencies.",
+    "Ran bash run_repro.sh using an in-process HTTP 404 stub and captured the final output logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}

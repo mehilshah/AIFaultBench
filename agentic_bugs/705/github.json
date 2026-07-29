@@ -1,0 +1,55 @@
+{
+  "owner": "stanfordnlp",
+  "repo": "dspy",
+  "number": 9059,
+  "html_url": "https://github.com/stanfordnlp/dspy/issues/9059",
+  "is_pull_request": false,
+  "state": "closed",
+  "state_reason": "completed",
+  "title": "[Bug] GEPA reflection_minibatch_size parameter ignored, causing context length explosions",
+  "author": "Ju-usc",
+  "created_at": "2025-11-13T09:10:19Z",
+  "updated_at": "2025-11-25T19:29:24Z",
+  "closed_at": "2025-11-25T19:29:24Z",
+  "labels": [
+    "bug"
+  ],
+  "milestone": null,
+  "comments_count": 3,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": 12.43,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-07-29T13:05:59.530477+00:00",
+  "comments": [
+    {
+      "author": "TomeHirata",
+      "created_at": "2025-11-17T07:08:57Z",
+      "body": "The `reflection_minibatch_size` argument is passed to `gepa.optimize` and should be handled by the gepa library. @LakshyAAAgrawal Can you double-confirm the behavior?"
+    },
+    {
+      "author": "LakshyAAAgrawal",
+      "created_at": "2025-11-17T07:15:30Z",
+      "body": "@Ju-usc, As @TomeHirata mentioned, reflection_minibatch_size is actually passed to gepa.optimize method, which instantiates a BatchSampler internally and that only selects reflection_minibatch_size number of examples.\n\nSpecifically, the make_reflective_dataset method will receive only as many eval_batch.trajectories, as the reflection_minibatch_size. Could you confirm this behaviour with maybe printing the length of eval_batch.trajectories?\n\nWhat may instead be happening is that if the trajectory is of length N, specifically for dspy.ReAct, GEPA could be taking all calls, of lengths (1, 2, 3, ..., N) made to the model, and that could be bloating up the context. "
+    },
+    {
+      "author": "Ju-usc",
+      "created_at": "2025-11-20T04:27:54Z",
+      "body": "My bad\u2014I misunderstood how this works. I was only looking at the DSPy codebase and didn't check the GEPA library code. The real issue is that ReAct trajectories are huge (full conversation history + multiple LM calls), not that the minibatch size is ignored. Sorry for the confusion. Feel free to close!\n"
+    }
+  ]
+}

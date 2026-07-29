@@ -1,0 +1,62 @@
+# recovered-from-issue: https://github.com/pydantic/pydantic-ai/issues/6331
+
+TITLE
+Native tools contributed by capability functions are dropped under `override(native_tools=...)`
+
+BODY
+### Initial Checks
+
+- [x] I confirm that I'm using the latest version of Pydantic AI
+- [x] I confirm that I searched for my issue in https://github.com/pydantic/pydantic-ai/issues before opening this issue
+
+### Description
+
+Native tools contributed by a capability *function* (or any capability whose `for_run` returns a different instance carrying native tools) are silently dropped from the model request when `agent.override(native_tools=...)` is active.
+
+`override(native_tools=...)` is documented to replace the agent's *baseline* native tools while preserving per-run capability-contributed ones on top. That works for static capabilities, but the override branch reads the extras' native tools from the capability instances *before* `for_run` resolution:
+
+https://github.com/pydantic/pydantic-ai/blob/21763e588693a25c85e01642a2ce49b3d94b2126/pydantic_ai_slim/pydantic_ai/agent/__init__.py#L1292-L1299
+
+A `DynamicCapability` (what `capabilities=[fn]` wraps a function into) only materializes its native tools after `for_run`, so `cap.get_native_tools()` on the unresolved wrapper returns nothing and the tool never reaches the request.
+
+In the example below, the first two runs correctly send the capability-contributed MCP server tool; the third drops it:
+
+```python
+from pydantic_ai import Agent
+from pydantic_ai.capabilities import NativeTool
+from pydantic_ai.models.test import TestModel
+from pydantic_ai.native_tools import CodeExecutionTool, MCPServerTool
+
+
+def dynamic_cap(ctx):
+    return NativeTool(MCPServerTool(id='dyn', url='https://mcp.example.com/dyn'))
+
+
+model = TestModel()
+agent = Agent(model=model)
+
+# No override: [MCPServerTool(id='dyn', ...)] ✅
+agent.run_sync('Hello', capabilities=[dynamic_cap])
+
+# Override + static capability: [CodeExecutionTool(), MCPServerTool(id='static', ...)] ✅
+with agent.override(native_tools=[CodeExecutionTool()]):
+    agent.run_sync('Hello', capabilities=[NativeTool(MCPServerTool(id='static', url='https://mcp.example.com/static'))])
+
+# Override + capability function: [CodeExecutionTool()] ❌ — 'dyn' tool silently dropped
+with agent.override(native_tools=[CodeExecutionTool()]):
+    agent.run_sync('Hello', capabilities=[dynamic_cap])
+```
+
+(`TestModel` raises `UserError: TestModel does not support built-in tools` on each run since it doesn't support native tools, but `model.last_model_request_parameters.native_tools` shows what would have been sent.)
+
+The fix needs to read the extras' native tools from the *resolved* run capability rather than the pre-`for_run` instances — without calling `for_run` a second time, since [`AbstractCapability.for_run`](https://github.com/pydantic/pydantic-ai/blob/21763e588693a25c85e01642a2ce49b3d94b2126/pydantic_ai_slim/pydantic_ai/capabilities/abstract.py#L244-L251) is documented as called once per run and implementations are allowed to have per-run side effects (e.g. the durable-exec integrations depend on this for deterministic replay). This was originally surfaced by a review comment on #6242, which works around it by resolving the per-run capabilities up front and then letting `effective_capability.for_run` resolve them a second time — see the discussion there for why that double resolution isn't acceptable.
+
+### Example Code
+
+_No response_
+
+### Python, Pydantic AI & LLM client version
+
+```Text
+main (21763e588)
+```

@@ -1,0 +1,12 @@
+{
+  "bug_id": "727",
+  "bug_dir": "727",
+  "issue_url": "https://github.com/openai/openai-agents-python/issues/2962",
+  "commit_hash": "da82b2cd663ee263b206ce65179c26b598d61f73",
+  "library_name": "openai-agents-python",
+  "library_version": "unknown",
+  "bug_report_source": "bug_report.txt",
+  "codebase_source": "openai/openai-agents-python@da82b2cd663ee263b206ce65179c26b598d61f73",
+  "codebase_present": "false",
+  "standardized_dir": "../727"
+}

@@ -1,0 +1,94 @@
+# recovered-from-issue: https://github.com/huggingface/smolagents/issues/1689
+
+TITLE
+BUG: smolagents.utils.AgentGenerationError: Error in generating model output: Error code: 400 - {'object': 'error', 'message': 'Expected 2 output messages (reasoning and final), but got 64.', 'type': 'BadRequestError', 'param': None, 'code': 400}
+
+BODY
+<!--
+Thank you for reporting a bug!
+Please provide as much detail as possible to help us identify and fix the issue.
+-->
+
+**Problem**
+I am using vLLM to serve my model and when I run the example code from your website I always get this error, can you please help?: 
+
+**smolagents.utils.AgentGenerationError: Error in generating model output:
+Error code: 400 - {'object': 'error', 'message': 'Expected 2 output messages (reasoning and final), but got 64.', 'type': 'BadRequestError', 'param': None, 'code': 400}**
+
+My Code : 
+```python
+
+import httpx
+import re
+import requests
+from markdownify import markdownify
+
+from requests.exceptions import RequestException
+
+from smolagents import (
+    OpenAIServerModel,     
+    CodeAgent,
+    ToolCallingAgent,
+    WebSearchTool,
+    tool
+)
+
+
+model = OpenAIServerModel(
+    model_id=openai_model_name,
+    api_base=openai_model_url,
+    api_key="local",
+    client_kwargs = {"http_client": httpx.Client(verify=False)} 
+)
+
+@tool
+def visit_webpage(url: str) -> str:
+    """Visits a webpage at the given URL and returns its content as a markdown string.
+
+    Args:
+        url: The URL of the webpage to visit.
+
+    Returns:
+        The content of the webpage converted to Markdown, or an error message if the request fails.
+    """
+    try:
+        # Send a GET request to the URL
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an exception for bad status codes
+
+        # Convert the HTML content to Markdown
+        markdown_content = markdownify(response.text).strip()
+
+        # Remove multiple line breaks
+        markdown_content = re.sub(r"\n{3,}", "\n\n", markdown_content)
+
+        return markdown_content
+
+    except RequestException as e:
+        return f"Error fetching the webpage: {str(e)}"
+    except Exception as e:
+        return f"An unexpected error occurred: {str(e)}"
+    
+  
+web_agent = ToolCallingAgent(
+    tools=[WebSearchTool(), visit_webpage],
+    model=model,
+    max_steps=10,
+    name="web_search_agent",
+    description="Runs web searches for you.",
+)
+
+manager_agent = CodeAgent(
+    tools=[],
+    model=model,
+    managed_agents=[web_agent],
+    additional_authorized_imports=["time", "numpy", "pandas"],
+)
+
+answer = manager_agent.run("If LLM training continues to scale up at the current rhythm until 2030, what would be the electric power in GW required to power the biggest training runs by 2030? What would that correspond to, compared to some countries? Please provide a source for any numbers used.")
+```
+
+Version infos:
+Windows 11
+python 3.11.9
+smolagents         1.21.1

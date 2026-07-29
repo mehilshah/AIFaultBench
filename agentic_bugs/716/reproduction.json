@@ -1,0 +1,16 @@
+{
+  "reproducible": true,
+  "evidence": [
+    "Final `bash run_repro.sh` exited with status 1.",
+    "Captured stdout: `BUG REPRODUCED: HTTP 422: body is too long (maximum is 65536 characters); got 65874`.",
+    "Pinned checkout verified at `aa4e8ea1611dad2220950cc5afb30aff17932b41`."
+  ],
+  "steps": [
+    "Ran `bash setup_codebase.sh` and checked out the pinned commit.",
+    "Inspected the unbounded PR-body construction in `sweagent/run/hooks/open_pr.py`.",
+    "Created an offline standard-library reproducer with stubbed GitHub collaborators.",
+    "Ran the reproduction and captured final stdout/stderr logs."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash setup_codebase.sh && bash run_repro.sh"
+}
