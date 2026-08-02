@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproduction for fairseq speech_to_speech config mutation failure."""
-
 from omegaconf import OmegaConf
 
 

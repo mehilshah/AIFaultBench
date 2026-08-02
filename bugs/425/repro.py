@@ -1,17 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproduction for vLLM issue 47418.
-
-The bug is the unconditional attribute access in
-`vllm/v1/worker/gpu/spec_decode/dspark/speculator.py`:
-
-    if self.draft_logits is not None and model.draft_id_to_target_id is not None:
-
-`DSparkDeepseekV4ForCausalLM` in
-`vllm/models/deepseek_v4/nvidia/dspark.py` does not define
-`draft_id_to_target_id`, so the check raises `AttributeError` as soon as DSpark
-probabilistic sampling is enabled.
-"""
-
 from __future__ import annotations
 
 

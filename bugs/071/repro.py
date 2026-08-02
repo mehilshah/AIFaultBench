@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproducer for the missing `transformers.deepspeed` module.
-
-This script mirrors the import site in
-`codebase/applications/DeepSpeed-Chat/dschat/utils/model/model_utils.py`.
-"""
-
 from __future__ import annotations
 
 import traceback

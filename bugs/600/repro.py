@@ -1,16 +1,4 @@
 #!/usr/bin/env python3
-"""Reproduce the Gemma4 video metadata mismatch from vLLM.
-
-This script mirrors the buggy logic in `codebase/vllm/assets/video.py`:
-
-- `video_to_ndarrays()` samples frames with `np.linspace(...)`
-- `video_get_metadata()` reports `fps = duration / num_frames`
-  and `frames_indices = list(range(num_frames))`
-
-The repro uses a locally generated video with a known FPS so the mismatch is
-fully self-contained.
-"""
-
 from __future__ import annotations
 
 import json

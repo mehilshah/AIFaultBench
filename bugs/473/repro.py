@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproduction for numpyro issue 2055 / flax 0.11.0 incompatibility."""
-
 from __future__ import annotations
 
 from jax import random

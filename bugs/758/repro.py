@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Deterministically reproduce #1674 without contacting Amazon Bedrock."""
-
 import sys
 
 from smolagents import AmazonBedrockServerModel

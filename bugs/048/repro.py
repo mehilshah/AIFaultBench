@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""Self-contained reproduction of the MMS forced-alignment concat bug.
-
-This mirrors the sliding-window logic in
-`examples/mms/data_prep/align_and_segment.py` and reproduces the failure at
-the emission concatenation step when window outputs differ in time length.
-"""
-
 from dataclasses import dataclass
 
 

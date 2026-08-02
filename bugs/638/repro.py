@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproduction for DeepSpeed issue 7686.
-
-This script loads the exact ZenFlow stage-3 optimizer implementation from the
-local codebase, injects the corrupted parameter state described in the bug
-report, and triggers the failing `narrow()` call.
-"""
-
 from __future__ import annotations
 
 import importlib.util

@@ -1,15 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproduction for the TorchRL Minari cache-path bug.
-
-The issue in `codebase/torchrl/data/datasets/minari_data.py` is that the code
-downloads a dataset with `MINARI_DATASETS_PATH` pointing at a temporary cache,
-then restores the environment before calling `minari.load_dataset(...)`.
-That makes the metadata lookup consult the wrong cache location.
-
-This script mirrors that control flow with a tiny fake Minari implementation so
-the failure is reproducible without heavyweight ML dependencies.
-"""
-
 from __future__ import annotations
 
 import json

@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproduction for the nnUNet Lightning scheduler failure.
-
-This mirrors the scheduler branch in
-`codebase/PyTorch/Segmentation/nnUNet/nnunet/nn_unet.py`.
-"""
-
 from __future__ import annotations
 
 import sys

@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""Reproduce the GraphGym import failure from the bug report.
-
-This script builds an isolated sandbox package tree that mirrors the relevant
-`torch_geometric.graphgym` layout but omits `imports.py`, which is the module
-reported as missing.
-"""
-
 from __future__ import annotations
 
 import shutil

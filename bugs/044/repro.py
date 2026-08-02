@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal repro for MMS TTS Japanese text being fully filtered as OOV.
-
-This mirrors the `filter_oov()` logic in `codebase/examples/mms/tts/infer.py`
-without requiring the missing VITS helper modules or model weights.
-"""
-
 from __future__ import annotations
 
 import json

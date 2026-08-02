@@ -1,22 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
 # DeepSpeed Team
-"""Minimal repro for DeepSpeed ZeRO-3 mixed-dtype all-gather regression.
-
-This script mirrors the vulnerable logic in
-``deepspeed/runtime/zero/partition_parameters.py``:
-
-    flat_tensor = torch.empty(..., dtype=param_list[0].ds_tensor.dtype, ...)
-
-When the first persistent parameter is bf16 and a later persistent parameter is
-fp32, the all-gather buffer is allocated as bf16 for both parameters. The real
-PyTorch collective rejects the second call with:
-
-    TypeError: output tensor must have the same type as input tensor
-
-The bug report links this to ZeRO-3 + PEFT LoRA models whose adapters stay in
-fp32 while the base model is bf16.
-"""
-
 from __future__ import annotations
 
 import sys

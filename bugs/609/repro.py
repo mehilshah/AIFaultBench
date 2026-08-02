@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal Flux2 LoRA repro for the reported `guidance_in.*` leftover-key failure."""
-
 from __future__ import annotations
 
 import sys

@@ -1,12 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproducer for the reported dummy-run indexing failure.
-
-The upstream traceback in the issue lands in the speculative decoding
-dummy-run path. The core failure is a contract mismatch: the caller treats
-``last_hidden_states`` as a tensor, but the draft model returns a tuple.
-Indexing that tuple with a tensor reproduces the same ``TypeError``.
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass

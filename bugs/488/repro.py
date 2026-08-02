@@ -1,16 +1,4 @@
 #!/usr/bin/env python3
-"""Deterministic repro for the GLM-5.2 sparse-indexer layer mask.
-
-The issue report describes GLM-5.2 / ``glm_moe_dsa`` behaving badly only when
-the V2 model runner is enabled. The relevant code path in
-``codebase/vllm/models/deepseek_v32/nvidia/attention.py`` documents that
-GLM-5.2 should keep layers ``[0, 1, 2, 6, 10, ...]`` when
-``index_topk_freq=4``.
-
-This repro exercises that logic directly and fails when the current formula
-computes a different carry set.
-"""
-
 from __future__ import annotations
 
 from pathlib import Path

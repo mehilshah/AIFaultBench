@@ -1,17 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproduction for the reported zero mAP@200 / p@200 output.
-
-The posted code computes retrieval AP from cosine similarities transformed as:
-
-    distance = -1 * (1.0 - cosine_similarity(...))
-
-For a perfect match, cosine_similarity == 1, so the score becomes 0.
-TorchMetrics' retrieval_average_precision masks out non-positive scores
-before ranking, which makes the positive item disappear and the AP drop to 0.
-
-This script reproduces that behavior on a toy dataset with perfect retrieval.
-"""
-
 from __future__ import annotations
 
 import json

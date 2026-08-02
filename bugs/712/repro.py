@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Offline reproduction for Langflow custom-component future annotations bug."""
-
 import ast
 import importlib.util
 import sys

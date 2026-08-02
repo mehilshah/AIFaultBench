@@ -32,7 +32,7 @@ FAMILY = {
                      "sentence-transformers", "safetensors", "adapters",
                      "evaluate", "datasets", "optimum", "open_clip"},
     "JAX": {"jax", "equinox", "jaxtyping", "flax"},
-    "Probabilistic / stats": {"numpyro", "pyro", "sdv", "gpytorch", "bayesflow",
+    "Probabilistic / stats": {"numpyro", "pyro", "SDV", "gpytorch", "bayesflow",
                               "optuna", "Ax", "POT"},
     "PyTorch vision / graph": {"pytorch-image-models", "detectron2",
                                "pytorch_geometric", "kornia", "vit-pytorch",
@@ -46,10 +46,16 @@ FAMILY = {
                            "deepvariant"},
     "Reinforcement learning": {"rl", "stable-baselines3", "tianshou",
                                "PaLM-rlhf-pytorch"},
+    "Agent frameworks": {"langgraph", "langchain", "smolagents", "pydantic-ai",
+                         "camel", "crewAI", "autogen", "agno", "dspy",
+                         "openai-agents-python", "SWE-agent", "semantic-kernel",
+                         "langflow", "browser-use"},
+    "RAG / memory / tracing": {"llama_index", "mem0", "phoenix", "python-sdk"},
 }
 FAMILY_ORDER = ["Hugging Face", "JAX", "Probabilistic / stats",
                 "PyTorch vision / graph", "Training / serving",
-                "TensorFlow / Keras", "Reinforcement learning"]
+                "TensorFlow / Keras", "Reinforcement learning",
+                "Agent frameworks", "RAG / memory / tracing"]
 
 
 def fam_of(repo: str) -> str:
@@ -136,7 +142,13 @@ def build(name: str, body: str, varwidth: str = "17cm") -> None:
 # --------------------------------------------------------------------------- #
 def load():
     with open(os.path.join(ROOT, "index.csv")) as fh:
-        return list(csv.DictReader(fh))
+        rows = list(csv.DictReader(fh))
+    # index.csv serialises booleans Python-style ("True"/"False"); normalise so
+    # the `== "true"` comparisons below cannot silently match nothing.
+    for r in rows:
+        r["reproducible"] = r["reproducible"].strip().lower()
+        assert r["reproducible"] in ("true", "false"), r
+    return rows
 
 
 def per_repo(rows):
@@ -161,7 +173,7 @@ def fig_status(rows):
     gap = 0.06
     body = r"""
 \FigTitle{Reproduction status of the benchmark}
-\FigSub{%(repro)d of %(total)d deep-learning bugs reproduce on the reference machine (%(pct)d\%%).}
+\FigSub{%(repro)d of %(total)d AI/ML bugs reproduce on the reference machine (%(pct)d\%%).}
 \begin{tikzpicture}[x=1cm,y=1cm]
   \fill[good] (0,0) rectangle (%(wr).3f,1.5);
   \fill[crit] (%(xn).3f,0) rectangle (%(W).3f,1.5);
@@ -261,12 +273,17 @@ def fig_rate(rows):
 # --------------------------------------------------------------------------- #
 def fig_blocking(rows):
     notr = sum(r["reproducible"] != "true" for r in rows)
+    # Manual grouping of the free-text `blocking_reason` field. The first three
+    # counts are the original hand grouping over the 107 pre-agentic blocked
+    # cases (61/43/3); the agentic split added 8 / 2 / 1 respectively.
     cats = [
-        ("No longer reproduces on the pinned\\\\checkout (fixed / drift / flaky)", 61, "sonedark"),
-        ("Hardware / OS / build not\\\\available on the reference machine", 43, "sone"),
-        ("Not an executable bug\\\\(docs, meta, non-code)", 3, "sonesoft"),
+        ("No longer reproduces on the pinned\\\\checkout (fixed / drift / flaky)", 69, "sonedark"),
+        ("Hardware / OS / build not\\\\available on the reference machine", 45, "sone"),
+        ("Not an executable bug\\\\(docs, meta, non-code)", 4, "sonesoft"),
     ]
-    assert sum(c[1] for c in cats) == notr
+    assert sum(c[1] for c in cats) == notr, (
+        f"manual blocking grouping sums to {sum(c[1] for c in cats)}, "
+        f"but index.csv has {notr} non-reproducible bugs")
     cats = cats[::-1]
     plots, labels, ylabels = [], [], []
     for i, (lab, v, col) in enumerate(cats):

@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""Reproduce the MMS ASR logging-order bug from issue #5152.
-
-This script mirrors the final formatting logic from
-`codebase/examples/mms/asr/infer/mms_infer.py` and feeds it a hypothesis
-sequence transcribed from `bug_report.txt`.
-"""
-
 from __future__ import annotations
 
 import json

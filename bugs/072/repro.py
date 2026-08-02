@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproduction for the DeepSpeedEngine.model AttributeError."""
-
-
 class DeepSpeedEngine:
     def __getattr__(self, name):
         raise AttributeError(

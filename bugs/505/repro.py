@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal async H2D copy race repro.
-
-This mirrors the bug report's `CpuGpuBuffer.copy_to_gpu()` pattern:
-an async `copy_` to GPU is issued and a consumer on another stream reads the
-destination without any explicit synchronization.
-"""
-
 from __future__ import annotations
 
 import sys

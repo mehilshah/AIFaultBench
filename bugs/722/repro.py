@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Deterministically expose the released-port race in issue #2704."""
-
 from __future__ import annotations
 
 import ast

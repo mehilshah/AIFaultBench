@@ -1,15 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal repro for the ConvSE3 multiplication error.
-
-The upstream issue reports a failure in the `ConvSE3` path when a separate
-degree-1 input type is introduced. The runtime error is raised by a batched
-matrix multiplication whose second operand has degree-1 width 3 while the
-kernel expects width 1.
-
-This script reproduces the exact error message without requiring the full DGL
-stack or dataset download.
-"""
-
 from __future__ import annotations
 
 import sys

@@ -1,16 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproduction for DeepSpeed superoffload single-GPU KeyError.
-
-This is a pure-Python harness that mirrors the relevant control flow from:
-- codebase/deepspeed/runtime/superoffload/superoffload_stage3.py
-- codebase/deepspeed/runtime/zero/stage3.py
-
-The issue is that a single subgroup returns early from `_create_fp16_sub_groups`
-without populating `sub_group_to_param_num`, but later
-`reduce_independent_p_g_buckets_and_remove_grads` unconditionally indexes that
-mapping when the first bucket is reduced.
-"""
-
 from __future__ import annotations
 
 import json

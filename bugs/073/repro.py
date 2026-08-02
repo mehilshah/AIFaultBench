@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproduction of the Domino/DeepSpeed cdb initialization bug.
-
-The upstream failure reported in DeepSpeedExamples #940 is an AttributeError
-inside DeepSpeed's communication wrapper when `cdb` is still None and
-`all_reduce()` dereferences it directly.
-"""
-
 from __future__ import annotations
 
 import traceback

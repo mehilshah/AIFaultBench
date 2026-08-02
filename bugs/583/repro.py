@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Reproduce the trust_remote_code bypass in the community pipeline branch."""
-
 from __future__ import annotations
 
 import importlib.util

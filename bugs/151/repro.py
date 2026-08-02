@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproduction for the generation config overwrite bug."""
-
 from __future__ import annotations
 
 import os

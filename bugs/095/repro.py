@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproduction of the learned Gaussian diffusion DDIM bug."""
-
-
 class GaussianDiffusion:
     def ddim_sample(self, shape, return_all_timesteps=False):
         # This mirrors the failing call site in

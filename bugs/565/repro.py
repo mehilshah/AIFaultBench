@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal GPU repro for the TraceEnum_ELBO memory leak.
-
-This script mirrors the issue report's one-site discrete model, but marks the
-site for model-side parallel enumeration so the TraceEnum_ELBO code path is
-actually exercised.
-"""
-
 from __future__ import annotations
 
 import gc

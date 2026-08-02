@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-"""Reproduce SDV issue 2799 from the vendored source tree.
-
-This script loads only the metadata modules needed for the bug so we do not
-pull in unrelated synthesizer dependencies.
-"""
-
 from __future__ import annotations
 
 import importlib.util

@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Offline reproduction for browser-use issue #4769."""
-
 import asyncio
 from types import SimpleNamespace
 

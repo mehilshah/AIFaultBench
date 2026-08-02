@@ -1,14 +1,4 @@
 #!/usr/bin/env python3
-"""Deterministic repro for RandAugment magnitude std handling.
-
-The bug report points at:
-  official/vision/ops/augment.py::_parse_policy_info
-
-The implementation adds random normal noise without passing `level_std` as the
-standard deviation. This script demonstrates the consequence directly:
-changing `level_std` does not change the sampled values.
-"""
-
 from __future__ import annotations
 
 import json

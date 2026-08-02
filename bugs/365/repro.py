@@ -1,15 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproduction for DeepSpeed SuperOffload subgroup indexing bug.
-
-The bug report says `sub_group_to_param_num` is populated with local subgroup
-indices per optimizer group, but later the code looks up the dictionary with the
-global subgroup index (`_cur_bucket_index` / `grad_position[i][0]`).
-
-This harness mirrors that bookkeeping with a tiny pure-Python model of the
-relevant control flow and triggers the same `KeyError: 2` when a third global
-subgroup is processed.
-"""
-
 from __future__ import annotations
 
 import json

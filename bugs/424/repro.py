@@ -1,12 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproducer for DeepSpeed issue #7830.
-
-This intentionally monkeypatches torch's internal grad-fn lookup to fail when
-called with grad mode disabled. The unpatched DeepSpeed code calls the lookup
-directly from a backward hook, which runs with grad mode disabled, so the
-reproducer fails before the upstream fix and passes after it.
-"""
-
 from __future__ import annotations
 
 import importlib.util

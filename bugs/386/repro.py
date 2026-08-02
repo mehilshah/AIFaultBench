@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Reproduce the CVAE BCE target validation failure from bug_report.txt."""
-
 from __future__ import annotations
 
 import json

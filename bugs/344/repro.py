@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""Reproduce the PyG legacy ``Data`` deserialization failure.
-
-This script creates a pickle payload that mimics an older PyG ``Data`` object
-by omitting the internal ``_store`` attribute, then loads and prints it.
-Printing triggers ``Data.__repr__`` which raises the reported RuntimeError.
-"""
-
 from __future__ import annotations
 
 import pickle

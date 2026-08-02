@@ -1,9 +1,3 @@
-"""Minimal reproduction for SDV issue 2711.
-
-This mirrors the `HMASynthesizer._clear_nans` branch in
-`codebase/sdv/multi_table/hma.py:378-383`.
-"""
-
 from __future__ import annotations
 
 import json

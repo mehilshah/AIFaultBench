@@ -1,16 +1,4 @@
 #!/usr/bin/env python3
-"""Minimal reproducer for the parallel_tool_calls null validation crash.
-
-This mirrors the schema mismatch in
-`vllm/entrypoints/openai/responses/protocol.py`:
-
-- request side accepts `parallel_tool_calls: bool | None = True`
-- response side requires `parallel_tool_calls: bool`
-
-The real bug happens when `from_request()` forwards `None` into the response
-model and Pydantic raises a ValidationError instead of applying the default.
-"""
-
 from __future__ import annotations
 
 import sys

@@ -1,14 +1,4 @@
 #!/usr/bin/env python3
-"""
-Minimal repro for stanza issue 1366.
-
-The report iterates over `doc.sentences[i].to_dict()` and indexes `word['xpos']`.
-That fails when the list contains a multi-word token dictionary that omits xpos.
-This script loads the local Stanza source tree without importing the broken
-system `torch`, constructs a sentence containing an MWT, and demonstrates the
-KeyError on the same access pattern.
-"""
-
 from __future__ import annotations
 
 import importlib.machinery
