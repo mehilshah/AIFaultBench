@@ -1,3 +1,34 @@
+---
+pretty_name: AIFaultBench
+license: cc-by-4.0
+language:
+  - en
+  - code
+size_categories:
+  - n<1K
+task_categories:
+  - other
+tags:
+  - software-engineering
+  - bug-reproduction
+  - fault-localization
+  - automated-program-repair
+  - debugging
+  - benchmark
+  - machine-learning
+  - deep-learning
+  - llm-infrastructure
+  - agentic-ai
+  - reinforcement-learning
+  - msr
+  - mining-software-repositories
+configs:
+  - config_name: default
+    data_files:
+      - split: train
+        path: index.csv
+---
+
 # AIFaultBench: A Benchmark of Real-World Faults in AI Software Systems
 
 [![Dataset on Zenodo](https://img.shields.io/badge/dataset-Zenodo-1682d4.svg)](https://doi.org/10.5281/zenodo.21422606)
@@ -94,6 +125,24 @@ reproducible = [b for b in bugs if b["reproducible"]]
 agentic = [b for b in bugs if b["domain"] == "Agentic"]
 ```
 
+The index is also exposed through the Hugging Face dataset viewer:
+
+```python
+from datasets import load_dataset
+
+index = load_dataset("mehilshah/MSR-MiningChallenge-2027", split="train")
+```
+
+Note that `bug_id` is a zero-padded three-digit string (`001`, …, `774`) that names the
+directory under `bugs/`. The CSV loader parses it as an integer, so pad it back before
+building a path:
+
+```python
+path = f"bugs/{int(row['bug_id']):03d}"
+```
+
+Loading `index.json` directly preserves the identifier as a string.
+
 For a complete walkthrough, see `consume_dataset.ipynb`.
 
 ---
@@ -130,6 +179,7 @@ Together, these provide a fully executable reproduction package suitable for eva
 
 ## License
 
-The reproduction scripts, metadata, and benchmark packaging are released under the dataset license.
+The reproduction scripts, metadata, and benchmark packaging are released under
+[CC BY 4.0](LICENSE).
 
 Each original bug report and source repository remains under its respective upstream license.
