@@ -1,8 +1,8 @@
 # AIFaultBench: A Benchmark of Real-World Faults in AI Software Systems
 
-[![Dataset on Zenodo](https://img.shields.io/badge/dataset-Zenodo-1682d4.svg)](https://doi.org/10.5281/zenodo.21422606)
-[![Dataset on HF](https://img.shields.io/badge/dataset-%F0%9F%A4%97%20Hugging%20Face-yellow.svg)](https://huggingface.co/datasets/mehilshah/MSR-MiningChallenge-2027)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21422606.svg)](https://doi.org/10.5281/zenodo.21422606) 
+[![Dataset on Zenodo](https://img.shields.io/badge/dataset-Zenodo-1682d4.svg)](https://zenodo.org/records/21763133)
+[![Dataset on HF](https://img.shields.io/badge/dataset-%F0%9F%A4%97%20Hugging%20Face-yellow.svg)](https://huggingface.co/datasets/mehilshah/AIFaultBench)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21763133.svg)](https://doi.org/10.5281/zenodo.21763133) 
 
 AIFaultBench is a benchmark of **770 real-world AI software faults** collected from **105 open-source repositories** across **76 organizations**, spanning traditional machine learning, deep learning, large language model infrastructure, reinforcement learning, agentic AI systems, and AI tooling.
 
@@ -99,7 +99,7 @@ The index is also exposed through the Hugging Face dataset viewer:
 ```python
 from datasets import load_dataset
 
-index = load_dataset("mehilshah/MSR-MiningChallenge-2027", split="train")
+index = load_dataset("mehilshah/AIFaultBench", split="train")
 ```
 
 Note that `bug_id` is a zero-padded three-digit string (`001`, …, `774`) that names the
@@ -136,11 +136,12 @@ Together, these provide a fully executable reproduction package suitable for eva
 ## Citation
 
 ```bibtex
-@misc{AIFaultBench_2027,
+@misc{AIFaultBench_2026,
   title={AIFaultBench: A Reproducible Benchmark of Real-World AI Software Faults},
   author={Shah, Mehil B and Rahman, Mohammad Masudur and Khomh, Foutse},
-  year={2027},
-  doi={10.5281/zenodo.21422606}
+  year={2026},
+  doi={10.5281/zenodo.21763133},
+  url={https://zenodo.org/records/21763133}
 }
 ```
 
