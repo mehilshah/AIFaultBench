@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+message: "If you use AIFaultBench, please cite it as below."
+type: dataset
+title: "AIFaultBench: A Reproducible Benchmark of Real-World AI Software Faults"
+abstract: >-
+  AIFaultBench is a benchmark of 770 real-world AI software faults collected from
+  105 open-source repositories across 76 organizations, spanning traditional
+  machine learning, deep learning, large language model infrastructure,
+  reinforcement learning, agentic AI systems, and AI tooling. Each fault ships
+  with the original GitHub issue report, a minimal reproduction script, a
+  dependency specification, codebase reconstruction and environment setup
+  scripts, reproduction logs, structured metadata, and a reproduction
+  trajectory. 652 of the 770 faults (85%) are verified reproducible; the
+  remainder document the reasons preventing reproduction.
+authors:
+  - family-names: Shah
+    given-names: "Mehil B."
+    email: shahmehil@dal.ca
+    affiliation: "Dalhousie University"
+  - family-names: Rahman
+    given-names: "Mohammad Masudur"
+    affiliation: "Dalhousie University"
+  - family-names: Khomh
+    given-names: Foutse
+    affiliation: "Polytechnique Montréal"
+doi: 10.5281/zenodo.21422606
+url: "https://doi.org/10.5281/zenodo.21422606"
+repository-code: "https://github.com/mehilshah/MSR-MiningChallenge-2027"
+repository-artifact: "https://huggingface.co/datasets/mehilshah/MSR-MiningChallenge-2027"
+license: CC-BY-4.0
+date-released: 2026-07-18
+keywords:
+  - benchmark
+  - software engineering
+  - bug reproduction
+  - fault localization
+  - automated program repair
+  - debugging
+  - machine learning
+  - deep learning
+  - large language models
+  - agentic AI
+  - reinforcement learning
+  - mining software repositories
