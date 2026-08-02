@@ -31,7 +31,7 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.21763132
     description: "Concept DOI — always resolves to the latest version."
-url: "https://zenodo.org/records/21763133"
+url: "https://zenodo.org/records/21763203"
 repository-code: "https://github.com/mehilshah/AIFaultBench"
 repository-artifact: "https://huggingface.co/datasets/mehilshah/AIFaultBench"
 license: CC-BY-4.0
