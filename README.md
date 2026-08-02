@@ -1,34 +1,3 @@
----
-pretty_name: AIFaultBench
-license: cc-by-4.0
-language:
-  - en
-  - code
-size_categories:
-  - n<1K
-task_categories:
-  - other
-tags:
-  - software-engineering
-  - bug-reproduction
-  - fault-localization
-  - automated-program-repair
-  - debugging
-  - benchmark
-  - machine-learning
-  - deep-learning
-  - llm-infrastructure
-  - agentic-ai
-  - reinforcement-learning
-  - msr
-  - mining-software-repositories
-configs:
-  - config_name: default
-    data_files:
-      - split: train
-        path: index.csv
----
-
 # AIFaultBench: A Benchmark of Real-World Faults in AI Software Systems
 
 [![Dataset on Zenodo](https://img.shields.io/badge/dataset-Zenodo-1682d4.svg)](https://doi.org/10.5281/zenodo.21422606)
