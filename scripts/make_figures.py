@@ -242,14 +242,19 @@ def fig_rate(rows):
         (red if repo == "vllm" else blue).append(f"({rate:.2f},{i})")
         ylabels.append(tex_escape(repo))
         col = "crit" if repo == "vllm" else "ink"
-        labels.append(rf"\node[anchor=west,color={col},font=\small\bfseries] "
-                      rf"at (axis cs:{rate:.2f},{i}) {{\;{rate:.0f}\%}};")
+        # fill=surface masks the dashed mean line where a label crosses it.
+        labels.append(rf"\node[anchor=west,color={col},font=\small\bfseries,"
+                      rf"fill=surface,inner xsep=3pt,inner ysep=1pt] "
+                      rf"at (axis cs:{rate:.2f},{i}) {{{rate:.0f}\%}};")
     n = len(items)
     body = r"""
 \FigTitle{Reproduction rate by repository}
-\FigSub{Repositories with $\geq$ 15 bugs. GPU-serving / distributed libraries (vLLM) reproduce least; CPU-friendly ones (NumPyro) most.}
+\FigSub{Repositories with $\geq$ 15 bugs. GPU-serving / distributed libraries (vLLM) reproduce least; CPU-friendly ones (NumPyro, smolagents) most.}
 \begin{tikzpicture}
 \begin{axis}[barbase, xbar, width=15cm, height=10.5cm, bar width=12pt,
+  %% both series share one category slot: without this pgfplots groups them and
+  %% every bar is drawn off its own row label.
+  every axis plot/.append style={bar shift=0pt},
   xmin=0, xmax=112, ymax=%(ymax).1f, xtick={0,20,40,60,80,100},
   xticklabel={\pgfmathprintnumber{\tick}\%%},
   ytick={0,...,%(last)d}, yticklabels={%(ylabels)s}, y=0.62cm,
@@ -284,10 +289,18 @@ def fig_blocking(rows):
     assert sum(c[1] for c in cats) == notr, (
         f"manual blocking grouping sums to {sum(c[1] for c in cats)}, "
         f"but index.csv has {notr} non-reproducible bugs")
+    # Leave room to the right of the longest bar for its value label, and put the
+    # ticks on a round step -- otherwise the widest bar's label runs off the page.
+    top = max(c[1] for c in cats)
+    xmax = top * 1.34
+    step = 20 if xmax <= 110 else 25
+    xticks = ",".join(str(t) for t in range(0, int(top) + 1, step))
+
     cats = cats[::-1]
     plots, labels, ylabels = [], [], []
     for i, (lab, v, col) in enumerate(cats):
-        plots.append(rf"\addplot[fill={col},draw=none,xbar] coordinates {{({v},{i})}};")
+        plots.append(rf"\addplot[fill={col},draw=none,xbar,bar shift=0pt] "
+                     rf"coordinates {{({v},{i})}};")
         labels.append(rf"\node[anchor=west,color=ink,font=\small\bfseries] "
                       rf"at (axis cs:{v},{i}) {{\;{v} \;\textbullet\; {round(v/notr*100)}\%}};")
         ylabels.append(r"{\footnotesize\begin{tabular}{@{}r@{}}" +
@@ -297,7 +310,7 @@ def fig_blocking(rows):
 \FigSub{The reference machine is CPU-first; most blocked cases are upstream fixes or unavailable hardware.}
 \begin{tikzpicture}
 \begin{axis}[barbase, width=15cm, height=5.2cm, bar width=15pt,
-  xmin=0, xmax=74, ymax=2.4, xtick={0,20,40,60},
+  xmin=0, xmax=%(xmax).1f, ymax=2.4, xtick={%(xticks)s},
   ytick={0,1,2}, yticklabels={%(ylabels)s}, y=1.15cm,
   ]
 %(plots)s
@@ -306,7 +319,7 @@ def fig_blocking(rows):
 \end{tikzpicture}
 \FigFoot{Source: index.csv \;\textbullet\; n = %(notr)d non-reproducible bugs}
 """ % dict(notr=notr, ylabels=",".join(ylabels), plots="\n".join(plots),
-           labels="\n".join(labels))
+           labels="\n".join(labels), xmax=xmax, xticks=xticks)
     build("blocking_breakdown", body, varwidth="17cm")
 
 
