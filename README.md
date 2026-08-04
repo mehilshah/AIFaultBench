@@ -1,6 +1,6 @@
 # AIFaultBench: A Benchmark of Real-World Faults in AI Software Systems
 
-[![Dataset on Zenodo](https://img.shields.io/badge/dataset-Zenodo-1682d4.svg)](https://zenodo.org/records/21763203)
+[![Dataset on Zenodo](https://img.shields.io/badge/dataset-Zenodo-1682d4.svg)](https://zenodo.org/records/21782307)
 [![Dataset on HF](https://img.shields.io/badge/dataset-%F0%9F%A4%97%20Hugging%20Face-yellow.svg)](https://huggingface.co/datasets/mehilshah/AIFaultBench)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21763133.svg)](https://zenodo.org/records/21763203) 
 
@@ -140,8 +140,8 @@ Together, these provide a fully executable reproduction package suitable for eva
   title={AIFaultBench: A Reproducible Benchmark of Real-World AI Software Faults},
   author={Shah, Mehil B and Rahman, Mohammad Masudur and Khomh, Foutse},
   year={2026},
-  doi={10.5281/zenodo.21763203},
-  url={https://zenodo.org/records/21763203}
+  doi={10.5281/zenodo.21782307},
+  url={https://zenodo.org/records/21782307}
 }
 ```
 
