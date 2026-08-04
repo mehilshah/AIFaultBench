@@ -2,5 +2,5 @@
 # Recreate this bug's codebase (the dataset does not ship it).
 set -euo pipefail
 git clone https://github.com/huggingface/evaluate codebase
-git -C codebase checkout 8dfe057
+git -C codebase checkout 8dfe05784099fb9af55b8e77793205a3b7c86465
 # then: bash setup_env.sh && bash run_repro.sh

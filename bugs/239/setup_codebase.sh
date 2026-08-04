@@ -2,5 +2,5 @@
 # Recreate this bug's codebase (the dataset does not ship it).
 set -euo pipefail
 git clone https://github.com/pypa/cibuildwheel codebase
-git -C codebase checkout 93542c3
+git -C codebase checkout 93542c397cfe940bcbb8f1eff5c37d345ea16653
 # then: bash setup_env.sh && bash run_repro.sh

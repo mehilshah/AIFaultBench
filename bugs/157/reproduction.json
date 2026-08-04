@@ -6,6 +6,6 @@
     "Ran the exact OPT-125m safetensors load path from the bug report against codebase/src.",
     "Inspected lm_head.weight and model.decoder.embed_tokens.weight after loading; both were materialized on cpu and shared storage."
   ],
-  "blocking_reason": "",
+  "blocking_reason": "The reported failure did not manifest on this host: loading OPT-125m with use_safetensors=True materialized lm_head.weight and model.decoder.embed_tokens.weight on cpu rather than leaving them on the meta device.",
   "reproduction_command": "bash run_repro.sh"
 }

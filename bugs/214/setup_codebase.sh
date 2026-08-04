@@ -2,5 +2,5 @@
 # Recreate this bug's codebase (the dataset does not ship it).
 set -euo pipefail
 git clone https://github.com/sdv-dev/SDV codebase
-git -C codebase checkout c1acb42
+git -C codebase checkout c1acb42aca17c4e085a4c8686deaa5f479d0e66c
 # then: bash setup_env.sh && bash run_repro.sh

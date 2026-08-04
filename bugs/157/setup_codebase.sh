@@ -2,5 +2,5 @@
 # Recreate this bug's codebase (the dataset does not ship it).
 set -euo pipefail
 git clone https://github.com/huggingface/transformers codebase
-git -C codebase checkout 3aa2154
+git -C codebase checkout 3aa21543ddda64d24314f1a17d2e80ad8747a9af
 # then: bash setup_env.sh && bash run_repro.sh

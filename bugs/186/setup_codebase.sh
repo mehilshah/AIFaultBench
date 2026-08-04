@@ -2,5 +2,5 @@
 # Recreate this bug's codebase (the dataset does not ship it).
 set -euo pipefail
 git clone https://github.com/marimo-team/marimo codebase
-git -C codebase checkout 88937c9
+git -C codebase checkout 88937c99cfe845ba64d0fcca655aa82c88a6e3e4
 # then: bash setup_env.sh && bash run_repro.sh

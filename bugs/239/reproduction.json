@@ -9,6 +9,6 @@
     "Built and installed the project locally with pip, then called the exported create_context() function.",
     "Built a cp310 manylinux wheel with the local cibuildwheel source tree and imported the result in the manylinux container."
   ],
-  "blocking_reason": "The manylinux wheel segfaulted on import inside the cp310 container.",
+  "blocking_reason": "",
   "reproduction_command": "bash run_repro.sh"
 }
