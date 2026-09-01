@@ -769,3 +769,4 @@ bug_id,library,repository,domain,issue_url,reproducible,issue_state,created_at,c
 772,smolagents,huggingface/smolagents,Agentic,https://github.com/huggingface/smolagents/issues/1518,True,closed,2025-07-04T00:14:53Z,2025-07-04T06:58:46Z,2025-07-04T11:08:04Z,lvicentesanchez,1,bug,2,0.28,False,,,
 773,browser-use,browser-use/browser-use,Agentic,https://github.com/browser-use/browser-use/issues/4267,True,closed,2026-03-03T19:13:34Z,2026-03-22T21:30:46Z,2026-03-22T21:42:05Z,migratesky,1,bug,2,19.1,True,3d917866000ceedb740b64d259607ad8e3ba8d84,,
 774,browser-use,browser-use/browser-use,Agentic,https://github.com/browser-use/browser-use/issues/4073,True,closed,2026-02-10T09:10:16Z,2026-03-01T17:00:22Z,2026-03-01T17:00:22Z,alexander-tempest,1,bug,1,19.33,True,cdcc58d966c3de71a6829ee7ccad546aa0a4e880,,
+775,lark,lark-parser/lark,Tooling,https://github.com/lark-parser/lark/issues/1570,True,open,2025-12-07T17:15:45Z,,2025-12-09T13:46:24Z,Joxos,0,,2,,False,,,

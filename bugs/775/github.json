@@ -1,0 +1,48 @@
+{
+  "owner": "lark-parser",
+  "repo": "lark",
+  "number": 1570,
+  "html_url": "https://github.com/lark-parser/lark/issues/1570",
+  "is_pull_request": false,
+  "state": "open",
+  "state_reason": null,
+  "title": "python.lark failed to pare special forms of with_stmt",
+  "author": "Joxos",
+  "created_at": "2025-12-07T17:15:45Z",
+  "updated_at": "2025-12-09T13:46:24Z",
+  "closed_at": null,
+  "labels": [],
+  "milestone": null,
+  "comments_count": 2,
+  "reactions": {
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "resolution_days": null,
+  "fix": {
+    "closing_commit": null,
+    "linked_prs": [],
+    "best_guess_fix_commit": null,
+    "has_fix": false
+  },
+  "fetched_at": "2026-08-30T00:00:00+00:00",
+  "comments": [
+    {
+      "author": "Joxos",
+      "created_at": "2025-12-07T17:31:14Z",
+      "body": "Added that: `with (open(\"a.txt\") as a,):` also fails, along with related gaps around exception groups (`except*`) and PEP 695 `type` statements not being supported by the grammar."
+    },
+    {
+      "author": "Joxos",
+      "created_at": "2025-12-09T13:46:24Z",
+      "body": "Added that the `async_funcdef` rule in the grammar appears unreachable, since `async_stmt` always matches `\"async\" funcdef` first."
+    }
+  ]
+}

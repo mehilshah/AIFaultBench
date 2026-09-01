@@ -1,0 +1,37 @@
+# recovered-from-issue: https://github.com/lark-parser/lark/issues/1570
+
+TITLE
+python.lark failed to pare special forms of with_stmt
+
+BODY
+**Describe the bug**
+
+python.lark failed to pare special forms of with_stmt
+
+**To Reproduce**
+
+I'm using the newest python.lark in grammar/ and tried to parse:
+
+```python
+with (open("a.txt") as a,
+      open("b.txt") as b):
+    pass
+```
+
+which is valid in Python 3.13. However, the grammar in python.lark is:
+
+```lark
+with_stmt: "with" with_items ":" suite
+with_items: with_item ("," with_item)*
+with_item: test ["as" name]
+```
+
+It seems like this file doesn't realized such grammar. When using lark to parse the codes it raises something like:
+`lark.exceptions.UnexpectedToken: Unexpected token Token('AS', 'as') at line 291, column 21.`
+
+Though this grammar file can parse this feature in another form:
+
+```python
+with open("a.txt") as a, open("b.txt") as b):
+    pass
+```
