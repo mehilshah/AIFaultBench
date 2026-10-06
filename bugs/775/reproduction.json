@@ -1,0 +1,12 @@
+{
+  "reproducible": true,
+  "evidence": "Running ./run_repro.sh installed lark 1.3.1, parsed the non-parenthesized with-statement successfully, then failed to parse the parenthesized with-statement with: Unexpected token Token('AS', 'as') at line 1, column 21 -- matching the traceback reported in the issue.",
+  "steps": [
+    "Created an isolated Python environment and installed lark==1.3.1 from requirements.txt.",
+    "Executed repro.py through run_repro.sh, using the python.lark grammar and PythonIndenter postlexer from the pinned codebase checkout.",
+    "Confirmed the unparenthesized with-statement (`with a as x, b as y:`) parses correctly.",
+    "Confirmed the parenthesized with-statement (`with (a as x, b as y):`), valid Python 3.9+/3.13 syntax, raises UnexpectedToken on the 'as' keyword."
+  ],
+  "blocking_reason": "",
+  "reproduction_command": "bash run_repro.sh"
+}
